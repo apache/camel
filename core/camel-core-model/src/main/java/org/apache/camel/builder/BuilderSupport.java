@@ -24,10 +24,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.DatasonnetExpression;
-import org.apache.camel.model.language.ExchangePropertyExpression;
-import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.model.language.VariableExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.support.builder.Namespaces;
@@ -62,16 +58,14 @@ public abstract class BuilderSupport implements CamelContextAware {
      * Returns a value builder for the given header
      */
     public ValueBuilder header(String name) {
-        Expression exp = new HeaderExpression(name);
-        return new ValueBuilder(exp);
+        return Builder.header(name);
     }
 
     /**
      * Returns a value builder for the given exchange property
      */
     public ValueBuilder exchangeProperty(String name) {
-        Expression exp = new ExchangePropertyExpression(name);
-        return new ValueBuilder(exp);
+        return Builder.exchangeProperty(name);
     }
 
     /**
@@ -92,8 +86,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * Returns a value builder for the given variable
      */
     public ValueBuilder variable(String name) {
-        Expression exp = new VariableExpression(name);
-        return new ValueBuilder(exp);
+        return Builder.variable(name);
     }
 
     /**
@@ -246,9 +239,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      * Returns a simple expression value builder
      */
     public ValueBuilder simple(String value, Class<?> resultType) {
-        SimpleExpression exp = new SimpleExpression(value);
-        exp.setResultType(resultType);
-        return new ValueBuilder(exp);
+        return Builder.simple(value, resultType);
     }
 
     /**

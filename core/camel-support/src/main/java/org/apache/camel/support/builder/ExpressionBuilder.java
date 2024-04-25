@@ -411,11 +411,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                Exception exception = exchange.getException();
-                if (exception == null) {
-                    exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
-                }
-                return exception;
+                return LanguageHelper.exception(exchange);
             }
 
             @Override

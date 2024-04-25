@@ -16,7 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.camel.Expression;
@@ -65,13 +64,7 @@ public class ConvertHeaderReifier extends ProcessorReifier<ConvertHeaderDefiniti
     }
 
     public static String validateCharset(String charset) throws UnsupportedCharsetException {
-        if (charset != null) {
-            if (Charset.isSupported(charset)) {
-                return Charset.forName(charset).name();
-            }
-            throw new UnsupportedCharsetException(charset);
-        }
-        return null;
+        return ConvertBodyReifier.validateCharset(charset);
     }
 
 }

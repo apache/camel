@@ -1269,7 +1269,7 @@ public abstract class AbstractCamelCatalog {
             if (!optionPlaceholder && !lookup && javaType != null
                     && (javaType.startsWith("java.util.Map") || javaType.startsWith("java.util.Properties"))) {
                 // there must be a valid suffix
-                if (suffix == null || suffix.isEmpty() || suffix.equals(".")) {
+                if (isValidSuffix(suffix)) {
                     result.addInvalidMap(longKey, value);
                 } else if (suffix.startsWith("[") && !suffix.contains("]")) {
                     result.addInvalidMap(longKey, value);
@@ -1277,7 +1277,7 @@ public abstract class AbstractCamelCatalog {
             }
             if (!optionPlaceholder && !lookup && javaType != null && "array".equals(row.getType())) {
                 // there must be a suffix and it must be using [] style
-                if (suffix == null || suffix.isEmpty() || suffix.equals(".")) {
+                if (isValidSuffix(suffix)) {
                     result.addInvalidArray(longKey, value);
                 } else if (!suffix.startsWith("[") && !suffix.contains("]")) {
                     result.addInvalidArray(longKey, value);
@@ -1291,6 +1291,10 @@ public abstract class AbstractCamelCatalog {
                 }
             }
         }
+    }
+
+    private static boolean isValidSuffix(String suffix) {
+        return suffix == null || suffix.isEmpty() || suffix.equals(".");
     }
 
     private static boolean acceptConfigurationPropertyKey(String key) {
