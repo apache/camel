@@ -233,17 +233,17 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public List<String> findComponentNames() {
         return cache(FIND_COMPONENT_NAMES, () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
-                .flatMap(Collection::stream)
-                .sorted()
-                .toList());
+                        .flatMap(Collection::stream)
+                        .sorted()
+                        .toList());
     }
 
     @Override
     public List<String> findDataFormatNames() {
         return cache(FIND_DATA_FORMAT_NAMES, () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
-                .flatMap(Collection::stream)
-                .sorted()
-                .toList());
+                        .flatMap(Collection::stream)
+                        .sorted()
+                        .toList());
     }
 
     @Override
@@ -556,32 +556,32 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     public ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version) {
         ArtifactModel<?> am = null;
         List<String> listComponentNames = findComponentNames();
-        am = matchArtifactModelFromList(listComponentNames, groupId, artifactId, version);
+        am = matchArtifactModelComponentNames(listComponentNames, groupId, artifactId, version);
         if (am != null) {
             return am;
         }
         List<String> listDataformatNames = findDataFormatNames();
-        am = matchArtifactModelFromList(listDataformatNames, groupId, artifactId, version);
+        am = matchArtifactModelDataFormatNames(listDataformatNames, groupId, artifactId, version);
         if (am != null) {
             return am;
         }
         List<String> listLanguageNames = findLanguageNames();
-        am = matchArtifactModelFromList(listLanguageNames, groupId, artifactId, version);
+        am = matchArtifactModelLanguageNames(listLanguageNames, groupId, artifactId, version);
         if (am != null) {
             return am;
         }
         List<String> listOtherNames = findOtherNames();
-        am = matchArtifactModelFromList(listOtherNames, groupId, artifactId, version);
+        am = matchArtifactModelOtherNames(listOtherNames, groupId, artifactId, version);
         if (am != null) {
             return am;
         }
         List<String> listTransformerNames = findTransformerNames();
-        am = matchArtifactModelFromList(listTransformerNames, groupId, artifactId, version);
+        am = matchArtifactModelTransformerNames(listTransformerNames, groupId, artifactId, version);
         if (am != null) {
             return am;
         }
         List<String> listDevConsoleNames = findDevConsoleNames();
-        am = matchArtifactModelFromList(listDevConsoleNames, groupId, artifactId, version);
+        am = matchArtifactModelDevConsoleNames(listDevConsoleNames, groupId, artifactId, version);
         if (am != null) {
             return am;
         }
@@ -654,10 +654,71 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         }
     }
 
-    private ArtifactModel matchArtifactModelFromList(List<String> artifactModelList, String groupId, String artifactId,
+    private ArtifactModel matchArtifactModelComponentNames(List<String> artifactModelList, String groupId,
+            String artifactId,
             String version) {
         for (String name : artifactModelList) {
             ArtifactModel<?> am = componentModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
+    }
+
+    private ArtifactModel matchArtifactModelDataFormatNames(List<String> artifactModelList, String groupId,
+            String artifactId,
+            String version) {
+        for (String name : artifactModelList) {
+            ArtifactModel<?> am = dataFormatModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
+    }
+
+    private ArtifactModel matchArtifactModelLanguageNames(List<String> artifactModelList, String groupId,
+            String artifactId,
+            String version) {
+        for (String name : artifactModelList) {
+            ArtifactModel<?> am = languageModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
+    }
+
+    private ArtifactModel matchArtifactModelOtherNames(List<String> artifactModelList, String groupId,
+            String artifactId,
+            String version) {
+        for (String name : artifactModelList) {
+            ArtifactModel<?> am = otherModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
+    }
+
+    private ArtifactModel matchArtifactModelTransformerNames(List<String> artifactModelList, String groupId,
+            String artifactId,
+            String version) {
+        for (String name : artifactModelList) {
+            ArtifactModel<?> am = transformerModel(name);
+            if (matchArtifact(am, groupId, artifactId, version)) {
+                return am;
+            }
+        }
+        return null;
+    }
+
+    private ArtifactModel matchArtifactModelDevConsoleNames(List<String> artifactModelList, String groupId,
+            String artifactId,
+            String version) {
+        for (String name : artifactModelList) {
+            ArtifactModel<?> am = devConsoleModel(name);
             if (matchArtifact(am, groupId, artifactId, version)) {
                 return am;
             }
