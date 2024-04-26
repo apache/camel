@@ -45,10 +45,10 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private int lineNumber = -1;
     private String location;
 
-    public OptionalIdentifiedDefinition() {
+    protected OptionalIdentifiedDefinition() {
     }
 
-    protected OptionalIdentifiedDefinition(OptionalIdentifiedDefinition source) {
+    protected OptionalIdentifiedDefinition(OptionalIdentifiedDefinition<?> source) {
         this.camelContext = source.camelContext;
         this.id = source.id;
         this.customId = source.customId;
