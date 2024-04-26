@@ -264,9 +264,8 @@ class KameletTest extends YamlTestSupport {
                     beans:
                       - name: "myProcessor"
                         type: "#class:${MySetBody.class.name}"
-                        property:
-                          - key: "payload"
-                            value: "test-payload"
+                        properties:
+                          payload: "test-payload"
                     from:
                       uri: "kamelet:source"
                       steps:

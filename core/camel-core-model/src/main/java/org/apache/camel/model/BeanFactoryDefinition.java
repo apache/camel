@@ -57,7 +57,7 @@ public abstract class BeanFactoryDefinition<
     @XmlAttribute
     @Metadata(label = "advanced")
     private String scriptLanguage;
-    @XmlElement(name = "property")
+    @XmlTransient
     private List<PropertyDefinition> propertyDefinitions;
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)

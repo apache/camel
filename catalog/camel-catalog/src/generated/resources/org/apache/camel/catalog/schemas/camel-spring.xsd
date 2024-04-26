@@ -4018,7 +4018,6 @@ implementation. Default value: Singleton
   </xs:complexType>
   <xs:complexType abstract="true" name="beanFactoryDefinition">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:property"/>
       <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition">
         <xs:annotation>
           <xs:documentation xml:lang="en">

@@ -5197,12 +5197,6 @@
           "properties" : {
             "type" : "object"
           },
-          "property" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-            }
-          },
           "script" : {
             "type" : "string"
           },
@@ -6662,12 +6656,6 @@
           },
           "properties" : {
             "type" : "object"
-          },
-          "property" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-            }
           },
           "script" : {
             "type" : "string"

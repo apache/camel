@@ -32,8 +32,8 @@
             <templateParameter name="greeting"/>
             <templateParameter name="suffix"/>
             <templateBean name="myBean" type="#class:org.apache.camel.spring.routebuilder.MyLocalBean">
-                <property key="prefix" value="{{greeting}}"/>
                 <properties>
+                    <property key="prefix" value="{{greeting}}"/>
                     <property key="suffix" value="{{suffix}}"/>
                 </properties>
             </templateBean>
