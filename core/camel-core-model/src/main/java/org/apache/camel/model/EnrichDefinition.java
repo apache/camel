@@ -81,6 +81,7 @@ public class EnrichDefinition extends ExpressionNode
     }
 
     protected EnrichDefinition(EnrichDefinition source) {
+        super(source);
         this.aggregationStrategyBean = source.aggregationStrategyBean;
         this.variableSend = source.variableSend;
         this.variableReceive = source.variableReceive;
