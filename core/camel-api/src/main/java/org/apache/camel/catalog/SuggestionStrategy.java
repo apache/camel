@@ -28,7 +28,7 @@ public interface SuggestionStrategy {
      *
      * @param  names         valid names
      * @param  unknownOption unknown option name
-     * @return               a list of suggested names (did you mean)
+     * @return               an array of suggested names (did you mean)
      */
     String[] suggestEndpointOptions(Set<String> names, String unknownOption);
 }

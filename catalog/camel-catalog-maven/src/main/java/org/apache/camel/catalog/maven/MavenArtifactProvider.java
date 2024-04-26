@@ -28,7 +28,7 @@ public interface MavenArtifactProvider {
     /**
      * Configures the directory for the download cache.
      * <p/>
-     * The default folder is <tt>USER_HOME/.groovy/grape</tt>
+     * The default directory is provider dependant.
      *
      * @param directory the directory.
      */

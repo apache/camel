@@ -47,6 +47,7 @@ import org.bouncycastle.operator.OutputEncryptor;
 /**
  * Sends EDI Messages over HTTP
  */
+@SuppressWarnings("java:S2095")
 public class AS2ClientManager {
 
     //

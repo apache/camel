@@ -16,7 +16,6 @@
  */
 package org.apache.camel.catalog.maven;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation uses Maven Resolver to download the Maven JARs.
  */
-public class MavenVersionManager implements VersionManager, Closeable {
+public class MavenVersionManager implements VersionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenVersionManager.class);
 
@@ -261,9 +260,5 @@ public class MavenVersionManager implements VersionManager, Closeable {
         }
 
         return null;
-    }
-
-    @Override
-    public void close() {
     }
 }

@@ -16,20 +16,23 @@
  */
 package org.apache.camel.parser.java;
 
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class MyRouteDuplicateIdTest extends CamelTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected void startCamelContext() throws Exception {
+        // do not start context automatically
     }
 
     @Test
     void testFoo() {
-        // noop
+        assertThrows(FailedToStartRouteException.class, () -> context.start());
     }
 
     @Override

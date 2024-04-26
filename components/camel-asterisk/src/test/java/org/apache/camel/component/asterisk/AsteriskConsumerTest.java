@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Disabled("CAMEL-10321: Set host, username and password test asterisk consumer.")
 public class AsteriskConsumerTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskConsumerTest.class);
@@ -52,6 +54,7 @@ public class AsteriskConsumerTest extends CamelTestSupport {
     @Test
     void testStartRoute() {
         // do nothing here , just make sure the camel route can started.
+        assertTrue(context.isStarted());
     }
 
     @Override

@@ -44,7 +44,6 @@ import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
@@ -350,16 +349,18 @@ public class ValidateMojo extends AbstractMojo {
     private static void unzipArtifact(MavenArtifact artifact, Path target) throws IOException {
         try (ZipFile zipFile = new ZipFile(artifact.getFile().toPath().toFile())) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            target = target.normalize();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                File entryDestination = new File(target.toString(), entry.getName());
-                if (entry.isDirectory()) {
-                    entryDestination.mkdirs();
-                } else {
-                    entryDestination.getParentFile().mkdirs();
-                    try (InputStream in = zipFile.getInputStream(entry);
-                         OutputStream out = new FileOutputStream(entryDestination)) {
-                        IOUtils.copy(in, out);
+                Path dest = target.resolve(entry.getName()).normalize();
+                if (dest.startsWith(target)) {
+                    if (entry.isDirectory()) {
+                        Files.createDirectories(dest);
+                    } else {
+                        Files.createDirectories(dest.getParent());
+                        try (InputStream in = zipFile.getInputStream(entry)) {
+                            Files.copy(in, dest);
+                        }
                     }
                 }
             }

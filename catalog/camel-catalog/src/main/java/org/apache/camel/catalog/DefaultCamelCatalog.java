@@ -554,43 +554,17 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version) {
-        for (String name : findComponentNames()) {
-            ArtifactModel<?> am = componentModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
-        }
-        for (String name : findDataFormatNames()) {
-            ArtifactModel<?> am = dataFormatModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
-        }
-        for (String name : findLanguageNames()) {
-            ArtifactModel<?> am = languageModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
-        }
-        for (String name : findOtherNames()) {
-            ArtifactModel<?> am = otherModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
-        }
-        for (String name : findTransformerNames()) {
-            ArtifactModel<?> am = transformerModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
-        }
-        for (String name : findDevConsoleNames()) {
-            ArtifactModel<?> am = devConsoleModel(name);
-            if (matchArtifact(am, groupId, artifactId, version)) {
-                return am;
-            }
-        }
-        return null;
+        return Stream.<Stream<ArtifactModel<?>>> of(
+                findComponentNames().stream().map(this::componentModel),
+                findDataFormatNames().stream().map(this::dataFormatModel),
+                findLanguageNames().stream().map(this::languageModel),
+                findOtherNames().stream().map(this::otherModel),
+                findTransformerNames().stream().map(this::transformerModel),
+                findDevConsoleNames().stream().map(this::devConsoleModel))
+                .flatMap(s -> s)
+                .filter(am -> matchArtifact(am, groupId, artifactId, version))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
