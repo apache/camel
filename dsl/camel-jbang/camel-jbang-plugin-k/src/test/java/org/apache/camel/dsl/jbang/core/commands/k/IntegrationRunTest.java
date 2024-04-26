@@ -88,10 +88,6 @@ class IntegrationRunTest extends KubeBaseTest {
                   traits:
                     container:
                       imagePullPolicy: ALWAYS
-                      name: integration
-                      port: 8080
-                      servicePort: 80
-                      servicePortName: http
                     logging:
                       level: DEBUG""", printer.getOutput());
     }
@@ -162,7 +158,6 @@ class IntegrationRunTest extends KubeBaseTest {
                         - to: log:info
                   traits:
                     mount:
-                      hotReload: false
                       volumes:
                       - /foo
                       - /bar""", printer.getOutput());
@@ -225,8 +220,6 @@ class IntegrationRunTest extends KubeBaseTest {
                         - to: log:info
                   traits:
                     environment:
-                      containerMeta: true
-                      httpProxy: true
                       vars:
                       - CAMEL_FOO=bar""", printer.getOutput());
     }
@@ -287,11 +280,8 @@ class IntegrationRunTest extends KubeBaseTest {
                         - to: log:info
                   traits:
                     builder:
-                      incrementalImageBuild: true
-                      orderStrategy: SEQUENTIAL
                       properties:
-                      - camel.foo=bar
-                      strategy: ROUTINE""", printer.getOutput());
+                      - camel.foo=bar""", printer.getOutput());
     }
 
     @Test
@@ -447,8 +437,7 @@ class IntegrationRunTest extends KubeBaseTest {
                     mount:
                       configs:
                       - secret:foo
-                      - configmap:bar
-                      hotReload: false""", printer.getOutput());
+                      - configmap:bar""", printer.getOutput());
     }
 
     @Test
@@ -477,7 +466,6 @@ class IntegrationRunTest extends KubeBaseTest {
                         - to: log:info
                   traits:
                     mount:
-                      hotReload: false
                       resources:
                       - configmap:foo/file.txt""", printer.getOutput());
     }
@@ -530,11 +518,7 @@ class IntegrationRunTest extends KubeBaseTest {
                 spec:
                   traits:
                     container:
-                      image: quay.io/camel/demo-app:1.0
-                      name: integration
-                      port: 8080
-                      servicePort: 80
-                      servicePortName: http""", printer.getOutput());
+                      image: quay.io/camel/demo-app:1.0""", printer.getOutput());
     }
 
     @Test
@@ -568,8 +552,6 @@ class IntegrationRunTest extends KubeBaseTest {
                     affinity:
                       nodeAffinityLabels:
                       - kubernetes.io/hostname
-                      podAffinity: false
-                      podAntiAffinity: false
                     camel:
                       properties:
                       - camel.foo=bar

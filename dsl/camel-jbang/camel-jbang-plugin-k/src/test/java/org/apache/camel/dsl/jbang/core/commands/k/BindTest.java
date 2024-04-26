@@ -155,7 +155,6 @@ class BindTest extends KubeBaseTest {
                         mount:
                           configs:
                           - configmap:my-cm
-                          hotReload: false
                   source:
                     ref:
                       kind: Kamelet
