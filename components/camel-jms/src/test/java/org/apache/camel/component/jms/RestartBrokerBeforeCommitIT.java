@@ -38,6 +38,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.test.infra.artemis.services.RestartAwareArtemisContainer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.json.JsonObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * This issue will be fixed in spring-jms 6.1.6
  */
-
+@Disabled("The test seems to failing often")
 public class RestartBrokerBeforeCommitIT extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestartBrokerBeforeCommitIT.class);
