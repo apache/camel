@@ -546,8 +546,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     if (ann.annotationType() == PropertyInject.class) {
                         PropertyInject pi = (PropertyInject) ann;
                         Object result
-                                = getInjectionPropertyValue(type, genericType, pi.value(), pi.defaultValue(), pi.separator(),
-                                        null, null, null);
+                                = getInjectionPropertyValue(type, genericType, pi.value(), pi.defaultValue(), pi.separator()
+                        );
                         parameters[i] = result;
                     } else if (ann.annotationType() == BeanConfigInject.class) {
                         BeanConfigInject pi = (BeanConfigInject) ann;
