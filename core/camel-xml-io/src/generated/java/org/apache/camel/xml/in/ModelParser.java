@@ -908,7 +908,6 @@ public class ModelParser extends BaseParser {
     protected <T extends BeanFactoryDefinition> ElementHandler<T> beanFactoryDefinitionElementHandler() {
         return (def, key) -> switch (key) {
             case "properties": def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition())); yield true;
-            case "property": doAdd(doParsePropertyDefinition(), def.getPropertyDefinitions(), def::setPropertyDefinitions); yield true;
             case "script": def.setScript(doParseText()); yield true;
             default: yield false;
         };
