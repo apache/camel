@@ -133,6 +133,14 @@ public class VertxWebsocketUriDsl(
   }
 
   /**
+   * Headers to send in the HTTP handshake request. When the endpoint is a consumer, it only works
+   * when it consumes a remote host as a client (i.e. consumeAsClient is true).
+   */
+  public fun handshakeHeaders(handshakeHeaders: String) {
+    it.property("handshakeHeaders", handshakeHeaders)
+  }
+
+  /**
    * When consumeAsClient is set to true this sets the maximum number of allowed reconnection
    * attempts to a previously closed WebSocket. A value of 0 (the default) will attempt to reconnect
    * indefinitely.
