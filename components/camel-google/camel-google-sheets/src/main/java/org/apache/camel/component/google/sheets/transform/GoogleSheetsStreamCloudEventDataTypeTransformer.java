@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.google.sheets.transform;
 
+import java.util.Map;
+
 import org.apache.camel.Message;
 import org.apache.camel.component.cloudevents.CloudEvent;
 import org.apache.camel.component.cloudevents.CloudEvents;
@@ -24,8 +26,6 @@ import org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstan
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
-
-import java.util.Map;
 
 /**
  * Data type transformer converts Google Sheets Stream consumer response to CloudEvent v1_0 data format. The data type
