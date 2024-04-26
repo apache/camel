@@ -114,6 +114,24 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
         assertEquals(testQueryParam, websocketURI.getQuery(), "Query parameters are not correctly set in the in websocketURI.");
     }
 
+    @Test
+    void testHandshakeHeaders() {
+        String handshakeHeaders
+                = "handshake.Authorization=Bearer token&handshake.ApiSign=-u-4tjFSE=&handshake.Timestamp=2024-04-23T15:22:16.000000Z";
+        String endpointParams = "consumeAsClient=true";
+
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:foo.bar.com/test?" + endpointParams + "&" + handshakeHeaders,
+                        VertxWebsocketEndpoint.class);
+        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("Authorization"),
+                "Handshake headers Authorization is not correctly configured.");
+        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("ApiSign"),
+                "Handshake headers ApiSign is not correctly configured.");
+        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("Timestamp"),
+                "Handshake headers Timestamp is not correctly configured.");
+
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

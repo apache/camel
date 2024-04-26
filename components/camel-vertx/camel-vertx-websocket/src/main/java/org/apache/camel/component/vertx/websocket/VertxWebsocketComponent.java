@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -76,9 +77,12 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
             }
         }
 
+        Map<String, Object> handshakeHeaders = PropertiesHelper.extractProperties(parameters, "handshake.");
+
         VertxWebsocketConfiguration configuration = new VertxWebsocketConfiguration();
         configuration.setAllowOriginHeader(isAllowOriginHeader());
         configuration.setOriginHeaderUrl(getOriginHeaderUrl());
+        configuration.setHandshakeHeaders(handshakeHeaders);
 
         VertxWebsocketEndpoint endpoint = createEndpointInstance(uri, configuration);
         setProperties(endpoint, parameters);

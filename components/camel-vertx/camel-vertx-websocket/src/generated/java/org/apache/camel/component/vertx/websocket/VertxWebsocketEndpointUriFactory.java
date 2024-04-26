@@ -23,7 +23,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("allowOriginHeader");
         props.add("allowedOriginPattern");
         props.add("bridgeErrorHandler");
@@ -33,6 +33,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("fireWebSocketConnectionEvents");
+        props.add("handshakeHeaders");
         props.add("host");
         props.add("lazyStartProducer");
         props.add("maxReconnectAttempts");
@@ -47,7 +48,9 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
         props.add("sslContextParameters");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("handshake.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
