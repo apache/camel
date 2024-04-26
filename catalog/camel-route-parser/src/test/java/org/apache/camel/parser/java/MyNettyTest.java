@@ -21,6 +21,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Disabled // on purpose to ignore
 public class MyNettyTest extends CamelTestSupport {
 
@@ -30,7 +32,7 @@ public class MyNettyTest extends CamelTestSupport {
 
     @Test
     void testFoo() {
-        // noop
+        assertTrue(context.isStarted());
     }
 
     @Override

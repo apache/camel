@@ -34,7 +34,7 @@ public final class SuggestSimilarHelper {
             return Arrays.asList(suggestions);
         }
 
-        return null;
+        return List.of();
     }
 
 }

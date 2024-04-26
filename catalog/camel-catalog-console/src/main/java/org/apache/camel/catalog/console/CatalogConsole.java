@@ -30,6 +30,7 @@ import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "catalog", description = "Information about used Camel artifacts")
+@SuppressWarnings("java:S2160")
 public class CatalogConsole extends AbstractDevConsole {
 
     private static final String CP = System.getProperty("java.class.path");

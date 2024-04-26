@@ -77,6 +77,9 @@ import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
 public class RouteCoverageMojo extends AbstractMojo {
 
     public static final String DESTINATION_DIR = "/target/camel-route-coverage";
+
+    private static final String MAIN_FORMAT_PATTERN = "%8s    %8s    %s%n";
+
     /**
      * The maven project.
      */
@@ -93,24 +96,18 @@ public class RouteCoverageMojo extends AbstractMojo {
      * Whether to fail if a route was not fully covered.
      *
      * Note the option coverageThreshold can be used to set a minimum coverage threshold in percentage.
-     *
-     * @parameter property="camel.failOnError" default-value="false"
      */
     @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
 
     /**
      * The minimum route coverage in percent when using failOnError.
-     *
-     * @parameter property="camel.coverageThreshold" default-value="100"
      */
     @Parameter(property = "camel.coverageThreshold", defaultValue = "100")
     private byte coverageThreshold = 100;
 
     /**
      * The minimum coverage across all routes in percent when using failOnError.
-     *
-     * @parameter property="camel.overallCoverageThreshold" default-value="0"
      */
     @Parameter(property = "camel.overallCoverageThreshold", defaultValue = "0")
     private byte overallCoverageThreshold;
@@ -163,32 +160,7 @@ public class RouteCoverageMojo extends AbstractMojo {
             return;
         }
 
-        Set<File> javaFiles = new LinkedHashSet<>();
-        Set<File> xmlFiles = new LinkedHashSet<>();
-
-        // find all java route builder classes
-        findJavaRouteBuilderClasses(javaFiles, true, includeTest, project);
-        // find all xml routes
-        findXmlRouters(xmlFiles, true, includeTest, project);
-
-        List<CamelNodeDetails> routeTrees = new ArrayList<>();
-
-        for (File file : javaFiles) {
-            addJavaFiles(file, routeTrees);
-        }
-        for (File file : xmlFiles) {
-            addXmlFiles(file, routeTrees);
-        }
-
-        getLog().info("Discovered " + routeTrees.size() + " routes");
-
-        // skip any routes which has no route id assigned
-
-        long anonymous = routeTrees.stream().filter(t -> t.getRouteId() == null).count();
-        if (!anonymousRoutes && anonymous > 0) {
-            getLog().warn(
-                    "Discovered " + anonymous + " anonymous routes. Add route ids to these routes for route coverage support");
-        }
+        List<CamelNodeDetails> routeTrees = discoverRoutes();
 
         final AtomicInteger notCovered = new AtomicInteger();
         final AtomicInteger coveredNodes = new AtomicInteger();
@@ -226,7 +198,7 @@ public class RouteCoverageMojo extends AbstractMojo {
             String packageName = new File(fileName).getParent();
             Element pack = null;
 
-            if (generateJacocoXmlReport && report != null) {
+            if (report != null) {
                 // package tag
                 pack = document.createElement("package");
                 createAttrString(document, pack, "name", packageName);
@@ -239,7 +211,7 @@ public class RouteCoverageMojo extends AbstractMojo {
                             sourceFileName, pack);
         }
 
-        if (generateJacocoXmlReport && report != null) {
+        if (report != null) {
             doGenerateJacocoReport(file, document);
         }
 
@@ -264,6 +236,37 @@ public class RouteCoverageMojo extends AbstractMojo {
         }
     }
 
+    private List<CamelNodeDetails> discoverRoutes() {
+        Set<File> javaFiles = new LinkedHashSet<>();
+        Set<File> xmlFiles = new LinkedHashSet<>();
+
+        // find all java route builder classes
+        findJavaRouteBuilderClasses(javaFiles, true, includeTest, project);
+        // find all xml routes
+        findXmlRouters(xmlFiles, true, includeTest, project);
+
+        List<CamelNodeDetails> routeTrees = new ArrayList<>();
+
+        for (File file : javaFiles) {
+            addJavaFiles(file, routeTrees);
+        }
+        for (File file : xmlFiles) {
+            addXmlFiles(file, routeTrees);
+        }
+
+        getLog().info("Discovered " + routeTrees.size() + " routes");
+
+        // skip any routes which has no route id assigned
+
+        long anonymous = routeTrees.stream().filter(t -> t.getRouteId() == null).count();
+        if (!anonymousRoutes && anonymous > 0) {
+            getLog().warn(
+                    "Discovered " + anonymous + " anonymous routes. Add route ids to these routes for route coverage support");
+        }
+
+        return routeTrees;
+    }
+
     private int grabDumpData(
             CamelNodeDetails t, String routeId, int totalNumberOfNodes, String fileName, AtomicInteger notCovered,
             AtomicInteger coveredNodes, Element report, Document document, String sourceFileName, Element pack)
@@ -281,7 +284,7 @@ public class RouteCoverageMojo extends AbstractMojo {
                 getLog().info("Route coverage summary:\n\n" + out);
                 getLog().info("");
 
-                if (generateJacocoXmlReport && report != null) {
+                if (report != null) {
                     appendSourcefileNode(document, sourceFileName, pack, coverage);
                 }
             }
@@ -476,8 +479,8 @@ public class RouteCoverageMojo extends AbstractMojo {
             sw.println("Route:\t" + routeId);
         }
         sw.println();
-        sw.printf("%8s    %8s    %s%n", "Line #", "Count", "Route");
-        sw.printf("%8s    %8s    %s%n", "------", "-----", "-----");
+        sw.printf(MAIN_FORMAT_PATTERN, "Line #", "Count", "Route");
+        sw.printf(MAIN_FORMAT_PATTERN, "------", "-----", "-----");
 
         int covered = 0;
         for (RouteCoverageNode node : model) {
@@ -485,7 +488,7 @@ public class RouteCoverageMojo extends AbstractMojo {
                 covered++;
             }
             String pad = padString(node.getLevel());
-            sw.printf("%8s    %8s    %s%n", node.getLineNumber(), node.getCount(), pad + node.getName());
+            sw.printf(MAIN_FORMAT_PATTERN, node.getLineNumber(), node.getCount(), pad + node.getName());
         }
 
         coveredNodes.addAndGet(covered);
