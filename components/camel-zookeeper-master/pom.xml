@@ -141,6 +141,7 @@
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
+                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx2G</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
