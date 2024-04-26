@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.support.jsse.SecureRandomParameters;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.FileUtil;
@@ -58,6 +59,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     private int spoolUsedHeapMemoryThreshold;
     private SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit;
     private String spoolCipher;
+    private SecureRandomParameters secureRandomParameters;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
     private final UtilizationStatistics statistics = new UtilizationStatistics();
@@ -175,6 +177,16 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     @Override
     public void setSpoolCipher(String spoolCipher) {
         this.spoolCipher = spoolCipher;
+    }
+
+    @Override
+    public SecureRandomParameters getSecureRandomParameters() {
+        return secureRandomParameters;
+    }
+
+    @Override
+    public void setSecureRandomParameters(SecureRandomParameters secureRandomParameters) {
+        this.secureRandomParameters = secureRandomParameters;
     }
 
     @Override

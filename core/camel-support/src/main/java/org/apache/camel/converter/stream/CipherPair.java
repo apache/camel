@@ -16,44 +16,59 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.SecureRandom;
+import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-import javax.crypto.spec.IvParameterSpec;
 
+import org.apache.camel.support.jsse.SecureRandomParameters;
 import org.apache.camel.util.StringHelper;
 
 /**
  * A class to hold a pair of encryption and decryption ciphers.
  */
 public class CipherPair {
-    private final String transformation;
-    private final Cipher enccipher;
-    private final Key key;
-    private final byte[] ivp;
 
-    public CipherPair(String transformation) throws GeneralSecurityException {
+    private final String transformation;
+    private final SecureRandom random;
+    private final Key key;
+    private final AlgorithmParameterSpec params;
+
+    public CipherPair(String transformation, SecureRandomParameters secureRandomParameters) throws GeneralSecurityException {
         this.transformation = transformation;
+        this.random = secureRandomParameters != null
+                ? secureRandomParameters.createSecureRandom()
+                : new SecureRandom();
 
         String a = StringHelper.before(transformation, "/", transformation);
 
         KeyGenerator keygen = KeyGenerator.getInstance(a);
-        keygen.init(new SecureRandom());
+        keygen.init(random);
         key = keygen.generateKey();
-        enccipher = Cipher.getInstance(transformation);
-        enccipher.init(Cipher.ENCRYPT_MODE, key);
-        ivp = enccipher.getIV();
+
+        Cipher cipher = Cipher.getInstance(transformation);
+        cipher.init(Cipher.ENCRYPT_MODE, key, random);
+        AlgorithmParameters parameters = cipher.getParameters();
+        params = parameters != null ? parameters.getParameterSpec(AlgorithmParameterSpec.class) : null;
     }
 
     public String getTransformation() {
         return transformation;
     }
 
-    public Cipher getEncryptor() {
-        return enccipher;
+    public Cipher createEncryptor() {
+        try {
+            Cipher enccipher = Cipher.getInstance(transformation);
+            enccipher.init(Cipher.ENCRYPT_MODE, key, params, random);
+            return enccipher;
+        } catch (GeneralSecurityException e) {
+            // should not happen
+            throw new IllegalStateException("Could not instantiate encryptor", e);
+        }
     }
 
     /**
@@ -63,11 +78,11 @@ public class CipherPair {
     public Cipher createDecryptor() {
         try {
             Cipher deccipher = Cipher.getInstance(transformation);
-            deccipher.init(Cipher.DECRYPT_MODE, key, ivp == null ? null : new IvParameterSpec(ivp));
+            deccipher.init(Cipher.DECRYPT_MODE, key, params, random);
             return deccipher;
         } catch (GeneralSecurityException e) {
             // should not happen
-            throw new IllegalStateException("Could not instanciate decryptor", e);
+            throw new IllegalStateException("Could not instantiate decryptor", e);
         }
     }
 }

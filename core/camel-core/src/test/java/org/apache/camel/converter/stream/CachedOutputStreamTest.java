@@ -19,6 +19,7 @@ package org.apache.camel.converter.stream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -153,13 +154,13 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     @Test
     public void testCacheStreamToFileAndCloseStreamEncrypted() throws Exception {
         // set some stream or 8-bit block cipher transformation name
-        context.getStreamCachingStrategy().setSpoolCipher("RC4");
+        context.getStreamCachingStrategy().setSpoolCipher("AES/CBC/PKCS5Padding");
 
         context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes(StandardCharsets.UTF_8));
-        cos.flush();
+        cos.close();
 
         File file = testDirectory().toFile();
         String[] files = file.list();
@@ -167,7 +168,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals(1, files.length, "we should have a temp file");
         assertTrue(new File(file, files[0]).length() > 10, "The content is written");
 
-        java.io.FileInputStream tmpin = new java.io.FileInputStream(new File(file, files[0]));
+        FileInputStream tmpin = new FileInputStream(new File(file, files[0]));
         String temp = toString(tmpin);
         assertTrue(!temp.isEmpty() && !temp.contains("aaa"), "The content is not encrypted");
         tmpin.close();

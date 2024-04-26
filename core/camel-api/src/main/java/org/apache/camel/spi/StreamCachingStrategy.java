@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StaticService;
 import org.apache.camel.StreamCache;
+import org.apache.camel.support.jsse.SecureRandomParameters;
 
 /**
  * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
@@ -223,6 +224,13 @@ public interface StreamCachingStrategy extends StaticService {
     void setSpoolCipher(String cipher);
 
     String getSpoolCipher();
+
+    /**
+     * Sets the parameters used to create a secure random when using encryption.
+     */
+    void setSecureRandomParameters(SecureRandomParameters secureRandomParameters);
+
+    SecureRandomParameters getSecureRandomParameters();
 
     /**
      * Whether to remove the temporary directory when stopping.
