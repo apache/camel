@@ -187,6 +187,9 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx2G</argLine>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>default-test</id>
