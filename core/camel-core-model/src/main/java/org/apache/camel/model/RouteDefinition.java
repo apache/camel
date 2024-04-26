@@ -326,9 +326,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Disable stream caching for this route.
      *
-     * @return the builder
+     * @return     the builder
+     * @deprecated use {@link #streamCache(String)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition noStreamCaching() {
         setStreamCache("false");
         return this;
@@ -337,9 +338,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Enable stream caching for this route.
      *
-     * @return the builder
+     * @return     the builder
+     * @deprecated use {@link #streamCache(String)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition streamCaching() {
         setStreamCache("true");
         return this;
@@ -352,7 +354,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * @return                 the builder
      * @deprecated             use {@link #streamCache(String)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition streamCaching(String streamCache) {
         setStreamCache(streamCache);
         return this;
@@ -372,9 +374,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Disable tracing for this route.
      *
-     * @return the builder
+     * @return     the builder
+     * @deprecated use {@link #trace(String)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition noTracing() {
         setTrace("false");
         return this;
@@ -383,9 +386,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Enable tracing for this route.
      *
-     * @return the builder
+     * @return     the builder
+     * @deprecated use {@link #trace(String)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition tracing() {
         setTrace("true");
         return this;
@@ -394,10 +398,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Enable tracing for this route.
      *
-     * @param  tracing whether to use tracing (true or false), the value can be a property placeholder
-     * @return         the builder
+     * @param      tracing whether to use tracing (true or false), the value can be a property placeholder
+     * @return             the builder
+     * @deprecated         use {@link #trace(String)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition tracing(String tracing) {
         setTrace(tracing);
         return this;
@@ -482,9 +487,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Disable message history for this route.
      *
-     * @return the builder
+     * @return     the builder
+     * @deprecated use {@link #messageHistory(boolean)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition noMessageHistory() {
         setMessageHistory("false");
         return this;
@@ -493,9 +499,10 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Disable delayer for this route.
      *
-     * @return the builder
+     * @return     the builder
+     * @deprecated use {@link #delayer(long)}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition noDelayer() {
         setDelayer("0");
         return this;
