@@ -301,16 +301,11 @@ public class RouteDevConsole extends AbstractDevConsole {
             return;
         }
 
-        // sort by index
-        List<ManagedProcessorMBean> mps = new ArrayList<>();
-        for (String id : ids) {
-            ManagedProcessorMBean mp = mcc.getManagedProcessor(id);
-            if (mp != null) {
-                mps.add(mp);
-            }
-        }
-        // sort processors by index
-        mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
+        List<ManagedProcessorMBean> mps = ids.stream().map(mcc::getManagedProcessor)
+                .filter(Objects::nonNull)
+                // sort processors by index
+                .sorted(Comparator.comparingInt(ManagedProcessorMBean::getIndex))
+                .toList();
 
         for (ManagedProcessorMBean mp : mps) {
             JsonObject jo = new JsonObject();
