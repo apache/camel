@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Cannot run on CI servers so run manually")
+@Deprecated
 public class MavenArtifactProviderManualTest {
 
     @Test

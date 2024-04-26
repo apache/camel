@@ -19,10 +19,12 @@ package org.apache.camel.tooling.maven;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.Service;
+
 /**
  * Pragmatic Maven download/resolution API that should replace usage of Ivy/Grape and Shrinkwrap across Camel.
  */
-public interface MavenDownloader {
+public interface MavenDownloader extends Service {
 
     /**
      * Main resolution method. Using Maven Resolver, a list of maven coordinates (in the form of

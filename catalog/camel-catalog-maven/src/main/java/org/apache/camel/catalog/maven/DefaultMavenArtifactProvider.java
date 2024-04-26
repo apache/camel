@@ -35,15 +35,19 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentJSonSchema;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentProperties;
+import static org.slf4j.helpers.NOPLogger.NOP_LOGGER;
 
 /**
  * Default {@link MavenArtifactProvider} which uses Groovy Grape to download the artifact.
+ *
+ * @deprecated use {@code org.apache.camel.tooling.maven.support.MavenDownloader} from {@code camel-tooling-maven}
+ *             instead.
  */
+@Deprecated(since = "4.6.0")
 public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMavenArtifactProvider.class);
     private String localRepository;
-    private boolean log;
+    private Logger logger;
 
     private final MavenDownloader downloader;
 
@@ -51,14 +55,19 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
     public DefaultMavenArtifactProvider() {
         downloader = new MavenDownloaderImpl();
-        ((MavenDownloaderImpl) downloader).build();
+        downloader.build();
+        setLog(true);
     }
 
     /**
      * Sets whether to log errors and warnings to System.out. By default nothing is logged.
      */
     public void setLog(boolean log) {
-        this.log = log;
+        setLogger(log ? LoggerFactory.getLogger(DefaultMavenArtifactProvider.class) : null);
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger != null ? logger : NOP_LOGGER;
     }
 
     @Override
@@ -80,18 +89,14 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
         try {
             MavenDownloader mavenDownloader = downloader;
             if (localRepository != null) {
-                if (log) {
-                    LOGGER.debug("Using cache directory: {}", localRepository);
-                }
+                logger.debug("Using cache directory: {}", localRepository);
                 // customize only local repository
                 mavenDownloader = mavenDownloader.customize(localRepository,
                         ConfigurationProperties.DEFAULT_CONNECT_TIMEOUT,
                         ConfigurationProperties.DEFAULT_REQUEST_TIMEOUT);
             }
 
-            if (log) {
-                LOGGER.info("Downloading {}:{}:{}", groupId, artifactId, version);
-            }
+            logger.info("Downloading {}:{}:{}", groupId, artifactId, version);
 
             try (OpenURLClassLoader classLoader = new OpenURLClassLoader()) {
                 if (version == null || version.isBlank()) {
@@ -114,10 +119,8 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             }
 
         } catch (Exception e) {
-            if (log) {
-                LOGGER.warn("Error during add components from artifact {}:{}:{} due {}", groupId, artifactId, version,
-                        e.getMessage(), e);
-            }
+            logger.warn("Error during add components from artifact {}:{}:{} due {}", groupId, artifactId, version,
+                    e.getMessage(), e);
         }
 
         return names;
@@ -125,7 +128,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
     protected void scanCamelComponents(CamelCatalog camelCatalog, ClassLoader classLoader, Set<String> names) {
         // is there any custom Camel components in this library?
-        Properties properties = loadComponentProperties(log, classLoader);
+        Properties properties = loadComponentProperties(classLoader, logger);
         String components = (String) properties.get("components");
         if (components != null) {
             String[] part = components.split("\\s");
@@ -139,13 +142,11 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
     private void findClassName(CamelCatalog camelCatalog, ClassLoader classLoader, Set<String> names, String scheme) {
         // find the class name
-        String javaType = extractComponentJavaType(log, classLoader, scheme);
+        String javaType = extractComponentJavaType(classLoader, scheme, logger);
         if (javaType != null) {
-            String json = loadComponentJSonSchema(log, classLoader, scheme);
+            String json = loadComponentJSonSchema(classLoader, scheme, logger);
             if (json != null) {
-                if (log) {
-                    LOGGER.info("Adding component: {}", scheme);
-                }
+                logger.info("Adding component: " + scheme);
                 camelCatalog.addComponent(scheme, javaType, json);
                 names.add(scheme);
             }
