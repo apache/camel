@@ -209,27 +209,36 @@ public final class RouteBuilderParser {
         String uri;
         Expression exp;
         for (Annotation<JavaClassSource> ann : field.getAnnotations()) {
-            boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                    || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+            boolean valid = isValid(ann);
             if (valid) {
                 exp = (Expression) ann.getInternal();
                 if (exp instanceof SingleMemberAnnotation singleMemberAnnotation) {
                     exp = singleMemberAnnotation.getValue();
                 } else if (exp instanceof NormalAnnotation normalAnnotation) {
-                    List<?> values = normalAnnotation.values();
-                    for (Object value : values) {
-                        MemberValuePair pair = (MemberValuePair) value;
-                        if ("uri".equals(pair.getName().toString())) {
-                            exp = pair.getValue();
-                            break;
-                        }
-                    }
+                    exp = evalNormalAnnotation(normalAnnotation, exp);
                 }
                 uri = CamelJavaParserHelper.getLiteralValue(clazz, null, exp);
                 endpointUri = new EndpointUri(uri, exp);
             }
         }
         return endpointUri;
+    }
+
+    private static Expression evalNormalAnnotation(NormalAnnotation normalAnnotation, Expression exp) {
+        List<?> values = normalAnnotation.values();
+        for (Object value : values) {
+            MemberValuePair pair = (MemberValuePair) value;
+            if ("uri".equals(pair.getName().toString())) {
+                exp = pair.getValue();
+                break;
+            }
+        }
+        return exp;
+    }
+
+    private static boolean isValid(Annotation<JavaClassSource> ann) {
+        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
+                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
     }
 
     static List<MethodSource<JavaClassSource>> findAllConfigureMethods(
