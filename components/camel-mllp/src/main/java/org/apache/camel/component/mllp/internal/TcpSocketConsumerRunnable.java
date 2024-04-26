@@ -189,11 +189,11 @@ public class TcpSocketConsumerRunnable implements Runnable {
                         log.debug("No data received - ignoring timeout");
                     } else {
                         mllpBuffer.resetSocket(clientSocket);
-                        new MllpInvalidMessageException(
-                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx,
-                                logPhi);
                         consumer.handleMessageTimeout("Timeout receiving complete message payload",
                                 mllpBuffer.toByteArrayAndReset(), timeoutEx);
+                        throw new MllpInvalidMessageException(
+                                "Timeout receiving complete message payload", mllpBuffer.toByteArrayAndReset(), timeoutEx,
+                                logPhi);
                     }
                 } catch (MllpSocketException mllpSocketEx) {
                     mllpBuffer.resetSocket(clientSocket);
