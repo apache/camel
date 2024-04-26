@@ -19,6 +19,8 @@ package org.apache.camel.catalog.maven;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+
 import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 
 /**
@@ -30,7 +32,7 @@ public final class ComponentArtifactHelper {
     private ComponentArtifactHelper() {
     }
 
-    public static Properties loadComponentProperties(boolean log, ClassLoader classLoader) {
+    public static Properties loadComponentProperties(ClassLoader classLoader, Logger logger) {
         Properties answer = new Properties();
         try {
             // load the component files using the recommended way by a component.properties file
@@ -39,15 +41,12 @@ public final class ComponentArtifactHelper {
                 answer.load(is);
             }
         } catch (Exception e) {
-            if (log) {
-                System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component.properties file due "
-                                   + e.getMessage());
-            }
+            logger.warn("Error loading META-INF/services/org/apache/camel/component.properties file due {}", e.getMessage(), e);
         }
         return answer;
     }
 
-    public static String extractComponentJavaType(boolean log, ClassLoader classLoader, String scheme) {
+    public static String extractComponentJavaType(ClassLoader classLoader, String scheme, Logger logger) {
         try {
             InputStream is = classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme);
             if (is != null) {
@@ -56,20 +55,17 @@ public final class ComponentArtifactHelper {
                 return (String) props.get("class");
             }
         } catch (Exception e) {
-            if (log) {
-                System.out.println("WARN: Error loading META-INF/services/org/apache/camel/component/" + scheme + " file due "
-                                   + e.getMessage());
-            }
+            logger.warn("Error loading META-INF/services/org/apache/camel/component/{} file due {}", scheme, e.getMessage(), e);
         }
 
         return null;
     }
 
-    public static String loadComponentJSonSchema(boolean log, ClassLoader classLoader, String scheme) {
+    public static String loadComponentJSonSchema(ClassLoader classLoader, String scheme, Logger logger) {
         String answer = null;
 
         String path = null;
-        String javaType = extractComponentJavaType(log, classLoader, scheme);
+        String javaType = extractComponentJavaType(classLoader, scheme, logger);
         if (javaType != null) {
             int pos = javaType.lastIndexOf('.');
             path = javaType.substring(0, pos);
@@ -84,9 +80,7 @@ public final class ComponentArtifactHelper {
                     answer = loadText(is);
                 }
             } catch (Exception e) {
-                if (log) {
-                    System.out.println("WARN: Error loading " + path + " file due " + e.getMessage());
-                }
+                logger.warn("Error loading {} file due {}", path, e.getMessage(), e);
             }
         }
 
