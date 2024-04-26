@@ -222,8 +222,7 @@ public final class AnnotationDependencyInjection {
             Value value = field.getAnnotation(Value.class);
             if (value != null) {
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), value.value(), null, null,
-                                null, bean, beanName));
+                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), value.value(), null, null));
             }
         }
 
@@ -294,8 +293,7 @@ public final class AnnotationDependencyInjection {
                     df = null;
                 }
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), cp.name(), df, null, null,
-                                bean, beanName));
+                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), cp.name(), df, null));
             }
         }
 

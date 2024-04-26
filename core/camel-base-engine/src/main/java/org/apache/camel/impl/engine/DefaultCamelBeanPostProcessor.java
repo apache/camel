@@ -270,7 +270,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
             if (propertyInject != null) {
                 injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), propertyInject.separator(),
-                        bean, beanName);
+                        bean);
             }
 
             BeanInject beanInject = field.getAnnotation(BeanInject.class);
@@ -329,11 +329,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
     public void injectFieldProperty(
             Field field, String propertyName, String propertyDefaultValue, String propertySeparator,
-            Object bean, String beanName) {
+            Object bean) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionPropertyValue(field.getType(), field.getGenericType(), propertyName,
                         propertyDefaultValue,
-                        propertySeparator, field.getName(), bean, beanName));
+                        propertySeparator));
     }
 
     protected void injectMethods(final Object bean, final String beanName, Function<Class<?>, Boolean> accept) {
@@ -429,7 +429,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         if (propertyInject != null) {
             setterPropertyInjection(method, propertyInject.value(), propertyInject.defaultValue(), propertyInject.separator(),
-                    bean, beanName);
+                    bean);
         }
 
         BeanInject beanInject = method.getAnnotation(BeanInject.class);
@@ -467,7 +467,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
     public void setterPropertyInjection(
             Method method, String propertyValue, String propertyDefaultValue, String propertySeparator,
-            Object bean, String beanName) {
+            Object bean) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
@@ -476,7 +476,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             Class<?> type = parameterTypes[0];
             Type genericType = method.getGenericParameterTypes()[0];
             Object value = getPostProcessorHelper().getInjectionPropertyValue(type, genericType, propertyValue,
-                    propertyDefaultValue, propertySeparator, propertyName, bean, beanName);
+                    propertyDefaultValue, propertySeparator);
             invokeMethod(method, bean, value);
         }
     }

@@ -378,13 +378,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Field field = bean.getClass().getField("timeout");
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
-        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "timeout", bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "");
         assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
-        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "greeting", bean, "foo");
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "");
         assertEquals("Hello Camel", value);
     }
 
@@ -399,13 +399,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Field field = bean.getClass().getField("timeout");
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
-        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "5000", "", "timeout", bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "5000", "");
         assertEquals(Integer.valueOf(5000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
-        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "greeting", bean, "foo");
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "");
         assertEquals("Hello Camel", value);
     }
 
@@ -422,8 +422,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value
-                = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", propertyInject.separator(), "ports",
-                        bean, "foo");
+                = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", propertyInject.separator());
         assertIsInstanceOf(int[].class, value);
         int[] arr = (int[]) value;
         assertEquals(2, arr.length);
@@ -433,9 +432,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         field = bean.getClass().getField("hosts");
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
-        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", propertyInject.separator(), "hosts",
-                bean,
-                "foo");
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", propertyInject.separator());
         assertIsInstanceOf(String[].class, value);
         String[] arr2 = (String[]) value;
         assertEquals(2, arr2.length);
@@ -456,8 +453,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, field.getGenericType(),
-                propertyInject.value(), "", propertyInject.separator(), "ports",
-                bean, "foo");
+                propertyInject.value(), "", propertyInject.separator());
         assertIsInstanceOf(List.class, value);
         List arr = (List) value;
         assertEquals(2, arr.size());
@@ -468,8 +464,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
         value = helper.getInjectionPropertyValue(type, field.getGenericType(),
-                propertyInject.value(), "", propertyInject.separator(), "hosts", bean,
-                "foo");
+                propertyInject.value(), "", propertyInject.separator());
         assertIsInstanceOf(Set.class, value);
         Set arr2 = (Set) value;
         assertEquals(2, arr.size());
@@ -490,8 +485,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, field.getGenericType(),
-                propertyInject.value(), "", propertyInject.separator(), "servers",
-                bean, "foo");
+                propertyInject.value(), "", propertyInject.separator());
         assertIsInstanceOf(Map.class, value);
         Map arr = (Map) value;
         assertEquals(2, arr.size());
@@ -511,13 +505,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Method method = bean.getClass().getMethod("setTimeout", int.class);
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         Class<?> type = method.getParameterTypes()[0];
-        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "timeout", bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "");
         assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         method = bean.getClass().getMethod("setGreeting", String.class);
         propertyInject = method.getAnnotation(PropertyInject.class);
         type = method.getParameterTypes()[0];
-        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "", "greeting", bean, "foo");
+        value = helper.getInjectionPropertyValue(type, null, propertyInject.value(), "", "");
         assertEquals("Hello Camel", value);
     }
 
