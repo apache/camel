@@ -28,6 +28,8 @@ The following tools uses the catalog in their editor:
 - https://marketplace.eclipse.org/content/language-support-apache-camel[Camel tooling for Eclipse]
 - https://marketplace.visualstudio.com/items?itemName=redhat.vscode-apache-camel[Camel tooling for VS Code]
 - https://marketplace.visualstudio.com/items?itemName=camel-karavan.karavan[Camel Karavan for VS Code]
+- https://marketplace.visualstudio.com/items?itemName=redhat.vscode-kaoto[Kaoto for VS Code]
+- https://hawt.io/[Hawtio]
 
 The xref:camel-report-maven-plugin.adoc[Camel Maven validation] plugin uses the catalog during validation of all the
 Camel endpoints found while scanning the source code.
@@ -58,4 +60,3 @@ org
 Each directory contains files with the information. Every Camel component is included
 as JSON schema files in the components directory. For example, the Timer component
 is included in the file timer.json.
-
