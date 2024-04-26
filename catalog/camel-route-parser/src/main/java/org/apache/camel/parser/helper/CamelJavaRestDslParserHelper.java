@@ -105,49 +105,62 @@ public final class CamelJavaRestDslParserHelper {
             JavaClassSource clazz, String fullyQualifiedFileName,
             MethodSource<JavaClassSource> configureMethod) {
 
+        if (configureMethod == null) {
+            return Collections.emptyList();
+        }
+
         List<RestServiceDetails> answer = new ArrayList<>();
 
-        if (configureMethod != null) {
-            MethodDeclaration md = (MethodDeclaration) configureMethod.getInternal();
-            Block block = md.getBody();
-            if (block != null) {
-                for (Object statement : md.getBody().statements()) {
-                    // must be a method call expression
-                    if (statement instanceof ExpressionStatement es) {
-                        Expression exp = es.getExpression();
-                        boolean valid = isRest(exp);
-                        if (valid) {
-                            RestServiceDetails node = new RestServiceDetails();
-                            answer.add(node);
+        MethodDeclaration md = (MethodDeclaration) configureMethod.getInternal();
+        Block block = md.getBody();
+        if (block != null) {
+            for (Object statement : md.getBody().statements()) {
+                // must be a method call expression
+                if (statement instanceof ExpressionStatement es) {
+                    Expression exp = es.getExpression();
+                    boolean valid = isRest(exp);
+                    if (valid) {
+                        final RestServiceDetails node =
+                                doParse(clazz, fullyQualifiedFileName, configureMethod, exp, block);
 
-                            // include source code details
-                            int pos = exp.getStartPosition();
-                            int line = findLineNumber(fullyQualifiedFileName, pos);
-                            if (line > -1) {
-                                node.setLineNumber(Integer.toString(line));
-                            }
-                            pos = exp.getStartPosition() + exp.getLength();
-                            line = findLineNumber(fullyQualifiedFileName, pos);
-                            if (line > -1) {
-                                node.setLineNumberEnd(Integer.toString(line));
-                            }
-                            node.setFileName(fullyQualifiedFileName);
-                            node.setClassName(clazz.getQualifiedName());
-                            node.setMethodName(configureMethod.getName());
-
-                            parseExpression(node, null, fullyQualifiedFileName, clazz, block, exp);
-
-                            // flip order of verbs as we parse bottom-up
-                            if (node.getVerbs() != null) {
-                                Collections.reverse(node.getVerbs());
-                            }
-                        }
+                        answer.add(node);
                     }
                 }
             }
         }
 
+
         return answer;
+    }
+
+    private RestServiceDetails doParse(
+            JavaClassSource clazz, String fullyQualifiedFileName, MethodSource<JavaClassSource> configureMethod,
+            Expression exp, Block block) {
+        RestServiceDetails node = new RestServiceDetails();
+
+        // include source code details
+        int pos = exp.getStartPosition();
+        int line = findLineNumber(fullyQualifiedFileName, pos);
+        if (line > -1) {
+            node.setLineNumber(Integer.toString(line));
+        }
+        pos = exp.getStartPosition() + exp.getLength();
+        line = findLineNumber(fullyQualifiedFileName, pos);
+        if (line > -1) {
+            node.setLineNumberEnd(Integer.toString(line));
+        }
+        node.setFileName(fullyQualifiedFileName);
+        node.setClassName(clazz.getQualifiedName());
+        node.setMethodName(configureMethod.getName());
+
+        parseExpression(node, null, fullyQualifiedFileName, clazz, block, exp);
+
+        // flip order of verbs as we parse bottom-up
+        if (node.getVerbs() != null) {
+            Collections.reverse(node.getVerbs());
+        }
+
+        return node;
     }
 
     private boolean isRestConfiguration(Expression exp) {
@@ -522,8 +535,7 @@ public final class CamelJavaRestDslParserHelper {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
                     for (Annotation<JavaClassSource> ann : field.getAnnotations()) {
-                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+                        boolean valid = isValid(ann);
                         if (valid) {
                             Expression exp = (Expression) ann.getInternal();
                             exp = ParserCommon.evalExpression(exp);
@@ -605,6 +617,11 @@ public final class CamelJavaRestDslParserHelper {
         }
 
         return null;
+    }
+
+    private static boolean isValid(Annotation<JavaClassSource> ann) {
+        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
+                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
     }
 
     private static boolean isNumericOperator(JavaClassSource clazz, Block block, Expression expression) {
