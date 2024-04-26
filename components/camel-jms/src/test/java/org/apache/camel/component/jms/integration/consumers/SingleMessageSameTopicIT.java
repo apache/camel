@@ -21,10 +21,14 @@ import org.apache.camel.component.jms.AbstractPersistentJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
 
     @BeforeEach
@@ -35,11 +39,13 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Hello World");
     }
 
+    @Order(1)
     @Test
     void testTwoConsumerOnSameTopic() throws Exception {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Order(2)
     @Test
     void testStopAndStartOneRoute() throws Exception {
         MockEndpoint.assertIsSatisfied(context);
@@ -69,6 +75,7 @@ public class SingleMessageSameTopicIT extends AbstractPersistentJMSTest {
         template.sendBody("activemq:topic:SingleMessageSameTopicIT", "Hello World");
     }
 
+    @Order(3)
     @Test
     void testRemoveOneRoute() throws Exception {
         MockEndpoint.assertIsSatisfied(context);
