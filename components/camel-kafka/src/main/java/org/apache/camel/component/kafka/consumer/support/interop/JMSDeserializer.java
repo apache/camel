@@ -55,11 +55,11 @@ public class JMSDeserializer implements KafkaHeaderDeserializer {
                 case "JMSTimestamp":
                     return bytesToLong(value);
                 case "JMSCorrelationID":
-                    return value;
+                    return new String(value);
                 case "JMSReplyTo":
                     return new String(value);
                 case "JMSRedelivered":
-                    return bytesToInt(value);
+                    return Boolean.parseBoolean(new String(value));
                 case "JMSType":
                     return new String(value);
                 case "JMSExpiration":
