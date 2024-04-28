@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpConcurrentTest extends BaseHttpTest {
@@ -48,11 +50,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/", (request, response, context) -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
+                    await().atMost(Duration.ofMillis(1000)).until(()->true);
                     response.setCode(HttpStatus.SC_OK);
                     response.setEntity(new StringEntity(Integer.toString(counter.incrementAndGet())));
                 }).create();

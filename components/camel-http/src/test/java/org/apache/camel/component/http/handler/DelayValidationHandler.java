@@ -17,11 +17,14 @@
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.protocol.HttpContext;
+
+import static org.awaitility.Awaitility.await;
 
 public class DelayValidationHandler extends BasicValidationHandler {
 
@@ -38,11 +41,7 @@ public class DelayValidationHandler extends BasicValidationHandler {
             final ClassicHttpRequest request, final ClassicHttpResponse response,
             final HttpContext context)
             throws HttpException, IOException {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        await().atMost(Duration.ofMillis(delay)).until(()->true);
 
         super.handle(request, response, context);
     }

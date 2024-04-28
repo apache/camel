@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProducerRestartTest extends BaseHttpTest {
@@ -86,7 +88,8 @@ public class HttpProducerRestartTest extends BaseHttpTest {
         context.getRouteController().stopRoute("foo");
 
         // a little delay before starting again
-        Thread.sleep(1000);
+        await().atMost(Duration.ofMillis(1000)).until(()->true);
+
 
         context.getRouteController().startRoute("foo");
         out = template.requestBody("direct:start", "Hello World", String.class);

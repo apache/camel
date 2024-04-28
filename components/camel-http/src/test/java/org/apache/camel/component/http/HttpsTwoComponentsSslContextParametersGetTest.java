@@ -27,6 +27,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest {
@@ -99,7 +102,8 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
         context.start();
 
         // should be able to startup
-        Thread.sleep(500);
+        await().atMost(Duration.ofMillis(500)).until(()->true);
+
 
         context.stop();
     }
