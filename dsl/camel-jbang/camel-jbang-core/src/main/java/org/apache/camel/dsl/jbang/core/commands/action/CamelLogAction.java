@@ -446,7 +446,9 @@ public class CamelLogAction extends ActionBaseCommand {
             ts = ts.replace('T', ' ');
             int dot = ts.indexOf('.');
             if (dot != -1) {
-                ts = ts.substring(0, dot + 4);
+                int pos1 = dot + 3; // skip these 6 chars
+                int pos2 = dot + 9;
+                ts = ts.substring(0, pos1) + ts.substring(pos2);
             }
             String after = StringHelper.after(line, "  ");
             return ts + "  " + after;
