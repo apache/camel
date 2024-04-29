@@ -52,8 +52,8 @@ public abstract class CamelCommand implements Callable<Integer> {
         return main;
     }
 
-    protected void configureLoggingOff() {
-        RuntimeUtil.configureLog("off", false, false, false, false, null);
+    protected void configureLoggingOff() throws Exception {
+        RuntimeUtil.configureLog("off", false, false, false, false, null, null);
     }
 
     protected boolean disarrangeLogging() {

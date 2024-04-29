@@ -215,6 +215,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--logging-config-path" }, description = "Path to file with custom logging configuration")
     String loggingConfigPath;
 
+    @Option(names = { "--logging-category" }, description = "Used for individual logging levels (ex: org.apache.kafka=DEBUG)")
+    List<String> loggingCategory = new ArrayList<>();
+
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
     int maxMessages;
 
@@ -1430,11 +1433,34 @@ public class Run extends CamelCommand {
         return main;
     }
 
-    private void configureLogging() {
+    private void configureLogging() throws Exception {
         if (silentRun) {
             // do not configure logging
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, scriptRun, false, loggingConfigPath);
+            // allow to configure individual logging levels in application.properties
+            Properties prop = loadProfileProperties();
+            if (prop != null) {
+                for (Object obj : prop.keySet()) {
+                    String key = obj.toString();
+                    String value = prop.getProperty(key);
+                    if (key.startsWith("logging.level.")) {
+                        key = key.substring(14);
+                    } else if (key.startsWith("quarkus.log.category.")) {
+                        key = key.substring(21);
+                        if (key.endsWith(".level")) {
+                            key = key.substring(0, key.length() - 6);
+                        }
+                    }
+                    key = StringHelper.removeLeadingAndEndingQuotes(key);
+                    String line = key + "=" + value;
+                    String line2 = key + " = " + value;
+                    if (!loggingCategory.contains(line) && !loggingCategory.contains(line2)) {
+                        loggingCategory.add(line);
+                    }
+                }
+            }
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, scriptRun, false, loggingConfigPath,
+                    loggingCategory);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
@@ -1445,7 +1471,7 @@ public class Run extends CamelCommand {
                 logFile.deleteOnExit();
             }
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, false, null);
+            RuntimeUtil.configureLog("off", false, false, false, false, null, null);
             writeSettings("loggingLevel", "off");
         }
     }
