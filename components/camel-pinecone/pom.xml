@@ -58,7 +58,7 @@
         <dependency>
             <groupId>io.pinecone</groupId>
             <artifactId>pinecone-client</artifactId>
-            <version>1.0.0</version>
+	    <version>${pinecone-client-version}</version>
         </dependency>
 
         <!-- test dependencies -->
