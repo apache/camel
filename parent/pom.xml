@@ -278,7 +278,7 @@
         <jettison-version>1.5.4</jettison-version>
         <jgit-version>6.8.0.202311291450-r</jgit-version>
         <jgroups-version>5.3.4.Final</jgroups-version>
-        <jgroups-raft-version>1.0.12.Final</jgroups-raft-version>
+        <jgroups-raft-version>1.0.13.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>5.2.7</jira-rest-client-api-version>
