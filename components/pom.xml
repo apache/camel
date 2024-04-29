@@ -233,6 +233,7 @@
         <module>camel-pdf</module>
         <module>camel-pg-replication-slot</module>
         <module>camel-pgevent</module>
+        <module>camel-pinecone</module>
         <module>camel-platform-http</module>
         <module>camel-platform-http-jolokia</module>
         <module>camel-platform-http-main</module>
