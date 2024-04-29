@@ -23,7 +23,7 @@ The `KameletMain` is pre-configured with the following properties:
 camel.component.kamelet.location = classpath:/kamelets,github:apache:camel-kamelets/kamelets
 camel.component.rest.consumerComponentName = platform-http
 camel.component.rest.producerComponentName = vertx-http
-came.main.jmxUpdateRouteEnabled = true
+camel.main.jmxUpdateRouteEnabled = true
 ----
 
 These settings can be overridden by configuration in `application.properties`.
