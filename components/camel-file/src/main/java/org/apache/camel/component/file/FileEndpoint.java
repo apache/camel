@@ -102,16 +102,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         // auto create starting directory if needed
         if (!file.exists() && !file.isDirectory()) {
-            if (isAutoCreate()) {
-                LOG.debug("Creating non existing starting directory: {}", file);
-                boolean absolute = FileUtil.isAbsolute(file);
-                boolean created = operations.buildDirectory(file.getPath(), absolute);
-                if (!created) {
-                    LOG.warn("Cannot auto create starting directory: {}", file);
-                }
-            } else if (isStartingDirectoryMustExist()) {
-                throw new FileNotFoundException("Starting directory does not exist: " + file);
-            }
+            tryCreateDirectory();
         }
         if (!isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
             throw new IllegalArgumentException(
@@ -140,13 +131,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         }
 
         if (ObjectHelper.isNotEmpty(getReadLock())) {
-            // check if its a valid
-            String valid = "none,markerFile,fileLock,rename,changed,idempotent,idempotent-changed,idempotent-rename";
-            String[] arr = valid.split(",");
-            boolean matched = Arrays.stream(arr).anyMatch(n -> n.equals(getReadLock()));
-            if (!matched) {
-                throw new IllegalArgumentException("ReadLock invalid: " + getReadLock() + ", must be one of: " + valid);
-            }
+            readLockCheck();
         }
 
         // set max messages per poll
@@ -155,6 +140,33 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         configureConsumer(result);
         return result;
+    }
+
+    private void readLockCheck() {
+        // check if its a valid
+        String valid = "none,markerFile,fileLock,rename,changed,idempotent,idempotent-changed,idempotent-rename";
+        String[] arr = valid.split(",");
+        boolean matched = Arrays.stream(arr).anyMatch(n -> n.equals(getReadLock()));
+        if (!matched) {
+            throw new IllegalArgumentException("ReadLock invalid: " + getReadLock() + ", must be one of: " + valid);
+        }
+    }
+
+    private void tryCreateDirectory() throws FileNotFoundException {
+        if (isAutoCreate()) {
+            doCreateStartDirectory();
+        } else if (isStartingDirectoryMustExist()) {
+            throw new FileNotFoundException("Starting directory does not exist: " + file);
+        }
+    }
+
+    private void doCreateStartDirectory() {
+        LOG.debug("Creating non existing starting directory: {}", file);
+        boolean absolute = FileUtil.isAbsolute(file);
+        boolean created = operations.buildDirectory(file.getPath(), absolute);
+        if (!created) {
+            LOG.warn("Cannot auto create starting directory: {}", file);
+        }
     }
 
     @Override
