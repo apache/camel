@@ -47,7 +47,7 @@ public class FixedLengthAllowShortTest {
     @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
-    protected String[] expectedFirstName = { "JOHN-SHORT", "JIMMY-SHORT", "JANE-SHORT", "FRED-SHORT" };
+    protected final String[] expectedFirstName = { "JOHN-SHORT", "JIMMY-SHORT", "JANE-SHORT", "FRED-SHORT" };
 
     @Test
     public void testCamel() throws Exception {
