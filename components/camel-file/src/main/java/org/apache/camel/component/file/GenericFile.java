@@ -164,14 +164,8 @@ public class GenericFile<T> implements WrappedFile<T> {
                 message.setHeader(FileConstants.FILE_EXTENDED_ATTRIBUTES, extendedAttributes);
             }
 
-            if ((isProbeContentTypeFromEndpoint || probeContentType) && file instanceof File) {
-                File f = (File) file;
-                Path path = f.toPath();
-                try {
-                    message.setHeader(FileConstants.FILE_CONTENT_TYPE, Files.probeContentType(path));
-                } catch (Exception e) {
-                    // just ignore the exception
-                }
+            if (isProbeContentType(isProbeContentTypeFromEndpoint)) {
+                probeContentType(message);
             }
 
             if (isAbsolute()) {
@@ -193,6 +187,20 @@ public class GenericFile<T> implements WrappedFile<T> {
                 message.setHeader(FileConstants.FILE_LAST_MODIFIED, getLastModified());
                 message.setHeader(Exchange.MESSAGE_TIMESTAMP, getLastModified());
             }
+        }
+    }
+
+    private boolean isProbeContentType(boolean isProbeContentTypeFromEndpoint) {
+        return (isProbeContentTypeFromEndpoint || probeContentType) && file instanceof File;
+    }
+
+    private void probeContentType(GenericFileMessage<T> message) {
+        File f = (File) file;
+        Path path = f.toPath();
+        try {
+            message.setHeader(FileConstants.FILE_CONTENT_TYPE, Files.probeContentType(path));
+        } catch (Exception e) {
+            // just ignore the exception
         }
     }
 
@@ -225,15 +233,7 @@ public class GenericFile<T> implements WrappedFile<T> {
             // for relative then we should avoid having the endpoint path
             // duplicated so clip it
             if (ObjectHelper.isNotEmpty(newEndpointPath) && newFileName.startsWith(newEndpointPath)) {
-                // clip starting endpoint in case it was added
-                // use File.separatorChar as the normalizePath uses this as path
-                // separator so we should use the same
-                // in this logic here
-                if (newEndpointPath.endsWith(String.valueOf(File.separatorChar))) {
-                    newFileName = StringHelper.after(newFileName, newEndpointPath);
-                } else {
-                    newFileName = StringHelper.after(newFileName, newEndpointPath + File.separatorChar);
-                }
+                newFileName = clipFileName(newEndpointPath, newFileName);
 
                 // reconstruct file with clipped name
                 file = new File(newFileName);
@@ -264,13 +264,30 @@ public class GenericFile<T> implements WrappedFile<T> {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("FileNameOnly: {}", getFileNameOnly());
-            LOG.trace("FileName: {}", getFileName());
-            LOG.trace("Absolute: {}", isAbsolute());
-            LOG.trace("Relative path: {}", getRelativeFilePath());
-            LOG.trace("Absolute path: {}", getAbsoluteFilePath());
-            LOG.trace("Name changed to: {}", this);
+            logFileProperties();
         }
+    }
+
+    private void logFileProperties() {
+        LOG.trace("FileNameOnly: {}", getFileNameOnly());
+        LOG.trace("FileName: {}", getFileName());
+        LOG.trace("Absolute: {}", isAbsolute());
+        LOG.trace("Relative path: {}", getRelativeFilePath());
+        LOG.trace("Absolute path: {}", getAbsoluteFilePath());
+        LOG.trace("Name changed to: {}", this);
+    }
+
+    private static String clipFileName(String newEndpointPath, String newFileName) {
+        // clip starting endpoint in case it was added
+        // use File.separatorChar as the normalizePath uses this as path
+        // separator so we should use the same
+        // in this logic here
+        if (newEndpointPath.endsWith(String.valueOf(File.separatorChar))) {
+            newFileName = StringHelper.after(newFileName, newEndpointPath);
+        } else {
+            newFileName = StringHelper.after(newFileName, newEndpointPath + File.separatorChar);
+        }
+        return newFileName;
     }
 
     public String getRelativeFilePath() {
