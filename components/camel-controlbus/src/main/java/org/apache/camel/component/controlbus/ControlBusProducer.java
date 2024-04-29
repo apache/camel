@@ -18,8 +18,12 @@ package org.apache.camel.component.controlbus;
 
 import java.util.concurrent.RejectedExecutionException;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -160,78 +164,21 @@ public class ControlBusProducer extends DefaultAsyncProducer {
 
             try {
                 if ("start".equals(action)) {
-                    LOG.debug("Starting route: {}", id);
-                    getEndpoint().getCamelContext().getRouteController().startRoute(id);
+                    startAction(id);
                 } else if ("stop".equals(action)) {
-                    LOG.debug("Stopping route: {}", id);
-                    getEndpoint().getCamelContext().getRouteController().stopRoute(id);
+                    stopAction(id);
                 } else if ("fail".equals(action)) {
-                    LOG.debug("Stopping and failing route: {}", id);
-                    // is there any caused exception from the exchange to mark the route as failed due
-                    Throwable cause = exchange.getException();
-                    if (cause == null) {
-                        cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-                    }
-                    if (cause == null) {
-                        cause = new RejectedExecutionException("Route " + id + " is forced stopped and marked as failed");
-                    }
-                    getEndpoint().getCamelContext().getRouteController().stopRoute(id, cause);
+                    failAction(id);
                 } else if ("suspend".equals(action)) {
-                    LOG.debug("Suspending route: {}", id);
-                    getEndpoint().getCamelContext().getRouteController().suspendRoute(id);
+                    suspendAction(id);
                 } else if ("resume".equals(action)) {
-                    LOG.debug("Resuming route: {}", id);
-                    getEndpoint().getCamelContext().getRouteController().resumeRoute(id);
+                    resumeAction(id);
                 } else if ("restart".equals(action)) {
-                    LOG.debug("Restarting route: {}", id);
-                    getEndpoint().getCamelContext().getRouteController().stopRoute(id);
-                    int delay = getEndpoint().getRestartDelay();
-                    if (delay > 0) {
-                        try {
-                            LOG.debug("Sleeping {} ms before starting route: {}", delay, id);
-                            Thread.sleep(delay);
-                        } catch (InterruptedException e) {
-                            LOG.info("Interrupted while waiting before starting the route");
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                    getEndpoint().getCamelContext().getRouteController().startRoute(id);
+                    restartAction(id);
                 } else if ("status".equals(action)) {
-                    LOG.debug("Route status: {}", id);
-                    ServiceStatus status = getEndpoint().getCamelContext().getRouteController().getRouteStatus(id);
-                    if (status != null) {
-                        result = status.name();
-                    }
+                    result = statusAction(id, result);
                 } else if ("stats".equals(action)) {
-                    LOG.debug("Route stats: {}", id);
-
-                    // camel context or per route
-                    String name = getEndpoint().getCamelContext().getManagementName();
-                    if (name == null) {
-                        result = "JMX is disabled, cannot get stats";
-                    } else {
-                        ObjectName on;
-                        String operation;
-                        if (id == null) {
-                            CamelContext camelContext = getEndpoint().getCamelContext();
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
-                                    .getObjectNameForCamelContext(camelContext);
-                            operation = "dumpRoutesStatsAsXml";
-                        } else {
-                            Route route = getEndpoint().getCamelContext().getRoute(id);
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
-                                    .getObjectNameForRoute(route);
-                            operation = "dumpRouteStatsAsXml";
-                        }
-                        if (on != null) {
-                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent()
-                                    .getMBeanServer();
-                            result = server.invoke(on, operation, new Object[] { true, true },
-                                    new String[] { "boolean", "boolean" });
-                        } else {
-                            result = "Cannot lookup route with id " + id;
-                        }
-                    }
+                    result = statsAction(id);
                 }
 
                 if (result != null && !getEndpoint().isAsync()) {
@@ -243,6 +190,99 @@ public class ControlBusProducer extends DefaultAsyncProducer {
             } catch (Exception e) {
                 logger.log("Error executing ControlBus task [" + task + "]. This exception will be ignored.", e);
             }
+        }
+
+        private Object statsAction(String id)
+                throws MalformedObjectNameException, InstanceNotFoundException, MBeanException, ReflectionException {
+            Object result;
+            LOG.debug("Route stats: {}", id);
+
+            // camel context or per route
+            String name = getEndpoint().getCamelContext().getManagementName();
+            if (name == null) {
+                result = "JMX is disabled, cannot get stats";
+            } else {
+                ObjectName on;
+                String operation;
+                if (id == null) {
+                    CamelContext camelContext = getEndpoint().getCamelContext();
+                    on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                            .getObjectNameForCamelContext(camelContext);
+                    operation = "dumpRoutesStatsAsXml";
+                } else {
+                    Route route = getEndpoint().getCamelContext().getRoute(id);
+                    on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                            .getObjectNameForRoute(route);
+                    operation = "dumpRouteStatsAsXml";
+                }
+                if (on != null) {
+                    MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent()
+                            .getMBeanServer();
+                    result = server.invoke(on, operation, new Object[] { true, true },
+                            new String[] { "boolean", "boolean" });
+                } else {
+                    result = "Cannot lookup route with id " + id;
+                }
+            }
+            return result;
+        }
+
+        private Object statusAction(String id, Object result) {
+            LOG.debug("Route status: {}", id);
+            ServiceStatus status = getEndpoint().getCamelContext().getRouteController().getRouteStatus(id);
+            if (status != null) {
+                result = status.name();
+            }
+            return result;
+        }
+
+        private void restartAction(String id) throws Exception {
+            LOG.debug("Restarting route: {}", id);
+            getEndpoint().getCamelContext().getRouteController().stopRoute(id);
+            int delay = getEndpoint().getRestartDelay();
+            if (delay > 0) {
+                try {
+                    LOG.debug("Sleeping {} ms before starting route: {}", delay, id);
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    LOG.info("Interrupted while waiting before starting the route");
+                    Thread.currentThread().interrupt();
+                }
+            }
+            getEndpoint().getCamelContext().getRouteController().startRoute(id);
+        }
+
+        private void resumeAction(String id) throws Exception {
+            LOG.debug("Resuming route: {}", id);
+            getEndpoint().getCamelContext().getRouteController().resumeRoute(id);
+        }
+
+        private void suspendAction(String id) throws Exception {
+            LOG.debug("Suspending route: {}", id);
+            getEndpoint().getCamelContext().getRouteController().suspendRoute(id);
+        }
+
+        private void failAction(String id) throws Exception {
+            LOG.debug("Stopping and failing route: {}", id);
+            // is there any caused exception from the exchange to mark the route as failed due
+            Throwable cause = exchange.getException();
+            if (cause == null) {
+                cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+            }
+            if (cause == null) {
+                cause = new RejectedExecutionException("Route " + id + " is forced stopped and marked as failed");
+            }
+            getEndpoint().getCamelContext().getRouteController().stopRoute(id, cause);
+        }
+
+        private void stopAction(String id) throws Exception {
+            LOG.debug("Stopping route: {}", id);
+            getEndpoint().getCamelContext().getRouteController().stopRoute(id);
+        }
+
+        private void startAction(String id) throws Exception {
+            LOG.debug("Starting route: {}", id);
+            getEndpoint().getCamelContext().getRouteController().startRoute(id);
         }
 
     }
