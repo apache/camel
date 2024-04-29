@@ -149,6 +149,8 @@ route:
 When running using `camel run --source-dir=mydir` then Camel JBang will now preload existing files on startup, such as `application.properties`,
 and beans and routes (same as if you run with `cd mydir; camel run *`). This allows to configure settings on Camel on startup, which was not possible beforehand.
 
+The `--open-api` option has changed from _code-first_ to use the new _contract-first_ Rest DSL style by using the specification file direct as-is.
+
 === camel-spring-boot
 
 The auto configuration of xref:clustering.adoc[Cluster Service] implementations has been moved to dedicated starters:
