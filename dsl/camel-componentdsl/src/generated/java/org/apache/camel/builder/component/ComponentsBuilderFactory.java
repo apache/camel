@@ -3401,6 +3401,19 @@ public interface ComponentsBuilderFactory {
         return PgeventComponentBuilderFactory.pgevent();
     }
     /**
+     * Pinecone (camel-pinecone)
+     * Perform operations on the Pinecone Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.6
+     * Maven coordinates: org.apache.camel:camel-pinecone
+     * 
+     * @return the dsl builder
+     */
+    static PineconeComponentBuilderFactory.PineconeComponentBuilder pinecone() {
+        return PineconeComponentBuilderFactory.pinecone();
+    }
+    /**
      * Platform HTTP (camel-platform-http)
      * Expose HTTP endpoints using the HTTP server available in the current
      * platform.

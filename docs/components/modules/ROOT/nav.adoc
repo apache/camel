@@ -255,6 +255,7 @@
 ** xref:paho-component.adoc[Paho]
 ** xref:paho-mqtt5-component.adoc[Paho MQTT 5]
 ** xref:pdf-component.adoc[PDF]
+** xref:pinecone-component.adoc[Pinecone]
 ** xref:platform-http-component.adoc[Platform HTTP]
 ** xref:plc4x-component.adoc[PLC4X]
 ** xref:pgevent-component.adoc[PostgresSQL Event]

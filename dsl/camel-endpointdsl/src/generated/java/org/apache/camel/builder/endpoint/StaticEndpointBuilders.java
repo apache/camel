@@ -11444,6 +11444,46 @@ public class StaticEndpointBuilders {
         return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Pinecone (camel-pinecone)
+     * Perform operations on the Pinecone Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.6
+     * Maven coordinates: org.apache.camel:camel-pinecone
+     * 
+     * Syntax: <code>pinecone:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PineconeVectorDbEndpointBuilderFactory.PineconeVectorDbEndpointBuilder pinecone(String path) {
+        return pinecone("pinecone", path);
+    }
+    /**
+     * Pinecone (camel-pinecone)
+     * Perform operations on the Pinecone Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.6
+     * Maven coordinates: org.apache.camel:camel-pinecone
+     * 
+     * Syntax: <code>pinecone:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PineconeVectorDbEndpointBuilderFactory.PineconeVectorDbEndpointBuilder pinecone(String componentName, String path) {
+        return PineconeVectorDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Platform HTTP (camel-platform-http)
      * Expose HTTP endpoints using the HTTP server available in the current
      * platform.

@@ -1,0 +1,53 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "pinecone",
+    "title": "Pinecone",
+    "description": "Perform operations on the Pinecone Vector Database.",
+    "deprecated": false,
+    "firstVersion": "4.6.0",
+    "label": "database,ai",
+    "javaType": "org.apache.camel.component.pinecone.PineconeVectorDbComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-pinecone",
+    "version": "4.6.0-SNAPSHOT",
+    "scheme": "pinecone",
+    "extendsScheme": "",
+    "syntax": "pinecone:collection",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "configuration": { "index": 0, "kind": "property", "displayName": "Configuration", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.pinecone.PineconeVectorDbConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "The configuration;" },
+    "lazyStartProducer": { "index": 1, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "token": { "index": 2, "kind": "property", "displayName": "Token", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.pinecone.PineconeVectorDbConfiguration", "configurationField": "configuration", "description": "Sets the API key to use for authentication" },
+    "autowiredEnabled": { "index": 3, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelPineconeAction": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "enum": [ "CREATE_COLLECTION", "CREATE_INDEX", "UPSERT", "INSERT", "SEARCH", "DELETE" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The action to be performed.", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#ACTION" },
+    "CamelPineconeOperationStatus": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation Status.", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#OPERATION_STATUS" },
+    "CamelPineconeOperationStatusValue": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation Status Value.", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#OPERATION_STATUS_VALUE" },
+    "CamelPineconeTextFieldName": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Text Field Name for Insert\/Upsert operation", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#TEXT_FIELD_NAME" },
+    "CamelPineconeVectorFieldName": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Vector Field Name for Insert\/Upsert operation", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#VECTOR_FIELD_NAME" },
+    "CamelPineconeIndexName": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Index Name", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#INDEX_NAME" },
+    "CamelPineconeIndexPodType": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Index Pod Type", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#INDEX_POD_TYPE" },
+    "CamelPineconeIndexPodEnvironment": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Index Pod Environment", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#INDEX_POD_ENVIRONMENT" },
+    "CamelPineconeCollectionName": { "index": 8, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Collection Name for Insert\/Upsert operation", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#COLLECTION_NAME" },
+    "CamelPineconeCollectionSimilarityMetric": { "index": 9, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Collection Similarity Metric", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#COLLECTION_SIMILARITY_METRIC" },
+    "CamelPineconeCollectionDimension": { "index": 10, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Collection Dimension", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#COLLECTION_DIMENSION" },
+    "CamelPineconeCollectionCloud": { "index": 11, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Collection Cloud Vendor", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#COLLECTION_CLOUD" },
+    "CamelPineconeCollectionCloudRegion": { "index": 12, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Collection Cloud Vendor Region", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#COLLECTION_CLOUD_REGION" },
+    "CamelPineconeIndexId": { "index": 13, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Index Upsert Id", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#INDEX_ID" },
+    "CamelPineconeQueryTopK": { "index": 14, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Query Top K", "constantName": "org.apache.camel.component.pinecone.PineconeVectorDb$Headers#QUERY_TOP_K" }
+  },
+  "properties": {
+    "collection": { "index": 0, "kind": "path", "displayName": "Collection", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The collection Name" },
+    "token": { "index": 1, "kind": "parameter", "displayName": "Token", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.pinecone.PineconeVectorDbConfiguration", "configurationField": "configuration", "description": "Sets the API key to use for authentication" },
+    "lazyStartProducer": { "index": 2, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}
