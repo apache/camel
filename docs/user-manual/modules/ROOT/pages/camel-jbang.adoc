@@ -1631,7 +1631,7 @@ camel cmd logger
  91103  foo     20s  root    INFO
 ----
 
-The logging level can be change at runtime, for example to change foo to DEBUG you execute:
+The logging level can be changed at runtime, for example to change foo to DEBUG you execute:
 
 [source,bash]
 ----
@@ -1639,6 +1639,43 @@ camel cmd logger --level=DEBUG foo
 ----
 
 TIP: You can use `--all` to change logging levels for all running integrations.
+
+===== Configuring individual logging levels
+
+From *Camel 4.6* onwards you can easily configure different logging levels from CLI and `application.properties`.
+
+For example from CLI you can specify using the `--logging-category` option. For example to enable DEBUG logging if using Kafka:
+
+[source,bash]
+----
+$ camel run myapp.yaml --logging-category=org.apache.kafka=DEBUG
+----
+
+You can specify multiple categories by repeating the CLI option as shown:
+
+[source,bash]
+----
+$ camel run myapp.yaml --logging-category=org.apache.kafka=DEBUG --logging-category=com.foo.something=TRACE
+----
+
+You can also configure logging levels in `application.properties` using two styles
+
+- `logging.level.` is the default style used by Camel and Spring Boot
+- `quarkus.log.category.` is used by Quarkus
+
+For example, you can declare as follows:
+
+[source,properties]
+----
+
+# make it easy to configure individual logging levels
+logging.level.org.apache.kafka = DEBUG
+logging.level.com.foo.something = TRACE
+
+# you can also use quarkus style naming
+quarkus.log.category."org.apache.kafka".level = DEBUG
+quarkus.log.category."com.foo.something".level = TRACE
+----
 
 ==== Listing services
 
