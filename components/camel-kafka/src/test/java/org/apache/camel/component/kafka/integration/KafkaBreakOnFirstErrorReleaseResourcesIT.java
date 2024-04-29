@@ -33,8 +33,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,11 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 @Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64", "s390x" },
-             disabledReason = "This test does not run reliably on ppc64le")
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Consistently unreliable on shared environments")
+                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
 class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20563";
