@@ -107,6 +107,10 @@ final class RestOpenApiHelper {
                             // strip off the first "/" if double "/" exists
                             basePath = basePath.substring(1);
                         }
+                        // strip ending slash
+                        if (basePath.endsWith("/")) {
+                            basePath = basePath.substring(0, basePath.length() - 1);
+                        }
                         if ("/".equals(basePath)) {
                             basePath = "";
                         }

@@ -46,12 +46,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
-import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -59,8 +53,6 @@ import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.generator.openapi.RestDslGenerator;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.spi.BacklogDebugger;
@@ -1254,7 +1246,7 @@ public class Run extends CamelCommand {
         content = content.replaceFirst("\\{\\{ \\.CamelKameletsDependencies }}", sb.toString());
 
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
-        Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(Paths.get(fn), content);
 
         List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
@@ -1321,7 +1313,7 @@ public class Run extends CamelCommand {
         }
         content = content.replaceFirst("\\{\\{ \\.Name }}", "CodeRoute");
         content = content.replaceFirst("\\{\\{ \\.Code }}", code);
-        Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(Paths.get(fn), content);
         return "file:" + fn;
     }
 
@@ -1406,7 +1398,7 @@ public class Run extends CamelCommand {
                 }
                 fn = cn + ".java";
             }
-            Files.write(Paths.get(fn), t.toString().getBytes(StandardCharsets.UTF_8));
+            Files.writeString(Paths.get(fn), t.toString());
             file = "file:" + fn;
         }
         return file;
@@ -1464,24 +1456,17 @@ public class Run extends CamelCommand {
             throw new FileNotFoundException("Cannot find file: " + file);
         }
 
-        ObjectMapper mapper;
-        boolean yaml = file.getName().endsWith(".yaml") || file.getName().endsWith(".yml");
-        if (yaml) {
-            mapper = new YAMLMapper();
-        } else {
-            mapper = new ObjectMapper();
-        }
-        ObjectNode node = (ObjectNode) mapper.readTree(file);
-        OpenApiDocument document = (OpenApiDocument) Library.readDocument(node);
-        RuntimeUtil.setRootLoggingLevel("off");
-        try {
-            try (CamelContext context = new DefaultCamelContext()) {
-                String out = RestDslGenerator.toYaml(document).generate(context, false);
-                Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
-            }
-        } finally {
-            RuntimeUtil.setRootLoggingLevel(loggingLevel);
-        }
+        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/rest-dsl.yaml.tmpl");
+        String content = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        String onlyName = FileUtil.stripPath(file.getName());
+        content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
+
+        Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
+
+        // we need to include the spec on the classpath
+        files.add(openapi);
     }
 
     private boolean knownFile(String file) throws Exception {

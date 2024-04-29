@@ -361,6 +361,11 @@ class ExportSpringBoot extends Export {
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
 
+        if (openapi != null) {
+            // include http server if using openapi
+            answer.add("mvn:org.apache.camel:camel-platform-http");
+        }
+
         return answer;
     }
 
