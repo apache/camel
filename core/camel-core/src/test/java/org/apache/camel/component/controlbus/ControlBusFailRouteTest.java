@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,12 +33,13 @@ public class ControlBusFailRouteTest extends ContextTestSupport {
 
     @Test
     public void testControlBusFail() {
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        final RouteController routeController = context.getRouteController();
+        assertEquals("Started", routeController.getRouteStatus("foo").name());
 
         template.sendBody("direct:foo", "Hello World");
 
         // runs async so it can take a little while
-        await().atMost(5, TimeUnit.SECONDS).until(() -> context.getRouteController().getRouteStatus("foo").isStopped());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> routeController.getRouteStatus("foo").isStopped());
 
         Route route = context.getRoute("foo");
         RouteError re = route.getLastError();
