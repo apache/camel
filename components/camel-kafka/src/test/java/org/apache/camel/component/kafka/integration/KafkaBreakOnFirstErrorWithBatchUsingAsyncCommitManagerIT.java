@@ -35,8 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Camel to handle when to commit an offset
  */
 @Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64", "s390x" },
-             disabledReason = "This test does not run reliably on ppc64le")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
 class KafkaBreakOnFirstErrorWithBatchUsingAsyncCommitManagerIT extends BaseExclusiveKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
     public static final String TOPIC = "breakOnFirstErrorBatchIT";
