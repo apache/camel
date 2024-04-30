@@ -123,6 +123,35 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The port number of asynchronous MDN server.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param asyncMdnPortNumber the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder asyncMdnPortNumber(Integer asyncMdnPortNumber) {
+            doSetProperty("asyncMdnPortNumber", asyncMdnPortNumber);
+            return this;
+        }
+        /**
+         * The port number of asynchronous MDN server.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param asyncMdnPortNumber the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder asyncMdnPortNumber(String asyncMdnPortNumber) {
+            doSetProperty("asyncMdnPortNumber", asyncMdnPortNumber);
+            return this;
+        }
+        /**
          * The name of the attached file.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -441,6 +470,21 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder mdnMessageTemplate(String mdnMessageTemplate) {
             doSetProperty("mdnMessageTemplate", mdnMessageTemplate);
+            return this;
+        }
+        /**
+         * The return URL that the message receiver should send an asynchronous
+         * MDN to. If not present the receipt is synchronous. (Client only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param receiptDeliveryOption the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder receiptDeliveryOption(String receiptDeliveryOption) {
+            doSetProperty("receiptDeliveryOption", receiptDeliveryOption);
             return this;
         }
         /**
@@ -1037,6 +1081,35 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The port number of asynchronous MDN server.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param asyncMdnPortNumber the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder asyncMdnPortNumber(Integer asyncMdnPortNumber) {
+            doSetProperty("asyncMdnPortNumber", asyncMdnPortNumber);
+            return this;
+        }
+        /**
+         * The port number of asynchronous MDN server.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param asyncMdnPortNumber the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder asyncMdnPortNumber(String asyncMdnPortNumber) {
+            doSetProperty("asyncMdnPortNumber", asyncMdnPortNumber);
+            return this;
+        }
+        /**
          * The name of the attached file.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1355,6 +1428,21 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder mdnMessageTemplate(String mdnMessageTemplate) {
             doSetProperty("mdnMessageTemplate", mdnMessageTemplate);
+            return this;
+        }
+        /**
+         * The return URL that the message receiver should send an asynchronous
+         * MDN to. If not present the receipt is synchronous. (Client only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param receiptDeliveryOption the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder receiptDeliveryOption(String receiptDeliveryOption) {
+            doSetProperty("receiptDeliveryOption", receiptDeliveryOption);
             return this;
         }
         /**
@@ -1932,6 +2020,35 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The port number of asynchronous MDN server.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param asyncMdnPortNumber the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder asyncMdnPortNumber(Integer asyncMdnPortNumber) {
+            doSetProperty("asyncMdnPortNumber", asyncMdnPortNumber);
+            return this;
+        }
+        /**
+         * The port number of asynchronous MDN server.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param asyncMdnPortNumber the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder asyncMdnPortNumber(String asyncMdnPortNumber) {
+            doSetProperty("asyncMdnPortNumber", asyncMdnPortNumber);
+            return this;
+        }
+        /**
          * The name of the attached file.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2250,6 +2367,21 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder mdnMessageTemplate(String mdnMessageTemplate) {
             doSetProperty("mdnMessageTemplate", mdnMessageTemplate);
+            return this;
+        }
+        /**
+         * The return URL that the message receiver should send an asynchronous
+         * MDN to. If not present the receipt is synchronous. (Client only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param receiptDeliveryOption the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder receiptDeliveryOption(String receiptDeliveryOption) {
+            doSetProperty("receiptDeliveryOption", receiptDeliveryOption);
             return this;
         }
         /**
@@ -2706,7 +2838,8 @@ public interface AS2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 2 enums and the value can be one of: CLIENT, SERVER
+         * There are 3 enums and the value can be one of: CLIENT, SERVER,
+         * RECEIPT
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -2729,7 +2862,8 @@ public interface AS2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 2 enums and the value can be one of: CLIENT, SERVER
+         * There are 3 enums and the value can be one of: CLIENT, SERVER,
+         * RECEIPT
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

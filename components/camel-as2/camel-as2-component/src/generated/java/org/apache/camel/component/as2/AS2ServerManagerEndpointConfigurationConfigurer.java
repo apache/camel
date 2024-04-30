@@ -27,6 +27,7 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("As2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
         map.put("As2To", java.lang.String.class);
         map.put("As2Version", java.lang.String.class);
+        map.put("AsyncMdnPortNumber", java.lang.Integer.class);
         map.put("AttachedFileName", java.lang.String.class);
         map.put("ClientFqdn", java.lang.String.class);
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
@@ -44,6 +45,7 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("HttpSocketTimeout", java.time.Duration.class);
         map.put("MdnMessageTemplate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("ReceiptDeliveryOption", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
         map.put("RequestUriPattern", java.lang.String.class);
         map.put("Server", java.lang.String.class);
@@ -76,6 +78,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "as2To": target.setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "as2Version": target.setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncmdnportnumber":
+        case "asyncMdnPortNumber": target.setAsyncMdnPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "attachedfilename":
         case "attachedFileName": target.setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
@@ -109,6 +113,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnMessageTemplate": target.setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "receiptdeliveryoption":
+        case "receiptDeliveryOption": target.setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
         case "requestUri": target.setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturipattern":
@@ -159,6 +165,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "as2To": return java.lang.String.class;
         case "as2version":
         case "as2Version": return java.lang.String.class;
+        case "asyncmdnportnumber":
+        case "asyncMdnPortNumber": return java.lang.Integer.class;
         case "attachedfilename":
         case "attachedFileName": return java.lang.String.class;
         case "clientfqdn":
@@ -192,6 +200,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnMessageTemplate": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "receiptdeliveryoption":
+        case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
         case "requestUri": return java.lang.String.class;
         case "requesturipattern":
@@ -238,6 +248,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "as2To": return target.getAs2To();
         case "as2version":
         case "as2Version": return target.getAs2Version();
+        case "asyncmdnportnumber":
+        case "asyncMdnPortNumber": return target.getAsyncMdnPortNumber();
         case "attachedfilename":
         case "attachedFileName": return target.getAttachedFileName();
         case "clientfqdn":
@@ -271,6 +283,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "mdnMessageTemplate": return target.getMdnMessageTemplate();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "receiptdeliveryoption":
+        case "receiptDeliveryOption": return target.getReceiptDeliveryOption();
         case "requesturi":
         case "requestUri": return target.getRequestUri();
         case "requesturipattern":

@@ -12,7 +12,9 @@ public enum AS2ApiName implements ApiName {
 
     CLIENT("client"),
 
-    SERVER("server");
+    SERVER("server"),
+
+    RECEIPT("receipt");
 
 
     private final String name;

@@ -23,12 +23,13 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(43);
+        Set<String> props = new HashSet<>(45);
         props.add("apiName");
         props.add("as2From");
         props.add("as2MessageStructure");
         props.add("as2To");
         props.add("as2Version");
+        props.add("asyncMdnPortNumber");
         props.add("attachedFileName");
         props.add("clientFqdn");
         props.add("compressionAlgorithm");
@@ -52,6 +53,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("lazyStartProducer");
         props.add("mdnMessageTemplate");
         props.add("methodName");
+        props.add("receiptDeliveryOption");
         props.add("requestUri");
         props.add("requestUriPattern");
         props.add("server");
