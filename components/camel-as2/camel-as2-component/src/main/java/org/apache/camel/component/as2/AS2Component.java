@@ -69,7 +69,7 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     protected void doShutdown() throws Exception {
         super.doShutdown();
 
-        // stop all server connectors as they would no longer be in use
-        AS2ConnectionHelper.closeAllServerConnections();
+        // stop all connectors as they would no longer be in use
+        AS2ConnectionHelper.closeAllConnections();
     }
 }

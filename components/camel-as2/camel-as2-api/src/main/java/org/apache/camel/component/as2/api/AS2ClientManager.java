@@ -157,7 +157,7 @@ public class AS2ClientManager {
      */
     public static final String SIGNED_RECEIPT_MIC_ALGORITHMS = CAMEL_AS2_CLIENT_PREFIX + "signed-receipt-mic-algorithms";
 
-    //
+    public static final String RECEIPT_DELIVERY_OPTION = CAMEL_AS2_CLIENT_PREFIX + "Receipt-Delivery-Option";
 
     private AS2ClientConnection as2ClientConnection;
 
@@ -216,7 +216,8 @@ public class AS2ClientManager {
             String[] signedReceiptMicAlgorithms,
             AS2EncryptionAlgorithm encryptingAlgorithm,
             Certificate[] encryptingCertificateChain,
-            String attachedFileName)
+            String attachedFileName,
+            String receiptDeliveryOption)
             throws HttpException {
 
         ObjectHelper.notNull(ediMessage, "EDI Message");
@@ -246,6 +247,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM, encryptingAlgorithm);
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_CERTIFICATE_CHAIN, encryptingCertificateChain);
+        httpContext.setAttribute(AS2ClientManager.RECEIPT_DELIVERY_OPTION, receiptDeliveryOption);
 
         BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", requestUri);
         request.setVersion(new ProtocolVersion("HTTP", 1, 1));

@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration;
 import org.apache.camel.component.as2.AS2ServerManagerEndpointConfiguration;
+import org.apache.camel.component.as2.AS2AsyncMDNServerManagerEndpointConfiguration;
 
 import org.apache.camel.support.component.ApiCollection;
 import org.apache.camel.support.component.ApiMethod;
@@ -32,7 +33,7 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
         List<String> nullableArgs;
 
         aliases.clear();
-        nullableArgs = Arrays.asList("ediMessageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain", "attachedFileName");
+        nullableArgs = Arrays.asList("ediMessageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain", "attachedFileName", "receiptDeliveryOption");
         apiHelpers.put(AS2ApiName.CLIENT, new ApiMethodHelper<>(AS2ClientManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ClientManagerApiMethod.class, AS2ApiName.CLIENT);
 
@@ -40,6 +41,11 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
         nullableArgs = Arrays.asList();
         apiHelpers.put(AS2ApiName.SERVER, new ApiMethodHelper<>(AS2ServerManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ServerManagerApiMethod.class, AS2ApiName.SERVER);
+
+        aliases.clear();
+        nullableArgs = Arrays.asList();
+        apiHelpers.put(AS2ApiName.RECEIPT, new ApiMethodHelper<>(AS2AsyncMDNServerManagerApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(AS2AsyncMDNServerManagerApiMethod.class, AS2ApiName.RECEIPT);
 
         setApiHelpers(apiHelpers);
         setApiMethods(apiMethods);
@@ -53,6 +59,9 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
                 break;
             case SERVER:
                 result = new AS2ServerManagerEndpointConfiguration();
+                break;
+            case RECEIPT:
+                result = new AS2AsyncMDNServerManagerEndpointConfiguration();
                 break;
         }
         return result;

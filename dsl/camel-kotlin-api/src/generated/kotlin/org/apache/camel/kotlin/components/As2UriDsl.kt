@@ -92,6 +92,20 @@ public class As2UriDsl(
   }
 
   /**
+   * The port number of asynchronous MDN server.
+   */
+  public fun asyncMdnPortNumber(asyncMdnPortNumber: String) {
+    it.property("asyncMdnPortNumber", asyncMdnPortNumber)
+  }
+
+  /**
+   * The port number of asynchronous MDN server.
+   */
+  public fun asyncMdnPortNumber(asyncMdnPortNumber: Int) {
+    it.property("asyncMdnPortNumber", asyncMdnPortNumber.toString())
+  }
+
+  /**
    * The name of the attached file
    */
   public fun attachedFileName(attachedFileName: String) {
@@ -196,6 +210,14 @@ public class As2UriDsl(
    */
   public fun mdnMessageTemplate(mdnMessageTemplate: String) {
     it.property("mdnMessageTemplate", mdnMessageTemplate)
+  }
+
+  /**
+   * The return URL that the message receiver should send an asynchronous MDN to. If not present the
+   * receipt is synchronous. (Client only)
+   */
+  public fun receiptDeliveryOption(receiptDeliveryOption: String) {
+    it.property("receiptDeliveryOption", receiptDeliveryOption)
   }
 
   /**

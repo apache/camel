@@ -845,7 +845,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         // Send MDN
         @SuppressWarnings("unused")
-        HttpCoreContext httpContext = mdnManager.send(mdn, RECIPIENT_DELIVERY_ADDRESS);
+        HttpCoreContext httpContext = mdnManager.send(mdn, mdn.getMainMessageContentType(), RECIPIENT_DELIVERY_ADDRESS);
     }
 
     @BeforeAll

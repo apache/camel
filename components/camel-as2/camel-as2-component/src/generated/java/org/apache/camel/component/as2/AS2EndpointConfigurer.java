@@ -28,6 +28,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("As2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
         map.put("As2To", java.lang.String.class);
         map.put("As2Version", java.lang.String.class);
+        map.put("AsyncMdnPortNumber", java.lang.Integer.class);
         map.put("AttachedFileName", java.lang.String.class);
         map.put("ClientFqdn", java.lang.String.class);
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
@@ -42,6 +43,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("HttpSocketTimeout", java.time.Duration.class);
         map.put("InBody", java.lang.String.class);
         map.put("MdnMessageTemplate", java.lang.String.class);
+        map.put("ReceiptDeliveryOption", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
         map.put("Server", java.lang.String.class);
         map.put("ServerFqdn", java.lang.String.class);
@@ -77,6 +79,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": target.getConfiguration().setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "as2Version": target.getConfiguration().setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncmdnportnumber":
+        case "asyncMdnPortNumber": target.getConfiguration().setAsyncMdnPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "attachedfilename":
         case "attachedFileName": target.getConfiguration().setAttachedFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientfqdn":
@@ -116,6 +120,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": target.getConfiguration().setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
+        case "receiptdeliveryoption":
+        case "receiptDeliveryOption": target.getConfiguration().setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
         case "requestUri": target.getConfiguration().setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
         case "server": target.getConfiguration().setServer(property(camelContext, java.lang.String.class, value)); return true;
@@ -162,6 +168,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return java.lang.String.class;
         case "as2version":
         case "as2Version": return java.lang.String.class;
+        case "asyncmdnportnumber":
+        case "asyncMdnPortNumber": return java.lang.Integer.class;
         case "attachedfilename":
         case "attachedFileName": return java.lang.String.class;
         case "clientfqdn":
@@ -201,6 +209,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return boolean.class;
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": return java.lang.String.class;
+        case "receiptdeliveryoption":
+        case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
         case "requestUri": return java.lang.String.class;
         case "server": return java.lang.String.class;
@@ -243,6 +253,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return target.getConfiguration().getAs2To();
         case "as2version":
         case "as2Version": return target.getConfiguration().getAs2Version();
+        case "asyncmdnportnumber":
+        case "asyncMdnPortNumber": return target.getConfiguration().getAsyncMdnPortNumber();
         case "attachedfilename":
         case "attachedFileName": return target.getConfiguration().getAttachedFileName();
         case "clientfqdn":
@@ -282,6 +294,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": return target.getConfiguration().getMdnMessageTemplate();
+        case "receiptdeliveryoption":
+        case "receiptDeliveryOption": return target.getConfiguration().getReceiptDeliveryOption();
         case "requesturi":
         case "requestUri": return target.getConfiguration().getRequestUri();
         case "server": return target.getConfiguration().getServer();

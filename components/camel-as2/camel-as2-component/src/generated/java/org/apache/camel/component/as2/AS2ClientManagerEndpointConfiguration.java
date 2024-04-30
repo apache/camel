@@ -15,7 +15,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "client", producerOnly = true,
            description = "Sends EDI Messages over HTTP",
-           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.hc.core5.http.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.hc.core5.http.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName, String receiptDeliveryOption)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class AS2ClientManagerEndpointConfiguration extends AS2Configuration {
@@ -55,6 +55,9 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="RFC2822 address of sender")})
     private String from;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send")})
+    private String receiptDeliveryOption;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="Resource location to deliver message")})
     private String requestUri;
@@ -168,6 +171,14 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public String getReceiptDeliveryOption() {
+        return receiptDeliveryOption;
+    }
+
+    public void setReceiptDeliveryOption(String receiptDeliveryOption) {
+        this.receiptDeliveryOption = receiptDeliveryOption;
     }
 
     public String getRequestUri() {

@@ -28,11 +28,14 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
 
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
+import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
+import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.ConnectionClosedException;
 import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.config.Http1Config;
 import org.apache.hc.core5.http.impl.io.HttpService;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
@@ -154,18 +157,42 @@ public class AS2ServerConnection {
 
                     this.httpService.handleRequest(this.serverConnection, context);
 
-                    // Send asynchronous MDN if any.
                     HttpCoreContext coreContext = HttpCoreContext.adapt(context);
                     String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
                             String.class);
+
                     if (recipientAddress != null) {
+                        // Send the MDN asynchronously.
+
                         DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
                                 AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
                                 DispositionNotificationMultipartReportEntity.class);
                         AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
                                 as2Version,
                                 originServer, serverFqdn, signingCertificateChain, signingPrivateKey);
-                        asynchronousMDNManager.send(multipartReportEntity, recipientAddress);
+
+                        HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
+                        AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
+                                request, signingAlgorithm, signingCertificateChain, signingPrivateKey);
+
+                        MultipartMimeEntity asyncReceipt = multipartReportEntity;
+                        if (gen != null) {
+                            // send a signed MDN
+                            MultipartSignedEntity multipartSignedEntity = null;
+                            try {
+                                multipartSignedEntity = ResponseMDN.prepareSignedReceipt(gen, multipartReportEntity);
+                            } catch (Exception e) {
+                                LOG.warn("failed to sign MDN");
+                            }
+                            if (multipartSignedEntity != null) {
+                                asynchronousMDNManager.send(
+                                        multipartSignedEntity, multipartSignedEntity.getContentType(), recipientAddress);
+                            }
+                        } else {
+                            // send an unsigned MDN
+                            asynchronousMDNManager.send(multipartReportEntity,
+                                    multipartReportEntity.getMainMessageContentType(), recipientAddress);
+                        }
                     }
 
                 }
@@ -194,6 +221,7 @@ public class AS2ServerConnection {
     private final PrivateKey signingPrivateKey;
     private final PrivateKey decryptingPrivateKey;
     private final Certificate[] validateSigningCertificateChain;
+    private final AS2SignatureAlgorithm signingAlgorithm;
 
     public AS2ServerConnection(String as2Version,
                                String originServer,
@@ -216,6 +244,7 @@ public class AS2ServerConnection {
         this.decryptingPrivateKey = decryptingPrivateKey;
         this.validateSigningCertificateChain = validateSigningCertificateChain;
 
+        this.signingAlgorithm = signingAlgorithm;
         listenerThread = new RequestListenerThread(
                 this.as2Version, this.originServer, this.serverFqdn,
                 parserServerPortNumber, signingAlgorithm, this.signingCertificateChain, this.signingPrivateKey,
