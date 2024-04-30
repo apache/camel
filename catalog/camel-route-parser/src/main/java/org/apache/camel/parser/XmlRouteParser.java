@@ -132,8 +132,7 @@ public final class XmlRouteParser {
                     uri = trimEndpointUri(uri);
                 }
                 if (!Strings.isNullOrEmpty(uri)) {
-                    final CamelEndpointDetails detail =
-                            toCamelEndpointDetails(baseDir, fullyQualifiedFileName, node, uri);
+                    final CamelEndpointDetails detail = toCamelEndpointDetails(baseDir, fullyQualifiedFileName, node, uri);
                     endpoints.add(detail);
                 }
             }
@@ -159,7 +158,7 @@ public final class XmlRouteParser {
         }
 
         return toEndpointDetails(node, fileName, lineNumber, lineNumberEnd, id, uri, consumerOnly,
-                        producerOnly);
+                producerOnly);
     }
 
     private static boolean isProducerOnly(String nodeName) {

@@ -42,7 +42,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j</artifactId>
-            <version>${langchain4j.version}</version>
+            <version>${langchain4j-version}</version>
         </dependency>
 
         <!-- for testing -->
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
-            <version>${langchain4j.version}</version>
+            <version>${langchain4j-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
