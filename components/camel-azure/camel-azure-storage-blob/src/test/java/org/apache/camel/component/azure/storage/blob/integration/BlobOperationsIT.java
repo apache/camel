@@ -330,7 +330,7 @@ class BlobOperationsIT extends Base {
     }
 
     @Test
-    void testCreateAndUploadPageBlob() throws IOException {
+    void testCreateAndUploadPageBlob() throws Exception {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -361,7 +361,7 @@ class BlobOperationsIT extends Base {
     }
 
     @Test
-    void testResizePageBlob() throws IOException {
+    void testResizePageBlob() throws Exception {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -396,7 +396,7 @@ class BlobOperationsIT extends Base {
     }
 
     @Test
-    void testClearPages() throws IOException {
+    void testClearPages() throws Exception {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -426,7 +426,7 @@ class BlobOperationsIT extends Base {
     }
 
     @Test
-    void testGetPageBlobRanges() throws IOException {
+    void testGetPageBlobRanges() throws Exception {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
