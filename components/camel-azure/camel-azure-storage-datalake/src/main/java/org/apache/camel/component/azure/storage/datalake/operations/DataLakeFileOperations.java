@@ -203,15 +203,15 @@ public class DataLakeFileOperations {
         return new DataLakeOperationResponse(true);
     }
 
-    public DataLakeOperationResponse upload(final Exchange exchange) throws IOException {
+    public DataLakeOperationResponse upload(final Exchange exchange) throws Exception {
         final FileCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final ParallelTransferOptions transferOptions = configurationProxy.getParallelTransferOptions(exchange);
-        final FileStreamAndLength fileStreamAndLength = FileStreamAndLength.createFileStreamAndLengthFromExchangeBody(exchange);
+        final InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
         final String permission = configurationProxy.getPermission(exchange);
         final String umask = configurationProxy.getUmask(exchange);
 
         final FileParallelUploadOptions uploadOptions
-                = new FileParallelUploadOptions(fileStreamAndLength.getInputStream())
+                = new FileParallelUploadOptions(is)
                         .setHeaders(commonRequestOptions.getPathHttpHeaders()).setParallelTransferOptions(transferOptions)
                         .setMetadata(commonRequestOptions.getMetadata()).setPermissions(permission)
                         .setRequestConditions(commonRequestOptions.getRequestConditions())
