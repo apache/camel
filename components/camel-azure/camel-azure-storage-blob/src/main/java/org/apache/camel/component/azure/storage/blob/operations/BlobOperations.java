@@ -374,7 +374,7 @@ public class BlobOperations {
         return BlobOperationResponse.createWithEmptyBody(response);
     }
 
-    public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws IOException {
+    public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws Exception {
         ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
         final boolean createPageBlob = configurationProxy.isCreatePageBlob(exchange);
@@ -384,22 +384,21 @@ public class BlobOperations {
             createPageBlob(exchange);
         }
 
-        final BlobStreamAndLength streamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
+        final InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
         final BlobCommonRequestOptions requestOptions = getCommonRequestOptions(exchange);
         final PageRange pageRange = configurationProxy.getPageRange(exchange);
-
         if (pageRange == null) {
             throw new IllegalArgumentException("You need to set page range in the exchange headers.");
         }
 
         try {
             final Response<PageBlobItem> response
-                    = client.uploadPageBlob(pageRange, streamAndLength.getInputStream(), requestOptions.getContentMD5(),
+                    = client.uploadPageBlob(pageRange, is, requestOptions.getContentMD5(),
                             requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
-            closeInputStreamIfNeeded(streamAndLength.getInputStream());
+            closeInputStreamIfNeeded(is);
         }
     }
 
