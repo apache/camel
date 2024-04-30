@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.xquery;
 
+import java.util.Map;
+
 import net.sf.saxon.Configuration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -56,6 +58,10 @@ public class XQueryLanguage extends SingleInputTypedLanguageSupport implements P
         Class<?> clazz = property(Class.class, properties, 0, null);
         if (clazz != null) {
             builder.setResultType(clazz);
+        }
+        Map<String, String> ns = property(Map.class, properties, 2, null);
+        if (ns != null && !ns.isEmpty()) {
+            builder.setNamespaces(ns);
         }
         if (configuration != null) {
             builder.setConfiguration(configuration);
