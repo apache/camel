@@ -44,7 +44,7 @@ import org.apache.hc.core5.http.ContentType;
 public class AS2Configuration {
 
     @UriPath
-    @Metadata(required = true, enums = "client,server")
+    @Metadata(required = true, enums = "client,server,receipt")
     private AS2ApiName apiName;
     @UriPath
     @Metadata(required = true)
@@ -118,6 +118,10 @@ public class AS2Configuration {
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
     @UriParam
     private HostnameVerifier hostnameVerifier;
+    @UriParam
+    private Integer asyncMdnPortNumber;
+    @UriParam
+    private String receiptDeliveryOption;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -537,5 +541,28 @@ public class AS2Configuration {
      */
     public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
+    }
+
+    public Integer getAsyncMdnPortNumber() {
+        return asyncMdnPortNumber;
+    }
+
+    /**
+     * The port number of asynchronous MDN server.
+     */
+    public void setAsyncMdnPortNumber(Integer asyncMdnPortNumber) {
+        this.asyncMdnPortNumber = asyncMdnPortNumber;
+    }
+
+    public String getReceiptDeliveryOption() {
+        return receiptDeliveryOption;
+    }
+
+    /**
+     * The return URL that the message receiver should send an asynchronous MDN to. If not present the receipt is
+     * synchronous. (Client only)
+     */
+    public void setReceiptDeliveryOption(String receiptDeliveryOption) {
+        this.receiptDeliveryOption = receiptDeliveryOption;
     }
 }

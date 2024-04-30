@@ -22,7 +22,7 @@ import java.net.URI;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
-import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
+import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.camel.component.as2.api.protocol.RequestAsynchronousMDN;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -105,11 +105,14 @@ public class AS2AsynchronousMDNManager {
                 .build();
     }
 
+    // Sends the signed or unsigned AS2-MDN to the URI requested by the sender of the AS2 message.
     public HttpCoreContext send(
-            DispositionNotificationMultipartReportEntity mdn,
+            MultipartMimeEntity multipartMimeEntity,
+            String contentType,
             String recipientDeliveryAddress)
             throws HttpException {
-        ObjectHelper.notNull(mdn, "mdn");
+        ObjectHelper.notNull(multipartMimeEntity, "multipartMimeEntity");
+        ObjectHelper.notNull(contentType, "contentType");
         ObjectHelper.notNull(recipientDeliveryAddress, "recipientDeliveryAddress");
 
         URI uri = URI.create(recipientDeliveryAddress);
@@ -127,10 +130,10 @@ public class AS2AsynchronousMDNManager {
             httpContext.setAttribute(RECIPIENT_ADDRESS, recipientDeliveryAddress);
 
             ClassicHttpRequest request = new BasicClassicHttpRequest("POST", uri);
-            request.setHeader(AS2Header.CONTENT_TYPE, mdn.getMainMessageContentType());
+            request.setHeader(AS2Header.CONTENT_TYPE, contentType);
             httpContext.setAttribute(HttpCoreContext.HTTP_REQUEST, request);
-            mdn.setMainBody(true);
-            EntityUtils.setMessageEntity(request, mdn);
+            multipartMimeEntity.setMainBody(true);
+            EntityUtils.setMessageEntity(request, multipartMimeEntity);
 
             HttpResponse response;
             try {
