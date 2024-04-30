@@ -118,9 +118,11 @@ pipeline {
                                             echo "Code quality review ENABLED for ${PLATFORM}"
                                             sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
                                         }
+                                    } else {
+                                        echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
                                     }
                                 } else {
-                                    echo "Code quality review disabled for ${PLATFORM}"
+                                    echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
                                 }
                             }
                         }
