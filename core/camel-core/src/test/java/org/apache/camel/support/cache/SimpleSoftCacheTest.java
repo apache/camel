@@ -73,8 +73,7 @@ class SimpleSoftCacheTest {
         cache.put(1, "foo");
         cache.put(2, "bar");
 
-        Map<Integer, Object> tmp = new HashMap<>();
-        cache.forEach(tmp::put);
+        Map<Integer, Object> tmp = new HashMap<>(cache);
 
         assertEquals("foo", tmp.get(1));
         assertEquals("bar", tmp.get(2));
@@ -84,8 +83,7 @@ class SimpleSoftCacheTest {
 
         cache.getInnerCache().get(1).clear();
 
-        tmp = new HashMap<>();
-        cache.forEach(tmp::put);
+        tmp = new HashMap<>(cache);
 
         assertNull(tmp.get(1));
         assertEquals("bar", tmp.get(2));
@@ -308,7 +306,7 @@ class SimpleSoftCacheTest {
 
     public static class LargeObject {
 
-        byte[] data;
+        final byte[] data;
 
         public LargeObject() {
             this.data = new byte[100 * 1024 * 1024]; // 100 MB

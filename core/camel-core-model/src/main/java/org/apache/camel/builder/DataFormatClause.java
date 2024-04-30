@@ -96,14 +96,30 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(new AvroDataFormat());
     }
 
-    public T avro(Object schema) {
+    /**
+     * Uses Avro data format with tje given library and schema
+     */
+    public T avro(AvroLibrary library, Object schema) {
         AvroDataFormat dataFormat = new AvroDataFormat();
+        dataFormat.setLibrary(library);
         dataFormat.setSchema(schema);
         return dataFormat(dataFormat);
     }
 
-    public T avro(String instanceClassName) {
-        return dataFormat(new AvroDataFormat(instanceClassName));
+    /**
+     * Uses Avro data format with the given unmarshalType
+     */
+    public T avro(String unmarshalTypeName) {
+        return dataFormat(new AvroDataFormat(unmarshalTypeName));
+    }
+
+    /**
+     * Uses Avro data format with given library and unmarshalType
+     */
+    public T avro(AvroLibrary library, String unmarshalTypeName) {
+        AvroDataFormat df = new AvroDataFormat(unmarshalTypeName);
+        df.setLibrary(library);
+        return dataFormat(df);
     }
 
     /**
@@ -129,6 +145,16 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         AvroDataFormat avroDataFormat = new AvroDataFormat();
         avroDataFormat.setLibrary(library);
         avroDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(avroDataFormat);
+    }
+
+    /**
+     * Uses the Avro data format with given unmarshalType and schemaResolver
+     */
+    public T avro(Class<?> unmarshalType, String schemaResolver) {
+        AvroDataFormat avroDataFormat = new AvroDataFormat();
+        avroDataFormat.setUnmarshalType(unmarshalType);
+        avroDataFormat.setSchemaResolver(schemaResolver);
         return dataFormat(avroDataFormat);
     }
 
@@ -1427,7 +1453,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
             case Unmarshal:

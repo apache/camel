@@ -73,7 +73,6 @@ public class KameletMainTest {
     protected void doTestMain(String includes, BiConsumer<KameletMain, CamelContext> consumer) throws Exception {
         KameletMain main = new KameletMain();
 
-        main.setDownload(false);
         main.configure().withRoutesIncludePattern(includes);
         main.configure().withAutoConfigurationEnabled(true);
         main.start();

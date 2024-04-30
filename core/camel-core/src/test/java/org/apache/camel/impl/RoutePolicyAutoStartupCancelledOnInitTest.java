@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoutePolicyAutoStartupCancelledOnInitTest extends ContextTestSupport {
 
-    private RoutePolicy policy = new RoutePolicySupport() {
+    private final RoutePolicy policy = new RoutePolicySupport() {
         @Override
         public void onInit(Route route) {
             route.setAutoStartup(false);

@@ -42,9 +42,9 @@ public class InterceptFromSimpleRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // In Camel 1.4 proceed is default so we must use stop to not
                 // route it to the result mock
                 interceptFrom().when(header("city").isEqualTo("London")).to("mock:intercepted").stop();

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
 
     @Test
-    public void testSedaDefaultUnboundedQueueSize() throws Exception {
+    public void testSedaDefaultUnboundedQueueSize() {
         SedaEndpoint seda = context.getEndpoint("seda:foo", SedaEndpoint.class);
         assertEquals(0, seda.getQueue().size());
 
@@ -37,7 +37,7 @@ public class SedaDefaultUnboundedQueueSizeTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSedaDefaultBoundedQueueSize() throws Exception {
+    public void testSedaDefaultBoundedQueueSize() {
         SedaEndpoint seda = context.getEndpoint("seda:foo?size=500", SedaEndpoint.class);
         assertEquals(0, seda.getQueue().size());
 

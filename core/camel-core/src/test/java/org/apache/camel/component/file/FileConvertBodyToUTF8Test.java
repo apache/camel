@@ -38,7 +38,7 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(String.class, "UTF-8").to("mock:result");
             }
         });

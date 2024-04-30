@@ -32,11 +32,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport {
 
-    protected ThreadPoolExecutor customThreadPoolExecutor
+    protected final ThreadPoolExecutor customThreadPoolExecutor
             = new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
     @Test
-    public void testSplitterWithCustomThreadPoolExecutor() throws Exception {
+    public void testSplitterWithCustomThreadPoolExecutor() {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorServiceBean();
         if (threadPoolExecutor == null) {
             threadPoolExecutor = context.getRegistry().lookupByNameAndType(getSplitter().getExecutorService(),

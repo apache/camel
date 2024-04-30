@@ -23,10 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
-import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -34,13 +34,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class TemporaryQueueRouteTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
-    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
     protected final String endpointUri = "activemq:temp-queue:TemporaryQueueRouteTest";
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
-    @Test
+    @RepeatedTest(5)
     public void testSendMessage() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Hello World");

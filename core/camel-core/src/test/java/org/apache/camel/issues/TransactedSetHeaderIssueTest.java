@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class TransactedSetHeaderIssueTest extends ContextTestSupport {
 
-    private Policy policy = new Policy() {
+    private final Policy policy = new Policy() {
         @Override
         public void beforeWrap(Route route, NamedNode definition) {
             // noop
@@ -47,7 +47,7 @@ public class TransactedSetHeaderIssueTest extends ContextTestSupport {
     public void testSetHeaderOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("myPolicy", policy);
 
                 from("direct:start")
@@ -71,7 +71,7 @@ public class TransactedSetHeaderIssueTest extends ContextTestSupport {
     public void testSetHeaderIssue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("myPolicy", policy);
 
                 from("direct:start")

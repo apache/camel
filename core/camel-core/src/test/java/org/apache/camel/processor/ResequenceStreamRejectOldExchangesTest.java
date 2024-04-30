@@ -84,10 +84,10 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start").onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true)
                         .to("mock:error").end().resequence(header("seqno")).stream()

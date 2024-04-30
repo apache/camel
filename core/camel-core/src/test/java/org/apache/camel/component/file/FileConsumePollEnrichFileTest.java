@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
     @Test
-    public void testPollEnrich() throws Exception {
+    public void testPollEnrich() {
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -49,10 +49,10 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
                         .to("mock:start")
                         .pollEnrich(

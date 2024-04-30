@@ -25,17 +25,17 @@ import org.apache.camel.spi.Registry;
 public class WireTapOnPrepareRefTest extends WireTapOnPrepareTest {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("deepClone", new AnimalDeepClonePrepare());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").wireTap("direct:a").onPrepare("deepClone").to("direct:b");
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");

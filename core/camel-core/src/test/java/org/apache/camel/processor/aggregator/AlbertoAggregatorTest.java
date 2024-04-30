@@ -43,6 +43,18 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         String allNames
                 = "Harpo Marx,Fiodor Karamazov,Chico Marx,Ivan Karamazov,Groucho Marx,Alexei Karamazov,Dimitri Karamazov";
 
+        final Map<String, List<String>> allBrothers = getAllBrothers();
+
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedBodiesReceived(allBrothers);
+
+        template.sendBody("direct:start", allNames);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    private static Map<String, List<String>> getAllBrothers() {
         List<String> marxBrothers = new ArrayList<>();
         marxBrothers.add("Harpo");
         marxBrothers.add("Chico");
@@ -57,21 +69,14 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         Map<String, List<String>> allBrothers = new HashMap<>();
         allBrothers.put("Marx", marxBrothers);
         allBrothers.put("Karamazov", karamazovBrothers);
-
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.expectedBodiesReceived(allBrothers);
-
-        template.sendBody("direct:start", allNames);
-
-        assertMockEndpointsSatisfied();
+        return allBrothers;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
-            AggregationStrategy surnameAggregator = new AggregationStrategy() {
+            final AggregationStrategy surnameAggregator = new AggregationStrategy() {
                 @SuppressWarnings("unchecked")
                 public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                     debugIn("Surname Aggregator", oldExchange, newExchange);
@@ -95,7 +100,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
             };
 
             @SuppressWarnings("unchecked")
-            AggregationStrategy brothersAggregator = new AggregationStrategy() {
+            final AggregationStrategy brothersAggregator = new AggregationStrategy() {
                 public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                     debugIn("Brothers Aggregator", oldExchange, newExchange);
 
@@ -134,7 +139,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
             }
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start")
                         // Separate people
@@ -151,7 +156,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                                 // in a
                                 // header
                                 new Processor() {
-                                    public void process(Exchange exchange) throws Exception {
+                                    public void process(Exchange exchange) {
 
                                         String[] parts = exchange.getIn().getBody(String.class).split(" ");
                                         exchange.getIn().setBody(parts[0]);

@@ -35,8 +35,8 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     public static final String FILE_URI_QUERY = "?initialDelay=0&delay=10&synchronous=true";
 
-    private AtomicInteger counter = new AtomicInteger();
-    private CountDownLatch latch = new CountDownLatch(2);
+    private final AtomicInteger counter = new AtomicInteger();
+    private final CountDownLatch latch = new CountDownLatch(2);
 
     @Override
     @BeforeEach
@@ -76,11 +76,11 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             // START SNIPPET: e1
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(FILE_URI_QUERY)).routeId("foo").noAutoStartup()
                         // let it complete all tasks during shutdown
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
@@ -92,7 +92,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
     public class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             counter.incrementAndGet();
             latch.countDown();
         }

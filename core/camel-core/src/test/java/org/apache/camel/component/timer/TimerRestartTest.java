@@ -45,7 +45,7 @@ public class TimerRestartTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("timer://foo?fixedRate=true&delay=0&period=10").to("mock:result");

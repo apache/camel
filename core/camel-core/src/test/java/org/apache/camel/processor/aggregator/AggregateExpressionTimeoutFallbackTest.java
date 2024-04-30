@@ -41,10 +41,10 @@ public class AggregateExpressionTimeoutFallbackTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
                         // if no timeout header it will fallback to the 2000 seconds
                         .completionTimeout(header("timeout")).completionTimeout(2000).to("mock:aggregated");

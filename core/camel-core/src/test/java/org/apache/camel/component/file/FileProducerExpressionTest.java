@@ -33,8 +33,8 @@ import org.junit.jupiter.api.condition.OS;
 public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myguidgenerator", new MyGuidGenerator());
         return jndi;
     }
@@ -48,14 +48,14 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProduceBeanByExpression() throws Exception {
+    public void testProduceBeanByExpression() {
         template.sendBody(fileUri("?fileName=${bean:myguidgenerator}.bak"), "Hello World");
 
         assertFileExists(testFile("123.bak"));
     }
 
     @Test
-    public void testProducerDateByHeader() throws Exception {
+    public void testProducerDateByHeader() {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME,
                 context.resolveLanguage("simple").createExpression("myfile-${date:now:yyyyMMdd}.txt"));
 
@@ -64,7 +64,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerDateByExpression() throws Exception {
+    public void testProducerDateByExpression() {
         template.sendBody(fileUri("?fileName=myfile-${date:now:yyyyMMdd}.txt"), "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -72,7 +72,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerComplexByExpression() throws Exception {
+    public void testProducerComplexByExpression() {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody(fileUri("?jailStartingDirectory=false&fileName=" + expression), "Hello World");
 
@@ -81,7 +81,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerSimpleWithHeaderByExpression() throws Exception {
+    public void testProducerSimpleWithHeaderByExpression() {
         template.sendBodyAndHeader(fileUri("?fileName=myfile-${in.header.foo}.txt"), "Hello World", "foo",
                 "abc");
 
@@ -89,7 +89,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerWithDateHeader() throws Exception {
+    public void testProducerWithDateHeader() {
         Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();

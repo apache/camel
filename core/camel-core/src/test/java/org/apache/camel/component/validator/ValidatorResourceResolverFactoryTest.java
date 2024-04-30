@@ -112,7 +112,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         jndiContext = createJndiContext();
         jndiContext.bind("resourceResolverFactory", new ResourceResolverFactoryImpl());
         return new DefaultRegistry(new JndiBeanRepository(jndiContext));
@@ -120,10 +120,10 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] { new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
                         .recipientList(new SimpleExpression(
@@ -133,7 +133,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
         }, new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:startComponent")
                         .setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))

@@ -45,10 +45,10 @@ public class StringAggregationStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:aggregateBody", "direct:aggregateBodyComma", "direct:aggregateBodyLines",
                         "direct:aggregateHeader", "direct:aggregateHeaderComma",
                         "direct:aggregateHeaderLines");

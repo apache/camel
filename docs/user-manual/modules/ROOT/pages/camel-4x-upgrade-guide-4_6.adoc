@@ -1,0 +1,176 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.5 to 4.6
+
+=== variables
+
+When using `variableReceive` then the variable is only set if processing the `Exchange` was completely successfully.
+
+For example calling a route that fails due to an exception being thrown (even if `onException` or `errorHandler` are in use)
+then the variable is no longer set. Also, if the route is marked for rollback, or to stop continue routing with `.stop()`.
+
+This is the same logic that the routing engine uses, whether to continue routing the `Exchange` or not.
+
+=== XML DSL
+
+When using XML DSL to define properties on `<bean>` then `<property>` must now be declared inside `<properties>`.
+
+=== YAML DSL
+
+When using YAML DSL to define properties on `bean` then `property` has been removed in favour of using `properties`.
+
+Before:
+[source,yaml]
+----
+    beans:
+      - name: "myProcessor"
+        type: "#class:com.foo.MyClass"
+        property:
+          - key: "payload"
+            value: "test-payload"
+----
+
+After:
+[source,yaml]
+----
+    beans:
+      - name: "myProcessor"
+        type: "#class:com.foo.MyClass"
+        properties:
+          payload: "test-payload"
+----
+
+=== camel-as2
+
+The `camel-as2` component has upgraded HTTP Client 4.x to 5.x and because of that, there are some options that have changed.
+
+=== camel-elasticsearch
+
+The class `org.apache.camel.component.es.aggregation.ElastichsearchBulkRequestAggregationStrategy` has been renamed to `org.apache.camel.component.es.aggregation.ElasticsearchBulkRequestAggregationStrategy`.
+
+=== camel-rest-openapi
+
+The `specifciationUri` in the `rest-api` component has changed from being a `java.net.URI` to a `String` type
+, as it uses Camels `ResourceLoader` to load from pluggable resources and also more tooling friendly.
+
+The validator using Atlassian `swagger-request-validator` JAR has been removed, as this library is not JakartaEE compatible,
+and was causing classloading problems. The validator is now using similar validation as Rest DSL. However, the validator
+no longer check for JSon payloads if any required nodes is missing.
+
+=== camel-langchain4j-chat
+
+The Camel Langchain4j Chat component name has been changed from `camel-langchain-chat`to `camel-langchain4j-chat` to adhere to the standardized naming conventions within the LangChain4j ecosystem.
+
+If you are migrating from Camel 4.5, please ensure the following:
+
+- Update your maven dependencies, changing from `camel-langchain-chat`to `camel-langchain4j-chat`
+- Adjust your endpoints, replacing `langchain-chat` with `langchain4j-chat`
+- Transfer any Camel class references from `org.apache.camel.component.chat.ChatLangchain*` to `org.apache.camel.component.langchain4j.chat.ChatLangchain4j*`
+- Modify the header name `The prompt Template`  from  `CamelLangChainChatPromptTemplate` to `CamelLangChain4jChatPromptTemplate`
+
+=== camel-langchain4j-embeddings
+
+The Camel Langchain4j Embeddings component name has been changed from `camel-langchain-embedings` to `camel-langchain4j-embedings` to adhere to the standardized naming conventions within the LangChain4j ecosystem.
+
+If you are migrating from Camel 4.5, please ensure the following
+
+- Update your maven dependencies, changing from  `camel-langchain-embedings`to `camel-langchain4j-embedings`
+- Adjust your endpoints, replacing `langchain-embedings` with `langchain4j-embedings`
+- Transfer any Camel class references from `org.apache.camel.component.langchain.embeddings.LangChainEmbeddings*` to `org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings*`
+- Modify the header name `The Finish Reason` from  `CamelLangChainEmbeddingsFinishReason` to `CamelLangChain4jEmbeddingsFinishReason`
+- Modify the header name `The Input Token Count` from  `CamelLangChainEmbeddingsInputTokenCount` to `CamelLangChain4jEmbeddingsInputTokenCount`
+- Modify the header name `The Output Token Count` from  `CamelLangChainEmbeddingsOutputTokenCount` to `CamelLangChain4jEmbeddingsOutputTokenCount`
+- Modify the header name `The Total Token Count` from  `CamelLangChainEmbeddingsTotalTokenCount` to `CamelLangChain4jEmbeddingsTotalTokenCount`
+- Modify the header name `A dense vector embedding of a text` from  `CamelLangChainEmbeddingsVector` to `CamelLangChain4jEmbeddingsVector`
+
+=== camel-platform-http
+
+The `PlatformHttpEngine` class has changed the `createConsumer` method to return a `org.apache.camel.component.platform.http.spi.PlatformHttpConsumer` type,
+instead of `org.apache.camel.Consumer`.
+
+=== camel-platform-http-vertx
+
+The id used for multipart file upload attachments on `AttachmentMessage` has changed from being the name of the uploaded file, to the value specifed on the `name` field of the `Content-Disposition` header sent in the request body.
+
+=== camel-google-sheets
+
+The option `scopes` is changed from a `Collection` to be a `String` type to make it easy to configure in endpoint URI from all DSLs and tooling.
+Multiple scopes can be separated by comma.
+
+=== camel-kafka
+
+The Kafka component now supports custom subscription adapters for applications with very complex subscription logic.
+
+=== camel-azure-servicebus
+
+The Camel Azure ServiceBus consumer has been refactored to internally use the high-level client instead of the low-level client to more easily support automatic reconnection, competing consumers and high availability, amongst other concerns. The corresponding changes to configuration options are:
+
+- The consumer now supports the Competing Consumers EIP. This can be enabled by increasing the newly added `maxConcurrentCalls` option to a value greater than 1.
+- The `disableAutoComplete` option has been removed. Auto-complete is always disabled on the underlying client to ensure that Camel is able to correctly complete, abandon or dead-letter consumed messages as appropriate. The presence of the `disableAutoComplete` option made little sense, since it is not propagated to the underlying client and enabling this option caused Camel not to take any steps to acknowledge/reject consumed messages. Enabling this option would result in message locks being held indefinitely, which is almost certainly not the desired behaviour.
+- The high level client always operates in `receiveMessages` mode (peek mode is not supported), so the `consumerOperation` option has been removed, along with the `ServiceBusConsumerOperationDefinition` enum. The associated `peekNumMaxMessages` option has also been removed.
+- The `receiverAsyncClient` option has been replaced with a `processorClient` option to enable use of a custom-configured client. The parameter type accepted by this option is `ServiceBusProcessorClient`.
+- The `reconnectDelay` option has been removed, since reconnection is now handled internally by the client.
+
+
+=== camel-yaml-dsl
+
+Renamed `streamCaching` to `streamCache` on the `route`
+
+Before:
+
+[source,yaml]
+----
+route:
+  streamCaching: false
+  from:
+    uri: "direct:foo"
+    steps:
+      - to: "mock:bar"
+----
+
+After:
+
+[source,yaml]
+----
+route:
+  streamCache: false
+  from:
+    uri: "direct:foo"
+    steps:
+      - to: "mock:bar"
+----
+
+=== camel-jbang
+
+When running using `camel run --source-dir=mydir` then Camel JBang will now preload existing files on startup, such as `application.properties`,
+and beans and routes (same as if you run with `cd mydir; camel run *`). This allows to configure settings on Camel on startup, which was not possible beforehand.
+
+The `--open-api` option has changed from _code-first_ to use the new _contract-first_ Rest DSL style by using the specification file direct as-is.
+
+=== camel-spring-boot
+
+The auto configuration of xref:clustering.adoc[Cluster Service] implementations has been moved to dedicated starters:
+
+[%header, cols="1,2"]
+|===
+| Type         | Starter
+| Consul       | camel-consul-cluster-service-starter
+| File         | camel-file-cluster-service-starter
+| Infinispan   | camel-infinispan-cluster-service-starter
+| JGroups Lock | camel-jgroups-cluster-service-starter
+| JGroups Raft | camel-jgroups-raft-cluster-service-starter
+| Kubernetes   | camel-kubernetes-cluster-service-starter
+| Zookeeper    | camel-zookeeper-cluster-service-starter
+|===
+
+
+The Cluster Services are turned on by default unless they are explicit disabled, as example:
+
+[source, properties]
+----
+camel.cluster.consul.enabled = false
+----

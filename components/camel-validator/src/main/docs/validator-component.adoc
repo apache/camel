@@ -55,10 +55,10 @@ The following
 https://github.com/apache/camel/blob/main/components/camel-spring-xml/src/test/resources/org/apache/camel/component/validator/camelContext.xml[example]
 shows how to configure a route from endpoint *direct:start* which then
 goes to one of two endpoints, either *mock:valid* or *mock:invalid*
-based on whether or not the XML matches the given schema (which is
+based on whether the XML matches the given schema (which is
 supplied on the classpath).
 
-== Advanced: JMX method clearCachedSchema
+== Advanced: JMX method `clearCachedSchema`
 
 You can force that the cached schema in the
 validator endpoint is cleared and reread with the next process call with

@@ -15,6 +15,8 @@ The  Rest DSL can be integrated with
 the `camel-openapi-java` module which is used for exposing the REST
 services and their APIs using https://www.openapis.org/[OpenApi].
 
+IMPORTANT: Only OpenAPI spec version 3.x is supported. You cannot use the old Swagger 2.0 spec.
+
 Maven users will need to add the following dependency to
 their `pom.xml` for this component:
 
@@ -86,7 +88,7 @@ with `api.xxx` is configured using `apiProperty` dsl.
 browser, and not the actual access to the REST services. The default is
 false.
 
-|openapi.version |String |OpenApi spec version. Is default 3.0.
+|openapi.version |String |OpenApi spec version. Only spec version 3.x is supported. Is default 3.0.
 
 |host |String |To set up the hostname. If not configured, camel-openapi-java will
 calculate the name as localhost based.
@@ -172,9 +174,8 @@ is using OAuth security with permitted scopes of read and write pets.
 == JSon or Yaml
 
 The camel-openapi-java module supports both JSon and Yaml out of the
-box. You can specify in the request url what you want returned by using
-`/openapi.json` or `/openapi.yaml` for either one. If none is specified, then
-the HTTP Accept header is used to detect if json or yaml can be
+box. You can specify in the request url what you want by using `.json` or `.yaml` as suffix in the context-path
+If none is specified, then the HTTP Accept header is used to detect if json or yaml can be
 accepted. If either both are accepted or none was set as accepted, then
 json is returned as the default format.
 

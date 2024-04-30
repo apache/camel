@@ -50,10 +50,10 @@ public class RouteStartupOrderLastTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use auto assigned startup ordering
                 from("direct:start").to("seda:foo");
 

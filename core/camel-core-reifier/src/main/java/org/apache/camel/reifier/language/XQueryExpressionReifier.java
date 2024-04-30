@@ -27,7 +27,7 @@ import org.apache.camel.spi.NamespaceAware;
 public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<XQueryExpression> {
 
     public XQueryExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (XQueryExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override

@@ -116,7 +116,7 @@ public class EnumConverterTest extends ContextTestSupport {
     public void testEnumWithToStringOverrideRouteSimple() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .choice()
                         .when(simple("${header.type} == ${type:org.apache.camel.converter.MyTypeEnum.TYPE1}")).to("mock:type1")

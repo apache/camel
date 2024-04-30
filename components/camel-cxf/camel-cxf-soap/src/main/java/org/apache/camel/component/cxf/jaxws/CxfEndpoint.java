@@ -69,6 +69,7 @@ import org.apache.camel.component.cxf.transport.header.CxfHeaderFilterStrategy;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -128,6 +129,9 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = SCHEME_CXF, title = "CXF", syntax = "cxf:beanId:address",
              category = { Category.HTTP, Category.WEBSERVICE }, headersClass = CxfConstants.class)
+@Metadata(annotations = {
+        "protocol=http",
+})
 public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
@@ -192,7 +196,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(label = "logging")
     private boolean loggingFeatureEnabled;
     @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
-    private int loggingSizeLimit;
+    private int loggingSizeLimit = AbstractLoggingInterceptor.DEFAULT_LIMIT;
     @UriParam(label = "advanced")
     private boolean mtomEnabled;
     @UriParam(label = "advanced")

@@ -118,7 +118,7 @@ public class RestDslGeneratorV3Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        try (InputStream is = RestDslGeneratorTest.class.getResourceAsStream("openapi-spec.json")) {
+        try (InputStream is = RestDslXmlGeneratorV3Test.class.getResourceAsStream("openapi-spec.json")) {
             String json = IOHelper.loadText(is);
             document = (OpenApi30Document) Library.readDocumentFromJSONString(json);
         }

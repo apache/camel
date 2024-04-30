@@ -21,10 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class RetryRouteScopedUntilRecipientListParallelIssueTest extends RetryRouteScopedUntilRecipientListIssueTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end()
                         .recipientList(header("recipientListHeader"))
                         .parallelProcessing().to("mock:result");

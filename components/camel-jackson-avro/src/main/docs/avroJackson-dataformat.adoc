@@ -26,7 +26,7 @@ annotated for JSON serialization/deserialization.
 [source,java]
 -------------------------------
 from("kafka:topic").
-  unmarshal().avro(AvroLibrary.Jackson, JsonNode.class).
+  unmarshal().avro(JsonNode.class).
   to("log:info");
 -------------------------------
 

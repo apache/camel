@@ -41,16 +41,16 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class).to("mock:result");
             }
@@ -58,7 +58,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     }
 
     @Test
-    public void testRollbackThrowException() throws Exception {
+    public void testRollbackThrowException() {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         await().atMost(2, TimeUnit.SECONDS).until(() -> LATCH.getCount() == 0);

@@ -58,7 +58,7 @@ public class ManagedMBeansLevelContextOnlyWithAddedRouteTest extends ManagedMBea
         // add a 2nd route
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:bar").routeId("bar").to("mock:bar");
             }
         });

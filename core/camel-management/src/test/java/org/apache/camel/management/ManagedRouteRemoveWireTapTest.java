@@ -91,10 +91,10 @@ public class ManagedRouteRemoveWireTapTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").wireTap("direct:tap").to("mock:result");
 
                 from("direct:tap").routeId("tap").to("mock:tap");

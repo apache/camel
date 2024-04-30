@@ -43,10 +43,10 @@ public class LoopDoWhileDelayTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:simple").loopDoWhile(simple("${body.length} <= 5")).to("mock:loop").transform(body().append("A"))
                         .delay(10).end()
                         .end().to("mock:result");

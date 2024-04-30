@@ -29,7 +29,6 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.support.SourceLoader;
@@ -104,12 +103,15 @@ public class KameletMain extends MainCommandLineSupport {
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
 
     protected final MainRegistry registry = new MainRegistry();
+    private String profile = "dev";
     private boolean download = true;
     private String repos;
     private boolean fresh;
     private boolean verbose;
     private String mavenSettings;
     private String mavenSettingsSecurity;
+    boolean mavenCentralEnabled = true;
+    boolean mavenApacheSnapshotEnabled = true;
     private String stubPattern;
     private boolean silent;
     private DownloadListener downloadListener;
@@ -178,6 +180,17 @@ public class KameletMain extends MainCommandLineSupport {
      */
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return registry.findByTypeWithName(type);
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * Camel profile to use (dev = development, prod = production). The default is dev.
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public boolean isDownload() {
@@ -265,6 +278,28 @@ public class KameletMain extends MainCommandLineSupport {
 
     public DownloadListener getDownloadListener() {
         return downloadListener;
+    }
+
+    public boolean isMavenCentralEnabled() {
+        return mavenCentralEnabled;
+    }
+
+    /**
+     * Whether downloading JARs from Maven Central repository is enabled
+     */
+    public void setMavenCentralEnabled(boolean mavenCentralEnabled) {
+        this.mavenCentralEnabled = mavenCentralEnabled;
+    }
+
+    public boolean isMavenApacheSnapshotEnabled() {
+        return mavenApacheSnapshotEnabled;
+    }
+
+    /**
+     * Whether downloading JARs from ASF Maven Snapshot repository is enabled
+     */
+    public void setMavenApacheSnapshotEnabled(boolean mavenApacheSnapshotEnabled) {
+        this.mavenApacheSnapshotEnabled = mavenApacheSnapshotEnabled;
     }
 
     /**
@@ -384,6 +419,8 @@ public class KameletMain extends MainCommandLineSupport {
         downloader.setFresh(fresh);
         downloader.setMavenSettings(mavenSettings);
         downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
+        downloader.setMavenCentralEnabled(mavenCentralEnabled);
+        downloader.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
         if (downloadListener != null) {
             downloader.addDownloadListener(downloadListener);
         }
@@ -441,8 +478,9 @@ public class KameletMain extends MainCommandLineSupport {
                     }
                 }
             }
-
         }
+        configure().withProfile(profile);
+
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
         if (port != null) {
@@ -451,28 +489,19 @@ public class KameletMain extends MainCommandLineSupport {
         }
         boolean console = "true".equals(getInitialProperties().get("camel.jbang.console"));
         if (console) {
+            configure().setDevConsoleEnabled(true);
             configure().httpServer().withEnabled(true);
+            configure().httpServer().withInfoEnabled(true); // also enable info if console is enabled
             configure().httpServer().withDevConsoleEnabled(true);
         }
-
-        // always enable developer console as it is needed by camel-cli-connector
-        configure().withDevConsoleEnabled(true);
-        // and enable a bunch of other stuff that gives more details for developers
-        configure().withCamelEventsTimestampEnabled(true);
-        configure().withLoadHealthChecks(true);
-        configure().withModeline(true);
-        configure().withLoadStatisticsEnabled(true);
-        configure().withMessageHistory(true);
-        configure().withInflightRepositoryBrowseEnabled(true);
-        configure().withEndpointRuntimeStatisticsEnabled(true);
-        configure().withJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
-        configure().withShutdownLogInflightExchangesOnTimeout(false);
-        configure().withShutdownTimeout(10);
-        configure().withStartupRecorder("backlog");
-
         boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
         if (tracing) {
-            configure().withBacklogTracing(true);
+            configure().tracerConfig().withEnabled(true);
+        }
+        boolean infoConsole = "true".equals(getInitialProperties().get("camel.jbang.info"));
+        if (infoConsole) {
+            configure().httpServer().withEnabled(true);
+            configure().httpServer().withInfoEnabled(true);
         }
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health) {
@@ -734,21 +763,19 @@ public class KameletMain extends MainCommandLineSupport {
      */
     protected void configureInitialProperties(String location) {
         addInitialProperty("camel.component.kamelet.location", location);
+        addInitialProperty("camel.component.rest-api.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
-        addInitialProperty("came.main.jmxUpdateRouteEnabled", "true");
+        // make it easy to load mock-data from file without having to add camel-mock to classpath
+        addInitialProperty("camel.component.rest-openapi.mockIncludePattern", "file:camel-mock/**,classpath:camel-mock/**");
     }
 
     protected String startupInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("Using Java ").append(System.getProperty("java.version"));
-        String pid = getPid();
-        if (pid != null) {
-            sb.append(" with PID ").append(pid);
-        }
+        sb.append(" with PID ").append(getPid());
         sb.append(". Started by ").append(System.getProperty("user.name"));
         sb.append(" in ").append(System.getProperty("user.dir"));
-
         return sb.toString();
     }
 

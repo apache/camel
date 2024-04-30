@@ -46,8 +46,8 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     }
 
     @Override
-    public String getKind() {
-        return "component";
+    public Kind getKind() {
+        return Kind.component;
     }
 
     public String getScheme() {

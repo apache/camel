@@ -16,23 +16,25 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultEndpoint;
 
 public class Mock321ScheduledPollConsumer extends MockScheduledPollConsumer {
 
-    private volatile int counter = 4;
+    private final AtomicInteger counter = new AtomicInteger(4);
 
     public Mock321ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
     @Override
-    protected int poll() throws Exception {
-        if (counter > 0) {
-            counter = counter - 1;
+    protected int poll() {
+        if (counter.get() > 0) {
+            counter.decrementAndGet();
         }
-        return counter;
+        return counter.get();
     }
 
     @Override

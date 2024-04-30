@@ -305,6 +305,10 @@ class StepsDsl(
         def.setHeader(setHeader, expression)
     }
 
+    fun setHeaders(setHeader: String, vararg variableNamesAndValues: Any) {
+        def.setHeaders(setHeader, variableNamesAndValues)
+    }
+
     fun setHeader(setHeader: String, function: () -> Any) {
         def.setHeader(setHeader, function)
     }
@@ -323,6 +327,10 @@ class StepsDsl(
 
     fun setVariable(setVariable: String, expression: Expression) {
         def.setVariable(setVariable, expression)
+    }
+
+    fun setVariables(setHeader: String, vararg variableNamesAndValues: Any) {
+        def.setVariables(setHeader, variableNamesAndValues)
     }
 
     fun setVariable(setVariable: String, function: () -> Any) {

@@ -33,12 +33,11 @@ import org.junit.jupiter.api.condition.OS;
 @DisabledOnOs(OS.WINDOWS)
 public class FileAsyncStressManualTest extends ContextTestSupport {
 
-    private int files = 150;
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+        int files = 150;
         for (int i = 0; i < files; i++) {
             template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, i + ".txt");
         }
@@ -57,10 +56,10 @@ public class FileAsyncStressManualTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // leverage the fact that we can limit to max 50 files per poll
                 // this will result in polling again and potentially picking up
                 // files

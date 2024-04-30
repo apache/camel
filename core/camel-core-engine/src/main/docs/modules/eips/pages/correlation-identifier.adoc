@@ -7,17 +7,19 @@ Identifier] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] by getting or setting a header on the xref:message.adoc[Message].
 
 When working with the xref:ROOT:jms-component.adoc[JMS]
-components the correlation identifier header is called
+components, the correlation identifier header is called
 *JMSCorrelationID*, and they handle the correlation automatically.
 
-Other messaging systems, such as xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] also handles this automatic,
-and you should generally not have a need for using custom correlation IDs with these systems.
+Other messaging systems, such as xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ],
+also handle this automatically.
+In general, you should not have a need for using custom correlation IDs with these systems.
 
 image::eip/CorrelationIdentifierSolution.gif[image]
 
 You can use your own correlation identifier to any
 message exchange to help correlate messages together to a single
-conversation (or business process). For example if you need to correlation messages when using web services.
+conversation (or business process).
+For example, if you need to correlation messages when using web services.
 
 The use of a correlation identifier is key to working with xref:others:tracing.adoc[Distributed Tracing]
 and be useful when using xref:manual::tracer.adoc[Tracer] messages to log,
@@ -26,8 +28,8 @@ or testing with simulation or canned data such as with the xref:ROOT:mock-compon
 
 == EIPs using correlation identifiers
 
-Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message, and in
-those cases, Camel will add a correlation id on the
+Some xref:enterprise-integration-patterns.adoc[EIP] patterns will spin off a sub message.
+In those cases, Camel will add a correlation id on the
 xref:manual::exchange.adoc[Exchange] as a property with they key
 `Exchange.CORRELATION_ID`, which links back to the source
 xref:manual::exchange.adoc[Exchange] and its exchange id.

@@ -46,20 +46,20 @@ public class AsyncEndpointFailedAfterOnExceptionHandledTest extends ContextTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 onException(IllegalArgumentException.class).handled(true).to("mock:error").transform(constant("FAIL"));
 
                 from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("log:after").to("mock:after").throwException(new IllegalArgumentException("Damn")).to("mock:result");

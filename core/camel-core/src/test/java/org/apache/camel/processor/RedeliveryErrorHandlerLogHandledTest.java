@@ -37,7 +37,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
     public void testRedeliveryErrorHandlerOnExceptionLogHandledDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).handled(true)
                         .to("mock:handled");
 
@@ -57,7 +57,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
     public void testRedeliveryErrorHandlerOnExceptionLogHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).logHandled(true)
                         .handled(true).to("mock:handled");
 
@@ -77,7 +77,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
     public void testRedeliveryErrorHandlerOnExceptionLogRetryAttempted() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0).logHandled(true)
                         .logRetryAttempted(true).handled(true).to("mock:handled");
 
@@ -97,7 +97,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
     public void testRedeliveryErrorHandlerDoNotLogExhausted() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().logExhausted(false));
 
                 from("direct:bar").throwException(new CamelException("Camel rocks"));
@@ -122,7 +122,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
     public void testRedeliveryErrorHandlerLogExhaustedDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler());
 
                 from("direct:bar").throwException(new CamelException("Camel rocks"));
@@ -147,7 +147,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
     public void testRedeliveryErrorHandlerAllOptions() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(3).logExhausted(true).logHandled(true)
                         .logRetryStackTrace(true).logStackTrace(true)
                         .retryAttemptedLogLevel(LoggingLevel.WARN).retriesExhaustedLogLevel(LoggingLevel.ERROR));
@@ -174,7 +174,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
     public void testRedeliveryErrorHandlerOnExceptionAllOptions() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(3).logHandled(true)
                         .logRetryAttempted(true).logRetryStackTrace(true)
                         .logExhausted(true).logStackTrace(true).handled(true).retryAttemptedLogLevel(LoggingLevel.WARN)

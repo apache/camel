@@ -37,10 +37,10 @@ public class InterceptSimpleRouteWhenTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 intercept().when(body().contains("Hello")).to("mock:intercepted");
 

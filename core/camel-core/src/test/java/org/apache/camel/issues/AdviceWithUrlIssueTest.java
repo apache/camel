@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 public class AdviceWithUrlIssueTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:test?concurrentConsumers=1").routeId("sedaroute").to("log:before").to("mock:target");
             }
         };
@@ -63,7 +63,7 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
 
     private static class Advice extends AdviceWithRouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             interceptSendToEndpoint("mock:target").skipSendToOriginalEndpoint().to("mock:target2");
         }
     }

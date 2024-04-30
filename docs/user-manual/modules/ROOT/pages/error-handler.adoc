@@ -246,7 +246,6 @@ the `errorHandlerRef` attribute on the `route` tag.
 [source,xml]
 ----
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <template id="myTemplate"/>
         <!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
         <route errorHandlerRef="myDeadLetterErrorHandler">
             <from uri="direct:in"/>
@@ -281,6 +280,25 @@ etc.
         <property name="redeliveryDelay" value="250"/>
     </bean>
 ----
+
+In *Camel 4.6* you can now inline `<errorHandler>` directly in the routes. The example above can be done as follows:
+
+[source,xml]
+----
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <errorHandler>
+                <deadLetterChannel deadLetterUri="mock:dead">
+                    <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="250"/>
+                </deadLetterChannel>
+            </errorHandler>
+            <from uri="direct:in"/>
+            <process ref="myFailureProcessor"/>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+----
+
 
 == Using the transactional error handler
 

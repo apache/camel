@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "propertiesLocation",
+    "title": "Properties Location",
+    "description": "Properties to use with properties placeholder",
+    "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderLocationDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "resolver": { "index": 1, "kind": "attribute", "displayName": "Resolver", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "classpath", "description": "The resolver to use to locate the location" },
+    "path": { "index": 2, "kind": "attribute", "displayName": "Path", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Property locations to use." },
+    "optional": { "index": 3, "kind": "attribute", "displayName": "Optional", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the location is optional." }
+  }
+}

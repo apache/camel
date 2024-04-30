@@ -29,15 +29,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FromRestApiTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
         return jndi;
     }
 
     @Test
-    public void testFromRestModel() throws Exception {
+    public void testFromRestModel() {
         assertEquals(1, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
@@ -51,10 +51,10 @@ public class FromRestApiTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost").component("dummy-rest").apiContextPath("/api");
 
                 rest("/say/hello").get().to("log:hello");

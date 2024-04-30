@@ -124,7 +124,7 @@ public class RestProducerBindingProcessorTest {
     }
 
     @Test
-    public void shouldNotMarshalAndUnmarshalByDefault() throws Exception {
+    public void shouldNotMarshalAndUnmarshalByDefault() {
         final String outType = ResponsePojo.class.getName();
 
         final RestProducerBindingProcessor bindingProcessor = new RestProducerBindingProcessor(

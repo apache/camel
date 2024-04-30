@@ -49,7 +49,7 @@ public class RestDslYamlGeneratorV3SimpleTest {
         final CamelContext context = new DefaultCamelContext();
 
         final String yaml = RestDslGenerator.toYaml(document).generate(context);
-        final URI file = RestDslGeneratorTest.class.getResource("/OpenApiV3PetstoreSimpleYaml.txt").toURI();
+        final URI file = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreSimpleYaml.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(yaml).isEqualTo(expectedContent);

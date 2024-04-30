@@ -32,7 +32,7 @@ class MainTemplatedRoutePlaceholderTest {
         Main main = new Main();
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("appendtobody")
                         .templateParameter("append")
                         .templateParameter("in")

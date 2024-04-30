@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 public class AggregationStrategyBeanAdapterRefTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myAppender", new AggregationStrategyBeanAdapterTest.MyBodyAppender());
         return jndi;
     }
@@ -42,10 +42,10 @@ public class AggregationStrategyBeanAdapterRefTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(constant(true)).aggregationStrategy("myAppender").completionSize(3)
                         .to("mock:result");
             }

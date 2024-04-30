@@ -22,7 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("Flaky test")
 public class FileRecursiveNoopTest extends ContextTestSupport {
 
     @BeforeEach
@@ -53,10 +55,10 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&recursive=true&noop=true")).convertBodyTo(String.class).noAutoStartup()
                         .to("mock:result");
             }

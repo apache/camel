@@ -69,7 +69,7 @@ public class ChoiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void sendMessage(final Object headerValue, final Object body) throws Exception {
+    protected void sendMessage(final Object headerValue, final Object body) {
         template.sendBodyAndHeader("direct:start", body, "foo", headerValue);
     }
 

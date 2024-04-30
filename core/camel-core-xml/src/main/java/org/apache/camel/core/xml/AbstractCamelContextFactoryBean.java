@@ -141,12 +141,14 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.OrderedComparator;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.model.RouteDefinitionHelper.getRouteConfigurationDefinitionConsumer;
+import static org.apache.camel.model.RouteDefinitionHelper.routesByIdOrPattern;
 
 /**
  * A factory to create and initialize a {@link CamelContext} and install routes either explicitly configured or found by
@@ -538,7 +540,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
 
             // add each rest as route
-            for (RestDefinition rest : getContext().getRestDefinitions()) {
+            for (RestDefinition rest : getRests()) {
                 rest.asRouteDefinition(getContext()).forEach(r -> getRoutes().add(r));
             }
 
@@ -632,31 +634,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     for (String id : ids) {
                         // sort according to ordered
                         globalConfigurations.stream().sorted(OrderedComparator.get())
-                                .filter(g -> {
-                                    if (route.getRouteConfigurationId() != null) {
-                                        // if the route has a route configuration assigned then use pattern matching
-                                        return PatternHelper.matchPattern(g.getId(), id);
-                                    } else {
-                                        // global configurations have no id assigned or is a wildcard
-                                        return g.getId() == null || g.getId().equals(id);
-                                    }
-                                })
-                                .forEach(g -> {
-                                    // there can only be one global error handler, so override previous, meaning
-                                    // that we will pick the last in the sort (take precedence)
-                                    if (g.getErrorHandler() != null) {
-                                        errorHandler.set(g.getErrorHandler());
-                                    }
-
-                                    String aid = g.getId() == null ? "<default>" : g.getId();
-                                    // remember the id that was used on the route
-                                    route.addAppliedRouteConfigurationId(aid);
-                                    oe.addAll(g.getOnExceptions());
-                                    icp.addAll(g.getIntercepts());
-                                    ifrom.addAll(g.getInterceptFroms());
-                                    ito.addAll(g.getInterceptSendTos());
-                                    oc.addAll(g.getOnCompletions());
-                                });
+                                .filter(routesByIdOrPattern(route, id))
+                                .forEach(getRouteConfigurationDefinitionConsumer(route, errorHandler, oe, icp, ifrom, ito, oc));
                     }
                 }
             }
@@ -1421,16 +1400,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         PackageScanDefinition packageScanDef = getPackageScan();
         if (packageScanDef != null && !packageScanDef.getPackages().isEmpty()) {
             // use package scan filter
-            PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
-            // support property placeholders in include and exclude
-            for (String include : packageScanDef.getIncludes()) {
-                include = getContext().resolvePropertyPlaceholders(include);
-                filter.addIncludePattern(include);
-            }
-            for (String exclude : packageScanDef.getExcludes()) {
-                exclude = getContext().resolvePropertyPlaceholders(exclude);
-                filter.addExcludePattern(exclude);
-            }
+            final PatternBasedPackageScanFilter filter
+                    = addPatterns(packageScanDef.getIncludes(), packageScanDef.getExcludes());
 
             String[] normalized = normalizePackages(getContext(), packageScanDef.getPackages());
             findRouteBuildersByPackageScan(normalized, filter, builders);
@@ -1440,21 +1411,27 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ContextScanDefinition contextScanDef = getContextScan();
         if (contextScanDef != null) {
             // use package scan filter
-            PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
-            // support property placeholders in include and exclude
-            for (String include : contextScanDef.getIncludes()) {
-                include = getContext().resolvePropertyPlaceholders(include);
-                filter.addIncludePattern(include);
-            }
-            for (String exclude : contextScanDef.getExcludes()) {
-                exclude = getContext().resolvePropertyPlaceholders(exclude);
-                filter.addExcludePattern(exclude);
-            }
+            final PatternBasedPackageScanFilter filter
+                    = addPatterns(contextScanDef.getIncludes(), contextScanDef.getExcludes());
             // lets be false by default, to skip prototype beans
             boolean includeNonSingletons = contextScanDef.getIncludeNonSingletons() != null
                     && Boolean.parseBoolean(contextScanDef.getIncludeNonSingletons());
             findRouteBuildersByContextScan(filter, includeNonSingletons, builders);
         }
+    }
+
+    private PatternBasedPackageScanFilter addPatterns(List<String> contextScanDef, List<String> contextScanDef1) {
+        PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
+        // support property placeholders in include and exclude
+        for (String include : contextScanDef) {
+            include = getContext().resolvePropertyPlaceholders(include);
+            filter.addIncludePattern(include);
+        }
+        for (String exclude : contextScanDef1) {
+            exclude = getContext().resolvePropertyPlaceholders(exclude);
+            filter.addExcludePattern(exclude);
+        }
+        return filter;
     }
 
     protected abstract void findRouteBuildersByPackageScan(

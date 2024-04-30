@@ -63,7 +63,7 @@ public class ArangoDBLocalContainerService implements ArangoDBService, Container
     @Override
     public void initialize() {
         LOG.info("Trying to start the ArangoDB container");
-        ContainerEnvironmentUtil.configureContainerStartup(container, ArangoDBProperties.ARANGODB_CONTAINER, 2);
+        ContainerEnvironmentUtil.configureContainerStartup(container, ArangoDBProperties.ARANGODB_CONTAINER_STARTUP, 2);
 
         container.start();
 

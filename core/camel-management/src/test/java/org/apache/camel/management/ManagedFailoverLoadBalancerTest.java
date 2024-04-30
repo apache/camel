@@ -33,6 +33,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
@@ -70,10 +71,10 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
         assertEquals(2, size.intValue());
 
         Boolean roundRobin = (Boolean) mbeanServer.getAttribute(on, "RoundRobin");
-        assertEquals(true, roundRobin.booleanValue());
+        assertTrue(roundRobin.booleanValue());
 
         Boolean sticky = (Boolean) mbeanServer.getAttribute(on, "Sticky");
-        assertEquals(true, sticky.booleanValue());
+        assertTrue(sticky.booleanValue());
 
         Integer attempts = (Integer) mbeanServer.getAttribute(on, "MaximumFailoverAttempts");
         assertEquals(3, attempts.intValue());
@@ -90,10 +91,10 @@ public class ManagedFailoverLoadBalancerTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .loadBalance().failover(3, false, true, true, IOException.class, SQLException.class).id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");

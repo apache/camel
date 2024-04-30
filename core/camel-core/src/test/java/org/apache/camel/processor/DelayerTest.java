@@ -25,9 +25,9 @@ import static org.apache.camel.processor.ExchangeAwareDelayCalcBean.BEAN_DELAYER
 
 public class DelayerTest extends ContextTestSupport {
 
-    private MyDelayCalcBean bean = new MyDelayCalcBean();
+    private final MyDelayCalcBean bean = new MyDelayCalcBean();
 
-    private ExchangeAwareDelayCalcBean exchangeAwareBean = new ExchangeAwareDelayCalcBean();
+    private final ExchangeAwareDelayCalcBean exchangeAwareBean = new ExchangeAwareDelayCalcBean();
 
     @Test
     public void testSendingMessageGetsDelayed() throws Exception {

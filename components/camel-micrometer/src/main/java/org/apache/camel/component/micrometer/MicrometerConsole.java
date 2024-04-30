@@ -34,7 +34,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("micrometer")
+@DevConsole(name = "micrometer", description = "Display runtime metrics")
 public class MicrometerConsole extends AbstractDevConsole {
 
     /**

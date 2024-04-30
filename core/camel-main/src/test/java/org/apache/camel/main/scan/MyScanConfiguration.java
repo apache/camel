@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Assertions;
 public class MyScanConfiguration implements CamelConfiguration {
 
     @Override
-    public void configure(CamelContext camelContext) throws Exception {
+    public void configure(CamelContext camelContext) {
         Assertions.assertNotNull(camelContext);
         camelContext.getGlobalOptions().put("scanConfigured", "true");
     }

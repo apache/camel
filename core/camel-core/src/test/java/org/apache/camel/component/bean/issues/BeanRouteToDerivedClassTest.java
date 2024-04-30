@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
-    private DerivedClass derived = new DerivedClass();
+    private final DerivedClass derived = new DerivedClass();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -38,7 +38,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
     public void testDerivedClassCalled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:derived?method=process");
             }
         });
@@ -56,7 +56,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:derived?method=process");
 
                 from("direct:other").to("bean:derived");
@@ -84,7 +84,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // Explicit method name given so always call this
                 from("direct:start").to("bean:derived?method=process");
 
@@ -108,8 +108,8 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("derived", derived);
         return jndi;
     }

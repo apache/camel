@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanInPipelineTest extends ContextTestSupport {
 
     @Test
-    public void testBeanInPipeline() throws Exception {
+    public void testBeanInPipeline() {
         Object response = template.requestBody("direct:start", "Start:");
         assertEquals("Start:onetwothree", response);
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("one", new MyBean("one"));
         answer.bind("two", new MyBean("two"));
         answer.bind("three", new MyBean("three"));
@@ -44,9 +44,9 @@ public class BeanInPipelineTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
             }
         };
@@ -54,7 +54,7 @@ public class BeanInPipelineTest extends ContextTestSupport {
 
     public static class MyBean {
 
-        private String postfix;
+        private final String postfix;
 
         public MyBean(String postfix) {
             this.postfix = postfix;

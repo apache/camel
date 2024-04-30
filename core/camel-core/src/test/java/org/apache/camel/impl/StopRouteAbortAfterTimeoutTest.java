@@ -85,10 +85,10 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // shutdown this test faster
                 context.getShutdownStrategy().setTimeout(3);
 

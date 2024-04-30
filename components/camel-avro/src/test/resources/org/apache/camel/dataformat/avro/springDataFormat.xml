@@ -26,18 +26,18 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>
-            <avro id="avro1" instanceClassName="org.apache.camel.dataformat.avro.example.Value"/>
+            <avro id="avro1" instanceClassName="org.apache.camel.dataformat.avro.example.Value" library="ApacheAvro"/>
         </dataFormats>
         <route>
             <from uri="direct:in"/>
             <marshal>
-                <avro instanceClassName="org.apache.camel.dataformat.avro.example.Value"/>
+                <avro instanceClassName="org.apache.camel.dataformat.avro.example.Value" library="ApacheAvro"/>
             </marshal>
         </route>
         <route>
             <from uri="direct:back"/>
             <unmarshal>
-                <avro instanceClassName="org.apache.camel.dataformat.avro.example.Value"/>
+                <avro instanceClassName="org.apache.camel.dataformat.avro.example.Value" library="ApacheAvro"/>
             </unmarshal>
             <to uri="mock:reverse"/>
         </route>

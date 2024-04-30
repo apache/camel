@@ -48,6 +48,7 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
+        myRepo.start();
         prepareMailbox();
         super.setUp();
     }

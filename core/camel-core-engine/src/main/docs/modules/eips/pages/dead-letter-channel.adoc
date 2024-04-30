@@ -5,14 +5,14 @@ http://www.enterpriseintegrationpatterns.com/DeadLetterChannel.html[Dead
 Letter Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using the
 https://www.javadoc.io/doc/org.apache.camel/camel-core-processor/current/org/apache/camel/processor/errorhandler/DeadLetterChannel.html[DeadLetterChannel]
-processor which is an xref:manual::error-handler.adoc[Error Handler].
+ processor, which is an xref:manual::error-handler.adoc[Error Handler].
 
 image::eip/DeadLetterChannelSolution.gif[image]
 
 The Dead Letter Channel is an xref:manual::error-handler.adoc[Error Handler]
 that implements the principles from the Dead Letter Channel EIP.
-From the illustration above we can see the pattern is that if a message cannot be processed or fails during sending, it should be moved to a dead letter queue.
-The dead letter queue, is based on a Camel
+From the illustration above, we can see the pattern is that if a message cannot be processed or fails during sending, it should be moved to a dead letter queue.
+The dead letter queue is based on a Camel
 xref:message-endpoint.adoc[Endpoint], allowing you to use any of the many Camel components, such as a file system, database, or a log.
 
 The Dead Letter Channel is similar to the default error handler, but with the following differences:
@@ -27,22 +27,28 @@ The Dead Letter Channel is similar to the default error handler, but with the fo
 When using the dead letter channel error handler, you must configure the dead letter queue as an endpoint, so the handler knows where to move the failed messages.
 This is done a bit differently in the Java DSL and XML DSL.
 
-For example, here’s how to log the message at `ERROR` level in Java DSL:
+For example, here’s how to log the message at `ERROR` level:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 errorHandler(deadLetterChannel("log:dead?level=ERROR"));
 ----
 
-And in Spring XML
-
+Spring XML::
++
 [source,xml]
 ----
 <errorHandler id="myErrorHandler" type="DeadLetterChannel"
               deadLetterUri="log:dead?level=ERROR"/>
 ----
 
-Pay attention to Spring XML DSL, the type attribute is used to declare which error handler to use, here its `DeadLetterChannel`.
+====
+
+Pay attention to Spring XML DSL. The type attribute is used to declare which error handler to use, here its `DeadLetterChannel`.
 And in XML the `<errorHandler>` must be configured with an id.
 The id must then be enabled on either the `<camelContext>` (global scope), or per route that should use this error handler.
 
@@ -66,8 +72,8 @@ which means this error handler is used globally. You can override this per route
 individual routes used another error handler.
 
 NOTE: The DSLs is planned to be improved in the near future to have a unified
-way of configuring error handling across all DSLs, with xref:manual::route-configuration.adoc[Route Configuration].
-When fully implemented then configuring error handler in Java and XML DSL would be much more similar than currently.
+way of configuring error handling across all DSLs with xref:manual::route-configuration.adoc[Route Configuration].
+When fully implemented, then configuring error handler in Java and XML DSL would be much more similar than currently.
 
 === Redelivery
 
@@ -81,41 +87,41 @@ You can customize things like:
 
 * how many times a message is attempted to be redelivered before it is considered a failure and sent to the dead letter channel
 * the initial redelivery timeout
-* using exponential backoff (i.e. the time between retries increases using a backoff multiplier)
+* using exponential backoff (i.e., the time between retries increases using a backoff multiplier)
 * whether to use collision avoidance to add some randomness to the timings
 * delay pattern
 * whether to allow redelivery during stopping/shutdown
 
-Only when all redelivery attempts have failed then the message is moved to the dead letter queue.
+Only when all redelivery attempts have failed, then the message is moved to the dead letter queue.
 
-=== Redelivery default values
+==== Redelivery default values
 
 Redelivery is disabled by default.
 
 The default redeliver policy will use the following values:
 
-* maximumRedeliveries = 0
-* redeliveryDelay = 1000L (1 second)
-* maximumRedeliveryDelay = 60 * 1000L (60 seconds)
-* And the exponential backoff and collision avoidance is turned off.
-* The retriesExhaustedLogLevel are set to LoggingLevel.ERROR
-* The retryAttemptedLogLevel are set to LoggingLevel.DEBUG
-* Stack traces is logged for exhausted messages
-* Handled exceptions is not logged
-* allowRedeliveryWhileStopping is true
-* logExhaustedMessageHistory is false
-* logExhaustedMessageBody is disabled by default to avoid logging sensitive message body/header details.
-  If this option is true, then logExhaustedMessageHistory must also be true.
+* The `maximumRedeliveries` is set to 0.
+* The `redeliveryDelay` is set to 1000 milliseconds (1 second).
+* The `maximumRedeliveryDelay` = 60 * 1000L (60 seconds).
+* And the exponential backoff and collision avoidance are turned off.
+* The `retriesExhaustedLogLevel` is set to `LoggingLevel.ERROR`.
+* The `retryAttemptedLogLevel` is set to `LoggingLevel.DEBUG`.
+* Stack traces are logged for exhausted messages.
+* Handled exceptions are not logged.
+* The `allowRedeliveryWhileStopping` is set to `true`.
+* The `logExhaustedMessageHistory` is set to `false`.
+* The `logExhaustedMessageBody` is disabled by default to avoid logging sensitive message body/header details.
+  If this option is true, then `logExhaustedMessageHistory` must also be true.
 
-The maximum redeliver delay ensures that a delay is never longer than the value, default 1 minute.
+The maximum redelivery delay ensures that a delay is never longer than the value, default 1 minute.
 This can happen if you turn on the exponential backoff.
 
 The maximum redeliveries are the number of redelivery attempts.
-Setting the maximumRedeliveries to a negative value such as -1 will then always redelivery (unlimited).
-Setting the maximumRedeliveries to 0 will disable any redelivery attempt.
+Setting the `maximumRedeliveries` to a negative value such as -1 will then always redelivery (unlimited).
+Setting the `maximumRedeliveries` to 0 will disable any redelivery attempt.
 
 Camel will log delivery failures at the DEBUG logging level by default.
-You can change this by specifying retriesExhaustedLogLevel and/or retryAttemptedLogLevel.
+You can change this by specifying `retriesExhaustedLogLevel` and/or `retryAttemptedLogLevel`.
 
 You can turn logging of stack traces on/off.
 If turned off Camel will still log the redelivery attempt, it's just much less verbose.
@@ -123,29 +129,33 @@ If turned off Camel will still log the redelivery attempt, it's just much less v
 There are more options for fine-tuned logging configurations which you can find at https://www.javadoc.io/doc/org.apache.camel/camel-core-processor/current/org/apache/camel/processor/errorhandler/RedeliveryPolicy.html[RedeliveryPolicy].
 
 
-=== What happens when an exception is thrown during sending to the dead letter queue
+=== What happens when an exception is thrown during sending to the dead letter queue?
 
 When the Dead Letter Channel moves a message to the dead letter endpoint, and a new Exception is thrown, then the new caused exception is logged at WARN level (can be turned off by setting `logNewException` to false) and Camel stops processing the message.
 This ensures that the Dead LetterChannel will always succeed.
 
 If you do not want this behaviour you can configure `deadLetterHandleNewException` to false, which then causes the dead letter channel to fail and propagate back the new Exception, which causes Camel to fail processing the message.
 
-=== What happens when an Exchange is moved to the dead letter queue
+=== What happens when an Exchange is moved to the dead letter queue?
 
-When all attempts of redelivery have failed the
+When all attempts of redelivery have failed, the
 xref:manual::exchange.adoc[Exchange] is moved to the dead letter queue.
 The exchange is then complete, and from the client point of view, the message is done being processed.
 
-For instance configuring the dead letter channel as:
+For instance, configuring the dead letter channel as:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 errorHandler(deadLetterChannel("jms:queue:dead")
     .maximumRedeliveries(3).redeliveryDelay(5000));
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <errorHandler id="myErrorHandler" type="DeadLetterChannel"
@@ -153,6 +163,8 @@ And in XML:
   <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="5000"/>
 </errorHandler>
 ----
+
+====
 
 The Dead Letter error handler will clear the caused exception (`setException(null)`), by moving the caused exception to a property on the xref:manual::exchange.adoc[Exchange], with the key `Exchange.EXCEPTION_CAUGHT`.
 Then the xref:manual::exchange.adoc[Exchange]
@@ -162,7 +174,7 @@ is moved to the `jms:queue:dead` destination, and the client will not notice the
 
 The option `useOriginalMessage` is used for routing the original input message instead of the current message that potentially is modified during routing.
 
-For instance if you have this route:
+For instance, if you have this route:
 
 [source,java]
 -----
@@ -172,16 +184,15 @@ from("jms:queue:order:input")
    .to("bean:handleOrder");
 -----
 
-The route listen for JMS messages and validates, transforms and handle it.
+The route listens for JMS messages and validates, transforms and handles it.
 During this the xref:manual::exchange.adoc[Exchange] payload is transformed/modified in the various bean stages.
 
-Now suppose that if an exception is thrown we want to move the message to the dead letter queue.
-However the message that is moved to the dead letter queue (by default) is the current message.
-Suppose at one time there is an exception in the validateOrder, and another time an exception thrown
-by transformOrder, and yet also in handleOrder. In all these different situations the message may be changed.
+Now suppose that if an exception is thrown, we want to move the message to the dead letter queue.
+However, the message moved to the dead letter queue (by default) is the current message.
+Suppose at one time there is an exception in the `validateOrder`, and another time an exception thrown
+by transformOrder, and yet also in handleOrder. In all these different situations, the message may be changed.
 
-By enabling `useOriginalMessage` on the dead letter channel, then the message that is moved to the dead letter queue,
-would be the original incoming message.
+By enabling `useOriginalMessage` on the dead letter channel, then the message moved to the dead letter queue would be the original incoming message.
 
 [NOTE]
 ====
@@ -189,15 +200,22 @@ There is also a *useOriginalBody* option, which only keeps the original message 
 not change the message headers.
 ====
 
+[tabs]
+====
+Java::
++
+
 [source,java]
 ----
-// will use original message (body and headers)
+// will use the original message (body and headers)
 errorHandler(deadLetterChannel("jms:queue:dead")
    .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000);
 ----
 
+XML::
++
 And in XML, you set `useOriginalMessage=true` on the `<errorHandler>` as shown:
-
++
 [source,xml]
 ----
 <errorHandler id="myErrorHandler" type="DeadLetterChannel" useOriginalMessage="true"
@@ -206,26 +224,33 @@ And in XML, you set `useOriginalMessage=true` on the `<errorHandler>` as shown:
 </errorHandler>
 ----
 
+====
+
 Then the messages routed to the `jms:queue:dead` is the original input.
-If we want to manually retry we can move the JMS message from the failed to the input queue, with no problem as the message is the same as the original we received.
+If we want to manually retry, we can move the JMS message from the failed to the input queue, with no problem as the message is the same as the original we received.
 
-==== Boundary of original message
+==== Boundary of the original message
 
-The original input means the input message that are bounded by the current unit of work.
+The original input means the input message is bounded by the current unit of work.
 A unit of work typically spans one route, or multiple routes if they are connected using internal endpoints such as direct or seda.
-When messages are passed via external endpoints such as JMS or HTT then the consumer will create a new unit of work, with the message it received as input as the original input.
+When messages are passed via external endpoints such as JMS or HTT, then the consumer will create a new unit of work, with the message it received as input as the original input.
 Also, some EIP patterns such as splitter, multicast, will create a new unit of work boundary for the messages in
-their sub-route (i.e. the _split_ message); however these EIPs have an option named `shareUnitOfWork` which allows
-combining with the parent unit of work and ends up usinguse the parent original message.
+their sub-route (i.e., the _split_ message); however, these EIPs have an option named `shareUnitOfWork` which allows
+combining with the parent unit of work and ends up using the parent original message.
 
 
 === Calling a processor before redelivery using OnRedelivery
 
-When the Dead Letter Channel is doing redeliver its possible to configure a xref:manual::processor.adoc[Processor]
-that is executed just _before_ every redelivery attempt.
-This can be used for the situations where you need to alter the message before its redelivered.
+When the Dead Letter Channel is doing redelivery, it's possible to configure a xref:manual::processor.adoc[Processor]
+ executed just _before_ every redelivery attempt.
+This can be used for situations where you need to alter the message before it's redelivered.
 
-For example in Java DSL you can do:
+For example, you can do:
+
+[tabs]
+====
+Java::
++
 
 [source,java]
 ----
@@ -234,8 +259,10 @@ errorHandler(deadLetterChannel("jms:queue:dead")
   .onRedeliver(new MyOnRedeliveryProcessor());
 ----
 
+XML::
++
 And in XML DSL, you specify a bean id via `onRedeliveryRef` on the `<errorHandler>` as shown:
-
++
 [source,xml]
 ----
 <bean id="myRedeliveryProcessor" class="com.foo.MyRedeliveryProcessor"/>
@@ -246,16 +273,18 @@ And in XML DSL, you specify a bean id via `onRedeliveryRef` on the `<errorHandle
 </errorHandler>
 ----
 
+====
+
 TIP: Camel also supports xref:manual::exception-clause.adoc[onException] to use `onRedeliver`.
 This means you can do special on redelivery for different exceptions, as opposed to `onRedelivery` set on
 Dead Letter Channel (or xref:manual::defaulterrorhandler.adoc[Default Error Handler]) can be viewed as global scoped.
 
 
-=== Calling a processor before sending message to the dead letter queue using OnPrepareFailure
+=== Calling a processor before sending a message to the dead letter queue using OnPrepareFailure
 
 Before the exchange is sent to the dead letter queue, you can use `onPrepare` to allow a custom `Processor` to prepare the exchange, such as adding information why the Exchange failed.
 
-For example the following processor adds a header with the exception message:
+For example, the following processor adds a header with the exception message:
 
 [source,java]
 ----
@@ -270,13 +299,20 @@ public static class MyPrepareProcessor implements Processor {
 
 Then configure the error handler to use the processor as follows:
 
+[tabs]
+====
+Java::
++
+
 [source,java]
 ----
 errorHandler(deadLetterChannel("jms:dead").onPrepareFailure(new MyPrepareProcessor()));
 ----
 
+XML::
++
 Configuring this from Spring XML is done with the `onPrepareFailureRef` to refer to the processor as a `<bean>` as shown:
-
++
 [source,xml]
 ----
 <bean id="myPrepare"
@@ -285,12 +321,14 @@ Configuring this from Spring XML is done with the `onPrepareFailureRef` to refer
 <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="jms:dead" onPrepareFailureRef="myPrepare"/>
 ----
 
+====
+
 === Calling a processor when an exception occurred
 
 With the `onExceptionOccurred` you can call a custom processor right after an exception was thrown,
 and the Dead Letter Channel is about to decide what to do (either to schedule a redelivery, or move the message into the dead letter queue).
 
-In other words this happens right after the exception was thrown, where you may want to do some custom logging, or something else.
+In other words, this happens right after the exception was thrown, where you may want to do some custom logging, or something else.
 
 For example, you may have a `Processor` that does some special logging:
 
@@ -308,33 +346,40 @@ public static class OnErrorLogger implements Processor {
 
 You can then configure the Dead Letter Channel to use this as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 errorHandler(deadLetterChannel("jms:dead").onExceptionOccurred(new OnErrorLogger()));
 ----
 
+XML::
++
 Configuring this from Spring XML is done with the `onExceptionOccurredRef` to refer to the processor as a `<bean>` as shown:
-
++
 [source,xml]
 ----
 <bean id="myErrorLogger" class="com.foo.OnErrorLogger"/>
 
 <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="jms:dead" onExceptionOccurredRef="myErrorLogger"/>
 ----
+====
 
 
 === Redeliver Delay Pattern
 
 Delay pattern is used as a single option to set a range pattern for delays.
-If used then the following options does not apply: (delay, backOffMultiplier, useExponentialBackOff, useCollisionAvoidance, maximumRedeliveryDelay).
+If used, then the following options do not apply: (delay, `backOffMultiplier`, `useExponentialBackOff`, `useCollisionAvoidance`, `maximumRedeliveryDelay`).
 
 The idea is to set groups of ranges using the following syntax:
 `limit:delay;limit 2:delay 2;limit 3:delay 3;...;limit N:delay N`
 
 Each group has two values separated with colon
 
-* limit = upper limit
-* delay = delay in milliseconds. The groups are separated with semicolon.
+* `limit` = upper limit
+* `delay` = delay in milliseconds. The groups are separated with semicolon.
   The rule of thumb is that the next groups should have a higher limit than the previous group.
 
 Let's clarify this with an example:
@@ -352,10 +397,10 @@ That gives us 3 groups:
 
 Resulting in these delays for redelivery attempt:
 
-* Redelivery attempt number 1..4 = 0 millis (as the first group start with 5)
-* Redelivery attempt number 5..9 = 1000 millis (the first group)
-* Redelivery attempt number 10..19 = 5000 millis (the second group)
-* Redelivery attempt number 20.. = 20000 millis (the last group)
+* Redelivery attempt number `1..4` = 0 millis (as the first group starts with 5)
+* Redelivery attempt number `5..9` = 1000 millis (the first group)
+* Redelivery attempt number `10..19` = 5000 millis (the second group)
+* Redelivery attempt number `20..` = 20000 millis (the last group)
 
 NOTE: The first redelivery attempt is 1, so the first group should start with 1 or higher.
 
@@ -366,8 +411,8 @@ You can start a group with limit 1 to have a starting delay:
 delayPattern=1:1000;5:5000
 ----
 
-* Redelivery attempt number 1..4 = 1000 millis (the first group)
-* Redelivery attempt number 5.. = 5000 millis (the last group)
+* Redelivery attempt number `1..4 = 1000` millis (the first group)
+* Redelivery attempt number `5.. = 5000` millis (the last group)
 
 There is no requirement that the next delay should be higher than the previous.
 You can use any delay value you like. For example with:
@@ -377,12 +422,12 @@ You can use any delay value you like. For example with:
 delayPattern=1:5000;3:1000
 ----
 
-We start with 5 sec delay and then later reduce that to 1 second.
+We start with a 5 sec delay and then later reduce that to 1 second.
 
 
 === State of redelivery as message headers
 
-When a message is redelivered the Dead Letter Channel
+When a message is redelivered, the Dead Letter Channel
 will append the following headers to the message with the state of the redelivery:
 
 [width="100%",cols="1m,1m,",options="header"]
@@ -394,9 +439,9 @@ will append the following headers to the message with the state of the redeliver
 `retryWhile` or have unlimited maximum redelivery configured.
 |===
 
-=== Which endpoint failed
+=== Which endpoint failed?
 
-During routing messages Camel will store an exchange property
+During routing messages, Camel will store an exchange property
 with the most recent endpoint in use (send to):
 
 [source,java]
@@ -406,9 +451,9 @@ String lastEndpointUri = exchange.getProperty(Exchange.TO_ENDPOINT, String.class
 
 The `Exchange.TO_ENDPOINT` have the constant value `CamelToEndpoint`.
 
-This information is updated when Camel sends a message to any endpoint.
+This information is updated when Apache Camel sends a message to any endpoint.
 
-When for example processing the xref:manual::exchange.adoc[Exchange] at a given
+When, for example, processing the xref:manual::exchange.adoc[Exchange] at a given
 xref:manual::endpoint.adoc[Endpoint] and the message is to be moved into the dead letter queue, then Camel also decorates the Exchange with another property that contains that *last* endpoint:
 
 [source,java]
@@ -418,13 +463,13 @@ String failedEndpointUri = exchange.getProperty(Exchange.FAILURE_ENDPOINT, Strin
 
 The `Exchange.FAILURE_ENDPOINT` have the constant value `CamelFailureEndpoint`.
 
-This allows for example you to fetch this information in your dead letter queue and use that for error reporting.
-This is particular usable if the Camel route uses dynamic EIPs such as
+This allows, for example, you to fetch this information in your dead letter queue and use that for error reporting.
+This is particularly usable if the Camel route uses dynamic EIPs such as
 xref:recipientList-eip.adoc[Recipient List] or xref:toD-eip.adoc[ToD], where the target
 endpoint uri would be stored as information.
 
 This information is kept on the Exchange even if the message was successfully processed by a given endpoint,
-and then later fails for example in a local xref:bean-eip.adoc[Bean] EIP processing instead.
+and then later fails, for example, in local xref:bean-eip.adoc[Bean] EIP processing instead.
 So beware that this is a hint that helps pinpoint errors to xref:manual::endpoint.adoc[Endpoints], and not EIPs.
 
 [source,java]
@@ -438,7 +483,7 @@ Now suppose the route above, and a failure happens in the `foo` bean.
 Then the `Exchange.TO_ENDPOINT` and `Exchange.FAILURE_ENDPOINT` will still contain the value of `\http://someserver/somepath`.
 
 
-=== Which route failed
+=== Which route failed?
 
 When a message is moved into the dead letter queue, then Camel will store the id of the route,
 where the message failed. This information can be obtained in Java via:
@@ -450,14 +495,14 @@ String failedRouteId = exchange.getProperty(Exchange.FAILURE_ROUTE_ID, String.cl
 
 The `Exchange.FAILURE_ROUTE_ID` have the constant value `CamelFailureRouteId`.
 
-This allows for example you to fetch this information in your dead letter queue and use that for error reporting.
+This allows, for example, you to fetch this information in your dead letter queue and use that for error reporting.
 
 
 === Control if redelivery is allowed during stopping/shutdown
 
 The option `allowRedeliveryWhileStopping` (default is `true`) controls whether redelivery is allowed or not,
-during stopping Camel or the route. This only applies for any potential new redelivery attempts;
-any currently ongoing redeliveries is still being executed.
+during stopping Camel or the route. This only applies to any potential new redelivery attempts;
+any currently ongoing redeliveries are still being executed.
 
 This option can only disallow any redelivery to be executed *after* the stopping of a route/shutdown of Camel has been triggered.
 

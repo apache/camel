@@ -15,7 +15,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "server", consumerOnly = true,
            description = "Receives EDI Messages over HTTP",
-           apiMethods = {@ApiMethod(methodName = "listen", signatures={"void listen(String requestUriPattern, org.apache.http.protocol.HttpRequestHandler handler)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "listen", signatures={"void listen(String requestUriPattern, org.apache.hc.core5.http.io.HttpRequestHandler handler)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class AS2ServerManagerEndpointConfiguration extends AS2Configuration {

@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
@@ -48,6 +49,9 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+
+import static org.apache.camel.support.CamelContextHelper.parseBoolean;
+import static org.apache.camel.support.CamelContextHelper.parseText;
 
 /**
  * Defines a rest service using the rest-dsl
@@ -88,6 +92,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     @Metadata(label = "advanced")
     private String tag;
+    @XmlElement
+    private OpenApiDefinition openApi;
     @XmlElement(name = "securityDefinitions") // use the name Swagger/OpenAPI uses
     @Metadata(label = "security")
     private RestSecuritiesDefinition securityDefinitions;
@@ -232,7 +238,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     /**
      * Whether to enable validation of the client request to check:
-     *
+     * <p>
      * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
      * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
      * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
@@ -283,6 +289,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         this.apiDocs = apiDocs;
     }
 
+    public OpenApiDefinition getOpenApi() {
+        return openApi;
+    }
+
+    /**
+     * To use an existing OpenAPI specification as contract-first for Camel Rest DSL.
+     */
+    public void setOpenApi(OpenApiDefinition openApi) {
+        this.openApi = openApi;
+    }
+
     public Resource getResource() {
         return resource;
     }
@@ -293,6 +310,25 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * To use an existing OpenAPI specification as contract-first for Camel Rest DSL.
+     */
+    public OpenApiDefinition openApi() {
+        openApi = new OpenApiDefinition();
+        openApi.setRest(this);
+        return openApi;
+    }
+
+    /**
+     * To use an existing OpenAPI specification as contract-first for Camel Rest DSL.
+     */
+    public RestDefinition openApi(String specification) {
+        openApi = new OpenApiDefinition();
+        openApi.setRest(this);
+        openApi.specification(specification);
+        return this;
+    }
 
     /**
      * To set the base path of this REST service
@@ -562,6 +598,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition type(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException(MISSING_VERB);
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setType(classType);
+        return this;
+    }
+
     public RestDefinition type(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -571,6 +618,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setTypeClass(classType);
         verb.setType(asTypeName(classType));
+        return this;
+    }
+
+    public RestDefinition outType(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException(MISSING_VERB);
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutType(classType);
         return this;
     }
 
@@ -722,8 +780,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * Build the from endpoint uri for the verb
      */
-    public String buildFromUri(VerbDefinition verb) {
-        return "rest:" + verb.asVerb() + ":" + buildUri(verb);
+    public String buildFromUri(CamelContext camelContext, VerbDefinition verb) {
+        return "rest:" + verb.asVerb() + ":" + buildUri(camelContext, verb);
+    }
+
+    /**
+     * Build the from endpoint uri for the open-api
+     */
+    public String buildFromUri(CamelContext camelContext, OpenApiDefinition openApi) {
+        return "rest-openapi:" + parseText(camelContext, openApi.getSpecification());
     }
 
     // Implementation
@@ -779,6 +844,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
         }
 
+        // any open-api contracts
+        if (openApi != null) {
+            disabled = CamelContextHelper.parseBoolean(camelContext, openApi.getDisabled());
+            if (disabled != null && disabled) {
+                openApi = null;
+            }
+        }
+        if (!filter.isEmpty() && openApi != null) {
+            // we cannot have both code-first and contract-first in rest-dsl
+            throw new IllegalArgumentException("Cannot have both code-first and contract-first in Rest DSL");
+        }
+
         // sanity check this rest definition do not have duplicates
         validateUniquePaths(filter);
 
@@ -787,7 +864,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // sanity check this rest definition do not have duplicates linked routes via direct endpoints
             validateUniqueDirects(filter);
         }
-        addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
+        if (!filter.isEmpty()) {
+            addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
+        }
+        if (openApi != null) {
+            addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent(),
+                    config.getApiContextPath(), config.isClientRequestValidation());
+        }
 
         return answer;
     }
@@ -884,7 +967,97 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return answer;
     }
 
-    @SuppressWarnings("rawtypes")
+    private void addRouteDefinition(
+            CamelContext camelContext, OpenApiDefinition openApi, List<RouteDefinition> answer,
+            String component, String producerComponent, String apiContextPath,
+            boolean clientValidation) {
+
+        RouteDefinition route = new RouteDefinition();
+        if (openApi.getRouteId() != null) {
+            route.routeId(parseText(camelContext, openApi.getRouteId()));
+        }
+        // add dummy empty stop
+        route.getOutputs().add(new StopDefinition());
+
+        final RestBindingDefinition binding = getRestBindingDefinition(camelContext, component);
+        route.setRestBindingDefinition(binding);
+
+        // append options
+        Map<String, Object> options = new HashMap<>();
+        if (binding.getConsumes() != null) {
+            options.put("consumes", parseText(camelContext, binding.getConsumes()));
+        }
+        if (binding.getProduces() != null) {
+            options.put("produces", parseText(camelContext, binding.getProduces()));
+        }
+        if (getClientRequestValidation() != null) {
+            options.put("clientRequestValidation", parseBoolean(camelContext, getClientRequestValidation()));
+        } else if (clientValidation) {
+            options.put("clientRequestValidation", "true");
+        }
+        if (openApi.getMissingOperation() != null) {
+            options.put("missingOperation", parseText(camelContext, openApi.getMissingOperation()));
+        }
+        if (openApi.getMockIncludePattern() != null) {
+            options.put("mockIncludePattern", parseText(camelContext, openApi.getMockIncludePattern()));
+        }
+        if (openApi.getApiContextPath() != null) {
+            options.put("apiContextPath", parseText(camelContext, openApi.getApiContextPath()));
+        }
+
+        // include optional description
+        String description = openApi.getDescription();
+        if (description == null) {
+            description = getDescriptionText();
+        }
+        if (description != null) {
+            options.put("description", parseText(camelContext, description));
+        }
+
+        // create the from endpoint uri which is using the rest-openapi component
+        String from = buildFromUri(camelContext, openApi);
+
+        // append additional options
+        if (!options.isEmpty()) {
+            try {
+                from = URISupport.appendParametersToURI(from, options);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        // the route should be from this rest endpoint
+        route.fromRest(from);
+        route.setRestDefinition(this);
+        answer.add(route);
+    }
+
+    private RestBindingDefinition getRestBindingDefinition(CamelContext camelContext, String component) {
+        String mode = getBindingMode();
+        if (mode == null) {
+            mode = camelContext.getRestConfiguration().getBindingMode().name();
+        }
+
+        RestBindingDefinition binding = new RestBindingDefinition();
+        binding.setComponent(component);
+        if ("json".equals(mode)) {
+            binding.setConsumes("application/json");
+            binding.setProduces("application/json");
+        } else if ("xml".equals(mode)) {
+            binding.setConsumes("application/xml");
+            binding.setProduces("application/xml");
+        } else if ("json_xml".equals(mode)) {
+            binding.setConsumes("application/json;application/xml");
+            binding.setProduces("application/json;application/xml");
+        }
+        binding.setBindingMode(mode);
+        binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
+        binding.setClientRequestValidation(getClientRequestValidation());
+        binding.setEnableCORS(getEnableCORS());
+        binding.setEnableNoContentResponse(getEnableNoContentResponse());
+        return binding;
+    }
+
     private void addRouteDefinition(
             CamelContext camelContext, List<VerbDefinition> verbs, List<RouteDefinition> answer,
             String component, String producerComponent) {
@@ -895,50 +1068,76 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 throw new IllegalArgumentException("Rest service: " + verb + " must have to endpoint configured.");
             }
             if (verb.getRouteId() != null) {
-                route.routeId(verb.getRouteId());
+                route.routeId(parseText(camelContext, verb.getRouteId()));
             }
             route.getOutputs().add(verb.getTo());
 
             // add the binding
             RestBindingDefinition binding = new RestBindingDefinition();
             binding.setComponent(component);
-            binding.setType(verb.getType());
+            binding.setType(parseText(camelContext, verb.getType()));
             binding.setTypeClass(verb.getTypeClass());
-            binding.setOutType(verb.getOutType());
+            binding.setOutType(parseText(camelContext, verb.getOutType()));
             binding.setOutTypeClass(verb.getOutTypeClass());
             // verb takes precedence over configuration on rest
+            if (verb.getBindingMode() != null) {
+                binding.setBindingMode(parseText(camelContext, verb.getBindingMode()));
+            } else {
+                binding.setBindingMode(getBindingMode());
+            }
             if (verb.getConsumes() != null) {
-                binding.setConsumes(verb.getConsumes());
+                binding.setConsumes(parseText(camelContext, verb.getConsumes()));
             } else {
                 binding.setConsumes(getConsumes());
             }
             if (verb.getProduces() != null) {
-                binding.setProduces(verb.getProduces());
+                binding.setProduces(parseText(camelContext, verb.getProduces()));
             } else {
                 binding.setProduces(getProduces());
             }
-            if (verb.getBindingMode() != null) {
-                binding.setBindingMode(verb.getBindingMode());
-            } else {
-                binding.setBindingMode(getBindingMode());
+            if (binding.getType() != null || binding.getOutType() != null && binding.getBindingMode() != null) {
+                // okay we have binding mode and in/out type defined - then we can infer consume/produces
+                String mode = binding.getBindingMode();
+                if ("json".equals(mode)) {
+                    if (binding.getConsumes() == null && binding.getType() != null) {
+                        binding.setConsumes("application/json");
+                    }
+                    if (binding.getProduces() == null && binding.getOutType() != null) {
+                        binding.setProduces("application/json");
+                    }
+                } else if ("xml".equals(mode)) {
+                    if (binding.getConsumes() == null && binding.getType() != null) {
+                        binding.setConsumes("application/xml");
+                    }
+                    if (binding.getProduces() == null && binding.getOutType() != null) {
+                        binding.setProduces("application/xml");
+                    }
+                } else if ("json_xml".equals(mode)) {
+                    if (binding.getConsumes() == null && binding.getType() != null) {
+                        binding.setConsumes("application/json;application/xml");
+                    }
+                    if (binding.getProduces() == null && binding.getOutType() != null) {
+                        binding.setProduces("application/json;application/xml");
+                    }
+                }
             }
             if (verb.getSkipBindingOnErrorCode() != null) {
-                binding.setSkipBindingOnErrorCode(verb.getSkipBindingOnErrorCode());
+                binding.setSkipBindingOnErrorCode(parseText(camelContext, verb.getSkipBindingOnErrorCode()));
             } else {
                 binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
             }
             if (verb.getClientRequestValidation() != null) {
-                binding.setClientRequestValidation(verb.getClientRequestValidation());
+                binding.setClientRequestValidation(parseText(camelContext, verb.getClientRequestValidation()));
             } else {
                 binding.setClientRequestValidation(getClientRequestValidation());
             }
             if (verb.getEnableCORS() != null) {
-                binding.setEnableCORS(verb.getEnableCORS());
+                binding.setEnableCORS(parseText(camelContext, verb.getEnableCORS()));
             } else {
                 binding.setEnableCORS(getEnableCORS());
             }
             if (verb.getEnableNoContentResponse() != null) {
-                binding.setEnableNoContentResponse(verb.getEnableNoContentResponse());
+                binding.setEnableNoContentResponse(parseText(camelContext, verb.getEnableNoContentResponse()));
             } else {
                 binding.setEnableNoContentResponse(getEnableNoContentResponse());
             }
@@ -947,7 +1146,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 RestParamType type = param.getType();
                 if ((RestParamType.query == type || RestParamType.header == type)
                         && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
-                    binding.addDefaultValue(param.getName(), param.getDefaultValue());
+                    binding.addDefaultValue(param.getName(), parseText(camelContext, param.getDefaultValue()));
+                }
+                // register all allowed values for the query and header parameters
+                if ((RestParamType.query == type || RestParamType.header == type)
+                        && param.getAllowableValues() != null) {
+                    binding.addAllowedValue(param.getName(), parseText(camelContext, param.getAllowableValuesAsCommaString()));
                 }
                 // register which parameters are required
                 Boolean required = param.getRequired();
@@ -966,18 +1170,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // append options
             Map<String, Object> options = new HashMap<>();
-            // verb takes precedence over configuration on rest
-            if (verb.getConsumes() != null) {
-                options.put("consumes", verb.getConsumes());
-            } else if (getConsumes() != null) {
-                options.put("consumes", getConsumes());
+            if (binding.getConsumes() != null) {
+                options.put("consumes", binding.getConsumes());
             }
-            if (verb.getProduces() != null) {
-                options.put("produces", verb.getProduces());
-            } else if (getProduces() != null) {
-                options.put("produces", getProduces());
+            if (binding.getProduces() != null) {
+                options.put("produces", binding.getProduces());
             }
-
             // append optional type binding information
             String inType = binding.getType();
             if (inType != null) {
@@ -987,7 +1185,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (outType != null) {
                 options.put("outType", outType);
             }
-
             if (component != null && !component.isEmpty()) {
                 options.put("consumerComponentName", component);
             }
@@ -999,27 +1196,21 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // description 2) verb description 3) rest description
             // this allows end users to define general descriptions and override
             // then per to/route or verb
-            String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
-            if (description == null) {
-                description = verb.getDescriptionText();
-            }
-            if (description == null) {
-                description = getDescriptionText();
-            }
+            final String description = getDescription(verb, route);
             if (description != null) {
-                options.put("description", description);
+                options.put("description", parseText(camelContext, description));
             }
 
-            String path = getPath();
+            String path = parseText(camelContext, getPath());
             String s1 = FileUtil.stripTrailingSeparator(path);
-            String s2 = FileUtil.stripLeadingSeparator(verb.getPath());
+            String s2 = FileUtil.stripLeadingSeparator(parseText(camelContext, verb.getPath()));
             String allPath;
             if (s1 != null && s2 != null) {
                 allPath = s1 + "/" + s2;
             } else if (path != null) {
                 allPath = path;
             } else {
-                allPath = verb.getPath();
+                allPath = parseText(camelContext, verb.getPath());
             }
 
             // each {} is a parameter (url templating)
@@ -1037,7 +1228,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
 
             if (verb.getType() != null) {
-                String bodyType = verb.getType();
+                String bodyType = parseText(camelContext, verb.getType());
                 if (bodyType.endsWith("[]")) {
                     bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
                 }
@@ -1052,7 +1243,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
 
             // create the from endpoint uri which is using the rest component
-            String from = buildFromUri(verb);
+            String from = buildFromUri(camelContext, verb);
 
             // rebuild uri without these query parameters
             if (toRemove != null && !toRemove.isEmpty()) {
@@ -1086,6 +1277,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             route.setRestDefinition(this);
             answer.add(route);
         }
+    }
+
+    private String getDescription(VerbDefinition verb, RouteDefinition route) {
+        String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
+        if (description == null) {
+            description = verb.getDescriptionText();
+        }
+        if (description == null) {
+            description = getDescriptionText();
+        }
+        return description;
     }
 
     private Set<String> uriTemplating(
@@ -1136,16 +1338,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return params;
     }
 
-    private String buildUri(VerbDefinition verb) {
+    private String buildUri(CamelContext camelContext, VerbDefinition verb) {
+        String answer;
         if (path != null && verb.getPath() != null) {
-            return path + ":" + verb.getPath();
+            answer = path + ":" + verb.getPath();
         } else if (path != null) {
-            return path;
+            answer = path;
         } else if (verb.getPath() != null) {
-            return verb.getPath();
+            answer = verb.getPath();
         } else {
-            return "";
+            answer = "";
         }
+        return parseText(camelContext, answer);
     }
 
     private ParamDefinition findParam(VerbDefinition verb, String name) {

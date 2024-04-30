@@ -41,4 +41,10 @@ public @interface PropertyInject {
      */
     String defaultValue() default "";
 
+    /**
+     * Used for splitting the property value into an array/list of values. For example to use comma to separate the
+     * values.
+     */
+    String separator() default "";
+
 }

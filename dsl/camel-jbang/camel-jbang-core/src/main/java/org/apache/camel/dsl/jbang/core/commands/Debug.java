@@ -91,9 +91,9 @@ public class Debug extends Run {
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
                         description = "Show exchange variables in traced messages")
-    boolean showExchangeVariables;
+    boolean showExchangeVariables = true;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in traced messages")
@@ -251,7 +251,7 @@ public class Debug extends Run {
         cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
         cmds.add("--prop=camel.debug.singleStepIncludeStartEnd=true");
 
-        cmds.add(0, "camel");
+        addCamelCommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
@@ -407,14 +407,18 @@ public class Debug extends Run {
                         lines = jo.getCollection("history");
                         if (lines != null) {
                             for (JsonObject line : lines) {
-                                History history = new History();
-                                history.routeId = line.getString("routeId");
-                                history.nodeId = line.getString("nodeId");
-                                history.elapsed = line.getLongOrDefault("elapsed", 0);
-                                history.location = line.getString("location");
-                                history.line = line.getIntegerOrDefault("line", -1);
-                                history.code = line.getString("code");
-                                row.history.add(history);
+                                // only include if accepted for debugging
+                                boolean accept = line.getBooleanOrDefault("acceptDebugger", true);
+                                if (accept) {
+                                    History history = new History();
+                                    history.routeId = line.getString("routeId");
+                                    history.nodeId = line.getString("nodeId");
+                                    history.elapsed = line.getLongOrDefault("elapsed", 0);
+                                    history.location = line.getString("location");
+                                    history.line = line.getIntegerOrDefault("line", -1);
+                                    history.code = line.getString("code");
+                                    row.history.add(history);
+                                }
                             }
                         }
                         rows.add(row);
@@ -478,8 +482,10 @@ public class Debug extends Run {
         List<Panel> panel = new ArrayList<>();
         if (!row.code.isEmpty()) {
             String loc = StringHelper.beforeLast(row.location, ":", row.location);
-            if (loc.length() < 72) {
+            if (loc != null && loc.length() < 72) {
                 loc = loc + " ".repeat(72 - loc.length());
+            } else {
+                loc = "";
             }
             panel.add(Panel.withCode("Source: " + loc).andHistory("History"));
             panel.add(Panel.withCode("-".repeat(80))

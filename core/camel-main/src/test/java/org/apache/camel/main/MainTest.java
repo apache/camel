@@ -127,7 +127,7 @@ public class MainTest {
     }
 
     @Test
-    public void testOptionalProperties() throws Exception {
+    public void testOptionalProperties() {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
@@ -141,7 +141,22 @@ public class MainTest {
     }
 
     @Test
-    public void testDisableTracing() throws Exception {
+    public void testProfile() {
+        // lets make a simple route
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+        main.configure().withProfile("prod");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        // should load application-prod.properties from classpath
+        assertEquals("Production World", camelContext.resolvePropertyPlaceholders("{{hello}}"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testDisableTracing() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
@@ -153,7 +168,7 @@ public class MainTest {
     }
 
     @Test
-    public void testLifecycleConfiguration() throws Exception {
+    public void testLifecycleConfiguration() {
         AtomicInteger durationMaxMessages = new AtomicInteger();
 
         Main main = new Main() {
@@ -194,7 +209,7 @@ public class MainTest {
 
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").to("mock:results");
         }
     }

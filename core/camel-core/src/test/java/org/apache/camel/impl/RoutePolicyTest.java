@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RoutePolicyTest extends ContextTestSupport {
-    private MyRoutPolicy routePolicy = new MyRoutPolicy();
+    private final MyRoutPolicy routePolicy = new MyRoutPolicy();
 
     @Test
-    public void testStartCalledWhenCamelStarts() throws Exception {
+    public void testStartCalledWhenCamelStarts() {
         assertEquals(1, routePolicy.getStartCount());
     }
 
@@ -84,7 +84,7 @@ public class RoutePolicyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRemoveCalledWhenCamelIsStopped() throws Exception {
+    public void testRemoveCalledWhenCamelIsStopped() {
         assertTrue(context.getStatus().isStarted());
         assertEquals(0, routePolicy.getRemoveCount());
         context.stop();
@@ -93,21 +93,21 @@ public class RoutePolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").routePolicy(routePolicy).to("mock:result");
             }
         };
     }
 
     private static class MyRoutPolicy implements RoutePolicy {
-        private AtomicInteger removeCounter = new AtomicInteger();
-        private AtomicInteger startCounter = new AtomicInteger();
-        private AtomicInteger stopCounter = new AtomicInteger();
-        private AtomicInteger suspendCounter = new AtomicInteger();
-        private AtomicInteger resumeCounter = new AtomicInteger();
+        private final AtomicInteger removeCounter = new AtomicInteger();
+        private final AtomicInteger startCounter = new AtomicInteger();
+        private final AtomicInteger stopCounter = new AtomicInteger();
+        private final AtomicInteger suspendCounter = new AtomicInteger();
+        private final AtomicInteger resumeCounter = new AtomicInteger();
 
         @Override
         public void onRemove(Route route) {

@@ -77,7 +77,8 @@ final class InternalRouteStartupManager {
         camelContext.setStartingRoutes(true);
         try {
             for (RouteService routeService : routeServices.values()) {
-                StartupStep step = camelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
+                StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(Route.class,
+                        routeService.getId(),
                         "Init Route");
                 try {
                     LOG.debug("Initializing route id: {}", routeService.getId());
@@ -88,7 +89,7 @@ final class InternalRouteStartupManager {
                     routeService.setUp();
                 } finally {
                     setupRoute.remove();
-                    camelContext.getStartupStepRecorder().endStep(step);
+                    camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
                 }
             }
         } finally {
@@ -107,7 +108,7 @@ final class InternalRouteStartupManager {
      * @param  addingRoutes   whether we are adding new routes
      * @throws Exception      is thrown if error starting routes
      */
-    protected void doStartOrResumeRoutes(
+    public void doStartOrResumeRoutes(
             AbstractCamelContext camelContext,
             Map<String, RouteService> routeServices, boolean checkClash, boolean startConsumer, boolean resumeConsumer,
             boolean addingRoutes)
@@ -117,23 +118,7 @@ final class InternalRouteStartupManager {
             // filter out already started routes
             Map<String, RouteService> filtered = new LinkedHashMap<>();
             for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-                boolean startable = false;
-
-                Consumer consumer = entry.getValue().getRoute().getConsumer();
-                if (consumer instanceof SuspendableService) {
-                    // consumer could be suspended, which is not reflected in
-                    // the BaseRouteService status
-                    startable = ((SuspendableService) consumer).isSuspended();
-                }
-
-                if (!startable && consumer instanceof StatefulService) {
-                    // consumer could be stopped, which is not reflected in the
-                    // BaseRouteService status
-                    startable = ((StatefulService) consumer).getStatus().isStartable();
-                } else if (!startable) {
-                    // no consumer so use state from route service
-                    startable = entry.getValue().getStatus().isStartable();
-                }
+                final boolean startable = isStartable(entry);
 
                 if (startable) {
                     filtered.put(entry.getKey(), entry.getValue());
@@ -146,6 +131,27 @@ final class InternalRouteStartupManager {
         } finally {
             camelContext.setStartingRoutes(false);
         }
+    }
+
+    private static boolean isStartable(Map.Entry<String, RouteService> entry) {
+        boolean startable = false;
+
+        Consumer consumer = entry.getValue().getRoute().getConsumer();
+        if (consumer instanceof SuspendableService) {
+            // consumer could be suspended, which is not reflected in
+            // the BaseRouteService status
+            startable = ((SuspendableService) consumer).isSuspended();
+        }
+
+        if (!startable && consumer instanceof StatefulService) {
+            // consumer could be stopped, which is not reflected in the
+            // BaseRouteService status
+            startable = ((StatefulService) consumer).getStatus().isStartable();
+        } else if (!startable) {
+            // no consumer so use state from route service
+            startable = entry.getValue().getStatus().isStartable();
+        }
+        return startable;
     }
 
     /**
@@ -162,7 +168,7 @@ final class InternalRouteStartupManager {
      * @param  routeServices  the routes
      * @throws Exception      is thrown if error starting the routes
      */
-    protected synchronized void safelyStartRouteServices(
+    private synchronized void safelyStartRouteServices(
             AbstractCamelContext camelContext,
             boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
             Collection<RouteService> routeServices)
@@ -298,7 +304,8 @@ final class InternalRouteStartupManager {
             // will then be prepared in time before we start inputs which will
             // consume messages to be routed
             RouteService routeService = entry.getValue().getRouteService();
-            StartupStep step = camelContext.getStartupStepRecorder().beginStep(Route.class, routeService.getId(),
+            StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(Route.class,
+                    routeService.getId(),
                     "Warump Route");
             try {
                 LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
@@ -308,7 +315,7 @@ final class InternalRouteStartupManager {
                 routeService.warmUp();
             } finally {
                 setupRoute.remove();
-                camelContext.getStartupStepRecorder().endStep(step);
+                camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
             }
         }
     }
@@ -350,7 +357,8 @@ final class InternalRouteStartupManager {
                 continue;
             }
 
-            StartupStep step = camelContext.getStartupStepRecorder().beginStep(Route.class, route.getRouteId(),
+            StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(Route.class,
+                    route.getRouteId(),
                     "Start Route");
 
             // do some preparation before starting the consumer on the route
@@ -451,7 +459,7 @@ final class InternalRouteStartupManager {
                 }
             }
 
-            camelContext.getStartupStepRecorder().endStep(step);
+            camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
         }
     }
 

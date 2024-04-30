@@ -68,10 +68,10 @@ public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends Conte
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("C").startupOrder(3).to("log:foo").to("direct:bar");
 
                 from("direct:baz").routeId("A").startupOrder(1).to("log:baz").to("mock:result");

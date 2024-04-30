@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BrowseTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BrowseTest.class);
 
-    protected Object body1 = "one";
-    protected Object body2 = "two";
+    protected final Object body1 = "one";
+    protected final Object body2 = "two";
 
     @Test
     public void testListEndpoints() throws Exception {
@@ -54,9 +54,9 @@ public class BrowseTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("browse:foo").to("browse:bar");
             }
         };

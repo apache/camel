@@ -39,15 +39,15 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("renameissue?noop=false&initialDelay=0&delay=10"))
                         .setProperty("PartitionID")
                         .simple("${file:name}").convertBodyTo(String.class)
                         .to(ExchangePattern.InOut, "direct:source").process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 log.info("The exchange's IN body as String is {}", exchange.getIn().getBody(String.class));
                             }
                         }).to("mock:result");

@@ -20,6 +20,7 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
@@ -36,7 +37,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("source")
+@DevConsole(name = "source", description = "Dump route source code")
 public class SourceDevConsole extends AbstractDevConsole {
 
     /**
@@ -50,7 +51,7 @@ public class SourceDevConsole extends AbstractDevConsole {
     public static final String LIMIT = "limit";
 
     public SourceDevConsole() {
-        super("camel", "source", "Source", "Display route source code");
+        super("camel", "source", "Source", "Dump route source code");
     }
 
     @Override
@@ -88,7 +89,9 @@ public class SourceDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
                 }
                 if (!code.isEmpty()) {
+                    sb.append("\n");
                     sb.append(code);
+                    sb.append("\n\n");
                 }
             }
             sb.append("\n");
@@ -138,6 +141,7 @@ public class SourceDevConsole extends AbstractDevConsole {
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
             routes.stream()
                     .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                    .filter(Objects::nonNull)
                     .filter(r -> accept(r, filter))
                     .filter(r -> accept(r, subPath))
                     .sorted(SourceDevConsole::sort)

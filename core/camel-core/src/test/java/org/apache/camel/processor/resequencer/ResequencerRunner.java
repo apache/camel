@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 public class ResequencerRunner<E> extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(ResequencerRunner.class);
 
-    private ResequencerEngineSync<E> resequencer;
+    private final ResequencerEngineSync<E> resequencer;
 
-    private long interval;
+    private final long interval;
 
     private boolean cancelRequested;
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
 
-    private static volatile int counter;
+    private static final LongAdder counter = new LongAdder();
 
     @Test
     public void testDLCNoRedelivery() throws Exception {
@@ -41,14 +43,14 @@ public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, counter, "Only the original attempt");
+        assertEquals(1, counter.intValue(), "Only the original attempt");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(0));
 
                 from("direct:start").to("mock:a").process(new MyFailProcessor()).to("mock:b");
@@ -59,8 +61,8 @@ public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
     public static final class MyFailProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
-            counter++;
+        public void process(Exchange exchange) {
+            counter.increment();
             throw new IllegalArgumentException("Forced");
         }
     }

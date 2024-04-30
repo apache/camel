@@ -127,7 +127,6 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         // should be prepared, check parents has been set
-        assertNotNull("Parent should be set on outputs");
         route = context.getRouteDefinition("foo");
         for (ProcessorDefinition<?> output : route.getOutputs()) {
             assertNotNull(output.getParent(), "Parent should be set on output");
@@ -148,7 +147,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertTrue(context.getRouteController().getRouteStatus("foo").isStarted(), "Route should be started");
 
         getMockEndpoint("mock:foo").whenExchangeReceived(2, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setException(new IllegalArgumentException("Damn"));
             }
         });

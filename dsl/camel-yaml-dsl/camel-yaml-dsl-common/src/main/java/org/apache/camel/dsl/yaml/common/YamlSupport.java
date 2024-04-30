@@ -178,6 +178,9 @@ public final class YamlSupport {
                         // steps must be set on the route
                         setSteps(route, val);
                         break;
+                    case "variableReceive":
+                        // is handled in FromDefinitionSerializer
+                        break;
                     default:
                         throw new UnsupportedFieldException(val, key);
                 }

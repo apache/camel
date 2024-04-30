@@ -23,8 +23,13 @@ public final class MainConstants {
     public static final String OVERRIDE_PROPERTIES_LOCATION = "camel.main.override-properties-location";
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
     public static final String PLATFORM_HTTP_SERVER = "platform-http-server";
+    public static final String PROFILE = "camel.main.profile";
 
     private MainConstants() {
+    }
+
+    static String profilePropertyPlaceholderLocation(String profile) {
+        return "classpath:application-" + profile + ".properties;optional=true";
     }
 
 }

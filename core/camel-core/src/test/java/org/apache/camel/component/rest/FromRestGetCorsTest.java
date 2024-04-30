@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FromRestGetCorsTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
@@ -44,7 +44,7 @@ public class FromRestGetCorsTest extends ContextTestSupport {
 
         Exchange out = template.request("seda:post-say-bye", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("I was here");
             }
         });
@@ -63,10 +63,10 @@ public class FromRestGetCorsTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().host("localhost").enableCORS(true);
 
                 rest("/say/hello").get().to("direct:hello");

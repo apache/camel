@@ -34,7 +34,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnrichDefinition extends ExpressionNode implements AggregationStrategyAwareDefinition<EnrichDefinition> {
+public class EnrichDefinition extends ExpressionNode
+        implements AggregationStrategyAwareDefinition<EnrichDefinition>, Copyable {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
@@ -72,11 +73,27 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
     private String autoStartComponents;
 
     public EnrichDefinition() {
-        this(null);
+        this((AggregationStrategy) null);
     }
 
     public EnrichDefinition(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategyBean = aggregationStrategy;
+    }
+
+    protected EnrichDefinition(EnrichDefinition source) {
+        super(source);
+        this.aggregationStrategyBean = source.aggregationStrategyBean;
+        this.variableSend = source.variableSend;
+        this.variableReceive = source.variableReceive;
+        this.aggregationStrategy = source.aggregationStrategy;
+        this.aggregationStrategyMethodName = source.aggregationStrategyMethodName;
+        this.aggregationStrategyMethodAllowNull = source.aggregationStrategyMethodAllowNull;
+        this.aggregateOnException = source.aggregateOnException;
+        this.shareUnitOfWork = source.shareUnitOfWork;
+        this.cacheSize = source.cacheSize;
+        this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
+        this.allowOptimisedComponents = source.allowOptimisedComponents;
+        this.autoStartComponents = source.autoStartComponents;
     }
 
     @Override
@@ -378,5 +395,10 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
 
     public void setAutoStartComponents(String autoStartComponents) {
         this.autoStartComponents = autoStartComponents;
+    }
+
+    @Override
+    public EnrichDefinition copy() {
+        return new EnrichDefinition(this);
     }
 }

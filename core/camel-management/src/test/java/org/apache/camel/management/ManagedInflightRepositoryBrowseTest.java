@@ -42,10 +42,10 @@ public class ManagedInflightRepositoryBrowseTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getInflightRepository().setInflightBrowseEnabled(true);
 
                 from("direct:start").routeId("foo")

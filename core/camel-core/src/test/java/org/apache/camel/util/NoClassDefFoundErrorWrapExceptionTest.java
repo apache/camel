@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NoClassDefFoundErrorWrapExceptionTest extends ContextTestSupport {
 
     @Test
-    public void testNoClassDef() throws Exception {
+    public void testNoClassDef() {
         try {
             template.requestBody("seda:start", "Hello World");
             fail("Should throw exception");
@@ -46,10 +46,10 @@ public class NoClassDefFoundErrorWrapExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").process(new ProcessorA()).process(new ProcessorB()).process(new ProcessorFail());
             }
         };

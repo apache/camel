@@ -107,7 +107,7 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
                     Counter counter = (Counter) meter;
                     int expectedCount;
                     String routeId = counter.getId().getTag("routeId");
-                    if (routeId.equals("failureHandled")) {
+                    if (routeId.equals("failureHandled") || routeId.equals("multicast")) {
                         expectedCount = count;
                     } else {
                         expectedCount = 0;

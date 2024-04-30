@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "milvus:embeddings",
+    "title": "Milvus (Embeddings)",
+    "description": "Prepares the message to become an object writable by Milvus component",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.milvus.transform.MilvusEmbeddingsDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-milvus",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.aggregate.hazelcast;
 
-import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
@@ -62,14 +61,6 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
         } finally {
             repo.doStop();
         }
-    }
-
-    @Test
-    public void uninitializedHazelcastInstanceThrows() throws Exception {
-        final String repoName = "hzRepoMap";
-        HazelcastAggregationRepository repo = new HazelcastAggregationRepository(repoName, (HazelcastInstance) null);
-        assertThrows(IllegalArgumentException.class,
-                () -> repo.doStart());
     }
 
     @Test

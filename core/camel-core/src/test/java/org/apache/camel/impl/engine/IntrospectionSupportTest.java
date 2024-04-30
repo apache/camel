@@ -256,7 +256,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetProperties() throws Exception {
+    public void testGetProperties() {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
         bean.setPrice(10.0);
@@ -273,7 +273,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAnotherGetProperties() throws Exception {
+    public void testAnotherGetProperties() {
         AnotherExampleBean bean = new AnotherExampleBean();
         bean.setId("123");
         bean.setName("Claus");
@@ -300,7 +300,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetPropertiesOptionPrefix() throws Exception {
+    public void testGetPropertiesOptionPrefix() {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
         bean.setPrice(10.0);
@@ -317,7 +317,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGetPropertiesSkipNull() throws Exception {
+    public void testGetPropertiesSkipNull() {
         ExampleBean bean = new ExampleBean();
         bean.setName("Claus");
         bean.setPrice(10.0);
@@ -416,10 +416,6 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testGetPropertyGetter() throws Exception {
-        ExampleBean bean = new ExampleBean();
-        bean.setName("Claus");
-        bean.setPrice(10.0);
-
         Method name = getPropertyGetter(ExampleBean.class, "name");
         assertEquals("getName", name.getName());
 
@@ -432,10 +428,6 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testGetPropertySetter() throws Exception {
-        ExampleBean bean = new ExampleBean();
-        bean.setName("Claus");
-        bean.setPrice(10.0);
-
         Method name = getPropertySetter(ExampleBean.class, "name");
         assertEquals("setName", name.getName());
 
@@ -523,7 +515,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFindSetterMethodsOrderedByParameterType() throws Exception {
+    public void testFindSetterMethodsOrderedByParameterType() {
         List<Method> setters = findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean",
                 false, false, false);
 

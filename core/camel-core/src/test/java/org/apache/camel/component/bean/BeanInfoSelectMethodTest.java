@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BeanInfoSelectMethodTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }
@@ -47,7 +47,7 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
     public void testFailure() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Failure");
         template.send("direct:b", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello");
                 exchange.setException(new IllegalArgumentException("Forced by unit test"));
             }
@@ -56,10 +56,10 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").logStackTrace(false).maximumRedeliveries(3));
 
                 onException(Exception.class).handled(true).bean("foo", "handleFailure").to("mock:result");

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LoadBalancerTest {
 
-    private static StaticServiceDiscovery serviceDiscovery = new StaticServiceDiscovery();
+    private static final StaticServiceDiscovery serviceDiscovery = new StaticServiceDiscovery();
 
     @BeforeAll
     public static void setUp() {
@@ -87,7 +87,7 @@ public class LoadBalancerTest {
     }
 
     @Test
-    public void testNoActiveServices() throws Exception {
+    public void testNoActiveServices() {
         DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         DefaultCamelContext camelContext = new DefaultCamelContext();
         loadBalancer.setCamelContext(camelContext);

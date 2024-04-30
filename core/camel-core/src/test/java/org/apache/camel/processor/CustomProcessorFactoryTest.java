@@ -63,10 +63,10 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setBody().constant("body not altered").to("mock:foo");
 
                 from("direct:foo").split(body()).setBody().constant("body not altered").to("mock:split").end()

@@ -30,7 +30,7 @@ public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDe
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter();
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
         final PathVisitor<RestsDefinition> restDslStatement
-                = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
+                = new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
 
         for (String name : document.getPaths().getItemNames()) {
             OpenApiPathItem item = document.getPaths().getItem(name);

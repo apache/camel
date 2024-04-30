@@ -53,8 +53,8 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("reverse-strategy", ExceptionPolicyStrategy.class, new DefaultExceptionPolicyStrategy() {
             @Override
             public Iterable<Throwable> createExceptionIterable(Throwable exception) {
@@ -91,9 +91,9 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalStateException.class).maximumRedeliveries(1).redeliveryDelay(0)
                         .to(ERROR_USER_QUEUE);
 
@@ -101,7 +101,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
                         .to(ERROR_QUEUE);
 
                 from("direct:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String s = exchange.getIn().getBody(String.class);
                         if ("Hello Camel".equals(s)) {
                             throw new MyUserException("Forced for testing", new IOException("Uh oh!"));

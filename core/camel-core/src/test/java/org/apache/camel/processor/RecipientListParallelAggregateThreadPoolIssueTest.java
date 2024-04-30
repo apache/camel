@@ -50,10 +50,10 @@ public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getExecutorServiceManager().setThreadNamePattern("#counter#");
 
                 from("direct:start").recipientList(header("foo")).parallelProcessing();

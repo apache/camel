@@ -51,7 +51,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
         assertEquals(1, set.size());
         ObjectName on = set.iterator().next();
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals(true, registered, "Should be registered");
+        assertTrue(registered, "Should be registered");
 
         // check the starting endpoint uri
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
@@ -147,7 +147,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(
                 10, 1000, 5000,
                 List.of(IOException.class, UnsupportedOperationException.class));
@@ -155,7 +155,7 @@ public class ManagedThrottlingExceptionRoutePolicyTest extends ManagementTestSup
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("testRoute")
                         .routePolicy(policy)
                         .to("log:foo")

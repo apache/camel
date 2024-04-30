@@ -61,10 +61,10 @@ public class ManagedCamelContextAutoStartupTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setAutoStartup(false);
 
                 from("direct:foo").routeId("foo").transform(constant("Bye World"));

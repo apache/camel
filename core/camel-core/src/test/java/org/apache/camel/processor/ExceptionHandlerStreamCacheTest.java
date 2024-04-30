@@ -99,7 +99,7 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
                 onException(Exception.class).handled(true).to("mock:exception");
 
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String message = exchange.getIn().getBody(String.class);
 
                         if (message.contains("error")) {

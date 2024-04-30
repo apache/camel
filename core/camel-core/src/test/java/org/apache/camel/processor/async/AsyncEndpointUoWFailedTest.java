@@ -35,7 +35,7 @@ public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private MySynchronization sync = new MySynchronization();
+    private final MySynchronization sync = new MySynchronization();
 
     @Test
     public void testAsyncEndpoint() throws Exception {
@@ -62,19 +62,19 @@ public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                         exchange.getExchangeExtension().addOnCompletion(sync);
                     }
                 }).to("mock:before").to("log:before").to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("log:after").to("mock:after").throwException(new IllegalArgumentException("Damn")).to("mock:result");
@@ -84,8 +84,8 @@ public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
 
     private static class MySynchronization extends SynchronizationAdapter {
 
-        private AtomicInteger onComplete = new AtomicInteger();
-        private AtomicInteger onFailure = new AtomicInteger();
+        private final AtomicInteger onComplete = new AtomicInteger();
+        private final AtomicInteger onFailure = new AtomicInteger();
 
         @Override
         public void onComplete(Exchange exchange) {

@@ -31,7 +31,7 @@ public class BindToRegistryBeanPostProcessorTest extends ContextTestSupport {
 
     // field
     @BindToRegistry(beanPostProcess = true)
-    private FooService foo = new FooService();
+    private final FooService foo = new FooService();
 
     // method
     @BindToRegistry(beanPostProcess = true)

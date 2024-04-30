@@ -64,16 +64,16 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
     private final class MyRedeliverProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             counter.incrementAndGet();
         }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:deadLetter").allowRedeliveryWhileStopping(false)
                         .onRedelivery(new MyRedeliverProcessor()).maximumRedeliveries(200)
                         .redeliveryDelay(10).retryAttemptedLogLevel(LoggingLevel.INFO));

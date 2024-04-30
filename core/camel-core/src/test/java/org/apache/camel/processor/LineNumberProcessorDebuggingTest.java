@@ -35,7 +35,7 @@ public class LineNumberProcessorDebuggingTest {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .process(new MyProcessor());
             }
@@ -75,7 +75,7 @@ public class LineNumberProcessorDebuggingTest {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getMessage().setBody(location + ":" + lineNumber);
         }
     }

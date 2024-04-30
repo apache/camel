@@ -48,10 +48,10 @@ public class TimerNegativeNoRepeatCountDelayTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer://negativeDelay?delay=-1&repeatCount=10&includeMetadata=true").routeId("routeTest")
                         .to("mock:result");
             }

@@ -43,7 +43,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").onException(Throwable.class).to("mock:c").log("onException")
                         .throwException(new NullPointerException("A NPE error here")).end().to("mock:a")
                         .log("test").throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
@@ -72,7 +72,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").onException(Throwable.class).handled(true).log("onException")
                         .throwException(new NullPointerException("A NPE error here")).end().to("mock:a")
                         .log("test").throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
@@ -101,7 +101,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").onException(Throwable.class).to("mock:c").log("onException").to("direct:error").end()
                         .to("mock:a").log("test")
                         .throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
@@ -135,7 +135,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").onException(Throwable.class).handled(true).to("mock:c").to("direct:error").end()
                         .to("mock:a").log("test")
                         .throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
@@ -169,7 +169,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").onException(Throwable.class).to("mock:c").log("onException").to("direct:error").end()
                         .to("mock:a").log("test")
                         .throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");
@@ -198,7 +198,7 @@ public class OnExceptionRouteScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").onException(Throwable.class).handled(true).to("mock:c").log("onException")
                         .to("direct:error").end().to("mock:a").log("test")
                         .throwException(new IllegalStateException("Bad state")).to("log:test").to("mock:b");

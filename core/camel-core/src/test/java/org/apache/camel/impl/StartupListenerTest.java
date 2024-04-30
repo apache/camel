@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StartupListenerTest extends ContextTestSupport {
 
-    private MyStartupListener my = new MyStartupListener();
+    private final MyStartupListener my = new MyStartupListener();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -41,7 +41,7 @@ public class StartupListenerTest extends ContextTestSupport {
         private boolean alreadyStarted;
 
         @Override
-        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
             invoked++;
             this.alreadyStarted = alreadyStarted;
 
@@ -99,10 +99,10 @@ public class StartupListenerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").to("mock:result");
             }
         };

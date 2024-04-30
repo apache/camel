@@ -89,7 +89,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced")
     private String timezone;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.component.jackson.SchemaResolver")
     private String schemaResolver;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")

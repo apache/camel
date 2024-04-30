@@ -28,6 +28,8 @@ import java.util.stream.IntStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +75,7 @@ public class MasterComponentTest {
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
-            context.setName("context-" + id);
+            context.getCamelContextExtension().setName("context-" + id);
             context.addService(service);
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -87,8 +89,8 @@ public class MasterComponentTest {
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500));
-            context.start();
+            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+                    .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
 
             contextLatch.await();
 

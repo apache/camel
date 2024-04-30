@@ -34,7 +34,7 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
     public void testPropertiesComponent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:result");
             }
         });
@@ -51,8 +51,8 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         // bind something else as properties, but this should not cause Camel to
         // fail start
         jndi.bind("properties", this);

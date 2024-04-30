@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-twilio</artifactId>
@@ -301,24 +301,6 @@
                                     </fromJavasource>
                                 </api>
                                 <!-- Package: com.twilio.rest.api.v2010.account.call -->
-                                <api>
-                                    <apiName>call-feedback</apiName>
-                                    <classPrefix>Call</classPrefix>
-                                    <proxyClass>com.twilio.rest.api.v2010.account.call.Feedback</proxyClass>
-                                    <fromJavasource>
-                                        <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
-                                        <includeStaticMethods>true</includeStaticMethods>
-                                    </fromJavasource>
-                                </api>
-                                <api>
-                                    <apiName>call-feedback-summary</apiName>
-                                    <classPrefix>Call</classPrefix>
-                                    <proxyClass>com.twilio.rest.api.v2010.account.call.FeedbackSummary</proxyClass>
-                                    <fromJavasource>
-                                        <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
-                                        <includeStaticMethods>true</includeStaticMethods>
-                                    </fromJavasource>
-                                </api>
                                 <api>
                                     <apiName>call-notification</apiName>
                                     <classPrefix>Call</classPrefix>

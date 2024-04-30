@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class StartingRoutesErrorReportedTest extends ContextTestSupport {
 
     @Test
-    public void testInvalidFrom() throws Exception {
+    public void testInvalidFrom() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start?foo=bar").routeId("route1").to("mock:result");
                 }
             });
@@ -43,11 +43,11 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInvalidTo() throws Exception {
+    public void testInvalidTo() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").routeId("route2").to("direct:result?foo=bar");
                 }
             });
@@ -60,11 +60,11 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMaskPassword() throws Exception {
+    public void testMaskPassword() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("stub:foo?password=secret&beer=yes").routeId("route2").to("direct:result?foo=bar");
                 }
             });
@@ -77,11 +77,11 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInvalidBean() throws Exception {
+    public void testInvalidBean() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").routeId("route3").to("mock:foo").bean("");
                 }
             });
@@ -93,11 +93,11 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testUnavailableDataFormatOnClasspath() throws Exception {
+    public void testUnavailableDataFormatOnClasspath() {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start").routeId("route3").unmarshal().jaxb().log("Will never get here");
                 }
             });

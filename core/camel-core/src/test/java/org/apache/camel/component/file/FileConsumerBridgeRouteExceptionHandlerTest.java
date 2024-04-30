@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupport {
 
-    private MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
+    private final MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
 
     @Test
     public void testCustomExceptionHandler() throws Exception {
@@ -49,18 +49,18 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myReadLockStrategy", myReadLockStrategy);
         return jndi;
     }
 
     // START SNIPPET: e2
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // to handle any IOException being thrown
                 onException(IOException.class).handled(true).log("IOException occurred due: ${exception.message}").transform()
                         .simple("Error ${exception.message}")
@@ -84,8 +84,7 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
         private int counter;
 
         @Override
-        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint)
-                throws Exception {
+        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
             // noop
         }
 
@@ -106,22 +105,19 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
 
         @Override
         public void releaseExclusiveReadLockOnAbort(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) {
             // noop
         }
 
         @Override
         public void releaseExclusiveReadLockOnRollback(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) {
             // noop
         }
 
         @Override
         public void releaseExclusiveReadLockOnCommit(
-                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-                throws Exception {
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) {
             // noop
         }
 

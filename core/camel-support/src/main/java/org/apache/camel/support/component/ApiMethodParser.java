@@ -207,24 +207,7 @@ public abstract class ApiMethodParser<T> {
         result = processResults(result);
 
         // check that argument names have the same type across methods
-        Map<String, Class<?>> allArguments = new HashMap<>();
-        for (ApiMethodModel model : result) {
-            for (ApiMethodArg argument : model.getArguments()) {
-                String name = argument.getName();
-                Class<?> argClass = allArguments.get(name);
-                Class<?> type = argument.getType();
-                if (argClass == null) {
-                    allArguments.put(name, type);
-                } else {
-                    if (argClass != type) {
-                        throw new IllegalArgumentException(
-                                "Argument [" + name
-                                                           + "] is used in multiple methods with different types "
-                                                           + argClass.getCanonicalName() + ", " + type.getCanonicalName());
-                    }
-                }
-            }
-        }
+        final Map<String, Class<?>> allArguments = extractArguments(result);
         allArguments.clear();
 
         result.sort(new Comparator<>() {
@@ -274,6 +257,28 @@ public abstract class ApiMethodParser<T> {
             model.uniqueName = uniqueName;
         }
         return result;
+    }
+
+    private static Map<String, Class<?>> extractArguments(List<ApiMethodModel> result) {
+        Map<String, Class<?>> allArguments = new HashMap<>();
+        for (ApiMethodModel model : result) {
+            for (ApiMethodArg argument : model.getArguments()) {
+                String name = argument.getName();
+                Class<?> argClass = allArguments.get(name);
+                Class<?> type = argument.getType();
+                if (argClass == null) {
+                    allArguments.put(name, type);
+                } else {
+                    if (argClass != type) {
+                        throw new IllegalArgumentException(
+                                "Argument [" + name
+                                                           + "] is used in multiple methods with different types "
+                                                           + argClass.getCanonicalName() + ", " + type.getCanonicalName());
+                    }
+                }
+            }
+        }
+        return allArguments;
     }
 
     protected List<ApiMethodModel> processResults(List<ApiMethodModel> result) {

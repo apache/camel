@@ -34,8 +34,8 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
     private static int tries;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("fail", new MyFailBean());
         return jndi;
     }
@@ -44,7 +44,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
     public void testRecipientListOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException();
@@ -69,7 +69,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(3).end().to("mock:a")
                         .recipientList(header("foo"))
                         .aggregationStrategy(new MyAggregationStrategy()).parallelProcessing();
@@ -100,7 +100,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException();
@@ -131,7 +131,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
@@ -193,7 +193,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
 
     public static class MyFailBean {
 
-        public String doSomething(Exchange exchange) throws Exception {
+        public String doSomething(Exchange exchange) {
             counter++;
             assertEquals("bean://fail", exchange.getProperty(Exchange.TO_ENDPOINT, String.class));
             throw new IllegalArgumentException("Damn");

@@ -16,8 +16,8 @@
  */
 package org.apache.camel;
 
+import java.time.Duration;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -162,26 +162,11 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     String getVersion();
 
     /**
-     * Gets the uptime in a human readable format
+     * Gets the uptime for this context.
      *
-     * @return the uptime in days/hours/minutes
+     * @return the uptime
      */
-    @Deprecated
-    String getUptime();
-
-    /**
-     * Gets the uptime in milli seconds
-     *
-     * @return the uptime in millis seconds
-     */
-    @Deprecated
-    long getUptimeMillis();
-
-    /**
-     * Gets the date and time Camel was started up.
-     */
-    @Deprecated
-    Date getStartDate();
+    Duration getUptime();
 
     /**
      * Gets a clock instance that keeps track of time for relevant CamelContext events

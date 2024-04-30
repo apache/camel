@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BeanHandlerMethodTest extends ContextTestSupport {
 
     @Test
-    public void testInterfaceBeanMethod() throws Exception {
+    public void testInterfaceBeanMethod() {
         BeanInfo info = new BeanInfo(context, MyConcreteBean.class);
 
         Exchange exchange = new DefaultExchange(context);
@@ -43,7 +43,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNoHandleMethod() throws Exception {
+    public void testNoHandleMethod() {
         BeanInfo info = new BeanInfo(context, MyNoDummyBean.class);
 
         Exchange exchange = new DefaultExchange(context);
@@ -66,7 +66,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
     }
 
     @Test
-    public void testHandleMethod() throws Exception {
+    public void testHandleMethod() {
         BeanInfo info = new BeanInfo(context, MyDummyBean.class);
 
         Exchange exchange = new DefaultExchange(context);
@@ -77,7 +77,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
     }
 
     @Test
-    public void testHandleAndBodyMethod() throws Exception {
+    public void testHandleAndBodyMethod() {
         BeanInfo info = new BeanInfo(context, MyOtherDummyBean.class);
 
         Exchange exchange = new DefaultExchange(context);

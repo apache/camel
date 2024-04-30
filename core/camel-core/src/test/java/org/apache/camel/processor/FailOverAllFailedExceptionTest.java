@@ -59,7 +59,7 @@ public class FailOverAllFailedExceptionTest extends ContextTestSupport {
                 });
 
                 from("direct:y").to("mock:y").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new IllegalArgumentException("Illegal");
                     }
                 });

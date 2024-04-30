@@ -64,7 +64,7 @@ public class GoogleSheetsVerifierExtension extends DefaultComponentVerifierExten
             GoogleSheetsConfiguration configuration = setProperties(new GoogleSheetsConfiguration(), parameters);
             GoogleSheetsClientFactory clientFactory = new BatchGoogleSheetsClientFactory();
             Sheets client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(),
-                    configuration.getScopes(), configuration.getApplicationName(),
+                    configuration.getScopesAsList(), configuration.getApplicationName(),
                     configuration.getRefreshToken(), configuration.getAccessToken());
             client.spreadsheets().get(Optional.ofNullable(parameters.get("spreadsheetId"))
                     .map(Object::toString)

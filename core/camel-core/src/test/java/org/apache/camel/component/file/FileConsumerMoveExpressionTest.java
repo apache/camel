@@ -39,8 +39,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myguidgenerator", new MyGuidGenerator());
         return jndi;
     }
@@ -49,7 +49,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     public void testRenameToId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&exclude=.*bak" + "&move=${id}.bak"))
                         .convertBodyTo(String.class).to("mock:result");
             }
@@ -72,7 +72,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     public void testRenameToComplexWithId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&exclude=.*bak&move=backup-${id}-${file:name.noext}.bak"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
@@ -96,7 +96,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     public void testRenameToBean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&exclude=.*bak&move=backup/${bean:myguidgenerator.guid}.txt"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
@@ -116,7 +116,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     public void testRenameToSiblingFolder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("test?initialDelay=0&delay=10&exclude=.*bak&move=../backup/${file:name}.bak"))
                         .to("mock:result");
             }
@@ -135,7 +135,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     public void testRenameToBeanWithBeanLanguage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // configured by java using java beans setters
                 FileEndpoint endpoint = new FileEndpoint();
                 endpoint.setCamelContext(context);

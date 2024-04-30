@@ -36,7 +36,7 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
     public void testAsyncErrorHandlerWait() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:in").threads(2).to("mock:foo").process(new Processor() {

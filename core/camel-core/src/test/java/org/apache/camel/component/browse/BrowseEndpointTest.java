@@ -37,7 +37,7 @@ public class BrowseEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(be);
             }
         });
@@ -54,7 +54,7 @@ public class BrowseEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(be);
             }
         });

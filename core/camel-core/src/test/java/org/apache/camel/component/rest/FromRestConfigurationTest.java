@@ -27,15 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myDummy", new FooBar());
         return jndi;
     }
 
     @Override
     @Test
-    public void testFromRestModel() throws Exception {
+    public void testFromRestModel() {
         assertEquals("dummy-rest", context.getRestConfiguration().getComponent());
         assertEquals("localhost", context.getRestConfiguration().getHost());
         assertEquals(9090, context.getRestConfiguration().getPort());
@@ -52,10 +52,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("dummy-rest").host("localhost").port(9090).componentProperty("foo", "bar")
                         .componentProperty("other", "stuff")
                         .endpointProperty("size", "200").consumerProperty("pollTimeout", "1000")

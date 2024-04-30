@@ -93,10 +93,10 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] { new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start") //
                         .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
                         .recipientList(new SimpleExpression("xslt:${header.xslt_file}?uriResolverFactory=#uriResolverFactory")) //
@@ -104,7 +104,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
             }
         }, new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startComponent") //
                         .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
                         .recipientList(new SimpleExpression("xslt:${header.xslt_file}")) //
@@ -114,7 +114,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         jndiContext = createJndiContext();
         jndiContext.bind("uriResolverFactory", new CustomXsltUriResolverFactory());
         return new DefaultRegistry(new JndiBeanRepository(jndiContext));

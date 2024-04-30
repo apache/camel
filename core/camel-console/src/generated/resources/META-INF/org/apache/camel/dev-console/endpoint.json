@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "endpoint",
+    "title": "Endpoints",
+    "description": "Endpoint Registry information",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.EndpointDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

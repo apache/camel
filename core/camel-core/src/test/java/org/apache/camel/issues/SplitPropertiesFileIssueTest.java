@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
-    private String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
+    private final String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
 
     @Test
     public void testSplitPropertiesFileAndRoute() throws Exception {
@@ -48,10 +48,10 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&move=done")).convertBodyTo(String.class)
                         .split(new MyCustomExpression())
                         .recipientList(header("myCustomDestination"));

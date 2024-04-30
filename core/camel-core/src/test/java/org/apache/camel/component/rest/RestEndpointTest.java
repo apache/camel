@@ -38,21 +38,19 @@ public class RestEndpointTest {
                 final CamelContext camelContext, final String host, final String verb, final String basePath,
                 final String uriTemplate,
                 final String queryParameters, final String consumes, final String produces, RestConfiguration configuration,
-                final Map<String, Object> parameters)
-                throws Exception {
+                final Map<String, Object> parameters) {
             return null;
         }
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
-                throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) {
             return null;
         }
     }
 
-    RestComponent restComponent;
+    final RestComponent restComponent;
 
-    CamelContext context;
+    final CamelContext context;
 
     public RestEndpointTest() {
         context = new DefaultCamelContext();

@@ -39,13 +39,13 @@ public class AsyncCompletionServiceTest {
     private AsyncCompletionService<Object> service;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         executor = Executors.newFixedThreadPool(5);
         service = new AsyncCompletionService<>(executor, true);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         executor.shutdownNow();
     }
 

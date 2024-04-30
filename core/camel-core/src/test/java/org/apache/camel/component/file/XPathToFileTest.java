@@ -43,10 +43,10 @@ public class XPathToFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(xpath("/foo/person")).log("${bodyAs(String)}")
                         .to(fileUri("?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml"))
                         .to("mock:result");

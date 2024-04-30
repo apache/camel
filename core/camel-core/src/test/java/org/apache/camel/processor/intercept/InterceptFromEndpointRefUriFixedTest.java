@@ -24,9 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 public class InterceptFromEndpointRefUriFixedTest extends InterceptFromEndpointRefUriTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 context.getRegistry().bind("start", context.getEndpoint("direct:start"));
                 context.getRegistry().bind("bar", context.getEndpoint("seda:bar"));
 

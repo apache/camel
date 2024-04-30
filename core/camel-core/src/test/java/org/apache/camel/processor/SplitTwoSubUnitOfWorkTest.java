@@ -74,10 +74,10 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("direct:start").to("mock:a").split(simple("${body.foo}")).shareUnitOfWork().to("mock:b").to("direct:line")
@@ -86,7 +86,7 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
 
                 from("direct:line").to("log:line").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         if (body.contains("Donkey")) {
                             counter++;
@@ -99,8 +99,8 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
     }
 
     public static final class MyBody {
-        private String foo;
-        private String bar;
+        private final String foo;
+        private final String bar;
 
         private MyBody(String foo, String bar) {
             this.foo = foo;

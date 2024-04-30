@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -35,6 +36,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
+
+import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
 
 /**
  * Factory for generating code for @DataTypeTransformer.
@@ -142,22 +145,10 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                     = a.target().asClass().hasAnnotation(Deprecated.class) || project.getName().contains("(deprecated)");
             model.setClassName(currentClass);
             model.setDeprecated(deprecated);
-            var name = a.value("name");
-            if (name != null) {
-                model.setName(name.value().toString());
-            }
-            var from = a.value("from");
-            if (from != null) {
-                model.setFrom(from.value().toString());
-            }
-            var to = a.value("to");
-            if (to != null) {
-                model.setFrom(to.value().toString());
-            }
-            var desc = a.value("description");
-            if (desc != null) {
-                model.setDescription(desc.value().toString());
-            }
+            model.setName(annotationValue(a, "name"));
+            model.setFrom(annotationValue(a, "from"));
+            model.setTo(annotationValue(a, "to"));
+            model.setDescription(annotationValue(a, "description"));
             models.add(model);
         });
         models.sort(Comparator.comparing(DataTypeTransformerModel::getName));
@@ -171,7 +162,7 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
                     JsonObject jo = asJsonObject(model);
                     String json = jo.toJson();
                     json = Jsoner.prettyPrint(json, 2);
-                    String fn = sanitizeFileName(model.getName()) + ".json";
+                    String fn = sanitizeFileName(model.getName()) + PackageHelper.JSON_SUFIX;
                     boolean updated = updateResource(resourcesOutputDir.toPath(),
                             "META-INF/services/org/apache/camel/transformer/" + fn,
                             json + NL);
@@ -219,7 +210,7 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
     }
 
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^A-Za-z0-9-/]", "-");
+        return fileName.replaceAll("[^A-Za-z0-9+-/]", "-");
     }
 
     private String asTitle(String name) {

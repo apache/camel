@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
     @Test
-    public void testAllowNullBodyTrue() throws Exception {
+    public void testAllowNullBodyTrue() {
         template.sendBody(fileUri("?allowNullBody=true&fileName=allowNullBody.txt"), null);
         assertFileExists(testFile("allowNullBody.txt"));
     }

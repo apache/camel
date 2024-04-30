@@ -79,10 +79,10 @@ public class ManagedWeightedLoadBalancerTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .loadBalance().weighted(true, "1,2").id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");

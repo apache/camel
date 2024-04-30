@@ -54,4 +54,15 @@ public interface NamedNode extends LineNumberAware {
      */
     NamedNode getParent();
 
+    /**
+     * Whether this node can accept debugging the current exchange. This allows flexibility for some EIPs that need to
+     * compute whether to accept debugging or not
+     *
+     * @param  exchange the current exchange
+     * @return          true to accept debugging this node, or false to skip
+     */
+    default boolean acceptDebugger(Exchange exchange) {
+        return true;
+    }
+
 }

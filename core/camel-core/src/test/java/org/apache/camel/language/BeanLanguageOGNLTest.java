@@ -25,16 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanLanguageOGNLTest extends ContextTestSupport {
 
     @Test
-    public void testBeanLanguageOGNL() throws Exception {
+    public void testBeanLanguageOGNL() {
         String reply = template.requestBody("direct:start", "World", String.class);
         assertEquals("Hello World", reply);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform().method(MyReallyCoolBean.class, "getOther.greet");
             }
         };
@@ -42,7 +42,7 @@ public class BeanLanguageOGNLTest extends ContextTestSupport {
 
     public static class MyReallyCoolBean {
 
-        private MyOtherReallyCoolBean other = new MyOtherReallyCoolBean();
+        private final MyOtherReallyCoolBean other = new MyOtherReallyCoolBean();
 
         public MyOtherReallyCoolBean getOther() {
             return other;

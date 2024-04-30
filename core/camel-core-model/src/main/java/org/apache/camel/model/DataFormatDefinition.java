@@ -30,7 +30,6 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("rawtypes")
 public class DataFormatDefinition extends IdentifiedType {
 
     @XmlTransient

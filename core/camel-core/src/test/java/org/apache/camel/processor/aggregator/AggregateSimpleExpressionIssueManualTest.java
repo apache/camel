@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -39,8 +40,8 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
     private static final Logger LOG = LoggerFactory.getLogger(AggregateSimpleExpressionIssueManualTest.class);
     private static final String DATA = "100,200,1,123456,2010-03-01T12:13:14,100,USD,Best Buy,5045,Santa Monica,CA,Type\n";
 
-    private MyBean myBean = new MyBean();
-    private AggStrategy aggStrategy = new AggStrategy();
+    private final MyBean myBean = new MyBean();
+    private final AggStrategy aggStrategy = new AggStrategy();
 
     @Test
     public void testAggregateSimpleExpression() throws Exception {
@@ -74,10 +75,10 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri()).routeId("foo").noAutoStartup().log("Picked up ${file:name}").split()
                         .tokenize("\n").streaming()
                         .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500"))
@@ -87,16 +88,15 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
     }
 
     public static final class MyBean {
-        private volatile int cnt;
+        private final LongAdder cnt = new LongAdder();
 
         public void invoke(final List<String> strList) {
-            LOG.info("Batch {}", ++cnt);
+            cnt.increment();
+            LOG.info("Batch {}", cnt.intValue());
         }
     }
 
     public static final class AggStrategy implements AggregationStrategy {
-
-        private final int batchSize = 1000;
 
         @Override
         @SuppressWarnings("unchecked")
@@ -104,6 +104,7 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
             String str = newExchange.getIn().getBody(String.class);
 
             if (oldExchange == null) {
+                int batchSize = 1000;
                 List<String> list = new ArrayList<>(batchSize);
                 list.add(str);
                 newExchange.getIn().setBody(list);

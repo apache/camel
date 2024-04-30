@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
@@ -27,6 +28,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -46,10 +49,12 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "autoStartup", type = "boolean"),
                   @YamlProperty(name = "routePolicy", type = "string"),
                   @YamlProperty(name = "startupOrder", type = "number"),
-                  @YamlProperty(name = "streamCaching", type = "boolean"),
+                  @YamlProperty(name = "streamCache", type = "boolean"),
                   @YamlProperty(name = "messageHistory", type = "boolean"),
                   @YamlProperty(name = "logMask", type = "boolean"),
                   @YamlProperty(name = "trace", type = "boolean"),
+                  @YamlProperty(name = "errorHandlerRef", type = "string"),
+                  @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
                   @YamlProperty(name = "shutdownRoute", type = "enum:Default,Defer",
                                 defaultValue = "Default",
                                 description = "To control how to shut down the route."),
@@ -61,6 +66,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
           })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RouteDefinitionDeserializer.class);
 
     public RouteDefinitionDeserializer() {
         super(RouteDefinition.class);
@@ -111,6 +118,11 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     target.setStartupOrder(asInt(val));
                     break;
                 case "streamCaching":
+                    // backwards compatible
+                    LOG.warn("Old option name detected! Option streamCaching should be renamed to streamCache");
+                    target.setStreamCache(asText(val));
+                    break;
+                case "streamCache":
                     target.setStreamCache(asText(val));
                     break;
                 case "logMask":
@@ -127,6 +139,12 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "trace":
                     target.setTrace(asText(val));
+                    break;
+                case "errorHandlerRef":
+                    target.setErrorHandlerRef(asText(val));
+                    break;
+                case "errorHandler":
+                    target.setErrorHandler(asType(val, ErrorHandlerDefinition.class));
                     break;
                 case "inputType":
                     target.setInputType(asType(val, InputTypeDefinition.class));

@@ -34,10 +34,10 @@ public class DoCatchDirectRecipientListTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().to("direct:a").doCatch(Exception.class).to("direct:c").end();
 
                 from("direct:a").to("mock:a").recipientList(constant("direct:b"));

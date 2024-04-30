@@ -36,10 +36,10 @@ public class InterceptSendToEndpointNormalizePatternTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("stub:foo?privateKeyFile=/user/.ssh.id_rsa").to("mock:intercept");
 
                 from("direct:start").to("stub:foo?privateKeyFile=/user/.ssh.id_rsa").to("mock:result");

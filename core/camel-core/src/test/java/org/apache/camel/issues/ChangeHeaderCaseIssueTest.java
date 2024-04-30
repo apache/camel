@@ -48,12 +48,12 @@ public class ChangeHeaderCaseIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("mock:result").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // change the case of the header
                         Object value = exchange.getIn().removeHeader("SOAPAction");
                         exchange.getIn().setHeader("SoapAction", value);

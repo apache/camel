@@ -18,16 +18,30 @@ package org.apache.camel.component.sjms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.component.sjms.support.JmsExclusiveTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
                           disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
-public class ReconnectConsumerTest extends JmsTestSupport {
-
+public class ReconnectConsumerTest extends JmsExclusiveTestSupport {
     private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer.ReconnectConsumerTest";
     private static final String MOCK_RESULT = "mock:result";
+
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    @Override
+    public ArtemisService getService() {
+        return service;
+    }
 
     @Test
     public void testSynchronous() throws Exception {

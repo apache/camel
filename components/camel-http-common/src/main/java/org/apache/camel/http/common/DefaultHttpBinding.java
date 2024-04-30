@@ -65,7 +65,7 @@ import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
  * <p/>
- * Uses by default the {@link org.apache.camel.http.common.HttpHeaderFilterStrategy}
+ * Uses by default the {@link org.apache.camel.http.base.HttpHeaderFilterStrategy}
  */
 public class DefaultHttpBinding implements HttpBinding {
 
@@ -91,7 +91,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
     private boolean mapHttpMessageFormUrlEncodedBody = true;
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new org.apache.camel.http.base.HttpHeaderFilterStrategy();
     private String fileNameExtWhitelist;
 
     public DefaultHttpBinding() {

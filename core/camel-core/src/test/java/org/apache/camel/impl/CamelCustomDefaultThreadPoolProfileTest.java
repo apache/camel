@@ -49,7 +49,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
     }
 
     @Test
-    public void testCamelCustomDefaultThreadPoolProfile() throws Exception {
+    public void testCamelCustomDefaultThreadPoolProfile() {
         DefaultExecutorServiceManager manager = (DefaultExecutorServiceManager) context.getExecutorServiceManager();
         ThreadPoolProfile profile = manager.getDefaultThreadPoolProfile();
         assertEquals(5, profile.getPoolSize().intValue());
@@ -61,10 +61,10 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").threads(25, 45).to("mock:result");
             }
         };

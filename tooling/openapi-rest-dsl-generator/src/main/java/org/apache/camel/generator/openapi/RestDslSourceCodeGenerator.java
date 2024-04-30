@@ -138,7 +138,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
                 if (anyAccepted) {
                     // create new rest statement per path to avoid a giant chained single method
                     PathVisitor<MethodSpec> restDslStatement
-                            = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
+                            = new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
                     restDslStatement.visit(name, s);
                     emitter.endEmit();
                 }

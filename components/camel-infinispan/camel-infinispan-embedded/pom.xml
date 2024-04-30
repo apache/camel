@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-parent</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan-embedded</artifactId>
@@ -39,12 +39,17 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core-jakarta</artifactId>
+            <artifactId>infinispan-commons</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-query-jakarta</artifactId>
+            <artifactId>infinispan-core</artifactId>
+            <version>${infinispan-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-query</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>
@@ -75,7 +80,14 @@
         <!-- testing - infinispan -->
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core-jakarta</artifactId>
+            <artifactId>infinispan-core</artifactId>
+            <version>${infinispan-version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-commons</artifactId>
             <version>${infinispan-version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -138,11 +150,10 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <property>
-                                    <name>infinispan.test.jgroups.protocol</name>
-                                    <value>tcp</value>
-                                </property>
+                                <infinispan.test.jgroups.protocol>tcp</infinispan.test.jgroups.protocol>
+                                <infinispan.server.log.path>${project.build.directory}/infinispan-log</infinispan.server.log.path>
                             </systemPropertyVariables>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                 </plugins>

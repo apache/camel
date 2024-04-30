@@ -42,17 +42,17 @@ public class ToFileRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         // bind our processor in the registry with the given id
-        Registry reg = super.createRegistry();
+        Registry reg = super.createCamelRegistry();
         reg.bind("processReport", new ProcessReport());
         return reg;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // the reports from the seda queue is processed by our processor
                 // before they are written to files in the test directory
                 from("direct:reports").process("processReport")
@@ -64,7 +64,7 @@ public class ToFileRouteTest extends ContextTestSupport {
     private static class ProcessReport implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             // do some business logic here
 

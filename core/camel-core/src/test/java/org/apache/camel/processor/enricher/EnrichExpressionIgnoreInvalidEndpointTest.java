@@ -33,10 +33,10 @@ public class EnrichExpressionIgnoreInvalidEndpointTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").enrich().header("source").ignoreInvalidEndpoint().to("mock:result");
 
                 from("direct:foo").transform().constant("Hello World");

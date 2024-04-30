@@ -34,10 +34,10 @@ public class FailoverRoundRobinGoodBadTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").loadBalance().failover(1, true, true).to("direct:good", "direct:bad");
 
                 from("direct:good").to("mock:good");

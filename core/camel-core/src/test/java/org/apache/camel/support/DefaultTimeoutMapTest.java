@@ -27,20 +27,22 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.TimeoutMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated("Depends on precise timing that may be hard to achieve if the system is under pressure")
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class DefaultTimeoutMapTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTimeoutMapTest.class);
-    private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
+    private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
 
     @Test
-    public void testDefaultTimeoutMap() throws Exception {
+    public void testDefaultTimeoutMap() {
         DefaultTimeoutMap<?, ?> map = new DefaultTimeoutMap<>(executor);
         map.start();
         assertTrue(map.currentTime() > 0);
@@ -51,7 +53,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testDefaultTimeoutMapPurge() throws Exception {
+    public void testDefaultTimeoutMapPurge() {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
@@ -87,7 +89,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testDefaultTimeoutMapGetRemove() throws Exception {
+    public void testDefaultTimeoutMapGetRemove() {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         assertTrue(map.currentTime() > 0);
@@ -101,14 +103,14 @@ public class DefaultTimeoutMapTest {
 
         Object old = map.remove("A");
         assertEquals(123, old);
-        assertNull((Object) map.get("A"));
+        assertNull(map.get("A"));
         assertEquals(0, map.size());
 
         map.stop();
     }
 
     @Test
-    public void testExecutor() throws Exception {
+    public void testExecutor() {
         ScheduledExecutorService e = Executors.newScheduledThreadPool(2);
 
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(e, 50);
@@ -128,7 +130,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testExpiredInCorrectOrder() throws Exception {
+    public void testExpiredInCorrectOrder() {
         final List<String> keys = new ArrayList<>();
         final List<Integer> values = new ArrayList<>();
 
@@ -172,7 +174,7 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testDefaultTimeoutMapStopStart() throws Exception {
+    public void testDefaultTimeoutMapStopStart() {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         map.start();
         map.put("A", 1, 500);

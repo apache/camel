@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class ConfigurerResolverTest extends ContextTestSupport {
 
     @Test
-    public void testConfigurerResolver() throws Exception {
+    public void testConfigurerResolver() {
         PropertyConfigurer resolver = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(context.getClass().getName(), context);
         Assertions.assertNotNull(resolver);

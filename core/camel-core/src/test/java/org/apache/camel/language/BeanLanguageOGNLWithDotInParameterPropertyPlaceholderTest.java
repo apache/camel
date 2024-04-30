@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends ContextTestSupport {
 
-    private Properties myProp;
-
     @Test
     public void testDot() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -39,11 +37,11 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyDestinationBean());
 
-        myProp = new Properties();
+        Properties myProp = new Properties();
         myProp.put("myApp", "MyAppV1.2.3");
         jndi.bind("myprop", myProp);
 
@@ -58,10 +56,10 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("goto").simple("${bean:myBean.whereToMate({{myApp}}, ${header.id})}")
                         .to("mock:result");
             }

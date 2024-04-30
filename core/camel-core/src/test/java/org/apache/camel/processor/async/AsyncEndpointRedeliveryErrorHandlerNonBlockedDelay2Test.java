@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,7 +33,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test.class);
 
-    private static volatile int attempt;
+    private static final LongAdder attempt = new LongAdder();
     private static String beforeThreadName;
     private static String afterThreadName;
 
@@ -51,25 +53,26 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
 
                 from("seda:start").to("log:before").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).to("async:camel").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         LOG.info("Processing at attempt {} {}", attempt, exchange);
 
                         String body = exchange.getIn().getBody(String.class);
                         if (body.contains("Camel")) {
-                            if (++attempt <= 2) {
+                            attempt.increment();
+                            if (attempt.intValue() <= 2) {
                                 LOG.info("Processing failed will thrown an exception");
                                 throw new IllegalArgumentException("Damn");
                             }
@@ -79,7 +82,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
                         LOG.info("Processing at attempt {} complete {}", attempt, exchange);
                     }
                 }).to("log:after").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         afterThreadName = Thread.currentThread().getName();
                     }
                 }).to("mock:result");

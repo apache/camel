@@ -32,7 +32,7 @@ public class RouteSetRouteIdTwoTimesTest extends TestSupport {
         assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:hello").routeId("foo").to("mock:result").to("mock:bar").routeId("bar");
                 }
             });

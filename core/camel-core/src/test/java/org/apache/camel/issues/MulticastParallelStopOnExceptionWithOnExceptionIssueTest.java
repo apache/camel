@@ -31,7 +31,7 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
     public void testEnd1FailureTest() throws Exception {
         MockEndpoint end1 = getMockEndpoint("mock:end1");
         end1.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 throw new RuntimeException("Simulated Exception");
             }
         });
@@ -53,7 +53,7 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
     public void testEnd2FailureTest() throws Exception {
         MockEndpoint end2 = getMockEndpoint("mock:end2");
         end2.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 throw new RuntimeException("Simulated Exception");
             }
         });
@@ -71,10 +71,10 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).to("log:onException").to("mock:end4").transform(constant("Stop!"));
 
                 from("direct:start").multicast().parallelProcessing().stopOnException().to("mock:end1", "mock:end2").end()

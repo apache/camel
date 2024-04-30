@@ -32,7 +32,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitAggregateInOutTest.class);
 
-    private String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
+    private final String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
 
     @Test
     public void testSplitAndAggregateInOut() throws Exception {
@@ -48,17 +48,17 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("MyOrderService", new MyOrderService());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // this routes starts from the direct:start endpoint
                 // the body is then split based on @ separator

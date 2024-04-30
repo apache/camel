@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MethodCallBeanRefNotFoundTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }
@@ -39,7 +39,7 @@ public class MethodCallBeanRefNotFoundTest extends ContextTestSupport {
     public void testMethodCallBeanRefNotFound() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").routeId("a").split().method("foo", "hello").to("mock:a");
 
                 from("direct:b").routeId("b").split().method("bar", "hello").to("mock:b");

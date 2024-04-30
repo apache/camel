@@ -32,10 +32,10 @@ public class BeanAbstractMethodIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").filter().simple("${body.doSomething} == 123").to("mock:123");
             }
         };

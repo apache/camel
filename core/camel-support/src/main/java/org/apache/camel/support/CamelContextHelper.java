@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +26,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ContextEvents;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
@@ -32,10 +34,13 @@ import org.apache.camel.NamedRoute;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.clock.Clock;
+import org.apache.camel.clock.EventClock;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeUtils;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -44,7 +49,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public final class CamelContextHelper {
 
-    public static final String MODEL_DOCUMENTATION_PREFIX = "org/apache/camel/model/";
+    public static final String MODEL_DOCUMENTATION_PREFIX = "META-INF/org/apache/camel/model/";
 
     /**
      * Utility classes should not have a public constructor.
@@ -637,6 +642,43 @@ public final class CamelContextHelper {
                     "No RestConfiguration for component: " + component + " found, RestConfiguration targets: "
                                                + configurationComponent);
         }
+    }
+
+    /**
+     * Gets the uptime in a human-readable format
+     *
+     * @return the uptime in days/hours/minutes
+     */
+    public static String getUptime(CamelContext context) {
+        long delta = context.getUptime().toMillis();
+        if (delta == 0) {
+            return "";
+        }
+
+        return TimeUtils.printDuration(delta);
+    }
+
+    /**
+     * Gets the uptime in milliseconds
+     *
+     * @return the uptime in milliseconds
+     */
+    public static long getUptimeMillis(CamelContext context) {
+        return context.getUptime().toMillis();
+    }
+
+    /**
+     * Gets the date and time Camel was started up.
+     */
+    public static Date getStartDate(CamelContext context) {
+        EventClock<ContextEvents> contextClock = context.getClock();
+
+        final Clock clock = contextClock.get(ContextEvents.START);
+        if (clock == null) {
+            return null;
+        }
+
+        return clock.asDate();
     }
 
 }

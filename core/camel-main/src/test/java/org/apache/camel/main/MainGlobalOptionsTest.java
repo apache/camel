@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainGlobalOptionsTest {
 
     @Test
-    public void testMain() throws Exception {
+    public void testMain() {
         Main main = new Main();
 
         main.addInitialProperty("camel.main.global-options[foo]", "123");

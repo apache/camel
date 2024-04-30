@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SimulatorTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", new MyBean("foo"));
         answer.bind("bar", new MyBean("bar"));
         return answer;
@@ -49,7 +49,7 @@ public class SimulatorTest extends ContextTestSupport {
 
     protected void assertRespondsWith(final String value, String containedText) throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("answer");
                 in.setHeader("cheese", value);
@@ -74,7 +74,7 @@ public class SimulatorTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        private String value;
+        private final String value;
 
         public MyBean(String value) {
             this.value = value;

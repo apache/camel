@@ -18,8 +18,8 @@ package org.apache.camel.test.infra.rocketmq.common;
 
 public final class RocketMQProperties {
 
-    public static final String ROCKETMQ_VERSION_PROPERTY = "itest.rocketmq.container.image.version";
-    public static final String ROCKETMQ_IMAGE_PROPERTY = "itest.rocketmq.container.image";
+    public static final String ROCKETMQ_VERSION_PROPERTY = "rocketmq.container.image.version";
+    public static final String ROCKETMQ_IMAGE_PROPERTY = "rocketmq.container.image";
     public static final int ROCKETMQ_NAMESRV_PORT = 9876;
     public static final int ROCKETMQ_BROKER1_PORT = 10909;
     public static final int ROCKETMQ_BROKER2_PORT = 10911;

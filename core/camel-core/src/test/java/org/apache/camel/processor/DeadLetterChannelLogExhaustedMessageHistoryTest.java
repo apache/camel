@@ -32,10 +32,10 @@ public class DeadLetterChannelLogExhaustedMessageHistoryTest extends ContextTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // no delay to speedup test
                 errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3)
                         // need to turn on logging handled and exhausted to see this

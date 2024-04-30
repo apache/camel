@@ -31,16 +31,7 @@ public class ParserTest {
 
     @Test
     public void justParse() throws XmlPullParserException, IOException {
-        String xml = """
-                <?xml version='1.0'?>
-                <c:root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="uri:camel" xmlns="uri:camel-beans">
-                    <c:e1 a="value-1" b:a="value-2" xmlns:c="uri:cxf" xmlns:b="uri:b" />
-                    <watch-out-for-entities>&nbsp;</watch-out-for-entities>
-                </c:root>
-                """;
-        BaseParser p = new BaseParser(new StringReader(xml));
-        MXParser xpp = p.parser;
-        xpp.defineEntityReplacementText("nbsp", "—");
+        final MXParser xpp = getMxParser();
         int eventType = xpp.getEventType();
         while (eventType != MXParser.END_DOCUMENT) {
             xpp.getStartLineNumber();
@@ -85,7 +76,7 @@ public class ParserTest {
                         assertEquals("value-1", xpp.getAttributeValue(null, "a"));
                         assertEquals("value-2", xpp.getAttributeValue("uri:b", "a"));
                         // check with non-interned String
-                        assertEquals("value-2", xpp.getAttributeValue(new String("uri:b"), "a"));
+                        assertEquals("value-2", xpp.getAttributeValue("uri:b", "a"));
                     }
                 }
                 case MXParser.END_TAG -> {
@@ -125,6 +116,20 @@ public class ParserTest {
             }
             eventType = xpp.next();
         }
+    }
+
+    private static MXParser getMxParser() throws IOException, XmlPullParserException {
+        String xml = """
+                <?xml version='1.0'?>
+                <c:root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="uri:camel" xmlns="uri:camel-beans">
+                    <c:e1 a="value-1" b:a="value-2" xmlns:c="uri:cxf" xmlns:b="uri:b" />
+                    <watch-out-for-entities>&nbsp;</watch-out-for-entities>
+                </c:root>
+                """;
+        BaseParser p = new BaseParser(new StringReader(xml));
+        MXParser xpp = p.parser;
+        xpp.defineEntityReplacementText("nbsp", "—");
+        return xpp;
     }
 
     @Test

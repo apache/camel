@@ -45,7 +45,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(endpoint).to("direct:foo");
                 from("direct:foo").to(endpoint);
             }
@@ -69,7 +69,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(endpoint).to("direct:foo");
                 from("direct:foo").to(endpoint);
             }
@@ -87,14 +87,14 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
         final AtomicBoolean reported = new AtomicBoolean();
         endpoint.setReporter(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 reported.set(true);
             }
         });
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(endpoint).to("direct:foo");
                 from("direct:foo").to(endpoint);
             }
@@ -106,7 +106,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSimpleDataSet() throws Exception {
+    public void testSimpleDataSet() {
         SimpleDataSet ds = new SimpleDataSet();
         ds.setSize(2);
         ds.setDefaultBody("Hi");
@@ -119,7 +119,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         ds.setSize(4);
         ds.setReportCount(0);
         ds.setOutputTransformer(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 String body = "Hi " + exchange.getIn().getBody(String.class);
                 exchange.getIn().setBody(body);
             }
@@ -132,7 +132,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(endpoint).to("direct:foo");
                 from("direct:foo").to(endpoint);
             }

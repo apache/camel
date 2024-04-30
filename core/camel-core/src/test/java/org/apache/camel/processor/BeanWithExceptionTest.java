@@ -43,7 +43,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(0);
 
         template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("<valid/>");
                 exchange.getIn().setHeader("foo", "bar");
                 exchange.setProperty("cheese", "old");
@@ -59,7 +59,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("<invalid/>");
                 exchange.getIn().setHeader("foo", "notMatchedHeaderValue");
                 exchange.setProperty("cheese", "old");
@@ -83,8 +83,8 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", new ValidationBean());
         return answer;
     }

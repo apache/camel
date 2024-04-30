@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 public class MyCurrencyBeanTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myCurrencyBean", new MyCurrencyBean());
         return jndi;
     }
@@ -49,10 +49,10 @@ public class MyCurrencyBeanTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myCurrencyBean?method=display( ${body} )").to("mock:result");
 
                 from("direct:price").to("bean:myCurrencyBean?method=displayPrice( ${body}, ${header.price} )")

@@ -46,20 +46,20 @@ public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).loadBalance().failover()
                         // first is sync, the 2nd is async based
                         .to("direct:fail", "async:bye:world").end().process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // because the first is a sync then it will wait and
                                 // thus use the same thread to continue
                                 afterThreadName = Thread.currentThread().getName();

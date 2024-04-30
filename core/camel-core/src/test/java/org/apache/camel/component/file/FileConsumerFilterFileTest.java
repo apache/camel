@@ -66,9 +66,9 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(FILE_URL_1)).convertBodyTo(String.class).to("mock:result");
                 from(fileUri(FILE_URL_2)).convertBodyTo(String.class).to("mock:result2");
             }

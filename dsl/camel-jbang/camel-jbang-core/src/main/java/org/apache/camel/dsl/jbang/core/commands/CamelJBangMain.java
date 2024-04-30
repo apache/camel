@@ -21,9 +21,11 @@ import java.util.concurrent.Callable;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.*;
+import org.apache.camel.dsl.jbang.core.commands.bind.Bind;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDevConsole;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDoc;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
@@ -127,6 +129,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(main)))
                         .addSubcommand("language", new CommandLine(new CatalogLanguage(main)))
                         .addSubcommand("transformer", new CommandLine(new CatalogTransformer(main)))
+                        .addSubcommand("dev-console", new CommandLine(new CatalogDevConsole(main)))
                         .addSubcommand("other", new CommandLine(new CatalogOther(main)))
                         .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(main))))
                 .addSubcommand("doc", new CommandLine(new CatalogDoc(main)))

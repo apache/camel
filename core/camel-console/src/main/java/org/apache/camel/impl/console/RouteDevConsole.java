@@ -22,8 +22,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -38,7 +40,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole("route")
+@DevConsole(name = "route", description = "Route information")
 public class RouteDevConsole extends AbstractDevConsole {
 
     /**
@@ -56,12 +58,24 @@ public class RouteDevConsole extends AbstractDevConsole {
      */
     public static final String PROCESSORS = "processors";
 
+    /**
+     * Action to perform such as start,stop,suspend,resume on one or more routes
+     */
+    public static final String ACTION = "action";
+
     public RouteDevConsole() {
         super("camel", "route", "Route", "Route information");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        String action = (String) options.get(ACTION);
+        String filter = (String) options.get(FILTER);
+        if (action != null) {
+            doAction(getCamelContext(), action, filter);
+            return "";
+        }
+
         final boolean processors = "true".equals(options.getOrDefault(PROCESSORS, "false"));
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
@@ -201,6 +215,13 @@ public class RouteDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
+        String action = (String) options.get(ACTION);
+        String filter = (String) options.get(FILTER);
+        if (action != null) {
+            doAction(getCamelContext(), action, filter);
+            return new JsonObject();
+        }
+
         final boolean processors = "true".equals(options.getOrDefault(PROCESSORS, "false"));
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
@@ -296,7 +317,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             arr.add(jo);
 
             jo.put("id", mp.getProcessorId());
-            jo.put("nodePrefixId", mp.getNodePrefixId());
+            if (mp.getNodePrefixId() != null) {
+                jo.put("nodePrefixId", mp.getNodePrefixId());
+            }
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
@@ -318,32 +341,37 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             jo.put("processor", mp.getProcessorName());
             jo.put("level", mp.getLevel());
-            JsonObject stats = new JsonObject();
-            stats.put("idleSince", mp.getIdleSince());
-            stats.put("exchangesTotal", mp.getExchangesTotal());
-            stats.put("exchangesFailed", mp.getExchangesFailed());
-            stats.put("exchangesInflight", mp.getExchangesInflight());
-            stats.put("meanProcessingTime", mp.getMeanProcessingTime());
-            stats.put("maxProcessingTime", mp.getMaxProcessingTime());
-            stats.put("minProcessingTime", mp.getMinProcessingTime());
-            if (mp.getExchangesTotal() > 0) {
-                stats.put("lastProcessingTime", mp.getLastProcessingTime());
-                stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
-            }
-            Date last = mp.getLastExchangeCreatedTimestamp();
-            if (last != null) {
-                stats.put("lastCreatedExchangeTimestamp", last.getTime());
-            }
-            last = mp.getLastExchangeCompletedTimestamp();
-            if (last != null) {
-                stats.put("lastCompletedExchangeTimestamp", last.getTime());
-            }
-            last = mp.getLastExchangeFailureTimestamp();
-            if (last != null) {
-                stats.put("lastFailedExchangeTimestamp", last.getTime());
-            }
+            final JsonObject stats = getStatsObject(mp);
             jo.put("statistics", stats);
         }
+    }
+
+    private static JsonObject getStatsObject(ManagedProcessorMBean mp) {
+        JsonObject stats = new JsonObject();
+        stats.put("idleSince", mp.getIdleSince());
+        stats.put("exchangesTotal", mp.getExchangesTotal());
+        stats.put("exchangesFailed", mp.getExchangesFailed());
+        stats.put("exchangesInflight", mp.getExchangesInflight());
+        stats.put("meanProcessingTime", mp.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mp.getMaxProcessingTime());
+        stats.put("minProcessingTime", mp.getMinProcessingTime());
+        if (mp.getExchangesTotal() > 0) {
+            stats.put("lastProcessingTime", mp.getLastProcessingTime());
+            stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
+        }
+        Date last = mp.getLastExchangeCreatedTimestamp();
+        if (last != null) {
+            stats.put("lastCreatedExchangeTimestamp", last.getTime());
+        }
+        last = mp.getLastExchangeCompletedTimestamp();
+        if (last != null) {
+            stats.put("lastCompletedExchangeTimestamp", last.getTime());
+        }
+        last = mp.getLastExchangeFailureTimestamp();
+        if (last != null) {
+            stats.put("lastFailedExchangeTimestamp", last.getTime());
+        }
+        return stats;
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
@@ -359,6 +387,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
             routes.stream()
                     .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                    .filter(Objects::nonNull)
                     .filter(r -> accept(r, filter))
                     .filter(r -> accept(r, subPath))
                     .sorted(RouteDevConsole::sort)
@@ -378,8 +407,7 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
-        // sort by id
-        return o1.getRouteId().compareTo(o2.getRouteId());
+        return o1.getRouteId().compareToIgnoreCase(o2.getRouteId());
     }
 
     private String getLoad1(ManagedRouteMBean mrb) {
@@ -435,7 +463,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         if (percent) {
             double p;
             if (total > 0) {
-                p = (covered / total) * 100;
+                p = ((double) covered / total) * 100;
             } else {
                 p = 0;
             }
@@ -443,6 +471,56 @@ public class RouteDevConsole extends AbstractDevConsole {
             return covered + "/" + total + " (" + f + "%)";
         } else {
             return covered + "/" + total;
+        }
+    }
+
+    protected void doAction(CamelContext camelContext, String command, String filter) {
+        if (filter == null) {
+            filter = "*";
+        }
+        String[] patterns = filter.split(",");
+        // find matching IDs
+        List<String> ids = camelContext.getRoutes()
+                .stream().map(Route::getRouteId)
+                .filter(routeId -> {
+                    for (String p : patterns) {
+                        if (PatternHelper.matchPattern(routeId, p)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .toList();
+        for (String id : ids) {
+            try {
+                if ("start".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.getRouteController().startAllRoutes();
+                    } else {
+                        camelContext.getRouteController().startRoute(id);
+                    }
+                } else if ("stop".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.getRouteController().stopAllRoutes();
+                    } else {
+                        camelContext.getRouteController().stopRoute(id);
+                    }
+                } else if ("suspend".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.suspend();
+                    } else {
+                        camelContext.getRouteController().suspendRoute(id);
+                    }
+                } else if ("resume".equals(command)) {
+                    if ("*".equals(id)) {
+                        camelContext.resume();
+                    } else {
+                        camelContext.getRouteController().resumeRoute(id);
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 

@@ -19,7 +19,6 @@ package org.apache.camel.component.olingo2;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +39,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
+import org.apache.camel.util.CaseInsensitiveMap;
 
 /**
  * Communicate with OData 2.0 services using Apache Olingo.
@@ -114,8 +114,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     @Override
     public void configureProperties(Map<String, Object> options) {
         // filter out options that are with $ as they are for query
-        Map<String, Object> query = new LinkedHashMap<>();
-        Map<String, Object> known = new LinkedHashMap<>();
+        Map<String, Object> query = new CaseInsensitiveMap();
+        Map<String, Object> known = new CaseInsensitiveMap();
         options.forEach((k, v) -> {
             if (k.startsWith("$")) {
                 query.put(k, v);

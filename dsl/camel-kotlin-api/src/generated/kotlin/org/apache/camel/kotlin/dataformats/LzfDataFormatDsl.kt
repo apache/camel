@@ -23,6 +23,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.LZFDataFormat
 
+/**
+ * Compress and decompress streams using LZF deflate algorithm.
+ */
 public fun DataFormatDsl.lzf(i: LzfDataFormatDsl.() -> Unit) {
   def = LzfDataFormatDsl().apply(i).def
 }
@@ -34,14 +37,23 @@ public class LzfDataFormatDsl {
   init {
     def = LZFDataFormat()}
 
+  /**
+   * The id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Enable encoding (compress) using multiple processing cores.
+   */
   public fun usingParallelCompression(usingParallelCompression: Boolean) {
     def.usingParallelCompression = usingParallelCompression.toString()
   }
 
+  /**
+   * Enable encoding (compress) using multiple processing cores.
+   */
   public fun usingParallelCompression(usingParallelCompression: String) {
     def.usingParallelCompression = usingParallelCompression
   }

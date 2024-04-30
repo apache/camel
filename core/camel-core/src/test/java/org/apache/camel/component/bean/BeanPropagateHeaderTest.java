@@ -40,17 +40,17 @@ public class BeanPropagateHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("order", new MyOrderService());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").setHeader("foo", constant("bar")).convertBodyTo(Integer.class).to("bean:order")
                         .to(ExchangePattern.InOnly, "seda:foo").transform(constant("OK"));
 

@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -93,7 +93,7 @@
             </properties>
         </profile>
         <profile>
-            <id>full</id>
+            <id>regen</id>
             <activation>
                 <property>
                     <name>!quickly</name>

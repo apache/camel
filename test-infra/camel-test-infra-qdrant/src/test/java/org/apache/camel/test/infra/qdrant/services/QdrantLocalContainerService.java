@@ -21,9 +21,14 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.qdrant.common.QdrantProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.qdrant.QdrantContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class QdrantLocalContainerService implements QdrantService, ContainerService<QdrantContainer> {
+    public static final int HTTP_PORT = 6333;
+    public static final int GRPC_PORT = 6334;
+
     private static final Logger LOG = LoggerFactory.getLogger(QdrantLocalContainerService.class);
 
     private final QdrantContainer container;
@@ -50,6 +55,7 @@ public class QdrantLocalContainerService implements QdrantService, ContainerServ
     public void initialize() {
         LOG.info("Trying to start the Qdrant container");
 
+        container.withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger(QdrantContainer.class)));
         container.start();
 
         registerProperties();
@@ -70,21 +76,21 @@ public class QdrantLocalContainerService implements QdrantService, ContainerServ
 
     @Override
     public String getHttpHost() {
-        return container.getHttpHost();
+        return container.getHost();
     }
 
     @Override
     public int getHttpPort() {
-        return container.getHttpPort();
+        return container.getMappedPort(HTTP_PORT);
     }
 
     @Override
     public String getGrpcHost() {
-        return container.getGrpcHost();
+        return container.getHost();
     }
 
     @Override
     public int getGrpcPort() {
-        return container.getGrpcPort();
+        return container.getMappedPort(GRPC_PORT);
     }
 }

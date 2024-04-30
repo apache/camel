@@ -36,9 +36,9 @@ public class InterceptFromSimpleLogTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // intercept all incomming routes and log it
                 interceptFrom().to("log:received");

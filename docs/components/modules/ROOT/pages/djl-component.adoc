@@ -1,1 +1,1 @@
-../../../../../components/camel-djl/src/main/docs/djl-component.adoc
+../../../../../components/camel-ai/camel-djl/src/main/docs/djl-component.adoc

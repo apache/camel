@@ -45,18 +45,18 @@ public class BeanParameterMethodCallThreeBodyOgnlTest extends ContextTestSupport
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("router", new MyRouter());
         jndi.bind("foo", new MyBean());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").dynamicRouter().method("router").to("mock:result");
             }
         };

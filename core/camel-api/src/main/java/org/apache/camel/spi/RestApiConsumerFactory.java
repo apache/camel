@@ -35,13 +35,13 @@ public interface RestApiConsumerFactory {
      * Creates a new REST API <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>,
      * which provides API listing of the REST services
      *
-     * @param  camelContext the camel context
-     * @param  processor    the processor
-     * @param  contextPath  the context-path
-     * @param  parameters   additional parameters
-     *
-     * @return              a newly created REST API consumer
-     * @throws Exception    can be thrown
+     * @param  camelContext  the camel context
+     * @param  processor     the processor
+     * @param  contextPath   the context-path
+     * @param  configuration REST configuration
+     * @param  parameters    additional parameters
+     * @return               a newly created REST API consumer
+     * @throws Exception     can be thrown
      */
     Consumer createApiConsumer(
             CamelContext camelContext, Processor processor, String contextPath,

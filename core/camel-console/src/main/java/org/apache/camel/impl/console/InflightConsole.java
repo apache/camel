@@ -26,7 +26,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("inflight")
+@DevConsole(name = "inflight", displayName = "Inflight Exchanges", description = "Display inflight exchanges")
 public class InflightConsole extends AbstractDevConsole {
 
     /**

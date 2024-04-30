@@ -26,19 +26,19 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Issue3Test extends ContextTestSupport {
-    protected String fromQueue = "direct:A";
+    protected final String fromQueue = "direct:A";
 
     @Test
-    public void testIssue() throws Exception {
+    public void testIssue() {
         sendBody(fromQueue, "cluster!");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fromQueue).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         final Message in = exchange.getIn();
                         assertNotNull(in, "Message is Null");
                         String isDebugString = in.getHeader("someproperty", String.class);

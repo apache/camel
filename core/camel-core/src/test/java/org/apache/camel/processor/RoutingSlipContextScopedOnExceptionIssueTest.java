@@ -36,17 +36,17 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
     public void testUsingInterceptor() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("fail", routeId);
                     }
                 }).to("mock:error");
 
                 interceptSendToEndpoint("direct*").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String target = exchange.getProperty(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
                     }
@@ -80,10 +80,10 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
     public void testUsingExistingHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("fail", routeId);
                     }

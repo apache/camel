@@ -42,7 +42,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
     public void testThreadsRejectedExecution() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use a custom pool which rejects any new tasks while currently
                 // in progress
                 // this should force the ThreadsProcessor to run the tasks
@@ -69,7 +69,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
     public void testThreadsRejectedExecutionCallerNotRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use a custom pool which rejects any new tasks while currently
                 // in progress
                 // this should force the ThreadsProcessor to run the tasks
@@ -104,7 +104,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
     public void testThreadsRejectedAbort() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").to("log:before").threads(1, 1).maxPoolSize(1).maxQueueSize(2)
                         .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).delay(100).to("log:after")
                         .to("mock:result");
@@ -130,7 +130,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
     public void testThreadsRejectedCallerRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").to("log:before").threads(1, 1).maxPoolSize(1).maxQueueSize(2)
                         .rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns).delay(100).to("log:after")
                         .to("mock:result");
@@ -156,7 +156,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
     public void testThreadsRejectedAbortNoRedelivery() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(250).maximumRedeliveries(3).handled(true).to("mock:error");
 
                 from("seda:start").to("log:before").threads(1, 1).maxPoolSize(1).maxQueueSize(2)

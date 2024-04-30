@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSupport {
 
-    private MyBodyAppender appender = new MyBodyAppender();
+    private final MyBodyAppender appender = new MyBodyAppender();
 
     @Test
     public void testNoData() throws Exception {
@@ -46,10 +46,10 @@ public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").pollEnrich("seda:foo", 100, AggregationStrategies.bean(appender)).to("mock:result");
             }
         };

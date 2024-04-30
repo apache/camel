@@ -70,49 +70,36 @@ public class AggregationStrategyBeanInfo {
         }
 
         List<AggregationStrategyParameterInfo> oldParameters = new ArrayList<>();
-        List<AggregationStrategyParameterInfo> newParameters = new ArrayList<>();
-
         for (int i = 0; i < size / 2; i++) {
-            Class<?> oldType = parameterTypes[i];
-            if (oldParameters.isEmpty()) {
-                // the first parameter is the body
-                Expression oldBody = ExpressionBuilder.mandatoryBodyExpression(oldType);
-                AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, oldType, oldBody);
-                oldParameters.add(info);
-            } else if (oldParameters.size() == 1) {
-                // the 2nd parameter is the headers
-                Expression oldHeaders = ExpressionBuilder.headersExpression();
-                AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, oldType, oldHeaders);
-                oldParameters.add(info);
-            } else if (oldParameters.size() == 2) {
-                // the 3rd parameter is the properties
-                Expression oldProperties = ExpressionBuilder.exchangePropertiesExpression();
-                AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, oldType, oldProperties);
-                oldParameters.add(info);
-            }
+            addParameters(parameterTypes, i, oldParameters);
         }
 
+        List<AggregationStrategyParameterInfo> newParameters = new ArrayList<>();
         for (int i = size / 2; i < size; i++) {
-            Class<?> newType = parameterTypes[i];
-            if (newParameters.isEmpty()) {
-                // the first parameter is the body
-                Expression newBody = ExpressionBuilder.mandatoryBodyExpression(newType);
-                AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, newType, newBody);
-                newParameters.add(info);
-            } else if (newParameters.size() == 1) {
-                // the 2nd parameter is the headers
-                Expression newHeaders = ExpressionBuilder.headersExpression();
-                AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, newType, newHeaders);
-                newParameters.add(info);
-            } else if (newParameters.size() == 2) {
-                // the 3rd parameter is the properties
-                Expression newProperties = ExpressionBuilder.exchangePropertiesExpression();
-                AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, newType, newProperties);
-                newParameters.add(info);
-            }
+            addParameters(parameterTypes, i, newParameters);
         }
 
         return new AggregationStrategyMethodInfo(method, oldParameters, newParameters);
+    }
+
+    private static void addParameters(Class<?>[] parameterTypes, int i, List<AggregationStrategyParameterInfo> parameters) {
+        Class<?> parameterType = parameterTypes[i];
+        if (parameters.isEmpty()) {
+            // the first parameter is the body
+            Expression body = ExpressionBuilder.mandatoryBodyExpression(parameterType);
+            AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, parameterType, body);
+            parameters.add(info);
+        } else if (parameters.size() == 1) {
+            // the 2nd parameter is the headers
+            Expression headersExpression = ExpressionBuilder.headersExpression();
+            AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, parameterType, headersExpression);
+            parameters.add(info);
+        } else if (parameters.size() == 2) {
+            // the 3rd parameter is the properties
+            Expression properties = ExpressionBuilder.exchangePropertiesExpression();
+            AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, parameterType, properties);
+            parameters.add(info);
+        }
     }
 
 }

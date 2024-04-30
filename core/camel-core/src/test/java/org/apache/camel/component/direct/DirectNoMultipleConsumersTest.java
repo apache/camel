@@ -33,7 +33,7 @@ public class DirectNoMultipleConsumersTest extends TestSupport {
         container.disableJMX();
 
         container.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("mock:result");
 
                 from("direct:in").to("mock:result");

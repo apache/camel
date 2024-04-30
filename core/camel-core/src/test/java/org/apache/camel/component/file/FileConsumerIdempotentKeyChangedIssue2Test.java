@@ -52,10 +52,10 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 endpoint = endpoint(fileUri("?noop=true&initialDelay=0&delay=100"
                                             + "&idempotentKey=${file:name}-${file:size}-${file:modified}"));
 

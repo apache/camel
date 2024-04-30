@@ -34,7 +34,7 @@ public class PropertiesComponentOverridePropertiesNonStringTest extends ContextT
     public void testPropertiesComponentEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("{{hey}}").to("mock:{{cool.result}}");
             }
         });

@@ -36,8 +36,8 @@ public class FileDataSetConsumerTest extends ContextTestSupport {
     final String dataSetUri = "dataset://" + dataSetName;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", dataSet);
         return answer;
     }
@@ -68,9 +68,9 @@ public class FileDataSetConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(dataSetUri).to("mock://result");
             }
         };

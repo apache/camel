@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +40,6 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.support.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.invocation.Invocation;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -52,16 +50,15 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 public class AbstractCamelContextFactoryBeanTest {
 
     // any properties (abstract methods in AbstractCamelContextFactoryBean that
     // return String and receive no arguments) that do not support property
     // placeholders
-    Set<String> propertiesThatAreNotPlaceholdered = Collections.singleton("{{getErrorHandlerRef}}");
+    final Set<String> propertiesThatAreNotPlaceholdered = Collections.singleton("{{getErrorHandlerRef}}");
 
-    TypeConverter typeConverter = new DefaultTypeConverter(
+    final TypeConverter typeConverter = new DefaultTypeConverter(
             new DefaultPackageScanClassResolver(),
             new Injector() {
                 @Override
@@ -91,7 +88,7 @@ public class AbstractCamelContextFactoryBeanTest {
             }, false);
 
     // properties that should return value that can be converted to boolean
-    Set<String> valuesThatReturnBoolean = new HashSet<>(
+    final Set<String> valuesThatReturnBoolean = new HashSet<>(
             asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
                     "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}",
                     "{{getCaseInsensitiveHeaders}}",
@@ -102,18 +99,15 @@ public class AbstractCamelContextFactoryBeanTest {
                     "{{getInflightRepositoryBrowseEnabled}}"));
 
     // properties that should return value that can be converted to long
-    Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
+    final Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
 
-    public AbstractCamelContextFactoryBeanTest() throws Exception {
+    public AbstractCamelContextFactoryBeanTest() {
         ((Service) typeConverter).start();
     }
 
     @Test
     public void shouldSupportPropertyPlaceholdersOnAllProperties() throws Exception {
-        final Set<Invocation> invocations = new LinkedHashSet<>();
-
-        final DefaultCamelContext context = mock(DefaultCamelContext.class,
-                withSettings().invocationListeners(i -> invocations.add((Invocation) i.getInvocation())));
+        final DefaultCamelContext context = mock(DefaultCamelContext.class);
 
         final ExtendedCamelContext extendedCamelContext = mock(ExtendedCamelContext.class);
 
@@ -202,18 +196,4 @@ public class AbstractCamelContextFactoryBeanTest {
 
         return expectedPropertiesToBeResolved;
     }
-
-    static boolean shouldProvidePropertyPlaceholderSupport(final Method method) {
-        // all abstract getter methods that return String are possibly returning
-        // strings that contain property placeholders
-
-        final boolean isAbstract = Modifier.isAbstract(method.getModifiers());
-        final boolean isGetter = method.getName().startsWith("get");
-        final Class<?> returnType = method.getReturnType();
-
-        final boolean isCompatibleReturnType = String.class.isAssignableFrom(returnType);
-
-        return isAbstract && isGetter && isCompatibleReturnType;
-    }
-
 }

@@ -30,7 +30,7 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
     public void testDirect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:result");
             }
         });
@@ -47,13 +47,13 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDirectExistingExists() throws Exception {
+    public void testDirectExistingExists() {
 
         FailedToStartRouteException e = assertThrows(FailedToStartRouteException.class,
                 () -> {
                     context.addRoutes(new RouteBuilder() {
                         @Override
-                        public void configure() throws Exception {
+                        public void configure() {
                             from("direct:start").to("mock:result");
 
                             from("direct:start").to("mock:bar");

@@ -50,10 +50,10 @@ public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTest
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3).to("mock:b").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         ON_EXCEPTION_RETRY.incrementAndGet();
                         // exception thrown here, should not trigger the
                         // onException(IllegalArgumentException.class) as we

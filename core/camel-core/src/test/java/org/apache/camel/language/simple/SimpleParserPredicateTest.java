@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
     @Test
-    public void testSimpleBooleanValue() throws Exception {
+    public void testSimpleBooleanValue() {
         exchange.getIn().setBody("foo");
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "true", true, null);
@@ -49,7 +49,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleEq() throws Exception {
+    public void testSimpleEq() {
         exchange.getIn().setBody("foo");
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == 'foo'", true, null);
@@ -59,7 +59,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleEqNumeric() throws Exception {
+    public void testSimpleEqNumeric() {
         exchange.getIn().setBody(123);
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == 123", true, null);
@@ -69,7 +69,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleEqFunctionFunction() throws Exception {
+    public void testSimpleEqFunctionFunction() {
         exchange.getIn().setBody(122);
         exchange.getIn().setHeader("val", 122);
 
@@ -80,7 +80,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleEqFunctionNumeric() throws Exception {
+    public void testSimpleEqFunctionNumeric() {
         exchange.getIn().setBody(122);
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == 122", true, null);
@@ -90,7 +90,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleGtFunctionNumeric() throws Exception {
+    public void testSimpleGtFunctionNumeric() {
         exchange.getIn().setBody(122);
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} > 120", true, null);
@@ -100,7 +100,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleUnaryInc() throws Exception {
+    public void testSimpleUnaryInc() {
         exchange.getIn().setBody(122);
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body}++ == 123", true, null);
@@ -110,7 +110,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleUnaryDec() throws Exception {
+    public void testSimpleUnaryDec() {
         exchange.getIn().setBody(122);
 
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body}-- == 121", true, null);
@@ -120,7 +120,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleEqFunctionBoolean() throws Exception {
+    public void testSimpleEqFunctionBoolean() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
 
@@ -131,7 +131,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleEqFunctionBooleanSpaces() throws Exception {
+    public void testSimpleEqFunctionBooleanSpaces() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
 
@@ -142,7 +142,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleLogicalAnd() throws Exception {
+    public void testSimpleLogicalAnd() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
@@ -155,7 +155,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleLogicalOr() throws Exception {
+    public void testSimpleLogicalOr() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
@@ -168,7 +168,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleLogicalAndAnd() throws Exception {
+    public void testSimpleLogicalAndAnd() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
@@ -183,7 +183,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleManyAndLogical() throws Exception {
+    public void testSimpleManyAndLogical() {
         exchange.getIn().setBody("Hello");
 
         StringBuilder sb = new StringBuilder();
@@ -202,7 +202,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleManyOrLogical() throws Exception {
+    public void testSimpleManyOrLogical() {
         exchange.getIn().setBody("Hello");
 
         StringBuilder sb = new StringBuilder();
@@ -221,7 +221,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleExpressionPredicate() throws Exception {
+    public void testSimpleExpressionPredicate() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("number", "1234");
         SimplePredicateParser parser = new SimplePredicateParser(context, "${in.header.number} regex '\\d{4}'", true, null);
@@ -230,7 +230,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleMap() throws Exception {
+    public void testSimpleMap() {
         Map<String, String> map = new HashMap<>();
         map.put("foo", "123");
         map.put("foo bar", "456");
@@ -257,8 +257,8 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
 
         List<String> list = new ArrayList<>();
         list.add("foo");
@@ -269,7 +269,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleIn() throws Exception {
+    public void testSimpleIn() {
         Map<String, String> map = new HashMap<>();
         map.put("key", "foo");
         map.put("key2", "bar");
@@ -290,7 +290,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSimpleInEmpty() throws Exception {
+    public void testSimpleInEmpty() {
         SimplePredicateParser parser = new SimplePredicateParser(context, "${body} in ',,gold,silver'", true, null);
         Predicate pre = parser.parsePredicate();
 

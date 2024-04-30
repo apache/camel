@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public class ClaimCheckTest extends ContextTestSupport {
 
     // in memory data store for testing only!
-    public static Map<String, Object> dataStore = new HashMap<>();
+    public static final Map<String, Object> dataStore = new HashMap<>();
 
     @Test
     public void testClaimCheck() throws Exception {
@@ -56,8 +56,8 @@ public class ClaimCheckTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("checkLuggage", new CheckLuggageBean());
         jndi.bind("dataEnricher", new DataEnricherBean());
         return jndi;

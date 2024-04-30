@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DefaultComponentValidateURITest extends ContextTestSupport {
 
     @Test
-    public void testNoParameters() throws Exception {
+    public void testNoParameters() {
         Endpoint endpoint = context.getEndpoint("timer://foo");
         assertNotNull(endpoint, "Should have created an endpoint");
     }
@@ -55,7 +55,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
     }
 
     @Test
-    public void testScheduledPollConsumerOptions() throws Exception {
+    public void testScheduledPollConsumerOptions() {
         // test that we support both notations of scheduled polling consumer options
 
         Endpoint endpint = context.getEndpoint("file://foo2?delay=1000");

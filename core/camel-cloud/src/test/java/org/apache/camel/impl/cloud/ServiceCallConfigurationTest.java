@@ -36,8 +36,8 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServiceCallConfigurationTest {
 
@@ -59,7 +59,7 @@ public class ServiceCallConfigurationTest {
         context.setServiceCallConfiguration(conf);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                         .serviceCall("scall", "scall/api/${header.customerId}");
@@ -74,7 +74,7 @@ public class ServiceCallConfigurationTest {
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
         assertNotNull(proc);
-        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
         assertEquals(sd, loadBalancer.getServiceDiscovery());
@@ -105,7 +105,7 @@ public class ServiceCallConfigurationTest {
         context.setServiceCallConfiguration(conf);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                         .serviceCall()
@@ -120,7 +120,7 @@ public class ServiceCallConfigurationTest {
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
         assertNotNull(proc);
-        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
         assertEquals(sd, loadBalancer.getServiceDiscovery());
@@ -145,7 +145,7 @@ public class ServiceCallConfigurationTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                             .serviceCall()
@@ -162,7 +162,7 @@ public class ServiceCallConfigurationTest {
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
         assertNotNull(proc);
-        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
         assertEquals(sd, loadBalancer.getServiceDiscovery());
@@ -187,7 +187,7 @@ public class ServiceCallConfigurationTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .routeId("default")
                             .serviceCall()
@@ -204,7 +204,7 @@ public class ServiceCallConfigurationTest {
         DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
         assertNotNull(proc);
-        assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+        assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
 
         DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
         assertEquals(sd, loadBalancer.getServiceDiscovery());
@@ -252,7 +252,7 @@ public class ServiceCallConfigurationTest {
         context.addServiceCallConfiguration("named", namedConfiguration);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:default")
                         .id("default")
                         .serviceCall()
@@ -284,7 +284,7 @@ public class ServiceCallConfigurationTest {
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
             assertNotNull(proc);
-            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
 
             DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
             assertEquals(defaultServiceDiscovery, loadBalancer.getServiceDiscovery());
@@ -296,7 +296,7 @@ public class ServiceCallConfigurationTest {
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("named"));
 
             assertNotNull(proc);
-            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
 
             DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
             assertEquals(defaultServiceDiscovery, loadBalancer.getServiceDiscovery());
@@ -308,7 +308,7 @@ public class ServiceCallConfigurationTest {
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("local"));
 
             assertNotNull(proc);
-            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
 
             DefaultServiceLoadBalancer loadBalancer = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
             assertEquals(localServiceDiscovery, loadBalancer.getServiceDiscovery());
@@ -340,7 +340,7 @@ public class ServiceCallConfigurationTest {
             context.setServiceCallConfiguration(global);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .routeId("default")
                             .serviceCall()
@@ -360,19 +360,19 @@ public class ServiceCallConfigurationTest {
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
             assertNotNull(proc);
-            assertTrue(proc.getLoadBalancer() instanceof DefaultServiceLoadBalancer);
+            assertInstanceOf(DefaultServiceLoadBalancer.class, proc.getLoadBalancer());
             assertEquals("service-name", proc.getName());
             assertEquals("file", proc.getScheme());
             assertEquals("direct:service-name", proc.getUri());
 
             DefaultServiceLoadBalancer lb = (DefaultServiceLoadBalancer) proc.getLoadBalancer();
 
-            assertTrue(lb.getServiceFilter() instanceof BlacklistServiceFilter);
+            assertInstanceOf(BlacklistServiceFilter.class, lb.getServiceFilter());
             BlacklistServiceFilter filter = (BlacklistServiceFilter) lb.getServiceFilter();
             List<ServiceDefinition> blacklist = filter.getBlacklistedServices();
             assertEquals(1, blacklist.size());
 
-            assertTrue(lb.getServiceDiscovery() instanceof StaticServiceDiscovery);
+            assertInstanceOf(StaticServiceDiscovery.class, lb.getServiceDiscovery());
 
             Exchange exchange = new DefaultExchange(context);
             List<ServiceDefinition> services1 = lb.getServiceDiscovery().getServices("hello-service");
@@ -417,7 +417,7 @@ public class ServiceCallConfigurationTest {
             context.setServiceCallConfiguration(config);
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("direct:start")
                             .routeId("default")
                             .serviceCall("scall");

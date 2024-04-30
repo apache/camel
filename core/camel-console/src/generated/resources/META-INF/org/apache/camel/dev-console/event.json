@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "event",
+    "title": "Camel Events",
+    "description": "The most recent Camel events",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.EventConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

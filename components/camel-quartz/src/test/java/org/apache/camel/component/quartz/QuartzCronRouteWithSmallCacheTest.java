@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -57,12 +56,9 @@ public class QuartzCronRouteWithSmallCacheTest extends BaseQuartzTest {
             public void configure() {
                 from("direct:foo").to("log:foo");
 
-                from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        latch.countDown();
-                        template.sendBody("direct:foo", "Quartz triggered");
-                    }
+                from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").process(exchange -> {
+                    latch.countDown();
+                    template.sendBody("direct:foo", "Quartz triggered");
                 });
             }
         };

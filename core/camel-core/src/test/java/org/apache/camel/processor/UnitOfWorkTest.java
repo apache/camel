@@ -34,7 +34,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     protected Exchange completed;
     protected Exchange failed;
     protected String uri = "direct:foo";
-    protected CountDownLatch doneLatch = new CountDownLatch(1);
+    protected final CountDownLatch doneLatch = new CountDownLatch(1);
     protected Object foo;
     protected Object baz;
 
@@ -84,10 +84,10 @@ public class UnitOfWorkTest extends ContextTestSupport {
         super.setUp();
     }
 
-    protected void sendMessage() throws InterruptedException {
+    protected void sendMessage() {
 
         template.send(uri, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader("foo", "bar");
                 exchange.getIn().setHeader("baz", "bat");
                 exchange.getIn().setBody("<hello>world!</hello>");

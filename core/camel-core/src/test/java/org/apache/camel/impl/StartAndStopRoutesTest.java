@@ -34,7 +34,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
     protected Endpoint endpointA;
     protected Endpoint endpointB;
     protected Endpoint endpointC;
-    protected Object expectedBody = "<hello>world!</hello>";
+    protected final Object expectedBody = "<hello>world!</hello>";
 
     @Test
     public void testStartRouteThenStopMutateAndStartRouteAgain() throws Exception {
@@ -74,10 +74,10 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test.a").to("seda:test.b").to("mock:results");
             }
         };

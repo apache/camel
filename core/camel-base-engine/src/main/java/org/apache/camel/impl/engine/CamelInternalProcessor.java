@@ -32,6 +32,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -766,7 +767,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
-            return backlogDebugger.beforeProcess(exchange, target, definition);
+            if (definition.acceptDebugger(exchange)) {
+                return backlogDebugger.beforeProcess(exchange, target, definition);
+            }
+            return null;
         }
 
         @Override
@@ -794,13 +798,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
-            debugger.beforeProcess(exchange, target, definition);
-            return new StopWatch();
+            if (definition.acceptDebugger(exchange)) {
+                debugger.beforeProcess(exchange, target, definition);
+                return new StopWatch();
+            }
+            return null;
         }
 
         @Override
         public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
-            debugger.afterProcess(exchange, target, definition, stopWatch.taken());
+            if (stopWatch != null) {
+                debugger.afterProcess(exchange, target, definition, stopWatch.taken());
+            }
         }
 
     }
@@ -1067,8 +1076,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private final NamedNode processorDefinition;
         private final NamedRoute routeDefinition;
         private final Synchronization tracingAfterRoute;
-        private final boolean rest;
-        private final boolean template;
         private final boolean skip;
 
         public TracingAdvice(Tracer tracer, NamedNode processorDefinition, NamedRoute routeDefinition, boolean first) {
@@ -1079,17 +1086,19 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     = routeDefinition != null
                             ? new TracingAfterRoute(tracer, routeDefinition.getRouteId(), routeDefinition) : null;
 
+            boolean rest;
+            boolean template;
             if (routeDefinition != null) {
-                this.rest = routeDefinition.isCreatedFromRest();
-                this.template = routeDefinition.isCreatedFromTemplate();
+                rest = routeDefinition.isCreatedFromRest();
+                template = routeDefinition.isCreatedFromTemplate();
             } else {
-                this.rest = false;
-                this.template = false;
+                rest = false;
+                template = false;
             }
             // optimize whether to skip this route or not
-            if (this.rest && !tracer.isTraceRests()) {
+            if (rest && !tracer.isTraceRests()) {
                 this.skip = true;
-            } else if (this.template && !tracer.isTraceTemplates()) {
+            } else if (template && !tracer.isTraceTemplates()) {
                 this.skip = true;
             } else {
                 this.skip = false;
@@ -1219,7 +1228,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Event notifier for {@link BacklogTracerAdvice} to capture {@link Exchange} sent to endpoints during tracing.
      */
-    private static final class BacklogTraceAdviceEventNotifier extends SimpleEventNotifierSupport {
+    private static final class BacklogTraceAdviceEventNotifier extends SimpleEventNotifierSupport implements NonManagedService {
 
         private final Object dummy = new Object();
 

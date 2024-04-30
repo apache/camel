@@ -33,6 +33,8 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.hamcrest.Matcher;
@@ -63,7 +65,7 @@ public abstract class TestSupport {
 
     protected TestInfo info;
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @TempDir
     private Path tempDirectory;
@@ -141,6 +143,19 @@ public abstract class TestSupport {
             }
         }
         return resolvedPath;
+    }
+
+    /**
+     * Indicates whether the component {@code camel-debug} is present in the classpath of the test.
+     *
+     * @return {@code true} if it is present, {@code false} otherwise.
+     */
+    public static boolean isCamelDebugPresent() {
+        // Needs to be detected before initializing and starting the camel context
+        return Thread.currentThread()
+                .getContextClassLoader()
+                .getResource(String.format("%s%s", FactoryFinder.DEFAULT_PATH, Debugger.FACTORY))
+               != null;
     }
 
     protected String fileUri() {

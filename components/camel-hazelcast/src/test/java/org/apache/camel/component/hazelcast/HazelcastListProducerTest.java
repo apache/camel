@@ -20,17 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hazelcast.collection.IList;
-import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastService;
+import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,15 +42,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HazelcastListProducerTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
+
+    @RegisterExtension
+    public static TestEntityNameGenerator nameGenerator = new TestEntityNameGenerator();
+
     private static IList<String> list;
 
     private static HazelcastInstance hazelcastInstance;
 
     @BeforeAll
     public static void beforeAll() {
-        Config config = new Config();
-        config.getNetworkConfig().getJoin().getAutoDetectionConfig().setEnabled(false);
-        hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+        hazelcastInstance = Hazelcast.newHazelcastInstance(hazelcastService.createConfiguration(null, 0, null, "list"));
         list = hazelcastInstance.getList("bar");
     }
 

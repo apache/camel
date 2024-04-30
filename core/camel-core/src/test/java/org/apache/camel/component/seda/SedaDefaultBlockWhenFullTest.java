@@ -43,11 +43,11 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
             = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=false&timeout=0";
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         SedaComponent component = new SedaComponent();
         component.setDefaultBlockWhenFull(true);
 
-        Registry registry = super.createRegistry();
+        Registry registry = super.createCamelRegistry();
         registry.bind("seda", component);
 
         return registry;
@@ -57,7 +57,7 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).to(MOCK_URI);
 
                 // use same delay as above on purpose

@@ -62,8 +62,8 @@ public class WireTapShutdownRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("tap", new MyTapBean());
         return jndi;
     }
@@ -83,7 +83,7 @@ public class WireTapShutdownRouteTest extends ContextTestSupport {
 
         private String tapped;
 
-        public void tapSomething(String body) throws Exception {
+        public void tapSomething(String body) {
             try {
                 EXCHANGER.exchange(null);
                 Thread.sleep(100);

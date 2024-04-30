@@ -16,7 +16,7 @@ on a xref:message.adoc[Message] which can be set to `InOut` to indicate a
 request/reply message. Camel xref:ROOT:index.adoc[Components] then
 implement this pattern using the underlying transport or protocols.
 
-For example when using xref:ROOT:jms-component.adoc[JMS] with `InOut` the component will
+For example, when using xref:ROOT:jms-component.adoc[JMS] with `InOut` the component will
 by default perform these actions:
 
 * create by default a temporary inbound queue
@@ -40,7 +40,7 @@ the pattern property.
 foo:bar?exchangePattern=InOut
 ----
 
-IMPORTANT: This is only possible on endpoints used by consumers (i.e. in `<from>`).
+IMPORTANT: This is only possible on endpoints used by consumers (i.e., in `<from>`).
 
 In the example below the message will be forced as a request reply message as the consumer
 is in `InOut` mode.
@@ -113,13 +113,13 @@ NOTE: Using `setExchangePattern` to change the xref:manual::exchange-pattern.ado
 is often only used in special use-cases where you must
 force to be using either `InOnly` or `InOut` mode when using components that support both modes (such as messaging components like ActiveMQ, JMS, RabbitMQ etc.)
 
-== JMS component and InOnly vs InOut
+== JMS component and InOnly vs. InOut
 
 When consuming messages from xref:ROOT:jms-component.adoc[JMS] a Request Reply is
 indicated by the presence of the `JMSReplyTo` header. This means the JMS component automatic
 detects whether to use `InOnly` or `InOut` in the consumer.
 
 Likewise, the JMS producer will check the current xref:manual::exchange-pattern.adoc[Exchange Pattern]
-on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e. one-way vs request/reply messaging)
+on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e., one-way vs. request/reply messaging)
 
 

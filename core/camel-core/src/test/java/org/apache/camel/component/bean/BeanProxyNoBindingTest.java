@@ -111,15 +111,6 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
 
-        /*        try {
-            service.invalidReturnType("<order type=\"beer\">Carlsberg</order>");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-            InvalidPayloadException cause = assertIsInstanceOf(InvalidPayloadException.class, e.getCause());
-            assertEquals(Integer.class, cause.getType());
-        }*/
-
         Exception e = assertThrows(Exception.class,
                 () -> service.invalidReturnType("<order type=\"beer\">Carlsberg</order>"),
                 "Should have thrown exception");
@@ -192,10 +183,10 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").choice().when(xpath("/order/@type = 'book'")).to("direct:book").otherwise()
                         .to("direct:other").end();

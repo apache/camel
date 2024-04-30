@@ -53,10 +53,10 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when().simple("${body.property['foo']} == 'King Kong'").to("mock:king")
                         .otherwise().to("mock:other");
             }
@@ -64,7 +64,7 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
     }
 
     public static final class MyObjectMessage {
-        private Map<Object, Object> property;
+        private final Map<Object, Object> property;
 
         public MyObjectMessage() {
             this.property = new HashMap<>();

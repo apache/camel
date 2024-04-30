@@ -17,6 +17,7 @@
 package org.apache.camel.component.language;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,12 +35,12 @@ public class LanguageRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
-                String script = URLEncoder.encode("Hello ${body}", "UTF-8");
+                String script = URLEncoder.encode("Hello ${body}", StandardCharsets.UTF_8);
                 from("direct:start").to("language:simple:" + script).to("mock:result");
                 // END SNIPPET: e1
             }

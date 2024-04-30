@@ -51,7 +51,7 @@ public class RestOpenApiReaderFileResponseModelTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    @ValueSource(strings = { "3.1", "3.0" })
     public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
@@ -68,12 +68,8 @@ public class RestOpenApiReaderFileResponseModelTest extends CamelTestSupport {
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         LOG.info(json);
 
-        if (config.isOpenApi2()) {
-            assertTrue(json.contains("\"type\" : \"file\""));
-        } else {
-            assertTrue(json.contains("\"format\" : \"binary\""));
-            assertTrue(json.contains("\"type\" : \"string\""));
-        }
+        assertTrue(json.contains("\"format\" : \"binary\""));
+        assertTrue(json.contains("\"type\" : \"string\""));
 
         context.stop();
     }

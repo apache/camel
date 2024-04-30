@@ -22,7 +22,9 @@
         <parameter name="foo" value="fooVal"/>
         <parameter name="bar" value="barVal"/>
         <bean name="myBean" type="#class:org.apache.camel.spring.routebuilder.SpringTemplatedRouteTest$MySpecialBean">
-            <property key="name" value="John"/>
+            <properties>
+                <property key="name" value="John"/>
+            </properties>
         </bean>
     </templatedRoute>
 </templatedRoutes>

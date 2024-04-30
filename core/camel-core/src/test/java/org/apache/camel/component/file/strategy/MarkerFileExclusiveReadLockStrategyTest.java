@@ -45,8 +45,8 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
 
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyTest.class);
     private static final int NUMBER_OF_THREADS = 5;
-    private AtomicInteger numberOfFilesProcessed = new AtomicInteger();
-    private CountDownLatch latch = new CountDownLatch(2);
+    private final AtomicInteger numberOfFilesProcessed = new AtomicInteger();
+    private final CountDownLatch latch = new CountDownLatch(2);
 
     @Test
     public void testMultithreadedLocking() throws Exception {
@@ -100,13 +100,13 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("in?readLock=markerFile&initialDelay=0&delay=10")).onCompletion()
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 numberOfFilesProcessed.addAndGet(1);
                                 latch.countDown();
                             }

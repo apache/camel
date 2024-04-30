@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DefaultInjectorTest {
 
     @Test
-    public void testDefaultInjector() throws Exception {
+    public void testDefaultInjector() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -42,7 +42,7 @@ public class DefaultInjectorTest {
     }
 
     @Test
-    public void testDefaultInjectorFactory() throws Exception {
+    public void testDefaultInjectorFactory() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -65,7 +65,7 @@ public class DefaultInjectorTest {
 
     public static class MyOtherBean {
 
-        private static MyOtherBean me = new MyOtherBean();
+        private static final MyOtherBean me = new MyOtherBean();
 
         public static MyOtherBean getInstance() {
             return me;

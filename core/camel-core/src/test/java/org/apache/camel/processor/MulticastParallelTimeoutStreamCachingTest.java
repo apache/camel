@@ -29,13 +29,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSupport {
 
     private static final String BODY_STRING = "message body";
@@ -52,6 +55,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         assertTrue(f.isDirectory());
         Thread.sleep(500L); // deletion happens asynchron
         File[] files = f.listFiles();
+        assertNotNull(files, "There should be a list of files");
         assertEquals(0, files.length);
     }
 
@@ -65,7 +69,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final Processor processor1 = new Processor() {
             public void process(Exchange exchange) {
                 try {

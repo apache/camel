@@ -43,16 +43,16 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     private static volatile String event = "";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10"))
                         .convertBodyTo(String.class).to("mock:result");
             }
@@ -82,7 +82,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
             try {
                 consumer.start();
             } catch (Exception e) {
-                RuntimeCamelException.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
 
             if (counter++ == 0) {
@@ -99,7 +99,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         }
 
         @Override
-        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
+        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) {
             if (cause.getMessage().equals("Damn I cannot do this")) {
                 event += "rollback";
                 // stop consumer as it does not work

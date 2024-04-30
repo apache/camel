@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
 public class CustomParameterMappingStrategyTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyFooBean());
         jndi.bind("myStrategy", new MyCustomStrategy());
         return jndi;
@@ -42,10 +42,10 @@ public class CustomParameterMappingStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").bean("foo").to("mock:result");
             }
         };

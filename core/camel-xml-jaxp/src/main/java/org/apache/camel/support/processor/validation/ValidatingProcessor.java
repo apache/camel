@@ -166,8 +166,8 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
                 } catch (SAXParseException e) {
                     // can be thrown for non-well-formed XML
                     throw new SchemaValidationException(
-                            exchange, schema, Collections.singletonList(e), Collections.<SAXParseException> emptyList(),
-                            Collections.<SAXParseException> emptyList());
+                            exchange, schema, Collections.singletonList(e), Collections.emptyList(),
+                            Collections.emptyList());
                 }
             }
         } finally {

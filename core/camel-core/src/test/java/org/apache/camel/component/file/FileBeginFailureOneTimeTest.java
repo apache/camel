@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
-    private MyStrategy myStrategy = new MyStrategy();
+    private final MyStrategy myStrategy = new MyStrategy();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myStrategy", myStrategy);
         return jndi;
     }
@@ -51,10 +52,10 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&processStrategy=#myStrategy")).convertBodyTo(String.class)
                         .to("mock:result");
             }
@@ -63,22 +64,20 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
     private static class MyStrategy implements GenericFileProcessStrategy<File> {
 
-        private volatile int invoked;
+        private final LongAdder invoked = new LongAdder();
 
         @Override
         public void prepareOnStartup(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint)
-                throws Exception {
+                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) {
         }
 
         @Override
         public boolean begin(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
-            invoked++;
-            if (invoked <= 1) {
+                GenericFile<File> fileGenericFile) {
+            invoked.increment();
+            if (invoked.intValue() <= 1) {
                 throw new IllegalArgumentException("Damn I cannot do this");
             }
             return true;
@@ -88,8 +87,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         public void abort(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
+                GenericFile<File> fileGenericFile) {
             // noop
         }
 
@@ -97,20 +95,18 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         public void commit(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
+                GenericFile<File> fileGenericFile) {
         }
 
         @Override
         public void rollback(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile)
-                throws Exception {
+                GenericFile<File> fileGenericFile) {
         }
 
         public int getInvoked() {
-            return invoked;
+            return invoked.intValue();
         }
     }
 

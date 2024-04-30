@@ -83,6 +83,7 @@ import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetHeadersDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SetVariableDefinition;
+import org.apache.camel.model.SetVariablesDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
@@ -223,6 +224,7 @@ import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.HeadDefinition;
 import org.apache.camel.model.rest.MutualTLSDefinition;
 import org.apache.camel.model.rest.OAuth2Definition;
+import org.apache.camel.model.rest.OpenApiDefinition;
 import org.apache.camel.model.rest.OpenIdConnectDefinition;
 import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.PatchDefinition;
@@ -631,7 +633,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "include", type = "string", description = "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL", displayName = "Include"),
                     @YamlProperty(name = "instanceClassName", type = "string", description = "Class name to use for marshal and unmarshalling", displayName = "Instance Class Name"),
                     @YamlProperty(name = "jsonView", type = "string", description = "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations", displayName = "Json View"),
-                    @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson", defaultValue = "ApacheAvro", description = "Which Avro library to use.", displayName = "Library"),
+                    @YamlProperty(name = "library", type = "enum:ApacheAvro,Jackson", defaultValue = "avroJackson", description = "Which Avro library to use.", displayName = "Library"),
                     @YamlProperty(name = "moduleClassNames", type = "string", description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.", displayName = "Module Class Names"),
                     @YamlProperty(name = "moduleRefs", type = "string", description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.", displayName = "Module Refs"),
                     @YamlProperty(name = "objectMapper", type = "string", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.", displayName = "Object Mapper"),
@@ -1097,7 +1099,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "method", type = "string", description = "Sets the method name on the bean to use", displayName = "Method"),
-                    @YamlProperty(name = "ref", type = "string", description = "Sets a reference to an exiting bean to use, which is looked up from the registry", displayName = "Ref"),
+                    @YamlProperty(name = "ref", type = "string", description = "Sets a reference to an existing bean to use, which is looked up from the registry", displayName = "Ref"),
                     @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype", defaultValue = "Singleton", description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. So when using prototype scope then this depends on the bean registry implementation.", displayName = "Scope")
             }
     )
@@ -5287,6 +5289,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "jtaTransactionErrorHandler", type = "object:org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition", oneOf = "errorHandlerType"),
                     @YamlProperty(name = "noErrorHandler", type = "object:org.apache.camel.model.errorhandler.NoErrorHandlerDefinition", oneOf = "errorHandlerType"),
+                    @YamlProperty(name = "refErrorHandler", type = "object:org.apache.camel.model.errorhandler.RefErrorHandlerDefinition", oneOf = "errorHandlerType"),
                     @YamlProperty(name = "springTransactionErrorHandler", type = "object:org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition", oneOf = "errorHandlerType")
             }
     )
@@ -5322,6 +5325,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "noErrorHandler": {
                     org.apache.camel.model.errorhandler.NoErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.NoErrorHandlerDefinition.class);
+                    target.setErrorHandlerType(val);
+                    break;
+                }
+                case "refErrorHandler": {
+                    org.apache.camel.model.errorhandler.RefErrorHandlerDefinition val = asType(node, org.apache.camel.model.errorhandler.RefErrorHandlerDefinition.class);
                     target.setErrorHandlerType(val);
                     break;
                 }
@@ -10347,6 +10355,84 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = {
+                    "open-api",
+                    "openApi"
+            },
+            types = org.apache.camel.model.rest.OpenApiDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Open Api",
+            description = "To use OpenApi as contract-first with Camel Rest DSL.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "missingOperation", type = "enum:fail,ignore,mock", defaultValue = "fail", description = "Whether to fail, ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.", displayName = "Missing Operation"),
+                    @YamlProperty(name = "mockIncludePattern", type = "string", defaultValue = "classpath:camel-mock/**", description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.", displayName = "Mock Include Pattern"),
+                    @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
+                    @YamlProperty(name = "specification", type = "string", required = true, description = "Path to the OpenApi specification file.", displayName = "Specification")
+            }
+    )
+    public static class OpenApiDefinitionDeserializer extends YamlDeserializerBase<OpenApiDefinition> {
+        public OpenApiDefinitionDeserializer() {
+            super(OpenApiDefinition.class);
+        }
+
+        @Override
+        protected OpenApiDefinition newInstance() {
+            return new OpenApiDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(OpenApiDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "missingOperation": {
+                    String val = asText(node);
+                    target.setMissingOperation(val);
+                    break;
+                }
+                case "mockIncludePattern": {
+                    String val = asText(node);
+                    target.setMockIncludePattern(val);
+                    break;
+                }
+                case "routeId": {
+                    String val = asText(node);
+                    target.setRouteId(val);
+                    break;
+                }
+                case "specification": {
+                    String val = asText(node);
+                    target.setSpecification(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
                     "open-id-connect",
                     "openIdConnect"
             },
@@ -12274,7 +12360,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Random",
-            description = "The destination endpoints are selected by random.",
+            description = "The destination endpoints are selected randomly.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -12503,11 +12589,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "maximumRedeliveries", type = "number", description = "Sets the maximum redeliveries x = redeliver at most x times 0 = no redeliveries -1 = redeliver forever", displayName = "Maximum Redeliveries"),
                     @YamlProperty(name = "maximumRedeliveryDelay", type = "string", defaultValue = "60000", description = "Sets the maximum delay between redelivery", displayName = "Maximum Redelivery Delay"),
                     @YamlProperty(name = "redeliveryDelay", type = "string", defaultValue = "1000", description = "Sets the initial redelivery delay", displayName = "Redelivery Delay"),
-                    @YamlProperty(name = "retriesExhaustedLogLevel", type = "string", defaultValue = "ERROR", description = "Sets the logging level to use when retries have been exhausted", displayName = "Retries Exhausted Log Level"),
+                    @YamlProperty(name = "retriesExhaustedLogLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "ERROR", description = "Sets the logging level to use when retries have been exhausted", displayName = "Retries Exhausted Log Level"),
                     @YamlProperty(name = "retryAttemptedLogInterval", type = "number", defaultValue = "1", description = "Sets the interval to use for logging retry attempts", displayName = "Retry Attempted Log Interval"),
-                    @YamlProperty(name = "retryAttemptedLogLevel", type = "string", defaultValue = "DEBUG", description = "Sets the logging level to use for logging retry attempts", displayName = "Retry Attempted Log Level"),
+                    @YamlProperty(name = "retryAttemptedLogLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "DEBUG", description = "Sets the logging level to use for logging retry attempts", displayName = "Retry Attempted Log Level"),
                     @YamlProperty(name = "useCollisionAvoidance", type = "boolean", description = "Turn on collision avoidance.", displayName = "Use Collision Avoidance"),
-                    @YamlProperty(name = "useExponentialBackOff", type = "boolean", description = "Turn on exponential backk off", displayName = "Use Exponential Back Off")
+                    @YamlProperty(name = "useExponentialBackOff", type = "boolean", description = "Turn on exponential back off", displayName = "Use Exponential Back Off")
             }
     )
     public static class RedeliveryPolicyDefinitionDeserializer extends YamlDeserializerBase<RedeliveryPolicyDefinition> {
@@ -13371,8 +13457,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "config", type = "string", description = "Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from the registry.", displayName = "Config"),
                     @YamlProperty(name = "failureRateThreshold", type = "number", defaultValue = "50", description = "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.", displayName = "Failure Rate Threshold"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "ignoreException", type = "array:string", description = "Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception matching or inheriting from one of the list will not count as a failure nor success, even if the exceptions is part of recordExceptions.", displayName = "Ignore Exception"),
                     @YamlProperty(name = "minimumNumberOfCalls", type = "number", defaultValue = "100", description = "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate. For example, if minimumNumberOfCalls is 10, then at least 10 calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the CircuitBreaker will not transition to open even if all 9 calls have failed. Default minimumNumberOfCalls is 100", displayName = "Minimum Number Of Calls"),
                     @YamlProperty(name = "permittedNumberOfCallsInHalfOpenState", type = "number", defaultValue = "10", description = "Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10.", displayName = "Permitted Number Of Calls In Half Open State"),
+                    @YamlProperty(name = "recordException", type = "array:string", description = "Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.", displayName = "Record Exception"),
                     @YamlProperty(name = "slidingWindowSize", type = "number", defaultValue = "100", description = "Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. slidingWindowSize configures the size of the sliding window. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. The slidingWindowSize must be greater than 0. The minimumNumberOfCalls must be greater than 0. If the slidingWindowType is COUNT_BASED, the minimumNumberOfCalls cannot be greater than slidingWindowSize . If the slidingWindowType is TIME_BASED, you can pick whatever you want. Default slidingWindowSize is 100.", displayName = "Sliding Window Size"),
                     @YamlProperty(name = "slidingWindowType", type = "enum:TIME_BASED,COUNT_BASED", defaultValue = "COUNT_BASED", description = "Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. Default slidingWindowType is COUNT_BASED.", displayName = "Sliding Window Type"),
                     @YamlProperty(name = "slowCallDurationThreshold", type = "number", defaultValue = "60", description = "Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds.", displayName = "Slow Call Duration Threshold"),
@@ -13441,6 +13529,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
+                case "ignoreException": {
+                    java.util.List<String> val = asStringList(node);
+                    target.setIgnoreExceptions(val);
+                    break;
+                }
                 case "minimumNumberOfCalls": {
                     String val = asText(node);
                     target.setMinimumNumberOfCalls(val);
@@ -13449,6 +13542,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "permittedNumberOfCallsInHalfOpenState": {
                     String val = asText(node);
                     target.setPermittedNumberOfCallsInHalfOpenState(val);
+                    break;
+                }
+                case "recordException": {
+                    java.util.List<String> val = asStringList(node);
+                    target.setRecordExceptions(val);
                     break;
                 }
                 case "slidingWindowSize": {
@@ -13784,12 +13882,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "apiComponent", type = "enum:openapi,swagger", description = "The name of the Camel component to use as the REST API. If no API Component has been explicit configured, then Camel will lookup if there is a Camel component responsible for servicing and generating the REST API documentation, or if a org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If either one is found, then that is being used.", displayName = "Api Component"),
-                    @YamlProperty(name = "apiContextPath", type = "string", description = "Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.", displayName = "Api Context Path"),
+                    @YamlProperty(name = "apiContextPath", type = "string", description = "Sets a leading context-path the REST API will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.", displayName = "Api Context Path"),
                     @YamlProperty(name = "apiContextRouteId", type = "string", description = "Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id.", displayName = "Api Context Route Id"),
                     @YamlProperty(name = "apiHost", type = "string", description = "To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname", displayName = "Api Host"),
                     @YamlProperty(name = "apiProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the api documentation. For example set property api.title to my cool stuff", displayName = "Api Property"),
                     @YamlProperty(name = "apiVendorExtension", type = "boolean", description = "Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.", displayName = "Api Vendor Extension"),
                     @YamlProperty(name = "bindingMode", type = "enum:auto,json,json_xml,off,xml", defaultValue = "off", description = "Sets the binding mode to use. The default value is off", displayName = "Binding Mode"),
+                    @YamlProperty(name = "bindingPackageScan", type = "string", description = "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.", displayName = "Binding Package Scan"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
                     @YamlProperty(name = "component", type = "enum:platform-http,servlet,jetty,undertow,netty-http,coap", description = "The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used.", displayName = "Component"),
                     @YamlProperty(name = "componentProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the rest component in use.", displayName = "Component Property"),
@@ -13802,14 +13901,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "endpointProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the rest endpoint in use.", displayName = "Endpoint Property"),
                     @YamlProperty(name = "host", type = "string", description = "The hostname to use for exposing the REST service.", displayName = "Host"),
                     @YamlProperty(name = "hostNameResolver", type = "enum:allLocalIp,localHostName,localIp", defaultValue = "allLocalIp", description = "If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be using.", displayName = "Host Name Resolver"),
-                    @YamlProperty(name = "inlineRoutes", type = "boolean", description = "Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. This option is default false.", displayName = "Inline Routes"),
+                    @YamlProperty(name = "inlineRoutes", type = "boolean", description = "Inline routes in rest-dsl which are linked using direct endpoints. Each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). By inlining (default) allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. If a route is not using direct endpoint then the rest-dsl is not inlined, and will become an individual route. This option is default true.", displayName = "Inline Routes"),
                     @YamlProperty(name = "jsonDataFormat", type = "string", description = "Name of specific json data format to use. By default jackson will be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.", displayName = "Json Data Format"),
                     @YamlProperty(name = "port", type = "string", description = "The port number to use for exposing the REST service. Notice if you use servlet component then the port number configured here does not apply, as the port number in use is the actual port number the servlet component is using. eg if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf that uses port 8181 by default etc. Though in those situations setting the port number here, allows tooling and JMX to know the port number, so its recommended to set the port number to the number that the servlet engine uses.", displayName = "Port"),
                     @YamlProperty(name = "producerApiDoc", type = "string", description = "Sets the location of the api document the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url.", displayName = "Producer Api Doc"),
                     @YamlProperty(name = "producerComponent", type = "enum:vertx-http,http,undertow,netty-http", description = "Sets the name of the Camel component to use as the REST producer", displayName = "Producer Component"),
                     @YamlProperty(name = "scheme", type = "string", description = "The scheme to use for exposing the REST service. Usually http or https is supported. The default value is http", displayName = "Scheme"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.", displayName = "Skip Binding On Error Code"),
-                    @YamlProperty(name = "useXForwardHeaders", type = "boolean", description = "Whether to use X-Forward headers for Host and related setting. The default value is true.", displayName = "Use XForward Headers"),
+                    @YamlProperty(name = "useXForwardHeaders", type = "boolean", description = "Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc. Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema that camel-openapi-java generates from Rest DSL routes.", displayName = "Use XForward Headers"),
                     @YamlProperty(name = "xmlDataFormat", type = "string", description = "Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.", displayName = "Xml Data Format")
             }
     )
@@ -13860,6 +13959,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "bindingMode": {
                     target.setBindingMode(asEnum(node, org.apache.camel.model.rest.RestBindingMode.class));
+                    break;
+                }
+                case "bindingPackageScan": {
+                    String val = asText(node);
+                    target.setBindingPackageScan(val);
                     break;
                 }
                 case "clientRequestValidation": {
@@ -14041,6 +14145,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetDefinition"),
                     @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadDefinition"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "openApi", type = "object:org.apache.camel.model.rest.OpenApiDefinition", description = "To use an existing OpenAPI specification as contract-first for Camel Rest DSL.", displayName = "Open Api"),
                     @YamlProperty(name = "patch", type = "array:org.apache.camel.model.rest.PatchDefinition"),
                     @YamlProperty(name = "path", type = "string", description = "Path of the rest service, such as /foo", displayName = "Path"),
                     @YamlProperty(name = "post", type = "array:org.apache.camel.model.rest.PostDefinition"),
@@ -14100,6 +14205,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "enableNoContentResponse": {
                     String val = asText(node);
                     target.setEnableNoContentResponse(val);
+                    break;
+                }
+                case "openApi": {
+                    org.apache.camel.model.rest.OpenApiDefinition val = asType(node, org.apache.camel.model.rest.OpenApiDefinition.class);
+                    target.setOpenApi(val);
                     break;
                 }
                 case "path": {
@@ -14580,7 +14690,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Round Robin",
-            description = "The destination endpoints are selected in a round-robin fashion. This is a well known and classic policy, which spreads the load evenly.",
+            description = "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )
@@ -16287,7 +16397,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.SetHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Headers",
-            description = "Allows to set multiple headers on the message at the same time.",
+            description = "Allows setting multiple headers on the message at the same time.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -16503,6 +16613,72 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "set-variables",
+                    "setVariables"
+            },
+            types = org.apache.camel.model.SetVariablesDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Set Variables",
+            description = "Allows setting multiple variables at the same time.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "variables", type = "array:org.apache.camel.model.SetVariableDefinition")
+            }
+    )
+    public static class SetVariablesDefinitionDeserializer extends YamlDeserializerBase<SetVariablesDefinition> {
+        public SetVariablesDefinitionDeserializer() {
+            super(SetVariablesDefinition.class);
+        }
+
+        @Override
+        protected SetVariablesDefinition newInstance() {
+            return new SetVariablesDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SetVariablesDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "variables": {
+                    java.util.List<org.apache.camel.model.SetVariableDefinition> val = asFlatList(node, org.apache.camel.model.SetVariableDefinition.class);
+                    target.setVariables(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;

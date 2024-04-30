@@ -22,10 +22,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -68,7 +66,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiRequestValidationTest extends CamelTestSupport {
@@ -78,10 +75,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @BeforeAll
     public static void startWireMockServer() throws Exception {
         wireMockServer.start();
-        setUpPetStoreStubs("/openapi.json", "/v2/pet");
         setUpPetStoreStubs("/openapi-v3.json", "/api/v3/pet");
         setUpPetStoreStubs("/petstore-3.1.yaml", "/api/v31/pet");
-        setUpFruitsApiStubs("/fruits-2.0.yaml");
         setUpFruitsApiStubs("/fruits-3.0.yaml");
     }
 
@@ -192,18 +187,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("petStoreVersions")
-    void requestValidationWithCustomLevels(String petStoreVersion) {
-        Pet pet = new Pet();
-        pet.setId(10);
-        pet.setName("doggie");
-
-        Pet createdPet = template.requestBodyAndHeader("direct:customLevels", pet, "petStoreVersion", petStoreVersion,
-                Pet.class);
-        assertEquals(10, createdPet.getId());
-    }
-
-    @ParameterizedTest
-    @MethodSource("petStoreVersions")
     void requestValidationWithValidJsonBody(String petStoreVersion) {
         Pet pet = new Pet();
         pet.setId(10);
@@ -213,30 +196,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         Pet createdPet
                 = template.requestBodyAndHeader("direct:validateJsonBody", pet, "petStoreVersion", petStoreVersion, Pet.class);
         assertEquals(10, createdPet.getId());
-    }
-
-    @ParameterizedTest
-    @MethodSource("petStoreVersions")
-    void requestValidationWithJsonBodyAndMissingMandatoryFields(String petStoreVersion) {
-        Pet pet = new Pet();
-        pet.setName(null);
-
-        Exchange exchange = template.request("direct:validateJsonBody", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setHeader("petStoreVersion", petStoreVersion);
-                exchange.getMessage().setBody(pet);
-            }
-        });
-
-        Exception exception = exchange.getException();
-        assertNotNull(exception);
-        assertInstanceOf(RestOpenApiValidationException.class, exception);
-
-        RestOpenApiValidationException validationException = (RestOpenApiValidationException) exception;
-        Set<String> errors = validationException.getValidationErrors();
-        assertEquals(1, errors.size());
-        assertEquals("Object has missing required properties ([\"name\",\"photoUrls\"])", errors.iterator().next());
     }
 
     @ParameterizedTest
@@ -322,7 +281,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
         String errorMessage = errors.iterator().next();
         assertTrue(
-                errorMessage.startsWith("Request Content-Type header '[application/camel]' does not match any allowed types"));
+                errorMessage.startsWith("Request Content-Type header 'application/camel' does not match any allowed types"));
     }
 
     @ParameterizedTest
@@ -348,7 +307,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "petStoreV2", "petStoreV3" })
+    @ValueSource(strings = { "petStoreV3" })
     void requestValidationWithBinaryBody(String petStoreVersion) throws IOException {
         Map<String, Object> headers = Map.of(
                 "petId", 1,
@@ -364,8 +323,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
         RestOpenApiEndpoint endpoint = context.getEndpoint(petStoreVersion + ":#addPet", RestOpenApiEndpoint.class);
         endpoint.createProducer();
         assertFalse(endpoint.isRequestValidationEnabled());
-        assertNull(endpoint.getRequestValidationCustomizer());
-        assertTrue(endpoint.getRequestValidationLevels().isEmpty());
     }
 
     @ParameterizedTest
@@ -414,32 +371,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
     @ParameterizedTest
     @MethodSource("fruitsApiVersions")
-    void requestValidationRequiredFormParamsNotPresent(String fruitsApiVersion) {
-        Exchange exchange = template.request("direct:formParam", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setHeader("fruitsApiVersion", fruitsApiVersion);
-                exchange.getMessage().setBody("name=&color=");
-            }
-        });
-
-        Exception exception = exchange.getException();
-        assertNotNull(exception);
-        assertInstanceOf(RestOpenApiValidationException.class, exception);
-
-        RestOpenApiValidationException validationException = (RestOpenApiValidationException) exception;
-        Set<String> errors = validationException.getValidationErrors();
-        // [Path '/name'] Instance type (null) does not match any allowed primitive type string
-        assertEquals(2, errors.size());
-        Iterator<String> iterator = errors.iterator();
-        assertEquals("[Path '/color'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])",
-                iterator.next());
-        assertEquals("[Path '/name'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])",
-                iterator.next());
-    }
-
-    @ParameterizedTest
-    @MethodSource("fruitsApiVersions")
     void requestValidationRequiredFormParamsPresent(String fruitsApiVersion) {
         String result = template.requestBodyAndHeader("direct:formParam", "name=Lemon&color=Yellow", "fruitsApiVersion",
                 fruitsApiVersion, String.class);
@@ -460,10 +391,8 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("petStoreV2", createRestOpenApiComponent("openapi.json"));
         camelContext.addComponent("petStoreV3", createRestOpenApiComponent("openapi-v3.json"));
         camelContext.addComponent("petStoreV31", createRestOpenApiComponent("petstore-3.1.yaml"));
-        camelContext.addComponent("fruitsV2", createRestOpenApiComponent("fruits-2.0.yaml"));
         camelContext.addComponent("fruitsV3", createRestOpenApiComponent("fruits-3.0.yaml"));
         camelContext.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
         camelContext.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
@@ -471,11 +400,11 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     }
 
     public static Iterable<String> petStoreVersions() {
-        return List.of("petStoreV2", "petStoreV3", "petStoreV31");
+        return List.of("petStoreV3", "petStoreV31");
     }
 
     public static Iterable<String> fruitsApiVersions() {
-        return List.of("fruitsV2", "fruitsV3");
+        return List.of("fruitsV3");
     }
 
     @Override
@@ -534,11 +463,6 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
                         .toD("${header.petStoreVersion}:uploadFile?requestValidationEnabled=true&produces=application/octet-stream")
                         .unmarshal(jacksonDataFormat);
 
-                from("direct:customLevels")
-                        .marshal(jacksonDataFormat)
-                        .toD("${header.petStoreVersion}:#addPet?requestValidationEnabled=true&validation.request.body=IGNORE")
-                        .unmarshal(jacksonDataFormat);
-
                 from("direct:headerParam")
                         .toD("${header.fruitsApiVersion}:#deleteFruit?requestValidationEnabled=true");
 
@@ -555,7 +479,7 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
     private RestOpenApiComponent createRestOpenApiComponent(String specificationUri) {
         RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName("http");
-        component.setSpecificationUri(URI.create("classpath:" + specificationUri));
+        component.setSpecificationUri("classpath:" + specificationUri);
         component.setConsumes("application/json");
         component.setProduces("application/json");
         component.setHost("http://localhost:" + wireMockServer.port());

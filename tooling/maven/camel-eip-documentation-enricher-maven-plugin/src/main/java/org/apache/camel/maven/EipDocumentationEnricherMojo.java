@@ -98,19 +98,19 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     /**
      * Sub path from camel core directory to model directory with generated json files for components.
      */
-    @Parameter(defaultValue = "org/apache/camel/model")
+    @Parameter(defaultValue = "META-INF/org/apache/camel/model")
     public String pathToModelDir;
 
     /**
      * Sub path from camel core xml directory to model directory with generated json files for components.
      */
-    @Parameter(defaultValue = "org/apache/camel/core/xml")
+    @Parameter(defaultValue = "META-INF/org/apache/camel/core/xml")
     public String pathToCoreXmlModelDir;
 
     /**
      * Sub path from camel spring directory to model directory with generated json files for components.
      */
-    @Parameter(defaultValue = "org/apache/camel/spring")
+    @Parameter(defaultValue = "META-INF/org/apache/camel/spring")
     public String pathToSpringModelDir;
 
     /**

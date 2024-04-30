@@ -58,6 +58,7 @@ public final class MavenGav {
     public static MavenGav parseGav(String gav, String defaultVersion) {
         MavenGav answer = new MavenGav();
         // camel-k style GAV
+        gav = gav.trim();
         if (gav.startsWith("camel:")) {
             answer.setGroupId("org.apache.camel");
             String a = gav.substring(6);

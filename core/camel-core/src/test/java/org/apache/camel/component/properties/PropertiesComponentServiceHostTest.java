@@ -31,7 +31,7 @@ public class PropertiesComponentServiceHostTest extends ContextTestSupport {
     public void testFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:foo").transform().constant("{{service.host:FOO}}:8888").to("mock:bar");
             }
         });
@@ -50,7 +50,7 @@ public class PropertiesComponentServiceHostTest extends ContextTestSupport {
     public void testFunctionGetOrElse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:foo").transform().constant("{{service.host:BAR:myotherserver}}:8888")
                         .to("mock:bar");
             }

@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TypeConvertersTest extends ContextTestSupport {
 
-    private MyConverters converters = new MyConverters();
+    private final MyConverters converters = new MyConverters();
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         int before = context.getTypeConverterRegistry().size();
 
         context.getTypeConverterRegistry().addTypeConverters(converters);
@@ -54,7 +54,7 @@ public class TypeConvertersTest extends ContextTestSupport {
         assertEquals(Float.parseFloat("1.1"), context.getTypeConverter().mandatoryConvertTo(float.class, "1.1"));
         assertEquals(Double.parseDouble("1.1"), context.getTypeConverter().mandatoryConvertTo(double.class, "1.1"));
 
-        assertEquals("a".charAt(0), context.getTypeConverter().mandatoryConvertTo(char.class, "a"));
+        assertEquals('a', context.getTypeConverter().mandatoryConvertTo(char.class, "a"));
         assertEquals(Boolean.parseBoolean("true"), context.getTypeConverter().mandatoryConvertTo(boolean.class, "true"));
     }
 }

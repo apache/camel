@@ -41,14 +41,14 @@ public class IOHelperTest {
     public void testIOException() {
         IOException io = new IOException("Damn", new IllegalArgumentException("Damn"));
         assertEquals("Damn", io.getMessage());
-        assertTrue(io.getCause() instanceof IllegalArgumentException);
+        assertInstanceOf(IllegalArgumentException.class, io.getCause());
     }
 
     @Test
     public void testIOExceptionWithMessage() {
         IOException io = new IOException("Not again", new IllegalArgumentException("Damn"));
         assertEquals("Not again", io.getMessage());
-        assertTrue(io.getCause() instanceof IllegalArgumentException);
+        assertInstanceOf(IllegalArgumentException.class, io.getCause());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class IOHelperTest {
     }
 
     @Test
-    public void testCharsetNormalize() throws Exception {
+    public void testCharsetNormalize() {
         assertEquals("UTF-8", IOHelper.normalizeCharset("'UTF-8'"));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8\""));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8 \""));
@@ -104,7 +104,7 @@ public class IOHelperTest {
     }
 
     @Test
-    public void testCharsetName() throws Exception {
+    public void testCharsetName() {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
         assertNull(ExchangeHelper.getCharsetName(exchange, false));
@@ -119,7 +119,7 @@ public class IOHelperTest {
     }
 
     @Test
-    public void testGetCharsetNameFromContentType() throws Exception {
+    public void testGetCharsetNameFromContentType() {
         String charsetName = IOHelper.getCharsetNameFromContentType("text/html; charset=iso-8859-1");
         assertEquals("iso-8859-1", charsetName);
 
@@ -128,7 +128,7 @@ public class IOHelperTest {
     }
 
     @Test
-    public void testCharset() throws Exception {
+    public void testCharset() {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
         assertNull(ExchangeHelper.getCharset(exchange, false));

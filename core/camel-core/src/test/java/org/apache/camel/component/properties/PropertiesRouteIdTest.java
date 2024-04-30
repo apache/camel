@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PropertiesRouteIdTest extends ContextTestSupport {
 
     @Test
-    public void testPropertiesRouteId() throws Exception {
+    public void testPropertiesRouteId() {
         assertEquals(1, context.getRoutes().size());
         assertNotNull(context.getRoute("Camel"), "Route with name Camel should exist");
 
@@ -39,10 +39,10 @@ public class PropertiesRouteIdTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("{{cool.name}}").to("mock:result").id("{{cool.other.name}}");
             }
         };

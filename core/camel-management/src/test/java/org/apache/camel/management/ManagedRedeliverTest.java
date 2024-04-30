@@ -79,10 +79,10 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true)
                         .redeliveryDelay(0)
                         .maximumRedeliveries(4).logStackTrace(false)

@@ -32,7 +32,7 @@ public class BatchResequencerWithDuplicateTest extends ContextTestSupport {
     public void testBatchResequencerAllowDuplicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").resequence(header("id")).allowDuplicates().to("mock:result");
             }
         });
@@ -57,7 +57,7 @@ public class BatchResequencerWithDuplicateTest extends ContextTestSupport {
     public void testBatchResequencerNoDuplicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").resequence(header("id")).to("mock:result");
             }
         });

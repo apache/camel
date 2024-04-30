@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSupport {
 
-    private MyEventNotifier notifier = new MyEventNotifier();
+    private final MyEventNotifier notifier = new MyEventNotifier();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -60,10 +60,10 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body()).aggregationStrategy(AggregationStrategies.useOriginal(false))
                         .filter(simple("${body} == 'Kaboom'"))
                         .throwException(new IllegalArgumentException("Forced error")).end().to("mock:line").end()
@@ -77,7 +77,7 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
         private int errors;
 
         @Override
-        public void notify(CamelEvent event) throws Exception {
+        public void notify(CamelEvent event) {
             errors++;
         }
 

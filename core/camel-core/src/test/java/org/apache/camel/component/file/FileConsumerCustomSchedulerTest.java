@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -32,11 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
-    private MyScheduler scheduler = new MyScheduler();
+    private final MyScheduler scheduler = new MyScheduler();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myScheduler", scheduler);
         return jndi;
     }
@@ -57,10 +58,10 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10"))
                         .routeId("foo").noAutoStartup().to("mock:result");
             }
@@ -70,9 +71,8 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
     private static final class MyScheduler implements ScheduledPollConsumerScheduler {
 
         private CamelContext camelContext;
-        private Timer timer;
         private TimerTask timerTask;
-        private volatile int counter;
+        private final LongAdder counter = new LongAdder();
         private String foo;
 
         @Override
@@ -85,7 +85,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
             this.timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    counter++;
+                    counter.increment();
                     task.run();
                 }
             };
@@ -97,7 +97,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         }
 
         public int getCounter() {
-            return counter;
+            return counter.intValue();
         }
 
         public String getFoo() {
@@ -110,7 +110,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         @Override
         public void startScheduler() {
-            timer = new Timer();
+            Timer timer = new Timer();
             timer.schedule(timerTask, 10);
         }
 

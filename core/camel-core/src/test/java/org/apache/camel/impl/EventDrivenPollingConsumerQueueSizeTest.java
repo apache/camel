@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport {
 
-    private String uri = "my:foo?pollingConsumerQueueSize=10&pollingConsumerBlockWhenFull=false";
+    private final String uri = "my:foo?pollingConsumerQueueSize=10&pollingConsumerBlockWhenFull=false";
 
     @Override
     @BeforeEach
@@ -108,7 +108,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
     private static final class MyQueueComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyQueueEndpoint(uri, this);
         }
     }
@@ -122,7 +122,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return new DefaultProducer(this) {
                 @Override
                 public void process(Exchange exchange) throws Exception {
@@ -132,12 +132,12 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return consumer;
         }
 
         @Override
-        public PollingConsumer createPollingConsumer() throws Exception {
+        public PollingConsumer createPollingConsumer() {
             return consumer;
         }
 

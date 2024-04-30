@@ -28,6 +28,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRegisterRouteTest extends ManagementTestSupport {
@@ -42,7 +43,7 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals(true, registered, "Should be registered");
+        assertTrue(registered, "Should be registered");
 
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         // the route has this starting endpoint uri
@@ -69,7 +70,7 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         context.getRouteController().stopRoute(context.getRouteDefinitions().get(0).getId());
 
         registered = mbeanServer.isRegistered(on);
-        assertEquals(true, registered, "Should be registered");
+        assertTrue(registered, "Should be registered");
 
         // should be stopped, eg its removed
         state = (String) mbeanServer.getAttribute(on, "State");
@@ -77,10 +78,10 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").routeGroup("myGroup").description("my cool route")
                         .to("log:foo").to("mock:result");
             }

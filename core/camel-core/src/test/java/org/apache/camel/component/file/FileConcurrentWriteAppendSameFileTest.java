@@ -104,10 +104,10 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
                         .split(body().tokenize(LS)).parallelProcessing().streaming()
                         .setBody(body().append(":Status=OK").append(LS))

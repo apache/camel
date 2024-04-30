@@ -23,6 +23,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class QuartzTwoCamelContextRestartTest {
 
     private DefaultCamelContext camel1;
@@ -65,13 +67,13 @@ public class QuartzTwoCamelContextRestartTest {
         mock2.expectedMinimumMessageCount(6);
         mock1.assertIsSatisfied();
 
-        camel1.stop();
+        assertDoesNotThrow(() -> camel1.stop());
 
         mock2.assertIsSatisfied();
 
         // should resume triggers when we start camel 1 again
         // fetch mock endpoint again because we have stopped camel context
-        camel1.start();
+        assertDoesNotThrow(() -> camel1.start());
         mock1 = camel1.getEndpoint("mock:one", MockEndpoint.class);
         mock1.expectedMinimumMessageCount(3);
 

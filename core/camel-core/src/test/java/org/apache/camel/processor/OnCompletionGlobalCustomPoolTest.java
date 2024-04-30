@@ -43,10 +43,10 @@ public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 // use a custom thread pool
                 onCompletion().executorService(pool).to("log:global").to("mock:sync");

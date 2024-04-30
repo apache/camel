@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FileSplitInSplitTest extends ContextTestSupport {
 
-    private final int size = 3;
     private final String comma = ",";
 
     @Test
     public void testConcurrentAppend() throws Exception {
         // create file with many lines
         StringBuilder sb = new StringBuilder();
+        int size = 3;
         for (int i = 0; i < size; i++) {
             sb.append("Block1 Line ").append(i).append(LS);
         }
@@ -73,10 +73,10 @@ public class FileSplitInSplitTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
                         .split(body().tokenize(comma)).parallelProcessing().streaming()
                         .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))

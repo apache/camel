@@ -85,7 +85,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFail() throws Exception {
+    public void testFail() {
 
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:fail", "Hello World"),
@@ -97,13 +97,13 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMethodNotExists() throws Exception {
+    public void testMethodNotExists() {
 
         Exception e = assertThrows(Exception.class,
                 () -> {
                     context.addRoutes(new RouteBuilder() {
                         @Override
-                        public void configure() throws Exception {
+                        public void configure() {
                             from("direct:typo").bean("myBean", "ups").to("mock:result");
                         }
                     });
@@ -115,14 +115,14 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMethodNotExistsOnInstance() throws Exception {
+    public void testMethodNotExistsOnInstance() {
         final MyBean myBean = new MyBean();
 
         Exception e = assertThrows(Exception.class,
                 () -> {
                     context.addRoutes(new RouteBuilder() {
                         @Override
-                        public void configure() throws Exception {
+                        public void configure() {
                             from("direct:typo").bean(myBean, "ups").to("mock:result");
                         }
                     });
@@ -134,18 +134,18 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         bean = new MyBean();
         answer.bind("myBean", bean);
         return answer;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:echo").bean("myBean", "echo").to("mock:result");
 
                 from("direct:hi").bean("myBean", "hi").to("mock:result");

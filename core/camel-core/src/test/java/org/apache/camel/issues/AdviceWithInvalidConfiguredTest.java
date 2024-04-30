@@ -35,7 +35,7 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     errorHandler(defaultErrorHandler());
 
                     interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()
@@ -66,10 +66,10 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:start").routeId("route-a").to("direct:bar");

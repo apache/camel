@@ -33,10 +33,10 @@ public class TimerAndErrorHandlerIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(RuntimeCamelException.class).handled(true);
 
                 errorHandler(defaultErrorHandler());

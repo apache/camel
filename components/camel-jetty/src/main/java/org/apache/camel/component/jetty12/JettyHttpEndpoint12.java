@@ -35,7 +35,10 @@ import org.apache.camel.spi.UriEndpoint;
              category = { Category.HTTP }, consumerOnly = true, lenientProperties = true,
              headersClass = JettyHttpConstants.class)
 @Metadata(excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
-                              + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
+                              + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain",
+          annotations = {
+                  "protocol=http"
+          })
 public class JettyHttpEndpoint12 extends JettyHttpEndpoint implements AsyncEndpoint {
 
     private HttpBinding binding;

@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Test;
 public class FileSorterRefTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("mySorter", new MyFileSorter<>());
         return jndi;
     }
@@ -47,7 +47,7 @@ public class FileSorterRefTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&sorter=#mySorter")).convertBodyTo(String.class).to("mock:result");
             }
         });

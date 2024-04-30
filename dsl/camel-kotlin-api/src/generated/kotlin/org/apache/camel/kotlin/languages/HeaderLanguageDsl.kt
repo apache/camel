@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.model.language.HeaderExpression
 
+/**
+ * Gets a header from the Exchange.
+ */
 public fun `header`(`header`: String, i: HeaderLanguageDsl.() -> Unit = {}): HeaderExpression {
   val def = HeaderExpression(header)
   HeaderLanguageDsl(def).apply(i)
@@ -38,14 +41,23 @@ public class HeaderLanguageDsl(
     this.def = def
   }
 
+  /**
+   * Sets the id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: Boolean) {
     def.trim = trim.toString()
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: String) {
     def.trim = trim
   }

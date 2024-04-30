@@ -19,13 +19,14 @@ package org.apache.camel.model;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
@@ -36,6 +37,7 @@ import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -47,7 +49,7 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {
@@ -148,7 +150,7 @@ public final class RouteDefinitionHelper {
             } else {
                 RestDefinition rest = route.getRestDefinition();
                 if (rest != null && route.isRest()) {
-                    VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
+                    VerbDefinition verb = findVerbDefinition(context, rest, route.getInput().getEndpointUri());
                     if (verb != null) {
                         String id = context.resolvePropertyPlaceholders(verb.getId());
                         if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
@@ -200,9 +202,11 @@ public final class RouteDefinitionHelper {
                     String endpointUri = fromDefinition.getEndpointUri();
                     if (ObjectHelper.isNotEmpty(endpointUri)
                             && (endpointUri.startsWith("rest:") || endpointUri.startsWith("rest-api:"))) {
-                        Map<String, Object> options = new HashMap<>(1);
-                        options.put("routeId", route.getId());
-                        endpointUri = URISupport.appendParametersToURI(endpointUri, options);
+
+                        // append route id as a new option
+                        String query = URISupport.extractQuery(endpointUri);
+                        String separator = query == null ? "?" : "&";
+                        endpointUri += separator + "routeId=" + route.getId();
 
                         // replace uri with new routeId
                         fromDefinition.setUri(endpointUri);
@@ -216,12 +220,13 @@ public final class RouteDefinitionHelper {
     /**
      * Find verb associated with the route by mapping uri
      */
-    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) throws Exception {
+    private static VerbDefinition findVerbDefinition(CamelContext camelContext, RestDefinition rest, String endpointUri)
+            throws Exception {
         VerbDefinition ret = null;
         String preVerbUri = "";
         String target = URISupport.normalizeUri(endpointUri);
         for (VerbDefinition verb : rest.getVerbs()) {
-            String verbUri = URISupport.normalizeUri(rest.buildFromUri(verb));
+            String verbUri = URISupport.normalizeUri(rest.buildFromUri(camelContext, verb));
             if (target.startsWith(verbUri) && preVerbUri.length() < verbUri.length()) {
                 // if there are multiple verb uri match, select the most specific one
                 // for example if the endpoint Uri is
@@ -792,5 +797,40 @@ public final class RouteDefinitionHelper {
         // ensure to sanitize uri's in the route, so we do not show sensitive information such as passwords
         route = URISupport.sanitizeUri(route);
         return route;
+    }
+
+    public static Predicate<RouteConfigurationDefinition> routesByIdOrPattern(
+            RouteDefinition route, String id) {
+        return g -> {
+            if (route.getRouteConfigurationId() != null) {
+                // if the route has a route configuration assigned then use pattern matching
+                return PatternHelper.matchPattern(g.getId(), id);
+            } else {
+                // global configurations have no id assigned or is a wildcard
+                return g.getId() == null || g.getId().equals(id);
+            }
+        };
+    }
+
+    public static Consumer<RouteConfigurationDefinition> getRouteConfigurationDefinitionConsumer(
+            RouteDefinition route, AtomicReference<ErrorHandlerDefinition> gcErrorHandler, List<OnExceptionDefinition> oe,
+            List<InterceptDefinition> icp, List<InterceptFromDefinition> ifrom, List<InterceptSendToEndpointDefinition> ito,
+            List<OnCompletionDefinition> oc) {
+        return g -> {
+            // there can only be one global error handler, so override previous, meaning
+            // that we will pick the last in the sort (take precedence)
+            if (g.getErrorHandler() != null) {
+                gcErrorHandler.set(g.getErrorHandler());
+            }
+
+            String aid = g.getId() == null ? "<default>" : g.getId();
+            // remember the id that was used on the route
+            route.addAppliedRouteConfigurationId(aid);
+            oe.addAll(g.getOnExceptions());
+            icp.addAll(g.getIntercepts());
+            ifrom.addAll(g.getInterceptFroms());
+            ito.addAll(g.getInterceptSendTos());
+            oc.addAll(g.getOnCompletions());
+        };
     }
 }

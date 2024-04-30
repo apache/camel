@@ -35,10 +35,10 @@ public class OnExceptionWhenSimpleOgnlTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(MyException.class)
                         // OGNL on the exception function in the simple language
                         .onWhen(simple("${exception.info.state} == 3")).handled(true).to("mock:three");

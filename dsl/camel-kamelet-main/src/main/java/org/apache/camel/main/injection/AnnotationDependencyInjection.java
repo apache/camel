@@ -222,7 +222,8 @@ public final class AnnotationDependencyInjection {
             Value value = field.getAnnotation(Value.class);
             if (value != null) {
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), value.value(), null, null, bean, beanName));
+                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), value.value(), null, null,
+                                null, bean, beanName));
             }
         }
 
@@ -288,8 +289,13 @@ public final class AnnotationDependencyInjection {
             }
             ConfigProperty cp = field.getAnnotation(ConfigProperty.class);
             if (cp != null) {
+                String df = cp.defaultValue();
+                if (ConfigProperty.UNCONFIGURED_VALUE.equals(df)) {
+                    df = null;
+                }
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), cp.name(), cp.defaultValue(), null, bean, beanName));
+                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), cp.name(), df, null, null,
+                                bean, beanName));
             }
         }
 

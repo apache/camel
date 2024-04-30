@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class NewFileConsumeTest extends ContextTestSupport {
 
-    private CountDownLatch latch = new CountDownLatch(1);
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     @Override
     public boolean isUseRouteBuilder() {

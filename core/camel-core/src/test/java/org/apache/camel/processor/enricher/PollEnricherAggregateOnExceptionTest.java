@@ -46,7 +46,7 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
     public void testEnrichTrueKaboom() throws Exception {
         template.send("seda:foo", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setException(new IllegalArgumentException("I cannot do this"));
             }
         });
@@ -75,7 +75,7 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
     public void testEnrichFalseKaboom() throws Exception {
         template.send("seda:foo", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setException(new IllegalArgumentException("I cannot do this"));
             }
         });
@@ -95,10 +95,10 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").pollEnrich("seda:foo", 5000, new MyAggregationStrategy(), true).to("mock:result");
 
                 from("direct:start2").pollEnrich("seda:foo", 5000, new MyAggregationStrategy(), false).to("mock:result");

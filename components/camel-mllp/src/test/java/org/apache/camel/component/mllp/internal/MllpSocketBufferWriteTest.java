@@ -21,6 +21,7 @@ import java.net.SocketTimeoutException;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.apache.camel.test.stub.tcp.SocketStub;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Tests for the overridden methods in the MllpSocketBuffer class.
  */
+@Isolated
 public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     static final int MIN_BUFFER_SIZE = 2048;

@@ -8,28 +8,28 @@
 :tabs-sync-option:
 
 IMPORTANT: The Service Call EIP is deprecated in Camel 3.x and will be removed in a future Camel release. There is no direct replacement.
-If you use Kubernetes then services can be called directly by name.
+If you use Kubernetes, then services can be called directly by name.
 
 How can I call a remote service in a distributed system where the service is looked up from a service registry of some sorts?
 
 image::eip/MessagingGatewayIcon.gif[image]
 
-Use a Service Call acting as a xref:messaging-gateway.adoc[Messaging Gateway] for distributed systems, that
+Use a Service Call acting as a xref:messaging-gateway.adoc[Messaging Gateway] for distributed systems that
 handles the complexity of calling the service in a reliable manner.
 
 The pattern has the following noteworthy features:
 
-* _Location transparency_ — Decouples Camel and the physical location of the services
+* _Location transparency_: Decouples Camel and the physical location of the services
 using logical names representing the services.
-* _URI templating_ — Allows you to template the Camel endpoint URI as the physical
+* _URI templating_: Allows you to template the Camel endpoint URI as the physical
 endpoint to use when calling the service.
-* _Service discovery_ - Looks up the service from a service registry of some sort to know
+* _Service discovery_: it looks up the service from a service registry of some sort to know
 the physical locations of the services.
-* _Service filter_ — Allows you to filter unwanted services (for example, blacklisted or
+* _Service filter_: Allows you to filter unwanted services (for example, blacklisted or
 unhealthy services).
-* _Service chooser_ — Allows you to choose the most appropriate service based on
+* _Service chooser_: Allows you to choose the most appropriate service based on
 factors such as geographical zone, affinity, plans, canary deployments, and SLAs.
-* _Load balancer_ — A preconfigured Service Discovery, Filter, and Chooser intended
+* _Load balancer_: A preconfigured Service Discovery, Filter, and Chooser intended
 for a specific runtime (these three features combined as one).
 
 In a nutshell, the EIP pattern sits between your Camel application and the services running
@@ -53,7 +53,7 @@ include::partial$eip-exchangeProperties.adoc[]
 The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Zookeeper, DNS.
 The EIP separates the configuration of the service registry from the calling of the service.
 
-When calling a service you may just refer to the name of the service in the EIP as shown below:
+When calling a service, you may refer to the name of the service in the EIP as shown below:
 
 [source,java]
 ----
@@ -93,9 +93,10 @@ http:myhost.com:80
 
 === Mapping Service Name to Endpoint URI
 
-It is often needed to build more complex Camel URI which may include options or paths which is possible through different options:name: value
+It is often needed to build more complex Camel URI which may include options or paths,
+which is possible through different options:name: value
 
-The *service name* supports a limited uri like syntax, here some examples
+The *service name* supports a limited uri like syntax, here are some examples
 
 [width="100%",cols="25%a,75%a",options="header"]
 |===
@@ -142,7 +143,10 @@ from("direct:start")
 
 === Static Service Discovery
 
-This service discovery implementation does not query any external services to find out the list of services associated to a named service but keep them in memory. Each service should be provided in the following form:
+This service discovery implementation does not query any external services
+to find out the list of services associated with a named service
+but keep them in memory.
+Each service should be provided in the following form:
 
 [source,text]
 ----
@@ -316,7 +320,7 @@ Available options:
 | clientKeyFile | String | Sets the Client Keystore data that are loaded from the file when using client lookup
 | clientKeyPassphrase | String | Sets the Client Keystore passphrase when using client lookup
 | dnsDomain | String | Sets the DNS domain to use for dns lookup
-| namespace | String | The Kubernetes namespace to use. By default the namespace's name is taken from the environment variable KUBERNETES_MASTER
+| namespace | String | The Kubernetes namespace to use. By default, the namespace's name is taken from the environment variable KUBERNETES_MASTER
 | oauthToken | String | Sets the OAUTH token for authentication (instead of username/password) when using client lookup
 | username | String | Sets the username for authentication when using client lookup
 | password | String | Sets the password for authentication when using client lookup
@@ -420,7 +424,7 @@ And in XML:
 
 Service Filters choose suitable candidates from the service definitions found in the service discovery. 
 
-The service filter have access to the current exchange, which allows you to create service filters
+The service filter has access to the current exchange, which allows you to create service filters
 comparing service metadata with message content.
 
 Assuming you have labeled one of the services in your service discovery to support a certain type of requests:

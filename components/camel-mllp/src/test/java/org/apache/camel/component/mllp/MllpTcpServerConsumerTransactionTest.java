@@ -41,7 +41,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -60,7 +60,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         context.setUseMDCLogging(true);
-        context.setName(this.getClass().getSimpleName());
+        context.getCamelContextExtension().setName(this.getClass().getSimpleName());
 
         return context;
     }

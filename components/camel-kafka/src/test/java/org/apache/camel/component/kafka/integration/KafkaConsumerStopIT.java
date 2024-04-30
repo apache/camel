@@ -27,6 +27,7 @@ import org.apache.camel.component.kafka.KafkaFetchRecords;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.consumer.internals.LegacyKafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This IT is based on {@link KafkaConsumerFullIT}
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KafkaConsumerStopIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerStopIT extends BaseKafkaTestSupport {
 
     public static final String TOPIC = "test-full";
 
@@ -119,8 +120,11 @@ public class KafkaConsumerStopIT extends BaseEmbeddedKafkaTestSupport {
 
     private static boolean kafkaClientConsumerClosed(org.apache.kafka.clients.consumer.KafkaConsumer kafkaClientConsumer)
             throws Exception {
-        Try<Object> closedTry = ReflectionUtils.tryToReadFieldValue(org.apache.kafka.clients.consumer.KafkaConsumer.class,
-                "closed", kafkaClientConsumer);
+        Try<Object> delegate = ReflectionUtils.tryToReadFieldValue(org.apache.kafka.clients.consumer.KafkaConsumer.class,
+                "delegate", kafkaClientConsumer);
+        LegacyKafkaConsumer cd = (LegacyKafkaConsumer) delegate.get();
+        Try<Object> closedTry = ReflectionUtils.tryToReadFieldValue(LegacyKafkaConsumer.class,
+                "closed", cd);
         return (boolean) closedTry.get();
     }
 

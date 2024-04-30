@@ -4,12 +4,13 @@
     "name": "js-dsl",
     "title": "JavaScript DSL",
     "description": "Camel DSL with JavaScript",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.9.0",
     "label": "dsl",
     "supportLevel": "Experimental",
+    "metadata": { "routes.language": "js" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-js-dsl",
-    "version": "4.5.0-SNAPSHOT"
+    "version": "4.6.0-SNAPSHOT"
   }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml
 
+import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ProcessDefinition
 
@@ -34,5 +35,30 @@ class ProcessTest extends YamlTestSupport {
             with(context.routeDefinitions[0].outputs[0], ProcessDefinition) {
                 ref == 'myProcessor'
             }
+    }
+
+    def "process with class ref"() {
+        setup:
+            loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:    
+                      - process:  
+                          ref: "#class:org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor"
+                      - to: "mock:route"
+            '''
+
+            withMock('mock:route') {
+                expectedBodiesReceived 'TEST'
+            }
+
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:route').withBody('test').send()
+            }
+        then:
+            MockEndpoint.assertIsSatisfied(context)
     }
 }

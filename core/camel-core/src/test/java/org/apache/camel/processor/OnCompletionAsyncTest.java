@@ -38,7 +38,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
     public void testAsyncComplete() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().parallelProcessing().to("mock:before").delay(250).setBody(simple("OnComplete:${body}"))
                         .to("mock:after");
 
@@ -64,7 +64,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
     public void testAsyncFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().parallelProcessing().to("mock:before").delay(250).setBody(simple("OnComplete:${body}"))
                         .to("mock:after");
 
@@ -94,7 +94,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
     public void testAsyncCompleteUseOriginalBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().useOriginalBody().parallelProcessing().to("mock:before").delay(250)
                         .setBody(simple("OnComplete:${body}")).to("mock:after");
 
@@ -120,7 +120,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
     public void testAsyncFailureUseOriginalBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().useOriginalBody().parallelProcessing().to("mock:before").delay(250)
                         .setBody(simple("OnComplete:${body}")).to("mock:after");
 
@@ -150,7 +150,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
     public void testAsyncCompleteOnCompleteFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().parallelProcessing().to("mock:before").delay(250).setBody(simple("OnComplete:${body}"))
                         // this exception does not cause any side effect as we are
                         // in async mode
@@ -180,7 +180,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if (exchange.getIn().getBody(String.class).contains("Kaboom")) {
                 throw new IllegalArgumentException("Kaboom");
             }

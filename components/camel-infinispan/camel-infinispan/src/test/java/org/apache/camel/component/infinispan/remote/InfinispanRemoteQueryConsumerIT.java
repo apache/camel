@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.time.Duration;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.marshall.MarshallerUtil;
 import org.infinispan.commons.api.BasicCache;
@@ -28,9 +31,9 @@ import org.infinispan.commons.marshall.ProtoStreamMarshaller;
 import org.infinispan.commons.util.Util;
 import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.SerializationContext;
-import org.infinispan.protostream.sampledomain.User;
-import org.infinispan.protostream.sampledomain.marshallers.GenderMarshaller;
-import org.infinispan.protostream.sampledomain.marshallers.UserMarshaller;
+import org.infinispan.protostream.domain.User;
+import org.infinispan.protostream.domain.marshallers.GenderMarshaller;
+import org.infinispan.protostream.domain.marshallers.UserMarshaller;
 import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.jupiter.api.BeforeEach;
@@ -131,6 +134,8 @@ public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSu
     protected void beforeEach() {
         // cleanup the default test cache before each run
         getCache().clear();
+
+        Awaitility.await().atMost(Duration.ofSeconds(1)).until(() -> cacheContainer.isStarted());
     }
 
     @Override

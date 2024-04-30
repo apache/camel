@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.as2.api;
 
-import org.apache.http.protocol.HTTP;
-
 public interface AS2Header {
 
     /**
@@ -55,31 +53,39 @@ public interface AS2Header {
     /**
      * Message Header Name for Target Host
      */
-    String TARGET_HOST = HTTP.TARGET_HOST;
+    String TARGET_HOST = "Host";
     /**
      * Message Header Name for User Agent
      */
-    String USER_AGENT = HTTP.USER_AGENT;
+    String USER_AGENT = "User-Agent";
     /**
      * Message Header Name for Server Name
      */
-    String SERVER = HTTP.SERVER_HEADER;
+    String SERVER = "Server";
     /**
      * Message Header Name for Date
      */
-    String DATE = HTTP.DATE_HEADER;
+    String DATE = "Date";
     /**
      * Message Header Name for Content Length
      */
-    String CONTENT_LENGTH = HTTP.CONTENT_LEN;
+    String CONTENT_LENGTH = "Content-Length";
     /**
      * Message Header Name for Connection
      */
-    String CONNECTION = HTTP.CONN_DIRECTIVE;
+    String CONNECTION = "Connection";
     /**
      * Message Header Name for Expect
      */
-    String EXPECT = HTTP.EXPECT_DIRECTIVE;
+    String EXPECT = "Expect";
+    /**
+     * Message Header Name for Close;
+     */
+    String CLOSE = "Close";
+    /**
+     * Message Header for Keep Alive;
+     */
+    String KEEP_ALIVE = "Keep-Alive";
     /**
      * Message Header name for Content Transfer Encoding
      */

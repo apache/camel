@@ -70,6 +70,8 @@ public final class KafkaConstants {
               javaType = "org.apache.camel.component.kafka.consumer.KafkaManualCommit")
     public static final String MANUAL_COMMIT = "CamelKafkaManualCommit";
 
+    public static final String KAFKA_SUBSCRIBE_ADAPTER = "subscribeAdapter";
+
     private KafkaConstants() {
         // Utility class
     }

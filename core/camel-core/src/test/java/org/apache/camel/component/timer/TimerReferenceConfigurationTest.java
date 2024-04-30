@@ -64,8 +64,8 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     final String mockEndpointUri = "mock:result";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry reg = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry reg = super.createCamelRegistry();
         reg.bind("refExpectedTimeString", refExpectedTimeString);
         reg.bind("refExpectedPattern", refExpectedPattern);
         reg.bind("refExpectedPeriod", refExpectedPeriod);
@@ -77,10 +77,10 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(refTimerUri).to(mockEndpointUri);
                 from(valueTimerUri).to(mockEndpointUri);
             }

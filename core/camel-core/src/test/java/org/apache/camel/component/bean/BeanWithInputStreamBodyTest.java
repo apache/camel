@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 public class BeanWithInputStreamBodyTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyCoolBean());
         return jndi;
     }
@@ -43,7 +43,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
     public void testBeanWithInputStreamBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MyCoolBean.class).to("mock:result");
             }
         });
@@ -62,7 +62,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
     public void testBeanWithInputStreamBodyMethod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(MyCoolBean.class, "doSomething").to("mock:result");
             }
         });
@@ -81,7 +81,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
     public void testToBeanWithInputStreamBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean").to("mock:result");
             }
         });
@@ -100,7 +100,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
     public void testToBeanWithInputStreamBodyMethod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=doSomething").to("mock:result");
             }
         });
@@ -119,7 +119,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
     public void testToBeanWithInputStreamBodyMethodOGNL() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=doSomething(${body})").to("mock:result");
             }
         });

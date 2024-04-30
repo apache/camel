@@ -26,7 +26,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
@@ -45,32 +44,12 @@ public class XPathFeatureTest extends ContextTestSupport {
               + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        resetCoreConverters();
-        super.setUp();
-    }
-
-    private void resetCoreConverters() throws Exception {
-        /*
-         * Field field =
-         * CoreStaticTypeConverterLoader.class.getDeclaredField("INSTANCE");
-         * field.setAccessible(true); Field modifiersField =
-         * Field.class.getDeclaredField("modifiers");
-         * modifiersField.setAccessible(true); modifiersField.setInt(field,
-         * field.getModifiers() & ~Modifier.FINAL); Constructor<?> cns =
-         * CoreStaticTypeConverterLoader.class.getDeclaredConstructor();
-         * cns.setAccessible(true); field.set(null, cns.newInstance());
-         */
-    }
-
-    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
     @Test
-    public void testXPathDocTypeDisallowed() throws Exception {
+    public void testXPathDocTypeDisallowed() {
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail();
@@ -80,7 +59,7 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPath() throws Exception {
+    public void testXPath() {
         // Set these features will enable the external general entities
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities", "true");
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl", "false");
@@ -98,7 +77,7 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathNoTypeConverter() throws Exception {
+    public void testXPathNoTypeConverter() {
         try {
             // define a class without type converter as document type
             xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA));
@@ -111,7 +90,7 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathResultOnInvalidData() throws Exception {
+    public void testXPathResultOnInvalidData() {
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID));
             fail("Expect an Exception here");

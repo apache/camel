@@ -75,7 +75,7 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         mock.expectedBodiesReceived("Hello World");
         mock.message(0).header("foo").isNull();
 
-        template.requestBodyAndHeader("direct:start", "Hello World", "foo", (Object) null);
+        template.requestBodyAndHeader("direct:start", "Hello World", "foo", null);
 
         assertMockEndpointsSatisfied();
     }
@@ -93,10 +93,10 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(BeanWithHeaderAnnotation.class).to("mock:result");
             }
         };

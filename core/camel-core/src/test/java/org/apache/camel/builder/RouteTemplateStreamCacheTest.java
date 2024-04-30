@@ -30,7 +30,7 @@ public class RouteTemplateStreamCacheTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
 
                     routeTemplate("myTemplate")
                             .templateParameter("foo")

@@ -515,13 +515,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 if (!found) {
                     // okay before adding suppression then we must be sure its not referring to same method
                     // which otherwise can lead to add the same exception over and over again
-                    StackTraceElement[] ste1 = e.getStackTrace();
-                    StackTraceElement[] ste2 = previous.getStackTrace();
-                    boolean same = false;
-                    if (ste1 != null && ste2 != null && ste1.length > 0 && ste2.length > 0) {
-                        same = ste1[0].getClassName().equals(ste2[0].getClassName())
-                                && ste1[0].getLineNumber() == ste2[0].getLineNumber();
-                    }
+                    final boolean same = isSame(e, previous);
                     if (!same) {
                         e.addSuppressed(previous);
                     }
@@ -1018,13 +1012,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 if (!found) {
                     // okay before adding suppression then we must be sure its not referring to same method
                     // which otherwise can lead to add the same exception over and over again
-                    StackTraceElement[] ste1 = e.getStackTrace();
-                    StackTraceElement[] ste2 = previous.getStackTrace();
-                    boolean same = false;
-                    if (ste1 != null && ste2 != null && ste1.length > 0 && ste2.length > 0) {
-                        same = ste1[0].getClassName().equals(ste2[0].getClassName())
-                                && ste1[0].getLineNumber() == ste2[0].getLineNumber();
-                    }
+                    final boolean same = isSame(e, previous);
                     if (!same) {
                         e.addSuppressed(previous);
                     }
@@ -1603,6 +1591,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             return true;
         }
+    }
+
+    private static boolean isSame(Exception e, Throwable previous) {
+        StackTraceElement[] ste1 = e.getStackTrace();
+        StackTraceElement[] ste2 = previous.getStackTrace();
+        boolean same = false;
+        if (ste1 != null && ste2 != null && ste1.length > 0 && ste2.length > 0) {
+            same = ste1[0].getClassName().equals(ste2[0].getClassName())
+                    && ste1[0].getLineNumber() == ste2[0].getLineNumber();
+        }
+        return same;
     }
 
     /**

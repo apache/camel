@@ -51,7 +51,7 @@ public class PredicateBuilderConcurrentTest extends ContextTestSupport {
         for (int i = 0; i < 1000; i++) {
             final Integer num = i;
             Future<Boolean> future = pool.submit(new Callable<Boolean>() {
-                public Boolean call() throws Exception {
+                public Boolean call() {
                     Expression left = ExpressionBuilder.headerExpression("foo");
                     Expression right;
                     if (num % 2 == 0) {

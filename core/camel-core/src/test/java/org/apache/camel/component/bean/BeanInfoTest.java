@@ -35,10 +35,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BeanInfoTest {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
 
-    protected CamelContext camelContext = new DefaultCamelContext();
+    protected final CamelContext camelContext = new DefaultCamelContext();
 
     @Test
-    public void testObjectOperations() throws Exception {
+    public void testObjectOperations() {
         BeanInfo info = createBeanInfo(Object.class);
 
         List<MethodInfo> operations = info.getMethods();
@@ -47,7 +47,7 @@ public class BeanInfoTest {
     }
 
     @Test
-    public void testGetOperations() throws Exception {
+    public void testGetOperations() {
         BeanInfo info = createBeanInfo(Foo.class);
 
         List<MethodInfo> operations = info.getMethods();
@@ -166,13 +166,16 @@ public class BeanInfoTest {
 
     @InOnly
     public interface MyOneWayInterface {
+        @SuppressWarnings("Unused")
         void inOnlyMethod();
     }
 
     @InOnly
     public interface MyOneWayInterfaceWithOverloadedMethod {
+        @SuppressWarnings("Unused")
         void inOnlyMethod();
 
+        @SuppressWarnings("Unused")
         @InOut
         Object inOutMethod();
     }

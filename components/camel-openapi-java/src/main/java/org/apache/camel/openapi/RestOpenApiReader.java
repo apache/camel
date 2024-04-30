@@ -95,7 +95,6 @@ import static java.lang.invoke.MethodHandles.publicLookup;
  */
 public class RestOpenApiReader {
 
-    public static final String OAS20_SCHEMA_DEFINITION_PREFIX = "#/definitions/";
     public static final String OAS30_SCHEMA_DEFINITION_PREFIX = "#/components/schemas/";
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiReader.class);
     // Types that are not allowed in references.
@@ -179,9 +178,7 @@ public class RestOpenApiReader {
 
     private void checkCompatOpenApi2(OpenAPI openApi, BeanConfig config) {
         if (config.isOpenApi2()) {
-            // Verify that the OpenAPI 3 model can be downgraded to OpenApi 2
-            OpenAPI3to2 converter = new OpenAPI3to2();
-            converter.convertOpenAPI3to2(openApi);
+            throw new IllegalArgumentException("OpenAPI 2.x is not supported");
         }
     }
 
@@ -642,8 +639,6 @@ public class RestOpenApiReader {
                     Schema<?> model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi);
                     contentType.setSchema(model);
                     response.setContent(responseContent);
-                    // response.description = "Output type";
-                    //                    op.responses.addResponse("200", response);
                     op.getResponses().addApiResponse("200", response);
                 }
             }

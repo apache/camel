@@ -96,7 +96,7 @@ public class SplitterTest extends ContextTestSupport {
     @Test
     public void testEmptyBody() {
         Exchange result = template.request("direct:seqential", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setHeader("foo", "bar");
             }
         });
@@ -155,7 +155,7 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Object) (Integer) 5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Object) 5, result.getProperty("aggregated", Integer.class));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Object) (Integer) 5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Object) 5, result.getProperty("aggregated", Integer.class));
     }
 
     @Test

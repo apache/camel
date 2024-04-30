@@ -32,10 +32,10 @@ public class ClassComponentWithPropertiesSetFromEndpointTest extends ContextTest
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye").to("mock:result");
             }
         };

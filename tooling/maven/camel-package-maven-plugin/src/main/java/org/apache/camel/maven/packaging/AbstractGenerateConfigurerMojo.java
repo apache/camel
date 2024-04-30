@@ -27,10 +27,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.Metadata;
@@ -145,9 +149,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         Set<String> bootstrapSet = new LinkedHashSet<>();
         Set<String> bootstrapAndExtendedSet = new LinkedHashSet<>();
 
+        Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project, getLog());
         if (discoverClasses) {
-            Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project, getLog());
-
             if (index != null) {
                 // discover all classes annotated with @Configurer
                 List<AnnotationInstance> annotations = index.getAnnotations(CONFIGURER);
@@ -164,7 +167,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         // additional classes
         if (classes != null && !classes.isEmpty()) {
-            Index index = readJandexIndex(project);
+            if (index == null) {
+                index = PackagePluginUtils.readJandexIndex(project);
+            }
             for (String clazz : classes) {
                 ClassInfo ci = index.getClassByName(DotName.createSimple(clazz));
                 AnnotationInstance ai = ci != null ? ci.declaredAnnotation(CONFIGURER) : null;
@@ -177,16 +182,16 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
 
         for (String fqn : set) {
-            processClass(fqn, sourcesOutputDir, false, false, resourcesOutputDir);
+            processClass(index, fqn, sourcesOutputDir, false, false, resourcesOutputDir);
         }
         for (String fqn : bootstrapSet) {
-            processClass(fqn, sourcesOutputDir, false, true, resourcesOutputDir);
+            processClass(index, fqn, sourcesOutputDir, false, true, resourcesOutputDir);
         }
         for (String fqn : extendedSet) {
-            processClass(fqn, sourcesOutputDir, true, false, resourcesOutputDir);
+            processClass(index, fqn, sourcesOutputDir, true, false, resourcesOutputDir);
         }
         for (String fqn : bootstrapAndExtendedSet) {
-            processClass(fqn, sourcesOutputDir, true, true, resourcesOutputDir);
+            processClass(index, fqn, sourcesOutputDir, true, true, resourcesOutputDir);
         }
     }
 
@@ -206,7 +211,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
     }
 
-    private void processClass(String fqn, File sourcesOutputDir, boolean extended, boolean bootstrap, File resourcesOutputDir)
+    private void processClass(
+            Index index, String fqn, File sourcesOutputDir, boolean extended, boolean bootstrap, File resourcesOutputDir)
             throws MojoExecutionException {
         try {
             String targetFqn = fqn;
@@ -215,7 +221,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 targetFqn = fqn.substring(pos + 1);
                 fqn = fqn.substring(0, pos);
             }
-            List<ConfigurerOption> options = processClass(fqn);
+            List<ConfigurerOption> options = processClass(index, fqn);
             generateConfigurer(fqn, targetFqn, options, sourcesOutputDir, extended, bootstrap);
             generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
         } catch (Exception e) {
@@ -335,12 +341,15 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         return artifacts;
     }
 
-    private List<ConfigurerOption> processClass(String fqn) throws ClassNotFoundException {
+    private List<ConfigurerOption> processClass(Index index, String fqn) throws ClassNotFoundException {
         List<ConfigurerOption> answer = new ArrayList<>();
         // filter out duplicates by using a names set that has already added
         Set<String> names = new HashSet<>();
 
         Class<?> clazz = projectClassLoader.loadClass(fqn);
+        ClassInfo ci = index != null ? index.getClassByName(DotName.createSimple(clazz)) : null;
+        boolean metadataOnly = ci != null && asBooleanDefaultFalse(ci.annotation(CONFIGURER), "metadataOnly");
+
         // find all public setters
         doWithMethods(clazz, m -> {
             boolean deprecated = m.isAnnotationPresent(Deprecated.class);
@@ -373,15 +382,21 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
                 ConfigurerOption option = null;
                 String t = builder
-                        ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(4 + 1)
-                        : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
+                        ? Character.toLowerCase(m.getName().charAt(4)) + m.getName().substring(4 + 1)
+                        : Character.toLowerCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
+                Field field = ReflectionHelper.findField(clazz, t);
+                // check via the field whether to be included or not if we should only include fields marked up with @Metadata
+                if (metadataOnly && field != null) {
+                    if (!field.isAnnotationPresent(Metadata.class)) {
+                        return;
+                    }
+                }
                 if (names.add(t)) {
                     option = new ConfigurerOption(t, type, getter, builder);
                     answer.add(option);
                 } else {
                     boolean replace = false;
                     // try to find out what the real type is of the correspondent field so we chose among the clash
-                    Field field = ReflectionHelper.findField(clazz, Character.toLowerCase(t.charAt(0)) + t.substring(1));
                     if (field != null && field.getType().equals(type)) {
                         // this is the correct type for the new option
                         replace = true;
@@ -445,8 +460,23 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         String pfqn = fqn;
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
-        String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
-                false, false, extended, bootstrap, options, null);
+        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
+
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("generatorClass", getClass().getName());
+        ctx.put("package", pn);
+        ctx.put("className", cn);
+        ctx.put("type", en);
+        ctx.put("pfqn", pfqn);
+        ctx.put("psn", psn);
+        ctx.put("hasSuper", false);
+        ctx.put("component", false);
+        ctx.put("extended", extended);
+        ctx.put("bootstrap", bootstrap);
+        ctx.put("options", options);
+        ctx.put("model", null);
+        ctx.put("mojo", this);
+        String source = velocity("velocity/property-configurer.vm", ctx);
 
         String fileName = pn.replace('.', '/') + "/" + cn + ".java";
         outputDir.mkdirs();
@@ -474,13 +504,19 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     }
 
     private static boolean asBooleanDefaultTrue(AnnotationInstance ai, String name) {
-        AnnotationValue av = ai.value(name);
-        return av == null || av.asBoolean();
+        if (ai != null) {
+            AnnotationValue av = ai.value(name);
+            return av == null || av.asBoolean();
+        }
+        return true;
     }
 
     private static boolean asBooleanDefaultFalse(AnnotationInstance ai, String name) {
-        AnnotationValue av = ai.value(name);
-        return av != null && av.asBoolean();
+        if (ai != null) {
+            AnnotationValue av = ai.value(name);
+            return av != null && av.asBoolean();
+        }
+        return false;
     }
 
 }

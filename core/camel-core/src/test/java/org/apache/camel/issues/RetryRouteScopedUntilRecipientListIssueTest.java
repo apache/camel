@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 
-    private AtomicInteger invoked = new AtomicInteger();
+    private final AtomicInteger invoked = new AtomicInteger();
 
     @BeforeEach
     public void resetInvoked() {
@@ -49,8 +49,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myRetryBean", new MyRetryBean());
         return jndi;
     }
@@ -60,15 +60,15 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         CamelContext context = super.createCamelContext();
 
         context.addEndpoint("fail", new DefaultEndpoint() {
-            public Producer createProducer() throws Exception {
+            public Producer createProducer() {
                 return new DefaultProducer(this) {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         exchange.setException(new IllegalArgumentException("Damn"));
                     }
                 };
             }
 
-            public Consumer createConsumer(Processor processor) throws Exception {
+            public Consumer createConsumer(Processor processor) {
                 return null;
             }
 
@@ -83,15 +83,15 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         });
 
         context.addEndpoint("not-fail", new DefaultEndpoint() {
-            public Producer createProducer() throws Exception {
+            public Producer createProducer() {
                 return new DefaultProducer(this) {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // noop
                     }
                 };
             }
 
-            public Consumer createConsumer(Processor processor) throws Exception {
+            public Consumer createConsumer(Processor processor) {
                 return null;
             }
 
@@ -250,10 +250,10 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start").onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end()
                         .recipientList(header("recipientListHeader"))
                         .to("mock:result");

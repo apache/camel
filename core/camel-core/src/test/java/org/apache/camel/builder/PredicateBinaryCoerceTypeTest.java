@@ -27,10 +27,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class PredicateBinaryCoerceTypeTest extends TestSupport {
-    protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+    protected final Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
     @Test
-    public void testIsNull() throws Exception {
+    public void testIsNull() {
         Expression a = ExpressionBuilder.constantExpression("123");
         assertDoesNotMatch(PredicateBuilder.isNull(a));
 
@@ -39,7 +39,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testIsNotNull() throws Exception {
+    public void testIsNotNull() {
         Expression a = ExpressionBuilder.constantExpression("123");
         assertMatches(PredicateBuilder.isNotNull(a));
 
@@ -48,7 +48,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testEqual() throws Exception {
+    public void testEqual() {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("123"));
         assertMatches(PredicateBuilder.isEqualTo(a, b));
@@ -60,7 +60,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testEqualWithNull() throws Exception {
+    public void testEqualWithNull() {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(null);
         assertDoesNotMatch(PredicateBuilder.isEqualTo(a, b));
@@ -77,7 +77,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testNotEqual() throws Exception {
+    public void testNotEqual() {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("123"));
 
@@ -88,7 +88,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testNotEqualWithNull() throws Exception {
+    public void testNotEqualWithNull() {
         Expression a = ExpressionBuilder.constantExpression("123");
         Expression b = ExpressionBuilder.constantExpression(null);
         assertMatches(PredicateBuilder.isNotEqualTo(a, b));
@@ -105,7 +105,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testGreatherThan() throws Exception {
+    public void testGreatherThan() {
         Expression a = ExpressionBuilder.constantExpression("200");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("100"));
 
@@ -121,7 +121,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testGreatherThanOrEqual() throws Exception {
+    public void testGreatherThanOrEqual() {
         // greather than
         Expression a = ExpressionBuilder.constantExpression("200");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("100"));
@@ -152,7 +152,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testLessThan() throws Exception {
+    public void testLessThan() {
         Expression a = ExpressionBuilder.constantExpression("100");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("200"));
 
@@ -168,7 +168,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Test
-    public void testLessThanOrEqual() throws Exception {
+    public void testLessThanOrEqual() {
         // less than
         Expression a = ExpressionBuilder.constantExpression("100");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("200"));

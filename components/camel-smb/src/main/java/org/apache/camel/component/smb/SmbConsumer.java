@@ -32,12 +32,18 @@ public class SmbConsumer extends ScheduledPollConsumer {
     private final SmbEndpoint endpoint;
     private final SmbConfiguration configuration;
 
-    private final SMBClient smbClient = new SMBClient();
+    private final SMBClient smbClient;
 
     public SmbConsumer(SmbEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
+
+        if (this.configuration.getSmbConfig() != null) {
+            smbClient = new SMBClient(this.configuration.getSmbConfig());
+        } else {
+            smbClient = new SMBClient();
+        }
     }
 
     @Override

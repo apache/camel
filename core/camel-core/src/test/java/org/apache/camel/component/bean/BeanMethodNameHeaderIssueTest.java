@@ -44,10 +44,10 @@ public class BeanMethodNameHeaderIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(BeanMethodNameHeaderIssueTest.class).to("mock:a")
                         .bean(BeanMethodNameHeaderIssueTest.class, "bar").to("mock:b")
                         .bean(BeanMethodNameHeaderIssueTest.class).to("mock:c")

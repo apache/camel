@@ -28,12 +28,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.squareup.kotlinpoet.ClassName;
+import com.squareup.kotlinpoet.ClassNames;
 import com.squareup.kotlinpoet.CodeBlock;
 import com.squareup.kotlinpoet.FileSpec;
 import com.squareup.kotlinpoet.FunSpec;
@@ -51,6 +53,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.text.CaseUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -107,7 +110,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
 
     private static final Predicate<String> identifierPattern = Pattern.compile("\\w+").asMatchPredicate();
 
-    private static final Pattern genericPattern = Pattern.compile("<([\\w.]+)>");
+    private static final Pattern genericPattern = Pattern.compile("<([\\w.?\\s]+)>");
 
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
@@ -140,7 +143,9 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         }
 
         ClassLoader classLoader = constructClassLoaderForCamelProjects(
-                "core/camel-core-model", "core/camel-api");
+                "core/camel-core-model",
+                "core/camel-api",
+                "core/camel-core-processor");
 
         executeLanguages(classLoader);
         executeDataFormats(classLoader);
@@ -169,7 +174,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
     private void createLanguageDsl(LanguageModel model, ClassLoader classLoader) throws MojoFailureException {
         String name = model.getName();
         getLog().debug("Generating Language DSL for " + name);
-        String pascalCaseName = toPascalCase(name);
+        String pascalCaseName = StringUtils.capitalize(name);
         String dslClassName = pascalCaseName + "LanguageDsl";
         Class<?> clazz;
         try {
@@ -199,6 +204,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                 return def
                 """.formatted(language.getSimpleName(), funName, dslClassName));
         funBuilder.returns(language);
+        funBuilder.addKdoc(sanitizeKDoc(model.getDescription()));
 
         TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(dslClassName);
         typeBuilder.addAnnotation(new ClassName("org.apache.camel.kotlin", "CamelDslMarker"));
@@ -213,26 +219,8 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             if (propertyName.equals("expression")) {
                 continue;
             }
-            Field field = FieldUtils.getField(clazz, propertyName, true);
-            if (field == null) {
-                MojoFailureException ex = new MojoFailureException(
-                        "Not found field %s for class %s".formatted(propertyName, clazz.getCanonicalName()));
-                getLog().error(ex);
-                throw ex;
-            }
-            TypeName javaType = parseJavaType(property.getJavaType());
-
-            if (field.getType().equals(String.class) && !javaType.equals(TypeNames.STRING)) {
-                appendPropertyBuilder(typeBuilder, propertyName, javaType, true);
-                appendPropertyBuilder(typeBuilder, propertyName, TypeNames.STRING, false);
-            } else if (field.getType().equals(Class.class)) {
-                TypeName clazzTypeName = ParameterizedTypeName.get(
-                        new ClassName("java.lang", "Class"),
-                        WildcardTypeName.producerOf(TypeNames.ANY));
-                appendPropertyBuilder(typeBuilder, propertyName, clazzTypeName, false);
-            } else {
-                appendPropertyBuilder(typeBuilder, propertyName, javaType, false);
-            }
+            createProperty(propertyName, clazz, property.getJavaType(), classLoader,
+                    typeBuilder, model.getName(), property.getDescription());
         }
 
         writeSource(
@@ -264,7 +252,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
     private void createDataFormatDsl(DataFormatModel model, ClassLoader classLoader) throws MojoFailureException {
         String name = model.getName();
         getLog().debug("Generating DataFormat DSL for " + name);
-        String pascalCaseName = toPascalCase(name);
+        String pascalCaseName = StringUtils.capitalize(name);
         String dslClassName = pascalCaseName + "DataFormatDsl";
         Class<?> clazz;
         try {
@@ -287,6 +275,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                 new ArrayList<>(),
                 TypeNames.UNIT));
         funBuilder.addCode("def = %s().apply(i).def".formatted(dslClassName));
+        funBuilder.addKdoc(sanitizeKDoc(model.getDescription()));
 
         TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(dslClassName);
         typeBuilder.addAnnotation(new ClassName("org.apache.camel.kotlin", "CamelDslMarker"));
@@ -295,26 +284,9 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
 
         for (DataFormatModel.DataFormatOptionModel property : model.getOptions()) {
             String propertyName = extractPropertyName(model, property);
-            Field field = FieldUtils.getField(clazz, propertyName, true);
-            if (field == null) {
-                MojoFailureException ex = new MojoFailureException(
-                        "Not found field %s for class %s".formatted(propertyName, clazz.getCanonicalName()));
-                getLog().error(ex);
-                throw ex;
-            }
-            TypeName javaType = parseJavaType(property.getJavaType());
-
-            if (field.getType().equals(String.class) && !javaType.equals(TypeNames.STRING)) {
-                appendPropertyBuilder(typeBuilder, propertyName, javaType, true);
-                appendPropertyBuilder(typeBuilder, propertyName, TypeNames.STRING, false);
-            } else if (field.getType().equals(Class.class)) {
-                TypeName clazzTypeName = ParameterizedTypeName.get(
-                        new ClassName("java.lang", "Class"),
-                        WildcardTypeName.producerOf(TypeNames.ANY));
-                appendPropertyBuilder(typeBuilder, propertyName, clazzTypeName, false);
-            } else {
-                appendPropertyBuilder(typeBuilder, propertyName, javaType, false);
-            }
+            createProperty(
+                    propertyName, clazz, property.getJavaType(), classLoader,
+                    typeBuilder, model.getName(), property.getDescription());
         }
 
         writeSource(
@@ -390,6 +362,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                 new ArrayList<>(),
                 TypeNames.UNIT));
         funBuilder.addCode("%s(this).apply(i)".formatted(dslClassName));
+        funBuilder.addKdoc(sanitizeKDoc(model.getDescription()));
 
         TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(dslClassName);
         typeBuilder.addAnnotation(new ClassName("org.apache.camel.kotlin", "CamelDslMarker"));
@@ -450,6 +423,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                     this.%s = %s
                     it.url("%s")
                     """.formatted(property.getName(), property.getName(), urlExpression)));
+            propertyBuilder.addKdoc(sanitizeKDoc(property.getDescription()));
             typeBuilder.addFunction(propertyBuilder.build());
             ClassName className = parsePropertyType(property.getType());
             if (!className.equals(TypeNames.STRING)) {
@@ -459,6 +433,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                         this.%s = %s.toString()
                         it.url("%s")
                         """.formatted(property.getName(), property.getName(), urlExpression)));
+                stringPropertyBuilder.addKdoc(sanitizeKDoc(property.getDescription()));
                 typeBuilder.addFunction(stringPropertyBuilder.build());
             }
         }
@@ -471,6 +446,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             propertyBuilder.addCode(CodeBlock.of("""
                     it.property("%s", %s)
                     """.formatted(property.getName(), property.getName())));
+            propertyBuilder.addKdoc(sanitizeKDoc(property.getDescription()));
             typeBuilder.addFunction(propertyBuilder.build());
             ClassName className = parsePropertyType(property.getType());
             if (!className.equals(TypeNames.STRING)) {
@@ -479,6 +455,7 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
                 stringPropertyBuilder.addCode(CodeBlock.of("""
                         it.property("%s", %s.toString())
                         """.formatted(property.getName(), property.getName())));
+                stringPropertyBuilder.addKdoc(sanitizeKDoc(property.getDescription()));
                 typeBuilder.addFunction(stringPropertyBuilder.build());
             }
         }
@@ -498,7 +475,21 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         return className;
     }
 
-    private void writeSource(FileSpec.Builder fileBuilder, String fileName, String packageName, String what)
+    private void writeSource(
+            FileSpec.Builder fileBuilder,
+            String fileName,
+            String packageName,
+            String what)
+            throws MojoFailureException {
+        writeSource(fileBuilder, fileName, packageName, what, x -> x);
+    }
+
+    private void writeSource(
+            FileSpec.Builder fileBuilder,
+            String fileName,
+            String packageName,
+            String what,
+            Function<String, String> postProcessing)
             throws MojoFailureException {
         StringBuilder codeBuilder = new StringBuilder();
         codeBuilder.append(licenseHeader);
@@ -510,21 +501,8 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         }
         String code = codeBuilder.toString();
         String filePath = packageName.replace('.', '/') + "/" + fileName + ".kt";
-        Path fullPath = sourcesOutputDir.toPath().resolve(filePath);
-        boolean update = true;
-        try {
-            if (Files.exists(fullPath)) {
-                String existingCode = Files.readString(fullPath);
-                if (existingCode.equals(code)) {
-                    update = false;
-                }
-            }
-        } catch (IOException e) {
-            throw new MojoFailureException(e);
-        }
-        if (update) {
-            getLog().info("Updating " + what);
-            updateResource(sourcesOutputDir.toPath(), filePath, code);
+        if (updateResource(sourcesOutputDir.toPath(), filePath, postProcessing.apply(code))) {
+            getLog().info("Updated " + what);
         }
     }
 
@@ -532,7 +510,12 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         return CaseUtils.toCamelCase(name, true, '-', '+');
     }
 
-    private void appendPropertyBuilder(TypeSpec.Builder typeBuilder, String propertyName, TypeName javaType, Boolean toString) {
+    private void appendPropertyBuilder(
+            TypeSpec.Builder typeBuilder,
+            String propertyName,
+            TypeName javaType,
+            Boolean toString,
+            String kdoc) {
         FunSpec.Builder propertyBuilder = FunSpec.builder(propertyName);
         propertyBuilder.addParameter(propertyName, javaType);
         String code = "def.%s = %s".formatted(propertyName, propertyName);
@@ -540,10 +523,20 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             code += ".toString()";
         }
         propertyBuilder.addCode(CodeBlock.of(code));
+        propertyBuilder.addKdoc(sanitizeKDoc(kdoc));
         typeBuilder.addFunction(propertyBuilder.build());
     }
 
     private TypeName parseJavaType(String javaType) throws MojoFailureException {
+        if (javaType.equals("?")) {
+            return TypeNames.STAR;
+        }
+        if (javaType.startsWith("? extends ")) {
+            return WildcardTypeName.producerOf(parseJavaType(javaType.substring("? extends ".length())));
+        }
+        if (javaType.equals(Object.class.getCanonicalName())) {
+            return TypeNames.ANY;
+        }
         if (javaType.equals(String.class.getCanonicalName())) {
             return TypeNames.STRING;
         }
@@ -565,11 +558,36 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
         if (javaType.equals("byte[]")) {
             return TypeNames.BYTE_ARRAY;
         }
+        if (javaType.equals(Throwable.class.getCanonicalName())) {
+            return TypeNames.THROWABLE;
+        }
         if (javaType.startsWith(List.class.getCanonicalName())) {
             Matcher matcher = genericPattern.matcher(javaType);
-            matcher.find();
+            if (!matcher.find()) {
+                try {
+                    return ClassName.bestGuess(javaType);
+                } catch (Exception e) {
+                    MojoFailureException ex = new MojoFailureException("Unable to resolve java type: " + javaType, e);
+                    getLog().error(ex);
+                    throw ex;
+                }
+            }
             String typeArgument = matcher.group(1);
             return ParameterizedTypeName.get(TypeNames.MUTABLE_LIST, parseJavaType(typeArgument));
+        }
+        if (javaType.startsWith(Class.class.getCanonicalName())) {
+            Matcher matcher = genericPattern.matcher(javaType);
+            if (!matcher.find()) {
+                try {
+                    return ClassName.bestGuess(javaType);
+                } catch (Exception e) {
+                    MojoFailureException ex = new MojoFailureException("Unable to resolve java type: " + javaType, e);
+                    getLog().error(ex);
+                    throw ex;
+                }
+            }
+            String typeArgument = matcher.group(1);
+            return ParameterizedTypeName.get(ClassNames.get(Class.class), parseJavaType(typeArgument));
         }
         try {
             return ClassName.bestGuess(javaType);
@@ -592,5 +610,58 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
             }
         }
         return new URLClassLoader(urls);
+    }
+
+    private boolean isPrimitiveTypeName(TypeName type) {
+        return type.equals(TypeNames.BOOLEAN)
+                || type.equals(TypeNames.INT)
+                || type.equals(TypeNames.LONG)
+                || type.equals(TypeNames.DOUBLE);
+    }
+
+    private void createProperty(
+            String propertyName, Class<?> clazz, String propertyJavaType, ClassLoader classLoader,
+            TypeSpec.Builder typeBuilder, String modelName, String description)
+            throws MojoFailureException {
+        Field field = FieldUtils.getField(clazz, propertyName, true);
+        if (field == null) {
+            MojoFailureException ex = new MojoFailureException(
+                    "Not found field %s for class %s".formatted(propertyName, clazz.getCanonicalName()));
+            getLog().error(ex);
+            throw ex;
+        }
+        TypeName javaType = parseJavaType(propertyJavaType);
+
+        if (field.getType().equals(String.class) && !javaType.equals(TypeNames.STRING)) {
+            if (isPrimitiveTypeName(javaType)) {
+                appendPropertyBuilder(typeBuilder, propertyName, javaType, true, description);
+            } else {
+                try {
+                    Class<?> propertyClass = classLoader.loadClass(propertyJavaType);
+                    if (propertyClass.isEnum()) {
+                        appendPropertyBuilder(typeBuilder, propertyName, javaType, true, description);
+                    } else {
+                        throw new MojoFailureException(
+                                "Error while generating DataFormat DSL '%s': java type '%s' for field '%s'"
+                                        .formatted(modelName, javaType.toString(), propertyName));
+                    }
+                } catch (ClassNotFoundException ignored) {
+                    // ignoring exception cause in that case we must generate String-argument function
+                    // which is done 3 lines below
+                }
+            }
+            appendPropertyBuilder(typeBuilder, propertyName, TypeNames.STRING, false, description);
+        } else if (field.getType().equals(Class.class)) {
+            TypeName clazzTypeName = ParameterizedTypeName.get(
+                    new ClassName("java.lang", "Class"),
+                    TypeNames.STAR);
+            appendPropertyBuilder(typeBuilder, propertyName, clazzTypeName, false, description);
+        } else {
+            appendPropertyBuilder(typeBuilder, propertyName, javaType, false, description);
+        }
+    }
+
+    private String sanitizeKDoc(String kdoc) {
+        return kdoc.replace("%", "%%");
     }
 }

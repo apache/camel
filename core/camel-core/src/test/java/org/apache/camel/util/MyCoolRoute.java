@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MyCoolRoute extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("direct:cool").routeId("cool")
                 .to("mock:cool")
                 .wireTap("mock:tap");

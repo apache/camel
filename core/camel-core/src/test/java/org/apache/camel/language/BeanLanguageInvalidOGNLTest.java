@@ -35,7 +35,7 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
     public void testBeanLanguageInvalidOGNL() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform().method(MyReallyCoolBean.class, "getOther[xx");
             }
         });
@@ -60,7 +60,7 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 
     public static class MyReallyCoolBean {
 
-        private Map<?, ?> map = new LinkedHashMap<>();
+        private final Map<?, ?> map = new LinkedHashMap<>();
 
         public Map<?, ?> getOther() {
             return map;

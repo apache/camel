@@ -63,7 +63,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:error");
             }
         });
@@ -82,7 +82,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().to("mock:from");
             }
         });
@@ -101,7 +101,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("mock:result").to("mock:to");
             }
         });
@@ -120,7 +120,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().to("mock:done");
             }
         });
@@ -134,10 +134,10 @@ public class AdviceWithIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(new MyProcessor()).to("mock:result");
             }
         };
@@ -146,7 +146,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
     private static final class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(body)) {
                 throw new IllegalArgumentException("Kaboom");

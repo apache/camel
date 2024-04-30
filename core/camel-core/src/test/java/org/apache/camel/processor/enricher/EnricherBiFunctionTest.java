@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnricherBiFunctionTest extends ContextTestSupport {
 
-    private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
+    private final MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
-    private BiFunction<Exchange, Exchange, Object> myAgg
+    private final BiFunction<Exchange, Exchange, Object> myAgg
             = (Exchange e1, Exchange e2) -> e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("cool", cool);
         jndi.bind("agg", myAgg);
         return jndi;
@@ -47,7 +47,7 @@ public class EnricherBiFunctionTest extends ContextTestSupport {
     @Test
     public void testEnrichRef() throws Exception {
         cool.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getMessage().setBody("Bye World");
             }
         });
@@ -60,10 +60,10 @@ public class EnricherBiFunctionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 cool.setCamelContext(context);
 
                 from("direct:start").enrich().simple("ref:cool").aggregationStrategy("agg");

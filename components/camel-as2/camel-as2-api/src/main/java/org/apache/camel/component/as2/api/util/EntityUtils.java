@@ -39,12 +39,12 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpMessage;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpMessage;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,32 +220,32 @@ public final class EntityUtils {
 
     public static boolean hasEntity(HttpMessage message) {
         boolean hasEntity = false;
-        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+        if (message instanceof ClassicHttpRequest httpEntityEnclosingRequest) {
             hasEntity = httpEntityEnclosingRequest.getEntity() != null;
-        } else if (message instanceof HttpResponse httpResponse) {
+        } else if (message instanceof ClassicHttpResponse httpResponse) {
             hasEntity = httpResponse.getEntity() != null;
         }
         return hasEntity;
     }
 
     public static HttpEntity getMessageEntity(HttpMessage message) {
-        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+        if (message instanceof ClassicHttpRequest httpEntityEnclosingRequest) {
             return httpEntityEnclosingRequest.getEntity();
-        } else if (message instanceof HttpResponse httpResponse) {
+        } else if (message instanceof ClassicHttpResponse httpResponse) {
             return httpResponse.getEntity();
         }
         return null;
     }
 
     public static void setMessageEntity(HttpMessage message, HttpEntity entity) {
-        if (message instanceof HttpEntityEnclosingRequest httpEntityEnclosingRequest) {
+        if (message instanceof ClassicHttpRequest httpEntityEnclosingRequest) {
             httpEntityEnclosingRequest.setEntity(entity);
-        } else if (message instanceof HttpResponse httpResponse) {
+        } else if (message instanceof ClassicHttpResponse httpResponse) {
             httpResponse.setEntity(entity);
         }
-        Header contentTypeHeader = entity.getContentType();
-        if (contentTypeHeader != null) {
-            message.setHeader(contentTypeHeader);
+        String contentType = entity.getContentType();
+        if (contentType != null) {
+            message.setHeader(AS2Header.CONTENT_TYPE, contentType);
         }
         if (entity instanceof MimeEntity mimeEntity) {
             Header contentTransferEncodingHeader = mimeEntity.getContentTransferEncoding();

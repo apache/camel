@@ -58,7 +58,6 @@ public abstract class AbstractThrottler extends AsyncProcessorSupport implements
         this.rejectExecution = rejectExecution;
         this.correlationExpression = correlation;
         this.maxRequestsExpression = ObjectHelper.notNull(maxRequestsExpression, "maxConcurrentRequestsExpression");
-        ;
     }
 
     protected static boolean handleInterrupt(

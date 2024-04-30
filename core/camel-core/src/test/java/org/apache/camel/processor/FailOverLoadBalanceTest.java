@@ -112,7 +112,7 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void sendMessage(final String endpoint, final Object headerValue, final Object body) throws Exception {
+    protected void sendMessage(final String endpoint, final Object headerValue, final Object body) {
         template.sendBodyAndHeader(endpoint, body, "foo", headerValue);
     }
 }

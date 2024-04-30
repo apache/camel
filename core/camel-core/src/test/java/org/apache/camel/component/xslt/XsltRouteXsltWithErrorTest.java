@@ -36,7 +36,7 @@ public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
     public void testXsltWithError() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("xslt:org/apache/camel/component/xslt/transform-with-error.xsl");
             }
         });

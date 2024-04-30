@@ -28,7 +28,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceSupport;
@@ -50,18 +52,29 @@ import org.slf4j.LoggerFactory;
  * {@link #getDropOldestFileStore()} (is default 1000) number of entries from the file store is dropped to reduce the
  * file store and make room for newer entries.
  */
+@Metadata(label = "bean",
+          description = "A file based idempotent repository. Comes with 1st-level in-memory cache for fast check of the most frequently used keys.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentRepository.class);
-
     private static final String STORE_DELIMITER = "\n";
 
     private final AtomicBoolean init = new AtomicBoolean();
-
     private Map<String, Object> cache;
+
+    @Metadata(description = "The maximum size of the 1st-level in-memory cache", defaultValue = "1000")
+    private int cacheSize;
+    @Metadata(description = "File name of the repository (incl directory)", required = true)
     private File fileStore;
+    @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb",
+              defaultValue = "" + 32 * 1024 * 1000L)
     private long maxFileStoreSize = 32 * 1024 * 1000L; // 32mb store file
+    @Metadata(description = "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk"
+                            + " space to allow room for new entries.",
+              defaultValue = "1000")
     private long dropOldestFileStore = 1000;
 
     public FileIdempotentRepository() {
@@ -241,28 +254,24 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         this.dropOldestFileStore = dropOldestFileStore;
     }
 
-    /**
-     * Sets the 1st-level cache size.
-     *
-     * Setting cache size is only possible when using the default {@link LRUCache} cache implementation.
-     */
-    public void setCacheSize(int size) {
-        if (cache != null && !(cache instanceof LRUCache)) {
-            throw new IllegalArgumentException(
-                    "Setting cache size is only possible when using the default LRUCache cache implementation");
-        }
-        if (cache != null) {
-            cache.clear();
-        }
-        cache = LRUCacheFactory.newLRUCache(size);
-    }
-
-    @ManagedAttribute(description = "The current 1st-level cache size")
+    @ManagedAttribute(description = "The current 1st-level cache size (elements in cache)")
     public int getCacheSize() {
         if (cache != null) {
             return cache.size();
         }
         return 0;
+    }
+
+    /**
+     * Sets the 1st-level maximum cache size.
+     */
+    public void setCacheSize(int size) {
+        this.cacheSize = size;
+    }
+
+    @ManagedAttribute(description = "The 1st-level maximum cache size")
+    public int getMaxCacheSize() {
+        return cacheSize;
     }
 
     /**
@@ -491,7 +500,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
         if (this.cache == null) {
             // default use a 1st level cache
-            this.cache = LRUCacheFactory.newLRUCache(1000);
+            this.cache = LRUCacheFactory.newLRUCache(cacheSize <= 0 ? 1000 : cacheSize);
         }
 
         // init store if not loaded before

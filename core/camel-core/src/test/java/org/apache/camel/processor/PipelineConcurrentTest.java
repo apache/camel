@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  */
 public class PipelineConcurrentTest extends ContextTestSupport {
 
-    private String uri = "seda:in?size=2000&concurrentConsumers=10";
+    private final String uri = "seda:in?size=2000&concurrentConsumers=10";
 
     @Test
     public void testConcurrentPipeline() throws Exception {
@@ -67,16 +67,16 @@ public class PipelineConcurrentTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // to force any exceptions coming forward immediately
                 errorHandler(noErrorHandler());
 
                 from(uri).pipeline("direct:do", "mock:result");
 
                 from("direct:do").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getMessage().setBody("Bye " + body);
                     }

@@ -30,7 +30,7 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
     public void testNoOtherwise() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when().simple("${header.foo} == 'bar'").to("mock:x").end().to("mock:end");
             }
         });
@@ -49,7 +49,7 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
     public void testNoOtherwiseTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when(simple("${header.foo} == 'bar'")).to("mock:x").end().to("mock:end");
             }
         });
@@ -68,7 +68,7 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
     public void testEmptyOtherwise() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when().simple("${header.foo} == 'bar'").to("mock:x").otherwise().end().to("mock:end");
             }
         });
@@ -87,7 +87,7 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
     public void testEmptyOtherwiseTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").choice().when(simple("${header.foo} == 'bar'")).to("mock:x").otherwise().end().to("mock:end");
             }
         });
@@ -102,7 +102,7 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void sendMessage(final Object headerValue, final Object body) throws Exception {
+    protected void sendMessage(final Object headerValue, final Object body) {
         template.sendBodyAndHeader("direct:start", body, "foo", headerValue);
     }
 

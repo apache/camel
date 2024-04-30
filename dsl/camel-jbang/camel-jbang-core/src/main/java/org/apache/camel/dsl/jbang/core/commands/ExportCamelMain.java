@@ -55,7 +55,7 @@ class ExportCamelMain extends Export {
             System.err.println("--build-tool=gradle is not support yet for camel-main runtime.");
         }
 
-        File profile = new File(getProfile() + ".properties");
+        File profile = new File("application.properties");
 
         // the settings file has information what to export
         File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
@@ -99,6 +99,8 @@ class ExportCamelMain extends Export {
         srcCamelResourcesDir.mkdirs();
         File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
         srcKameletsResourcesDir.mkdirs();
+        // copy application properties files
+        copyApplicationPropertiesFiles(srcResourcesDir);
         // copy source files
         copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
@@ -300,10 +302,24 @@ class ExportCamelMain extends Export {
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
+        if (profile != null && profile.exists()) {
+            Properties prop = new CamelCaseOrderedProperties();
+            RuntimeUtil.loadProperties(prop, profile);
+            // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
+            if (prop.getProperty("camel.metrics.enabled") != null || prop.getProperty("camel.server.metricsEnabled") != null) {
+                answer.add("mvn:org.apache.camel:camel-micrometer-prometheus");
+            }
+        }
+
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
+
+        if (openapi != null) {
+            // include http server if using openapi
+            answer.add("mvn:org.apache.camel:camel-platform-http-main");
+        }
 
         // if platform-http is included then we need to switch to use camel-platform-http-main as implementation
         if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-platform-http-main"))) {
@@ -314,6 +330,16 @@ class ExportCamelMain extends Export {
         }
 
         return answer;
+    }
+
+    @Override
+    protected void prepareApplicationProperties(Properties properties) {
+        if (openapi != null) {
+            // enable http server if not explicit configured
+            if (properties.getProperty("camel.server.enabled") == null) {
+                properties.setProperty("camel.server.enabled", "true");
+            }
+        }
     }
 
     private void createMainClassSource(File srcJavaDir, String packageName, String mainClassname) throws Exception {

@@ -28,19 +28,6 @@ import org.apache.camel.StaticService;
 public interface MessageHistoryFactory extends StaticService, CamelContextAware {
 
     /**
-     * Deprecated way to create a new {@link MessageHistory}
-     *
-     * @param      routeId   the route id
-     * @param      node      the node in the route
-     * @param      timestamp the timestamp is unused and will be removed in the future
-     * @param      exchange  the current exchange
-     * @return               a new {@link MessageHistory}
-     * @deprecated           use {@link #newMessageHistory(String, NamedNode, Exchange)}
-     */
-    @Deprecated(since = "4.4.0")
-    MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange);
-
-    /**
      * Creates a new {@link MessageHistory}
      *
      * @param  routeId  the route id

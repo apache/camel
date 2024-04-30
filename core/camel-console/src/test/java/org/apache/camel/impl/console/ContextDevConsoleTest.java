@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class ContextDevConsoleTest extends ContextTestSupport {
 
     @Test
-    public void testContextTest() throws Exception {
+    public void testContextTest() {
         DevConsole con = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("context");
         Assertions.assertNotNull(con);
         Assertions.assertEquals("camel", con.getGroup());
@@ -39,7 +39,7 @@ public class ContextDevConsoleTest extends ContextTestSupport {
     }
 
     @Test
-    public void testContextJson() throws Exception {
+    public void testContextJson() {
         DevConsole con = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("context");
         Assertions.assertNotNull(con);
         Assertions.assertEquals("camel", con.getGroup());

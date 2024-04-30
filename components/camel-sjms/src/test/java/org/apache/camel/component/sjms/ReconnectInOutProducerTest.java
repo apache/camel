@@ -25,9 +25,12 @@ import jakarta.jms.TextMessage;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.component.sjms.support.JmsExclusiveTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,13 +39,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
                           disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
-public class ReconnectInOutProducerTest extends JmsTestSupport {
-
+public class ReconnectInOutProducerTest extends JmsExclusiveTestSupport {
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.ReconnectInOutProducerTest";
 
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+
     @Override
-    protected boolean useJmx() {
-        return false;
+    public ArtemisService getService() {
+        return service;
     }
 
     @Test

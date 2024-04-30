@@ -25,7 +25,7 @@ import org.apache.camel.spi.Transformer;
 public class CustomDataTypeTransformer extends Transformer {
 
     @Override
-    public void transform(Message message, DataType from, DataType to) throws Exception {
+    public void transform(Message message, DataType from, DataType to) {
         message.setBody("customized");
     }
 }

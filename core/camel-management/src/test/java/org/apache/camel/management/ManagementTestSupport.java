@@ -86,7 +86,7 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
 
     private static NodeIdFactory buildNodeIdFactory() {
         return new NodeIdFactory() {
-            private AtomicInteger counter = new AtomicInteger();
+            private final AtomicInteger counter = new AtomicInteger();
 
             @Override
             public String createId(NamedNode definition) {

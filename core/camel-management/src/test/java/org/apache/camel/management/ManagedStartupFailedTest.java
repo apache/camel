@@ -29,8 +29,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
@@ -45,7 +45,7 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
     public void testAllGood() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").transform(body().prepend("Hello "));
             }
         });
@@ -55,7 +55,7 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
         MBeanServer server = getMBeanServer();
         try {
             Set<ObjectName> onames = server.queryNames(new ObjectName("org.apache.camel:*"), null);
-            assertTrue(onames.size() > 0);
+            assertFalse(onames.isEmpty());
 
             ProducerTemplate producer = context.createProducerTemplate();
             String result = producer.requestBody("direct:start", "Kermit", String.class);
@@ -72,7 +72,7 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
     public void testStartupFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("invalid:start");
             }
         });

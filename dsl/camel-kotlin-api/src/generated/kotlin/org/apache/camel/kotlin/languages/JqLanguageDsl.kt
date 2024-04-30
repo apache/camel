@@ -17,13 +17,15 @@
 package org.apache.camel.kotlin.languages
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.model.language.JqExpression
 
+/**
+ * Evaluates a JQ expression against a JSON message body.
+ */
 public fun jq(jq: String, i: JqLanguageDsl.() -> Unit = {}): JqExpression {
   val def = JqExpression(jq)
   JqLanguageDsl(def).apply(i)
@@ -40,22 +42,39 @@ public class JqLanguageDsl(
     this.def = def
   }
 
+  /**
+   * Sets the id of this node
+   */
   public fun id(id: String) {
     def.id = id
   }
 
+  /**
+   * Source to use, instead of message body. You can prefix with variable:, header:, or property: to
+   * specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to
+   * use default source, which is the message body.
+   */
   public fun source(source: String) {
     def.source = source
   }
 
-  public fun resultType(resultType: Class<out Any>) {
+  /**
+   * Sets the class of the result type (type from output)
+   */
+  public fun resultType(resultType: Class<*>) {
     def.resultType = resultType
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: Boolean) {
     def.trim = trim.toString()
   }
 
+  /**
+   * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+   */
   public fun trim(trim: String) {
     def.trim = trim
   }

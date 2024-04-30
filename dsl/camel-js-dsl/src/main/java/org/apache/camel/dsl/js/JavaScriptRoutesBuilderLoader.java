@@ -19,6 +19,7 @@ package org.apache.camel.dsl.js;
 import java.io.Reader;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Experimental;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.endpointdsl.support.EndpointRouteBuilderLoaderSupport;
@@ -34,6 +35,8 @@ import static org.graalvm.polyglot.Source.newBuilder;
 
 @ManagedResource(description = "Managed JavaScriptRoutesBuilderLoader")
 @RoutesLoader(JavaScriptRoutesBuilderLoader.EXTENSION)
+@Experimental
+@Deprecated
 public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSupport {
     public static final String EXTENSION = "js";
     public static final String LANGUAGE_ID = "js";

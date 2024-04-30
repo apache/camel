@@ -31,12 +31,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReadinessAndLivenessTest {
 
     @Test
-    public void testLiveAndReady() throws Exception {
+    public void testLiveAndReady() {
         CamelContext context = new DefaultCamelContext();
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -57,7 +58,7 @@ public class ReadinessAndLivenessTest {
         assertEquals(HealthCheck.State.UP, result.getState());
         assertFalse(result.getCheck().isLiveness());
         assertTrue(result.getCheck().isReadiness());
-        assertTrue(result.getCheck() instanceof MyReadyCheck);
+        assertInstanceOf(MyReadyCheck.class, result.getCheck());
 
         results = HealthCheckHelper.invokeLiveness(context);
         assertEquals(1, results.size());
@@ -65,11 +66,11 @@ public class ReadinessAndLivenessTest {
         assertEquals(HealthCheck.State.DOWN, result.getState());
         assertTrue(result.getCheck().isLiveness());
         assertFalse(result.getCheck().isReadiness());
-        assertTrue(result.getCheck() instanceof MyLiveCheck);
+        assertInstanceOf(MyLiveCheck.class, result.getCheck());
     }
 
     @Test
-    public void testAll() throws Exception {
+    public void testAll() {
         CamelContext context = new DefaultCamelContext();
 
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -90,7 +91,7 @@ public class ReadinessAndLivenessTest {
         assertEquals("READINESS", result.getMessage().get());
         assertTrue(result.getCheck().isLiveness());
         assertTrue(result.getCheck().isReadiness());
-        assertTrue(result.getCheck() instanceof MyAllCheck);
+        assertInstanceOf(MyAllCheck.class, result.getCheck());
 
         results = HealthCheckHelper.invokeLiveness(context);
         assertEquals(1, results.size());
@@ -99,7 +100,7 @@ public class ReadinessAndLivenessTest {
         assertTrue(result.getCheck().isLiveness());
         assertTrue(result.getCheck().isReadiness());
         assertEquals("LIVENESS", result.getMessage().get());
-        assertTrue(result.getCheck() instanceof MyAllCheck);
+        assertInstanceOf(MyAllCheck.class, result.getCheck());
     }
 
     private static class MyReadyCheck extends AbstractHealthCheck implements CamelContextAware {

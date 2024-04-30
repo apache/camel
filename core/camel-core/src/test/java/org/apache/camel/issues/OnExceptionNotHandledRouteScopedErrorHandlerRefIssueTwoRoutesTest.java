@@ -60,17 +60,17 @@ public class OnExceptionNotHandledRouteScopedErrorHandlerRefIssueTwoRoutesTest e
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myDLC", new DeadLetterChannelBuilder("mock:dead"));
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").errorHandler("myDLC").to("mock:foo")
                         .throwException(new IllegalArgumentException("Damn Foo"));
 

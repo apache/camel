@@ -27,21 +27,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
+@Isolated("Creates lots of threads")
 public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport {
 
-    private final int size = 200;
     private final String uri = "direct:start";
 
     @Test
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(20);
         List<Callable<Object>> tasks = new ArrayList<>();
+        int size = 200;
         for (int i = 0; i < size; i++) {
             final int id = i % 5;
             final int count = i;
             tasks.add(new Callable<Object>() {
-                public Object call() throws Exception {
+                public Object call() {
                     template.sendBodyAndHeader(uri, "" + count, "id", id);
                     return null;
                 }
@@ -59,10 +61,10 @@ public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(40)
                         .to("mock:result");
             }

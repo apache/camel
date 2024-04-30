@@ -27,23 +27,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AsyncEndpointRoutingSlipBean2Test extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyRoutingSlipBean());
         return jndi;
     }
 
     @Test
-    public void testAsyncEndpoint() throws Exception {
+    public void testAsyncEndpoint() {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye World", reply);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start").bean("myBean");

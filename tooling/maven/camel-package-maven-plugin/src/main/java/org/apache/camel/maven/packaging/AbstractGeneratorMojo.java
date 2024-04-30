@@ -19,18 +19,28 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,6 +51,9 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.runtime.RuntimeInstance;
 import org.codehaus.plexus.build.BuildContext;
 
 public abstract class AbstractGeneratorMojo extends AbstractMojo {
@@ -106,6 +119,22 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         refresh(buildContext, file);
     }
 
+    protected String velocity(String templatePath, Map<String, Object> ctx) {
+        Properties props = new Properties();
+        props.setProperty("resource.loaders", "class");
+        props.setProperty("resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        RuntimeInstance velocity = new RuntimeInstance();
+        velocity.init(props);
+
+        VelocityContext context = new VelocityContext();
+        ctx.forEach(context::put);
+
+        Template template = velocity.getTemplate(templatePath);
+        StringWriter writer = new StringWriter();
+        template.merge(context, writer);
+        return writer.toString();
+    }
+
     protected boolean updateResource(Path dir, String fileName, String data) {
         boolean updated;
         updated = updateResource(buildContext, dir.resolve(fileName), data);
@@ -132,6 +161,12 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         if (project.getDescription() != null) {
             properties.append("projectDescription=").append(project.getDescription()).append(NL);
         }
+
+        String annotations = project.getProperties().getProperty("annotations");
+        if (!Strings.isNullOrEmpty(annotations)) {
+            properties.append("annotations=").append(annotations).append(NL);
+        }
+
         data = properties.toString();
         return data;
     }
@@ -233,5 +268,29 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     protected boolean isJsonFile(Path p, BasicFileAttributes a) {
         return a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX);
+    }
+
+    @SuppressWarnings("unused") // use by velocity templates
+    public String canonicalClassName(String className) {
+        return Strings.canonicalClassName(className);
+    }
+
+    @SuppressWarnings("unused") // use by velocity templates
+    public String format(String fmt, Object... args) {
+        return String.format(fmt, args);
+    }
+
+    @SuppressWarnings("unused") // use by velocity templates
+    public TreeSet<?> newTreeSet() {
+        return new TreeSet<>();
+    }
+
+    @SuppressWarnings("unused") // use by velocity templates
+    public Set<BaseOptionModel> findConfigurations(Collection<? extends BaseOptionModel> options) {
+        final Set<String> found = new HashSet<>();
+        return options.stream()
+                .filter(o -> o.getConfigurationField() != null)
+                .filter(o -> found.add(o.getConfigurationClass()))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

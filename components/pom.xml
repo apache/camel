@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -75,6 +75,7 @@
 
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
+        <module>camel-ai</module>
         <module>camel-amqp</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>
@@ -97,7 +98,6 @@
         <module>camel-caffeine</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
-        <module>camel-chatscript</module>
         <module>camel-chunk</module>
         <module>camel-cloudevents</module>
         <module>camel-cm-sms</module>
@@ -115,7 +115,6 @@
         <module>camel-dhis2</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
-        <module>camel-djl</module>
         <module>camel-dns</module>
         <module>camel-docker</module>
         <module>camel-drill</module>
@@ -208,6 +207,7 @@
         <module>camel-micrometer</module>
         <module>camel-micrometer-prometheus</module>
         <module>camel-microprofile</module>
+        <module>camel-milvus</module>
         <module>camel-mina</module>
         <module>camel-minio</module>
         <module>camel-mllp</module>
@@ -233,6 +233,7 @@
         <module>camel-pdf</module>
         <module>camel-pg-replication-slot</module>
         <module>camel-pgevent</module>
+        <module>camel-pinecone</module>
         <module>camel-platform-http</module>
         <module>camel-platform-http-jolokia</module>
         <module>camel-platform-http-main</module>
@@ -525,11 +526,17 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <reuseForks>true</reuseForks>
+                            <argLine>${camel.failsafe.fork.vmargs}</argLine>
+                            <reuseForks>${camel.failsafe.reuseForks}</reuseForks>
                             <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
+                                <junit.jupiter.execution.parallel.enabled>${camel.failsafe.parallel}</junit.jupiter.execution.parallel.enabled>
+                                <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
+                                <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
+                                <junit.jupiter.execution.parallel.config.strategy>${camel.failsafe.parallel.strategy}</junit.jupiter.execution.parallel.config.strategy>
+                                <junit.jupiter.execution.parallel.config.dynamic.factor>${camel.failsafe.parallel.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
                             </systemPropertyVariables>
                         </configuration>
                         <executions>

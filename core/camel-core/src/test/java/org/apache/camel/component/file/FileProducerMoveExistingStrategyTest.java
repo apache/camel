@@ -33,11 +33,11 @@ import org.slf4j.LoggerFactory;
  */
 public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
-    private MyStrategy myStrategy = new MyStrategy();
+    private final MyStrategy myStrategy = new MyStrategy();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myStrategy", myStrategy);
         return jndi;
     }
@@ -85,8 +85,8 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
             String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
             counter++;
-            String fileNameWithoutExtension = to.substring(0, to.lastIndexOf('.')) + "" + counter;
-            to = fileNameWithoutExtension + to.substring(to.lastIndexOf('.'), to.length());
+            String fileNameWithoutExtension = to.substring(0, to.lastIndexOf('.')) + counter;
+            to = fileNameWithoutExtension + to.substring(to.lastIndexOf('.'));
             // we must normalize it (to avoid having both \ and / in the name
             // which confuses java.io.File)
             to = FileUtil.normalizePath(to);

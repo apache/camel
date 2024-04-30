@@ -43,12 +43,12 @@ public class SimpleShutdownGracefulTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").to("mock:foo").delay(3000).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         foo = foo + exchange.getIn().getBody(String.class);
                     }
                 });

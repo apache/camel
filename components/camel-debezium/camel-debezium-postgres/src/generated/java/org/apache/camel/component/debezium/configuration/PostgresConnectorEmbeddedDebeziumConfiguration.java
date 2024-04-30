@@ -12,6 +12,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
             EmbeddedDebeziumConfiguration {
 
     private static final String LABEL_NAME = "consumer,postgres";
+    @UriParam(label = LABEL_NAME, defaultValue = "none")
+    private String snapshotLockingMode = "none";
     @UriParam(label = LABEL_NAME)
     private String messageKeyColumns;
     @UriParam(label = LABEL_NAME)
@@ -74,6 +76,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String snapshotSelectStatementOverrides;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
     @UriParam(label = LABEL_NAME)
     private String columnIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "decoderbufs")
@@ -101,10 +105,10 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME)
     private String messagePrefixIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotData = false;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
-    @UriParam(label = LABEL_NAME)
-    private String snapshotCustomClass;
     @UriParam(label = LABEL_NAME, defaultValue = "debezium")
     private String slotName = "debezium";
     @UriParam(label = LABEL_NAME, defaultValue = "1024")
@@ -113,10 +117,16 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String hstoreHandlingMode = "json";
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
+    @UriParam(label = LABEL_NAME)
+    private String snapshotLockingModeCustomName;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "select_all")
+    private String snapshotQueryMode = "select_all";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
     private String schemaHistoryInternalFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -130,6 +140,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME, defaultValue = "bytes")
     private String binaryHandlingMode = "bytes";
+    @UriParam(label = LABEL_NAME)
+    private String snapshotQueryModeCustomName;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.postgresql.PostgresSourceInfoStructMaker")
@@ -147,11 +159,15 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedStartStream = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean slotDropOnStop = false;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long xminFetchIntervalMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
     private String timePrecisionMode = "adaptive";
     @UriParam(label = LABEL_NAME)
@@ -171,6 +187,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String notificationSinkTopicName;
     @UriParam(label = LABEL_NAME)
+    private String snapshotModeCustomName;
+    @UriParam(label = LABEL_NAME)
     private String columnExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeUnknownDatatypes = false;
@@ -182,6 +200,25 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String tableIncludeList;
     @UriParam(label = LABEL_NAME)
     private String slotStreamParams;
+
+    /**
+     * Controls how the connector holds locks on tables while performing the
+     * schema snapshot. The 'shared' which means the connector will hold a table
+     * lock that prevents exclusive table access for just the initial portion of
+     * the snapshot while the database schemas and other metadata are being
+     * read. The remaining work in a snapshot involves selecting all rows from
+     * each table, and this is done using a flashback query that requires no
+     * locks. However, in some cases it may be desirable to avoid locks entirely
+     * which can be done by specifying 'none'. This mode is only safe to use if
+     * no schema changes are happening while the snapshot is taken.
+     */
+    public void setSnapshotLockingMode(String snapshotLockingMode) {
+        this.snapshotLockingMode = snapshotLockingMode;
+    }
+
+    public String getSnapshotLockingMode() {
+        return snapshotLockingMode;
+    }
 
     /**
      * A semicolon-separated list of expressions that match fully-qualified
@@ -627,6 +664,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the schema should be snapshotted or not in case of
+     * error.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotOnSchemaError(
+            boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+        this.snapshotModeConfigurationBasedSnapshotOnSchemaError = snapshotModeConfigurationBasedSnapshotOnSchemaError;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotOnSchemaError() {
+        return snapshotModeConfigurationBasedSnapshotOnSchemaError;
+    }
+
+    /**
      * Regular expressions matching columns to include in change events
      */
     public void setColumnIncludeList(String columnIncludeList) {
@@ -802,6 +853,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the data should be snapshotted or not.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotData(
+            boolean snapshotModeConfigurationBasedSnapshotData) {
+        this.snapshotModeConfigurationBasedSnapshotData = snapshotModeConfigurationBasedSnapshotData;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotData() {
+        return snapshotModeConfigurationBasedSnapshotData;
+    }
+
+    /**
      * Maximum size of the queue for change events read from the database log
      * but not yet recorded or forwarded. Defaults to 8192, and should always be
      * larger than the maximum batch size.
@@ -812,21 +876,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxQueueSize() {
         return maxQueueSize;
-    }
-
-    /**
-     * When 'snapshot.mode' is set as custom, this setting must be set to
-     * specify a fully qualified class name to load (via the default class
-     * loader). This class must implement the 'Snapshotter' interface and is
-     * called on each app boot to determine whether to do a snapshot and how to
-     * build queries.
-     */
-    public void setSnapshotCustomClass(String snapshotCustomClass) {
-        this.snapshotCustomClass = snapshotCustomClass;
-    }
-
-    public String getSnapshotCustomClass() {
-        return snapshotCustomClass;
     }
 
     /**
@@ -880,6 +929,22 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When 'snapshot.locking.mode' is set as custom, this setting must be set
+     * to specify a the name of the custom implementation provided in the
+     * 'name()' method. The implementations must implement the
+     * 'SnapshotterLocking' interface and is called to determine how to lock
+     * tables during schema snapshot.
+     */
+    public void setSnapshotLockingModeCustomName(
+            String snapshotLockingModeCustomName) {
+        this.snapshotLockingModeCustomName = snapshotLockingModeCustomName;
+    }
+
+    public String getSnapshotLockingModeCustomName() {
+        return snapshotLockingModeCustomName;
+    }
+
+    /**
      * A delay period before a snapshot will begin, given in milliseconds.
      * Defaults to 0 ms.
      */
@@ -900,6 +965,31 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public boolean isProvideTransactionMetadata() {
         return provideTransactionMetadata;
+    }
+
+    /**
+     * Controls query used during the snapshot
+     */
+    public void setSnapshotQueryMode(String snapshotQueryMode) {
+        this.snapshotQueryMode = snapshotQueryMode;
+    }
+
+    public String getSnapshotQueryMode() {
+        return snapshotQueryMode;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the data should be snapshotted or not in case of
+     * error.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotOnDataError(
+            boolean snapshotModeConfigurationBasedSnapshotOnDataError) {
+        this.snapshotModeConfigurationBasedSnapshotOnDataError = snapshotModeConfigurationBasedSnapshotOnDataError;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotOnDataError() {
+        return snapshotModeConfigurationBasedSnapshotOnDataError;
     }
 
     /**
@@ -988,6 +1078,22 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getBinaryHandlingMode() {
         return binaryHandlingMode;
+    }
+
+    /**
+     * When 'snapshot.query.mode' is set as custom, this setting must be set to
+     * specify a the name of the custom implementation provided in the 'name()'
+     * method. The implementations must implement the 'SnapshotterQuery'
+     * interface and is called to determine how to build queries during
+     * snapshot.
+     */
+    public void setSnapshotQueryModeCustomName(
+            String snapshotQueryModeCustomName) {
+        this.snapshotQueryModeCustomName = snapshotQueryModeCustomName;
+    }
+
+    public String getSnapshotQueryModeCustomName() {
+        return snapshotQueryModeCustomName;
     }
 
     /**
@@ -1102,6 +1208,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the stream should start or not after snapshot.
+     */
+    public void setSnapshotModeConfigurationBasedStartStream(
+            boolean snapshotModeConfigurationBasedStartStream) {
+        this.snapshotModeConfigurationBasedStartStream = snapshotModeConfigurationBasedStartStream;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedStartStream() {
+        return snapshotModeConfigurationBasedStartStream;
+    }
+
+    /**
      * Whether or not to drop the logical replication slot when the connector
      * finishes orderly. By default the replication is kept so that on restart
      * progress can resume from the last recorded location
@@ -1142,6 +1261,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public long getXminFetchIntervalMs() {
         return xminFetchIntervalMs;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the schema should be snapshotted or not.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotSchema(
+            boolean snapshotModeConfigurationBasedSnapshotSchema) {
+        this.snapshotModeConfigurationBasedSnapshotSchema = snapshotModeConfigurationBasedSnapshotSchema;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
+        return snapshotModeConfigurationBasedSnapshotSchema;
     }
 
     /**
@@ -1264,6 +1396,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When 'snapshot.mode' is set as custom, this setting must be set to
+     * specify a the name of the custom implementation provided in the 'name()'
+     * method. The implementations must implement the 'Snapshotter' interface
+     * and is called on each app boot to determine whether to do a snapshot.
+     */
+    public void setSnapshotModeCustomName(String snapshotModeCustomName) {
+        this.snapshotModeCustomName = snapshotModeCustomName;
+    }
+
+    public String getSnapshotModeCustomName() {
+        return snapshotModeCustomName;
+    }
+
+    /**
      * Regular expressions matching columns to exclude from change events
      */
     public void setColumnExcludeList(String columnExcludeList) {
@@ -1342,6 +1488,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
         
+        addPropertyIfNotNull(configBuilder, "snapshot.locking.mode", snapshotLockingMode);
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
@@ -1373,6 +1520,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.schema.error", snapshotModeConfigurationBasedSnapshotOnSchemaError);
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "plugin.name", pluginName);
         addPropertyIfNotNull(configBuilder, "database.sslpassword", databaseSslpassword);
@@ -1386,20 +1534,24 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "message.prefix.include.list", messagePrefixIncludeList);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
-        addPropertyIfNotNull(configBuilder, "snapshot.custom.class", snapshotCustomClass);
         addPropertyIfNotNull(configBuilder, "slot.name", slotName);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
         addPropertyIfNotNull(configBuilder, "hstore.handling.mode", hstoreHandlingMode);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
+        addPropertyIfNotNull(configBuilder, "snapshot.locking.mode.custom.name", snapshotLockingModeCustomName);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
+        addPropertyIfNotNull(configBuilder, "snapshot.query.mode", snapshotQueryMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "slot.retry.delay.ms", slotRetryDelayMs);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.query.mode.custom.name", snapshotQueryModeCustomName);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "flush.lsn.source", flushLsnSource);
@@ -1408,9 +1560,11 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "schema.exclude.list", schemaExcludeList);
         addPropertyIfNotNull(configBuilder, "publication.autocreate.mode", publicationAutocreateMode);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "slot.drop.on.stop", slotDropOnStop);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "message.prefix.exclude.list", messagePrefixExcludeList);
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
@@ -1420,6 +1574,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "include.unknown.datatypes", includeUnknownDatatypes);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);

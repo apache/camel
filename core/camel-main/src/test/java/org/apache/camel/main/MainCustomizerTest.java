@@ -18,14 +18,17 @@ package org.apache.camel.main;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelConfiguration;
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.log.LogComponent;
+import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.support.CustomizersSupport;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class MainCustomizerTest {
     @Test
@@ -37,7 +40,7 @@ public class MainCustomizerTest {
             main.start();
 
             LogComponent component = main.getCamelContext().getComponent("log", LogComponent.class);
-            assertTrue(component.getExchangeFormatter() instanceof MyFormatter);
+            assertInstanceOf(MyFormatter.class, component.getExchangeFormatter());
         } finally {
             main.stop();
         }
@@ -71,6 +74,27 @@ public class MainCustomizerTest {
 
             LogComponent component = main.getCamelContext().getComponent("log", LogComponent.class);
             assertFalse(component.getExchangeFormatter() instanceof MyFormatter);
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testContextCustomizer() {
+        Main main = new Main();
+
+        try {
+            main.configure().addConfiguration(MyConfiguration.class);
+            main.bind("name-customizer", new CamelContextCustomizer() {
+                @Override
+                public void configure(CamelContext camelContext) {
+                    camelContext.getCamelContextExtension().setName("customized-name");
+                }
+            });
+
+            main.start();
+
+            assertEquals("customized-name", main.getCamelContext().getName());
         } finally {
             main.stop();
         }

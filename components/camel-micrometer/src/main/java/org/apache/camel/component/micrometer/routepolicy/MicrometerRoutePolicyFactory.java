@@ -20,21 +20,38 @@ import java.util.concurrent.TimeUnit;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NonManagedService;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicyFactory} to plugin and use metrics for gathering route utilization
  * statistics
  */
-public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
+public class MicrometerRoutePolicyFactory extends ServiceSupport
+        implements RoutePolicyFactory, CamelContextAware, NonManagedService, StaticService {
 
+    private CamelContext camelContext;
     private MeterRegistry meterRegistry;
+    private RouteMetric contextMetric;
     private boolean prettyPrint = true;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
     private MicrometerRoutePolicyConfiguration policyConfiguration = MicrometerRoutePolicyConfiguration.DEFAULT;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     /**
      * To use a specific {@link io.micrometer.core.instrument.MeterRegistry} instance.
@@ -90,9 +107,19 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
         this.policyConfiguration = policyConfiguration;
     }
 
+    public RouteMetric createOrGetContextMetric(MicrometerRoutePolicy policy) {
+        if (contextMetric == null) {
+            contextMetric = new ContextMetricsStatistics(
+                    policy.getMeterRegistry(), camelContext,
+                    policy.getNamingStrategy(), policy.getConfiguration(),
+                    policy.isRegisterKamelets(), policy.isRegisterTemplates());
+        }
+        return contextMetric;
+    }
+
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode routeDefinition) {
-        MicrometerRoutePolicy answer = new MicrometerRoutePolicy();
+        MicrometerRoutePolicy answer = new MicrometerRoutePolicy(this);
         answer.setMeterRegistry(getMeterRegistry());
         answer.setPrettyPrint(isPrettyPrint());
         answer.setDurationUnit(getDurationUnit());
@@ -101,4 +128,12 @@ public class MicrometerRoutePolicyFactory implements RoutePolicyFactory {
         return answer;
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        if (contextMetric != null) {
+            contextMetric.remove();
+            contextMetric = null;
+        }
+    }
 }

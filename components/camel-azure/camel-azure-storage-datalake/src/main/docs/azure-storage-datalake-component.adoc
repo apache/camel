@@ -1,8 +1,8 @@
-= Azure Storage Datalake Service Component
-:doctitle: Azure Storage Datalake Service
+= Azure Storage Data Lake Service Component
+:doctitle: Azure Storage Data Lake Service
 :shortname: azure-storage-datalake
 :artifactid: camel-azure-storage-datalake
-:description: Sends and receives files to/from Azure DataLake Storage.
+:description: Sends and receives files to/from Azure Data Lake Storage.
 :since: 3.8
 :supportlevel: Stable
 :tabs-sync-option:

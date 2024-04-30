@@ -5,6 +5,10 @@ Apache Camel offers a REST styled DSL.
 The intention is to allow end users to define REST services (hosted by Camel) using a
 REST style with verbs such as get, post, delete etc.
 
+NOTE: From *Camel 4.6* onwards the Rest DSL has been improved with a _contract first_ approach using vanilla OpenAPI specification
+files. This is documented in the xref:rest-dsl-openapi.adoc[Rest DSL with OpenAPI contract first] page. This current page documents the
+_code first_ Rest DSL that Camel provides for a long time.
+
 == How it works
 
 The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] endpoints as
@@ -295,13 +299,13 @@ not enabled.
 
 |json |Binding to/from json is enabled, and requires a json capable data
 format on the classpath. By default Camel will use `jackson` as the
-data format. See the INFO box below for more details.
+data format.
 
 |xml |Binding to/from xml is enabled, and requires `camel-jaxb` on the
-classpath. See the INFO box below for more details.
+classpath.
 
 |json_xml |Binding to/from json and xml is enabled and requires both data formats to
-be on the classpath. See the INFO box below for more details.
+be on the classpath.
 |===
 
 When using camel-jaxb for xml bindings, then
@@ -372,7 +376,11 @@ json_xml |JSON
 |===
  
 When using binding you must also configure what POJO type to map to.
-This is mandatory for incoming messages, and optional for outgoing. 
+This is mandatory for incoming messages, and optional for outgoing.
+
+NOTE: When using binding mode `json`, `xml` or `json_xml` then Camel will automatically set `consumers` and `produces`
+on the rest endpoint (according to the mode), if not already explicit configured. For example with binding mode `json`
+and setting the outType as `UserPojo` then Camel will define this rest endpoint as producing `application/json`.
 
 For example to map from xml/json to a pojo class `UserPojo` you do this
 in Java DSL as shown below:
@@ -724,6 +732,7 @@ The validation checks for the following:
 - Content-Type header matches what the Rest DSL consumes. (Returns HTTP Status 415)
 - Accept header matches what the Rest DSL produces. (Returns HTTP Status 406)
 - Missing required data (query parameters, HTTP headers, body). (Returns HTTP Status 400)
+- Checking if query parameters or HTTP headers has not-allowed values. (Returns HTTP Status 400)
 - Parsing error of the message body (JSon, XML or Auto binding mode must be enabled). (Returns HTTP Status 400)
 
 If the validation fails then Rest DSL will return a response

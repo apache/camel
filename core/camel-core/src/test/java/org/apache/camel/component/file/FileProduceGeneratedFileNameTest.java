@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
 
     @Test
-    public void testGeneratedFileName() throws Exception {
+    public void testGeneratedFileName() {
         Endpoint endpoint = context.getEndpoint("direct:a");
         FileEndpoint fileEndpoint = resolveMandatoryEndpoint(fileUri(), FileEndpoint.class);
 
@@ -46,9 +46,9 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").to(fileUri());
             }
         };

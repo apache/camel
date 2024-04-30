@@ -26,6 +26,8 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
@@ -90,6 +92,14 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     public void setExceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
+    }
+
+    @Override
+    public boolean acceptDebugger(Exchange exchange) {
+        // only accept if not handled by a previous catch clause handled, and that there is an exception
+        boolean previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED) != null;
+        final Exception e = exchange.getException();
+        return !previous && e != null;
     }
 
     // Fluent API

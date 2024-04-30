@@ -17,23 +17,25 @@
 
 package org.apache.camel.support.task;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TaskTestSupport {
     protected final int maxIterations = 5;
-    protected volatile int taskCount;
+    protected final LongAdder taskCount = new LongAdder();
 
     protected boolean booleanSupplier() {
-        taskCount++;
+        taskCount.increment();
 
         return false;
     }
 
     protected boolean taskPredicate(Object o) {
         assertNotNull(o);
-        taskCount++;
+        taskCount.increment();
 
         return false;
     }
@@ -41,8 +43,8 @@ public class TaskTestSupport {
     protected boolean taskPredicateWithDeterministicStop(Integer stopAtValue) {
         assertNotNull(stopAtValue);
 
-        taskCount++;
-        if (taskCount == stopAtValue.intValue()) {
+        taskCount.increment();
+        if (taskCount.intValue() == stopAtValue) {
             return true;
         }
 
@@ -58,8 +60,8 @@ public class TaskTestSupport {
             return false;
         }
 
-        taskCount++;
-        if (taskCount == stopAtValue.intValue()) {
+        taskCount.increment();
+        if (taskCount.intValue() == stopAtValue) {
             return true;
         }
 
@@ -68,6 +70,6 @@ public class TaskTestSupport {
 
     @BeforeEach
     void setUp() {
-        taskCount = 0;
+        taskCount.reset();
     }
 }

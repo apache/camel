@@ -66,6 +66,8 @@ function main() {
       if [[ ${projectRoot} = "." ]] ; then
         echo "The root project is affected, so a complete build is triggered"
         buildAll=true
+        totalAffected=1
+        break
       elif [[ ${projectRoot} != "${lastProjectRoot}" ]] ; then
         (( totalAffected ++ ))
         pl="$pl,${projectRoot}"
@@ -73,6 +75,7 @@ function main() {
       fi
     fi
   done
+
   if [[ ${totalAffected} = 0 ]] ; then
     echo "There is nothing to build"
     exit 0

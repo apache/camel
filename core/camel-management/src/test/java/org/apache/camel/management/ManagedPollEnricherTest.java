@@ -84,10 +84,10 @@ public class ManagedPollEnricherTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .pollEnrich().simple("seda:${header.whereto}").timeout(1000).id("mysend")
                         .to("mock:foo");

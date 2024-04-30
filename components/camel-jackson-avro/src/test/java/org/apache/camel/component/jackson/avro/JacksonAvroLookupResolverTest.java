@@ -22,7 +22,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.SchemaResolver;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.dataformat.AvroLibrary;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -82,9 +81,9 @@ public class JacksonAvroLookupResolverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:serialized").unmarshal().avro(AvroLibrary.Jackson, Pojo.class, "schema-resolver-1")
+                from("direct:serialized").unmarshal().avro(Pojo.class, "schema-resolver-1")
                         .to("mock:pojo");
-                from("direct:pojo").marshal().avro(AvroLibrary.Jackson, Pojo.class, "schema-resolver-1").to("mock:serialized");
+                from("direct:pojo").marshal().avro(Pojo.class, "schema-resolver-1").to("mock:serialized");
             }
         };
     }

@@ -30,18 +30,7 @@ public class MainRestConfigurationTest {
 
     @Test
     public void testRestConfiguration() {
-        Properties properties = new Properties();
-        properties.setProperty("camel.rest.component", "platform-http");
-        properties.setProperty("camel.rest.enableCORS", "true");
-        properties.setProperty("camel.rest.apiContextPath", "/openapi");
-        properties.setProperty("camel.rest.apiVendorExtension", "true");
-        properties.setProperty("camel.rest.apiProperties[dummyKey]", "Dummy Value");
-        properties.setProperty("camel.rest.apiProperties[api.title]", "My Title");
-        properties.setProperty("camel.rest.apiProperties[api.version]", "1.2.3");
-        properties.setProperty("camel.rest.apiProperties[base.path]", "/mybase");
-
-        Main main = new Main();
-        main.setOverrideProperties(properties);
+        final Main main = newMain();
 
         try {
             main.start();
@@ -62,5 +51,21 @@ public class MainRestConfigurationTest {
         } finally {
             main.stop();
         }
+    }
+
+    private static Main newMain() {
+        Properties properties = new Properties();
+        properties.setProperty("camel.rest.component", "platform-http");
+        properties.setProperty("camel.rest.enableCORS", "true");
+        properties.setProperty("camel.rest.apiContextPath", "/openapi");
+        properties.setProperty("camel.rest.apiVendorExtension", "true");
+        properties.setProperty("camel.rest.apiProperties[dummyKey]", "Dummy Value");
+        properties.setProperty("camel.rest.apiProperties[api.title]", "My Title");
+        properties.setProperty("camel.rest.apiProperties[api.version]", "1.2.3");
+        properties.setProperty("camel.rest.apiProperties[base.path]", "/mybase");
+
+        Main main = new Main();
+        main.setOverrideProperties(properties);
+        return main;
     }
 }

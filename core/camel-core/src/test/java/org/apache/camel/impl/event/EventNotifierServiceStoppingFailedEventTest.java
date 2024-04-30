@@ -42,7 +42,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         context.addService(new MyService("C", false));
 
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(CamelEvent event) throws Exception {
+            public void notify(CamelEvent event) {
                 events.add(event);
             }
         });
@@ -50,7 +50,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
     }
 
     @Test
-    public void testStopWithFailure() throws Exception {
+    public void testStopWithFailure() {
         stopOrder = "";
 
         context.stop();
@@ -75,8 +75,8 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
 
     private static final class MyService implements Service {
 
-        private String name;
-        private boolean fail;
+        private final String name;
+        private final boolean fail;
 
         private MyService(String name, boolean fail) {
             this.name = name;

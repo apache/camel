@@ -34,11 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FilerProducerDoneFileNameTest extends ContextTestSupport {
 
-    private Properties myProp = new Properties();
+    private final Properties myProp = new Properties();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myProp", myProp);
         return jndi;
     }
@@ -51,7 +51,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerConstantDoneFileName() throws Exception {
+    public void testProducerConstantDoneFileName() {
         template.sendBodyAndHeader(fileUri("?doneFileName=done"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists(testFile("hello.txt"));
@@ -59,7 +59,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerPrefixDoneFileName() throws Exception {
+    public void testProducerPrefixDoneFileName() {
         template.sendBodyAndHeader(fileUri("?doneFileName=done-${file:name}"), "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -68,7 +68,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerExtDoneFileName() throws Exception {
+    public void testProducerExtDoneFileName() {
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.done"), "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -77,7 +77,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerReplaceExtDoneFileName() throws Exception {
+    public void testProducerReplaceExtDoneFileName() {
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name.noext}.done"), "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 
@@ -86,7 +86,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerInvalidDoneFileName() throws Exception {
+    public void testProducerInvalidDoneFileName() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(fileUri("?doneFileName=${file:parent}/foo"), "Hello World", Exchange.FILE_NAME,
                         "hello.txt"));
@@ -95,7 +95,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerEmptyDoneFileName() throws Exception {
+    public void testProducerEmptyDoneFileName() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(fileUri("?doneFileName="), "Hello World", Exchange.FILE_NAME, "hello.txt"));
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -103,7 +103,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     }
 
     @Test
-    public void testProducerPlaceholderPrefixDoneFileName() throws Exception {
+    public void testProducerPlaceholderPrefixDoneFileName() {
         myProp.put("myDir", testDirectory().toString());
 
         template.sendBodyAndHeader("file:{{myDir}}?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,

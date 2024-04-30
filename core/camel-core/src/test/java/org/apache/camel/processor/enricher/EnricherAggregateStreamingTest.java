@@ -55,17 +55,17 @@ public class EnricherAggregateStreamingTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("b1", new MyProcessor()); // for synchronous call
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 getContext().setStreamCaching(Boolean.TRUE);
                 StreamCachingStrategy scs = getContext().getStreamCachingStrategy();
                 scs.setSpoolThreshold(1L);
@@ -100,7 +100,7 @@ public class EnricherAggregateStreamingTest extends ContextTestSupport {
     public static class MyProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // consume stream by reading the body as string
             exchange.getIn().getBody(String.class);
             exchange.getIn().setBody("New Body");

@@ -37,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
@@ -54,7 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64", "s390x" },
              disabledReason = "This test does not run reliably on ppc64le")
-class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Too slow to run on Github CI")
+class KafkaBreakOnFirstErrorSeekIssueIT extends BaseExclusiveKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-19894";
     public static final String TOPIC = "breakOnFirstError-19894";
@@ -134,6 +136,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseEmbeddedKafkaTestSupport {
                      + "&allowManualCommit=true"
                      + "&breakOnFirstError=true"
                      + "&maxPollRecords=8"
+                     + "&metadataMaxAgeMs=1000"
                      + "&pollTimeoutMs=1000"
                      + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"

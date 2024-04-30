@@ -36,11 +36,10 @@ import org.slf4j.LoggerFactory;
 import static org.awaitility.Awaitility.await;
 
 public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
-    private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyTest.class);
 
-    private String url = "seda:foo?concurrentConsumers=2";
+    private final String url = "seda:foo?concurrentConsumers=2";
     private MockEndpoint result;
-    private int size = 100;
 
     @Override
     @BeforeEach
@@ -54,6 +53,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
 
     @Test
     public void testThrottlingRoutePolicyClosed() throws Exception {
+        int size = 100;
         result.expectedMinimumMessageCount(size);
 
         for (int i = 0; i < size; i++) {
@@ -73,7 +73,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
 
         result.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 String msg = exchange.getIn().getBody(String.class);
                 exchange.setException(new ThrottlingException(msg));
             }
@@ -101,10 +101,10 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 int threshold = 2;
                 long failureWindow = 30;
                 long halfOpenAfter = 1000;

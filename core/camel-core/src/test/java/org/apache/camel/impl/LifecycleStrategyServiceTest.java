@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LifecycleStrategyServiceTest extends TestSupport {
 
-    private MyLifecycleStrategy dummy1 = new MyLifecycleStrategy();
+    private final MyLifecycleStrategy dummy1 = new MyLifecycleStrategy();
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
         context.addLifecycleStrategy(dummy1);
         return context;

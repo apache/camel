@@ -45,15 +45,15 @@ public class SameRouteAndContextScopedErrorHandlerIssueTest extends ContextTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0));
 
                 onException(IllegalArgumentException.class).onRedelivery(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         log.info("OnRedelivery invoked");
                         counter.incrementAndGet();
                     }
@@ -64,7 +64,7 @@ public class SameRouteAndContextScopedErrorHandlerIssueTest extends ContextTestS
                             private int counter;
 
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 if (counter++ < 2) {
                                     throw new IllegalArgumentException("Damn");
                                 }

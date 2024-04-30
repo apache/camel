@@ -41,10 +41,10 @@ public class MulticastAggregationStrategyInputExchangeTest extends ContextTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").multicast(new MyAggregateBean()).to("direct:a").to("direct:b").end();
 
                 from("direct:a").setHeader("foo", constant("123")).transform(constant("A")).to("mock:a");

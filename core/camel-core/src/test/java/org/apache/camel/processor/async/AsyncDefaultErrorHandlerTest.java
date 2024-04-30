@@ -40,7 +40,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
     public void testAsyncDefaultErrorHandlerWait() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").threads(2).to("mock:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new Exception("Forced exception by unit test");

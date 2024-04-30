@@ -110,10 +110,10 @@ public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onCompletion().to("log:global").to("mock:sync");
 
                 onCompletion().to("log:global").to("mock:two");
@@ -141,7 +141,7 @@ public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSuppor
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if ("Kaboom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kaboom");
             }

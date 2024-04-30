@@ -22,9 +22,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class Issue170Test extends ContextTestSupport {
-    protected String qOne = "seda:Q1";
-    protected String qTwo = "mock:Q2";
-    protected String qThree = "mock:Q3";
+    protected final String qOne = "seda:Q1";
+    protected final String qTwo = "mock:Q2";
+    protected final String qThree = "mock:Q3";
 
     @Test
     public void testSendMessagesGetCorrectCounts() throws Exception {

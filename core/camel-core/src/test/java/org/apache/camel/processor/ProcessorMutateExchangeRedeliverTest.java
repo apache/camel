@@ -67,16 +67,16 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // try to redeliver up till 3 times
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("direct:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
                         assertFalse(exchange.hasOut(), "Should not have OUT");
@@ -92,7 +92,7 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
 
                 from("direct:b").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
                         assertFalse(exchange.hasOut(), "Should not have OUT");

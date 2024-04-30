@@ -113,9 +113,11 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     }
 
     /**
-     * Whether to use X-Forward headers for Host and related setting.
-     * <p/>
-     * The default value is true.
+     * Whether to use X-Forward headers to set host etc. for OpenApi.
+     *
+     * This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc. Then the
+     * proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema that
+     * camel-openapi-java generates from Rest DSL routes.
      */
     public RestConfigurationProperties withUseXForwardHeaders(boolean useXForwardHeaders) {
         setUseXForwardHeaders(useXForwardHeaders);
@@ -207,6 +209,15 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
      */
     public RestConfigurationProperties withBindingMode(String bindingMode) {
         setBindingMode(bindingMode);
+        return this;
+    }
+
+    /**
+     * Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode
+     * is enabled for JSon or XML. Multiple package names can be separated by comma.
+     */
+    public RestConfigurationProperties withBindingPackageScan(String bindingPackageScan) {
+        setBindingPackageScan(bindingPackageScan);
         return this;
     }
 

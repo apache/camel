@@ -40,10 +40,10 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ErrorHandlerFactory dh = deadLetterChannel("direct:error").useOriginalMessage();
 
                 from("direct:failingRoute")

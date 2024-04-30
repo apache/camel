@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "propertiesFunction",
+    "title": "Properties Function",
+    "description": "Function to use with properties placeholder",
+    "deprecated": false,
+    "label": "spring,configuration",
+    "javaType": "org.apache.camel.core.xml.CamelPropertyPlaceholderFunctionDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "ref": { "index": 1, "kind": "attribute", "displayName": "Ref", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Reference to the custom properties function to lookup in the registry" }
+  }
+}

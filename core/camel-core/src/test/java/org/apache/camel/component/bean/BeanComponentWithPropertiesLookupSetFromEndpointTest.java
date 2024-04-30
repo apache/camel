@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 public class BeanComponentWithPropertiesLookupSetFromEndpointTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", "Hi");
         return jndi;
     }
@@ -40,10 +40,10 @@ public class BeanComponentWithPropertiesLookupSetFromEndpointTest extends Contex
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=#foo").to("mock:result");
             }
         };

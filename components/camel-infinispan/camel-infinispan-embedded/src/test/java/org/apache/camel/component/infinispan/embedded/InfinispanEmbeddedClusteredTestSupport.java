@@ -24,6 +24,7 @@ import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.commons.time.ControlledTimeService;
 import org.infinispan.commons.time.TimeService;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -31,7 +32,6 @@ import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.test.MultipleCacheManagersTest;
 import org.infinispan.test.TestDataSCI;
 import org.infinispan.test.TestingUtil;
-import org.infinispan.util.ControlledTimeService;
 
 public class InfinispanEmbeddedClusteredTestSupport extends CamelTestSupport {
     protected List<EmbeddedCacheManager> clusteredCacheContainers;

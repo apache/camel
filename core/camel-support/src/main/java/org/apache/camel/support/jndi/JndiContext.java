@@ -194,7 +194,7 @@ public class JndiContext implements Context, Serializable {
                 // and look for it in the bindings map.
                 CompositeName path = new CompositeName(name);
 
-                if (path.size() == 0) {
+                if (path.isEmpty()) {
                     return this;
                 } else {
                     String first = path.get(0);

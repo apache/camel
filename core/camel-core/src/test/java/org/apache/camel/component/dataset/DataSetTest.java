@@ -23,11 +23,11 @@ import org.junit.jupiter.api.Test;
 
 public class DataSetTest extends ContextTestSupport {
 
-    protected SimpleDataSet dataSet = new SimpleDataSet(20);
+    protected final SimpleDataSet dataSet = new SimpleDataSet(20);
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", dataSet);
         return answer;
     }
@@ -40,9 +40,9 @@ public class DataSetTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // start this first to make sure the "direct:foo" consumer is
                 // ready
                 from("direct:foo").to("dataset:foo?minRate=50");

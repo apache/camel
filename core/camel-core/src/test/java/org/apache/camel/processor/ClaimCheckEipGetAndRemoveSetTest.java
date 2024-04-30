@@ -38,10 +38,10 @@ public class ClaimCheckEipGetAndRemoveSetTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Set, "foo").transform().constant("Bye World")
                         .to("mock:b")
                         .claimCheck(ClaimCheckOperation.GetAndRemove, "foo").to("mock:c").transform().constant("Hi World")

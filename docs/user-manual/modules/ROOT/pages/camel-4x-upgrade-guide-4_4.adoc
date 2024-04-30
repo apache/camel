@@ -125,7 +125,7 @@ And the option `camel.main.routeControllerSuperviseEnabled` has been renamed to 
 
 All kamelets are now turned off error handling in the route templates. This is done to make using kamelets
 the same as calling a regular Camel component endpoint. Backwards mode can be enabled by setting `noErrorHandler=false`
-on the `KameletComponent` or as URI parameter `to("kamelet:http-sink?noErrorHandler=true&uri=xxxxx")`.
+on the `KameletComponent` or as URI parameter `to("kamelet:http-sink?noErrorHandler=false&uri=xxxxx")`.
 
 === camel-azure-cosmosdb
 
@@ -239,6 +239,9 @@ use `org.apache.camel.component.jsonvalidator.DefaultJsonUriSchemaLoader` instea
 
 Removed `token` from the URI's path in favor of setting it through a `token` query parameter. While the `token` was in the URI path, it could potentially be leaked within the logs.
 
+=== camel-openapi-java and camel-rest-openapi
+
+Deprecated support for the old Swagger 2.0 spec. Only OpenAPI v3 specs is supported from Camel 4.5 onwards.
 
 == Camel Spring Boot
 

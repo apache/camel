@@ -62,7 +62,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             MyEndpoint answer = new MyEndpoint(parameters);
             parameters.clear();
 
@@ -83,12 +83,12 @@ public class DefaultComponentTest extends ContextTestSupport {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return null;
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return null;
         }
 

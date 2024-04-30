@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TimerGracefulShutdownTest extends ContextTestSupport {
 
-    private MyExceptionHandler eh = new MyExceptionHandler();
+    private final MyExceptionHandler eh = new MyExceptionHandler();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("eh", eh);
         return jndi;
     }
@@ -55,10 +55,10 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:foo?period=10&delay=10&exceptionHandler=#eh").delay(10).to("log:time").to("mock:result");
             }
         };

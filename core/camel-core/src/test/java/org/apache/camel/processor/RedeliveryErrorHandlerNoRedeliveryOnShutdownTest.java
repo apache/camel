@@ -46,10 +46,10 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
 
                 // this error handler will try up till 20 redelivery attempts

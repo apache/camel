@@ -35,19 +35,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DisabledOnOs(OS.AIX)
 public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
 
-    private JmxNotificationEventNotifier notifier;
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         // START SNIPPET: e1
         // Set up the JmxNotificationEventNotifier
-        notifier = new JmxNotificationEventNotifier();
+        JmxNotificationEventNotifier notifier = new JmxNotificationEventNotifier();
         notifier.setSource("MyCamel");
         notifier.setIgnoreCamelContextEvents(true);
         notifier.setIgnoreRouteEvents(true);
         notifier.setIgnoreServiceEvents(true);
 
-        CamelContext context = new DefaultCamelContext(createRegistry());
+        CamelContext context = new DefaultCamelContext(createCamelRegistry());
         context.getManagementStrategy().addEventNotifier(notifier);
 
         // END SNIPPET: e1
@@ -110,10 +108,10 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("mock:result");
 
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));

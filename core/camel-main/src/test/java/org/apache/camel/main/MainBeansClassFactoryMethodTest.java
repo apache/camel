@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainBeansClassFactoryMethodTest {
 
     @Test
-    public void testBindBeans() throws Exception {
+    public void testBindBeans() {
         MyFoo myFoo = new MyFoo();
 
         Main main = new Main();
@@ -56,16 +56,16 @@ public class MainBeansClassFactoryMethodTest {
 
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").to("mock:foo");
         }
     }
 
     public static class MyDriver {
 
-        private String url;
-        private String username;
-        private String password;
+        private final String url;
+        private final String username;
+        private final String password;
 
         public MyDriver(String url, String username, String password) {
             this.url = url;

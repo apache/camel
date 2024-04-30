@@ -12,13 +12,13 @@ image::eip/ProcessManager.gif[image]
 Use a central processing unit, a Process Manager, to maintain the state of the sequence and determine
 the next processing step based on intermediate results.
 
-With Camel this pattern is implemented by using the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP.
+With Camel, this pattern is implemented by using the xref:dynamicRouter-eip.adoc[Dynamic Router] EIP.
 Camel's implementation of the dynamic router maintains the state of the sequence, and allows
 to determine the next processing step based dynamically.
 
-== Routing Slip vs Dynamic Router
+== Routing Slip vs. Dynamic Router
 
-On the other hand the xref:routingSlip-eip.adoc[Routing Slip] EIP demonstrates how a message can be routed
+On the other hand, the xref:routingSlip-eip.adoc[Routing Slip] EIP demonstrates how a message can be routed
 through a dynamic series of processing steps. The solution of the Routing Slip is based on two key assumptions:
 
 - the sequence of processing steps has to be determined up-front

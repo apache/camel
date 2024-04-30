@@ -8,10 +8,10 @@ How do you encapsulate access to the messaging system from the rest of the appli
 
 image::eip/MessagingGatewaySolution.gif[image]
 
-Use a Messaging Gateway, a class than wraps messaging-specific method calls and exposes domain-specific methods to the application.
+Use a Messaging Gateway, a class that wraps messaging-specific method calls and exposes domain-specific methods to the application.
 
 Camel has several endpoint components that support the Messaging Gateway from the EIP patterns.
-Components like xref:ROOT:bean-component.adoc[Bean] provides a way to bind a Java interface to the message exchange.
+Components like xref:ROOT:bean-component.adoc[Bean] provide a way to bind a Java interface to the message exchange.
 
 Another approach is to use `@Produce` annotations (xref:manual::pojo-producing.adoc[POJO Producing])
 which also can be used to hide Camel APIs and thereby encapsulate access, acting as a Messaging Gateway EIP solution.

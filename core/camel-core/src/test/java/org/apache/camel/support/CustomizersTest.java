@@ -139,7 +139,7 @@ public class CustomizersTest {
                         LogComponent.class,
                         target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertTrue(context.getComponent("log", LogComponent.class).getExchangeFormatter() instanceof MyExchangeFormatter);
+        assertInstanceOf(MyExchangeFormatter.class, context.getComponent("log", LogComponent.class).getExchangeFormatter());
     }
 
     @Test
@@ -166,7 +166,7 @@ public class CustomizersTest {
                         LogComponent.class,
                         target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertTrue(context.getComponent("log", LogComponent.class).getExchangeFormatter() instanceof MyExchangeFormatter);
+        assertInstanceOf(MyExchangeFormatter.class, context.getComponent("log", LogComponent.class).getExchangeFormatter());
     }
 
     @ParameterizedTest
@@ -202,7 +202,7 @@ public class CustomizersTest {
                         LogComponent.class,
                         target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertTrue(context.getComponent("log", LogComponent.class).getExchangeFormatter() instanceof MyExchangeFormatter);
+        assertInstanceOf(MyExchangeFormatter.class, context.getComponent("log", LogComponent.class).getExchangeFormatter());
     }
 
     // *****************************
@@ -228,9 +228,9 @@ public class CustomizersTest {
 
         assertNotEquals(df1, df2);
 
-        assertTrue(df1 instanceof MyDataFormat);
+        assertInstanceOf(MyDataFormat.class, df1);
         assertEquals(1, ((MyDataFormat) df1).getId());
-        assertTrue(df2 instanceof MyDataFormat);
+        assertInstanceOf(MyDataFormat.class, df2);
         assertEquals(2, ((MyDataFormat) df2).getId());
     }
 
@@ -254,9 +254,9 @@ public class CustomizersTest {
 
         assertNotEquals(df1, df2);
 
-        assertTrue(df1 instanceof MyDataFormat);
+        assertInstanceOf(MyDataFormat.class, df1);
         assertEquals(0, ((MyDataFormat) df1).getId());
-        assertTrue(df2 instanceof MyDataFormat);
+        assertInstanceOf(MyDataFormat.class, df2);
         assertEquals(0, ((MyDataFormat) df2).getId());
     }
 
@@ -312,11 +312,11 @@ public class CustomizersTest {
         private int id;
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             return null;
         }
 

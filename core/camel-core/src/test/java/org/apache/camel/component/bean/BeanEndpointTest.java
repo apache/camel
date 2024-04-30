@@ -33,8 +33,8 @@ public class BeanEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new FooBean());
         return jndi;
     }
@@ -55,7 +55,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });
@@ -81,7 +81,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });
@@ -109,7 +109,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });
@@ -135,7 +135,7 @@ public class BeanEndpointTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(endpoint);
             }
         });

@@ -46,10 +46,10 @@ public class ExpressionFunctionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:function").transform().message(m -> m.getExchange().getIn().getHeader("type")).to("mock:function");
                 from("direct:inFunction").transform().message(m -> m.getHeader("type")).to("mock:inFunction");
                 from("direct:inFunction2").transform(messageExpression(m -> m.getHeader("type"))).to("mock:inFunction2");

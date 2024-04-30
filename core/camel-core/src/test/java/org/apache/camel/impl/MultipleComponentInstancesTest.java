@@ -45,10 +45,10 @@ public class MultipleComponentInstancesTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log:foo").to("log:bar").to("mock:result");
                 from("direct:bye").to("log2:bye").to("mock2:aaa").to("mock3:bbb");
             }

@@ -132,8 +132,7 @@ public class VersionList extends CamelCommand {
 
             main.stop();
         } catch (Exception e) {
-            e.printStackTrace();
-            printer().println("Error downloading available Camel versions");
+            printer().println("Error downloading available Camel versions due to: " + e.getMessage());
             return 1;
         }
 

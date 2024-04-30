@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FromRestAdviceWithTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
@@ -44,7 +44,7 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
     public void testAdviceWith() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 rest("/say/hello").get().to("direct:hello");
 
                 from("direct:hello").routeId("myRoute")
@@ -56,7 +56,7 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
         RouteDefinition route = context.getRouteDefinition("myRoute");
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 replaceFromWith("direct:foo");
             }
         });

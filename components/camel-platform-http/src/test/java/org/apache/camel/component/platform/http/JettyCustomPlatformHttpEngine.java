@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.platform.http;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.support.CamelContextHelper;
 
@@ -26,7 +26,7 @@ public class JettyCustomPlatformHttpEngine implements PlatformHttpEngine {
     private int port;
 
     @Override
-    public Consumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor) {
+    public PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor) {
         if (port == 0) {
             JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
                     platformHttpEndpoint.getCamelContext(),

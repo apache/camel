@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyContactBean());
         return jndi;
     }
@@ -43,7 +43,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
     public void testCorrect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=concat(${body}, ${header.foo})").to("mock:result");
             }
         });
@@ -58,7 +58,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
     public void testMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=concat(${body}, ${header.foo}").to("mock:result");
             }
         });
@@ -76,7 +76,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
     public void testInvalidName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=--concat(${body}, ${header.foo})").to("mock:result");
             }
         });

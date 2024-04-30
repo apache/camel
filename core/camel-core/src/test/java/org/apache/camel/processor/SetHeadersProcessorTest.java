@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class SetHeadersProcessorTest extends ContextTestSupport {
 
     public static class HeaderBean {
-        Map<String, String> map = new java.util.LinkedHashMap<>();
+        final Map<String, String> map = new java.util.LinkedHashMap<>();
 
         public HeaderBean() {
         }
@@ -44,8 +44,8 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
         }
     }
 
-    private Map<String, Expression> headerMap = new java.util.LinkedHashMap<>();
-    protected String body = "<person name='Jane' age='10'/>";
+    private final Map<String, Expression> headerMap = new java.util.LinkedHashMap<>();
+    protected final String body = "<person name='Jane' age='10'/>";
     protected MockEndpoint expected;
 
     @Test
@@ -78,11 +78,10 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     @Test
     public void testUseMap() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startMap").setHeaders(headerMap).to("mock:result");
             }
         });
-        ;
         expected.message(0).header("foo").isEqualTo("ABC");
         expected.message(0).header("bar").isEqualTo("XYZ");
         template.sendBody("direct:startMap", body);
@@ -92,11 +91,10 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     @Test
     public void testUseMapOf() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:startMap").setHeaders(Map.of("foo", "ABC", "bar", "XYZ")).to("mock:result");
             }
         });
-        ;
         expected.message(0).header("foo").isEqualTo("ABC");
         expected.message(0).header("bar").isEqualTo("XYZ");
         template.sendBody("direct:startMap", body);
@@ -121,7 +119,7 @@ public class SetHeadersProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeaders("foo", simple("${body}"),

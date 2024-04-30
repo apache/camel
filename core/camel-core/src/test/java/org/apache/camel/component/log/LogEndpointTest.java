@@ -128,10 +128,10 @@ public class LogEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 LogEndpoint end = new LogEndpoint();
                 end.setComponent(context.getComponent("log"));
                 end.setCamelContext(context);

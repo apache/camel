@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static java.io.File.separator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileProducerMoveExistingTest extends ContextTestSupport {
 
     @Test
-    public void testExistingFileDoesNotExists() throws Exception {
+    public void testExistingFileDoesNotExists() {
         template.sendBodyAndHeader(
                 fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"), "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
@@ -157,6 +158,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
             String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             return new File(current, name).isDirectory() && name.startsWith(subdirPrefix + "-" + date);
         });
+        assertNotNull(directories, "There should be a list of directories");
         assertEquals(1, directories.length);
         File movedFilePath = testFile(directories[0] + separator + filename).toFile();
 
@@ -200,6 +202,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
             String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
             return new File(current, name).isFile() && name.startsWith(filename + "." + date);
         });
+        assertNotNull(files, "There should be a list of files");
         assertEquals(1, files.length);
 
         assertFileExists(testFile(files[0]), fileContent1);

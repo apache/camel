@@ -17,6 +17,7 @@
 package org.apache.camel.processor.converter;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
 
@@ -164,7 +165,7 @@ public class ConvertVariableTest extends ContextTestSupport {
 
     @Test
     public void testConvertToBytesCharset() throws Exception {
-        byte[] body = "Hello World".getBytes("iso-8859-1");
+        byte[] body = "Hello World".getBytes(StandardCharsets.ISO_8859_1);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedVariableReceived("foo", body);
@@ -181,14 +182,15 @@ public class ConvertVariableTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedVariableReceived("foo", body);
 
-        fluent.to("direct:charset3").withVariable("foo", new ByteArrayInputStream(body.getBytes("utf-16"))).send();
+        fluent.to("direct:charset3").withVariable("foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_16)))
+                .send();
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testConvertToBytesCharsetFail() throws Exception {
-        byte[] body = "Hello World".getBytes("utf-8");
+        byte[] body = "Hello World".getBytes(StandardCharsets.UTF_8);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedVariableReceived("foo", body);
@@ -210,7 +212,8 @@ public class ConvertVariableTest extends ContextTestSupport {
         result.expectedVariableReceived("foo", body);
         result.expectedMessageCount(1);
 
-        fluent.to("direct:charset3").withVariable("foo", new ByteArrayInputStream(body.getBytes("utf-8"))).send();
+        fluent.to("direct:charset3").withVariable("foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)))
+                .send();
 
         // should NOT be okay as we expected utf-8 but got it in utf-16
         result.assertIsNotSatisfied();

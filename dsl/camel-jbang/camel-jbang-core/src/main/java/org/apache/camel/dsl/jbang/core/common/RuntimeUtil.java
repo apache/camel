@@ -19,15 +19,20 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.StringHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 
@@ -39,23 +44,64 @@ public final class RuntimeUtil {
     }
 
     public static void configureLog(
-            String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath) {
+            String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath,
+            List<String> loggingCategories)
+            throws Exception {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", Long.toString(pid));
 
             if (loggingConfigPath != null) {
+                // ust custom logging configuration as-is
                 Configurator.initialize("CamelJBang", "file://" + Path.of(loggingConfigPath).toAbsolutePath());
-            } else if (export) {
-                Configurator.initialize("CamelJBang", "log4j2-export.properties");
-            } else if (script) {
-                Configurator.initialize("CamelJBang", "log4j2-script.properties");
-            } else if (json) {
-                Configurator.initialize("CamelJBang", "log4j2-json.properties");
-            } else if (color) {
-                Configurator.initialize("CamelJBang", "log4j2.properties");
+            } else if (loggingCategories != null && !loggingCategories.isEmpty()) {
+                // enrich logging file with custom logging categories
+                String name = "log4j2-no-color.properties";
+                if (export) {
+                    name = "log4j2-export.properties";
+                } else if (script) {
+                    name = "log4j2-export.properties";
+                } else if (json) {
+                    name = "log4j2-export.properties";
+                } else if (color) {
+                    name = "log4j2.properties";
+                }
+                InputStream is = RuntimeUtil.class.getClassLoader().getResourceAsStream(name);
+                String content = IOHelper.loadText(is);
+                IOHelper.close(is);
+
+                StringJoiner sj = new StringJoiner(System.lineSeparator());
+                int i = 0;
+                for (String lc : loggingCategories) {
+                    String prefix = "custom" + i++;
+                    String catName = StringHelper.before(lc, "=", "").trim();
+                    String catLevel = StringHelper.after(lc, "=", "").trim();
+                    if (!catName.isEmpty() && !catLevel.isEmpty()) {
+                        sj.add("logger." + prefix + ".name=" + catName);
+                        sj.add("logger." + prefix + ".level=" + catLevel);
+                        sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
+                        sj.add("logger." + prefix + ".appenderRef.$2.ref=file");
+                    }
+                }
+                content = content + System.lineSeparator() + sj;
+
+                name = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
+                Files.writeString(Paths.get(name), content);
+
+                Configurator.initialize("CamelJBang", "file://" + Path.of(name).toAbsolutePath());
             } else {
-                Configurator.initialize("CamelJBang", "log4j2-no-color.properties");
+                // use out of the box logging configuration
+                if (export) {
+                    Configurator.initialize("CamelJBang", "log4j2-export.properties");
+                } else if (script) {
+                    Configurator.initialize("CamelJBang", "log4j2-script.properties");
+                } else if (json) {
+                    Configurator.initialize("CamelJBang", "log4j2-json.properties");
+                } else if (color) {
+                    Configurator.initialize("CamelJBang", "log4j2.properties");
+                } else {
+                    Configurator.initialize("CamelJBang", "log4j2-no-color.properties");
+                }
             }
         }
 

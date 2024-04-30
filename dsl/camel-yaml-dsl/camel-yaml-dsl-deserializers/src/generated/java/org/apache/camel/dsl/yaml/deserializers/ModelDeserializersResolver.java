@@ -270,6 +270,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "on-fallback": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
             case "onFallback": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
             case "org.apache.camel.model.OnFallbackDefinition": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
+            case "open-api": return new ModelDeserializers.OpenApiDefinitionDeserializer();
+            case "openApi": return new ModelDeserializers.OpenApiDefinitionDeserializer();
+            case "org.apache.camel.model.rest.OpenApiDefinition": return new ModelDeserializers.OpenApiDefinitionDeserializer();
             case "open-id-connect": return new ModelDeserializers.OpenIdConnectDefinitionDeserializer();
             case "openIdConnect": return new ModelDeserializers.OpenIdConnectDefinitionDeserializer();
             case "org.apache.camel.model.rest.OpenIdConnectDefinition": return new ModelDeserializers.OpenIdConnectDefinitionDeserializer();
@@ -455,6 +458,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "set-variable": return new ModelDeserializers.SetVariableDefinitionDeserializer();
             case "setVariable": return new ModelDeserializers.SetVariableDefinitionDeserializer();
             case "org.apache.camel.model.SetVariableDefinition": return new ModelDeserializers.SetVariableDefinitionDeserializer();
+            case "set-variables": return new ModelDeserializers.SetVariablesDefinitionDeserializer();
+            case "setVariables": return new ModelDeserializers.SetVariablesDefinitionDeserializer();
+            case "org.apache.camel.model.SetVariablesDefinition": return new ModelDeserializers.SetVariablesDefinitionDeserializer();
             case "simple": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "org.apache.camel.model.language.SimpleExpression": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "soap": return new ModelDeserializers.SoapDataFormatDeserializer();

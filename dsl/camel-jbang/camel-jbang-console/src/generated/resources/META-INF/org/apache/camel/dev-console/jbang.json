@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel-jbang",
+    "name": "jbang",
+    "title": "Camel JBang",
+    "description": "Information about Camel JBang",
+    "deprecated": false,
+    "javaType": "org.apache.camel.jbang.console.JBangDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jbang-console",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

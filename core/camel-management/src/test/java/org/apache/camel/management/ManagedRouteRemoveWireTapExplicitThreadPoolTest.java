@@ -96,10 +96,10 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // create a new thread pool to use for wire tap
                 myThreadPool = Executors.newFixedThreadPool(1);
 

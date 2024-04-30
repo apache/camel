@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class KafkaToDIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaToDIT extends BaseKafkaTestSupport {
 
     @Test
     public void testToD() {

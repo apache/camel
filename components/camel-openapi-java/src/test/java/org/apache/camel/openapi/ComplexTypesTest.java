@@ -141,16 +141,12 @@ public class ComplexTypesTest extends CamelTestSupport {
 
     static Stream<Arguments> uriAndVersionVariations() {
         return Stream.of(
-                arguments("/complexRequest", "2.0"),
                 arguments("/complexRequest", "3.0"),
                 arguments("/complexRequest", "3.1"),
-                arguments("/complexResponse", "2.0"),
                 arguments("/complexResponse", "3.0"),
                 arguments("/complexResponse", "3.1"),
-                arguments("/complexRequestWithSchemaAnnotation", "2.0"),
                 arguments("/complexRequestWithSchemaAnnotation", "3.0"),
                 arguments("/complexRequestWithSchemaAnnotation", "3.1"),
-                arguments("/complexResponseWithSchemaAnnotation", "2.0"),
                 arguments("/complexResponseWithSchemaAnnotation", "3.0"),
                 arguments("/complexResponseWithSchemaAnnotation", "3.1"));
     }

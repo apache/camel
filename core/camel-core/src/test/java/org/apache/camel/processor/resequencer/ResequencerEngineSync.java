@@ -24,7 +24,7 @@ package org.apache.camel.processor.resequencer;
  */
 public class ResequencerEngineSync<E> {
 
-    private ResequencerEngine<E> resequencer;
+    private final ResequencerEngine<E> resequencer;
 
     public ResequencerEngineSync(ResequencerEngine<E> resequencer) {
         this.resequencer = resequencer;

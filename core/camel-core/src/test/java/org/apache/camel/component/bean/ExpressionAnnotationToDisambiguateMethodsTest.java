@@ -31,26 +31,26 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
-    protected MyBean myBean = new MyBean();
-    protected MyOtherBean myOtherBean = new MyOtherBean();
+    protected final MyBean myBean = new MyBean();
+    protected final MyOtherBean myOtherBean = new MyOtherBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         template.sendBodyAndHeader("direct:in", "<hello>world!</hello>", "foo", "bar");
 
         assertEquals("bar", myBean.bar, "bean body: " + myBean);
     }
 
     @Test
-    public void testSendMessageHandler() throws Exception {
+    public void testSendMessageHandler() {
         template.sendBodyAndHeader("direct:other", "<hello>world!</hello>", "foo", "bar");
 
         assertEquals("bar", myOtherBean.bar, "bean body: " + myOtherBean);
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         answer.bind("myOtherBean", myOtherBean);
         return answer;

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.as2.api;
 
-import org.apache.http.protocol.HttpCoreContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
 
 /**
  * Constants for AS2 component.
@@ -50,7 +50,7 @@ public interface AS2Constants {
     /**
      * HTTP Context Attribute Name for HTTP Client Connection object stored in context.
      */
-    String HTTP_CLIENT_CONNECTION = HttpCoreContext.HTTP_CONNECTION;
+    String HTTP_CLIENT_CONNECTION = HttpCoreContext.CONNECTION_ENDPOINT;
 
     /**
      * HTTP Context Attribute Name for HTTP Client Processor object stored in context.

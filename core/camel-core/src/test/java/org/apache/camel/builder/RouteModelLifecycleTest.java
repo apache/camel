@@ -42,7 +42,7 @@ public class RouteModelLifecycleTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:one")
                         .to("mock:result");
             }

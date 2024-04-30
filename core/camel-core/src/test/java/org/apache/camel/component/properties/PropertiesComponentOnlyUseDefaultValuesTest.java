@@ -34,7 +34,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
     public void testOnlyDefaults() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("{{foo:mock:foo}}").to("{{bar:mock:bar}}");
             }
         });
@@ -52,7 +52,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
     public void testOneMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("{{foo:mock:foo}}").to("{{bar}}");
             }
         });
@@ -64,7 +64,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
     public void testAllMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("{{foo:mock:foo}}").to("{{bar}}");
             }
         });

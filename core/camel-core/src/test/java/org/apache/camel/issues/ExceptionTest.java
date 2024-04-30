@@ -100,7 +100,7 @@ public class ExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         final Processor exceptionThrower = exchange -> {
             exchange.getIn().setBody("<exception/>");
             throw new IllegalArgumentException("Exception thrown intentionally.");

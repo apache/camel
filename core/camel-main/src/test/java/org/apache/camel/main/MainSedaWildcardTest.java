@@ -22,13 +22,13 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainSedaWildcardTest {
 
     @Test
-    public void testSedaWildcardMain() throws Exception {
+    public void testSedaWildcardMain() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.addProperty("camel.component.seda*.defaultQueueFactory",
@@ -43,13 +43,13 @@ public class MainSedaWildcardTest {
 
         SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
         assertNotNull(seda);
-        assertTrue(seda.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);
+        assertInstanceOf(MySedaBlockingQueueFactory.class, seda.getDefaultQueueFactory());
         MySedaBlockingQueueFactory myBQF = (MySedaBlockingQueueFactory) seda.getDefaultQueueFactory();
         assertEquals(123, myBQF.getCounter());
 
         SedaComponent seda2 = camelContext.getComponent("seda", SedaComponent.class);
         assertNotNull(seda2);
-        assertTrue(seda2.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);
+        assertInstanceOf(MySedaBlockingQueueFactory.class, seda2.getDefaultQueueFactory());
         myBQF = (MySedaBlockingQueueFactory) seda2.getDefaultQueueFactory();
         assertEquals(123, myBQF.getCounter());
 
@@ -58,7 +58,7 @@ public class MainSedaWildcardTest {
 
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").to("seda:foo");
 
             from("direct:hello").to("seda2:bar");

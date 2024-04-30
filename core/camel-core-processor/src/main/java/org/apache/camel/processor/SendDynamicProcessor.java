@@ -237,10 +237,10 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                     ServiceHelper.stopAndShutdownService(endpoint);
                 }
                 // result should be stored in variable instead of message body
-                if (variableReceive != null) {
-                    ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive, exchange.getMessage());
-                    exchange.getMessage().setBody(originalBody);
-                    exchange.getMessage().setHeaders(originalHeaders);
+                if (ExchangeHelper.shouldSetVariableResult(target, variableReceive)) {
+                    ExchangeHelper.setVariableFromMessageBodyAndHeaders(target, variableReceive, target.getMessage());
+                    target.getMessage().setBody(originalBody);
+                    target.getMessage().setHeaders(originalHeaders);
                 }
                 // signal we are done
                 c.done(doneSync);
@@ -306,20 +306,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     }
 
     protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
-        if (recipient instanceof Endpoint) {
-            return (Endpoint) recipient;
-        }
-        if (recipient != null) {
-            if (recipient instanceof NormalizedEndpointUri) {
-                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                CamelContext ecc = exchange.getContext();
-                return ecc.getCamelContextExtension().hasEndpoint(nu);
-            } else {
-                String uri = recipient.toString();
-                return exchange.getContext().hasEndpoint(uri);
-            }
-        }
-        return null;
+        return ProcessorHelper.getExistingEndpoint(exchange, recipient);
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {

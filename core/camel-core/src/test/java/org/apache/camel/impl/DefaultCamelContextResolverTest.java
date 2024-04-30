@@ -47,7 +47,7 @@ public class DefaultCamelContextResolverTest {
     private static CamelContext context;
 
     @BeforeAll
-    public static void createContext() throws Exception {
+    public static void createContext() {
         context = new DefaultCamelContext();
 
         // Add a component using its fallback name
@@ -75,13 +75,13 @@ public class DefaultCamelContextResolverTest {
     }
 
     @AfterAll
-    public static void destroyContext() throws Exception {
+    public static void destroyContext() {
         context.stop();
         context = null;
     }
 
     @Test
-    public void testComponentWithFallbackNames() throws Exception {
+    public void testComponentWithFallbackNames() {
         Component component = context.getComponent("green");
         assertNotNull(component, "Component not found in registry");
         boolean b = component instanceof SampleComponent;
@@ -90,7 +90,7 @@ public class DefaultCamelContextResolverTest {
     }
 
     @Test
-    public void testComponentWithBothNames() throws Exception {
+    public void testComponentWithBothNames() {
         Component component = context.getComponent("yellow");
         assertNotNull(component, "Component not found in registry");
         boolean b = component instanceof SampleComponent;
@@ -99,7 +99,7 @@ public class DefaultCamelContextResolverTest {
     }
 
     @Test
-    public void testDataFormatWithFallbackNames() throws Exception {
+    public void testDataFormatWithFallbackNames() {
         DataFormat dataFormat = context.resolveDataFormat("green");
         assertNotNull(dataFormat, "DataFormat not found in registry");
         boolean b = dataFormat instanceof SampleDataFormat;
@@ -108,7 +108,7 @@ public class DefaultCamelContextResolverTest {
     }
 
     @Test
-    public void testDataformatWithBothNames() throws Exception {
+    public void testDataformatWithBothNames() {
         DataFormat dataFormat = context.resolveDataFormat("red");
         assertNotNull(dataFormat, "DataFormat not found in registry");
         boolean b = dataFormat instanceof SampleDataFormat;
@@ -117,7 +117,7 @@ public class DefaultCamelContextResolverTest {
     }
 
     @Test
-    public void testLanguageWithFallbackNames() throws Exception {
+    public void testLanguageWithFallbackNames() {
         Language language = context.resolveLanguage("green");
         assertNotNull(language, "Language not found in registry");
         boolean b = language instanceof SampleLanguage;
@@ -126,7 +126,7 @@ public class DefaultCamelContextResolverTest {
     }
 
     @Test
-    public void testLanguageWithBothNames() throws Exception {
+    public void testLanguageWithBothNames() {
         Language language = context.resolveLanguage("blue");
         assertNotNull(language, "Language not found in registry");
         boolean b = language instanceof SampleLanguage;
@@ -135,19 +135,19 @@ public class DefaultCamelContextResolverTest {
     }
 
     @Test
-    public void testNullLookupComponent() throws Exception {
+    public void testNullLookupComponent() {
         Component component = context.getComponent("xxxxxxxxx");
         assertNull(component, "Non-existent Component should be null");
     }
 
     @Test
-    public void testNullLookupDataFormat() throws Exception {
+    public void testNullLookupDataFormat() {
         DataFormat dataFormat = context.resolveDataFormat("xxxxxxxxx");
         assertNull(dataFormat, "Non-existent DataFormat should be null");
     }
 
     @Test
-    public void testNullLookupLanguage() throws Exception {
+    public void testNullLookupLanguage() {
         assertThrows(NoSuchLanguageException.class, () -> context.resolveLanguage("xxxxxxxxx"));
     }
 
@@ -160,7 +160,7 @@ public class DefaultCamelContextResolverTest {
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             throw new UnsupportedOperationException("Should not be called");
         }
 
@@ -182,12 +182,12 @@ public class DefaultCamelContextResolverTest {
         }
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
             throw new UnsupportedOperationException("Should not be called");
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             throw new UnsupportedOperationException("Should not be called");
         }
 

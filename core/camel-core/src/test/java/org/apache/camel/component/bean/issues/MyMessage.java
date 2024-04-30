@@ -18,7 +18,7 @@ package org.apache.camel.component.bean.issues;
 
 public class MyMessage {
 
-    private String message;
+    private final String message;
 
     public MyMessage(String message) {
         this.message = message;

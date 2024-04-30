@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PropertyBindingSupportMapDotKeyTest extends ContextTestSupport {
 
     @Test
-    public void testPropertiesMapDotKey() throws Exception {
+    public void testPropertiesMapDotKey() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();

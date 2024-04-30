@@ -98,10 +98,10 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 Properties props = new Properties();
                 props.put("result", "mock:result");
                 context.getPropertiesComponent().setOverrideProperties(props);

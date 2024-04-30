@@ -44,7 +44,7 @@ public class TokenXMLPairNamespaceMultilineSplitTest extends TokenXMLPairNamespa
 
     @Override
     @Test
-    public void testTokenXMLPair2() throws Exception {
+    public void testTokenXMLPair2() {
         // noop
     }
 

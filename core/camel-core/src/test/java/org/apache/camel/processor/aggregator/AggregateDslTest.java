@@ -41,10 +41,10 @@ public class AggregateDslTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").aggregate().message(m -> m.getHeader("type")).aggregationStrategy()
                         .body(String.class, AggregateDslTest::joinString).completion()
                         .body(String.class, s -> s.split(",").length == 2).to("mock:aggregated");

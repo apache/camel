@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
 
     @Test
-    public void testDefineRouteTemplate() throws Exception {
+    public void testDefineRouteTemplate() {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
         RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
@@ -68,10 +68,10 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("greeting")
                         .description("Route saying {{greeting}}")
                         .from("direct:{{foo}}")

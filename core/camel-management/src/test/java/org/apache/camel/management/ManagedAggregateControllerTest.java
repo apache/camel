@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DisabledOnOs(OS.AIX)
 public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
-    private AggregateController controller = new DefaultAggregateController();
+    private final AggregateController controller = new DefaultAggregateController();
     private MBeanServer mbeanServer;
     private ObjectName on;
 
@@ -172,11 +172,11 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(controller).id("myAggregator")
                         .completionSize(10)

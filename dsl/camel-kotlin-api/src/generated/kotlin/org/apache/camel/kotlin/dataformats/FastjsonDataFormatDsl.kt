@@ -17,7 +17,6 @@
 package org.apache.camel.kotlin.dataformats
 
 import java.lang.Class
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Unit
@@ -25,6 +24,9 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.DataFormatDsl
 import org.apache.camel.model.dataformat.JsonDataFormat
 
+/**
+ * Marshal POJOs to JSON and back using Fastjson
+ */
 public fun DataFormatDsl.fastjson(i: FastjsonDataFormatDsl.() -> Unit) {
   def = FastjsonDataFormatDsl().apply(i).def
 }
@@ -36,14 +38,27 @@ public class FastjsonDataFormatDsl {
   init {
     def = JsonDataFormat()}
 
-  public fun unmarshalType(unmarshalType: Class<out Any>) {
+  /**
+   * Class name of the java type to use when unmarshalling
+   */
+  public fun unmarshalType(unmarshalType: Class<*>) {
     def.unmarshalType = unmarshalType
   }
 
+  /**
+   * Whether the data format should set the Content-Type header with the type from the data format.
+   * For example application/xml for data formats marshalling to XML, or application/json for data
+   * formats marshalling to JSON
+   */
   public fun contentTypeHeader(contentTypeHeader: Boolean) {
     def.contentTypeHeader = contentTypeHeader.toString()
   }
 
+  /**
+   * Whether the data format should set the Content-Type header with the type from the data format.
+   * For example application/xml for data formats marshalling to XML, or application/json for data
+   * formats marshalling to JSON
+   */
   public fun contentTypeHeader(contentTypeHeader: String) {
     def.contentTypeHeader = contentTypeHeader
   }

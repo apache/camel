@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.time.Duration;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,10 +64,16 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
         return true;
     }
 
-    @Test
-    public void testAdd() {
+    @BeforeEach
+    public void cleanup() {
         // cleanup
         aggregationRepository.getCache().clear();
+
+        Awaitility.await().atMost(Duration.ofSeconds(1)).until(() -> cacheContainer.isStarted());
+    }
+
+    @Test
+    public void testAdd() {
         // Given
         String key = "Add";
         assertFalse(exists(key));
@@ -77,8 +86,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testGetExists() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String key = "Get_Exists";
         Exchange exchange = new DefaultExchange(context());
@@ -94,8 +101,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testGetNotExists() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String key = "Get_NotExists";
         assertFalse(exists(key));
@@ -107,8 +112,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testRemoveExists() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String key = "Remove_Exists";
         Exchange exchange = new DefaultExchange(context());
@@ -122,8 +125,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testRemoveNotExists() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String key = "RemoveNotExists";
         Exchange exchange = new DefaultExchange(context());
@@ -136,8 +137,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testGetKeys() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String[] keys = { "GetKeys1", "GetKeys2" };
         addExchanges(keys);
@@ -151,8 +150,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testConfirmExist() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         for (int i = 1; i < 4; i++) {
             String key = "Confirm_" + i;
@@ -171,8 +168,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testConfirmNotExist() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String[] keys = new String[3];
         for (int i = 1; i < 4; i++) {
@@ -202,8 +197,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testScan() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String[] keys = { "Scan1", "Scan2" };
         addExchanges(keys);
@@ -217,8 +210,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
 
     @Test
     public void testRecover() {
-        // cleanup
-        aggregationRepository.getCache().clear();
         // Given
         String[] keys = { "Recover1", "Recover2" };
         addExchanges(keys);

@@ -60,10 +60,6 @@ public enum TwilioApiName implements ApiName {
 
     AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE("available-phone-number-country-toll-free"),
 
-    CALL_FEEDBACK("call-feedback"),
-
-    CALL_FEEDBACK_SUMMARY("call-feedback-summary"),
-
     CALL_NOTIFICATION("call-notification"),
 
     CALL_RECORDING("call-recording"),

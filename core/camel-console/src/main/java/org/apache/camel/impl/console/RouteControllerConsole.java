@@ -38,14 +38,14 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole("route-controller")
+@DevConsole(name = "route-controller", description = "Route controller information")
 public class RouteControllerConsole extends AbstractDevConsole {
 
     public static final String STACKTRACE = "stacktrace";
     public static final String ERROR = "error";
 
     public RouteControllerConsole() {
-        super("camel", "route-controller", "Route Controller", "Route startup information");
+        super("camel", "route-controller", "Route Controller", "Route controller information");
     }
 
     @Override

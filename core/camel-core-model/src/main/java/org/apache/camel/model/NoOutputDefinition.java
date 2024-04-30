@@ -29,4 +29,10 @@ public abstract class NoOutputDefinition<Type extends ProcessorDefinition<Type>>
         return Collections.emptyList();
     }
 
+    public NoOutputDefinition() {
+    }
+
+    protected NoOutputDefinition(NoOutputDefinition source) {
+        super(source);
+    }
 }

@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MDCCustomKeysTest extends ContextTestSupport {
 
-    private MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
-    private MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
+    private final MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");
+    private final MdcCheckerProcessor checker2 = new MdcCheckerProcessor("World");
 
     @Test
     public void testMdcPreserved() throws Exception {
@@ -64,10 +64,10 @@ public class MDCCustomKeysTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // enable MDC and breadcrumb
                 context.setUseMDCLogging(true);
                 context.setUseBreadcrumb(true);
@@ -124,7 +124,7 @@ public class MDCCustomKeysTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // custom is propagated as its pattern matches
             assertEquals(expected, MDC.get("custom.hello"));
             assertEquals("Baz", MDC.get("myKey"));
@@ -146,28 +146,28 @@ public class MDCCustomKeysTest extends ContextTestSupport {
                 assertNotEquals(exchangeId, MDC.get("camel.exchangeId"));
             } else {
                 exchangeId = MDC.get("camel.exchangeId");
-                assertTrue(exchangeId != null && exchangeId.length() > 0);
+                assertTrue(exchangeId != null && !exchangeId.isEmpty());
             }
 
             if (messageId != null) {
                 assertNotEquals(messageId, MDC.get("camel.messageId"));
             } else {
                 messageId = MDC.get("camel.messageId");
-                assertTrue(messageId != null && messageId.length() > 0);
+                assertTrue(messageId != null && !messageId.isEmpty());
             }
 
             if (breadcrumbId != null) {
                 assertEquals(breadcrumbId, MDC.get("camel.breadcrumbId"));
             } else {
                 breadcrumbId = MDC.get("camel.breadcrumbId");
-                assertTrue(breadcrumbId != null && breadcrumbId.length() > 0);
+                assertTrue(breadcrumbId != null && !breadcrumbId.isEmpty());
             }
 
             if (contextId != null) {
                 assertEquals(contextId, MDC.get("camel.contextId"));
             } else {
                 contextId = MDC.get("camel.contextId");
-                assertTrue(contextId != null && contextId.length() > 0);
+                assertTrue(contextId != null && !contextId.isEmpty());
             }
         }
     }

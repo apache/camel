@@ -40,7 +40,7 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends 
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new ConnectException("Forced"));
             }
         });
@@ -62,10 +62,10 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(5000));
 
                 from("direct:start")

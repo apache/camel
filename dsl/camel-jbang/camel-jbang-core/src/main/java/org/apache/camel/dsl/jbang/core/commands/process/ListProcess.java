@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -78,6 +79,12 @@ public class ListProcess extends ProcessWatchCommand {
                         } else {
                             row.ready = "0/1";
                         }
+                        Map<String, ?> stats = context.getMap("statistics");
+                        if (stats != null) {
+                            row.total = stats.get("exchangesTotal").toString();
+                            row.inflight = stats.get("exchangesInflight").toString();
+                            row.failed = stats.get("exchangesFailed").toString();
+                        }
                         rows.add(row);
                     }
                 });
@@ -97,7 +104,10 @@ public class ListProcess extends ProcessWatchCommand {
                         new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                         new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                                 .with(r -> extractState(r.state)),
-                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago))));
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                        new Column().header("TOTAL").with(r -> r.total),
+                        new Column().header("FAIL").with(r -> r.failed),
+                        new Column().header("INFLIGHT").with(r -> r.inflight))));
             }
         }
 
@@ -130,6 +140,9 @@ public class ListProcess extends ProcessWatchCommand {
         int state;
         String ago;
         long uptime;
+        String total;
+        String failed;
+        String inflight;
     }
 
 }

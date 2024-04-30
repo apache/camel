@@ -41,7 +41,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     URI httpUri;
     @UriParam(label = "common,advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
-    HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    HeaderFilterStrategy headerFilterStrategy = new org.apache.camel.http.base.HttpHeaderFilterStrategy();
     @UriParam(label = "common,advanced",
               description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     HttpBinding httpBinding;

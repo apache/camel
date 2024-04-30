@@ -28,7 +28,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ConsumerCache;
@@ -36,7 +35,6 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
@@ -263,19 +261,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         }
 
         // grab the real delegate consumer that performs the actual polling
-        Consumer delegate = consumer;
-        if (consumer instanceof EventDrivenPollingConsumer) {
-            delegate = ((EventDrivenPollingConsumer) consumer).getDelegateConsumer();
-        }
-
-        // is the consumer bridging the error handler?
-        boolean bridgeErrorHandler = false;
-        if (delegate instanceof DefaultConsumer) {
-            ExceptionHandler handler = ((DefaultConsumer) delegate).getExceptionHandler();
-            if (handler instanceof BridgeExceptionHandlerToErrorHandler) {
-                bridgeErrorHandler = true;
-            }
-        }
+        final boolean bridgeErrorHandler = isBridgeErrorHandler(consumer);
 
         Exchange resourceExchange;
         try {
@@ -350,11 +336,12 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // must catch any exception from aggregation
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                 if (aggregatedExchange != null) {
-                    if (variableReceive != null) {
+                    if (ExchangeHelper.shouldSetVariableResult(aggregatedExchange, variableReceive)) {
                         // result should be stored in variable instead of message body
-                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive, exchange.getMessage());
-                        exchange.getMessage().setBody(originalBody);
-                        exchange.getMessage().setHeaders(originalHeaders);
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(aggregatedExchange, variableReceive,
+                                aggregatedExchange.getMessage());
+                        aggregatedExchange.getMessage().setBody(originalBody);
+                        aggregatedExchange.getMessage().setHeaders(originalHeaders);
                     }
                     // copy aggregation result onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, aggregatedExchange);
@@ -397,43 +384,29 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         return true;
     }
 
-    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
-        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
-            return recipient;
-        } else if (recipient instanceof String) {
-            // trim strings as end users might have added spaces between separators
-            recipient = ((String) recipient).trim();
+    private static boolean isBridgeErrorHandler(PollingConsumer consumer) {
+        Consumer delegate = consumer;
+        if (consumer instanceof EventDrivenPollingConsumer) {
+            delegate = ((EventDrivenPollingConsumer) consumer).getDelegateConsumer();
         }
-        if (recipient != null) {
-            CamelContext ecc = exchange.getContext();
-            String uri;
-            if (recipient instanceof String) {
-                uri = (String) recipient;
-            } else {
-                // convert to a string type we can work with
-                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+
+        // is the consumer bridging the error handler?
+        boolean bridgeErrorHandler = false;
+        if (delegate instanceof DefaultConsumer) {
+            ExceptionHandler handler = ((DefaultConsumer) delegate).getExceptionHandler();
+            if (handler instanceof BridgeExceptionHandlerToErrorHandler) {
+                bridgeErrorHandler = true;
             }
-            // optimize and normalize endpoint
-            return ecc.getCamelContextExtension().normalizeUri(uri);
         }
-        return null;
+        return bridgeErrorHandler;
+    }
+
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        return ProcessorHelper.prepareRecipient(exchange, recipient);
     }
 
     protected static Endpoint getExistingEndpoint(CamelContext context, Object recipient) {
-        if (recipient instanceof Endpoint) {
-            return (Endpoint) recipient;
-        }
-        if (recipient != null) {
-            if (recipient instanceof NormalizedEndpointUri) {
-                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                ExtendedCamelContext ecc = context.getCamelContextExtension();
-                return ecc.hasEndpoint(nu);
-            } else {
-                String uri = recipient.toString();
-                return context.hasEndpoint(uri);
-            }
-        }
-        return null;
+        return ProcessorHelper.getExistingEndpoint(context, recipient);
     }
 
     protected static Endpoint resolveEndpoint(CamelContext camelContext, Object recipient, boolean prototype) {

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
@@ -25,6 +28,7 @@ import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +36,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-// Not parallel due to processing some part of the route concurrently (may be delayed when running on the test threads)
+// Due to processing some part of the route concurrently (may be delayed when running on the test threads)
 @Tags({ @Tag("not-parallel") })
 public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
 
@@ -42,6 +46,7 @@ public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+    private final CountDownLatch latch = new CountDownLatch(4);
 
     @Test
     public void testInOutPersistentReplyQueue() throws Exception {
@@ -51,6 +56,8 @@ public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
         template.sendBody("seda:start", "B");
         template.sendBody("seda:start", "C");
         template.sendBody("seda:start", "D");
+
+        Assertions.assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -66,11 +73,13 @@ public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
             public void configure() {
                 from("seda:start")
                         .log("Sending ${body}")
-                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutPersistentReplyQueueTest?replyTo=myReplies")
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:JmsInOutPersistentReplyQueueTest?replyTo=JmsInOutPersistentReplyQueueTest.myReplies")
                         // process the remainder of the route concurrently
                         .threads(5)
                         .log("Reply ${body}")
                         .delay(2000)
+                        .process(e -> latch.countDown())
                         .to("mock:result");
 
                 from("activemq:queue:JmsInOutPersistentReplyQueueTest")

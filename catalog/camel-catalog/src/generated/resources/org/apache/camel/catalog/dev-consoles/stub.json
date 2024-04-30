@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "stub",
+    "title": "Stub",
+    "description": "Browse messages on stub endpoints",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.stub.StubConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-stub",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

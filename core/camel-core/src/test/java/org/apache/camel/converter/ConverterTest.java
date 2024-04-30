@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -56,11 +57,11 @@ public class ConverterTest extends TestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
-    protected TypeConverter converter = new DefaultTypeConverter(
+    protected final TypeConverter converter = new DefaultTypeConverter(
             new DefaultPackageScanClassResolver(), new ReflectionInjector(), true);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         ServiceHelper.startService(converter);
     }
 
@@ -156,10 +157,10 @@ public class ConverterTest extends TestSupport {
     }
 
     @Test
-    public void testFileToString() throws Exception {
+    public void testFileToString() {
         URL resource = getClass().getResource("dummy.txt");
         assertNotNull(resource, "Cannot find resource!");
-        File file = new File(URLDecoder.decode(resource.getFile(), "UTF-8"));
+        File file = new File(URLDecoder.decode(resource.getFile(), StandardCharsets.UTF_8));
         String text = converter.convertTo(String.class, file);
         assertNotNull(text, "Should have returned a String!");
         text = text.trim();

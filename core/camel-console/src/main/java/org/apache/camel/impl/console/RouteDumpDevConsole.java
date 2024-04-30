@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
@@ -32,7 +33,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("route-dump")
+@DevConsole(name = "route-dump", description = "Dump route in XML or YAML format")
 public class RouteDumpDevConsole extends AbstractDevConsole {
 
     /**
@@ -56,7 +57,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     public static final String URI_AS_PARAMETERS = "uriAsParameters";
 
     public RouteDumpDevConsole() {
-        super("camel", "route-dump", "Route Dump", "Dump route structure in XML or YAML format");
+        super("camel", "route-dump", "Route Dump", "Dump route in XML or YAML format");
     }
 
     @Override
@@ -151,6 +152,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
             routes.stream()
                     .map(route -> mcc.getManagedRoute(route.getRouteId()))
+                    .filter(Objects::nonNull)
                     .filter(r -> accept(r, filter))
                     .filter(r -> accept(r, subPath))
                     .sorted(RouteDumpDevConsole::sort)

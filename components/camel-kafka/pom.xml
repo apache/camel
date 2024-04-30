@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kafka</artifactId>
@@ -160,7 +160,6 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <skipITs>${skipITs}</skipITs>
-                            <reuseForks>true</reuseForks>
                         </configuration>
                         <executions>
                             <execution>
@@ -170,7 +169,6 @@
                                     <systemPropertyVariables>
                                         <kafka.instance.type>local-kafka2-container</kafka.instance.type>
                                     </systemPropertyVariables>
-                                    <reuseForks>true</reuseForks>
                                     <reportNameSuffix>kafka-2</reportNameSuffix>
                                     <excludedGroups>non-abstract,health,idempotent</excludedGroups>
                                 </configuration>
@@ -199,7 +197,6 @@
                         <configuration>
                             <skipITs>${skipITs}</skipITs>
                             <skipTests>${skipTests}</skipTests>
-                            <reuseForks>true</reuseForks>
                         </configuration>
                         <executions>
                             <execution>
@@ -210,8 +207,6 @@
                                 </goals>
                                 <configuration>
                                     <skipITs>${skipITs}</skipITs>
-                                    <forkCount>1</forkCount>
-                                    <reuseForks>true</reuseForks>
                                     <excludedGroups>health,idempotent,breakOnFirstError</excludedGroups>
                                 </configuration>
                             </execution>
@@ -223,7 +218,7 @@
                                 <configuration>
                                     <reuseForks>false</reuseForks>
                                     <groups>health,idempotent,breakOnFirstError</groups>
-                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                    <forkedProcessTimeoutInSeconds>1200</forkedProcessTimeoutInSeconds>
                                 </configuration>
                             </execution>
                         </executions>

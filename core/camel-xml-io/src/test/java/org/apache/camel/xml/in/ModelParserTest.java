@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -72,6 +73,7 @@ public class ModelParserTest {
             = List.of("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = List.of("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = List.of("barTemplatedRoute.xml");
+    private static final List<String> REST_CONFIGURATION_XMLS = List.of("barRestConfiguration.xml");
     private static final List<String> ROUTE_CONFIGURATION_XMLS
             = List.of("errorHandlerConfiguration.xml", "errorHandlerConfigurationRedeliveryPolicyRef.xml");
 
@@ -115,6 +117,7 @@ public class ModelParserTest {
                 boolean isTemplatedRoute = TEMPLATED_ROUTE_XMLS.contains(path.getFileName().toString());
                 boolean isBeans = path.getFileName().toString().startsWith("beans");
                 boolean isConfiguration = ROUTE_CONFIGURATION_XMLS.contains(path.getFileName().toString());
+                boolean isRestConfiguration = REST_CONFIGURATION_XMLS.contains(path.getFileName().toString());
                 if (isRest) {
                     RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
                     assertNotNull(rests);
@@ -126,6 +129,9 @@ public class ModelParserTest {
                     assertNotNull(templatedRoutes);
                 } else if (isConfiguration) {
                     RouteConfigurationsDefinition configurations = parser.parseRouteConfigurationsDefinition().orElse(null);
+                    assertNotNull(configurations);
+                } else if (isRestConfiguration) {
+                    BeansDefinition configurations = parser.parseBeansDefinition().orElse(null);
                     assertNotNull(configurations);
                 } else if (!isBeans) {
                     RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
@@ -162,7 +168,11 @@ public class ModelParserTest {
                                  + "   </route>\n"
                                  + "</routes>";
         final RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition().orElse(null);
-        final RouteDefinition route0 = routes.getRoutes().get(0);
+
+        assertNotNull(routes, "There should be routes");
+        final List<RouteDefinition> routeDefinitions = routes.getRoutes();
+        assertNotNull(routeDefinitions, "There should be a list of route definitions");
+        final RouteDefinition route0 = routeDefinitions.get(0);
         final SetBodyDefinition setBody = (SetBodyDefinition) route0.getOutputs().get(0);
         final XPathExpression xPath = (XPathExpression) setBody.getExpression();
         final Map<String, String> namespaces = xPath.getNamespaces();
@@ -441,7 +451,9 @@ public class ModelParserTest {
     }
 
     private Path getResourceFolder() {
-        String childFileString = getClass().getClassLoader().getResource("barInterceptorRoute.xml").getFile();
+        final URL resource = getClass().getClassLoader().getResource("barInterceptorRoute.xml");
+        assert resource != null : "Cannot find barInterceptorRoute.xml";
+        String childFileString = resource.getFile();
         File parentFile = new File(childFileString).getParentFile();
         return parentFile.toPath();
     }

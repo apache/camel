@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SetRouteVariableTest extends ContextTestSupport {
     private MockEndpoint end;
-    private String variableName = "foo";
-    private String expectedVariableValue = "bar";
-    private String expectedVariableValue2 = "bar2";
+    private final String variableName = "foo";
+    private final String expectedVariableValue = "bar";
+    private final String expectedVariableValue2 = "bar2";
 
     @Test
     public void testSetExchangeVariableMidRoute() throws Exception {

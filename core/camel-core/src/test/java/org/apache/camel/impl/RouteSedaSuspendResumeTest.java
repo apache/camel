@@ -53,9 +53,10 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
             assertEquals("Suspended", ((StatefulService) route).getStatus().name());
         }
 
+        Thread.sleep(1000L);
         // need to give seda consumer thread time to idle
         await().atMost(1, TimeUnit.SECONDS)
-                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0);
+                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty());
 
         template.sendBody("seda:foo", "B");
 
@@ -77,10 +78,10 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").to("log:foo").to("mock:result");
             }
         };

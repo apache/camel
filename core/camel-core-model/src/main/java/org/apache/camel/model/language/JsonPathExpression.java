@@ -16,6 +16,10 @@
  */
 package org.apache.camel.model.language;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -241,9 +245,29 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
             return this;
         }
 
+        /**
+         * To configure additional options on JSONPath.
+         */
+        public Builder option(Option... options) {
+            this.option = Arrays.stream(options).map(Objects::toString).collect(Collectors.joining(","));
+            return this;
+        }
+
         @Override
         public JsonPathExpression end() {
             return new JsonPathExpression(this);
         }
+    }
+
+    /**
+     * {@code Option} defines the possible json path options that can be used.
+     */
+    @XmlTransient
+    public enum Option {
+        DEFAULT_PATH_LEAF_TO_NULL,
+        ALWAYS_RETURN_LIST,
+        AS_PATH_LIST,
+        SUPPRESS_EXCEPTIONS,
+        REQUIRE_PROPERTIES
     }
 }

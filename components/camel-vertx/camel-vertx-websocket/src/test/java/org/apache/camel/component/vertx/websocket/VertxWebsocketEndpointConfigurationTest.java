@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.net.URI;
+
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpServerOptions;
@@ -99,6 +101,35 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
         String originHeaderValue = headers.get(ORIGIN_HTTP_HEADER_NAME);
         assertNotNull(headers);
         assertEquals(originUrl, originHeaderValue);
+    }
+
+    @Test
+    void testPropertiesBinding() {
+        String testQueryParam = "testParam=hello";
+        String endpointParams = "consumeAsClient=true&maxReconnectAttempts=2";
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:foo.bar.com/test?" + endpointParams + "&" + testQueryParam,
+                        VertxWebsocketEndpoint.class);
+        URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
+        assertEquals(testQueryParam, websocketURI.getQuery(), "Query parameters are not correctly set in the in websocketURI.");
+    }
+
+    @Test
+    void testHandshakeHeaders() {
+        String handshakeHeaders
+                = "handshake.Authorization=Bearer token&handshake.ApiSign=-u-4tjFSE=&handshake.Timestamp=2024-04-23T15:22:16.000000Z";
+        String endpointParams = "consumeAsClient=true";
+
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:foo.bar.com/test?" + endpointParams + "&" + handshakeHeaders,
+                        VertxWebsocketEndpoint.class);
+        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("Authorization"),
+                "Handshake headers Authorization is not correctly configured.");
+        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("ApiSign"),
+                "Handshake headers ApiSign is not correctly configured.");
+        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("Timestamp"),
+                "Handshake headers Timestamp is not correctly configured.");
+
     }
 
     @Override

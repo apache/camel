@@ -33,6 +33,7 @@ import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,15 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
     }
 
+    @AfterEach
+    protected void cleanupMeterRegistry() {
+        if (meterRegistry != null) {
+            meterRegistry.clear();
+            meterRegistry.close();
+            meterRegistry = null;
+        }
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -71,7 +81,6 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         factory.setPrettyPrint(true);
         factory.setMeterRegistry(meterRegistry);
         context.setMessageHistoryFactory(factory);
-
         return context;
     }
 

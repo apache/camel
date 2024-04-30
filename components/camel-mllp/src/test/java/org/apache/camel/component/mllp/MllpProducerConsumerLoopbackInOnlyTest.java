@@ -45,7 +45,7 @@ public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         context.setUseMDCLogging(false);
-        context.setName(this.getClass().getSimpleName());
+        context.getCamelContextExtension().setName(this.getClass().getSimpleName());
 
         return context;
     }

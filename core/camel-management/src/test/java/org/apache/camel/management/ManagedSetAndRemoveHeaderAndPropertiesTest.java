@@ -54,7 +54,7 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
 
         for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals(true, registered, "Should be registered");
+            assertTrue(registered, "Should be registered");
 
             // should be one with name setFoo
             String id = (String) mbeanServer.getAttribute(on, "ProcessorId");
@@ -79,10 +79,10 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo")
                         .setHeader("foo", constant("bar")).id("setFoo")
                         .setProperty("beer", constant("yes")).id("setBeer")

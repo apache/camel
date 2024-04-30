@@ -36,10 +36,10 @@ public class MulticastAggregationStrategyThrowExceptionTest extends ContextTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 // must use share UoW if we want the error handler to react on

@@ -34,6 +34,12 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route Group")
     String getRouteGroup();
 
+    @ManagedAttribute(description = "Is this route created from a route template (or Kamelet)")
+    boolean isCreatedByRouteTemplate();
+
+    @ManagedAttribute(description = "Is this route created from a Kamelet")
+    boolean isCreatedByKamelet();
+
     @ManagedAttribute(description = "Route Properties")
     TabularData getRouteProperties();
 

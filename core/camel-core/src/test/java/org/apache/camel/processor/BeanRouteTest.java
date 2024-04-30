@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
 
     @Test
-    public void testSendingMessageWithMethodNameHeader() throws Exception {
+    public void testSendingMessageWithMethodNameHeader() {
         String expectedBody = "Wobble";
 
         template.sendBodyAndHeader("direct:in", expectedBody, Exchange.BEAN_METHOD_NAME, "read");
@@ -45,7 +45,7 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessageWithMethodNameHeaderWithMoreVerboseCoe() throws Exception {
+    public void testSendingMessageWithMethodNameHeaderWithMoreVerboseCoe() {
         final String expectedBody = "Wibble";
 
         template.send("direct:in", new Processor() {
@@ -68,8 +68,8 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }
@@ -84,9 +84,9 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        private static AtomicInteger counter = new AtomicInteger();
+        private static final AtomicInteger counter = new AtomicInteger();
         public String body;
-        private int id;
+        private final int id;
 
         public MyBean() {
             id = counter.incrementAndGet();

@@ -30,7 +30,7 @@ public class SimpleRegistryTest {
     private SimpleRegistry registry;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         registry = new SimpleRegistry();
         registry.bind("a", "b");
         registry.bind("c", 1);

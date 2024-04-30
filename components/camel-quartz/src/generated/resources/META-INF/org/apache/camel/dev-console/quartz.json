@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "quartz",
+    "title": "Quartz",
+    "description": "Quartz Scheduler",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.quartz.QuartzConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-quartz",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

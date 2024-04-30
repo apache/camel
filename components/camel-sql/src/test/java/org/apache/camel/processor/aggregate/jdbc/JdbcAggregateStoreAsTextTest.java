@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -103,7 +104,7 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
         mock.expectedBodiesReceived("ABCDE");
 
         repo.setStoreBodyAsText(true);
-        repo.setHeadersToStoreAsText(null);
+        repo.setHeadersToStoreAsText((List) null);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);

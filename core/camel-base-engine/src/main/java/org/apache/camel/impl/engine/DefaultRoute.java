@@ -107,7 +107,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
     private final List<Service> services = new ArrayList<>();
-    private StopWatch stopWatch = new StopWatch(false);
+    private final StopWatch stopWatch = new StopWatch(false);
     private RouteError routeError;
     private Integer startupOrder;
     private RouteController routeController;
@@ -139,6 +139,21 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public boolean isCustomId() {
         return "true".equals(properties.get(Route.CUSTOM_ID_PROPERTY));
+    }
+
+    @Override
+    public boolean isCreatedByRestDsl() {
+        return "true".equals(properties.get(Route.REST_PROPERTY));
+    }
+
+    @Override
+    public boolean isCreatedByRouteTemplate() {
+        return "true".equals(properties.get(Route.TEMPLATE_PROPERTY));
+    }
+
+    @Override
+    public boolean isCreatedByKamelet() {
+        return "true".equals(properties.get(Route.KAMELET_PROPERTY));
     }
 
     @Override

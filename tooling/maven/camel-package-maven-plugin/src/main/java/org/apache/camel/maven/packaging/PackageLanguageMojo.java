@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.maven.packaging.generics.ClassUtil;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -150,13 +151,16 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         String modelName = asModelName(name);
 
                         String json = PackageHelper.loadText(new File(
-                                core, "src/generated/resources/org/apache/camel/model/language/" + modelName
+                                core, "src/generated/resources/META-INF/org/apache/camel/model/language/" + modelName
                                       + PackageHelper.JSON_SUFIX));
 
                         LanguageModel languageModel = extractLanguageModel(project, json, name, javaType);
                         if (log.isDebugEnabled()) {
                             log.debug("Model: " + languageModel);
                         }
+
+                        SchemaHelper.addModelMetadata(languageModel, project);
+                        SchemaHelper.addModelMetadata(languageModel, javaType.getAnnotation(Metadata.class));
 
                         // build json schema for the data format
                         String schema = JsonMapper.createParameterJsonSchema(languageModel);
@@ -319,7 +323,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     private static String schemaSubDirectory(String javaType) {
         int idx = javaType.lastIndexOf('.');
         String pckName = javaType.substring(0, idx);
-        return pckName.replace('.', '/');
+        return "META-INF/" + pckName.replace('.', '/');
     }
 
 }

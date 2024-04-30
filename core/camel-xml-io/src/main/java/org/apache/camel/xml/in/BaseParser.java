@@ -128,17 +128,7 @@ public class BaseParser {
             T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler,
             boolean supportsExternalNamespaces)
             throws IOException, XmlPullParserException {
-        if (definition instanceof LineNumberAware) {
-            // we want to get the line number where the tag starts (in case its multi-line)
-            int line = parser.getStartLineNumber();
-            if (line == -1) {
-                line = parser.getLineNumber();
-            }
-            ((LineNumberAware) definition).setLineNumber(line);
-            if (resource != null) {
-                ((LineNumberAware) definition).setLocation(resource.getLocation());
-            }
-        }
+        setLocation(definition);
         if (definition instanceof NamespaceAware) {
             final Map<String, String> namespaces = new LinkedHashMap<>();
             for (int i = 0; i < parser.getNamespaceCount(parser.getDepth()); i++) {
@@ -218,17 +208,7 @@ public class BaseParser {
             if (event == XmlPullParser.TEXT) {
                 if (!parser.isWhitespace()) {
                     T definition = definitionSupplier.get();
-                    if (definition instanceof LineNumberAware) {
-                        // we want to get the line number where the tag starts (in case its multi-line)
-                        int line = parser.getStartLineNumber();
-                        if (line == -1) {
-                            line = parser.getLineNumber();
-                        }
-                        ((LineNumberAware) definition).setLineNumber(line);
-                        if (resource != null) {
-                            ((LineNumberAware) definition).setLocation(resource.getLocation());
-                        }
-                    }
+                    setLocation(definition);
                     valueHandler.accept(definition, parser.getText());
                     answer.add(definition);
                 }
@@ -254,6 +234,20 @@ public class BaseParser {
             } else {
                 throw new XmlPullParserException(
                         "expected START_TAG or END_TAG not " + XmlPullParser.TYPES[event], parser, null);
+            }
+        }
+    }
+
+    private <T> void setLocation(T definition) {
+        if (definition instanceof LineNumberAware) {
+            // we want to get the line number where the tag starts (in case its multi-line)
+            int line = parser.getStartLineNumber();
+            if (line == -1) {
+                line = parser.getLineNumber();
+            }
+            ((LineNumberAware) definition).setLineNumber(line);
+            if (resource != null) {
+                ((LineNumberAware) definition).setLocation(resource.getLocation());
             }
         }
     }
@@ -536,6 +530,10 @@ public class BaseParser {
             }
         }
         return false;
+    }
+
+    protected static String sanitizeUri(String uri) {
+        return uri;
     }
 
 }

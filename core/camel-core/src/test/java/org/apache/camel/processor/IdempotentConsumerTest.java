@@ -41,7 +41,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(10))
                         .to("mock:result");
@@ -65,7 +65,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     public void testNotSkiDuplicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start").idempotentConsumer(header("messageId")).idempotentRepository(repo).skipDuplicate(false)
@@ -96,7 +96,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     public void testNotSkiDuplicateWithFilter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 // START SNIPPET: e1
@@ -134,13 +134,13 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
@@ -169,13 +169,13 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     public void testFailedExchangesNotAddedDeadLetterChannelNotHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
@@ -204,14 +204,14 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use default error handler
                 errorHandler(defaultErrorHandler());
 
                 from("direct:start")
                         .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");

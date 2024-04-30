@@ -54,7 +54,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesMap() throws Exception {
+    public void testPropertiesMap() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -79,7 +79,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesMapNested() throws Exception {
+    public void testPropertiesMapNested() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -106,7 +106,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesMapFirst() throws Exception {
+    public void testPropertiesMapFirst() {
         Bar bar = new Bar();
 
         Map<String, Object> prop = new LinkedHashMap<>();
@@ -125,7 +125,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesNotMap() throws Exception {
+    public void testPropertiesNotMap() {
         Foo foo = new Foo();
 
         Map<String, Object> prop = new LinkedHashMap<>();

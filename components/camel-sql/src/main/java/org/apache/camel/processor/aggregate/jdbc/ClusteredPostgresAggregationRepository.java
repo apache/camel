@@ -25,7 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * PostgreSQL specific {@link JdbcAggregationRepository} that deals with SQL Violation Exceptions using special
- * {@code INSERT INTO .. ON CONFLICT DO NOTHING} claues.
+ * {@code INSERT INTO .. ON CONFLICT DO NOTHING} clause.
  */
 public class ClusteredPostgresAggregationRepository extends ClusteredJdbcAggregationRepository {
 

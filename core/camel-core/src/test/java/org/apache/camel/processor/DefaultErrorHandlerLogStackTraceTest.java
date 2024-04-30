@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class DefaultErrorHandlerLogStackTraceTest extends ContextTestSupport {
 
     @Test
-    public void testLogStackTrace() throws Exception {
+    public void testLogStackTrace() {
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should fail");
@@ -36,10 +36,10 @@ public class DefaultErrorHandlerLogStackTraceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().logStackTrace(true).loggingLevel(LoggingLevel.WARN));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));

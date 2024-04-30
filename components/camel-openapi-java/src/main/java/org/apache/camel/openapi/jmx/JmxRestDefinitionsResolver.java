@@ -17,7 +17,6 @@
 package org.apache.camel.openapi.jmx;
 
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -76,23 +75,6 @@ public class JmxRestDefinitionsResolver implements RestDefinitionsResolver {
         }
 
         return null;
-    }
-
-    @Override
-    public List<String> findCamelContexts() throws Exception {
-        List<String> answer = new ArrayList<>();
-
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> names = server.queryNames(new ObjectName("*:type=context,*"), null);
-        for (ObjectName on : names) {
-
-            String id = on.getKeyProperty("name");
-            if (id.startsWith("\"") && id.endsWith("\"")) {
-                id = id.substring(1, id.length() - 1);
-            }
-            answer.add(id);
-        }
-        return answer;
     }
 
 }

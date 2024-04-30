@@ -46,17 +46,17 @@ public class BeanPipelineVariablesTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:input").pipeline("bean:foo", "bean:bar?method=usingExchange", "bean:baz").to("mock:result");
             }
         };
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", new FooBean());
         answer.bind("bar", new BarBean());
         answer.bind("baz", new BazBean());

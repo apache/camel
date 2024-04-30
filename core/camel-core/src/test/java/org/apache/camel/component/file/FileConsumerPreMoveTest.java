@@ -59,11 +59,11 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         context.getRegistry().bind("testDirectory", testDirectory());
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?preMove=work/work-${file:name}&initialDelay=0&delay=10"))
                         .process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
@@ -73,7 +73,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
     public static class MyPreMoveCheckerProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Path testDirectory = (Path) exchange.getContext().getRegistry()
                     .lookupByName("testDirectory");
             Path file = testDirectory.resolve("work/work-hello.txt");

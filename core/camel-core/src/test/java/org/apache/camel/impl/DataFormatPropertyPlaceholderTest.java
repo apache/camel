@@ -39,8 +39,8 @@ public class DataFormatPropertyPlaceholderTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("reverse", new RefDataFormatTest.MyReverseDataFormat());
         return registry;
     }
@@ -64,10 +64,10 @@ public class DataFormatPropertyPlaceholderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").marshal("{{myDataformat}}").to("mock:a");
 
                 from("direct:b").unmarshal("{{myDataformat}}").to("mock:b");

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xml-io-dsl</artifactId>
@@ -36,6 +36,9 @@
         <firstVersion>3.9.0</firstVersion>
         <title>XML DSL</title>
         <label>dsl</label>
+        <annotations>
+            routes.language=xml
+        </annotations>
         <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 

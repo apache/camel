@@ -38,9 +38,6 @@ public class YamlModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
 
     public static final String WRITER_PACKAGE = "org.apache.camel.yaml.out";
 
-    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
-    protected File sourcesOutputDir;
-
     @Parameter(defaultValue = "${camel-generate-yaml-writer}")
     protected boolean generateYamlWriter;
 

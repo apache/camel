@@ -29,7 +29,7 @@ public class ThrottlerInvalidConfiguredTest extends ContextTestSupport {
     public void testInvalid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // null is invalid
                 from("seda:a").throttle(null).to("mock:result");
             }

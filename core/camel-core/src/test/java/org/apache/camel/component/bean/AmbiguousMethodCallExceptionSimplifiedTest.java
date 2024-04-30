@@ -46,7 +46,7 @@ public class AmbiguousMethodCallExceptionSimplifiedTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").choice().when(simple("${headers.bean.size} != 0")).to("mock:out");
             }
         };

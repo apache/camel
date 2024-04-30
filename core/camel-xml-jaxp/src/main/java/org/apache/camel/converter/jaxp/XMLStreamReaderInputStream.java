@@ -69,7 +69,7 @@ class XMLStreamReaderInputStream extends InputStream {
             if (n < 0) {
                 break;
             }
-            int clen = len > n ? n : len;
+            int clen = Math.min(len, n);
             System.arraycopy(buffer, 0, b, off, clen);
             System.arraycopy(buffer, clen, buffer, 0, buffer.length - clen);
             bpos -= clen;
@@ -141,7 +141,7 @@ class XMLStreamReaderInputStream extends InputStream {
                     }
                 }
             }
-            final int csize = chunk.size() < buffer.length - bpos ? chunk.size() : buffer.length - bpos;
+            final int csize = Math.min(chunk.size(), buffer.length - bpos);
             if (csize > 0) {
                 System.arraycopy(chunk.getByteArray(), 0, buffer, bpos, csize);
                 bpos += csize;

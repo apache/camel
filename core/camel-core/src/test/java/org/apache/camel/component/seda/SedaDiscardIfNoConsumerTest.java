@@ -53,7 +53,7 @@ public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
 
         template.send("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.getExchangeExtension().addOnCompletion(myCompletion);
             }
@@ -67,10 +67,10 @@ public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:bar?discardIfNoConsumers=true").to("mock:result");
             }
         };

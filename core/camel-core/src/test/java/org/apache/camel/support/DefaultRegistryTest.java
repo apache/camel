@@ -39,13 +39,13 @@ public class DefaultRegistryTest {
     private final AtomicInteger counter = new AtomicInteger();
 
     @BeforeEach
-    protected void setUp() throws Exception {
+    protected void setUp() {
         br.bind("myCompany", myCompany);
         registry.bind("myFooBar", myFooBar);
     }
 
     @Test
-    public void testBindAsSupplierLookupByName() throws Exception {
+    public void testBindAsSupplierLookupByName() {
         counter.set(0);
 
         registry.bind("myBar", FooBar.class, () -> {
@@ -62,7 +62,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindAsPrototypeSupplierLookupByName() throws Exception {
+    public void testBindAsPrototypeSupplierLookupByName() {
         counter.set(0);
 
         registry.bindAsPrototype("myBar", FooBar.class, () -> {
@@ -79,7 +79,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindAsPrototypeSupplierLookupByNameAndType() throws Exception {
+    public void testBindAsPrototypeSupplierLookupByNameAndType() {
         counter.set(0);
 
         registry.bindAsPrototype("myBar", FooBar.class, () -> {
@@ -96,7 +96,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindAsSupplierLookupByNameAndType() throws Exception {
+    public void testBindAsSupplierLookupByNameAndType() {
         counter.set(0);
 
         registry.bind("myBar", FooBar.class, () -> {
@@ -113,7 +113,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindAsSupplierFindByType() throws Exception {
+    public void testBindAsSupplierFindByType() {
         counter.set(0);
 
         registry.bind("myBar", FooBar.class, () -> {
@@ -138,7 +138,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindAsPrototypeSupplierFindByType() throws Exception {
+    public void testBindAsPrototypeSupplierFindByType() {
         counter.set(0);
 
         registry.bindAsPrototype("myBar", FooBar.class, () -> {
@@ -163,7 +163,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindAsPrototypeSupplierFindByTypeWithName() throws Exception {
+    public void testBindAsPrototypeSupplierFindByTypeWithName() {
         counter.set(0);
 
         registry.bindAsPrototype("myBar", FooBar.class, () -> {
@@ -188,7 +188,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindAsSupplierFindByTypeWithName() throws Exception {
+    public void testBindAsSupplierFindByTypeWithName() {
         counter.set(0);
 
         registry.bind("myBar", FooBar.class, () -> {
@@ -213,14 +213,14 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testLookupByName() throws Exception {
+    public void testLookupByName() {
         assertNull(registry.lookupByName("foo"));
         assertSame(myCompany, registry.lookupByName("myCompany"));
         assertSame(myFooBar, registry.lookupByName("myFooBar"));
     }
 
     @Test
-    public void testLookupByNameAndType() throws Exception {
+    public void testLookupByNameAndType() {
         assertNull(registry.lookupByNameAndType("foo", Object.class));
         assertSame(myCompany, registry.lookupByNameAndType("myCompany", Company.class));
         assertSame(myFooBar, registry.lookupByNameAndType("myFooBar", FooBar.class));
@@ -232,7 +232,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testFindByType() throws Exception {
+    public void testFindByType() {
         assertEquals(0, registry.findByType(DefaultRegistry.class).size());
 
         assertEquals(1, registry.findByType(Company.class).size());
@@ -247,7 +247,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testFindByTypeWithName() throws Exception {
+    public void testFindByTypeWithName() {
         assertEquals(0, registry.findByTypeWithName(DefaultRegistry.class).size());
 
         assertEquals(1, registry.findByTypeWithName(Company.class).size());
@@ -262,7 +262,7 @@ public class DefaultRegistryTest {
     }
 
     @Test
-    public void testBindCamelContextAwareInject() throws Exception {
+    public void testBindCamelContextAwareInject() {
         CamelContext context = new DefaultCamelContext();
         registry.setCamelContext(context);
 
@@ -276,11 +276,24 @@ public class DefaultRegistryTest {
         assertSame(context, lookup.getCamelContext());
     }
 
+    @Test
+    public void testFindSingleByTypeWithMultipleRepositories() {
+        SimpleRegistry sr = new SimpleRegistry();
+        Animal myAnimal = new Animal();
+        sr.bind("myAnimal", myAnimal);
+        registry.addBeanRepository(sr);
+
+        // Retrieve from the first bean repository
+        assertNotNull(registry.findSingleByType(Animal.class));
+        // Retrieve from the second bean repository
+        assertNotNull(registry.findSingleByType(Company.class));
+    }
+
     private static class MyBean implements CamelContextAware {
 
         private CamelContext camelContext;
 
-        private String name;
+        private final String name;
 
         public MyBean(String name) {
             this.name = name;

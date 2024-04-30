@@ -56,7 +56,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSedaUOWWithException() throws Exception {
+    public void testSedaUOWWithException() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         template.sendBodyAndHeader("direct:start", "Hello World", "kaboom", "yes");
@@ -69,24 +69,24 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 from("direct:start").process(new MyUOWProcessor(SedaUnitOfWorkTest.this, "A")).to("seda:foo");
 
                 from("seda:foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertNull(sync);
                     }
                 }).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         lastOne = "processor";
                     }
                 }).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         if ("yes".equals(exchange.getIn().getHeader("kaboom"))) {
                             throw new IllegalStateException("kaboom done!");
                         }
@@ -99,8 +99,8 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
     private static final class MyUOWProcessor implements Processor {
 
-        private SedaUnitOfWorkTest test;
-        private String id;
+        private final SedaUnitOfWorkTest test;
+        private final String id;
 
         private MyUOWProcessor(SedaUnitOfWorkTest test, String id) {
             this.test = test;
@@ -108,7 +108,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getUnitOfWork().addSynchronization(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     test.sync = "onComplete" + id;

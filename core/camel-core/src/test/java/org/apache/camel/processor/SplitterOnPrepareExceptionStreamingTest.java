@@ -24,10 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class SplitterOnPrepareExceptionStreamingTest extends SplitterOnPrepareExceptionTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split(body().tokenize(",")).onPrepare(new FixNamePrepare()).stopOnException().streaming()
                         .to("mock:a");
             }

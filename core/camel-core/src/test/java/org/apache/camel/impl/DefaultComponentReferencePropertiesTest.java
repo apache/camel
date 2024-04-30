@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -63,17 +62,13 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return null;
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return null;
-        }
-
-        public void setExpression(List<?> expressions) {
-            // do nothing
         }
 
         public void setExpression(Expression expression) {
@@ -109,8 +104,8 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("myExpression", ExpressionBuilder.bodyExpression());
         return registry;
     }
@@ -119,7 +114,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     public void testEmptyPath() throws Exception {
         DefaultComponent component = new DefaultComponent(context) {
             @Override
-            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
                 assertEquals("foo://?name=Christian", uri);
                 assertEquals("", remaining);
                 assertEquals(1, parameters.size());

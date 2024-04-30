@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", new MyBean());
         jndi.bind("myOtherBean", new MyOtherBean());
         return jndi;
@@ -68,10 +68,10 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("bean:myBean?method=doSomething()").to("mock:result");
 
                 from("direct:other").to("bean:myOtherBean?method=doSomething()").to("mock:result");

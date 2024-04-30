@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EnricherTest extends ContextTestSupport {
 
-    private static SampleAggregator aggregationStrategy = new SampleAggregator();
+    private static final SampleAggregator aggregationStrategy = new SampleAggregator();
 
     protected MockEndpoint mock;
 
@@ -71,13 +71,13 @@ public class EnricherTest extends ContextTestSupport {
     // -------------------------------------------------------------
 
     @Test
-    public void testEnrichInOut() throws InterruptedException {
+    public void testEnrichInOut() {
         String result = (String) template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
     @Test
-    public void testEnrichInOutPlusHeader() throws InterruptedException {
+    public void testEnrichInOutPlusHeader() {
         Exchange exchange = template.send("direct:enricher-test-5", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader("foo", "bar");
@@ -91,7 +91,7 @@ public class EnricherTest extends ContextTestSupport {
     }
 
     @Test
-    public void testEnrichErrorInOut() throws InterruptedException {
+    public void testEnrichErrorInOut() {
         Exchange exchange = template.send("direct:enricher-test-8", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("test");

@@ -19,8 +19,8 @@ package org.apache.camel.component.shiro.security;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.shiro.crypto.CipherService;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.crypto.cipher.CipherService;
+import org.apache.shiro.lang.util.ByteSource;
 
 public final class ShiroSecurityHelper {
 

@@ -4,12 +4,13 @@
     "name": "jsh-dsl",
     "title": "JavaShell DSL",
     "description": "Camel DSL with JavaShell",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.15.0",
     "label": "dsl",
     "supportLevel": "Experimental",
+    "metadata": { "routes.language": "jsh" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsh-dsl",
-    "version": "4.5.0-SNAPSHOT"
+    "version": "4.6.0-SNAPSHOT"
   }
 }

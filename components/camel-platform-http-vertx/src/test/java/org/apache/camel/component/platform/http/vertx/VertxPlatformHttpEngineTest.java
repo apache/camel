@@ -375,6 +375,7 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testFileUpload() throws Exception {
+        final String attachmentId = "myTestFile";
         final String fileContent = "Test multipart upload content";
         final File tempFile = File.createTempFile("platform-http", ".txt");
         final CamelContext context = createCamelContext(configuration -> {
@@ -395,7 +396,7 @@ public class VertxPlatformHttpEngineTest {
                     from("platform-http:/upload")
                             .process(exchange -> {
                                 AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
-                                DataHandler attachment = message.getAttachment(tempFile.getName());
+                                DataHandler attachment = message.getAttachment(attachmentId);
                                 message.setBody(attachment.getContent());
                             });
                 }
@@ -404,7 +405,7 @@ public class VertxPlatformHttpEngineTest {
             context.start();
 
             given()
-                    .multiPart(tempFile)
+                    .multiPart(attachmentId, tempFile)
                     .when()
                     .post("/upload")
                     .then()

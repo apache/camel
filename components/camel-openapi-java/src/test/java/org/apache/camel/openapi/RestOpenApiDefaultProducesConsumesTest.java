@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RestOpenApiDefaultProducesConsumesTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String[] OPENAPI_VERSIONS = { "3.1", "3.0", "2.0" };
+    private static final String[] OPENAPI_VERSIONS = { "3.1", "3.0" };
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @ParameterizedTest
@@ -70,6 +70,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
                 = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        processor.setCamelContext(context);
+        processor.start();
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 
@@ -104,6 +106,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
                 = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        processor.setCamelContext(context);
+        processor.start();
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 
@@ -141,6 +145,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
                 = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        processor.setCamelContext(context);
+        processor.start();
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 
@@ -189,6 +195,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
                 = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        processor.setCamelContext(context);
+        processor.start();
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 
@@ -237,6 +245,8 @@ public class RestOpenApiDefaultProducesConsumesTest {
         RestConfiguration restConfiguration = context.getRestConfiguration();
         RestOpenApiProcessor processor
                 = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        processor.setCamelContext(context);
+        processor.start();
         Exchange exchange = new DefaultExchange(context);
         processor.process(exchange);
 

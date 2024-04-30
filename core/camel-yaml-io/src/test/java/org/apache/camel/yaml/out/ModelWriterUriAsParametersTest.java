@@ -95,6 +95,16 @@ public class ModelWriterUriAsParametersTest {
         ModelWriter writer = new ModelWriter(sw);
         writer.setUriAsParameters(true);
 
+        final RouteDefinition route = createRouteDefinition();
+
+        writer.writeRouteDefinition(route);
+
+        String out = sw.toString();
+        String expected = stripLineComments(Paths.get("src/test/resources/route2.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    private static RouteDefinition createRouteDefinition() {
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute2");
         route.setInput(new FromDefinition("direct:start2"));
@@ -108,12 +118,7 @@ public class ModelWriterUriAsParametersTest {
         sp.addOutput(to);
         to = new ToDefinition("mock:result2");
         route.addOutput(to);
-
-        writer.writeRouteDefinition(route);
-
-        String out = sw.toString();
-        String expected = stripLineComments(Paths.get("src/test/resources/route2.yaml"), "#", true);
-        Assertions.assertEquals(expected, out);
+        return route;
     }
 
     @Test
@@ -125,15 +130,7 @@ public class ModelWriterUriAsParametersTest {
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute3");
         route.setInput(new FromDefinition("direct:start2"));
-        AggregateDefinition ag = new AggregateDefinition();
-        SimpleExpression e = new SimpleExpression("${body}");
-        e.setResultTypeName("int.class");
-        ag.setExpression(e);
-        ag.setCorrelationExpression(new ExpressionSubElementDefinition(new HeaderExpression("myHeader")));
-        ConstantExpression cons = new ConstantExpression("5");
-        cons.setResultTypeName("int.class");
-        ag.setCompletionSizeExpression(new ExpressionSubElementDefinition(cons));
-        ag.setCompletionTimeoutExpression(new ExpressionSubElementDefinition(new ConstantExpression("4000")));
+        final AggregateDefinition ag = createAggregateDefinition();
         route.addOutput(ag);
         ToDefinition to = new ToDefinition("kafka:line");
         ag.addOutput(to);
@@ -145,6 +142,19 @@ public class ModelWriterUriAsParametersTest {
         String out = sw.toString();
         String expected = stripLineComments(Paths.get("src/test/resources/route3.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
+    }
+
+    private static AggregateDefinition createAggregateDefinition() {
+        AggregateDefinition ag = new AggregateDefinition();
+        SimpleExpression e = new SimpleExpression("${body}");
+        e.setResultTypeName("int.class");
+        ag.setExpression(e);
+        ag.setCorrelationExpression(new ExpressionSubElementDefinition(new HeaderExpression("myHeader")));
+        ConstantExpression cons = new ConstantExpression("5");
+        cons.setResultTypeName("int.class");
+        ag.setCompletionSizeExpression(new ExpressionSubElementDefinition(cons));
+        ag.setCompletionTimeoutExpression(new ExpressionSubElementDefinition(new ConstantExpression("4000")));
+        return ag;
     }
 
     @Test
@@ -228,7 +238,7 @@ public class ModelWriterUriAsParametersTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start7").routeId("myRoute7")
                     .doTry()
                         .to("mock:try1")

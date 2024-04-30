@@ -38,12 +38,12 @@ public class CollectionConverterTest {
     private static final List<String> SMURFS = Arrays.asList("Papa smurf", "Smurfette", "Hefty smurf", "Jokey smurf");
 
     @Test
-    public void testIteratorToList() throws Exception {
+    public void testIteratorToList() {
         assertSmurfs(CollectionConverter.toArrayList(SMURFS.iterator()));
     }
 
     @Test
-    public void testIterableToList() throws Exception {
+    public void testIterableToList() {
         assertSmurfs(CollectionConverter.toList(new Iterable<String>() {
             public Iterator<String> iterator() {
                 return SMURFS.iterator();

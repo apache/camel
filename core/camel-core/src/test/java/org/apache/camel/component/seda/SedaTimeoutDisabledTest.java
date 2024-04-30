@@ -35,10 +35,10 @@ public class SedaTimeoutDisabledTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").to("mock:before").delay(500).transform(body().prepend("Bye ")).to("mock:result");
             }
         };

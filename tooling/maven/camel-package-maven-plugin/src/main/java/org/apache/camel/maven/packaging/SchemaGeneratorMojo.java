@@ -259,6 +259,11 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         findClassProperties(eipOptions, classElement, classElement, "", name);
 
         eipOptions.forEach(eipModel::addOption);
+        eipOptions.forEach(o -> {
+            // compute group based on label for each option
+            String group = EndpointHelper.labelAsGroupName(o.getLabel(), false, false);
+            o.setGroup(group);
+        });
 
         // after we have found all the options then figure out if the model
         // accepts input/output
@@ -283,7 +288,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         String json = JsonMapper.createParameterJsonSchema(eipModel);
         updateResource(
                 resourcesOutputDir.toPath(),
-                packageName.replace('.', '/') + "/" + fileName,
+                "META-INF/" + packageName.replace('.', '/') + "/" + fileName,
                 json);
     }
 
@@ -857,6 +862,14 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 null, false, null, null, false, false);
         eipOptions.add(ep);
 
+        // error handler
+        docComment = findJavaDoc(null, "errorHandler", null, classElement, true);
+        ep = createOption("errorHandler", "Error Handler", "element", "org.apache.camel.model.ErrorHandlerDefinition", false,
+                "",
+                "error", docComment, false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
+
         // input type
         docComment = findJavaDoc(null, "inputType", null, classElement, true);
         ep = createOption("inputType", "Input Type", "element", "org.apache.camel.model.InputTypeDefinition", false, "",
@@ -918,7 +931,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // description
         docComment = findJavaDoc(null, "description", null, classElement, true);
-        ep = createOption("description", "Description", "element", "java.lang.String", false, "",
+        ep = createOption("description", "Description", "attribute", "java.lang.String", false, "",
                 "",
                 docComment, false, null, false, null, null,
                 false, false);

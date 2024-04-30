@@ -27,6 +27,7 @@ import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -42,6 +43,7 @@ public class ErrorHandlerDefinition extends IdentifiedType {
             @XmlElement(name = "deadLetterChannel", type = DeadLetterChannelDefinition.class),
             @XmlElement(name = "defaultErrorHandler", type = DefaultErrorHandlerDefinition.class),
             @XmlElement(name = "noErrorHandler", type = NoErrorHandlerDefinition.class),
+            @XmlElement(name = "refErrorHandler", type = RefErrorHandlerDefinition.class),
             @XmlElement(name = "jtaTransactionErrorHandler", type = JtaTransactionErrorHandlerDefinition.class),
             @XmlElement(name = "springTransactionErrorHandler", type = SpringTransactionErrorHandlerDefinition.class) })
     private ErrorHandlerFactory errorHandlerType;

@@ -54,17 +54,17 @@ public class DefaultConsumerBridgeErrorHandlerRedeliveryTest extends DefaultCons
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // register our custom component
                 getContext().addComponent("my", new MyComponent());
 
                 // configure exception clause
                 onException(Exception.class).maximumRedeliveries(3).onRedelivery(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         redeliverCounter.incrementAndGet();
                     }
                 })

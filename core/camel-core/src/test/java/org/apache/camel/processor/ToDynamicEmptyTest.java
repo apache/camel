@@ -34,16 +34,16 @@ public class ToDynamicEmptyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToDynamicEmpty() throws Exception {
+    public void testToDynamicEmpty() {
         template.sendBody("direct:start", "Hello Camel");
         // its empty so not sending anywhere
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").toD("${header.foo}");
             }
         };

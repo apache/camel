@@ -42,7 +42,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).to("mock:c").log("onException")
                         .throwException(new NullPointerException("A NPE error here")).end();
 
@@ -72,7 +72,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).handled(true).to("mock:c").log("onException")
                         .throwException(new NullPointerException("A NPE error here")).end();
 
@@ -103,7 +103,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).to("mock:c").log("onException").to("direct:error").end();
 
                 from("direct:test").to("mock:a").log("test").throwException(new IllegalStateException("Bad state"))
@@ -138,7 +138,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).handled(true).to("mock:c").log("onException").to("direct:error").end();
 
                 from("direct:test").to("mock:a").log("test").throwException(new IllegalStateException("Bad state"))
@@ -173,7 +173,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).to("mock:c").log("onException").to("direct:error").end();
 
                 from("direct:test").to("mock:a").log("test").throwException(new IllegalStateException("Bad state"))
@@ -203,7 +203,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Throwable.class).handled(true).to("mock:c").log("onException").to("direct:error").end();
 
                 from("direct:test").to("mock:a").log("test").throwException(new IllegalStateException("Bad state"))

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-xml</artifactId>
@@ -661,7 +661,6 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <skipTests>${skipTests}</skipTests>
-                            <reuseForks>true</reuseForks>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>

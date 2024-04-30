@@ -16,10 +16,12 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -27,29 +29,29 @@ import org.junit.jupiter.api.Test;
  */
 public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends ContextTestSupport {
 
-    @Test
-    public void testRecipientListUseOriginalMessageIssue() throws Exception {
-        getMockEndpoint("mock:throwException").whenAnyExchangeReceived(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                throw new Exception("Exception raised");
-            }
+    @BeforeEach
+    void setupMocks() {
+        getMockEndpoint("mock:throwException").whenAnyExchangeReceived(exchange -> {
+            throw new Exception("Exception raised");
         });
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:error").expectedFileExists(
                 testFile("outbox/hello.txt"), "A");
+    }
 
+    @Test
+    public void testRecipientListUseOriginalMessageIssue() throws Exception {
         template.sendBodyAndHeader(fileUri("inbox"), "A",
                 Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(100, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).handled(true).useOriginalMessage().to(fileUri("outbox"))
                         .to("mock:error");
 

@@ -33,16 +33,12 @@ public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
     public ZookeeperContainer(Network network, String name, String containerName) {
         super(containerName);
 
-        withEnv("LOG_DIR", "/tmp/logs");
-        withExposedPorts(ZOOKEEPER_PORT);
-        withNetwork(network);
-
-        withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd));
-
-        withCommand("sh", "-c",
-                "bin/zookeeper-server-start.sh config/zookeeper.properties");
-
-        waitingFor(Wait.forListeningPort());
+        withEnv("LOG_DIR", "/tmp/logs")
+                .withExposedPorts(ZOOKEEPER_PORT)
+                .withNetwork(network)
+                .withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd))
+                .withCommand("sh", "-c", "bin/zookeeper-server-start.sh config/zookeeper.properties")
+                .waitingFor(Wait.forListeningPort());
     }
 
     private void setupContainer(String name, CreateContainerCmd createContainerCmd) {

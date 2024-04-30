@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ChoiceDefinitionTest extends TestSupport {
 
     @Test
-    public void testChoiceOutputOrder() throws Exception {
+    public void testChoiceOutputOrder() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -45,7 +45,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOutputOrderIterate() throws Exception {
+    public void testChoiceOutputOrderIterate() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -70,7 +70,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOutputOrderNoOtherwise() throws Exception {
+    public void testChoiceOutputOrderNoOtherwise() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -84,7 +84,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOutputOrderNoOtherwiseIterate() throws Exception {
+    public void testChoiceOutputOrderNoOtherwiseIterate() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -109,7 +109,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOtherwiseAlwaysLast() throws Exception {
+    public void testChoiceOtherwiseAlwaysLast() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -128,7 +128,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOtherwiseAlwaysLastIterate() throws Exception {
+    public void testChoiceOtherwiseAlwaysLastIterate() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -160,7 +160,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOutputRemoveFirst() throws Exception {
+    public void testChoiceOutputRemoveFirst() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -178,7 +178,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOutputRemoveLast() throws Exception {
+    public void testChoiceOutputRemoveLast() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -196,7 +196,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOutputSetFirst() throws Exception {
+    public void testChoiceOutputSetFirst() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));
@@ -216,7 +216,7 @@ public class ChoiceDefinitionTest extends TestSupport {
     }
 
     @Test
-    public void testChoiceOutputClear() throws Exception {
+    public void testChoiceOutputClear() {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
         WhenDefinition when2 = new WhenDefinition(body().contains("Donkey"));

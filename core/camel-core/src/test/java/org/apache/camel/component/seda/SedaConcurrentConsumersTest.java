@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 public class SedaConcurrentConsumersTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("count", "5");
         return jndi;
     }
@@ -42,10 +42,10 @@ public class SedaConcurrentConsumersTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo?concurrentConsumers=#count").to("mock:result");
             }
         };

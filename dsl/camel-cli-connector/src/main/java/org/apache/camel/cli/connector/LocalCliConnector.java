@@ -178,9 +178,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
-            LOG.info("Management from Camel JBang enabled");
+            LOG.info("Camel JBang CLI enabled");
         } else {
-            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang.", getPid());
+            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel JBang CLI.", getPid());
         }
     }
 
@@ -899,11 +899,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("fault-tolerance", json);
                     }
                 }
-                DevConsole dc12a = dcr.resolveById("route-circuit-breaker");
+                DevConsole dc12a = dcr.resolveById("circuit-breaker");
                 if (dc12a != null) {
                     JsonObject json = (JsonObject) dc12a.call(DevConsole.MediaType.JSON);
                     if (json != null && !json.isEmpty()) {
-                        root.put("route-circuit-breaker", json);
+                        root.put("circuit-breaker", json);
                     }
                 }
                 DevConsole dc12 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)

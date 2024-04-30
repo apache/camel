@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GenericFileMessageTest extends ContextTestSupport {
 
-    private CamelContext camelContext = new DefaultCamelContext();
+    private final CamelContext camelContext = new DefaultCamelContext();
 
     @Test
-    public void testGenericMessageToStringConversion() throws Exception {
+    public void testGenericMessageToStringConversion() {
         GenericFileMessage<File> message = new GenericFileMessage<>(camelContext);
         assertStringContains(message.toString(), "org.apache.camel.component.file.GenericFileMessage@");
 
@@ -45,7 +45,7 @@ public class GenericFileMessageTest extends ContextTestSupport {
     }
 
     @Test
-    public void testGenericFileContentType() throws Exception {
+    public void testGenericFileContentType() {
         GenericFile<File> file = new GenericFile<>(true);
         file.setEndpointPath("target");
         file.setFileName("target");

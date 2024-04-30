@@ -50,12 +50,14 @@ import org.slf4j.LoggerFactory;
  * {@link HazelcastInstance} it will DESTROY this instance on {@link #doStop()}. You should control
  * {@link HazelcastInstance} lifecycle yourself whenever you instantiate
  * {@link ReplicatedHazelcastAggregationRepository} passing a reference to the instance.
- *
  */
 public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregationRepository {
     private static final Logger LOG = LoggerFactory.getLogger(ReplicatedHazelcastAggregationRepository.class.getName());
     protected Map<String, DefaultExchangeHolder> replicatedCache;
     protected Map<String, DefaultExchangeHolder> replicatedPersistedCache;
+
+    public ReplicatedHazelcastAggregationRepository() {
+    }
 
     /**
      * Creates new {@link ReplicatedHazelcastAggregationRepository} that defaults to non-optimistic locking with
@@ -190,7 +192,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-        Lock l = hzInstance.getCPSubsystem().getLock(mapName);
+        Lock l = hazelcastInstance.getCPSubsystem().getLock(mapName);
         try {
             l.lock();
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
@@ -279,7 +281,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
                 TransactionOptions tOpts = new TransactionOptions();
 
                 tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
-                TransactionContext tCtx = hzInstance.newTransactionContext(tOpts);
+                TransactionContext tCtx = hazelcastInstance.newTransactionContext(tOpts);
 
                 try {
                     tCtx.beginTransaction();
@@ -334,16 +336,17 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
             throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
         }
         StringHelper.notEmpty(mapName, "repositoryName");
-        if (useLocalHzInstance) {
+        if (hazelcastInstance == null) {
+            useLocalHzInstance = true;
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
-            hzInstance = Hazelcast.newHazelcastInstance(cfg);
+            hazelcastInstance = Hazelcast.newHazelcastInstance(cfg);
         } else {
-            ObjectHelper.notNull(hzInstance, "hzInstanse");
+            ObjectHelper.notNull(hazelcastInstance, "hazelcastInstance");
         }
-        replicatedCache = hzInstance.getReplicatedMap(mapName);
+        replicatedCache = hazelcastInstance.getReplicatedMap(mapName);
         if (useRecovery) {
-            replicatedPersistedCache = hzInstance.getReplicatedMap(persistenceMapName);
+            replicatedPersistedCache = hazelcastInstance.getReplicatedMap(persistenceMapName);
         }
     }
 

@@ -226,9 +226,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             return;
         }
 
-        if (delay < 0) {
-            return;
-        } else {
+        if (delay >= 0) {
             try {
                 // keep track on delayer counter while we sleep
                 delayedCount.incrementAndGet();

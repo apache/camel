@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
     @Test
-    public void testForceCompletionTrue() throws Exception {
+    public void testForceCompletionTrue() {
         MyCompletionProcessor myCompletionProcessor
                 = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
@@ -46,7 +46,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
     }
 
     @Test
-    public void testForceCompletionFalse() throws Exception {
+    public void testForceCompletionFalse() {
         MyCompletionProcessor myCompletionProcessor
                 = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
@@ -104,17 +104,17 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myCompletionProcessor", new MyCompletionProcessor());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:forceCompletionTrue").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy())
                         .forceCompletionOnStop().completionSize(10).delay(100)
                         .process("myCompletionProcessor");

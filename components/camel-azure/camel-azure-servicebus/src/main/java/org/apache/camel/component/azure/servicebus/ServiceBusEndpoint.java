@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -36,6 +37,7 @@ public class ServiceBusEndpoint extends DefaultEndpoint {
 
     @UriParam
     private ServiceBusConfiguration configuration;
+    private ServiceBusClientFactory serviceBusClientFactory = new ServiceBusClientFactory();
 
     public ServiceBusEndpoint(final String uri, final Component component, final ServiceBusConfiguration configuration) {
         super(uri, component);
@@ -64,5 +66,16 @@ public class ServiceBusEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(ServiceBusConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+     * Set to use a custom client factory
+     */
+    public ServiceBusClientFactory getServiceBusClientFactory() {
+        return serviceBusClientFactory;
+    }
+
+    public void setServiceBusClientFactory(ServiceBusClientFactory serviceBusClientFactory) {
+        this.serviceBusClientFactory = serviceBusClientFactory;
     }
 }

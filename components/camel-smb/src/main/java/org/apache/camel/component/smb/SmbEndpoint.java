@@ -39,7 +39,8 @@ public class SmbEndpoint extends ScheduledPollEndpoint {
     private String hostname;
     @UriPath(defaultValue = "445")
     private int port;
-    @UriPath(secret = true)
+    @UriPath
+    @Metadata(required = true)
     private String shareName;
 
     @UriParam

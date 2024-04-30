@@ -18,10 +18,13 @@ package org.apache.camel.http.common;
 
 import java.util.Set;
 
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.http.HttpUtil;
 
-public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+/**
+ * @deprecated use {@link org.apache.camel.http.base.HttpHeaderFilterStrategy}
+ */
+@Deprecated
+public class HttpHeaderFilterStrategy extends org.apache.camel.http.base.HttpHeaderFilterStrategy {
 
     public HttpHeaderFilterStrategy() {
         initialize();

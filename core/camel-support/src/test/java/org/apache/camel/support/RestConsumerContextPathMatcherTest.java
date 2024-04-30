@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestConsumerContextPathMatcherTest {
@@ -125,4 +126,66 @@ public class RestConsumerContextPathMatcherTest {
         assertEquals(path2.getConsumerPath(), "/camel/foo/{id}");
         assertEquals(path3.getConsumerPath(), "/camel/*");
     }
+
+    @Test
+    public void testRestConsumerContextPathMatcherPetStore() {
+        final List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = createConsumerPaths();
+
+        RestConsumerContextPathMatcher.register("/api/v3/*");
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path1 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/pet", consumerPaths);
+        assertNull(path1);
+        RestConsumerContextPathMatcher.ConsumerPath<?> path2 = RestConsumerContextPathMatcher.matchBestPath("POST",
+                "/pet", consumerPaths);
+        assertEquals(path2.getConsumerPath(), "/pet");
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path3 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/pet/findByStatus", consumerPaths);
+        assertEquals(path3.getConsumerPath(), "/pet/findByStatus");
+        RestConsumerContextPathMatcher.ConsumerPath<?> path4 = RestConsumerContextPathMatcher.matchBestPath("DELETE",
+                "/pet/findByStatus", consumerPaths);
+        assertNull(path4);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path5 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/pet/findByTags", consumerPaths);
+        assertEquals(path5.getConsumerPath(), "/pet/findByTags");
+        RestConsumerContextPathMatcher.ConsumerPath<?> path6 = RestConsumerContextPathMatcher.matchBestPath("POST",
+                "/pet/findByStatus", consumerPaths);
+        assertNull(path6);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path7 = RestConsumerContextPathMatcher.matchBestPath("GET",
+                "/pet/123", consumerPaths);
+        assertEquals(path7.getConsumerPath(), "/pet/{petId}");
+        RestConsumerContextPathMatcher.ConsumerPath<?> path8 = RestConsumerContextPathMatcher.matchBestPath("POST",
+                "/pet/222", consumerPaths);
+        assertEquals(path8.getConsumerPath(), "/pet/{petId}");
+        RestConsumerContextPathMatcher.ConsumerPath<?> path9 = RestConsumerContextPathMatcher.matchBestPath("DELETE",
+                "/pet/333", consumerPaths);
+        assertEquals(path9.getConsumerPath(), "/pet/{petId}");
+        RestConsumerContextPathMatcher.ConsumerPath<?> path10 = RestConsumerContextPathMatcher.matchBestPath("PUT",
+                "/pet/444", consumerPaths);
+        assertNull(path10);
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path11 = RestConsumerContextPathMatcher.matchBestPath("POST",
+                "/pet/123/uploadImage", consumerPaths);
+        assertEquals(path11.getConsumerPath(), "/pet/{petId}/uploadImage");
+        RestConsumerContextPathMatcher.ConsumerPath<?> path12 = RestConsumerContextPathMatcher.matchBestPath("DELETE",
+                "/pet/222/uploadImage", consumerPaths);
+        assertNull(path12);
+    }
+
+    private static List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> createConsumerPaths() {
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
+        consumerPaths.add(new MockConsumerPath("POST", "/pet"));
+        consumerPaths.add(new MockConsumerPath("PUT", "/pet"));
+        consumerPaths.add(new MockConsumerPath("GET", "/pet/findByStatus"));
+        consumerPaths.add(new MockConsumerPath("GET", "/pet/findByTags"));
+        consumerPaths.add(new MockConsumerPath("DELETE", "/pet/{petId}"));
+        consumerPaths.add(new MockConsumerPath("GET", "/pet/{petId}"));
+        consumerPaths.add(new MockConsumerPath("POST", "/pet/{petId}"));
+        consumerPaths.add(new MockConsumerPath("POST", "/pet/{petId}/uploadImage"));
+        return consumerPaths;
+    }
+
 }

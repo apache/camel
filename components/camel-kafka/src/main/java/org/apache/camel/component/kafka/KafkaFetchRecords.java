@@ -17,22 +17,26 @@
 package org.apache.camel.component.kafka;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManagers;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaErrorStrategies;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.component.kafka.consumer.support.TopicHelper;
 import org.apache.camel.component.kafka.consumer.support.batching.KafkaRecordBatchingProcessorFacade;
 import org.apache.camel.component.kafka.consumer.support.classic.ClassicRebalanceListener;
 import org.apache.camel.component.kafka.consumer.support.resume.ResumeRebalanceListener;
 import org.apache.camel.component.kafka.consumer.support.streaming.KafkaRecordStreamingProcessorFacade;
+import org.apache.camel.component.kafka.consumer.support.subcription.DefaultSubscribeAdapter;
+import org.apache.camel.component.kafka.consumer.support.subcription.SubscribeAdapter;
+import org.apache.camel.component.kafka.consumer.support.subcription.TopicInfo;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
@@ -50,6 +54,8 @@ import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.rmi.registry.LocateRegistry.getRegistry;
 
 public class KafkaFetchRecords implements Runnable {
     /*
@@ -114,6 +120,11 @@ public class KafkaFetchRecords implements Runnable {
             terminated = false;
 
             if (!isConnected()) {
+
+                // shutdown existing consumer instance to release resources (heartbeat)
+                if (this.consumer != null) {
+                    safeConsumerClose();
+                }
 
                 // task that deals with creating kafka consumer
                 currentBackoffInterval = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffInterval();
@@ -295,15 +306,22 @@ public class KafkaFetchRecords implements Runnable {
                     commitManager, consumer, kafkaConsumer.getResumeStrategy());
         }
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());
-        }
+        TopicInfo topicInfo = new TopicInfo(topicPattern, topicName);
 
-        if (topicPattern != null) {
-            consumer.subscribe(topicPattern, listener);
-        } else {
-            consumer.subscribe(Arrays.asList(topicName.split(",")), listener);
+        final CamelContext camelContext = kafkaConsumer.getEndpoint().getCamelContext();
+        LOG.info("Searching for a custom subscribe adapter on the registry");
+        final SubscribeAdapter adapter = resolveSubscribeAdapter(camelContext);
+
+        adapter.subscribe(consumer, listener, topicInfo);
+    }
+
+    private static SubscribeAdapter resolveSubscribeAdapter(CamelContext camelContext) {
+        SubscribeAdapter adapter = camelContext.getRegistry().lookupByNameAndType(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER,
+                SubscribeAdapter.class);
+        if (adapter == null) {
+            adapter = new DefaultSubscribeAdapter();
         }
+        return adapter;
     }
 
     protected void startPolling() {
@@ -464,11 +482,7 @@ public class KafkaFetchRecords implements Runnable {
      * or a topic pattern.
      */
     private String getPrintableTopic() {
-        if (topicPattern != null) {
-            return "topic pattern " + topicPattern;
-        } else {
-            return "topic " + topicName;
-        }
+        return TopicHelper.getPrintableTopic(topicPattern, topicName);
     }
 
     private boolean isKafkaConsumerRunnable() {
@@ -553,11 +567,15 @@ public class KafkaFetchRecords implements Runnable {
                 // need to use reflection to access the network client which has API to check if the client has ready
                 // connections
                 org.apache.kafka.clients.consumer.KafkaConsumer kc = (org.apache.kafka.clients.consumer.KafkaConsumer) consumer;
-                ConsumerNetworkClient nc
-                        = (ConsumerNetworkClient) ReflectionHelper.getField(kc.getClass().getDeclaredField("client"), kc);
-                LOG.trace(
-                        "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
-                ready = nc.hasReadyNodes(System.currentTimeMillis());
+                Object client = ReflectionHelper.getField(kc.getClass().getDeclaredField("delegate"), kc);
+                if (client != null) {
+                    ConsumerNetworkClient nc
+                            = (ConsumerNetworkClient) ReflectionHelper.getField(client.getClass().getDeclaredField("client"),
+                                    client);
+                    LOG.trace(
+                            "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
+                    ready = nc.hasReadyNodes(System.currentTimeMillis());
+                }
             }
         } catch (Exception e) {
             // ignore

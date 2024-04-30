@@ -45,10 +45,10 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&noop=true")).multicast()
                         .to(fileUri("?fileName=output.txt&forceWrites=false"),
                                 fileUri("?fileName=output2.txt&charset=iso-8859-1&forceWrites=false"))

@@ -694,7 +694,6 @@ public final class URISupport {
             if (parameters.size() == 1) {
                 // only 1 parameter need to create new query string
                 query = URISupport.createQueryString(parameters);
-                return buildUri(scheme, path, query);
             } else {
                 // reorder parameters a..z
                 final Set<String> keySet = parameters.keySet();
@@ -703,8 +702,8 @@ public final class URISupport {
 
                 // build uri object with sorted parameters
                 query = URISupport.createQueryString(parametersArray, parameters, true);
-                return buildUri(scheme, path, query);
             }
+            return buildUri(scheme, path, query);
         }
     }
 
@@ -733,9 +732,7 @@ public final class URISupport {
             parameters = URISupport.parseQuery(query, false, false);
         }
 
-        if (parameters == null || parameters.size() == 1) {
-            return buildUri(scheme, path, query);
-        } else {
+        if (parameters != null && parameters.size() != 1) {
             final Set<String> entries = parameters.keySet();
 
             // reorder parameters a..z
@@ -743,16 +740,14 @@ public final class URISupport {
             boolean sort = false;
             String prev = null;
             for (String key : entries) {
-                if (prev == null) {
-                    prev = key;
-                } else {
+                if (prev != null) {
                     int comp = key.compareTo(prev);
                     if (comp < 0) {
                         sort = true;
                         break;
                     }
-                    prev = key;
                 }
+                prev = key;
             }
             if (sort) {
                 final String[] array = entries.toArray(new String[entries.size()]);
@@ -761,8 +756,8 @@ public final class URISupport {
                 query = URISupport.createQueryString(array, parameters, true);
             }
 
-            return buildUri(scheme, path, query);
         }
+        return buildUri(scheme, path, query);
     }
 
     private static String buildUri(String scheme, String path, String query) {
@@ -823,7 +818,6 @@ public final class URISupport {
                 if (parameters.size() == 1) {
                     // only 1 parameter need to create new query string
                     query = URISupport.createQueryString(parameters);
-                    return makeUri(uriWithoutQuery, query);
                 } else {
                     // reorder parameters a..z
                     final Set<String> keySet = parameters.keySet();
@@ -832,8 +826,8 @@ public final class URISupport {
 
                     // build uri object with sorted parameters
                     query = URISupport.createQueryString(parametersArray, parameters, true);
-                    return makeUri(uriWithoutQuery, query);
                 }
+                return makeUri(uriWithoutQuery, query);
             }
         } catch (URISyntaxException ex) {
             return null;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.platform.http.spi;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 
@@ -26,13 +25,13 @@ import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 public interface PlatformHttpEngine {
 
     /**
-     * Creates a new {@link Consumer} for the given {@link PlatformHttpEndpoint}.
+     * Creates a new {@link PlatformHttpConsumer} for the given {@link PlatformHttpEndpoint}.
      *
      * @param  platformHttpEndpoint the {@link PlatformHttpEndpoint} to create a consumer for
      * @param  processor            the Processor to pass to
-     * @return                      a new {@link Consumer}
+     * @return                      a new {@link PlatformHttpConsumer}
      */
-    Consumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor);
+    PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor);
 
     /**
      * The port number the HTTP server is using, if possible to determine.

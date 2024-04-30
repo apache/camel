@@ -37,10 +37,10 @@ public class ManagedResourceTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedResourceTest.class);
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .bean(MyManagedBean.class).id("myManagedBean")
                         .log("${body}")

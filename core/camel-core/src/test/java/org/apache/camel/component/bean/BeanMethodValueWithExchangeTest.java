@@ -46,17 +46,17 @@ public class BeanMethodValueWithExchangeTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyBean());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").to("bean:foo?method=bar(${exchange}, 'World')").to("mock:result");
 
                 from("direct:bar").to("bean:foo?method=bar(*, 'World')").to("mock:result");

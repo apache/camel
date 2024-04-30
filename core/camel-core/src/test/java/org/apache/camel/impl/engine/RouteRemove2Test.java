@@ -76,10 +76,10 @@ public class RouteRemove2Test extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").to("seda:bar").to("mock:foo");
 
                 from("seda:bar").routeId("bar").to("mock:bar");

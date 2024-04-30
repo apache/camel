@@ -49,6 +49,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        execute(false);
+    }
+
+    protected void execute(boolean dto) throws MojoExecutionException {
         if (skip) {
             return;
         }
@@ -86,6 +90,13 @@ public class GenerateMojo extends AbstractGenerateMojo {
         }
         if (ObjectHelper.isNotEmpty(packageName)) {
             generator.withPackageName(packageName);
+        }
+        if (dto) {
+            if (modelPackage != null) {
+                generator.withDtoPackageName(modelPackage);
+            } else {
+                generator.withDtoPackageName(packageName);
+            }
         }
 
         if (ObjectHelper.isNotEmpty(destinationGenerator)) {

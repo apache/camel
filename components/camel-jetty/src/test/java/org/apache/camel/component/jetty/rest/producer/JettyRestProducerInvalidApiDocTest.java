@@ -69,7 +69,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
             fail("Should fail");
         } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("OpenApi api-doc does not contain query parameter name for get:/api/bye", iae.getMessage());
+            assertEquals("OpenApi api-doc does not contain operation for get:/api/bye", iae.getMessage());
         }
     }
 }

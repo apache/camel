@@ -24,7 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 
+/**
+ * Used for testing purpose in dsl
+ */
 public final class MockRestConsumerFactory implements RestConsumerFactory {
+
     @Override
     public Consumer createConsumer(
             CamelContext camelContext,

@@ -57,7 +57,7 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    @ValueSource(strings = { "3.1", "3.0" })
     public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
@@ -76,13 +76,8 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
-        if (config.isOpenApi2()) {
-            assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-            assertTrue(json.contains("\"$ref\" : \"#/definitions/DayResponse\""));
-        } else {
-            assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
-            assertTrue(json.contains("\"$ref\" : \"#/components/schemas/DayResponse\""));
-        }
+        assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
+        assertTrue(json.contains("\"$ref\" : \"#/components/schemas/DayResponse\""));
         assertTrue(json.contains("\"default\" : \"friday\""));
         assertTrue(json.contains("\"enum\" : [ \"monday\", \"tuesday\", \"wednesday\", \"thursday\", \"friday\" ]"));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.DayResponse\""));

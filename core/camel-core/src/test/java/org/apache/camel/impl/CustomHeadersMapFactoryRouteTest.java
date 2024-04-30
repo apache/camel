@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
 
-    private HeadersMapFactory custom = new CustomHeadersMapFactory();
+    private final HeadersMapFactory custom = new CustomHeadersMapFactory();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -57,10 +57,10 @@ public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("mock:result");
             }
         };

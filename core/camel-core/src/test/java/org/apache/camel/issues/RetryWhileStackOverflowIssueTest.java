@@ -40,10 +40,10 @@ public class RetryWhileStackOverflowIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).retryWhile(simple("${body.areWeCool} == 'no'")).redeliveryDelay(0)
                         .handled(true).to("mock:error");
 

@@ -39,7 +39,7 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
     }
 
     @Test
-    public void testInflight() throws Exception {
+    public void testInflight() {
         assertEquals(0, context.getInflightRepository().browse().size());
 
         template.sendBody("direct:start", "Hello World");
@@ -48,13 +48,13 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("mock:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Collection<InflightRepository.InflightExchange> list = context.getInflightRepository().browse();
                         assertEquals(1, list.size());
 

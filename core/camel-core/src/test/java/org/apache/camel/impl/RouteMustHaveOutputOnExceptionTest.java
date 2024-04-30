@@ -33,7 +33,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     public void testValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
                         .backOffMultiplier(1.5).handled(true).delay(1000)
                         .log("Halting for some time").to("mock:halt").end().end().to("mock:result");
@@ -46,7 +46,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
     public void testInValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
                         .backOffMultiplier(1.5).handled(true).delay(1000)
                         .log("Halting for some time").to("mock:halt")

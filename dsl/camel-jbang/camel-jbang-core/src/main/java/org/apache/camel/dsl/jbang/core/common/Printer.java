@@ -39,6 +39,10 @@ public interface Printer {
         System.out.printf(format, args);
     }
 
+    default void printErr(Exception e) {
+        printf("Error: %s%n", e.getMessage());
+    }
+
     /**
      * Default printer uses System out print stream.
      */

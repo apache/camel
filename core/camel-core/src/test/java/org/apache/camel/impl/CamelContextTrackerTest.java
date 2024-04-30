@@ -31,7 +31,7 @@ public class CamelContextTrackerTest {
 
     private static final class MyContextTracker extends CamelContextTracker {
 
-        private List<String> names = new ArrayList<>();
+        private final List<String> names = new ArrayList<>();
 
         @Override
         public void contextCreated(CamelContext camelContext) {
@@ -45,7 +45,7 @@ public class CamelContextTrackerTest {
     }
 
     @Test
-    public void testContainerSet() throws Exception {
+    public void testContainerSet() {
         MyContextTracker tracker = new MyContextTracker();
 
         CamelContext camel1 = new DefaultCamelContext();

@@ -34,15 +34,15 @@ import org.junit.jupiter.api.Test;
 public class DefaultComponentAutowiredTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry reg = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry reg = super.createCamelRegistry();
         reg.bind("mycomponent-component", new MyComponentConfigurer());
         reg.bind("chf", new MyContentHandlerFactory());
         return reg;
     }
 
     @Test
-    public void testAutowired() throws Exception {
+    public void testAutowired() {
         context.addComponent("mycomponent", new MyComponent(context));
 
         MyComponent my = context.getComponent("mycomponent", MyComponent.class);
@@ -65,7 +65,7 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return null;
         }
 

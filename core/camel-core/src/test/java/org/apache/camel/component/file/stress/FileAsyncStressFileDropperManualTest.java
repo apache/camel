@@ -32,7 +32,7 @@ public class FileAsyncStressFileDropperManualTest extends ContextTestSupport {
     private static int counter;
 
     public static String getFilename() {
-        return "" + counter++ + ".txt";
+        return counter++ + ".txt";
     }
 
     @Test
@@ -44,10 +44,10 @@ public class FileAsyncStressFileDropperManualTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // generate a new file continuously
                 from("timer:foo?period=50")
                         .setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropperManualTest.class, "getFilename"))

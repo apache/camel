@@ -16,32 +16,11 @@
  */
 package org.apache.camel.maven.packaging.dsl;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 
 public final class DslHelper {
     private DslHelper() {
-    }
-
-    public static List<File> loadAllJavaFiles(final File dir) {
-        final File[] files = dir.listFiles();
-
-        if (files == null) {
-            return Collections.emptyList();
-        }
-
-        // load components
-        return Arrays.stream(files)
-                .filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists())
-                .sorted()
-                .collect(Collectors.toList());
     }
 
     public static String toCamelCaseLower(final String schema) {
@@ -80,8 +59,4 @@ public final class DslHelper {
         return desc;
     }
 
-    public static String generateComponentBuilderClassName(final ComponentModel componentModel, final String suffix) {
-        return StringUtils.capitalize(toCamelCaseLower(componentModel.getScheme()))
-               + "Component" + suffix;
-    }
 }

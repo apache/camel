@@ -63,10 +63,10 @@ public class OnCompletionAndInterceptTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 intercept().to("mock:intercept");
 
                 from("direct:start").onCompletion().to("log:sync").to("mock:sync")
@@ -83,7 +83,7 @@ public class OnCompletionAndInterceptTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             if ("Kaboom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kaboom");
             }

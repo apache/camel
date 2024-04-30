@@ -45,10 +45,10 @@ public class OnExceptionProcessorInspectCausedExceptionWithDefaultErrorHandlerTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3));
 
                 // START SNIPPET: e1
@@ -71,7 +71,7 @@ public class OnExceptionProcessorInspectCausedExceptionWithDefaultErrorHandlerTe
     public static class MyFunctionFailureHandler implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // the caused by exception is stored in a property on the exchange
             Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
             assertNotNull(caused);

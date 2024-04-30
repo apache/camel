@@ -41,9 +41,9 @@ public class BrowseRouteConsumeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("browse:foo").to("mock:result");
 
                 from("browse:foo").to("log:foo").to("mock:foo");

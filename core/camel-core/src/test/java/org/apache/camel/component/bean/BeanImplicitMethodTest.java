@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanImplicitMethodTest extends ContextTestSupport {
 
     @Test
-    public void testRoute() throws Exception {
+    public void testRoute() {
 
         String stringBody = "stringBody";
         String stringResponse = (String) template.requestBody("direct:in", stringBody);
@@ -47,8 +47,8 @@ public class BeanImplicitMethodTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", new MyBean());
         return answer;
     }

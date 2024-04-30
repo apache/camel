@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-protobuf</artifactId>
@@ -68,15 +68,6 @@
     </dependencies>
 
     <build>
-        <extensions>
-            <!-- Operating system and CPU architecture detection extension -->
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>${os-maven-plugin-version}</version>
-            </extension>
-        </extensions>
-
         <plugins>
             <!--
               Check if the running OS platform supports the protobuf generator plugin.

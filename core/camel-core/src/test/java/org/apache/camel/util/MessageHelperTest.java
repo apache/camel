@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -41,10 +40,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MessageHelperTest {
 
     private Message message;
-    private CamelContext camelContext = new DefaultCamelContext();
+    private final CamelContext camelContext = new DefaultCamelContext();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         message = new DefaultMessage(camelContext);
     }
 
@@ -52,7 +51,7 @@ public class MessageHelperTest {
      * Tests the {@link MessageHelper#resetStreamCache(Message)} method
      */
     @Test
-    public void testResetStreamCache() throws Exception {
+    public void testResetStreamCache() {
         // should not throw exceptions when Message or message body is null
         MessageHelper.resetStreamCache(null);
         MessageHelper.resetStreamCache(message);
@@ -64,11 +63,11 @@ public class MessageHelperTest {
                 reset.set(true);
             }
 
-            public void writeTo(OutputStream os) throws IOException {
+            public void writeTo(OutputStream os) {
                 // noop
             }
 
-            public StreamCache copy(Exchange exchange) throws IOException {
+            public StreamCache copy(Exchange exchange) {
                 return null;
             }
 
@@ -91,19 +90,19 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testGetContentType() throws Exception {
+    public void testGetContentType() {
         message.setHeader(Exchange.CONTENT_TYPE, "text/xml");
         assertEquals("text/xml", MessageHelper.getContentType(message));
     }
 
     @Test
-    public void testGetContentEncpding() throws Exception {
+    public void testGetContentEncpding() {
         message.setHeader(Exchange.CONTENT_ENCODING, "iso-8859-1");
         assertEquals("iso-8859-1", MessageHelper.getContentEncoding(message));
     }
 
     @Test
-    public void testCopyHeaders() throws Exception {
+    public void testCopyHeaders() {
         Message source = message;
         Message target = new DefaultMessage(camelContext);
 
@@ -118,7 +117,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testCopyHeadersOverride() throws Exception {
+    public void testCopyHeadersOverride() {
         Message source = message;
         Message target = new DefaultMessage(camelContext);
 
@@ -133,7 +132,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testCopyHeadersWithHeaderFilterStrategy() throws Exception {
+    public void testCopyHeadersWithHeaderFilterStrategy() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -157,7 +156,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testDumpAsXmlPlainBody() throws Exception {
+    public void testDumpAsXmlPlainBody() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -174,7 +173,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testDumpAsXmlBody() throws Exception {
+    public void testDumpAsXmlBody() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -194,7 +193,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testDumpAsXmlNoBody() throws Exception {
+    public void testDumpAsXmlNoBody() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -215,7 +214,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testDumpAsXmlNoBodyIndent() throws Exception {
+    public void testDumpAsXmlNoBodyIndent() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -236,7 +235,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testMessageDumpBody() throws Exception {
+    public void testMessageDumpBody() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -252,7 +251,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testMessageDumpBodyJSon() throws Exception {
+    public void testMessageDumpBodyJSon() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -268,7 +267,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testDumpAsXmlBodyJSon() throws Exception {
+    public void testDumpAsXmlBodyJSon() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -286,7 +285,7 @@ public class MessageHelperTest {
     }
 
     @Test
-    public void testMessageDumpBodyIndentJSon() throws Exception {
+    public void testMessageDumpBodyIndentJSon() {
         CamelContext context = new DefaultCamelContext();
         context.start();
 

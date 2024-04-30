@@ -33,11 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
 
-    MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
+    final MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myRepo", myRepo);
         return jndi;
     }
@@ -67,15 +67,15 @@ public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&idempotentRepository=#myRepo"))
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // we are in progress
                                 int size = myRepo.getCacheSize();
                                 assertTrue(size == 1 || size == 2);

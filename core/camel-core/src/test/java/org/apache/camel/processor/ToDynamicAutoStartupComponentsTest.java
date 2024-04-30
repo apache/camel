@@ -35,7 +35,7 @@ public class ToDynamicAutoStartupComponentsTest extends ContextTestSupport {
     public void testAutoStartupFalse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ToDynamicDefinition toD = new ToDynamicDefinition("mock:${header.foo}");
                 toD.setAutoStartComponents("false");
 
@@ -61,7 +61,7 @@ public class ToDynamicAutoStartupComponentsTest extends ContextTestSupport {
     public void testAutoStartupTrue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ToDynamicDefinition toD = new ToDynamicDefinition("mock:${header.foo}");
                 toD.setAutoStartComponents("true");
 

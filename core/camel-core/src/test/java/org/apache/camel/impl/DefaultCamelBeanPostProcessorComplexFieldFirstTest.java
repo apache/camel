@@ -18,8 +18,6 @@ package org.apache.camel.impl;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 import javax.sql.DataSource;
@@ -28,6 +26,7 @@ import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,11 +38,16 @@ public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextT
 
     private CamelBeanPostProcessor postProcessor;
 
+    @Override
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
+        answer.bind("myDS", new DummyDataSource());
+        return answer;
+    }
+
     @Test
     public void testPostProcessor() throws Exception {
         FooService foo = new FooService();
-
-        context.getRegistry().bind("myDS", new DummyDataSource());
 
         postProcessor.postProcessBeforeInitialization(foo, "foo");
         postProcessor.postProcessAfterInitialization(foo, "foo");
@@ -80,50 +84,50 @@ public class DefaultCamelBeanPostProcessorComplexFieldFirstTest extends ContextT
 
     }
 
-    private class DummyDataSource implements DataSource {
+    private static class DummyDataSource implements DataSource {
 
         @Override
-        public Connection getConnection() throws SQLException {
+        public Connection getConnection() {
             return null;
         }
 
         @Override
-        public Connection getConnection(String username, String password) throws SQLException {
+        public Connection getConnection(String username, String password) {
             return null;
         }
 
         @Override
-        public PrintWriter getLogWriter() throws SQLException {
+        public PrintWriter getLogWriter() {
             return null;
         }
 
         @Override
-        public void setLogWriter(PrintWriter out) throws SQLException {
+        public void setLogWriter(PrintWriter out) {
 
         }
 
         @Override
-        public void setLoginTimeout(int seconds) throws SQLException {
+        public void setLoginTimeout(int seconds) {
 
         }
 
         @Override
-        public int getLoginTimeout() throws SQLException {
+        public int getLoginTimeout() {
             return 0;
         }
 
         @Override
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        public Logger getParentLogger() {
             return null;
         }
 
         @Override
-        public <T> T unwrap(Class<T> iface) throws SQLException {
+        public <T> T unwrap(Class<T> iface) {
             return null;
         }
 
         @Override
-        public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        public boolean isWrapperFor(Class<?> iface) {
             return false;
         }
     }

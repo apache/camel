@@ -189,7 +189,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             // get the next processor
             if (isSticky()) {
                 int idx = lastGoodIndex.get();
-                index = idx > 0 ? idx : 0;
+                index = Math.max(idx, 0);
             } else if (isRoundRobin()) {
                 index = counter.updateAndGet(x -> ++x < processors.length ? x : 0);
             }

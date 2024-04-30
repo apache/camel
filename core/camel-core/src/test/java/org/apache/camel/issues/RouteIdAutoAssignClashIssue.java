@@ -45,10 +45,10 @@ public class RouteIdAutoAssignClashIssue extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // use route1, route2 to clash with Camel's auto assigning
                 from("direct:start1").routeId("route1").to("mock:start1");
 

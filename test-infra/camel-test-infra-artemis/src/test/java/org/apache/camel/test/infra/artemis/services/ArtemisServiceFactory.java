@@ -20,10 +20,13 @@ import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ArtemisServiceFactory {
 
     public static class SingletonArtemisService extends SingletonService<ArtemisService> implements ArtemisService {
+        private static final Logger LOG = LoggerFactory.getLogger(SingletonArtemisService.class);
 
         public SingletonArtemisService(ArtemisService service, String name) {
             super(service, name);
@@ -50,8 +53,9 @@ public final class ArtemisServiceFactory {
         }
 
         @Override
-        public void restart() {
-            getService().restart();
+        public final void restart() {
+            LOG.error("Singleton services must not be restarted");
+            throw new IllegalArgumentException("Singleton services must not be restarted");
         }
 
         @Override
@@ -70,12 +74,12 @@ public final class ArtemisServiceFactory {
         }
 
         @Override
-        public void afterEach(ExtensionContext extensionContext) {
+        public void afterAll(ExtensionContext extensionContext) {
             // NO-OP
         }
 
         @Override
-        public void beforeEach(ExtensionContext extensionContext) {
+        public void beforeAll(ExtensionContext extensionContext) {
             addToStore(extensionContext);
         }
     }

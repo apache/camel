@@ -36,11 +36,11 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         AntPathMatcherGenericFileFilter<File> filterNotCaseSensitive = new AntPathMatcherGenericFileFilter<>("**/c*");
         filterNotCaseSensitive.setCaseSensitive(false);
 
-        Registry jndi = super.createRegistry();
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("filter", new AntPathMatcherGenericFileFilter<File>("**/c*"));
         jndi.bind("caseInsensitiveFilter", filterNotCaseSensitive);
         return jndi;
@@ -51,7 +51,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "files/ant-path-1?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=true"))
                         .convertBodyTo(String.class)
@@ -77,7 +77,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("files/ant-path-2?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak"))
                         .convertBodyTo(String.class).to("mock:result2");
             }
@@ -103,7 +103,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "files/ant-path-3?initialDelay=0&delay=10&recursive=true&antInclude=**/*.pdf,**/*.txt&antExclude=**/a*,**/b*"))
                         .convertBodyTo(String.class)
@@ -139,7 +139,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "files/ant-path-4?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#filter"))
                         .convertBodyTo(String.class)
@@ -167,7 +167,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "files/ant-path-5?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class)
@@ -193,7 +193,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "files/ant-path-6?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class)
@@ -222,7 +222,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "files/ant-path-7?initialDelay=0&delay=10&recursive=true&antInclude=**/*.Pdf,**/*.txt&antExclude=**/a*,**/b*&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class).to("mock:result7");
@@ -258,7 +258,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.setAutoStartup(false);
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri(
                         "files/ant-path-8?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#caseInsensitiveFilter"))
                         .convertBodyTo(String.class).to("mock:result8");

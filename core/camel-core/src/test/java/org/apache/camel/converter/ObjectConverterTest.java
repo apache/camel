@@ -65,7 +65,7 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToByte() throws Exception {
+    public void testToByte() {
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte(Byte.valueOf("4")));
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte(Integer.valueOf("4")));
         assertEquals(Byte.valueOf("4"), ObjectConverter.toByte("4"));
@@ -79,7 +79,7 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToShort() throws Exception {
+    public void testToShort() {
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Short.valueOf("4")));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Integer.valueOf("4")));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort("4"));
@@ -90,7 +90,7 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToInteger() throws Exception {
+    public void testToInteger() {
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Integer.valueOf("4")));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Long.valueOf("4")));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger("4"));
@@ -102,7 +102,7 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToLong() throws Exception {
+    public void testToLong() {
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Long.valueOf("4")));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Integer.valueOf("4")));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong("4"));
@@ -114,7 +114,7 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToFloat() throws Exception {
+    public void testToFloat() {
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Float.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Integer.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat("4"));
@@ -125,7 +125,7 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testToDouble() throws Exception {
+    public void testToDouble() {
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Integer.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble("4"));
@@ -152,8 +152,8 @@ public class ObjectConverterTest {
     public void testToString() {
         assertEquals("ABC", ObjectConverter.toString(new StringBuffer("ABC")));
         assertEquals("ABC", ObjectConverter.toString(new StringBuilder("ABC")));
-        assertEquals("", ObjectConverter.toString(new StringBuffer("")));
-        assertEquals("", ObjectConverter.toString(new StringBuilder("")));
+        assertEquals("", ObjectConverter.toString(new StringBuffer()));
+        assertEquals("", ObjectConverter.toString(new StringBuilder()));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class ObjectConverterTest {
     }
 
     @Test
-    public void testNaN() throws Exception {
+    public void testNaN() {
         assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Double.NaN));
         assertEquals((Double) Double.NaN, ObjectConverter.toDouble(Float.NaN));
         assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Double.NaN));

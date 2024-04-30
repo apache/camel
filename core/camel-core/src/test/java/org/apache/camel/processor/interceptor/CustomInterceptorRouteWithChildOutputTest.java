@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSupport {
 
-    private MyInterceptor myInterceptor = new MyInterceptor();
+    private final MyInterceptor myInterceptor = new MyInterceptor();
 
     @Test
     public void testCustomInterceptor() throws Exception {
@@ -59,10 +59,10 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // add our custom interceptor
                 context.getCamelContextExtension().addInterceptStrategy(myInterceptor);
 
@@ -79,8 +79,7 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
 
         @Override
         public Processor wrapProcessorInInterceptors(
-                CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
-                throws Exception {
+                CamelContext context, NamedNode definition, Processor target, Processor nextTarget) {
             defs.add((ProcessorDefinition<?>) definition);
             return target;
         }

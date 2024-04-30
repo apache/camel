@@ -63,17 +63,17 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyBean());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single").to("bean:foo?method=bar(${body}, 'a,b')").to("mock:result");
 
                 from("direct:double").to("bean:foo?method=bar(${body}, \"c,d\")").to("mock:result");
@@ -94,8 +94,8 @@ public class BeanMethodValueWithCommaTest extends ContextTestSupport {
 
     public static class MyCronBody {
 
-        private String id;
-        private String cron;
+        private final String id;
+        private final String cron;
 
         public MyCronBody(String id, String cron) {
             this.id = id;

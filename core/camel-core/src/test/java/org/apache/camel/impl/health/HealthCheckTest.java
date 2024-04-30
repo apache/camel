@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HealthCheckTest {
 
     @Test
-    public void testCheck() throws Exception {
+    public void testCheck() {
         CamelContext context = new DefaultCamelContext();
 
         MyHealthCheck check = new MyHealthCheck();

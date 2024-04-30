@@ -122,10 +122,10 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("done?doneFileName=foo.done&initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
                         .convertBodyTo(String.class).to("mock:result");
 

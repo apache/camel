@@ -72,7 +72,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         @Produce
         private ProducerTemplate bar;
         @BindToRegistry("myCoolBean")
-        private MySerialBean myBean = new MySerialBean();
+        private final MySerialBean myBean = new MySerialBean();
 
         @BindToRegistry
         public FooBar doSomething() {

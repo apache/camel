@@ -111,6 +111,11 @@ a stax parser was needed anyway to use the language.
 
 Upgraded from Karaf 4.3.x to Karaf 4.4.x, which requires JDK11+.
 
+=== camel-http
+
+Added `followRedirects` option with default value `false` on component and endpoint level. 
+The introduction of this option changes the default redirect behaviour for producers from following all `GET` and `HEAD` redirects, to not following any redirects.
+
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:

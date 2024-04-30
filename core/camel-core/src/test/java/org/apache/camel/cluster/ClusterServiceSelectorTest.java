@@ -308,7 +308,7 @@ public class ClusterServiceSelectorTest {
     }
 
     @Test
-    public void testMandatoryLookupFailure() throws Exception {
+    public void testMandatoryLookupFailure() {
         CamelContext context = null;
 
         try {
@@ -324,7 +324,7 @@ public class ClusterServiceSelectorTest {
     }
 
     @Test
-    public void testMandatoryLookupFailureWithoutSelector() throws Exception {
+    public void testMandatoryLookupFailureWithoutSelector() {
         CamelContext context = null;
 
         try {
@@ -348,7 +348,7 @@ public class ClusterServiceSelectorTest {
         }
 
         @Override
-        protected CamelClusterView createView(String namespace) throws Exception {
+        protected CamelClusterView createView(String namespace) {
             return new DummyClusterServiceView(this, namespace);
         }
     }
@@ -358,7 +358,7 @@ public class ClusterServiceSelectorTest {
         }
 
         @Override
-        protected CamelClusterView createView(String namespace) throws Exception {
+        protected CamelClusterView createView(String namespace) {
             return new DummyClusterServiceView(this, namespace);
         }
     }
@@ -382,14 +382,6 @@ public class ClusterServiceSelectorTest {
         @Override
         public List<CamelClusterMember> getMembers() {
             return Collections.emptyList();
-        }
-
-        @Override
-        protected void doStart() throws Exception {
-        }
-
-        @Override
-        protected void doStop() throws Exception {
         }
 
         private final class DummyClusterServiceMember implements CamelClusterMember {

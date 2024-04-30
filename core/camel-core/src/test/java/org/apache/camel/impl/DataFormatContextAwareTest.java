@@ -35,17 +35,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class DataFormatContextAwareTest extends ContextTestSupport {
 
-    private MyDataFormat my = new MyDataFormat();
+    private final MyDataFormat my = new MyDataFormat();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("my", my);
         return registry;
     }
 
     @Test
-    public void testLanguageCamelContextAware() throws Exception {
+    public void testLanguageCamelContextAware() {
         DataFormat df = context.resolveDataFormat("my");
         assertNotNull(df);
 
@@ -68,22 +68,12 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
         }
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
         }
 
         @Override
-        public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        public Object unmarshal(Exchange exchange, InputStream stream) {
             return null;
-        }
-
-        @Override
-        protected void doStart() throws Exception {
-            // noop
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-            // noop
         }
     }
 }

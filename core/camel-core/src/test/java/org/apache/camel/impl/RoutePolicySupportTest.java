@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoutePolicySupportTest extends ContextTestSupport {
 
-    private MyRoutePolicy policy = new MyRoutePolicy();
+    private final MyRoutePolicy policy = new MyRoutePolicy();
 
     public static class MyRoutePolicy extends RoutePolicySupport {
     }
@@ -56,9 +56,9 @@ public class RoutePolicySupportTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").routePolicy(policy).autoStartup(false).to("mock:result");
             }
         };

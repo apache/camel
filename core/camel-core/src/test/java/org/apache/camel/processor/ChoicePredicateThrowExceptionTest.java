@@ -36,7 +36,7 @@ public class ChoicePredicateThrowExceptionTest extends ContextTestSupport {
     public void testChoiceGlobal() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
 
                 from("direct:start")
@@ -80,7 +80,7 @@ public class ChoicePredicateThrowExceptionTest extends ContextTestSupport {
     public void testChoiceSubRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 from("direct:start")
                         .to("direct:sub")

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class XPathTransformRouteTest extends ContextTestSupport {
 
-    public Document replaceMe(Document doc) throws Exception {
+    public Document replaceMe(Document doc) {
         // replace firstname to contain Servicemix
         NodeList list = doc.getElementsByTagName("firstname");
         list.item(0).setTextContent("Servicemix");
@@ -45,10 +45,10 @@ public class XPathTransformRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(XPathTransformRouteTest.class, "replaceMe").to("log:result", "mock:result");
             }
         };

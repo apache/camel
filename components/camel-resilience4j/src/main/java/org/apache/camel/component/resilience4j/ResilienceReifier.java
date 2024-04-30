@@ -17,7 +17,9 @@
 package org.apache.camel.component.resilience4j;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -81,7 +83,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         return answer;
     }
 
-    private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) {
+    private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) throws ClassNotFoundException {
         CircuitBreakerConfig.Builder builder = CircuitBreakerConfig.custom();
         if (config.getAutomaticTransitionFromOpenToHalfOpenEnabled() != null) {
             builder.automaticTransitionFromOpenToHalfOpenEnabled(
@@ -113,6 +115,12 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         }
         if (config.getWritableStackTraceEnabled() != null) {
             builder.writableStackTraceEnabled(parseBoolean(config.getWritableStackTraceEnabled()));
+        }
+        if (config.getRecordExceptions() != null) {
+            builder.ignoreExceptions(createRecordExceptionClasses());
+        }
+        if (config.getIgnoreExceptions() != null) {
+            builder.ignoreExceptions(createIgnoreExceptionClasses());
         }
         return builder.build();
     }
@@ -192,7 +200,6 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // on camel context takes the precedence over those in the registry
         if (definition.getConfiguration() != null) {
             final String ref = parseString(definition.getConfiguration());
-
             loadProperties(properties, Suppliers.firstNotNull(
                     () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class)
                             .getResilience4jConfiguration(ref),
@@ -207,6 +214,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         Resilience4jConfigurationDefinition config = new Resilience4jConfigurationDefinition();
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
+                .withIgnoreCase(true)
                 .withConfigurer(configurer)
                 .withProperties(properties)
                 .withTarget(config)
@@ -234,4 +242,22 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         });
     }
 
+    private Class<? extends Throwable>[] createRecordExceptionClasses() throws ClassNotFoundException {
+        return resolveExceptions(definition.resilience4jConfiguration().getRecordExceptions());
+    }
+
+    private Class<? extends Throwable>[] createIgnoreExceptionClasses() throws ClassNotFoundException {
+        return resolveExceptions(definition.resilience4jConfiguration().getIgnoreExceptions());
+    }
+
+    private Class<? extends Throwable>[] resolveExceptions(List<String> list) throws ClassNotFoundException {
+        // must use the class resolver from CamelContext to load classes to ensure it can
+        // be loaded in all kind of environments such as JEE servers and OSGi etc.
+        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
+        for (String name : list) {
+            Class<Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+            answer.add(type);
+        }
+        return answer.toArray(new Class[0]);
+    }
 }

@@ -36,11 +36,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public abstract class StompBaseTest extends CamelTestSupport {
 
     protected int numberOfMessages = 100;
-    int sslServicePort = AvailablePortFinder.getNextAvailable();
-    int servicePort = AvailablePortFinder.getNextAvailable();
+    static int sslServicePort = AvailablePortFinder.getNextAvailable();
+    static int servicePort = AvailablePortFinder.getNextAvailable();
 
     @RegisterExtension
-    public ArtemisService service = new ArtemisEmbeddedServiceBuilder()
+    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
             .withCustomConfiguration(configuration -> {
                 try {
                     configuration.setJMXManagementEnabled(true);

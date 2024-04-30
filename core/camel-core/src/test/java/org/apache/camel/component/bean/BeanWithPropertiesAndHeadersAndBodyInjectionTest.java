@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void testSendMessage() {
         Exchange out = template.send("direct:in", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("p1", "abc");
                 exchange.setProperty("p2", 123);
 
@@ -66,8 +66,8 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }

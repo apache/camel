@@ -34,6 +34,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StreamResequencerTest extends ContextTestSupport {
 
@@ -124,6 +125,7 @@ public class StreamResequencerTest extends ContextTestSupport {
 
         Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
+        assertNotNull(channel, "There should be a channel");
         assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
         assertIsInstanceOf(StreamResequencer.class, channel.getNextProcessor());
     }

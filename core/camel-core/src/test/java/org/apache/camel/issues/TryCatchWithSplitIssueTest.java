@@ -53,8 +53,8 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("error", new GenerateError());
         return jndi;
     }
@@ -75,7 +75,7 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
 
     public static class GenerateError {
 
-        public String dummyException(String payload) throws Exception {
+        public String dummyException(String payload) {
             if (payload.equals("James")) {
                 throw new IllegalArgumentException("This is a dummy error James!");
             }

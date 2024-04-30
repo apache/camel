@@ -50,10 +50,10 @@ public class OnCompletionWhenTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").onCompletion().onWhen(body().contains("Hello"))
                         // this route is only invoked when the original route is

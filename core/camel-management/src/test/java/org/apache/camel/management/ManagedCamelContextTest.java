@@ -58,7 +58,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
     }
 
     @Test
-    public void testManagedCamelContextClient() throws Exception {
+    public void testManagedCamelContextClient() {
         ManagedCamelContextMBean client
                 = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedCamelContext();
         assertNotNull(client);
@@ -258,10 +258,10 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .delay(10)
                         .to("mock:result");

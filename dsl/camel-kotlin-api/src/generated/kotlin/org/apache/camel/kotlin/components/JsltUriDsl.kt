@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Query or transform JSON payloads using JSLT.
+ */
 public fun UriDsl.jslt(i: JsltUriDsl.() -> Unit) {
   JsltUriDsl(this).apply(i)
 }
@@ -39,59 +42,124 @@ public class JsltUriDsl(
 
   private var resourceUri: String = ""
 
+  /**
+   * Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file
+   * and http loads the resource using these protocols (classpath is default). ref will lookup the
+   * resource in the registry. bean will call a method on a bean to be used as the resource. For bean
+   * you can specify the method name after dot, eg bean:myBean.myMethod.
+   */
   public fun resourceUri(resourceUri: String) {
     this.resourceUri = resourceUri
     it.url("$resourceUri")
   }
 
+  /**
+   * Sets whether the context map should allow access to all details. By default only the message
+   * body and headers can be accessed. This option can be enabled for full access to the current
+   * Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the
+   * full power of CamelContext API.
+   */
   public fun allowContextMapAll(allowContextMapAll: String) {
     it.property("allowContextMapAll", allowContextMapAll)
   }
 
+  /**
+   * Sets whether the context map should allow access to all details. By default only the message
+   * body and headers can be accessed. This option can be enabled for full access to the current
+   * Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the
+   * full power of CamelContext API.
+   */
   public fun allowContextMapAll(allowContextMapAll: Boolean) {
     it.property("allowContextMapAll", allowContextMapAll.toString())
   }
 
+  /**
+   * Whether to allow to use resource template from header or not (default false). Enabling this
+   * allows to specify dynamic templates via message header. However this can be seen as a potential
+   * security vulnerability if the header is coming from a malicious user, so use this with care.
+   */
   public fun allowTemplateFromHeader(allowTemplateFromHeader: String) {
     it.property("allowTemplateFromHeader", allowTemplateFromHeader)
   }
 
+  /**
+   * Whether to allow to use resource template from header or not (default false). Enabling this
+   * allows to specify dynamic templates via message header. However this can be seen as a potential
+   * security vulnerability if the header is coming from a malicious user, so use this with care.
+   */
   public fun allowTemplateFromHeader(allowTemplateFromHeader: Boolean) {
     it.property("allowTemplateFromHeader", allowTemplateFromHeader.toString())
   }
 
+  /**
+   * Sets whether to use resource content cache or not
+   */
   public fun contentCache(contentCache: String) {
     it.property("contentCache", contentCache)
   }
 
+  /**
+   * Sets whether to use resource content cache or not
+   */
   public fun contentCache(contentCache: Boolean) {
     it.property("contentCache", contentCache.toString())
   }
 
+  /**
+   * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in serialization features
+   */
   public fun mapBigDecimalAsFloats(mapBigDecimalAsFloats: String) {
     it.property("mapBigDecimalAsFloats", mapBigDecimalAsFloats)
   }
 
+  /**
+   * If true, the mapper will use the USE_BIG_DECIMAL_FOR_FLOATS in serialization features
+   */
   public fun mapBigDecimalAsFloats(mapBigDecimalAsFloats: Boolean) {
     it.property("mapBigDecimalAsFloats", mapBigDecimalAsFloats.toString())
   }
 
+  /**
+   * Setting a custom JSON Object Mapper to be used
+   */
   public fun objectMapper(objectMapper: String) {
     it.property("objectMapper", objectMapper)
   }
 
+  /**
+   * If true, JSON in output message is pretty printed.
+   */
   public fun prettyPrint(prettyPrint: String) {
     it.property("prettyPrint", prettyPrint)
   }
 
+  /**
+   * If true, JSON in output message is pretty printed.
+   */
   public fun prettyPrint(prettyPrint: Boolean) {
     it.property("prettyPrint", prettyPrint.toString())
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

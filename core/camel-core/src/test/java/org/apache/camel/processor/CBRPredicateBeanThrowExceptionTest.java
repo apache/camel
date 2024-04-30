@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
 
-    private static AtomicBoolean check = new AtomicBoolean();
-    private static AtomicBoolean check2 = new AtomicBoolean();
+    private static final AtomicBoolean check = new AtomicBoolean();
+    private static final AtomicBoolean check2 = new AtomicBoolean();
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("cbrBean", new MyCBRBean());
         return jndi;
     }
@@ -77,10 +77,10 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start").choice().when().method("cbrBean", "checkHeader").to("mock:foo").when()

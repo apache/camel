@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class SimpleXPathTransformTest extends ContextTestSupport {
 
-    private static String EXPECTED = """
+    private static final String EXPECTED = """
             <user>
               <rool>123</rool>
               <country>sweden</country>

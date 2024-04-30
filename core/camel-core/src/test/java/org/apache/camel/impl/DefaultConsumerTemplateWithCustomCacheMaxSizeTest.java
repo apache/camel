@@ -39,7 +39,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     }
 
     @Test
-    public void testCacheConsumers() throws Exception {
+    public void testCacheConsumers() {
         ConsumerTemplate template = context.createConsumerTemplate();
 
         assertEquals(0, template.getCurrentCacheSize(), "Size should be 0");

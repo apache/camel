@@ -51,8 +51,14 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
 
         // need to give seda consumer thread time to idle
         await().atMost(1, TimeUnit.SECONDS).until(() -> {
-            return context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0;
+            return context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty();
         });
+
+        // even though we wait for the queues to empty, there is a race condition where the consumer
+        // may still process messages while it's being suspended due to asynchronous message handling.
+        // as a result, we need to wait a bit longer to ensure that the seda consumer is suspended before
+        // sending the next message.
+        Thread.sleep(1000L);
 
         template.sendBody("seda:foo", "B");
         template.sendBody("direct:bar", "C");
@@ -77,10 +83,10 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:foo").routeId("foo").to("log:foo").to("mock:result");
 
                 from("direct:bar").routeId("bar").to("log:bar").to("mock:bar");

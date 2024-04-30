@@ -42,6 +42,7 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -57,8 +58,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Isolated("This test creates a lot of threads")
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
+    @Order(1)
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";
     protected static final String COMPONENT_NAME = "amq";

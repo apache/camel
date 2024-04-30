@@ -43,20 +43,20 @@ public class DirectShouldUseSameThreadTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 final ThreadLocal<String> local = new ThreadLocal<>();
 
                 from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         local.set("Hello");
                         id = Thread.currentThread().getId();
                     }
                 }).to("direct:foo");
 
                 from("direct:foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         assertEquals("Hello", local.get());
                         assertEquals(id, Thread.currentThread().getId());
                     }

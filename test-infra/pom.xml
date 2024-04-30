@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -78,5 +78,8 @@
         <module>camel-test-infra-smb</module>
         <module>camel-test-infra-cli</module>
         <module>camel-test-infra-qdrant</module>
+        <module>camel-test-infra-ollama</module>
+        <module>camel-test-infra-milvus</module>
+        <module>camel-test-infra-hazelcast</module>
     </modules>
 </project>

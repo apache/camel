@@ -40,7 +40,7 @@ public class PropertyBindingSupportAutowireNestedTest extends ContextTestSupport
     }
 
     @Test
-    public void testAutowireProperties() throws Exception {
+    public void testAutowireProperties() {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");

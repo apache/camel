@@ -794,7 +794,6 @@ public final class ObjectHelper {
      * @return                  the iterable
      * @see                     Iterable
      */
-    @SuppressWarnings("unchecked")
     public static Iterable<?> createIterable(
             Object value, String delimiter,
             final boolean allowEmptyValues, final boolean pattern) {
@@ -821,6 +820,7 @@ public final class ObjectHelper {
         return trySlowIterables(value);
     }
 
+    @SuppressWarnings("unchecked")
     private static Iterable<?> trySlowIterables(Object value) {
         if (value instanceof Iterator) {
             final Iterator<Object> iterator = (Iterator<Object>) value;
@@ -893,11 +893,11 @@ public final class ObjectHelper {
             // -> bean=foo?method=killer(a,b)
             // -> bean=bar?method=great(a,b)
             // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
-            return (Iterable<String>) () -> new Scanner(s, PARENTHESIS_PATTERN);
+            return () -> new Scanner(s, PARENTHESIS_PATTERN);
         } else {
             // optimized split string on default delimiter
             int count = StringHelper.countChar(s, DEFAULT_DELIMITER_CHAR) + 1;
-            return (Iterable<String>) () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR,
+            return () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR,
                     count);
         }
     }

@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myCoolBean", new MyBarSingleton());
         return jndi;
     }
@@ -49,10 +49,10 @@ public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").description("Hello danish \u00C6\u00D8\u00C5")
                         .setBody(simple("Hello ${body}")).to("mock:result");
             }

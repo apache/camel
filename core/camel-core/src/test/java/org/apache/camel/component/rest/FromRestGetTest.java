@@ -34,14 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class FromRestGetTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
 
     protected int getExpectedNumberOfRoutes() {
-        return 2 + 3;
+        // routes are inlined
+        return 3;
     }
 
     @Test
@@ -121,10 +122,10 @@ public class FromRestGetTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getPropertiesComponent().addInitialProperty("mySpecialId", "scott");
 
                 restConfiguration().host("localhost");

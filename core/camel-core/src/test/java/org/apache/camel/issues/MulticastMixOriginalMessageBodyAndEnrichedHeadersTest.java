@@ -31,7 +31,7 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersTest extends Conte
     public void testMulticastMixOriginalAndHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setAllowUseOriginalMessage(true);
 
                 onException(Exception.class).handled(true)

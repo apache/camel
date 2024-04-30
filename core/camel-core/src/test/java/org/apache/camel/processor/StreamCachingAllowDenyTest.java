@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class StreamCachingAllowDenyTest extends ContextTestSupport {
 
@@ -41,7 +41,7 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
     public void testAllow() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getStreamCachingStrategy().setAllowClasses(ByteArrayInputStream.class);
                 from("direct:a").to("mock:a");
             }
@@ -53,7 +53,7 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
         template.sendBody("direct:a", new ByteArrayInputStream("Hello World".getBytes()));
         assertMockEndpointsSatisfied();
         // should be converted
-        assertTrue(a.getReceivedExchanges().get(0).getMessage().getBody() instanceof StreamCache);
+        assertInstanceOf(StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
 
         assertEquals("Hello World", a.assertExchangeReceived(0).getIn().getBody(String.class));
 
@@ -71,7 +71,7 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
     public void testDeny() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getStreamCachingStrategy().setDenyClasses(ByteArrayInputStream.class);
                 from("direct:a").to("mock:a");
             }
@@ -93,7 +93,7 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
         template.sendBody("direct:a", new StringReader("Bye World"));
         assertMockEndpointsSatisfied();
         // should be converted
-        assertTrue(a.getReceivedExchanges().get(0).getMessage().getBody() instanceof StreamCache);
+        assertInstanceOf(StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
         assertEquals("Bye World", a.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
@@ -101,7 +101,7 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
     public void testAllowAndDeny() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getStreamCachingStrategy().setAllowClasses(ByteArrayInputStream.class);
                 context.getStreamCachingStrategy().setDenyClasses(Reader.class);
                 from("direct:a").to("mock:a");
@@ -114,7 +114,7 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
         template.sendBody("direct:a", new ByteArrayInputStream("Hello World".getBytes()));
         assertMockEndpointsSatisfied();
         // should be converted
-        assertTrue(a.getReceivedExchanges().get(0).getMessage().getBody() instanceof StreamCache);
+        assertInstanceOf(StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
 
         assertEquals("Hello World", a.assertExchangeReceived(0).getIn().getBody(String.class));
 
@@ -132,7 +132,7 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
     public void testDualDeny() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getStreamCachingStrategy().setDenyClasses(ByteArrayInputStream.class, Reader.class);
                 from("direct:a").to("mock:a");
             }

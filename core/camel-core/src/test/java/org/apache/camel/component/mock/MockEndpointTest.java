@@ -142,13 +142,13 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.expectedPropertyValuesReceivedInAnyOrder("foo", 123, 456);
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 456);
             }
         });
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
             }
         });
@@ -578,7 +578,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.message(0).exchangeProperty("foo").isNull();
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
             }
         });
@@ -588,7 +588,7 @@ public class MockEndpointTest extends ContextTestSupport {
         resetMocks();
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", null);
             }
         });
@@ -598,7 +598,7 @@ public class MockEndpointTest extends ContextTestSupport {
         resetMocks();
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // no foo property
             }
         });
@@ -893,7 +893,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedPropertyReceived("bar", "beer");
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
                 exchange.setProperty("bar", "beer");
             }
@@ -910,14 +910,14 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedPropertyReceived("bar", "beer");
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
                 exchange.setProperty("bar", "beer");
             }
         });
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
                 exchange.setProperty("bar", "beer");
             }
@@ -934,7 +934,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedPropertyReceived("bar", null);
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
             }
         });
@@ -950,7 +950,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedPropertyReceived("bar", "beer");
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 456);
                 exchange.setProperty("bar", "beer");
             }
@@ -967,7 +967,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedPropertyReceived("bar", "beer");
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
                 exchange.setProperty("bar", "wine");
             }
@@ -984,14 +984,14 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedPropertyReceived("bar", "beer");
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
                 exchange.setProperty("bar", "beer");
             }
         });
 
         template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("foo", 123);
                 exchange.setProperty("bar", "wine");
             }
@@ -1018,7 +1018,7 @@ public class MockEndpointTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 counter.incrementAndGet();
             }
         });
@@ -1223,8 +1223,8 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyHelloBean());
         return jndi;
     }

@@ -35,10 +35,10 @@ public class DeadLetterChannelOnPrepareTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:dead").onPrepareFailure(new MyPrepareProcessor()));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
@@ -49,7 +49,7 @@ public class DeadLetterChannelOnPrepareTest extends ContextTestSupport {
     public static class MyPrepareProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             exchange.getIn().setHeader("FailedBecause", cause.getMessage());
         }

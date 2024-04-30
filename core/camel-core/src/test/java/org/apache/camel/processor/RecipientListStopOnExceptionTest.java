@@ -47,10 +47,10 @@ public class RecipientListStopOnExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList(header("foo")).stopOnException().to("mock:result");
 
                 from("direct:a").to("mock:a");

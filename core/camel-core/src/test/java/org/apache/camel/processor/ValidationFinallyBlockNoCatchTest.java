@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * No catch blocks but handle all should work
  */
 public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
-    protected Processor validator = new MyValidator();
+    protected final Processor validator = new MyValidator();
     protected MockEndpoint validEndpoint;
     protected MockEndpoint allEndpoint;
     protected MockEndpoint deadEndpoint;

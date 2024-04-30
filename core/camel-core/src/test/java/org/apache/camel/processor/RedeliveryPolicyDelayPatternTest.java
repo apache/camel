@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RedeliveryPolicyDelayPatternTest {
 
-    private RedeliveryPolicy policy = new RedeliveryPolicy();
+    private final RedeliveryPolicy policy = new RedeliveryPolicy();
 
     @Test
-    public void testDelayPattern() throws Exception {
+    public void testDelayPattern() {
         policy.setDelayPattern("3:1000;5:3000;10:5000;20:10000");
 
         assertEquals(0, policy.calculateRedeliveryDelay(0, 0));

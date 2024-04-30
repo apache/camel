@@ -18,13 +18,13 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * This test the CronTrigger as a timer endpoint in a route.
@@ -39,10 +39,10 @@ public class QuartzStatefulJobRouteTest extends BaseQuartzTest {
         MockEndpoint.assertIsSatisfied(context);
 
         Trigger trigger = mock.getReceivedExchanges().get(0).getIn().getHeader("trigger", Trigger.class);
-        assertThat(trigger instanceof CronTrigger, CoreMatchers.is(true));
+        assertInstanceOf(CronTrigger.class, trigger, "trigger should be a CronTrigger");
 
         JobDetail detail = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
-        assertThat(detail.getJobClass().equals(StatefulCamelJob.class), CoreMatchers.is(true));
+        assertEquals(StatefulCamelJob.class, detail.getJobClass());
     }
 
     @Override

@@ -46,8 +46,8 @@ public class AvroDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String instanceClassName;
     @XmlAttribute
-    @Metadata(defaultValue = "ApacheAvro")
-    private AvroLibrary library = AvroLibrary.ApacheAvro;
+    @Metadata(defaultValue = "avroJackson")
+    private AvroLibrary library = AvroLibrary.Jackson;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String objectMapper;
@@ -94,7 +94,7 @@ public class AvroDataFormat extends DataFormatDefinition {
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.component.jackson.SchemaResolver")
     private String schemaResolver;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
@@ -429,6 +429,11 @@ public class AvroDataFormat extends DataFormatDefinition {
     //
     // Fluent builders
     //
+
+    public AvroDataFormat schema(Object schema) {
+        this.schema = schema;
+        return this;
+    }
 
     public AvroDataFormat objectMapper(String objectMapper) {
         this.objectMapper = objectMapper;

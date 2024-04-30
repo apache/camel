@@ -85,10 +85,10 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // we start this route async
                 from("direct:start")
                         // we play a bit with the message
@@ -119,7 +119,7 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             route += "B";
             assertEquals("Hello World", exchange.getIn().getBody());
             throw new IllegalArgumentException("Damn forced by unit test");

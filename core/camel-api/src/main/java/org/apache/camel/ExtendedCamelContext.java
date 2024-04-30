@@ -71,6 +71,18 @@ public interface ExtendedCamelContext {
     }
 
     /**
+     * Sets the profile Camel should run as (dev,test,prod).
+     */
+    void setProfile(String profile);
+
+    /**
+     * The profile Camel should run as (dev,test,prod). Returns null if no profile has been set.
+     */
+    default String getProfile() {
+        return null;
+    }
+
+    /**
      * Sets the registry Camel should use for looking up beans by name or type.
      * <p/>
      * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
@@ -79,6 +91,13 @@ public interface ExtendedCamelContext {
      * @param registry the registry such as DefaultRegistry or
      */
     void setRegistry(Registry registry);
+
+    /**
+     * Sets the assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean}
+     *
+     * @param managementMBeanAssembler the assembler to use
+     */
+    void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler);
 
     default Registry getRegistry() {
         return null;

@@ -23,6 +23,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 public class QuartzTwoCamelContextSuspendResumeTest {
 
     private DefaultCamelContext camel1;
@@ -64,14 +66,14 @@ public class QuartzTwoCamelContextSuspendResumeTest {
         mock2.expectedMinimumMessageCount(6);
         mock1.assertIsSatisfied();
 
-        camel1.suspend();
+        assertDoesNotThrow(() -> camel1.suspend());
 
         mock2.assertIsSatisfied();
 
         // should resume triggers when we start camel 1 again
         mock1.reset();
         mock1.expectedMinimumMessageCount(2);
-        camel1.resume();
+        assertDoesNotThrow(() -> camel1.resume());
 
         mock1.assertIsSatisfied();
     }

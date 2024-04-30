@@ -1504,7 +1504,6 @@ public class AggregateProcessor extends AsyncProcessorSupport
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         if (aggregationStrategy.canPreComplete()) {
@@ -1554,7 +1553,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         if (isRecoverableRepository()) {
             RecoverableAggregationRepository recoverable = (RecoverableAggregationRepository) aggregationRepository;
             if (recoverable.isUseRecovery()) {
-                long interval = recoverable.getRecoveryIntervalInMillis();
+                long interval = recoverable.getRecoveryInterval();
                 if (interval <= 0) {
                     throw new IllegalArgumentException(
                             "AggregationRepository has recovery enabled and the RecoveryInterval option must be a positive number, was: "

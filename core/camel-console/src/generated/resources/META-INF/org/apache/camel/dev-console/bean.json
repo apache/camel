@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "bean",
+    "title": "Bean",
+    "description": "Displays Java beans from the registry",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.BeanDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

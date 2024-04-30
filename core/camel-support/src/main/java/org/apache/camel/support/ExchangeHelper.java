@@ -374,6 +374,7 @@ public final class ExchangeHelper {
         resultExtension.setNotifyEvent(sourceExtension.isNotifyEvent());
         resultExtension.setRedeliveryExhausted(sourceExtension.isRedeliveryExhausted());
         resultExtension.setErrorHandlerHandled(sourceExtension.getErrorHandlerHandled());
+        resultExtension.setFailureHandled(sourceExtension.isFailureHandled());
 
         result.setException(source.getException());
     }
@@ -1087,29 +1088,34 @@ public final class ExchangeHelper {
      */
     public static void setVariable(Exchange exchange, String name, Object value) {
         VariableRepository repo = null;
+        final String id = getRepositoryId(name);
+        if (id != null) {
+            repo = getVariableRepository(exchange, id);
+            name = resolveRepositoryName(exchange, name, id);
+        }
+        final VariableAware va = getVariableAware(exchange, repo);
+        va.setVariable(name, value);
+    }
+
+    private static String getRepositoryId(String name) {
         String id = StringHelper.before(name, ":");
         // header and exchange is reserved
-        if ("header".equals(id) || "exchange".equals(id)) {
+        if (isReserved(id)) {
             id = null;
         }
-        if (id != null) {
-            VariableRepositoryFactory factory
-                    = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
-            repo = factory.getVariableRepository(id);
-            if (repo == null) {
-                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
-            }
-            name = StringHelper.after(name, ":");
-            // special for route, where we need to enrich the name with current route id if none given
-            if ("route".equals(id) && !name.contains(":")) {
-                String prefix = getAtRouteId(exchange);
-                if (prefix != null) {
-                    name = prefix + ":" + name;
-                }
+        return id;
+    }
+
+    private static String resolveRepositoryName(Exchange exchange, String name, String id) {
+        name = StringHelper.after(name, ":");
+        // special for route, where we need to enrich the name with current route id if none given
+        if ("route".equals(id) && !name.contains(":")) {
+            String prefix = getAtRouteId(exchange);
+            if (prefix != null) {
+                name = prefix + ":" + name;
             }
         }
-        VariableAware va = repo != null ? repo : exchange;
-        va.setVariable(name, value);
+        return name;
     }
 
     /**
@@ -1122,28 +1128,12 @@ public final class ExchangeHelper {
      */
     public static void setVariableFromMessageBodyAndHeaders(Exchange exchange, String name, Message message) {
         VariableRepository repo = null;
-        String id = StringHelper.before(name, ":");
-        // header and exchange is reserved
-        if ("header".equals(id) || "exchange".equals(id)) {
-            id = null;
-        }
+        final String id = getRepositoryId(name);
         if (id != null) {
-            VariableRepositoryFactory factory
-                    = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
-            repo = factory.getVariableRepository(id);
-            if (repo == null) {
-                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
-            }
-            name = StringHelper.after(name, ":");
-            // special for route, where we need to enrich the name with current route id if none given
-            if ("route".equals(id) && !name.contains(":")) {
-                String prefix = getAtRouteId(exchange);
-                if (prefix != null) {
-                    name = prefix + ":" + name;
-                }
-            }
+            repo = getVariableRepository(exchange, id);
+            name = resolveRepositoryName(exchange, name, id);
         }
-        VariableAware va = repo != null ? repo : exchange;
+        final VariableAware va = getVariableAware(exchange, repo);
 
         // set body and headers as variables
         Object body = message.getBody();
@@ -1156,6 +1146,29 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Whether the processing of the {@link Exchange} was success and that the result should be stored in variable.
+     *
+     * @param  exchange the exchange
+     * @param  name     the variable name
+     * @return          true to call setVariableFromMessageBodyAndHeaders to set the result after-wards
+     */
+    public static boolean shouldSetVariableResult(Exchange exchange, String name) {
+        if (name == null) {
+            return false;
+        }
+        // same logic as in Pipeline/PipelineHelper
+        boolean stop
+                = exchange.isRouteStop() || exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()
+                        || exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                                && exchange.getExchangeExtension().isErrorHandlerHandled();
+        if (stop) {
+            return false;
+        }
+        // success
+        return true;
+    }
+
+    /**
      * Gets the variable
      *
      * @param  exchange the exchange
@@ -1165,29 +1178,33 @@ public final class ExchangeHelper {
      */
     public static Object getVariable(Exchange exchange, String name) {
         VariableRepository repo = null;
-        String id = StringHelper.before(name, ":");
-        // header and exchange is reserved
-        if ("header".equals(id) || "exchange".equals(id)) {
-            id = null;
-        }
+        final String id = getRepositoryId(name);
         if (id != null) {
-            VariableRepositoryFactory factory
-                    = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
-            repo = factory.getVariableRepository(id);
-            if (repo == null) {
-                throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
-            }
-            name = StringHelper.after(name, ":");
-            // special for route, where we need to enrich the name with current route id if none given
-            if ("route".equals(id) && !name.contains(":")) {
-                String prefix = getAtRouteId(exchange);
-                if (prefix != null) {
-                    name = prefix + ":" + name;
-                }
-            }
+            repo = getVariableRepository(exchange, id);
+
+            name = resolveRepositoryName(exchange, name, id);
         }
-        VariableAware va = repo != null ? repo : exchange;
+        final VariableAware va = getVariableAware(exchange, repo);
         return va.getVariable(name);
+    }
+
+    private static VariableRepository getVariableRepository(Exchange exchange, String id) {
+        VariableRepositoryFactory factory
+                = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+        VariableRepository repo = factory.getVariableRepository(id);
+        if (repo == null) {
+            throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
+        }
+        return repo;
+    }
+
+    private static boolean isReserved(String id) {
+        return "header".equals(id) || "exchange".equals(id);
+    }
+
+    private static VariableAware getVariableAware(Exchange exchange, VariableRepository repo) {
+        VariableAware va = repo != null ? repo : exchange;
+        return va;
     }
 
     /**

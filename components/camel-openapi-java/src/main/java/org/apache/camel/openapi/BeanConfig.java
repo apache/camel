@@ -32,7 +32,7 @@ public class BeanConfig {
 
     String[] schemes;
     String title;
-    Version version = new Version("3.0.1");
+    Version version = OPENAPI_VERSION_30;
     String licenseUrl;
     String license;
 
@@ -133,7 +133,15 @@ public class BeanConfig {
             openApi.setInfo(info);
         }
         for (String scheme : this.schemes) {
-            Server server = new Server().url(scheme + "://" + this.host + this.basePath);
+            String url = scheme + "://" + this.host;
+            if (this.basePath != null) {
+                if (this.basePath.startsWith("/")) {
+                    url += this.basePath;
+                } else {
+                    url = url + "/" + this.basePath;
+                }
+            }
+            Server server = new Server().url(url);
             openApi.addServersItem(server);
         }
         if (isOpenApi31()) {

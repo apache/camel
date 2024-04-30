@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -56,7 +55,7 @@ class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -95,11 +94,6 @@ class AggregateCompletionOnlyTwoTest extends ContextTestSupport {
         public void confirm(CamelContext camelContext, String exchangeId) {
             confirm.incrementAndGet();
             super.confirm(camelContext, exchangeId);
-        }
-
-        @Override
-        public Set<String> getKeys() {
-            return super.getKeys();
         }
 
         public int getAdd() {

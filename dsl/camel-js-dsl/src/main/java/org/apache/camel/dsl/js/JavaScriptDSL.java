@@ -36,6 +36,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Registry;
 
+@Deprecated
 public class JavaScriptDSL extends BuilderSupport implements EndpointBuilderFactory {
     public final Registry registry;
     public final EndpointRouteBuilder builder;

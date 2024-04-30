@@ -127,7 +127,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter
     String basePath;
 
-    @Parameter(defaultValue = "3.0.46")
+    @Parameter(defaultValue = "3.0.54")
     String swaggerCodegenMavenPluginVersion;
 
     @Parameter(defaultValue = "${project}", readonly = true)

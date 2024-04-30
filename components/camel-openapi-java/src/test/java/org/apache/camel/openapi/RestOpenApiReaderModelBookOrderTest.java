@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
@@ -68,38 +67,6 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
                         .to("bean:bookService?method=getOrder(${header.id})");
             }
         };
-    }
-
-    @Test
-    public void testReaderRead() throws Exception {
-        BeanConfig config = new BeanConfig();
-        config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
-        config.setBasePath("/api");
-        config.setTitle("Camel User store");
-        config.setLicense("Apache 2.0");
-        config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
-        config.setVersion("2.0");
-        RestOpenApiReader reader = new RestOpenApiReader();
-
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
-        assertNotNull(openApi);
-
-        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
-
-        log.info(json);
-
-        assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-        assertTrue(json.contains("\"description\" : \"The order returned\""));
-        assertTrue(json.contains("\"BookOrder\""));
-        assertTrue(json.contains("\"LineItem\""));
-        assertTrue(json.contains("\"$ref\" : \"#/definitions/BookOrder\""));
-        assertTrue(json.contains("\"$ref\" : \"#/definitions/LineItem\""));
-        assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.BookOrder\""));
-        assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.LineItem\""));
-
-        context.stop();
     }
 
     @ParameterizedTest

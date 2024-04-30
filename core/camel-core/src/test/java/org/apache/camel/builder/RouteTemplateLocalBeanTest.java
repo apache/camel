@@ -43,7 +43,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
@@ -73,7 +73,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanInBuilder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
@@ -104,7 +104,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanInBuilderTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
@@ -144,7 +144,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanInConfigure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
@@ -178,7 +178,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanInConfigureTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
@@ -225,7 +225,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanInTemplateConfigure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .configure(rtc -> rtc.bind("myBar",
                                 (Processor) ex -> ex.getMessage().setBody("Builder " + ex.getMessage().getBody())))
@@ -259,7 +259,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .configure(rtc -> rtc.bind("myBar", (Processor) ex -> ex.getMessage().setBody("Builder" +
                                                                                                       counter.incrementAndGet()
@@ -302,7 +302,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanInTemplateBeanSupplier() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar", Processor.class,
                                 ctx -> (Processor) ex -> ex.getMessage().setBody("Builder " + ex.getMessage().getBody()))
@@ -336,7 +336,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar", Processor.class, ctx -> (Processor) ex -> ex.getMessage().setBody("Builder" +
                                                                                                                  counter.incrementAndGet()
@@ -379,7 +379,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanInTemplateBean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar",
                                 (Supplier<Processor>) () -> ex -> ex.getMessage()
@@ -414,7 +414,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar", (Supplier<Processor>) () -> ex -> ex.getMessage().setBody("Builder"
                                                                                                          + counter
@@ -458,7 +458,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar", "bean",
                                 RouteTemplateLocalBeanTest.class.getName() + "?method=createBuilderProcessor")
@@ -490,7 +490,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanExpressionFluent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar").bean(RouteTemplateLocalBeanTest.class, "createBuilderProcessor")
                         .from("direct:{{foo}}")
@@ -521,7 +521,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanExpressionFluentTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateParameter("greeting", "Davs ")
                         .templateBean("myBar").bean(RouteTemplateLocalBeanTest.class, "createBuilderProcessorTwo")
@@ -553,7 +553,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanClassExpressionFluent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar").typeClass(BuilderProcessor.class).end()
                         .from("direct:{{foo}}")
@@ -584,7 +584,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanClassAsString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar").type(BuilderProcessor.class.getName()).end()
                         .from("direct:{{foo}}")
@@ -614,7 +614,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public static class BuilderProcessor implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getMessage().setBody("Builder " + exchange.getMessage().getBody());
         }
     }
@@ -623,7 +623,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanClassPropertiesFluent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar").templateParameter("hi")
                         .templateBean("myBar").property("prefix", "{{hi}}").typeClass(BuilderThreeProcessor.class).end()
                         .from("direct:{{foo}}")
@@ -655,7 +655,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanMemorize() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar").templateParameter("hi")
                         .templateBean("myBar").property("prefix", "{{hi}}").typeClass(BuilderThreeProcessor.class).end()
                         .from("direct:{{foo}}")
@@ -696,7 +696,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanFactoryMethod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar")
                         .type("#class:org.apache.camel.builder.RouteTemplateLocalBeanTest#createBuilderProcessorThree('MyPrefix ')")
@@ -729,7 +729,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     public void testLocalBeanConstructorParameter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar").type("#class:org.apache.camel.builder.MyConstructorProcessor('MyCtr ')").end()
                         .from("direct:{{foo}}")
@@ -768,7 +768,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getMessage().setBody(prefix + "Builder2 " + exchange.getMessage().getBody());
         }
     }
@@ -787,7 +787,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             counter++;
             exchange.getMessage().setBody(prefix + "Builder3 " + exchange.getMessage().getBody());
             exchange.getMessage().setHeader("counter", counter);

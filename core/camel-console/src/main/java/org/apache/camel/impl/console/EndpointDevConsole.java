@@ -29,7 +29,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("endpoint")
+@DevConsole(name = "endpoint", displayName = "Endpoints", description = "Endpoint Registry information")
 public class EndpointDevConsole extends AbstractDevConsole {
 
     public EndpointDevConsole() {

@@ -44,7 +44,7 @@ public class CustomBulkTypeConvertersTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCoreTypeConverter() throws Exception {
+    public void testCoreTypeConverter() {
         MyOrder order = context.getTypeConverter().convertTo(MyOrder.class, "123");
         assertEquals(123, order.getId());
 

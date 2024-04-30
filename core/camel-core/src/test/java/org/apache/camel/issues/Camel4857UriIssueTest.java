@@ -42,8 +42,8 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
      * contain URI special characters like ? or +
      */
     static class MyEndpoint extends DefaultEndpoint {
-        String uri;
-        String remaining;
+        final String uri;
+        final String remaining;
 
         MyEndpoint(final String uri, final String remaining) {
             this.uri = uri;
@@ -51,12 +51,12 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -73,8 +73,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
     static class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
-                throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) {
             return new MyEndpoint(uri, remaining);
         }
 

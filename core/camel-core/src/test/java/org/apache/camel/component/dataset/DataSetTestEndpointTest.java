@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 
 public class DataSetTestEndpointTest extends ContextTestSupport {
 
-    private String expectedBody = "Hello World";
+    private final String expectedBody = "Hello World";
 
     @Test
     public void testMocksAreValid() throws Exception {
@@ -42,7 +42,7 @@ public class DataSetTestEndpointTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -62,13 +62,13 @@ public class DataSetTestEndpointTest extends ContextTestSupport {
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             // not needed for this test
             return null;
         }
 
         @Override
-        public Consumer createConsumer(final Processor processor) throws Exception {
+        public Consumer createConsumer(final Processor processor) {
             return new Consumer() {
                 @Override
                 public Endpoint getEndpoint() {

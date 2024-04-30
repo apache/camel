@@ -34,7 +34,7 @@ public class MyFooHealthCheckTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMyFoo() throws Exception {
+    public void testMyFoo() {
         context.start();
 
         HealthCheck hc = PluginHelper.getHealthCheckResolver(context).resolveHealthCheck("myfoo");
@@ -50,7 +50,7 @@ public class MyFooHealthCheckTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAddToRegistry() throws Exception {
+    public void testAddToRegistry() {
         context.start();
 
         HealthCheck hc = PluginHelper.getHealthCheckResolver(context).resolveHealthCheck("myfoo");

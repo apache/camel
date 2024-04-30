@@ -32,8 +32,8 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
     private static int counter;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("fail", new MyFailBean());
         return jndi;
     }
@@ -42,7 +42,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
     public void testRecipientListOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException().parallelProcessing();
@@ -66,7 +66,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start").to("mock:a").recipientList(header("foo")).stopOnException().parallelProcessing();
@@ -99,7 +99,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.setTracing(true);
 
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
@@ -146,7 +146,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
 
     public static class MyFailBean {
 
-        public String doSomething(Exchange exchange) throws Exception {
+        public String doSomething(Exchange exchange) {
             counter++;
             assertEquals("bean://fail", exchange.getProperty(Exchange.TO_ENDPOINT, String.class));
             throw new IllegalArgumentException("Damn");

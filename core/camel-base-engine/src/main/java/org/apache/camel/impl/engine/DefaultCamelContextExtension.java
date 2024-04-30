@@ -99,6 +99,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
 
     private volatile String description;
+    private volatile String profile;
     private volatile ExchangeFactory exchangeFactory;
     private volatile ExchangeFactoryManager exchangeFactoryManager;
     private volatile ProcessorExchangeFactory processorExchangeFactory;
@@ -217,6 +218,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public String getProfile() {
+        return profile;
+    }
+
+    @Override
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    @Override
     public Endpoint hasEndpoint(NormalizedEndpointUri uri) {
         if (camelContext.getEndpointRegistry().isEmpty()) {
             return null;
@@ -258,15 +269,17 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void registerEndpointCallback(EndpointStrategy strategy) {
-        if (!camelContext.getEndpointStrategies().contains(strategy)) {
-            // let it be invoked for already registered endpoints so it can
-            // catch-up.
-            camelContext.getEndpointStrategies().add(strategy);
+        // let it be invoked for already registered endpoints so it can
+        // catch-up.
+        if (camelContext.getEndpointStrategies().add(strategy)) {
             for (Endpoint endpoint : camelContext.getEndpoints()) {
-                Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
+                Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(),
+                        endpoint);
                 if (newEndpoint != null) {
                     // put will replace existing endpoint with the new endpoint
-                    camelContext.getEndpointRegistry().put(camelContext.getEndpointKey(endpoint.getEndpointUri()), newEndpoint);
+                    camelContext.getEndpointRegistry()
+                            .put(camelContext.getEndpointKey(endpoint.getEndpointUri()),
+                                    newEndpoint);
                 }
             }
         }
@@ -338,7 +351,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         return managementMBeanAssembler;
     }
 
-    void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
+    @Override
+    public void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
         this.managementMBeanAssembler
                 = camelContext.getInternalServiceManager().addService(camelContext, managementMBeanAssembler, false);
     }
@@ -790,11 +804,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             synchronized (lock) {
                 if (typeConverterRegistry == null) {
                     setTypeConverterRegistry(camelContext.createTypeConverterRegistry());
-
-                    // some registries are also a type converter implementation
-                    if (typeConverterRegistry instanceof TypeConverter newTypeConverter) {
-                        setTypeConverter(newTypeConverter);
-                    }
                 }
             }
         }
@@ -803,6 +812,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
         this.typeConverterRegistry = camelContext.getInternalServiceManager().addService(camelContext, typeConverterRegistry);
+        // some registries are also a type converter implementation
+        if (typeConverterRegistry instanceof TypeConverter newTypeConverter) {
+            setTypeConverter(newTypeConverter);
+        }
     }
 
     void stopTypeConverter() {

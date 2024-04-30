@@ -43,10 +43,10 @@ public class InterceptFromWhenNoStopTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptFrom().when(simple("${body} contains 'Goofy'")).to("mock:goofy");
 
                 from("direct:start").to("mock:end");

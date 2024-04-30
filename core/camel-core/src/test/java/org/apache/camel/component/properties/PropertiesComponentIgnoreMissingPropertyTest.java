@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class PropertiesComponentIgnoreMissingPropertyTest extends ContextTestSupport {
 
     @Test
-    public void testIgnoreMissingProperty() throws Exception {
+    public void testIgnoreMissingProperty() {
         var o = context.getPropertiesComponent().resolveProperty("{{?foo}}");
         Assertions.assertFalse(o.isEmpty());
         Assertions.assertEquals("{{?foo}}", o.get());

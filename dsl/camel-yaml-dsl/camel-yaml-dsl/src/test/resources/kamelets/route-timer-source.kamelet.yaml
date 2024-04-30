@@ -57,7 +57,7 @@ spec:
     - "camel:kamelet"
   template:
     route:
-      stream-caching: false
+      stream-cache: false
       message-history: true
       from:
         uri: timer:tick

@@ -25,10 +25,9 @@ import org.junit.jupiter.api.Test;
 
 public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSupport {
 
-    private String body = "Hello World this file will NOT be deleted";
-
     @Test
     public void testPollFileAndShouldNotBeDeleted() throws Exception {
+        String body = "Hello World this file will NOT be deleted";
         template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
@@ -45,13 +44,13 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 onException(IllegalArgumentException.class).to("mock:error");
 
                 from(fileUri("?initialDelay=0&delay=10&delete=true")).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new IllegalArgumentException("Forced by unittest");
                     }
                 });

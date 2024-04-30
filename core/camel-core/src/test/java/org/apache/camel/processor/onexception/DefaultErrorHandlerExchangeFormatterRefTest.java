@@ -32,14 +32,14 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
     private static int invoked;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myExchangeFormatter", new MyExchangeFormatter());
         return jndi;
     }
 
     @Test
-    public void testRetryUntil() throws Exception {
+    public void testRetryUntil() {
         try {
             template.requestBody("direct:start", "Hello World");
             fail("Expected the exception");
@@ -50,10 +50,10 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(defaultErrorHandler().exchangeFormatterRef("myExchangeFormatter"));
 
                 from("direct:start").process(new MyProcessor());

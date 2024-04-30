@@ -30,7 +30,7 @@ public class InterceptSendToEndpointWithParametersTest extends ContextTestSuppor
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("log*").to("mock:http").skipSendToOriginalEndpoint();
             }
         });
@@ -43,10 +43,10 @@ public class InterceptSendToEndpointWithParametersTest extends ContextTestSuppor
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("log://foo?groupSize=5&level=WARN");
             }
         };

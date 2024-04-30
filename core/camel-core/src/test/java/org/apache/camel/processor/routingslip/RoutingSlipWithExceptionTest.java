@@ -33,10 +33,9 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "destinations";
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
     private MockEndpoint endEndpoint;
     private MockEndpoint exceptionEndpoint;
-    private MockEndpoint exceptionSettingEndpoint;
     private MockEndpoint aEndpoint;
 
     @Test
@@ -125,11 +124,11 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
         endEndpoint = resolveMandatoryEndpoint("mock:noexception", MockEndpoint.class);
         exceptionEndpoint = resolveMandatoryEndpoint("mock:exception", MockEndpoint.class);
-        exceptionSettingEndpoint = resolveMandatoryEndpoint("mock:exceptionSetting", MockEndpoint.class);
+        MockEndpoint exceptionSettingEndpoint = resolveMandatoryEndpoint("mock:exceptionSetting", MockEndpoint.class);
         aEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
 
         exceptionSettingEndpoint.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setException(new Exception("Throw me!"));
             }
         });
@@ -139,8 +138,8 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }

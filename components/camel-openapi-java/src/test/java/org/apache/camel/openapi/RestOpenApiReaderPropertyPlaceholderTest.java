@@ -79,7 +79,7 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0", "2.0" })
+    @ValueSource(strings = { "3.1", "3.0" })
     public void testReaderRead(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
@@ -97,12 +97,7 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
-        if (config.isOpenApi2()) {
-            assertTrue(json.contains("\"host\" : \"localhost:8080\""));
-            assertTrue(json.contains("\"basePath\" : \"/api\""));
-        } else {
-            assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
-        }
+        assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
         assertTrue(json.contains("\"/hello/bye\""));
         assertTrue(json.contains("\"summary\" : \"To update the greeting message\""));
         assertTrue(json.contains("\"/hello/bye/{name}\""));

@@ -40,21 +40,21 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .throwException(new IllegalArgumentException("Foo"));
             }
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2")
                         .throwException(new IllegalArgumentException("Foo2"));
             }
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // global routes configuration
                 routeConfiguration().onException(Exception.class).handled(true).to("mock:error");
             }
@@ -90,14 +90,14 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("mock:result");
             }
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2")
                         // route scoped that overrides the global scoped
                         .onCompletion().to("mock:done2").end()
@@ -106,7 +106,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // global routes configuration
                 routeConfiguration().onCompletion().to("mock:done");
             }
@@ -144,7 +144,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody(constant("A"))
                         .setBody(constant("B"))
@@ -153,7 +153,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2")
                         .setBody(constant("C"))
                         .setBody(constant("D"))
@@ -162,7 +162,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // global routes configuration
                 routeConfiguration().intercept().to("mock:step");
             }
@@ -199,7 +199,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("seda:start")
                         .setBody(constant("A"))
                         .setBody(constant("B"))
@@ -208,7 +208,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2")
                         .setBody(constant("C"))
                         .setBody(constant("D"))
@@ -217,7 +217,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // global routes configuration
                 routeConfiguration().interceptFrom("direct*").to("mock:step");
             }
@@ -254,7 +254,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
 
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .setBody(constant("A"))
                         .to("mock:foo")
@@ -265,7 +265,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         });
         routes.add(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start2")
                         .setBody(constant("C"))
                         .to("mock:foo")
@@ -276,7 +276,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         });
         routes.add(new RouteConfigurationBuilder() {
             @Override
-            public void configuration() throws Exception {
+            public void configuration() {
                 // global routes configuration
                 routeConfiguration().interceptSendToEndpoint("mock:foo").to("mock:step");
             }

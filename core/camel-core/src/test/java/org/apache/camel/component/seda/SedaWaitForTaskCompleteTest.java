@@ -45,7 +45,7 @@ public class SedaWaitForTaskCompleteTest extends ContextTestSupport {
         // and since the route changes the payload we can get the response
         // anyway
         Exchange out = template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
             }
@@ -56,10 +56,10 @@ public class SedaWaitForTaskCompleteTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("seda:foo?waitForTaskToComplete=Always");
 
                 from("seda:foo?waitForTaskToComplete=Always").transform(constant("Bye World")).to("mock:result");

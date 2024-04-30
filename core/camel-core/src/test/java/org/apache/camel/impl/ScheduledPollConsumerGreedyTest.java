@@ -31,7 +31,7 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
     private final AtomicInteger polled = new AtomicInteger();
 
     @Test
-    public void test321Greedy() throws Exception {
+    public void test321Greedy() {
         polled.set(0);
 
         MockScheduledPollConsumer consumer = new Mock321ScheduledPollConsumer(getMockEndpoint("mock:foo"), null);
@@ -46,7 +46,7 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
                 polled.addAndGet(polledMessages);
             }
 
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 return false;
             }
         });
@@ -60,7 +60,7 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
     }
 
     @Test
-    public void test321NotGreedy() throws Exception {
+    public void test321NotGreedy() {
         polled.set(0);
 
         MockScheduledPollConsumer consumer = new Mock321ScheduledPollConsumer(getMockEndpoint("mock:foo"), null);
@@ -75,7 +75,7 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
                 polled.addAndGet(polledMessages);
             }
 
-            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 return false;
             }
         });

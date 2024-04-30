@@ -16,7 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -38,11 +37,6 @@ public class DefaultRestDefinitionsResolver implements RestDefinitionsResolver {
             return null;
         }
         return rests;
-    }
-
-    @Override
-    public List<String> findCamelContexts() throws Exception {
-        return Collections.emptyList();
     }
 
 }

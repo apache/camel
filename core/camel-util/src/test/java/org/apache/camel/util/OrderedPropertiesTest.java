@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OrderedPropertiesTest {
 
     @Test
-    public void testOrdered() throws Exception {
+    public void testOrdered() {
         Properties prop = new OrderedProperties();
         prop.setProperty("c", "CCC");
         prop.setProperty("d", "DDD");

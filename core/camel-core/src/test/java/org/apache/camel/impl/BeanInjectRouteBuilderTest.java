@@ -33,8 +33,8 @@ public class BeanInjectRouteBuilderTest extends ContextTestSupport {
     private FooBar foo;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("foo", new FooBar());
         return registry;
     }
@@ -61,13 +61,13 @@ public class BeanInjectRouteBuilderTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         String out = foo.hello(exchange.getIn().getBody(String.class));
                         exchange.getIn().setBody(out);
                     }

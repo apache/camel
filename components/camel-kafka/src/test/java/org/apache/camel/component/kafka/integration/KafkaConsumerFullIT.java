@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class KafkaConsumerFullIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
     public static final String TOPIC = "test-full";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerFullIT.class);

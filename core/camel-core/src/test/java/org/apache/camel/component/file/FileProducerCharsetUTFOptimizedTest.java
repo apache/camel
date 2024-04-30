@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
 
     // use utf-8 as original payload with 00e6 which is a danish ae letter
-    private byte[] utf = "ABC\u00e6D\uD867\uDE3DE\uD83C\uDFF3".getBytes(StandardCharsets.UTF_8);
+    private final byte[] utf = "ABC\u00e6D\uD867\uDE3DE\uD83C\uDFF3".getBytes(StandardCharsets.UTF_8);
 
     @BeforeEach
     public void createData() throws IOException {
@@ -62,10 +62,10 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("input?initialDelay=0&delay=10&noop=true"))
                         // no charset so its optimized to write directly
                         .to(fileUri("?fileName=output.txt"));

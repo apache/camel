@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.kafka.integration.common.TestProducerUtil.sendMessagesInRoute;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class KafkaSagaIT extends BaseEmbeddedKafkaTestSupport {
+public class KafkaSagaIT extends BaseKafkaTestSupport {
 
     @Test
     public void testSaga() throws Exception {

@@ -60,7 +60,7 @@ public class SimpleLanguageBeanFunctionScopeTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() {
         Registry wrapper = new SimpleRegistry() {
             @Override
             public Object lookupByName(String name) {
@@ -75,10 +75,10 @@ public class SimpleLanguageBeanFunctionScopeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single").choice().when().simple("${bean:foo?scope=Singleton}").to("mock:result")
                         .otherwise().to("mock:other");
 

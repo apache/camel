@@ -32,12 +32,13 @@ public class DirectNoConsumerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testInOnly() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo");
             }
         });
@@ -51,12 +52,13 @@ public class DirectNoConsumerTest extends ContextTestSupport {
         assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
     }
 
+    @Test
     public void testInOut() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo");
             }
         });
@@ -76,7 +78,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("direct:foo?failIfNoConsumers=false");
             }
         });
@@ -92,7 +94,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").wireTap("direct:foo?failIfNoConsumers=false").to("mock:foo");
             }
         });
@@ -112,7 +114,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("stopThisRoute").to("mock:foo");
             }
         });
@@ -140,7 +142,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("direct:foo");
                 from("direct:foo").to("mock:foo");
             }
@@ -161,7 +163,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("direct:foo?failIfNoConsumers=false").to("direct:bar");
                 from("direct:bar").to("mock:foo");
             }
@@ -182,7 +184,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo?failIfNoConsumers=false").to("log:test");
             }
         });

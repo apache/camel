@@ -23,13 +23,13 @@ import org.junit.jupiter.api.Test;
 
 public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
 
-    private String url = "seda:foo?concurrentConsumers=20";
-    private int size = 100;
+    private final String url = "seda:foo?concurrentConsumers=20";
 
     @Test
     public void testThrottlingRoutePolicy() throws Exception {
         // we use seda which are not persistent and hence can loose a message
         // when we get graceful shutdown support we can prevent this
+        int size = 100;
         getMockEndpoint("mock:result").expectedMinimumMessageCount(size - 10);
 
         for (int i = 0; i < size; i++) {
@@ -40,10 +40,10 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
                 policy.setMaxInflightExchanges(10);
 

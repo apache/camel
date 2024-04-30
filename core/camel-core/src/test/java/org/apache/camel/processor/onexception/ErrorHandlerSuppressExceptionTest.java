@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Test;
 public class ErrorHandlerSuppressExceptionTest extends ContextTestSupport {
 
     @Test
-    public void testSuppressException() throws Exception {
+    public void testSuppressException() {
         Exchange out = template.send("direct:start", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
         });
@@ -46,14 +46,14 @@ public class ErrorHandlerSuppressExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).maximumRedeliveries(3).redeliveryDelay(0)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // throw a new exception while handling an exception
                                 // this should not leak with the same exception being nested
                                 // as suppressed exception

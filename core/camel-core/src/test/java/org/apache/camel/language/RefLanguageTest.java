@@ -31,8 +31,8 @@ class RefLanguageTest extends AbstractTypedLanguageTest<RefExpression.Builder, R
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = super.createCamelRegistry();
         registry.bind("someExpression", new SimpleExpression("${body}"));
         return registry;
     }

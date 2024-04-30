@@ -38,9 +38,9 @@ import static org.awaitility.Awaitility.await;
 
 @Isolated("Does not play well with parallel execution")
 public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTestSupport {
-    private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
 
-    private String url = "direct:start?block=false";
+    private final String url = "direct:start?block=false";
     private MockEndpoint result;
 
     @Override
@@ -61,7 +61,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
 
         result.whenAnyExchangeReceived(new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 String msg = exchange.getIn().getBody(String.class);
                 exchange.setException(new ThrottlingException(msg));
             }
@@ -101,10 +101,10 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 int threshold = 2;
                 long failureWindow = 30;
                 long halfOpenAfter = 250;

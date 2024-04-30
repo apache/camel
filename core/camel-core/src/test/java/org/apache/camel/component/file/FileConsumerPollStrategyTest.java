@@ -40,16 +40,16 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
     private static String event = "";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10")).convertBodyTo(String.class)
                         .to("mock:result");
             }
@@ -88,7 +88,7 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
+        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) {
             if (cause.getMessage().equals("Damn I cannot do this")) {
                 event += "rollback";
             }

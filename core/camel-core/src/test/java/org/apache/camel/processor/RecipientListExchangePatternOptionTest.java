@@ -21,10 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class RecipientListExchangePatternOptionTest extends SendExchangePatternOptionTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList(constant("stub:foo?exchangePattern=InOnly")).to("mock:result");
 
                 from("stub:foo").to("mock:stub");

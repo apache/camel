@@ -19,7 +19,7 @@ https://webassembly.org[WebAssembly (Wasm)] is a low-level bytecode format desig
 
 This component provides support to leverage Wasm functions for message transformation.
 
-Maven users will need to add the following dependency to their pom.xml
+Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
 [source,xml]
@@ -69,7 +69,7 @@ In _Wasm_, sharing objects between the host, in this case the _JVM_, and the _Wa
 
 The module hosting the function *must* provide the functions to allocate/deallocate memory that *must* be named `alloc` and `dealloc` respectively.
 
-Here an example of the mentioned functions implemented in https://www.rust-lang.org[Rust]:
+Here's an example of the mentioned functions implemented in https://www.rust-lang.org[Rust]:
 
 [source,rust]
 ---------------------------------------
@@ -91,7 +91,10 @@ pub unsafe extern "C" fn dealloc(ptr: &mut u8, len: i32) {
 
 === Data shapes
 
-It is not possible to share a Java object with the Wasm module directly and as mentioned before, data exchange leverages Wasm's memory that can be accessed by both the host and the guest runtimes. At this stage, the data structure that the component exchange with the Wasm function is a subset of the Apache Camel Message, containing headers the body encoded as a base64 string:
+It is not possible to share a Java object with the Wasm module directly, and as mentioned before,
+data exchange leverages Wasm's memory that can be accessed by both the host and the guest runtimes.
+At this stage, the data structure that the component exchange with the Wasm function is a subset of the Apache Camel Message,
+containing headers the body encoded as a base64 string:
 
 [source,java]
 -------------------------------------------------
@@ -117,11 +120,11 @@ fn function(ptr: u32, len: u32) -> u64
 ** a pointer to the memory location when the input data has been written (`ptr`)
 ** the size of the input data (`len`)
 * it returns a 64bit unsigned integer where:
-** the first 32bit represent a pointer to the return data
-** the last 31bit represent the size of the return data, which must have the same data shape discussed above unless there is an error (see below)
-** the most significant bit of the returned data size, is reserved to signal an error, so if it is set, then the return data could contain an error message/code/etc
+** the first 32bit represents a pointer to the return data
+** the last 31bit represents the size of the return data, which must have the same data shape discussed above unless there is an error (see below)
+** the most significant bit of the returned data size is reserved to signal an error, so if it is set, then the return data could contain an error message/code/etc
 
-Here an example of a complete function:
+Here's an example of a complete function:
 
 [source,rust]
 ---------------------------------------

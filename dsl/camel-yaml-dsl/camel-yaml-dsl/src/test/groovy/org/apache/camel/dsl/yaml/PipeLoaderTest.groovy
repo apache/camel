@@ -705,7 +705,7 @@ class PipeLoaderTest extends YamlTestSupport {
 
         with (context.routeDefinitions[1]) {
             template == true
-            // stream-caching is disabled in the kamelet
+            // stream-cache is disabled in the kamelet
             streamCache == "false"
             messageHistory == "true"
         }

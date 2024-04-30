@@ -48,7 +48,7 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredicate
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         invoked.incrementAndGet();
@@ -74,10 +74,10 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredicate
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(5000));
 
                 from("direct:start")

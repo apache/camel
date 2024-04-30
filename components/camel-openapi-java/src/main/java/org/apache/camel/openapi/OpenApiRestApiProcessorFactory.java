@@ -78,6 +78,8 @@ public class OpenApiRestApiProcessorFactory implements RestApiProcessorFactory {
             options.put("cors", "true");
         }
 
-        return new RestOpenApiProcessor(options, configuration);
+        RestOpenApiProcessor answer = new RestOpenApiProcessor(options, configuration);
+        answer.setCamelContext(camelContext);
+        return answer;
     }
 }

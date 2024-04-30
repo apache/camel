@@ -18,8 +18,8 @@ package org.apache.camel.main;
 
 public class MyAddress {
 
-    private int zip;
-    private String street;
+    private final int zip;
+    private final String street;
 
     public MyAddress(int zip, String street) {
         this.zip = zip;

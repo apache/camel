@@ -43,16 +43,16 @@ public class AsyncEndpointSplitFineGrainedErrorHandlingTest extends ContextTestS
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
                 onException(Exception.class).maximumRedeliveries(2).redeliveryDelay(0);
 
                 from("direct:start").split(body()).to("mock:before").to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         if (counter++ == 1) {
                             throw new IllegalArgumentException("Cannot do this");
                         }

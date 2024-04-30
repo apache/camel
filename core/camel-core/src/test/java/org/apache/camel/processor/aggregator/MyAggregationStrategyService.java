@@ -41,12 +41,12 @@ public class MyAggregationStrategyService extends ServiceSupport implements Aggr
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() {
         started = true;
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doStop() {
         started = false;
     }
 }

@@ -54,7 +54,7 @@ public class SplitContinuedLogIssueTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class).continued(true).logContinued(false).to("log:error", "mock:error");
 
                 from("direct:start").split(body(), new SplitAggregationStrategy()).shareUnitOfWork().to("mock:line")

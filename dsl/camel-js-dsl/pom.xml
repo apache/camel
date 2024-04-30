@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-js-dsl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: JavaScript DSL</name>
+    <name>Camel :: JavaScript DSL (deprecated)</name>
     <description>Camel DSL with JavaScript</description>
 
     <properties>
@@ -43,6 +43,9 @@
         <sourcecheckExcludesComma>
             ${sourcecheckExcludes},
         </sourcecheckExcludesComma>
+        <annotations>
+            routes.language=js
+        </annotations>
     </properties>
 
     <dependencies>
@@ -53,7 +56,7 @@
 
         <dependency>
             <groupId>org.graalvm.js</groupId>
-            <artifactId>js</artifactId>
+            <artifactId>js-language</artifactId>
             <version>${graaljs-version}</version>
         </dependency>
 

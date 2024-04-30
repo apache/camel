@@ -31,17 +31,17 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * Sends and receives files to/from Azure DataLake Storage.
+ * Sends and receives files to/from Azure Data Lake Storage.
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure Storage Datalake Service",
+@UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure Storage Data Lake Service",
              syntax = "azure-storage-datalake:accountName/fileSystemName",
              category = { Category.CLOUD, Category.FILE, Category.BIGDATA }, headersClass = DataLakeConstants.class)
 public class DataLakeEndpoint extends ScheduledPollEndpoint {
 
-    @UriParam(description = "service client of datalake")
+    @UriParam(description = "service client of data lake")
     private DataLakeServiceClient dataLakeServiceClient;
 
-    @UriParam(description = "configuration object of azure datalake")
+    @UriParam(description = "configuration object of azure data lake")
     private DataLakeConfiguration configuration;
 
     public DataLakeEndpoint() {

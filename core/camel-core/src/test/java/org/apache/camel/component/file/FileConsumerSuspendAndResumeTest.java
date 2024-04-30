@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
 
-    private MyPolicy myPolicy = new MyPolicy();
+    private final MyPolicy myPolicy = new MyPolicy();
 
     @Test
     public void testConsumeSuspendAndResumeFile() throws Exception {
@@ -71,10 +71,10 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(fileUri("?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10"))
                         .routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
                         .to("mock:result");

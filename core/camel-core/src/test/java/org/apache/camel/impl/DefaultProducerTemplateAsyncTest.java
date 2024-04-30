@@ -60,7 +60,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
     @Test
     public void testSendAsyncProcessor() throws Exception {
         Future<Exchange> future = template.asyncSend("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello");
             }
         });
@@ -78,7 +78,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRequestAsyncBody() throws Exception {
+    public void testRequestAsyncBody() {
         StopWatch watch = new StopWatch();
         Future<Object> future = template.asyncRequestBody("direct:start", "Hello");
 
@@ -215,7 +215,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRequestAsyncErrorWhenProcessing() throws Exception {
+    public void testRequestAsyncErrorWhenProcessing() {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello");
 
@@ -237,7 +237,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRequestAsyncBodyErrorWhenProcessing() throws Exception {
+    public void testRequestAsyncBodyErrorWhenProcessing() {
         StopWatch watch = new StopWatch();
         Future<Object> future = template.asyncRequestBody("direct:error", "Hello");
 
@@ -256,14 +256,14 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").delay(200).asyncDelayed().transform(body().append(" World")).to("mock:result");
 
                 from("direct:error").delay(200).asyncDelayed().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         throw new IllegalArgumentException("Damn forced by unit test");
                     }
                 });

@@ -34,7 +34,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
 
     private static Map.Entry<String, String> anyNonEmptyEnvironmentVariable() {
         for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-            if (entry.getValue() != null && !"".equals(entry.getValue())) {
+            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
                 return entry;
             }
         }
@@ -48,7 +48,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("{{sys:FOO}}").transform().constant("{{env:" + env.getKey() + "}}").to("mock:bar");
             }
         });
@@ -70,7 +70,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("{{sys:FOO2}}").to("{{env:BAR2:mock:bar}}");
             }
         });

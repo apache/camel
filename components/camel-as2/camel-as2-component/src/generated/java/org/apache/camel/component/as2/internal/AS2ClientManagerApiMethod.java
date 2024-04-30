@@ -20,7 +20,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
 public enum AS2ClientManagerApiMethod implements ApiMethod {
 
     SEND(
-        org.apache.http.protocol.HttpCoreContext.class,
+        org.apache.hc.core5.http.protocol.HttpCoreContext.class,
         "send",
         arg("ediMessage", String.class),
         arg("requestUri", String.class),
@@ -29,7 +29,7 @@ public enum AS2ClientManagerApiMethod implements ApiMethod {
         arg("as2From", String.class),
         arg("as2To", String.class),
         arg("as2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class),
-        arg("ediMessageContentType", org.apache.http.entity.ContentType.class),
+        arg("ediMessageContentType", org.apache.hc.core5.http.ContentType.class),
         arg("ediMessageTransferEncoding", String.class),
         arg("signingAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class),
         arg("signingCertificateChain", new java.security.cert.Certificate[0].getClass()),

@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myPrepare", new AnimalDeepClonePrepare());
         return jndi;
     }
@@ -50,15 +50,15 @@ public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").bean(RecipientListBeanOnPrepareTest.class, "doSomething");
 
                 from("direct:a").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Animal body = exchange.getIn().getBody(Animal.class);
                         assertEquals(1, body.getId());
                         assertEquals("Tiger", body.getName());
@@ -70,7 +70,7 @@ public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
 
                 from("direct:b").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) {
                         Animal body = exchange.getIn().getBody(Animal.class);
                         assertEquals(1, body.getId());
                         assertEquals("Tiger", body.getName());

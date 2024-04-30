@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws-parent</artifactId>
@@ -40,6 +40,7 @@
 
     <modules>
         <module>camel-aws2-athena</module>
+        <module>camel-aws-bedrock</module>
         <module>camel-aws-cloudtrail</module>
         <module>camel-aws-config</module>
         <module>camel-aws2-cw</module>

@@ -112,7 +112,8 @@ public class JavaScriptRoutesBuilderLoaderTest {
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             assertThat(context.getRestDefinitions()).hasSize(1);
-            assertThat(context.getRouteDefinitions()).hasSize(2);
+            // routes are inlined
+            assertThat(context.getRouteDefinitions()).hasSize(1);
 
             assertThat(context.getRestDefinitions()).first().satisfies(d -> {
                 assertThat(d.getProduces()).isEqualTo("text/plain");

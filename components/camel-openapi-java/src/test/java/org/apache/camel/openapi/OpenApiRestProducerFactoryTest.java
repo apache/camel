@@ -23,13 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class OpenApiRestProducerFactoryTest {
 
     @Test
-    public void shouldLoadOpenApiPetStoreModel() throws Exception {
-        OpenApiRestProducerFactory factory = new OpenApiRestProducerFactory();
-
-        assertNotNull(factory.loadOpenApiModel("petstore.json"));
-    }
-
-    @Test
     public void shouldLoadOpenApiPetStoreModelV3() throws Exception {
         OpenApiRestProducerFactory factory = new OpenApiRestProducerFactory();
 

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisabledOnOs(OS.WINDOWS)
 public class ThrottlerDslTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
-    protected int messageCount = 9;
+    protected final int messageCount = 9;
 
     @Test
     public void testDsl() throws Exception {

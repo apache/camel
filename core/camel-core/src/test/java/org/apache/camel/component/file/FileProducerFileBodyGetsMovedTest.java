@@ -52,8 +52,6 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
-        GenericFile<File> body = new GenericFile<>();
-        body.setFile(temporaryFile);
         template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH,
                 temporaryFile.getAbsolutePath());
 
@@ -62,9 +60,9 @@ public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to(fileUri("?fileName=testStoreFile")).to("mock:result");
             }
         };

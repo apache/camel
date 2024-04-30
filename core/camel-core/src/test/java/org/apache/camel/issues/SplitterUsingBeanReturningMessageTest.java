@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SplitterUsingBeanReturningMessageTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("mySplitter", new MyOtherSplitterBean());
         return jndi;
     }
@@ -70,10 +70,10 @@ public class SplitterUsingBeanReturningMessageTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").split().method("mySplitter").to("log:foo", "mock:result");
             }
         };

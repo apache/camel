@@ -68,10 +68,10 @@ public class BeanParameterBestTypeMatchIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:noParam").bean(ClassA.class, "foo()").to("mock:end");
                 from("direct:1Param").bean(ClassA.class, "foo(${body})").to("mock:end");
                 from("direct:2Param").bean(ClassA.class, "foo(${body}, ${header.key})").to("mock:end");

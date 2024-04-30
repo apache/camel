@@ -38,17 +38,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanWithHeadersAndBodyInject2Test.class);
-    private MyBean myBean = new MyBean();
-    private Map<String, User> users = new HashMap<>();
+    private final MyBean myBean = new MyBean();
+    private final Map<String, User> users = new HashMap<>();
 
     @Test
-    public void testCannotBindToParameter() throws Exception {
+    public void testCannotBindToParameter() {
         // Create hashmap for testing purpose
         users.put("charles", new User("Charles", "43"));
         users.put("claus", new User("Claus", "33"));
 
         Exchange out = template.send("direct:in", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.setProperty("p1", "abc");
                 exchange.setProperty("p2", 123);
 
@@ -64,13 +64,13 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     }
 
     @Test
-    public void testBindToParameter() throws Exception {
+    public void testBindToParameter() {
         final List<String> list = new ArrayList<>();
         list.add("Charles");
         list.add("Claus");
 
         Exchange out = template.send("direct:in", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("TheBody");
                 exchange.getIn().setHeader("users", list);
             }
@@ -82,9 +82,9 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     }
 
     @Test
-    public void testBindToParameterIsNullValue() throws Exception {
+    public void testBindToParameterIsNullValue() {
         Exchange out = template.send("direct:in", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("TheBody");
                 exchange.getIn().setHeader("users", null);
             }
@@ -95,8 +95,8 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }
@@ -123,8 +123,8 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     }
 
     public static class User {
-        public String name;
-        public String age;
+        public final String name;
+        public final String age;
 
         public User(String name, String age) {
             this.name = name;

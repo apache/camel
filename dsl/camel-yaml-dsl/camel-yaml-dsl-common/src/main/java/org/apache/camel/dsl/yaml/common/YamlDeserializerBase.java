@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.common;
 
 import java.util.Locale;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
@@ -134,19 +135,23 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
     }
 
     protected void onNewTarget(Node node, T target, int line) {
+        YamlDeserializationContext ctx = getDeserializationContext(node);
+        if (ctx != null && target instanceof CamelContextAware) {
+            CamelContextAware.trySetCamelContext(target, ctx.getCamelContext());
+        }
+
         // enrich model with source location:line number
         if (target instanceof LineNumberAware && line != -1) {
             LineNumberAware lna = (LineNumberAware) target;
             lna.setLineNumber(line);
 
-            YamlDeserializationContext ctx = getDeserializationContext(node);
+            ctx = getDeserializationContext(node);
             if (ctx != null) {
                 lna.setLocation(ctx.getResource().getLocation());
             }
         }
         if (target instanceof ResourceAware) {
             ResourceAware ra = (ResourceAware) target;
-            YamlDeserializationContext ctx = getDeserializationContext(node);
             if (ctx != null) {
                 ra.setResource(ctx.getResource());
             }

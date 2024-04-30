@@ -32,10 +32,10 @@ public class ThreadsDefaultTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // will use a cached thread pool which can grown/shrink
                         .threads().to("log:foo").to("mock:result");

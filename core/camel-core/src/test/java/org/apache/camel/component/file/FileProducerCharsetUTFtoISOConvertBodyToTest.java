@@ -35,16 +35,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- *
- */
 class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
 
+    private static final String INPUT_FILE
+            = "input." + FileProducerCharsetUTFtoISOConvertBodyToTest.class.getSimpleName() + ".txt";
+    private static final String OUTPUT_FILE
+            = "output." + FileProducerCharsetUTFtoISOConvertBodyToTest.class.getSimpleName() + ".txt";
+
     @BeforeEach
     void writeTestData() {
-        try (OutputStream fos = Files.newOutputStream(testFile("input.txt"))) {
+        try (OutputStream fos = Files.newOutputStream(testFile(INPUT_FILE))) {
             fos.write(DATA.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             fail("The test cannot run due to: " + e.getMessage());
@@ -54,7 +56,7 @@ class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
     @AfterEach
     void cleanupFile() {
         try {
-            Files.delete(testFile("output.txt"));
+            Files.delete(testFile(OUTPUT_FILE));
         } catch (IOException e) {
             fail("The test cannot run due to an error cleaning up: " + e.getMessage());
         }
@@ -64,7 +66,7 @@ class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
     void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
         assertTrue(oneExchangeDone.matchesWaitTime());
 
-        final Path outputFile = testFile("output.txt");
+        final Path outputFile = testFile(OUTPUT_FILE);
 
         Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertFileExists(outputFile));
         Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(Files.size(outputFile) > 0));
@@ -75,17 +77,17 @@ class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 // the input file is in utf-8
-                from(fileUri("?initialDelay=0&delay=10&fileName=input.txt&charset=utf-8"))
+                fromF(fileUri("?initialDelay=0&delay=10&fileName=%s&charset=utf-8"), INPUT_FILE)
                         // now convert the input file from utf-8 to iso-8859-1
                         .convertBodyTo(byte[].class, "iso-8859-1")
                         // and write the file using that encoding
                         .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader"))
-                        .to(fileUri("?fileName=output.txt"));
+                        .toF(fileUri("?fileName=%s"), OUTPUT_FILE);
             }
         };
     }

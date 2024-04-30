@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jms</artifactId>
@@ -39,6 +39,9 @@
         <camel.surefire.parallel>true</camel.surefire.parallel>
         <camel.surefire.parallel.factor>0.5</camel.surefire.parallel.factor>
         <camel.surefire.fork.additional-vmargs>-Xmx1G</camel.surefire.fork.additional-vmargs>
+
+        <camel.failsafe.parallel>true</camel.failsafe.parallel>
+        <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
     </properties>
 
     <dependencies>
@@ -184,6 +187,9 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx2G</argLine>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>default-test</id>
@@ -191,7 +197,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <excludedGroups>not-parallel</excludedGroups>
+                                    <excludedGroups>not-parallel,exclusive</excludedGroups>
                                 </configuration>
                             </execution>
                             <execution>
@@ -202,6 +208,53 @@
                                 <configuration>
                                     <forkCount>4</forkCount>
                                     <groups>not-parallel</groups>
+                                    <excludedGroups>exclusive</excludedGroups>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>exclusive-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>2</forkCount>
+                                    <reuseForks>false</reuseForks>
+                                    <groups>exclusive</groups>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx3G</argLine>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks>
+                                    <excludedGroups>not-parallel</excludedGroups>
+                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>serials-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <forkCount>4</forkCount>
+                                    <reuseForks>false</reuseForks>
+                                    <groups>not-parallel</groups>
+                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                                 </configuration>
                             </execution>
                         </executions>

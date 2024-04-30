@@ -33,6 +33,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private String namingStrategy;
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
+    @Metadata(defaultValue = "all", enums = "all,route,context")
+    private String routePolicyLevel = "all";
     private boolean enableMessageHistory;
     @Metadata(defaultValue = "true")
     private boolean enableExchangeEventNotifier = true;
@@ -86,6 +88,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnableRoutePolicy(boolean enableRoutePolicy) {
         this.enableRoutePolicy = enableRoutePolicy;
+    }
+
+    public String getRoutePolicyLevel() {
+        return routePolicyLevel;
+    }
+
+    /**
+     * Sets the level of information to capture. all = both context and routes.
+     */
+    public void setRoutePolicyLevel(String routePolicyLevel) {
+        this.routePolicyLevel = routePolicyLevel;
     }
 
     public boolean isEnableMessageHistory() {
@@ -177,6 +190,14 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties withEnableRoutePolicy(boolean enableRoutePolicy) {
         this.enableRoutePolicy = enableRoutePolicy;
+        return this;
+    }
+
+    /**
+     * Sets the level of information to capture. all = both context and routes.
+     */
+    public MetricsConfigurationProperties withRoutePolicyLevel(String routePolicyLevel) {
+        this.routePolicyLevel = routePolicyLevel;
         return this;
     }
 

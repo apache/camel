@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
  */
 public class MockEndpointWithParametersTest extends ContextTestSupport {
 
-    private String uri = "smtp://host:9999?username=smtpusername&password=smtppassword";
+    private final String uri = "smtp://host:9999?username=smtpusername&password=smtppassword";
 
     @Test
     public void testMockEndpointWithParameter() throws Exception {
@@ -46,10 +46,10 @@ public class MockEndpointWithParametersTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to(uri);
             }
         };

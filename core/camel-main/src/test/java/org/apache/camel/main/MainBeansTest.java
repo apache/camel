@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class MainBeansTest {
 
     @Test
-    public void testBindBeans() throws Exception {
+    public void testBindBeans() {
         MyFoo myFoo = new MyFoo();
 
         Main main = new Main();
@@ -65,7 +65,7 @@ public class MainBeansTest {
     }
 
     @Test
-    public void testBindBeansMap() throws Exception {
+    public void testBindBeansMap() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
 
@@ -92,7 +92,7 @@ public class MainBeansTest {
     }
 
     @Test
-    public void testBindBeansMapSquareClass() throws Exception {
+    public void testBindBeansMapSquareClass() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
 
@@ -119,7 +119,7 @@ public class MainBeansTest {
     }
 
     @Test
-    public void testBindBeansMapSquare() throws Exception {
+    public void testBindBeansMapSquare() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
 
@@ -145,7 +145,7 @@ public class MainBeansTest {
     }
 
     @Test
-    public void testBindBeansListSquare() throws Exception {
+    public void testBindBeansListSquare() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
 
@@ -173,7 +173,7 @@ public class MainBeansTest {
     }
 
     @Test
-    public void testBindBeansMapSquareDotKey() throws Exception {
+    public void testBindBeansMapSquareDotKey() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
 
@@ -274,7 +274,7 @@ public class MainBeansTest {
 
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("direct:start").to("mock:foo");
         }
     }

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledOnOs(OS.AIX)
 public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ManagementTestSupport {
 
-    protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
+    protected final String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServer server;
 
     @Test
@@ -79,10 +79,10 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Man
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // sets the id of the previous node, that is the mock:foo
                         .to("mock:foo").id("myfoo")

@@ -1,17 +1,18 @@
-= JavaScript DSL Component
+= JavaScript DSL Component (deprecated)
 :doctitle: JavaScript DSL
 :shortname: js-dsl
 :artifactid: camel-js-dsl
 :description: Camel DSL with JavaScript
 :since: 3.9
-:supportlevel: Experimental
+:supportlevel: Experimental-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :group: DSL
 
 *Since Camel {since}*
 
-IMPORTANT: This DSL is experimental support level and is not recommended being used for production
+IMPORTANT: This DSL is deprecated and experimental support level and is not recommended being used for production.
 
 The `js-dsl` is used for runtime compiling JavaScript routes in an existing running Camel integration.
 This was invented for Camel K and later ported to Apache Camel.

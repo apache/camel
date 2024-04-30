@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-parent</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan</artifactId>
@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-client-hotrod-jakarta</artifactId>
+            <artifactId>infinispan-client-hotrod</artifactId>
             <version>${infinispan-version}</version>
             <exclusions>
                 <exclusion>
@@ -101,7 +101,7 @@
         <!-- testing - infinispan -->
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core-jakarta</artifactId>
+            <artifactId>infinispan-core</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
@@ -121,20 +121,15 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring5-remote</artifactId>
+            <artifactId>infinispan-spring6-remote</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>proto-sample-domain-definition</artifactId>
-            <version>${infinispan-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>proto-sample-domain-implementation</artifactId>
-            <version>${infinispan-version}</version>
+            <groupId>org.infinispan.protostream</groupId>
+            <artifactId>protostream</artifactId>
+            <version>${protostream-version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 

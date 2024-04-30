@@ -30,5 +30,5 @@ public enum MessageTrait {
      * Whether the message can store a data type. This carries the payload associated with the API specified in
      * {@link org.apache.camel.spi.DataTypeAware}.
      */
-    DATA_AWARE;
+    DATA_AWARE
 }

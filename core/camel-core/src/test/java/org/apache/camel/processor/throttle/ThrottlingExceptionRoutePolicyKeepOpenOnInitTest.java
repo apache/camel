@@ -25,9 +25,9 @@ import org.junit.jupiter.api.Test;
 
 public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTestSupport {
 
-    private String url = "seda:foo?concurrentConsumers=20";
+    private final String url = "seda:foo?concurrentConsumers=20";
     private MockEndpoint result;
-    private int size = 5;
+    private final int size = 5;
 
     private ThrottlingExceptionRoutePolicy policy;
 
@@ -98,10 +98,10 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(url).routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
             }
         };

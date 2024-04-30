@@ -1099,8 +1099,8 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition
-     * name or ID isn’t null. If the process definition name or ID isn’t specified, this argument is ignored, and
-     * standard evaluation is followed based on process order. By default, the entry criteria isn’t skipped if it’s not
+     * name or ID isn't null. If the process definition name or ID isn't specified, this argument is ignored, and
+     * standard evaluation is followed based on process order. By default, the entry criteria isn't skipped if it's not
      * set by this request.
      *
      * @param skipEntryCriteria
@@ -1205,7 +1205,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * EXPANDED: Apache Avro format but doesn’t strictly adhere to the record complex type. COMPACT: Apache Avro,
+     * EXPANDED: Apache Avro format but doesn't strictly adhere to the record complex type. COMPACT: Apache Avro,
      * adheres to the specification for the record complex type. This parameter is available in API version 43.0 and
      * later.
      *

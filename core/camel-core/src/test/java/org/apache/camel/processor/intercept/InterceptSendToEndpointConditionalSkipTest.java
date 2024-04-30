@@ -92,10 +92,10 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // only skip if the body equals 'skip'
                 interceptSendToEndpoint("mock:skippable").skipSendToOriginalEndpoint().when(body().isEqualTo("skip"))
                         .to("mock:detour");

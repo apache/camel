@@ -22,6 +22,9 @@ import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
+/**
+ * Access market data and trade on Bitcoin and Altcoin exchanges.
+ */
 public fun UriDsl.xchange(i: XchangeUriDsl.() -> Unit) {
   XchangeUriDsl(this).apply(i)
 }
@@ -39,31 +42,62 @@ public class XchangeUriDsl(
 
   private var name: String = ""
 
+  /**
+   * The exchange to connect to
+   */
   public fun name(name: String) {
     this.name = name
     it.url("$name")
   }
 
+  /**
+   * The currency
+   */
   public fun currency(currency: String) {
     it.property("currency", currency)
   }
 
+  /**
+   * The currency pair
+   */
   public fun currencyPair(currencyPair: String) {
     it.property("currencyPair", currencyPair)
   }
 
+  /**
+   * The method to execute
+   */
   public fun method(method: String) {
     it.property("method", method)
   }
 
+  /**
+   * The service to call
+   */
   public fun service(service: String) {
     it.property("service", service)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: String) {
     it.property("lazyStartProducer", lazyStartProducer)
   }
 
+  /**
+   * Whether the producer should be started lazy (on the first message). By starting lazy you can
+   * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
+   * fail during starting and cause the route to fail being started. By deferring this startup to be
+   * lazy then the startup failure can be handled during routing messages via Camel's routing error
+   * handlers. Beware that when the first message is processed then creating and starting the producer
+   * may take a little time and prolong the total processing time of the processing.
+   */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }

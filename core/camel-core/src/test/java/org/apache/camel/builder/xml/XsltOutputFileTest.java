@@ -50,7 +50,7 @@ public class XsltOutputFileTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXsltOutputFileMissingHeader() throws Exception {
+    public void testXsltOutputFileMissingHeader() {
         try {
             template.sendBody("direct:start", "<hello>world!</hello>");
             fail("Should thrown exception");

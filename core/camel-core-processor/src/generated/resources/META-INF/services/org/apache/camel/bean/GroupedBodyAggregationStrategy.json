@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "GroupedBodyAggregationStrategy",
+    "javaType": "org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy",
+    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "title": "Grouped Body Aggregation Strategy",
+    "description": "Aggregate body of input Message into a single combined Exchange holding all the aggregated bodies in a List of type Object as the message body. This aggregation strategy can be used in combination with Splitter to batch messages.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-processor",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

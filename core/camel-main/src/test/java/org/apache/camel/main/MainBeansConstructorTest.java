@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MainBeansConstructorTest {
 
     @Test
-    public void testBindBeans() throws Exception {
+    public void testBindBeans() {
         Main main = new Main();
         // create by class
         main.addProperty("camel.beans.address", "#class:org.apache.camel.main.MyAddress(90210, 'Somestreet 123')");

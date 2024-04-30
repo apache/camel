@@ -34,10 +34,10 @@ public class FileConsumeRootDirManualTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("file:/?noop=true").log("File: ${in.header.CamelFileName}").to("mock:result");
             }
         };

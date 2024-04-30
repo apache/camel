@@ -49,7 +49,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
     }
 
     private static final class EverySecondOneFailsRepository extends MemoryAggregationRepository {
-        private AtomicInteger counter = new AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         private EverySecondOneFailsRepository() {
             super(true);
@@ -66,7 +66,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         }
     }
 
-    private EverySecondOneFailsRepository sharedRepository = new EverySecondOneFailsRepository();
+    private final EverySecondOneFailsRepository sharedRepository = new EverySecondOneFailsRepository();
 
     @Test
     public void testAlwaysFails() throws Exception {
@@ -101,22 +101,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
     public void testEverySecondOneFails() throws Exception {
         int size = 200;
         ExecutorService service = Executors.newFixedThreadPool(10);
-        List<Callable<Object>> tasks = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            final int id = i % 25;
-            final int choice = i % 2;
-            final int count = i;
-            tasks.add(new Callable<Object>() {
-                public Object call() throws Exception {
-                    if (choice == 0) {
-                        template.sendBodyAndHeader("direct:everysecondone", "" + count, "id", id);
-                    } else {
-                        template2.sendBodyAndHeader("direct:everysecondone", "" + count, "id", id);
-                    }
-                    return null;
-                }
-            });
-        }
+        final List<Callable<Object>> tasks = createTasks(size);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         MockEndpoint mock2 = getMockEndpoint2("mock:result");
@@ -132,11 +117,31 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         assertEquals(25, contextCount + context2Count);
     }
 
+    private List<Callable<Object>> createTasks(int size) {
+        List<Callable<Object>> tasks = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            final int id = i % 25;
+            final int choice = i % 2;
+            final int count = i;
+            tasks.add(() -> sendTask(choice, count, id));
+        }
+        return tasks;
+    }
+
+    private Object sendTask(int choice, int count, int id) {
+        if (choice == 0) {
+            template.sendBodyAndHeader("direct:everysecondone", "" + count, "id", id);
+        } else {
+            template2.sendBodyAndHeader("direct:everysecondone", "" + count, "id", id);
+        }
+        return null;
+    }
+
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:fails").aggregate(header("id"), new BodyInAggregatingStrategy())
                         .aggregationRepository(new AlwaysFailingRepository()).optimisticLocking()
                         // do not use retry delay to speedup test

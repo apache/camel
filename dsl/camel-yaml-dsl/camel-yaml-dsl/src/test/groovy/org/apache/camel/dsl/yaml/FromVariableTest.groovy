@@ -67,4 +67,50 @@ class FromVariableTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "routeFromVariable"() {
+        setup:
+        loadRoutes '''
+              - route:
+                  from:
+                    uri: "direct:start"
+                    variableReceive: "myKey"
+                    steps:
+                      - setHeader:
+                          name: foo
+                          constant: "456"
+                      - setHeader:
+                          name: bar
+                          constant: "Murphy"
+                      - transform:
+                          simple: "Bye ${body}"
+                      - to: "mock:foo"
+                      - setBody:
+                          simple: "${variable:myKey}"
+                      - to: "mock:result"
+            '''
+
+        withMock('mock:foo') {
+            expectedBodiesReceived 'Bye '
+            whenAnyExchangeReceived { e -> {
+                Map m = e.getVariable("header:myKey", Map.class)
+                Assertions.assertNotNull(m)
+                Assertions.assertEquals(1, m.size())
+                Assertions.assertEquals(123, m.get("foo"))
+            }}
+        }
+        withMock('mock:result') {
+            expectedBodiesReceived 'World'
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('World').withHeader("foo", 123).send()
+        }
+
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
 }

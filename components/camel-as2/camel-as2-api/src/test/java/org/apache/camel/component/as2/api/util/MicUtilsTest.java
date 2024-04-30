@@ -25,10 +25,9 @@ import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpVersion;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +87,7 @@ public class MicUtilsTest {
     @Test
     public void createReceivedContentMicTest() throws Exception {
 
-        HttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", "/", HttpVersion.HTTP_1_1);
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/");
         request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, DISPOSITION_NOTIFICATION_OPTIONS_VALUE);
         request.addHeader(AS2Header.CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
@@ -96,9 +95,7 @@ public class MicUtilsTest {
                 = new ApplicationEDIFACTEntity(
                         EDI_MESSAGE, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
-        BasicHttpEntity basicEntity = new BasicHttpEntity();
-        basicEntity.setContent(is);
-        basicEntity.setContentType(CONTENT_TYPE_VALUE);
+        BasicHttpEntity basicEntity = new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE));
         request.setEntity(basicEntity);
 
         ReceivedContentMic receivedContentMic = MicUtils.createReceivedContentMic(request, null, null);

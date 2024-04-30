@@ -13,7 +13,7 @@
 
 This xref:manual::data-format.adoc[Data
 Format] uses https://www.univocity.com/pages/univocity_parsers_tutorial.html[uniVocity-parsers]
-for reading and writing 3 kinds of tabular data text files:
+for reading and writing three kinds of tabular data text files:
 
 * CSV (Comma Separated Values), where the values are separated by a
 symbol (usually a comma)
@@ -21,9 +21,9 @@ symbol (usually a comma)
 * TSV (Tabular Separated Values), where the fields are separated by a
 tabulation
 
-Thus there are 3 data formats based on uniVocity-parsers.
+Thus, there are three data formats based on uniVocity-parsers.
 
-If you use Maven you can just add the following to your pom.xml,
+If you use Maven, you can add the following to your `pom.xml`,
 substituting the version number for the latest and greatest release.
 
 [source,xml]
@@ -43,7 +43,7 @@ please refer to their
 https://www.univocity.com/pages/univocity_parsers_tutorial#settings[documentation
 page].
 
-The 3 data formats share common options and have dedicated ones, this
+The three data formats share common options and have dedicated ones, this
 section presents them all.
 
 == Options

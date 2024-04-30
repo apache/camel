@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilterCustomPredicateAsFilterTest extends ContextTestSupport {
 
-    private MyFiler filter = new MyFiler();
+    private final MyFiler filter = new MyFiler();
 
     private static class MyFiler implements Predicate {
 
-        private List<String> bodies = new ArrayList<>();
+        private final List<String> bodies = new ArrayList<>();
 
         @Override
         public boolean matches(Exchange exchange) {
@@ -64,10 +64,10 @@ public class FilterCustomPredicateAsFilterTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").filter(filter)
                         // only good messages will go here
                         .to("mock:good").end();

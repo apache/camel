@@ -32,7 +32,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.vault.AzureVaultConfiguration;
 
-@DevConsole("azure-secrets")
+@DevConsole(name = "azure-secrets", displayName = "Azure Key Vault Secrets", description = "Azure Key Vault Secret Manager")
 public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
 
     private KeyVaultPropertiesFunction propertiesFunction;

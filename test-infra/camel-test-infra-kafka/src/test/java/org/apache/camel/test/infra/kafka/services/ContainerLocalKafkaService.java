@@ -68,6 +68,7 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
 
     @Override
     public void shutdown() {
+        LOG.info("Shutting down Kafka container");
         kafka.stop();
     }
 

@@ -61,7 +61,7 @@ public class XsltContentCacheTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a")
                         .to("xslt://org/apache/camel/component/xslt/hello.xsl?output=string&contentCache=false")
                         .to("mock:result");

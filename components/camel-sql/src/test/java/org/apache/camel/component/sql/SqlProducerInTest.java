@@ -53,9 +53,7 @@ public class SqlProducerInTest extends CamelTestSupport {
         super.tearDown();
 
         if (db != null) {
-            if (db != null) {
-                db.shutdown();
-            }
+            db.shutdown();
         }
     }
 

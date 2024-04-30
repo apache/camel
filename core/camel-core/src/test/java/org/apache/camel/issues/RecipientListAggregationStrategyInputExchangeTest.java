@@ -41,10 +41,10 @@ public class RecipientListAggregationStrategyInputExchangeTest extends ContextTe
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").recipientList(constant("direct:a,direct:b")).aggregationStrategy(new MyAggregateBean());
 
                 from("direct:a").setHeader("foo", constant("123")).transform(constant("A")).to("mock:a");

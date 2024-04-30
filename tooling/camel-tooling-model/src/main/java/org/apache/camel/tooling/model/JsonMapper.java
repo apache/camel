@@ -17,7 +17,6 @@
 package org.apache.camel.tooling.model;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -45,7 +44,7 @@ public final class JsonMapper {
 
     public static BaseModel<?> generateModel(Path file) {
         try {
-            String json = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            String json = Files.readString(file);
             return generateModel(json);
         } catch (IOException e) {
             throw new RuntimeException("Error reading json file: " + file, e);
@@ -66,10 +65,14 @@ public final class JsonMapper {
             return generateDataFormatModel(obj);
         } else if (obj.containsKey("transformer")) {
             return generateTransformerModel(obj);
+        } else if (obj.containsKey("console")) {
+            return generateDevConsoleModel(obj);
         } else if (obj.containsKey("other")) {
             return generateOtherModel(obj);
         } else if (obj.containsKey("model")) {
             return generateEipModel(obj);
+        } else if (obj.containsKey("bean")) {
+            return generatePojoBeanModel(obj);
         } else {
             return null;
         }
@@ -314,6 +317,27 @@ public final class JsonMapper {
         return model;
     }
 
+    public static PojoBeanModel generatePojoBeanModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generatePojoBeanModel(obj);
+    }
+
+    public static PojoBeanModel generatePojoBeanModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("bean");
+        PojoBeanModel model = new PojoBeanModel();
+        parseModel(mobj, model);
+        JsonObject mprp = (JsonObject) mobj.get("properties");
+        if (mprp != null) {
+            for (Map.Entry<String, Object> entry : mprp.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                PojoBeanModel.PojoBeanOptionModel option = new PojoBeanModel.PojoBeanOptionModel();
+                parseOption(mp, option, entry.getKey());
+                model.addOption(option);
+            }
+        }
+        return model;
+    }
+
     public static String createParameterJsonSchema(EipModel model) {
         JsonObject wrapper = asJsonObject(model);
         return serialize(wrapper);
@@ -332,6 +356,22 @@ public final class JsonMapper {
         if (!model.getExchangeProperties().isEmpty()) {
             wrapper.put("exchangeProperties", asJsonObject(model.getExchangeProperties()));
         }
+        return wrapper;
+    }
+
+    public static String createParameterJsonSchema(PojoBeanModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(PojoBeanModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("model", obj);
+        wrapper.put("properties", asJsonObject(model.getOptions()));
         return wrapper;
     }
 
@@ -388,6 +428,53 @@ public final class JsonMapper {
         model.setTo(mobj.getString("to"));
         parseArtifact(mobj, model);
         return model;
+    }
+
+    public static String createParameterJsonSchema(TransformerModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(TransformerModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.put("from", model.getFrom());
+        obj.put("to", model.getTo());
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("transformer", obj);
+        return wrapper;
+    }
+
+    public static DevConsoleModel generateDevConsoleModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateDevConsoleModel(obj);
+    }
+
+    public static DevConsoleModel generateDevConsoleModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("console");
+        DevConsoleModel model = new DevConsoleModel();
+        parseModel(mobj, model);
+        model.setGroup(mobj.getString("group"));
+        parseArtifact(mobj, model);
+        return model;
+    }
+
+    public static String createParameterJsonSchema(DevConsoleModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(DevConsoleModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.put("group", model.getGroup());
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("console", obj);
+        return wrapper;
     }
 
     public static OtherModel generateOtherModel(String json) {

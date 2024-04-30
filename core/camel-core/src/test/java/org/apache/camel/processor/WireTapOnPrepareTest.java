@@ -49,10 +49,10 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 from("direct:start").wireTap("direct:a").copy().onPrepare(new AnimalDeepClonePrepare()).to("direct:b");
                 // END SNIPPET: e1
@@ -66,7 +66,7 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
     public static class ProcessorA implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Animal body = exchange.getIn().getBody(Animal.class);
             assertEquals(1, body.getId());
             assertEquals("Tiger", body.getName());
@@ -79,7 +79,7 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
     public static class ProcessorB implements Processor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             Animal body = exchange.getIn().getBody(Animal.class);
             assertEquals(1, body.getId());
             assertEquals("Tiger", body.getName());

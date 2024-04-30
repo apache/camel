@@ -26,6 +26,7 @@ import org.apache.camel.spi.CamelEvent.RouteReloadedEvent;
 import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.CamelEvent.RouteStartedEvent;
 import org.apache.camel.spi.CamelEvent.RouteStoppedEvent;
+import org.apache.camel.spi.ManagementStrategy;
 
 public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifier<RouteEvent> {
 
@@ -36,6 +37,8 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
     private Gauge gaugeRunning;
     private Gauge gaugeReloaded;
     private MicrometerRouteEventNotifierNamingStrategy namingStrategy = MicrometerRouteEventNotifierNamingStrategy.DEFAULT;
+    boolean registerKamelets;
+    boolean registerTemplates = true;
 
     public MicrometerRouteEventNotifier() {
         super(RouteEvent.class);
@@ -47,6 +50,15 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
 
     public void setNamingStrategy(MicrometerRouteEventNotifierNamingStrategy namingStrategy) {
         this.namingStrategy = namingStrategy;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        ManagementStrategy ms = getCamelContext().getManagementStrategy();
+        if (ms != null && ms.getManagementAgent() != null) {
+            registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
+            registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
+        }
     }
 
     @Override
@@ -84,6 +96,14 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
 
     @Override
     public void notify(CamelEvent eventObject) {
+        if (eventObject instanceof RouteEvent re) {
+            // skip routes that should not be included
+            boolean skip = (re.getRoute().isCreatedByKamelet() && !registerKamelets)
+                    || (re.getRoute().isCreatedByRouteTemplate() && !registerTemplates);
+            if (skip) {
+                return;
+            }
+        }
         if (eventObject instanceof RouteAddedEvent) {
             routesAdded.incrementAndGet();
         } else if (eventObject instanceof RouteRemovedEvent) {

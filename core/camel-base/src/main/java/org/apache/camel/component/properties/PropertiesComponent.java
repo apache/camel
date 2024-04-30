@@ -353,8 +353,10 @@ public class PropertiesComponent extends ServiceSupport
 
         // we need to re-create the property sources which may have already been created from locations
         this.sources.removeIf(s -> s instanceof LocationPropertiesSource);
+        // ensure the locations are in the same order as here, and therefore we provide the order number
+        int order = 100;
         for (PropertiesLocation loc : locations) {
-            addPropertiesLocationsAsPropertiesSource(loc);
+            addPropertiesLocationsAsPropertiesSource(loc, order++);
         }
     }
 
@@ -793,13 +795,13 @@ public class PropertiesComponent extends ServiceSupport
         ServiceHelper.stopAndShutdownServices(sources, propertiesFunctionResolver);
     }
 
-    private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location) {
+    private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location, int order) {
         if ("ref".equals(location.getResolver())) {
-            addPropertiesSource(new RefPropertiesSource(this, location));
+            addPropertiesSource(new RefPropertiesSource(this, location, order));
         } else if ("file".equals(location.getResolver())) {
-            addPropertiesSource(new FilePropertiesSource(this, location));
+            addPropertiesSource(new FilePropertiesSource(this, location, order));
         } else if ("classpath".equals(location.getResolver())) {
-            addPropertiesSource(new ClasspathPropertiesSource(this, location));
+            addPropertiesSource(new ClasspathPropertiesSource(this, location, order));
         }
     }
 

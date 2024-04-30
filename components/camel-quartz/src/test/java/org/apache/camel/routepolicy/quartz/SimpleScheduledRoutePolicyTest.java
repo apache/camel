@@ -103,7 +103,10 @@ public class SimpleScheduledRoutePolicyTest {
                 assertTrue(ServiceHelper.isStopped(context.getRoute("test").getConsumer()));
             });
 
-            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"));
+            CamelExecutionException thrown = assertThrows(CamelExecutionException.class,
+                    () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+                    "Should have thrown an exception");
+            assertTrue(thrown.getCause().getMessage().contains("direct://start"), "Exception should mention missing endpoint");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
         }
@@ -137,7 +140,10 @@ public class SimpleScheduledRoutePolicyTest {
                 assertTrue(ServiceHelper.isSuspended(context.getRoute("test").getConsumer()));
             });
 
-            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"));
+            CamelExecutionException thrown = assertThrows(CamelExecutionException.class,
+                    () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+                    "Should have thrown an exception");
+            assertTrue(thrown.getCause().getMessage().contains("direct://start"), "Exception should mention missing endpoint");
 
             context.getComponent("quartz", QuartzComponent.class).stop();
         }

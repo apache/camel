@@ -48,7 +48,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertEquals(3, taskCount);
+        assertEquals(3, taskCount.intValue());
         assertFalse(completed, "The task did not complete, the return should be false");
     }
 
@@ -67,7 +67,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertTrue(maxIterations > taskCount, "The task execution should not exceed the max iterations");
+        assertTrue(maxIterations > taskCount.intValue(), "The task execution should not exceed the max iterations");
         assertFalse(completed, "The task did not complete, the return should be false");
     }
 
@@ -85,7 +85,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicate, new Object());
-        assertEquals(3, taskCount);
+        assertEquals(3, taskCount.intValue());
         assertFalse(completed, "The task did not complete, the return should be false");
     }
 
@@ -105,7 +105,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStop, Integer.valueOf(3));
-        assertEquals(3, taskCount);
+        assertEquals(3, taskCount.intValue());
         assertTrue(completed, "The task did complete, the return should be true");
     }
 
@@ -124,7 +124,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
-        assertTrue(taskCount < maxIterations);
+        assertTrue(taskCount.intValue() < maxIterations);
         assertFalse(completed, "The task did not complete because of timeout, the return should be false");
     }
 
@@ -143,7 +143,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
-        assertTrue(taskCount < maxIterations);
+        assertTrue(taskCount.intValue() < maxIterations);
         assertFalse(completed, "The task did not complete because of timeout, the return should be false");
     }
 
@@ -161,7 +161,7 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStop, 4);
-        assertTrue(maxIterations > taskCount, "The task execution should not exceed the max iterations");
+        assertTrue(maxIterations > taskCount.intValue(), "The task execution should not exceed the max iterations");
         assertTrue(completed, "The task did not complete, the return should be false");
     }
 }

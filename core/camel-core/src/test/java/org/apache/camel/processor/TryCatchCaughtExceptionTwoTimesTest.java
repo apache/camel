@@ -43,21 +43,21 @@ public class TryCatchCaughtExceptionTwoTimesTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", this);
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").doTry().to("mock:a").to("bean:myBean?method=doSomething").doCatch(Exception.class)
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 assertEquals("bean://myBean?method=doSomething",
                                         exchange.getProperty(Exchange.FAILURE_ENDPOINT));
                                 assertEquals("Forced",
@@ -66,7 +66,7 @@ public class TryCatchCaughtExceptionTwoTimesTest extends ContextTestSupport {
                         }).end().to("mock:b").doTry().to("mock:c").to("bean:myBean?method=doSomethingElse")
                         .doCatch(Exception.class).process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 assertEquals("bean://myBean?method=doSomethingElse",
                                         exchange.getProperty(Exchange.FAILURE_ENDPOINT));
                                 assertEquals("Forced Again",
@@ -77,11 +77,11 @@ public class TryCatchCaughtExceptionTwoTimesTest extends ContextTestSupport {
         };
     }
 
-    public void doSomething(String body) throws Exception {
+    public void doSomething(String body) {
         throw new IllegalArgumentException("Forced");
     }
 
-    public void doSomethingElse(String body) throws Exception {
+    public void doSomethingElse(String body) {
         throw new IllegalArgumentException("Forced Again");
     }
 }

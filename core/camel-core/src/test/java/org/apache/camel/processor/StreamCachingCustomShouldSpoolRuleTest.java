@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
 
-    private MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
+    private final MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
 
     @Test
     public void testByteArrayInputStream() throws Exception {
@@ -60,10 +60,10 @@ public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().addSpoolRule(spoolRule);
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
@@ -73,7 +73,7 @@ public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
                         .to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 // check if spool file exists
                                 if (spoolRule.isSpool()) {
                                     String[] names = testDirectory().toFile().list();

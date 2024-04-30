@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class TimerRouteWithTracerTest extends TimerRouteTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 getContext().setTracing(true);

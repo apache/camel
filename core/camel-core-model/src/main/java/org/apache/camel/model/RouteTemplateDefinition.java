@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -403,6 +404,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
             // only set factory if not already set
             copy.setErrorHandlerFactory(route.getErrorHandlerFactory());
         }
+        copy.setErrorHandler(route.getErrorHandler());
 
         // and then copy over the rest
         // (do not copy id as it is used for route template id)
@@ -410,15 +412,16 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         copy.setDelayer(route.getDelayer());
         copy.setGroup(route.getGroup());
         copy.setInheritErrorHandler(route.isInheritErrorHandler());
-        copy.setInput(route.getInput());
+        // make a defensive copy of the input as input can be adviced during testing or other changes
+        copy.setInput(route.getInput().copy());
         copy.setInputType(route.getInputType());
         copy.setLogMask(route.getLogMask());
         copy.setMessageHistory(route.getMessageHistory());
         copy.setOutputType(route.getOutputType());
-        copy.setOutputs(route.getOutputs());
-        copy.setRoutePolicies(route.getRoutePolicies());
+        copy.setOutputs(copy(route.getOutputs()));
+        copy.setRoutePolicies(shallowCopy(route.getRoutePolicies()));
         copy.setRoutePolicyRef(route.getRoutePolicyRef());
-        copy.setRouteProperties(route.getRouteProperties());
+        copy.setRouteProperties(shallowCopy(route.getRouteProperties()));
         copy.setShutdownRoute(route.getShutdownRoute());
         copy.setShutdownRunningTask(route.getShutdownRunningTask());
         copy.setStartupOrder(route.getStartupOrder());
@@ -432,6 +435,27 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         }
         copy.setPrecondition(route.getPrecondition());
         copy.setRouteConfigurationId(route.getRouteConfigurationId());
+        copy.setTemplateParameters(shallowCopy(route.getTemplateParameters()));
+        return copy;
+    }
+
+    private <T> List<T> shallowCopy(List<T> list) {
+        return (list != null) ? new ArrayList<>(list) : null;
+    }
+
+    private <K, V> Map<K, V> shallowCopy(Map<K, V> map) {
+        return (map != null) ? new HashMap<>(map) : null;
+    }
+
+    private List<ProcessorDefinition<?>> copy(List<ProcessorDefinition<?>> outputs) {
+        var copy = new ArrayList<ProcessorDefinition<?>>();
+        for (var definition : outputs) {
+            if (definition instanceof Copyable copyableDefinition) {
+                copy.add(copyableDefinition.copy());
+            } else {
+                copy.add(definition);
+            }
+        }
         return copy;
     }
 

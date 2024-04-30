@@ -37,13 +37,13 @@ import org.slf4j.LoggerFactory;
 public class ThrottlerMethodCallTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThrottlerMethodCallTest.class);
     private static final int INTERVAL = 100;
-    protected int messageCount = 10;
+    protected final int messageCount = 10;
     private MockEndpoint resultEndpoint;
     private ExecutorService executor;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myBean", this);
         return jndi;
     }

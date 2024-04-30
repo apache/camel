@@ -41,7 +41,7 @@ public class JoinRoutesTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    protected void sendMessage(final Object headerValue, final Object body) throws Exception {
+    protected void sendMessage(final Object headerValue, final Object body) {
         template.send(startEndpoint, new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message

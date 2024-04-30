@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CamelContextHelperTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }
@@ -109,7 +109,7 @@ public class CamelContextHelperTest extends ContextTestSupport {
     public void testRouteStartupOrder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").startupOrder(222).to("mock:foo");
                 from("direct:bar").routeId("bar").startupOrder(111).to("mock:bar");
             }

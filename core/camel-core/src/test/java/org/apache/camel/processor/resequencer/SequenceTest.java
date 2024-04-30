@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.resequencer;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,7 @@ public class SequenceTest {
     private Sequence<TestObject> set;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         e1 = new TestObject(3);
         e2 = new TestObject(4);
         e3 = new TestObject(7);
@@ -40,10 +39,6 @@ public class SequenceTest {
         set.add(e3);
         set.add(e1);
         set.add(e2);
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
     }
 
     @Test

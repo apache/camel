@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "thread",
+    "title": "Thread",
+    "description": "Displays JVM Threads information",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ThreadDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.6.0-SNAPSHOT"
+  }
+}
+

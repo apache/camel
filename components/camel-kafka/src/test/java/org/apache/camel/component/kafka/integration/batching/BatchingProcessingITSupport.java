@@ -25,7 +25,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
+import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-abstract class BatchingProcessingITSupport extends BaseEmbeddedKafkaTestSupport {
+abstract class BatchingProcessingITSupport extends BaseKafkaTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BatchingProcessingITSupport.class);
 
     @EndpointInject("mock:result")

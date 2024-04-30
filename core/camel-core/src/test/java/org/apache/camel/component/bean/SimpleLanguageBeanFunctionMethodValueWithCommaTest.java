@@ -67,17 +67,17 @@ public class SimpleLanguageBeanFunctionMethodValueWithCommaTest extends ContextT
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("foo", new MyBean());
         return jndi;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:single").choice().when().simple("${bean:foo?method=bar(${body}, 'a,b')}").to("mock:result")
                         .otherwise().to("mock:other");
 
@@ -103,8 +103,8 @@ public class SimpleLanguageBeanFunctionMethodValueWithCommaTest extends ContextT
 
     public static class MyCronBody {
 
-        private String id;
-        private String cron;
+        private final String id;
+        private final String cron;
 
         public MyCronBody(String id, String cron) {
             this.id = id;

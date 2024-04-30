@@ -35,7 +35,7 @@ public class FromHasNoOutputRouteTest extends ContextTestSupport {
     public void testFromHasNoOutputRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // has no output which is a mis configuration
                 from("direct:start");
             }

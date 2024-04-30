@@ -32,14 +32,14 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
     private final int size = 100000;
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myLittleBean", new MyLittleBean());
         return jndi;
     }
 
     @Test
-    public void testProcessor() throws Exception {
+    public void testProcessor() {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < size; i++) {
@@ -51,7 +51,7 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBean() throws Exception {
+    public void testBean() {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < size; i++) {
@@ -63,10 +63,10 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:a").process(new MyLittleProcessor());
 
                 from("direct:b").bean("myLittleBean", "bye");

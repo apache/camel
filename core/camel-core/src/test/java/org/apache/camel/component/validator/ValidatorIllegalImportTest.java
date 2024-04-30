@@ -45,7 +45,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
     public void testOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").to("validator:org/apache/camel/component/validator/BroadcastMonitorFixed.xsd")
                         .to("mock:result");
             }
@@ -61,7 +61,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
     public void testIllegalImport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:test").to("validator:org/apache/camel/component/validator/BroadcastMonitor.xsd").to("mock:result");
             }
         });

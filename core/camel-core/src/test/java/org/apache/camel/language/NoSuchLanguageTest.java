@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class NoSuchLanguageTest extends LanguageTestSupport {
 
     @Test
-    public void testNoSuchLanguage() throws Exception {
+    public void testNoSuchLanguage() {
         try {
             assertPredicate("foo");
             fail("Should have thrown an exception");

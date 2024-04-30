@@ -34,7 +34,7 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
 
     private static class MyCustomRoutePolicy extends RoutePolicySupport {
 
-        private volatile AtomicBoolean stopped = new AtomicBoolean();
+        private final AtomicBoolean stopped = new AtomicBoolean();
 
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
@@ -76,10 +76,10 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:foo").routeId("foo").routePolicy(policy).to("mock:result");
             }
         };

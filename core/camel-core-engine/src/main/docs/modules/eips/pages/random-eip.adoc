@@ -1,15 +1,15 @@
 = Random EIP
 :doctitle: Random
 :shortname: random
-:description: The destination endpoints are selected by random.
+:description: The destination endpoints are selected randomly.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:
 
 Random mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 
-The destination endpoints are selected by random.
-This is a well known and classic policy, which spreads the load randomly.
+The destination endpoints are selected randomly.
+This is a well-known and classic policy, which spreads the load randomly.
 
 // eip options: START
 include::partial$eip-options.adoc[]
@@ -34,7 +34,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .loadBalance().ramdom()
+    .loadBalance().random()
         .to("seda:x")
         .to("seda:y")
         .to("seda:z")
@@ -48,7 +48,7 @@ XML::
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-       <ramdom/>
+       <random/>
        <to uri="seda:x"/>
        <to uri="seda:y"/>
        <to uri="seda:z"/>

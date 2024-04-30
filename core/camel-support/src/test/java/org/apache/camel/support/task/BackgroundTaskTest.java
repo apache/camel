@@ -58,7 +58,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertTrue(taskCount <= maxIterations);
+        assertTrue(taskCount.intValue() <= maxIterations);
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();
@@ -88,7 +88,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertTrue((maxIterations - 1) <= taskCount);
+        assertTrue((maxIterations - 1) <= taskCount.intValue());
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();
@@ -118,7 +118,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicate, new Object());
-        assertTrue(taskCount <= maxIterations);
+        assertTrue(taskCount.intValue() <= maxIterations);
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();
@@ -147,7 +147,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStop, Integer.valueOf(3));
-        assertEquals(3, taskCount);
+        assertEquals(3, taskCount.intValue());
         assertTrue(completed, "The task did complete, the return should be true");
     }
 
@@ -169,7 +169,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
-        assertTrue(taskCount <= 2, "Slow task: it should not run more than 2 times in 4 seconds");
+        assertTrue(taskCount.intValue() <= 2, "Slow task: it should not run more than 2 times in 4 seconds");
 
         Duration duration = task.elapsed();
         assertNotNull(duration);

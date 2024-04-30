@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
-    protected MyBean myBean = new MyBean();
+    protected final MyBean myBean = new MyBean();
 
     @Test
     public void testModificationOfDataAlongRoute() throws Exception {
@@ -58,8 +58,8 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }

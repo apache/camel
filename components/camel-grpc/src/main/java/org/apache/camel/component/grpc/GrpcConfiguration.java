@@ -19,12 +19,14 @@ package org.apache.camel.component.grpc;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.grpc.ClientInterceptor;
 import io.grpc.ServerInterceptor;
 import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
+import io.grpc.netty.NettyServerBuilder;
 import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -40,7 +42,7 @@ public class GrpcConfiguration {
 
     @UriPath
     @Metadata(required = true)
-    private int port;
+    private int port = -1;
 
     @UriPath
     @Metadata(required = true)
@@ -137,6 +139,39 @@ public class GrpcConfiguration {
     @UriParam(defaultValue = "false", label = "producer",
               description = "Expects that exchange property GrpcConstants.GRPC_RESPONSE_OBSERVER is set. Takes its value and calls onNext, onError and onComplete on that StreamObserver. All other gRPC parameters are ignored.")
     private boolean toRouteControlledStreamObserver = false;
+
+    @UriParam(label = "consumer", defaultValue = "" + NettyServerBuilder.DEFAULT_FLOW_CONTROL_WINDOW)
+    private int initialFlowControlWindow = NettyServerBuilder.DEFAULT_FLOW_CONTROL_WINDOW;
+
+    @UriParam(label = "consumer", defaultValue = "7200000")
+    private long keepAliveTime = TimeUnit.NANOSECONDS.toMillis(GrpcUtil.DEFAULT_SERVER_KEEPALIVE_TIME_NANOS);
+
+    @UriParam(label = "consumer", defaultValue = "20000")
+    private long keepAliveTimeout = TimeUnit.NANOSECONDS.toMillis(GrpcUtil.DEFAULT_SERVER_KEEPALIVE_TIMEOUT_NANOS);
+
+    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE)
+    private long maxConnectionAge = Long.MAX_VALUE;
+
+    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE)
+    private long maxConnectionIdle = Long.MAX_VALUE;
+
+    @UriParam(label = "consumer", defaultValue = "" + Long.MAX_VALUE)
+    private long maxConnectionAgeGrace = Long.MAX_VALUE;
+
+    @UriParam(label = "consumer", defaultValue = "" + GrpcUtil.DEFAULT_MAX_HEADER_LIST_SIZE)
+    private int maxInboundMetadataSize = GrpcUtil.DEFAULT_MAX_HEADER_LIST_SIZE;
+
+    @UriParam(label = "consumer", defaultValue = "0")
+    private int maxRstFramesPerWindow;
+
+    @UriParam(label = "consumer", defaultValue = "0")
+    private int maxRstPeriodSeconds;
+
+    @UriParam(label = "consumer", defaultValue = "300000")
+    private long permitKeepAliveTime = TimeUnit.MINUTES.toMillis(5);
+
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean permitKeepAliveWithoutCalls;
 
     /**
      * Fully qualified service name from the protocol buffer descriptor file (package dot service definition name)
@@ -419,7 +454,7 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The maximum number of concurrent calls permitted for each incoming server connection
+     * The maximum number of concurrent calls permitted for each incoming server connection. Defaults to no limit.
      */
     public void setMaxConcurrentCallsPerConnection(int maxConcurrentCallsPerConnection) {
         this.maxConcurrentCallsPerConnection = maxConcurrentCallsPerConnection;
@@ -495,6 +530,137 @@ public class GrpcConfiguration {
 
     public void setToRouteControlledStreamObserver(boolean toRouteControlledStreamObserver) {
         this.toRouteControlledStreamObserver = toRouteControlledStreamObserver;
+    }
+
+    public int getInitialFlowControlWindow() {
+        return initialFlowControlWindow;
+    }
+
+    /**
+     * Sets the initial flow control window in bytes.
+     */
+    public void setInitialFlowControlWindow(int initialFlowControlWindow) {
+        this.initialFlowControlWindow = initialFlowControlWindow;
+    }
+
+    public long getKeepAliveTime() {
+        return keepAliveTime;
+    }
+
+    /**
+     * Sets a custom keepalive time in milliseconds, the delay time for sending next keepalive ping. A value of
+     * Long.MAX_VALUE or a value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will disable keepalive.
+     */
+    public void setKeepAliveTime(long keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
+    }
+
+    public long getKeepAliveTimeout() {
+        return keepAliveTimeout;
+    }
+
+    /**
+     * Sets a custom keepalive timeout in milliseconds, the timeout for keepalive ping requests.
+     */
+    public void setKeepAliveTimeout(long keepAliveTimeout) {
+        this.keepAliveTimeout = keepAliveTimeout;
+    }
+
+    public long getMaxConnectionAge() {
+        return maxConnectionAge;
+    }
+
+    /**
+     * Sets a custom max connection age in milliseconds. Connections lasting longer than which will be gracefully
+     * terminated. A random jitter of +/-10% will be added to the value. A value of Long.MAX_VALUE (the default) or a
+     * value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection age.
+     */
+    public void setMaxConnectionAge(long maxConnectionAge) {
+        this.maxConnectionAge = maxConnectionAge;
+    }
+
+    public long getMaxConnectionIdle() {
+        return maxConnectionIdle;
+    }
+
+    /**
+     * Sets a custom max connection idle time in milliseconds. Connection being idle for longer than which will be
+     * gracefully terminated. A value of Long.MAX_VALUE (the default) or a value greater or equal to
+     * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection idle
+     */
+    public void setMaxConnectionIdle(long maxConnectionIdle) {
+        this.maxConnectionIdle = maxConnectionIdle;
+    }
+
+    public long getMaxConnectionAgeGrace() {
+        return maxConnectionAgeGrace;
+    }
+
+    /**
+     * Sets a custom grace time in milliseconds for the graceful connection termination. A value of Long.MAX_VALUE (the
+     * default) or a value greater or equal to NettyServerBuilder.AS_LARGE_AS_INFINITE is considered infinite.
+     */
+    public void setMaxConnectionAgeGrace(long maxConnectionAgeGrace) {
+        this.maxConnectionAgeGrace = maxConnectionAgeGrace;
+    }
+
+    public int getMaxInboundMetadataSize() {
+        return maxInboundMetadataSize;
+    }
+
+    /**
+     * Sets the maximum size of metadata allowed to be received. The default is 8 KiB.
+     */
+    public void setMaxInboundMetadataSize(int maxInboundMetadataSize) {
+        this.maxInboundMetadataSize = maxInboundMetadataSize;
+    }
+
+    public int getMaxRstFramesPerWindow() {
+        return maxRstFramesPerWindow;
+    }
+
+    /**
+     * Limits the rate of incoming RST_STREAM frames per connection to maxRstFramesPerWindow per maxRstPeriodSeconds.
+     * This option MUST be used in conjunction with maxRstPeriodSeconds for it to be effective.
+     */
+    public void setMaxRstFramesPerWindow(int maxRstFramesPerWindow) {
+        this.maxRstFramesPerWindow = maxRstFramesPerWindow;
+    }
+
+    public int getMaxRstPeriodSeconds() {
+        return maxRstPeriodSeconds;
+    }
+
+    /**
+     * Limits the rate of incoming RST_STREAM frames per maxRstPeriodSeconds. This option MUST be used in conjunction
+     * with maxRstFramesPerWindow for it to be effective.
+     */
+    public void setMaxRstPeriodSeconds(int maxRstPeriodSeconds) {
+        this.maxRstPeriodSeconds = maxRstPeriodSeconds;
+    }
+
+    public long getPermitKeepAliveTime() {
+        return permitKeepAliveTime;
+    }
+
+    /**
+     * Sets the most aggressive keep-alive time in milliseconds that clients are permitted to configure. The server will
+     * try to detect clients exceeding this rate and will forcefully close the connection.
+     */
+    public void setPermitKeepAliveTime(long permitKeepAliveTime) {
+        this.permitKeepAliveTime = permitKeepAliveTime;
+    }
+
+    public boolean isPermitKeepAliveWithoutCalls() {
+        return permitKeepAliveWithoutCalls;
+    }
+
+    /**
+     * Sets whether to allow clients to send keep-alive HTTP/ 2 PINGs even if there are no outstanding RPCs on the
+     * connection.
+     */
+    public void setPermitKeepAliveWithoutCalls(boolean permitKeepAliveWithoutCalls) {
+        this.permitKeepAliveWithoutCalls = permitKeepAliveWithoutCalls;
     }
 
     public void parseURI(URI uri) {

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.5.0-SNAPSHOT</version>
+        <version>4.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ftp</artifactId>
@@ -32,8 +32,7 @@
     <description>Camel FTP support</description>
 
     <properties>
-
-        <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
+        <camel.failsafe.parallel>true</camel.failsafe.parallel>
     </properties>
 
     <dependencies>
@@ -182,9 +181,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx3G</argLine>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>integration-test</id>
@@ -193,17 +189,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <forkCount>1</forkCount>
-                                    <reuseForks>true</reuseForks>
                                     <excludedGroups>not-parallel</excludedGroups>
-                                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
-                                    <systemPropertyVariables>
-                                        <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
-                                        <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
-                                        <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
-                                        <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
-                                        <junit.jupiter.execution.parallel.config.dynamic.factor>${camel.failsafe.parallel.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
-                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                             <execution>

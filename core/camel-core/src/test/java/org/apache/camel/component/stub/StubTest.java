@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 public class StubTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:InOnly").setExchangePattern(ExchangePattern.InOnly).to("stub:foo").to("mock:result");
 
                 from("direct:InOut").setExchangePattern(ExchangePattern.InOut).to("stub:foo").to("mock:result");

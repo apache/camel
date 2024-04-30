@@ -205,8 +205,7 @@ public class CaseInsensitiveMapTest {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("foo", "cheese");
 
-        Map<String, Object> other = new HashMap<>();
-        map.putAll(other);
+        map.putAll(new HashMap<>());
 
         assertEquals("cheese", map.get("FOO"));
         assertEquals("cheese", map.get("foo"));
@@ -312,11 +311,11 @@ public class CaseInsensitiveMapTest {
         assertTrue(map.containsKey("foo"));
         assertTrue(map.containsKey("FOO"));
 
-        assertTrue(map.keySet().contains("FOO"));
-        assertTrue(map.keySet().contains("FoO"));
-        assertTrue(map.keySet().contains("Foo"));
-        assertTrue(map.keySet().contains("foo"));
-        assertTrue(map.keySet().contains("fOO"));
+        assertTrue(map.containsKey("FOO"));
+        assertTrue(map.containsKey("FoO"));
+        assertTrue(map.containsKey("Foo"));
+        assertTrue(map.containsKey("foo"));
+        assertTrue(map.containsKey("fOO"));
 
         map.put("FOO", "cake");
         assertEquals(1, map.size());
@@ -336,7 +335,7 @@ public class CaseInsensitiveMapTest {
         assertTrue(map.containsKey("foo"));
         assertFalse(map.containsKey("FOO"));
 
-        assertFalse(map.keySet().contains("FOO"));
+        assertFalse(map.containsKey("FOO"));
 
         map.put("FOO", "cake");
         assertEquals(2, map.size());
@@ -504,7 +503,8 @@ public class CaseInsensitiveMapTest {
     }
 
     @Disabled("Manual test")
-    public void xxxTestCopyMapWithCamelHeadersTest() throws Exception {
+    @Test
+    public void testCopyMapWithCamelHeadersTest() throws Exception {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CamelA", "A");
         map.put("CamelB", "B");

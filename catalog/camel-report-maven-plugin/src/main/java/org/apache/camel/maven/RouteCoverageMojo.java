@@ -55,11 +55,11 @@ import org.apache.camel.parser.helper.RouteCoverageHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CoverageData;
 import org.apache.camel.util.FileUtil;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -74,7 +74,7 @@ import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
  * Performs route coverage reports after running Camel unit tests with camel-test modules
  */
 @Mojo(name = "route-coverage", threadSafe = true)
-public class RouteCoverageMojo extends AbstractExecMojo {
+public class RouteCoverageMojo extends AbstractMojo {
 
     public static final String DESTINATION_DIR = "/target/camel-route-coverage";
     /**
@@ -82,6 +82,12 @@ public class RouteCoverageMojo extends AbstractExecMojo {
      */
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
+
+    /**
+     * Skip route coverage execution.
+     */
+    @Parameter(property = "camel.skipRouteCoverage", defaultValue = "false")
+    private boolean skip;
 
     /**
      * Whether to fail if a route was not fully covered.
@@ -152,6 +158,10 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        if (skip) {
+            getLog().info("skipping route coverage as per configuration");
+            return;
+        }
 
         Set<File> javaFiles = new LinkedHashSet<>();
         Set<File> xmlFiles = new LinkedHashSet<>();

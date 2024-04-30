@@ -86,7 +86,7 @@ public class ByteArrayDataTypeTransformerTest {
     }
 
     @Test
-    public void shouldResolveTransformer() throws Exception {
+    public void shouldResolveTransformer() {
         DefaultTransformerRegistry transformerRegistry = new DefaultTransformerRegistry(camelContext);
         Transformer transformer = transformerRegistry.resolveTransformer(new TransformerKey("application-octet-stream"));
         Assertions.assertNotNull(transformer);

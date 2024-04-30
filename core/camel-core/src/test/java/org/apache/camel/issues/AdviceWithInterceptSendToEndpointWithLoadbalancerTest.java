@@ -34,14 +34,14 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Conte
     public void testInterceptSendToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").loadBalance().failover().to("seda:end1", "seda:end2");
             }
         });
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
         AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("seda:end1").skipSendToOriginalEndpoint().to("mock:end");
             }
         });

@@ -59,7 +59,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     private MyComponent component;
 
     @Test
-    public void testCacheProducerAcquireAndRelease() throws Exception {
+    public void testCacheProducerAcquireAndRelease() {
         DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
         cache.start();
 
@@ -85,7 +85,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCacheStopExpired() throws Exception {
+    public void testCacheStopExpired() {
         DefaultProducerCache cache = new DefaultProducerCache(this, context, 5);
         cache.start();
 
@@ -113,7 +113,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExtendedStatistics() throws Exception {
+    public void testExtendedStatistics() {
         DefaultProducerCache cache = new DefaultProducerCache(this, context, 5);
         cache.setExtendedStatistics(true);
         cache.start();
@@ -162,7 +162,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCacheEvictWhileInUse() throws Exception {
+    public void testCacheEvictWhileInUse() {
         producerCounter.set(0);
 
         MyProducerCache cache = new MyProducerCache(this, context, 2);
@@ -234,18 +234,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         for (int i = 0; i < 500; i++) {
             int index = i % 3;
-            callables.add(() -> {
-                Producer producer = cache.acquireProducer(endpoints.get(index));
-                boolean isEqual
-                        = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
-
-                if (!isEqual) {
-                    log.info("Endpoint uri to acquire: {}, returned producer (uri): {}", endpoints.get(index).getEndpointUri(),
-                            producer.getEndpoint().getEndpointUri());
-                }
-
-                return isEqual;
-            });
+            callables.add(() -> isEqualTask(cache, endpoints, index));
         }
 
         for (int i = 1; i <= 100; i++) {
@@ -255,6 +244,19 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
                 assertEquals(true, future.get());
             }
         }
+    }
+
+    private boolean isEqualTask(DefaultProducerCache cache, List<Endpoint> endpoints, int index) {
+        Producer producer = cache.acquireProducer(endpoints.get(index));
+        boolean isEqual
+                = producer.getEndpoint().getEndpointUri().equalsIgnoreCase(endpoints.get(index).getEndpointUri());
+
+        if (!isEqual) {
+            log.info("Endpoint uri to acquire: {}, returned producer (uri): {}", endpoints.get(index).getEndpointUri(),
+                    producer.getEndpoint().getEndpointUri());
+        }
+
+        return isEqual;
     }
 
     private static class MyProducerCache extends DefaultProducerCache {
@@ -308,7 +310,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             throw new UnsupportedOperationException();
         }
     }
@@ -316,21 +318,19 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     private final class MyEndpoint extends DefaultEndpoint {
 
         private final boolean isSingleton;
-        private final int number;
 
         private MyEndpoint(MyComponent component, boolean isSingleton, int number) {
             super("my://" + number, component);
             this.isSingleton = isSingleton;
-            this.number = number;
         }
 
         @Override
-        public Producer createProducer() throws Exception {
+        public Producer createProducer() {
             return new MyProducer(this);
         }
 
         @Override
-        public Consumer createConsumer(Processor processor) throws Exception {
+        public Consumer createConsumer(Processor processor) {
             return null;
         }
 
@@ -342,7 +342,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final class MyProducer extends DefaultProducer {
 
-        private int id;
+        private final int id;
 
         MyProducer(Endpoint endpoint) {
             super(endpoint);
@@ -350,17 +350,17 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             // noop
         }
 
         @Override
-        protected void doStop() throws Exception {
+        protected void doStop() {
             stopCounter.incrementAndGet();
         }
 
         @Override
-        protected void doShutdown() throws Exception {
+        protected void doShutdown() {
             shutdownCounter.incrementAndGet();
         }
 

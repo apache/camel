@@ -27,7 +27,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("blocked")
+@DevConsole(name = "blocked", displayName = "Blocked Exchanges", description = "Display blocked exchanges")
 public class BlockedConsole extends AbstractDevConsole {
 
     public BlockedConsole() {

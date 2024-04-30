@@ -29,6 +29,7 @@ import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
@@ -43,7 +44,7 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
         ObjectName on = getCamelObjectName(TYPE_THREAD_POOL, "mythreads(threads)");
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
-        assertEquals(false, shutdown.booleanValue());
+        assertFalse(shutdown.booleanValue());
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(5, corePoolSize.intValue());
@@ -58,7 +59,7 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
         assertEquals(25, keepAlive.intValue());
 
         Boolean allow = (Boolean) mbeanServer.getAttribute(on, "AllowCoreThreadTimeout");
-        assertEquals(true, allow.booleanValue());
+        assertTrue(allow.booleanValue());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -79,10 +80,10 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 ThreadPoolProfile profile = new ThreadPoolProfile("custom");
                 profile.setPoolSize(5);
                 profile.setMaxPoolSize(15);

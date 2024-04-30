@@ -46,7 +46,7 @@ public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
 
-        assertNotNull("The transformed XML should not be null", xml);
+        assertNotNull(xml, "The transformed XML should not be null");
         assertTrue(xml.contains("transformed"));
         // the foo tag is in the transform_to_foo.xsl which is what we want. If this didn't
         // work then transform.xsl would be used and we'd have a cheese element
@@ -60,10 +60,10 @@ public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("xslt:org/apache/camel/component/xslt/transform.xsl?allowTemplateFromHeader=true")
                         .multicast()

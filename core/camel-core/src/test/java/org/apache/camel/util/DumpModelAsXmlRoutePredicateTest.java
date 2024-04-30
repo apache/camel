@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry jndi = super.createCamelRegistry();
         jndi.bind("myCoolBean", new MyBarSingleton());
         return jndi;
     }
@@ -78,10 +78,10 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("myRoute").filter(simple("${body} > 10")).to("mock:result");
 
                 from("direct:other").routeId("myOtherRoute").filter(xpath("/foo")).to("mock:result");

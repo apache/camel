@@ -123,15 +123,7 @@ public class ModelWriterTest {
         RouteDefinition route = new RouteDefinition();
         route.setId("myRoute3");
         route.setInput(new FromDefinition("direct:start2"));
-        AggregateDefinition ag = new AggregateDefinition();
-        SimpleExpression e = new SimpleExpression("${body}");
-        e.setResultTypeName("int.class");
-        ag.setExpression(e);
-        ag.setCorrelationExpression(new ExpressionSubElementDefinition(new HeaderExpression("myHeader")));
-        ConstantExpression cons = new ConstantExpression("5");
-        cons.setResultTypeName("int.class");
-        ag.setCompletionSizeExpression(new ExpressionSubElementDefinition(cons));
-        ag.setCompletionTimeoutExpression(new ExpressionSubElementDefinition(new ConstantExpression("4000")));
+        final AggregateDefinition ag = createAggregateDefinition();
         route.addOutput(ag);
         ToDefinition to = new ToDefinition("kafka:line");
         ag.addOutput(to);
@@ -143,6 +135,19 @@ public class ModelWriterTest {
         String out = sw.toString();
         String expected = stripLineComments(Paths.get("src/test/resources/route3.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
+    }
+
+    private static AggregateDefinition createAggregateDefinition() {
+        AggregateDefinition ag = new AggregateDefinition();
+        SimpleExpression e = new SimpleExpression("${body}");
+        e.setResultTypeName("int.class");
+        ag.setExpression(e);
+        ag.setCorrelationExpression(new ExpressionSubElementDefinition(new HeaderExpression("myHeader")));
+        ConstantExpression cons = new ConstantExpression("5");
+        cons.setResultTypeName("int.class");
+        ag.setCompletionSizeExpression(new ExpressionSubElementDefinition(cons));
+        ag.setCompletionTimeoutExpression(new ExpressionSubElementDefinition(new ConstantExpression("4000")));
+        return ag;
     }
 
     @Test
@@ -222,7 +227,7 @@ public class ModelWriterTest {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start7").routeId("myRoute7")
                     .doTry()
                         .to("mock:try1")

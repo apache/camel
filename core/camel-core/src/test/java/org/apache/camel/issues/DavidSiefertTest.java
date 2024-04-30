@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class DavidSiefertTest extends ContextTestSupport {
-    protected static Object expectedBody = "Some Output";
+    protected static final Object expectedBody = "Some Output";
 
     @Test
     public void testWorks() throws Exception {
@@ -53,9 +53,9 @@ public class DavidSiefertTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").process(new MyProcessor()).to("mock:result");
             }
         };
@@ -63,7 +63,7 @@ public class DavidSiefertTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             exchange.getIn().getBody(String.class);
 
             Message output = exchange.getMessage();

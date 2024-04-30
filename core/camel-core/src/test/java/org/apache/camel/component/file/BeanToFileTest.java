@@ -41,16 +41,16 @@ public class BeanToFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("myBean", new MyBean());
         return answer;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("bean:myBean").setHeader(Exchange.FILE_NAME, constant("BeanToFileTest.txt"))
                         .to(fileUri("?fileExist=Override"), "mock:result");
             }

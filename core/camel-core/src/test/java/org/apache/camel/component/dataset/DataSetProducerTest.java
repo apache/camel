@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class DataSetProducerTest extends ContextTestSupport {
 
-    protected SimpleDataSet dataSet = new SimpleDataSet(20);
+    protected final SimpleDataSet dataSet = new SimpleDataSet(20);
 
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
@@ -38,8 +38,8 @@ public class DataSetProducerTest extends ContextTestSupport {
     final String resultUri = "mock://result";
 
     @Override
-    protected Registry createRegistry() throws Exception {
-        Registry answer = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry answer = super.createCamelRegistry();
         answer.bind("foo", dataSet);
         return answer;
     }
@@ -195,7 +195,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testDataSetIndexUriParameterUnset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUri).to(resultUri);
             }
         });
@@ -221,7 +221,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testDataSetIndexUriParameterSetToOff() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUriWithDataSetIndexSetToOff).to(resultUri);
             }
         });
@@ -245,7 +245,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testDataSetIndexUriParameterSetToLenient() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUriWithDataSetIndexSetToLenient).to(resultUri);
             }
         });
@@ -269,7 +269,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testDataSetIndexUriParameterSetToStrict() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUriWithDataSetIndexSetToStrict).to(resultUri);
             }
         });
@@ -293,7 +293,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterUnset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUri).to(resultUri);
             }
         });
@@ -337,7 +337,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterSetToOff() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUriWithDataSetIndexSetToOff).to(resultUri);
             }
         });
@@ -363,7 +363,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterSetToLenient() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUriWithDataSetIndexSetToLenient).to(resultUri);
             }
         });
@@ -407,7 +407,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     public void testInvalidDataSetIndexValueWithDataSetIndexUriParameterSetToStrict() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from(sourceUri).to(dataSetUriWithDataSetIndexSetToStrict).to(resultUri);
             }
         });

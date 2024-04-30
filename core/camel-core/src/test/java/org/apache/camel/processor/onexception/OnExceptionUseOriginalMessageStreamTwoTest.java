@@ -48,24 +48,24 @@ public class OnExceptionUseOriginalMessageStreamTwoTest extends ContextTestSuppo
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .useOriginalMessage()
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
-                                Assertions.assertTrue(exchange.getMessage().getBody() instanceof StreamCache);
+                            public void process(Exchange exchange) {
+                                Assertions.assertInstanceOf(StreamCache.class, exchange.getMessage().getBody());
                                 String s = exchange.getMessage().getBody(String.class);
                                 list1.add(s);
                             }
                         })
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
-                                Assertions.assertTrue(exchange.getMessage().getBody() instanceof StreamCache);
+                            public void process(Exchange exchange) {
+                                Assertions.assertInstanceOf(StreamCache.class, exchange.getMessage().getBody());
                                 String s = exchange.getMessage().getBody(String.class);
                                 list2.add(s);
                             }
@@ -85,10 +85,10 @@ public class OnExceptionUseOriginalMessageStreamTwoTest extends ContextTestSuppo
         }
     }
 
-    public class MyDataFormat extends ServiceSupport implements DataFormat {
+    public static class MyDataFormat extends ServiceSupport implements DataFormat {
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
             // noop
         }
 

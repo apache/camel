@@ -32,11 +32,12 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
     protected MockEndpoint unknownHostExceptionEndpoint;
     protected MockEndpoint validEndpoint;
 
-    protected String payloud = getPayloudPart("Hello world!");
+    protected final String payloud = getPayloudPart("Hello world!");
 
-    protected String ssrfPayloud = "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notex.isting/test\">\n" + payloud;
+    protected final String ssrfPayloud
+            = "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notex.isting/test\">\n" + payloud;
 
-    protected String xxePayloud
+    protected final String xxePayloud
             = "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notex.istinghost/test\">]>\n" + getPayloudPart("&file;");
 
     private final boolean accessExternalDTD;
@@ -61,11 +62,11 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // switch on DTD Access
                 if (accessExternalDTD) {
                     getContext().getGlobalOptions().put(SchemaReader.ACCESS_EXTERNAL_DTD, "true");

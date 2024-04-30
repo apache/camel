@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
 
 /**
  * Component configuration for AS2 component.

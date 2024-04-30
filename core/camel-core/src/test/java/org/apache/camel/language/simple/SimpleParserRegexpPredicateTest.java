@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
 
     @Test
-    public void testSimpleRegexp() throws Exception {
+    public void testSimpleRegexp() {
         exchange.getIn().setBody("12.34.5678");
 
         SimplePredicateParser parser
