@@ -27,6 +27,10 @@ import org.apache.camel.component.aws2.bedrock.runtime.BedrockConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -217,65 +221,20 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    public void testInvokeAnthropicV1Model() throws InterruptedException {
-
-        result.expectedMessageCount(1);
-        final Exchange result = template.send("direct:send_anthropic_v1_model", exchange -> {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode rootNode = mapper.createObjectNode();
-            rootNode.putIfAbsent("prompt",
-                    new TextNode("Human: Can you tell the history of Mayflower? \\n\\Assistant:"));
-
-            ArrayNode stopSequences = mapper.createArrayNode();
-            stopSequences.add("Human:");
-            rootNode.putIfAbsent("max_tokens_to_sample", new IntNode(300));
-            rootNode.putIfAbsent("stop_sequences", stopSequences);
-            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
-            rootNode.putIfAbsent("top_p", new IntNode(1));
-            rootNode.putIfAbsent("top_k", new IntNode(250));
-            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
-
-            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
-            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
-            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
-        });
-
-        MockEndpoint.assertIsSatisfied(context);
+    private static Stream<Arguments> models() {
+        return Stream.of(
+                Arguments.of("direct:send_anthropic_v1_model"),
+                Arguments.of("direct:send_anthropic_v2_model"),
+                Arguments.of("direct:send_anthropic_v21_model"));
     }
 
     @Test
-    public void testInvokeAnthropicV2Model() throws InterruptedException {
+    @ParameterizedTest
+    @MethodSource("models")
+    public void testInvokeAnthropicV1Model(String model) throws InterruptedException {
 
         result.expectedMessageCount(1);
-        final Exchange result = template.send("direct:send_anthropic_v2_model", exchange -> {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode rootNode = mapper.createObjectNode();
-            rootNode.putIfAbsent("prompt",
-                    new TextNode("Human: Can you tell the history of Mayflower? \\n\\Assistant:"));
-
-            ArrayNode stopSequences = mapper.createArrayNode();
-            stopSequences.add("Human:");
-            rootNode.putIfAbsent("max_tokens_to_sample", new IntNode(300));
-            rootNode.putIfAbsent("stop_sequences", stopSequences);
-            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
-            rootNode.putIfAbsent("top_p", new IntNode(1));
-            rootNode.putIfAbsent("top_k", new IntNode(250));
-            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
-
-            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
-            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
-            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
-        });
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testInvokeAnthropicV21Model() throws InterruptedException {
-
-        result.expectedMessageCount(1);
-        final Exchange result = template.send("direct:send_anthropic_v21_model", exchange -> {
+        final Exchange result = template.send(model, exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
             rootNode.putIfAbsent("prompt",
