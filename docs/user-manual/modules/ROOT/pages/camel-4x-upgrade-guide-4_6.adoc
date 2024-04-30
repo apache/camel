@@ -174,3 +174,12 @@ The Cluster Services are turned on by default unless they are explicit disabled,
 ----
 camel.cluster.consul.enabled = false
 ----
+
+=== camel-as2
+
+Changes for AS2-MDN asynchronous delivery:
+
+ - Added an option allowing clients to request an asynchronous receipt by including a 'Receipt-Delivery-Option' header specifying
+the return URL in the request that is sent to the server.
+ - Added a consumer capable of receiving signed or unsigned asynchronous message disposition notifications sent by the
+message receiver confirming receipt of the message.
