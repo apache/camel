@@ -120,15 +120,13 @@ public final class CamelJavaRestDslParserHelper {
                     Expression exp = es.getExpression();
                     boolean valid = isRest(exp);
                     if (valid) {
-                        final RestServiceDetails node =
-                                doParse(clazz, fullyQualifiedFileName, configureMethod, exp, block);
+                        final RestServiceDetails node = doParse(clazz, fullyQualifiedFileName, configureMethod, exp, block);
 
                         answer.add(node);
                     }
                 }
             }
         }
-
 
         return answer;
     }
