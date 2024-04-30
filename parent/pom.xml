@@ -399,7 +399,7 @@
 	<picocli-version>4.7.5</picocli-version>
 	<pinecone-client-version>1.0.0</pinecone-client-version>
         <plc4x-version>0.12.0</plc4x-version>
-        <pooled-jms-version>3.1.5</pooled-jms-version>
+        <pooled-jms-version>3.1.6</pooled-jms-version>
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.25.3</protobuf-version>
