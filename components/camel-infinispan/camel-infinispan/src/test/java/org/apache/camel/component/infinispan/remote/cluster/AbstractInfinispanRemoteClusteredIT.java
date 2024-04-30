@@ -42,6 +42,8 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 
 import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createCache;
 import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createConfiguration;
@@ -135,8 +137,8 @@ public class AbstractInfinispanRemoteClusteredIT {
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500));
-            context.start();
+            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+                    .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
 
             contextLatch.await();
         } catch (Exception e) {

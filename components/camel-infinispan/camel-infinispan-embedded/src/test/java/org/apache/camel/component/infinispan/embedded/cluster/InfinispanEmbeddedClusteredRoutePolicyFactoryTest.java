@@ -23,6 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.infinispan.manager.DefaultCacheManager;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
+import java.util.concurrent.TimeUnit;
 
 public class InfinispanEmbeddedClusteredRoutePolicyFactoryTest extends AbstractInfinispanEmbeddedClusteredTest {
     @Override
@@ -52,8 +55,8 @@ public class InfinispanEmbeddedClusteredRoutePolicyFactoryTest extends AbstractI
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500));
-            context.start();
+            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+                    .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
 
             contextLatch.await();
         }
