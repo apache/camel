@@ -163,15 +163,11 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseExclusiveKafkaTestSupport {
         final List<String> producedRecordsPartition1 = List.of("5", "6", "7", "8", "9", "10", "11");
         final List<String> producedRecordsPartition0 = List.of("1", "2", "3", "4");
 
-        producedRecordsPartition1.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 1, null, null, v);
+        producedRecordsPartition0.forEach(v -> {
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 0, "k0", v); //CAMEL-20680: kept explicit partition 0, added key.
             producer.send(data);
         });
 
-        producedRecordsPartition0.forEach(v -> {
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 0, null, null, v);
-            producer.send(data);
-        });
     }
 
 }
