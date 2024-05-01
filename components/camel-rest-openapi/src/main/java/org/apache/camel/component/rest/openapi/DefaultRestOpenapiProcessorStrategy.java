@@ -25,7 +25,10 @@ import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
@@ -48,6 +51,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +62,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         implements RestOpenapiProcessorStrategy, CamelContextAware, NonManagedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestOpenapiProcessorStrategy.class);
+
+    private static final String BODY_VERBS = "DELETE,PUT,POST,PATCH";
 
     private CamelContext camelContext;
     private ProducerCache producerCache;
@@ -164,7 +170,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
 
     @Override
     public boolean process(
-            Operation operation, String path,
+            Operation operation, String verb, String path,
             RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback) {
 
@@ -174,7 +180,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             if (e == null) {
                 if ("mock".equalsIgnoreCase(missingOperation)) {
                     // no route then try to load mock data as the answer
-                    loadMockData(operation, path, exchange);
+                    loadMockData(operation, verb, path, exchange);
                 }
                 callback.done(true);
                 return true;
@@ -205,7 +211,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         });
     }
 
-    private void loadMockData(Operation operation, String path, Exchange exchange) {
+    private void loadMockData(Operation operation, String verb, String path, Exchange exchange) {
         final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         final String[] includes = mockIncludePattern != null ? mockIncludePattern.split(",") : null;
 
@@ -256,9 +262,73 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 // ignore
             }
         } else {
-            // no mock data, so return an empty response
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
-            exchange.getMessage().setBody("");
+            // no mock data, so return data as-is for PUT,POST,DELETE,PATCH
+            if (BODY_VERBS.contains(verb)) {
+                // return input data as-is
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+            } else {
+                // no mock data (such as for GET)
+                // then try to see if there is an example in the openapi spec response we can use,
+                // otherwise use an empty body
+                Object body = "";
+
+                String contentType = ExchangeHelper.getContentType(exchange);
+                String accept = exchange.getMessage().getHeader("Accept", String.class);
+                if (operation.getResponses() != null) {
+                    ApiResponse a = operation.getResponses().get("200");
+                    Content c = a.getContent();
+                    if (c != null && !c.isEmpty()) {
+                        // prefer media-type that is the same as the incoming content-type
+                        // if none found, then find first matching content-type from the HTTP Accept header
+                        MediaType mt = contentType != null ? c.get(contentType) : null;
+                        if (mt == null && accept != null) {
+                            // find best match accept
+                            for (String acc : accept.split(",")) {
+                                acc = StringHelper.before(acc, ";", acc);
+                                acc = acc.trim();
+                                mt = c.get(acc);
+                                if (mt != null) {
+                                    // update content-type
+                                    contentType = acc;
+                                    break;
+                                }
+                            }
+                            // fallback to grab json or xml if we accept anything
+                            if (mt == null && "*/*".equals(accept)) {
+                                mt = c.get("application/json");
+                                if (mt != null) {
+                                    contentType = "application/json";
+                                }
+                            }
+                            // fallback to grab json or xml if we accept anything
+                            if (mt == null && "*/*".equals(accept)) {
+                                mt = c.get("application/xml");
+                                if (mt != null) {
+                                    contentType = "application/xml";
+                                }
+                            }
+                        }
+                        if (mt != null) {
+                            if (mt.getExample() != null) {
+                                body = mt.getExample();
+                            } else if (mt.getExamples() != null) {
+                                // grab first example
+                                Example ex = mt.getExamples().values().iterator().next();
+                                body = ex.getValue();
+                            }
+                        }
+                    }
+                }
+                boolean empty = body == null || body.toString().isBlank();
+                if (empty) {
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+                    exchange.getMessage().setBody("");
+                } else {
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+                    exchange.getMessage().setBody(body);
+                }
+            }
         }
     }
 
