@@ -151,8 +151,10 @@ This is similar to ignoring missing API operations, as you can tell Camel to moc
 
 When using _mock_ then Camel will (for missing operations) simulate a successful response:
 
-1. attempting to load canned responses from file system
-2. use example inlined in the OpenAPI `response` section.
+1. attempting to load canned responses from file system.
+2. for GET verbs then attempt to use example inlined in the OpenAPI `response` section.
+3. for other verbs (DELETE, PUT, POST, PATCH) then return the input body as response.
+4. if none of above then return empty body.
 
 This allows you to have a set of files that you can use for development and testing purposes.
 
@@ -193,7 +195,7 @@ $ curl http://0.0.0.0:8080/api/v3/pet/123
 
 If no file is found, then Camel will attempt to find an example from the _response_ section in the OpenAPI specification.
 
-In the response section below, then for success response (200) then for the `application/json` content-type, we have
+In the response section below, then for success GET response (200) then for the `application/json` content-type, we have
 an inlined example. Note if there are multiple examples for the same content-type, then Camel will pick the first example,
 so make sure it's the best example you want to let Camel use as mocked response body.
 
