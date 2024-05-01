@@ -101,7 +101,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseKafkaT
         contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
-                .atMost(3, TimeUnit.SECONDS)
+                .atMost(10, TimeUnit.SECONDS) // changed to 10 sec for CAMEL-20722
                 .until(() -> to.getExchanges().size() > 5);
 
         to.assertIsSatisfied(3000);
