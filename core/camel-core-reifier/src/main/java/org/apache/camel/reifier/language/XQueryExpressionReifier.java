@@ -48,9 +48,10 @@ public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<X
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[2];
+        Object[] properties = new Object[3];
         properties[0] = asResultType();
         properties[1] = parseString(definition.getSource());
+        properties[2] = definition.getNamespaces();
         return properties;
     }
 
