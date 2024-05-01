@@ -22,7 +22,6 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 
 import org.apache.camel.Route;
-import org.apache.camel.component.mllp.MllpInvalidMessageException;
 import org.apache.camel.component.mllp.MllpSocketException;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
 import org.apache.camel.spi.UnitOfWork;
