@@ -140,7 +140,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             }
 
             // process the incoming request
-            return restOpenapiProcessorStrategy.process(o, uri, rcp.getBinding(), exchange, callback);
+            return restOpenapiProcessorStrategy.process(o, verb, uri, rcp.getBinding(), exchange, callback);
         }
 
         // is it the api-context path
