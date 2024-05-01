@@ -120,61 +120,16 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // the repository is scoped per exchange
-        ClaimCheckRepository repo
-                = exchange.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, ClaimCheckRepository.class);
-        if (repo == null) {
-            repo = new DefaultClaimCheckRepository();
-            exchange.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, repo);
-        }
+        ClaimCheckRepository repo = getClaimCheckRepository(exchange);
 
         try {
             String claimKey = keyExpression.evaluate(exchange, String.class);
-
-            if ("Set".equals(operation)) {
-                // copy exchange, and do not share the unit of work
-                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                boolean addedNew = repo.add(claimKey, copy);
-                if (addedNew) {
-                    LOG.debug("Add: {} -> {}", claimKey, copy);
-                } else {
-                    LOG.debug("Override: {} -> {}", claimKey, copy);
-                }
-            } else if ("Get".equals(operation)) {
-                Exchange copy = repo.get(claimKey);
-                LOG.debug("Get: {} -> {}", claimKey, exchange);
-                if (copy != null) {
-                    Exchange result = aggregationStrategy.aggregate(exchange, copy);
-                    if (result != null) {
-                        ExchangeHelper.copyResultsPreservePattern(exchange, result);
-                    }
-                }
-            } else if ("GetAndRemove".equals(operation)) {
-                Exchange copy = repo.getAndRemove(claimKey);
-                LOG.debug("GetAndRemove: {} -> {}", claimKey, exchange);
-                if (copy != null) {
-                    // prepare the exchanges for aggregation
-                    ExchangeHelper.prepareAggregation(exchange, copy);
-                    Exchange result = aggregationStrategy.aggregate(exchange, copy);
-                    if (result != null) {
-                        ExchangeHelper.copyResultsPreservePattern(exchange, result);
-                    }
-                }
-            } else if ("Push".equals(operation)) {
-                // copy exchange, and do not share the unit of work
-                Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                LOG.debug("Push: {} -> {}", claimKey, copy);
-                repo.push(copy);
-            } else if ("Pop".equals(operation)) {
-                Exchange copy = repo.pop();
-                LOG.debug("Pop: {} -> {}", claimKey, exchange);
-                if (copy != null) {
-                    // prepare the exchanges for aggregation
-                    ExchangeHelper.prepareAggregation(exchange, copy);
-                    Exchange result = aggregationStrategy.aggregate(exchange, copy);
-                    if (result != null) {
-                        ExchangeHelper.copyResultsPreservePattern(exchange, result);
-                    }
-                }
+            switch (operation) {
+                case "Set" -> operationSetHandler(exchange, claimKey, repo);
+                case "Get" -> operationGetHandler(exchange, claimKey, repo);
+                case "GetAndRemove" -> operationGetAndRemoveHandler(exchange, claimKey, repo);
+                case "Push" -> operationPushHandler(exchange, claimKey, repo);
+                case "Pop" -> operationPopHandler(exchange, claimKey, repo);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -182,6 +137,72 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
 
         callback.done(true);
         return true;
+    }
+
+    private void operationPopHandler(Exchange exchange, String claimKey, ClaimCheckRepository repo) {
+        Exchange copy = repo.pop();
+        LOG.debug("Pop: {} -> {}", claimKey, exchange);
+        if (copy != null) {
+            // prepare the exchanges for aggregation
+            ExchangeHelper.prepareAggregation(exchange, copy);
+            Exchange result = aggregationStrategy.aggregate(exchange, copy);
+            if (result != null) {
+                ExchangeHelper.copyResultsPreservePattern(exchange, result);
+            }
+        }
+    }
+
+    private static void operationPushHandler(Exchange exchange, String claimKey, ClaimCheckRepository repo) {
+        // copy exchange, and do not share the unit of work
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        LOG.debug("Push: {} -> {}", claimKey, copy);
+        repo.push(copy);
+    }
+
+    private void operationGetAndRemoveHandler(Exchange exchange, String claimKey, ClaimCheckRepository repo) {
+        Exchange copy = repo.getAndRemove(claimKey);
+        LOG.debug("GetAndRemove: {} -> {}", claimKey, exchange);
+        if (copy != null) {
+            // prepare the exchanges for aggregation
+            ExchangeHelper.prepareAggregation(exchange, copy);
+            Exchange result = aggregationStrategy.aggregate(exchange, copy);
+            if (result != null) {
+                ExchangeHelper.copyResultsPreservePattern(exchange, result);
+            }
+        }
+    }
+
+    private void operationGetHandler(Exchange exchange, String claimKey, ClaimCheckRepository repo) {
+        Exchange copy = repo.get(claimKey);
+        LOG.debug("Get: {} -> {}", claimKey, exchange);
+        if (copy != null) {
+            Exchange result = aggregationStrategy.aggregate(exchange, copy);
+            if (result != null) {
+                ExchangeHelper.copyResultsPreservePattern(exchange, result);
+            }
+        }
+    }
+
+    private static void operationSetHandler(Exchange exchange, String claimKey, ClaimCheckRepository repo) {
+
+        // copy exchange, and do not share the unit of work
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        boolean addedNew = repo.add(claimKey, copy);
+        if (addedNew) {
+            LOG.debug("Add: {} -> {}", claimKey, copy);
+        } else {
+            LOG.debug("Override: {} -> {}", claimKey, copy);
+        }
+    }
+
+    private static ClaimCheckRepository getClaimCheckRepository(Exchange exchange) {
+        ClaimCheckRepository repo
+                = exchange.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, ClaimCheckRepository.class);
+        if (repo == null) {
+            repo = new DefaultClaimCheckRepository();
+            exchange.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, repo);
+        }
+        return repo;
     }
 
     @Override
