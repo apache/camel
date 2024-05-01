@@ -30,12 +30,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StartupSummaryLevel;
+import org.apache.camel.TypeConverterExists;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.main.util.XmlHelper;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.app.RegistryBeanDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -82,6 +91,8 @@ public class BlueprintXmlBeansHandler {
                 // this is a camel bean via camel-xml-io-dsl
                 String fileName = StringHelper.afterLast(id, ":");
                 discoverBeans(camelContext, fileName, doc);
+                // configure <camelContext>
+                configureCamelContext(camelContext, fileName);
             }
         });
     }
@@ -220,6 +231,166 @@ public class BlueprintXmlBeansHandler {
             }
         }
         return answer;
+    }
+
+    private void configureCamelContext(CamelContext camelContext, String fileName) {
+        Resource resource = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                .resolveResource("file:" + fileName);
+        if (!resource.exists()) {
+            return;
+        }
+
+        try {
+            // need to load and parse again as we need to load <camelContext> to configure CamelContext from XML
+            Document dom = new XmlConverter().toDOMDocument(resource.getInputStream(), null);
+            NodeList camels = dom.getElementsByTagNameNS("http://camel.apache.org/schema/blueprint", "camelContext");
+            if (camels.getLength() == 1) {
+                Node n = camels.item(0);
+                if (n.hasAttributes()) {
+                    String value = XmlHelper.getAttribute(n, "id");
+                    if (value != null) {
+                        camelContext.getCamelContextExtension().setName(CamelContextHelper.parseText(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "startupSummaryLevel");
+                    if (value != null) {
+                        camelContext
+                                .setStartupSummaryLevel(
+                                        CamelContextHelper.parse(camelContext, StartupSummaryLevel.class, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "trace");
+                    if (value != null) {
+                        camelContext.setTracing(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "backlogTrace");
+                    if (value != null) {
+                        camelContext.setBacklogTracing(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "tracePattern");
+                    if (value != null) {
+                        camelContext.setTracingPattern(CamelContextHelper.parseText(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "traceLoggingFormat");
+                    if (value != null) {
+                        camelContext.setTracingLoggingFormat(CamelContextHelper.parseText(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "debug");
+                    if (value != null) {
+                        camelContext.setDebugging(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "messageHistory");
+                    if (value != null) {
+                        camelContext.setMessageHistory(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "sourceLocationEnabled");
+                    if (value != null) {
+                        camelContext.setSourceLocationEnabled(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "logMask");
+                    if (value != null) {
+                        camelContext.setLogMask(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "logExhaustedMessageBody");
+                    if (value != null) {
+                        camelContext.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "streamCache");
+                    if (value != null) {
+                        camelContext.setStreamCaching(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "delayer");
+                    if (value != null) {
+                        camelContext.setDelayer(CamelContextHelper.parseLong(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "autoStartup");
+                    if (value != null) {
+                        camelContext.setAutoStartup(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "dumpRoutes");
+                    if (value != null) {
+                        camelContext.setDumpRoutes(CamelContextHelper.parseText(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "useMDCLogging");
+                    if (value != null) {
+                        camelContext.setUseMDCLogging(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "mdcLoggingKeysPattern");
+                    if (value != null) {
+                        camelContext.setMDCLoggingKeysPattern(CamelContextHelper.parseText(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "useDataType");
+                    if (value != null) {
+                        camelContext.setUseDataType(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "useBreadcrumb");
+                    if (value != null) {
+                        camelContext.setUseBreadcrumb(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "allowUseOriginalMessage");
+                    if (value != null) {
+                        camelContext.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "caseInsensitiveHeaders");
+                    if (value != null) {
+                        camelContext.setCaseInsensitiveHeaders(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "autowiredEnabled");
+                    if (value != null) {
+                        camelContext.setAutowiredEnabled(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "threadNamePattern");
+                    if (value != null) {
+                        camelContext.getExecutorServiceManager()
+                                .setThreadNamePattern(CamelContextHelper.parseText(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "shutdownRoute");
+                    if (value != null) {
+                        camelContext.setShutdownRoute(CamelContextHelper.parse(camelContext, ShutdownRoute.class, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "shutdownRunningTask");
+                    if (value != null) {
+                        camelContext
+                                .setShutdownRunningTask(
+                                        CamelContextHelper.parse(camelContext, ShutdownRunningTask.class, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "shutdownRunningTask");
+                    if (value != null) {
+                        camelContext.setLoadTypeConverters(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "typeConverterStatisticsEnabled");
+                    if (value != null) {
+                        camelContext.setTypeConverterStatisticsEnabled(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "loadHealthChecks");
+                    if (value != null) {
+                        camelContext.setLoadHealthChecks(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "inflightRepositoryBrowseEnabled");
+                    if (value != null) {
+                        camelContext.getInflightRepository()
+                                .setInflightBrowseEnabled(CamelContextHelper.parseBoolean(camelContext, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "typeConverterExists");
+                    if (value != null) {
+                        camelContext.getTypeConverterRegistry()
+                                .setTypeConverterExists(
+                                        CamelContextHelper.parse(camelContext, TypeConverterExists.class, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "typeConverterExistsLoggingLevel");
+                    if (value != null) {
+                        camelContext.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(
+                                CamelContextHelper.parse(camelContext, LoggingLevel.class, value));
+                    }
+                    value = XmlHelper.getAttribute(n, "errorHandlerRef");
+                    if (value != null) {
+                        camelContext.getCamelContextExtension()
+                                .setErrorHandlerFactory(
+                                        new RefErrorHandlerDefinition(CamelContextHelper.parseText(camelContext, value)));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     private void discoverBeans(CamelContext camelContext, String fileName, Document dom) {
