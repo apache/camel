@@ -1923,15 +1923,6 @@ Configures a ProducerTemplate
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="templateBean" type="tns:routeTemplateBeanDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: A route template bean (local bean)
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="templateParameter" type="tns:routeTemplateParameterDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -12518,13 +12509,6 @@ Whether tracing is enabled on this route.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="routeTemplateBeanDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:beanFactoryDefinition">
-        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

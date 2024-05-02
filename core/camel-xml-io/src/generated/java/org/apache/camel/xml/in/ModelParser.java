@@ -894,43 +894,6 @@ public class ModelParser extends BaseParser {
                 default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
-    protected RouteTemplateBeanDefinition doParseRouteTemplateBeanDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RouteTemplateBeanDefinition(), beanFactoryDefinitionAttributeHandler(), beanFactoryDefinitionElementHandler(), noValueHandler());
-    }
-    protected <T extends BeanFactoryDefinition> AttributeHandler<T> beanFactoryDefinitionAttributeHandler() {
-        return (def, key, val) -> switch (key) {
-            case "builderClass": def.setBuilderClass(val); yield true;
-            case "builderMethod": def.setBuilderMethod(val); yield true;
-            case "destroyMethod": def.setDestroyMethod(val); yield true;
-            case "factoryBean": def.setFactoryBean(val); yield true;
-            case "factoryMethod": def.setFactoryMethod(val); yield true;
-            case "initMethod": def.setInitMethod(val); yield true;
-            case "name": def.setName(val); yield true;
-            case "scriptLanguage": def.setScriptLanguage(val); yield true;
-            case "type": def.setType(val); yield true;
-            default: yield false;
-        };
-    }
-    protected <T extends BeanFactoryDefinition> ElementHandler<T> beanFactoryDefinitionElementHandler() {
-        return (def, key) -> switch (key) {
-            case "constructors": def.setConstructors(new BeanConstructorsAdapter().unmarshal(doParseBeanConstructorsDefinition())); yield true;
-            case "properties": def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition())); yield true;
-            case "script": def.setScript(doParseText()); yield true;
-            default: yield false;
-        };
-    }
-    protected BeanConstructorsDefinition doParseBeanConstructorsDefinition() throws IOException, XmlPullParserException {
-        return doParse(new BeanConstructorsDefinition(), noAttributeHandler(), (def, key) -> switch (key) {
-                case "constructor": doAdd(doParseBeanConstructorDefinition(), def.getConstructors(), def::setConstructors); yield true;
-                default: yield false;
-            }, noValueHandler());
-    }
-    protected BeanPropertiesDefinition doParseBeanPropertiesDefinition() throws IOException, XmlPullParserException {
-        return doParse(new BeanPropertiesDefinition(), noAttributeHandler(), (def, key) -> switch (key) {
-                case "property": doAdd(doParseBeanPropertyDefinition(), def.getProperties(), def::setProperties); yield true;
-                default: yield false;
-            }, noValueHandler());
-    }
     protected RouteTemplateContextRefDefinition doParseRouteTemplateContextRefDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateContextRefDefinition(), (def, key, val) -> switch (key) {
                 case "ref": def.setRef(val); yield true;
@@ -1117,6 +1080,40 @@ public class ModelParser extends BaseParser {
     }
     protected TemplatedRouteBeanDefinition doParseTemplatedRouteBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new TemplatedRouteBeanDefinition(), beanFactoryDefinitionAttributeHandler(), beanFactoryDefinitionElementHandler(), noValueHandler());
+    }
+    protected <T extends BeanFactoryDefinition> AttributeHandler<T> beanFactoryDefinitionAttributeHandler() {
+        return (def, key, val) -> switch (key) {
+            case "builderClass": def.setBuilderClass(val); yield true;
+            case "builderMethod": def.setBuilderMethod(val); yield true;
+            case "destroyMethod": def.setDestroyMethod(val); yield true;
+            case "factoryBean": def.setFactoryBean(val); yield true;
+            case "factoryMethod": def.setFactoryMethod(val); yield true;
+            case "initMethod": def.setInitMethod(val); yield true;
+            case "name": def.setName(val); yield true;
+            case "scriptLanguage": def.setScriptLanguage(val); yield true;
+            case "type": def.setType(val); yield true;
+            default: yield false;
+        };
+    }
+    protected <T extends BeanFactoryDefinition> ElementHandler<T> beanFactoryDefinitionElementHandler() {
+        return (def, key) -> switch (key) {
+            case "constructors": def.setConstructors(new BeanConstructorsAdapter().unmarshal(doParseBeanConstructorsDefinition())); yield true;
+            case "properties": def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition())); yield true;
+            case "script": def.setScript(doParseText()); yield true;
+            default: yield false;
+        };
+    }
+    protected BeanConstructorsDefinition doParseBeanConstructorsDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeanConstructorsDefinition(), noAttributeHandler(), (def, key) -> switch (key) {
+                case "constructor": doAdd(doParseBeanConstructorDefinition(), def.getConstructors(), def::setConstructors); yield true;
+                default: yield false;
+            }, noValueHandler());
+    }
+    protected BeanPropertiesDefinition doParseBeanPropertiesDefinition() throws IOException, XmlPullParserException {
+        return doParse(new BeanPropertiesDefinition(), noAttributeHandler(), (def, key) -> switch (key) {
+                case "property": doAdd(doParseBeanPropertyDefinition(), def.getProperties(), def::setProperties); yield true;
+                default: yield false;
+            }, noValueHandler());
     }
     protected TemplatedRouteDefinition doParseTemplatedRouteDefinition() throws IOException, XmlPullParserException {
         return doParse(new TemplatedRouteDefinition(), (def, key, val) -> switch (key) {

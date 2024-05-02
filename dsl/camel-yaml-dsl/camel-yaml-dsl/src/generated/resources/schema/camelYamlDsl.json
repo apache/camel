@@ -5187,49 +5187,6 @@
         },
         "required" : [ "from" ]
       },
-      "org.apache.camel.model.RouteTemplateBeanDefinition" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "builderClass" : {
-            "type" : "string"
-          },
-          "builderMethod" : {
-            "type" : "string"
-          },
-          "constructors" : {
-            "type" : "object"
-          },
-          "destroyMethod" : {
-            "type" : "string"
-          },
-          "factoryBean" : {
-            "type" : "string"
-          },
-          "factoryMethod" : {
-            "type" : "string"
-          },
-          "initMethod" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "properties" : {
-            "type" : "object"
-          },
-          "script" : {
-            "type" : "string"
-          },
-          "scriptLanguage" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "name", "type" ]
-      },
       "org.apache.camel.model.RouteTemplateDefinition" : {
         "type" : "object",
         "additionalProperties" : false,

@@ -70,7 +70,6 @@ RouteConfigurationDefinition
 RouteConfigurationsDefinition
 RouteContextRefDefinition
 RouteDefinition
-RouteTemplateBeanDefinition
 RouteTemplateContextRefDefinition
 RouteTemplateDefinition
 RouteTemplateParameterDefinition

@@ -243,9 +243,6 @@ public class ModelWriter extends BaseWriter {
     public void writeRouteDefinition(RouteDefinition def) throws IOException {
         doWriteRouteDefinition("route", def);
     }
-    public void writeRouteTemplateBeanDefinition(RouteTemplateBeanDefinition def) throws IOException {
-        doWriteRouteTemplateBeanDefinition("templateBean", def);
-    }
     public void writeRouteTemplateContextRefDefinition(RouteTemplateContextRefDefinition def) throws IOException {
         doWriteRouteTemplateContextRefDefinition("routeTemplateContextRef", def);
     }
@@ -1564,12 +1561,6 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getInputType(), this::doWriteInputTypeDefinitionRef);
         doWriteElement(null, def.getOutputType(), this::doWriteOutputTypeDefinitionRef);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
-        endElement(name);
-    }
-    protected void doWriteRouteTemplateBeanDefinition(String name, RouteTemplateBeanDefinition def) throws IOException {
-        startElement(name);
-        doWriteBeanFactoryDefinitionAttributes(def);
-        doWriteBeanFactoryDefinitionElements(def);
         endElement(name);
     }
     protected void doWriteRouteTemplateContextRefDefinition(String name, RouteTemplateContextRefDefinition def) throws IOException {
