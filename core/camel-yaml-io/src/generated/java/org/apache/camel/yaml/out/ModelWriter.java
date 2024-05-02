@@ -1989,18 +1989,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteRegistryBeanDefinition(String name, RegistryBeanDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("factoryMethod", def.getFactoryMethod());
-        doWriteAttribute("initMethod", def.getInitMethod());
-        doWriteAttribute("scriptLanguage", def.getScriptLanguage());
-        doWriteAttribute("builderClass", def.getBuilderClass());
-        doWriteAttribute("name", def.getName());
-        doWriteAttribute("builderMethod", def.getBuilderMethod());
-        doWriteAttribute("destroyMethod", def.getDestroyMethod());
-        doWriteAttribute("type", def.getType());
-        doWriteAttribute("factoryBean", def.getFactoryBean());
-        doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
-        doWriteElement("script", def.getScript(), this::doWriteString);
-        doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
+        doWriteBeanFactoryDefinitionAttributes(def);
+        doWriteBeanFactoryDefinitionElements(def);
         endElement(name);
     }
     protected void doWriteBlacklistServiceCallServiceFilterConfiguration(String name, BlacklistServiceCallServiceFilterConfiguration def) throws IOException {

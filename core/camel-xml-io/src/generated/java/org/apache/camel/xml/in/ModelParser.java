@@ -1349,23 +1349,7 @@ public class ModelParser extends BaseParser {
             }, noElementHandler(), noValueHandler());
     }
     protected RegistryBeanDefinition doParseRegistryBeanDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RegistryBeanDefinition(), (def, key, val) -> switch (key) {
-                case "builderClass": def.setBuilderClass(val); yield true;
-                case "builderMethod": def.setBuilderMethod(val); yield true;
-                case "destroyMethod": def.setDestroyMethod(val); yield true;
-                case "factoryBean": def.setFactoryBean(val); yield true;
-                case "factoryMethod": def.setFactoryMethod(val); yield true;
-                case "initMethod": def.setInitMethod(val); yield true;
-                case "name": def.setName(val); yield true;
-                case "scriptLanguage": def.setScriptLanguage(val); yield true;
-                case "type": def.setType(val); yield true;
-                default: yield false;
-            }, (def, key) -> switch (key) {
-                case "constructors": def.setConstructors(new BeanConstructorsAdapter().unmarshal(doParseBeanConstructorsDefinition())); yield true;
-                case "properties": def.setProperties(new BeanPropertiesAdapter().unmarshal(doParseBeanPropertiesDefinition())); yield true;
-                case "script": def.setScript(doParseText()); yield true;
-                default: yield false;
-            }, noValueHandler());
+        return doParse(new RegistryBeanDefinition(), beanFactoryDefinitionAttributeHandler(), beanFactoryDefinitionElementHandler(), noValueHandler());
     }
     protected RestConfigurationDefinition doParseRestConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestConfigurationDefinition(), (def, key, val) -> switch (key) {
