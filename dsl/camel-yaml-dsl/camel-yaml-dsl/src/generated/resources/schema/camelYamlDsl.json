@@ -6675,7 +6675,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
             }
           },
           "parameters" : {

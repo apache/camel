@@ -19,9 +19,9 @@ package org.apache.camel.dsl.yaml.deserializers;
 import java.util.List;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
-import org.apache.camel.model.TemplatedRouteBeanDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
@@ -43,7 +43,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "parameters",
                                 type = "array:org.apache.camel.model.TemplatedRouteParameterDefinition"),
                   @YamlProperty(name = "beans",
-                                type = "array:org.apache.camel.model.TemplatedRouteBeanDefinition")
+                                type = "array:org.apache.camel.model.app.RegistryBeanDefinition")
           })
 public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<TemplatedRouteDefinition> {
 
@@ -80,7 +80,8 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
                 break;
             }
             case "beans": {
-                List<TemplatedRouteBeanDefinition> items = asFlatList(node, TemplatedRouteBeanDefinition.class);
+                List<RegistryBeanDefinition<TemplatedRouteDefinition>> items
+                        = (List) asFlatList(node, RegistryBeanDefinition.class);
                 target.setBeans(items);
                 break;
             }
