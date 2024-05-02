@@ -16,6 +16,11 @@
  */
 package org.apache.camel.model;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringJoiner;
+import java.util.TreeMap;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -27,11 +32,6 @@ import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.StringHelper;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.TreeMap;
 
 /**
  * Helper to create bean instances from bean model definitions.
@@ -122,9 +122,13 @@ public final class BeanModelHelper {
             target = PropertyBindingSupport.resolveBean(context, type);
         }
 
-        // set optional properties on created bean
-        if (def.getProperties() != null && !def.getProperties().isEmpty()) {
-            PropertyBindingSupport.setPropertiesOnTarget(context, target, def.getProperties());
+        // do not set properties when using #type as it uses an existing shared bean
+        boolean setProps = !type.startsWith("#type");
+        if (setProps) {
+            // set optional properties on created bean
+            if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+                PropertyBindingSupport.setPropertiesOnTarget(context, target, def.getProperties());
+            }
         }
 
         return target;

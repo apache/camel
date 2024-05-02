@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -562,33 +563,34 @@ public class DefaultModel implements Model {
     /**
      * Binds the bean factory to the repository (if possible).
      *
-     * @param  beanFactory          the bean factory to bind.
+     * @param  def                  the bean factory to bind.
      * @param  routeTemplateContext the context into which the bean factory should be bound.
      * @throws Exception            if an error occurs while trying to bind the bean factory
      */
-    private static void bind(BeanFactoryDefinition<?, ?> beanFactory, RouteTemplateContext routeTemplateContext)
+    private static void bind(BeanFactoryDefinition<?, ?> def, RouteTemplateContext routeTemplateContext)
             throws Exception {
+
         final Map<String, Object> props = new HashMap<>();
-        if (beanFactory.getProperties() != null) {
-            props.putAll(beanFactory.getProperties());
+        if (def.getProperties() != null) {
+            props.putAll(def.getProperties());
         }
-        if (beanFactory.getBeanSupplier() != null) {
+        if (def.getBeanSupplier() != null) {
             if (props.isEmpty()) {
                 // bean class is optional for supplier
-                if (beanFactory.getBeanClass() != null) {
-                    routeTemplateContext.bind(beanFactory.getName(), beanFactory.getBeanClass(), beanFactory.getBeanSupplier());
+                if (def.getBeanClass() != null) {
+                    routeTemplateContext.bind(def.getName(), def.getBeanClass(), def.getBeanSupplier());
                 } else {
-                    routeTemplateContext.bind(beanFactory.getName(), beanFactory.getBeanSupplier());
+                    routeTemplateContext.bind(def.getName(), def.getBeanSupplier());
                 }
             }
-        } else if (beanFactory.getScript() != null && beanFactory.getScriptLanguage() != null) {
+        } else if (def.getScript() != null && def.getScriptLanguage() != null) {
             final CamelContext camelContext = routeTemplateContext.getCamelContext();
-            final Language lan = camelContext.resolveLanguage(beanFactory.getScriptLanguage());
+            final Language lan = camelContext.resolveLanguage(def.getScriptLanguage());
             final Class<?> clazz;
-            if (beanFactory.getBeanClass() != null) {
-                clazz = beanFactory.getBeanClass();
-            } else if (beanFactory.getType() != null) {
-                String fqn = beanFactory.getType();
+            if (def.getBeanClass() != null) {
+                clazz = def.getBeanClass();
+            } else if (def.getType() != null) {
+                String fqn = def.getType();
                 if (fqn.contains(":")) {
                     fqn = StringHelper.after(fqn, ":");
                 }
@@ -596,13 +598,13 @@ public class DefaultModel implements Model {
             } else {
                 clazz = Object.class;
             }
-            final String script = beanFactory.getScript();
+            final String script = def.getScript();
             final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
             if (slan != null) {
                 // scripting language should be evaluated with route template context as binding
                 // and memorize so the script is only evaluated once and the local bean is the same
                 // if a route template refers to the local bean multiple times
-                routeTemplateContext.bind(beanFactory.getName(), clazz, Suppliers.memorize(() -> {
+                routeTemplateContext.bind(def.getName(), clazz, Suppliers.memorize(() -> {
                     Map<String, Object> bindings = new HashMap<>();
                     // use rtx as the short-hand name, as context would imply its CamelContext
                     bindings.put("rtc", routeTemplateContext);
@@ -616,7 +618,7 @@ public class DefaultModel implements Model {
                 // exchange based languages needs a dummy exchange to be evaluated
                 // and memorize so the script is only evaluated once and the local bean is the same
                 // if a route template refers to the local bean multiple times
-                routeTemplateContext.bind(beanFactory.getName(), clazz, Suppliers.memorize(() -> {
+                routeTemplateContext.bind(def.getName(), clazz, Suppliers.memorize(() -> {
                     ExchangeFactory ef = camelContext.getCamelContextExtension().getExchangeFactory();
                     Exchange dummy = ef.create(false);
                     try {
@@ -636,102 +638,59 @@ public class DefaultModel implements Model {
                     }
                 }));
             }
-        } else if (beanFactory.getBeanClass() != null
-                || beanFactory.getType() != null && beanFactory.getType().startsWith("#class:")) {
-            // if there is a factory method then the class/bean should be created in a different way
-            String className = null;
-            String factoryMethod = null;
-            String parameters = null;
-            if (beanFactory.getType() != null) {
-                className = beanFactory.getType().substring(7);
-                if (className.endsWith(")") && className.indexOf('(') != -1) {
-                    parameters = StringHelper.after(className, "(");
-                    parameters = parameters.substring(0, parameters.length() - 1); // clip last )
-                    className = StringHelper.before(className, "(");
-                }
-                if (className != null && className.indexOf('#') != -1) {
-                    factoryMethod = StringHelper.after(className, "#");
-                    className = StringHelper.before(className, "#");
-                }
+        } else if (def.getBeanClass() != null || def.getType() != null) {
+            String type = def.getType();
+            if (type == null) {
+                type = def.getBeanClass().getName();
             }
-            if (className != null && (factoryMethod != null || parameters != null)) {
-                final CamelContext camelContext = routeTemplateContext.getCamelContext();
-                final Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
-                Class<?> fc = null;
-                if (factoryMethod != null) {
-                    String typeOrRef = StringHelper.before(factoryMethod, ":");
-                    if (typeOrRef != null) {
-                        // use another class with factory method
-                        factoryMethod = StringHelper.after(factoryMethod, ":");
-                        // special to support factory method parameters
-                        Object existing = camelContext.getRegistry().lookupByName(typeOrRef);
-                        if (existing != null) {
-                            fc = existing.getClass();
-                        } else {
-                            fc = camelContext.getClassResolver().resolveMandatoryClass(typeOrRef);
-                        }
-                    }
-                }
-                final Class<?> factoryClass = fc;
-                final String fqn = className;
-                final String fm = factoryMethod;
-                final String fp = parameters;
-                routeTemplateContext.bind(beanFactory.getName(), Object.class, Suppliers.memorize(() -> {
-                    // resolve placeholders in parameters
-                    String params = camelContext.resolvePropertyPlaceholders(fp);
-                    try {
-                        Object local;
-                        if (fm != null) {
-                            if (fp != null) {
-                                // special to support factory method parameters
-                                Class<?> target = factoryClass != null ? factoryClass : clazz;
-                                local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, target, fm, params);
-                            } else {
-                                local = camelContext.getInjector().newInstance(clazz, factoryClass, fm);
-                            }
-                            if (local == null) {
-                                throw new IllegalStateException(
-                                        "Cannot create bean instance using factory method: " + fqn + "#" + fm);
-                            }
-                        } else {
-                            // special to support constructor parameters
-                            local = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, params);
-                        }
-                        if (!props.isEmpty()) {
-                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
-                        }
-                        return local;
-                    } catch (Exception e) {
-                        throw new IllegalStateException(
-                                "Cannot create bean: " + beanFactory.getType());
-                    }
-                }));
-            } else {
-                final CamelContext camelContext = routeTemplateContext.getCamelContext();
-                Class<?> clazz = beanFactory.getBeanClass() != null
-                        ? beanFactory.getBeanClass() : camelContext.getClassResolver().resolveMandatoryClass(className);
-                // we only have the bean class so we use that to create a new bean via the injector
-                // and memorize so the bean is only created once and the local bean is the same
-                // if a route template refers to the local bean multiple times
-                routeTemplateContext.bind(beanFactory.getName(), clazz,
-                        Suppliers.memorize(() -> {
-                            Object local = camelContext.getInjector().newInstance(clazz);
-                            if (!props.isEmpty()) {
-                                PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
-                            }
-                            return local;
-                        }));
+            if (!type.startsWith("#")) {
+                type = "#class:" + type;
             }
-        } else if (beanFactory.getType() != null && beanFactory.getType().startsWith("#type:")) {
+            // factory bean/method
+            if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+                type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+            } else if (def.getFactoryMethod() != null) {
+                type = type + "#" + def.getFactoryMethod();
+            }
+            // property binding support has constructor arguments as part of the type
+            StringJoiner ctr = new StringJoiner(", ");
+            if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
+                // need to sort constructor args based on index position
+                Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
+                for (Object val : sorted.values()) {
+                    String text = val.toString();
+                    if (!StringHelper.isQuoted(text)) {
+                        text = "\"" + text + "\"";
+                    }
+                    ctr.add(text);
+                }
+                type = type + "(" + ctr + ")";
+            }
+            final String classType = type;
+
             final CamelContext camelContext = routeTemplateContext.getCamelContext();
-            Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(beanFactory.getType().substring(6));
-            Object found = camelContext.getRegistry().mandatoryFindSingleByType(clazz);
-            // do not set properties when using #type as it uses an existing shared bean
-            routeTemplateContext.bind(beanFactory.getName(), clazz, found);
+            routeTemplateContext.bind(def.getName(), Object.class, Suppliers.memorize(() -> {
+                try {
+                    Object local = PropertyBindingSupport.resolveBean(camelContext, classType);
+
+                    // do not set properties when using #type as it uses an existing shared bean
+                    boolean setProps = !classType.startsWith("#type");
+                    if (setProps) {
+                        // set optional properties on created bean
+                        if (def.getProperties() != null && !def.getProperties().isEmpty()) {
+                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, def.getProperties());
+                        }
+                    }
+                    return local;
+                } catch (Exception e) {
+                    throw new IllegalStateException(
+                            "Cannot create bean: " + def.getType());
+                }
+            }));
         } else {
             // invalid syntax for the local bean, so lets report an exception
             throw new IllegalArgumentException(
-                    "Route template local bean: " + beanFactory.getName() + " has invalid type syntax: " + beanFactory.getType()
+                    "Route template local bean: " + def.getName() + " has invalid type syntax: " + def.getType()
                                                + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
         }
     }
