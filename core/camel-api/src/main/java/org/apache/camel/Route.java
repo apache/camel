@@ -212,6 +212,14 @@ public interface Route extends RuntimeConfiguration {
     void addService(Service service);
 
     /**
+     * Adds a service to this route
+     *
+     * @param service   the service
+     * @param forceStop whether to force stopping the service when the route stops
+     */
+    void addService(Service service, boolean forceStop);
+
+    /**
      * Returns a navigator to navigate this route by navigating all the {@link Processor}s.
      *
      * @return a navigator for {@link Processor}.

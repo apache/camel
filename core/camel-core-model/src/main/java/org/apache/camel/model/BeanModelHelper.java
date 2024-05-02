@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.Language;
@@ -144,8 +145,6 @@ public final class BeanModelHelper {
         return target;
     }
 
-    // TODO: init and destroy method
-
     /**
      * Creates and binds the bean to the route-template repository (local beans for kamelets).
      *
@@ -191,12 +190,24 @@ public final class BeanModelHelper {
                 // and memorize so the script is only evaluated once and the local bean is the same
                 // if a route template refers to the local bean multiple times
                 routeTemplateContext.bind(def.getName(), clazz, Suppliers.memorize(() -> {
+                    Object local;
                     Map<String, Object> bindings = new HashMap<>();
                     // use rtx as the short-hand name, as context would imply its CamelContext
                     bindings.put("rtc", routeTemplateContext);
-                    Object local = slan.evaluate(script, bindings, Object.class);
-                    if (!props.isEmpty()) {
-                        PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
+                    try {
+                        local = slan.evaluate(script, bindings, Object.class);
+                        if (!props.isEmpty()) {
+                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
+                        }
+                        if (def.getInitMethod() != null) {
+                            org.apache.camel.support.ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                        }
+                        if (def.getDestroyMethod() != null) {
+                            routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
+                        }
+                    } catch (Exception e) {
+                        throw new IllegalStateException(
+                                "Cannot create bean: " + def.getType(), e);
                     }
                     return local;
                 }));
@@ -215,10 +226,23 @@ public final class BeanModelHelper {
                             if (!props.isEmpty()) {
                                 PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                             }
+                            if (def.getInitMethod() != null) {
+                                try {
+                                    org.apache.camel.support.ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                                } catch (Exception e) {
+                                    throw RuntimeCamelException.wrapRuntimeException(e);
+                                }
+                            }
+                            if (def.getDestroyMethod() != null) {
+                                routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
+                            }
                             return local;
                         } else {
                             return null;
                         }
+                    } catch (Exception e) {
+                        throw new IllegalStateException(
+                                "Cannot create bean: " + def.getType(), e);
                     } finally {
                         ef.release(dummy);
                     }
@@ -267,10 +291,16 @@ public final class BeanModelHelper {
                             PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, def.getProperties());
                         }
                     }
+                    if (def.getInitMethod() != null) {
+                        org.apache.camel.support.ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                    }
+                    if (def.getDestroyMethod() != null) {
+                        routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
+                    }
                     return local;
                 } catch (Exception e) {
                     throw new IllegalStateException(
-                            "Cannot create bean: " + def.getType());
+                            "Cannot create bean: " + def.getType(), e);
                 }
             }));
         } else {
