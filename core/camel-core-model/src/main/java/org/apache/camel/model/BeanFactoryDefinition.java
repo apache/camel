@@ -44,8 +44,6 @@ import org.apache.camel.spi.ResourceAware;
 public abstract class BeanFactoryDefinition<
         T extends BeanFactoryDefinition<T, P>, P> implements ResourceAware {
 
-    // TODO: fluent methods for new stuff such as builder/factory
-
     @XmlTransient
     private Resource resource;
     @XmlTransient
@@ -347,6 +345,58 @@ public abstract class BeanFactoryDefinition<
     }
 
     /**
+     * The name of the custom initialization method to invoke after setting bean properties. The method must have no
+     * arguments, but may throw any exception.
+     */
+    public T initMethod(String initMethod) {
+        setInitMethod(initMethod);
+        return (T) this;
+    }
+
+    /**
+     * The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method
+     * must have no arguments, but may throw any exception.
+     */
+    public T destroyMethod(String destroyMethod) {
+        setDestroyMethod(destroyMethod);
+        return (T) this;
+    }
+
+    /**
+     * Name of method to invoke when creating the bean via a factory bean.
+     */
+    public T factoryMethod(String factoryMethod) {
+        setFactoryMethod(factoryMethod);
+        return (T) this;
+    }
+
+    /**
+     * Name of factory bean (bean id) to use for creating the bean.
+     */
+    public T factoryBean(String factoryBean) {
+        setFactoryBean(factoryBean);
+        return (T) this;
+    }
+
+    /**
+     * Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use
+     * the properties values to configure the bean.
+     */
+    public T builderClass(String builderClass) {
+        setBuilderClass(builderClass);
+        return (T) this;
+    }
+
+    /**
+     * Name of method when using builder class. This method is invoked after configuring to create the actual bean. This
+     * method is often named build (used by default).
+     */
+    public T builderMethod(String builderMethod) {
+        setBuilderMethod(builderMethod);
+        return (T) this;
+    }
+
+    /**
      * Calls a groovy script for creating the local bean
      *
      * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
@@ -427,6 +477,33 @@ public abstract class BeanFactoryDefinition<
         setScriptLanguage("ognl");
         setScript(script);
         return parent;
+    }
+
+    /**
+     * Sets a constructor for creating the bean.
+     * Arguments correspond to specific index of the constructor
+     * argument list, starting from zero.
+     *
+     * @param index   the constructor index (starting from zero)
+     * @param value   the constructor value
+     */
+    @SuppressWarnings("unchecked")
+    public T constructor(Integer index, String value) {
+        if (constructors == null) {
+            constructors = new LinkedHashMap<>();
+        }
+        constructors.put(index, value);
+        return (T) this;
+    }
+
+    /**
+     * Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor
+     * argument list, starting from zero.
+     */
+    @SuppressWarnings("unchecked")
+    public T constructors(Map<Integer, Object> constructors) {
+        this.constructors = constructors;
+        return (T) this;
     }
 
     /**
