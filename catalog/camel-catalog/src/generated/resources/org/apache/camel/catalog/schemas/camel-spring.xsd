@@ -4018,11 +4018,21 @@ implementation. Default value: Singleton
   </xs:complexType>
   <xs:complexType abstract="true" name="beanFactoryDefinition">
     <xs:sequence>
+      <xs:element minOccurs="0" name="constructors" type="tns:beanConstructorsDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor argument
+list, starting from zero.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition">
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[
-Optional properties to set on the created local bean.
+Optional properties to set on the created bean.
 ]]>
           </xs:documentation>
         </xs:annotation>
@@ -4043,7 +4053,7 @@ resource.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Bean name.
+The name of the bean (bean id).
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -4052,8 +4062,65 @@ Bean name.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-What type to use for creating the bean (FQN classname). Can be prefixed with: #class or #type #class or #type then the
-bean is created via the fully qualified classname, such as #class:com.foo.MyBean.
+The class name (fully qualified) of the bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="initMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the custom initialization method to invoke after setting bean properties. The method must have no arguments,
+but may throw any exception.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="destroyMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method must
+have no arguments, but may throw any exception.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="factoryMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of method to invoke when creating the bean via a factory bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="factoryBean" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of factory bean (bean id) to use for creating the bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="builderClass" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the
+properties values to configure the bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="builderMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of method when using builder class. This method is invoked after configuring to create the actual bean. This method
+is often named build (used by default). Default value: build
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -4067,6 +4134,16 @@ The script language to use when using inlined script for creating the bean, such
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="beanConstructorsDefinition">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="constructor" type="tns:beanConstructorDefinition"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="beanConstructorDefinition">
+    <xs:sequence/>
+    <xs:attribute name="index" type="xs:int"/>
+    <xs:attribute name="value" type="xs:string" use="required"/>
   </xs:complexType>
   <xs:complexType name="beanPropertiesDefinition">
     <xs:sequence>

@@ -572,9 +572,6 @@ public class DefaultModel implements Model {
         if (beanFactory.getProperties() != null) {
             props.putAll(beanFactory.getProperties());
         }
-        if (beanFactory.getPropertyDefinitions() != null) {
-            beanFactory.getPropertyDefinitions().forEach(p -> props.put(p.getKey(), p.getValue()));
-        }
         if (beanFactory.getBeanSupplier() != null) {
             if (props.isEmpty()) {
                 // bean class is optional for supplier

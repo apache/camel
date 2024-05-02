@@ -807,12 +807,19 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteBeanFactoryDefinitionAttributes(BeanFactoryDefinition<?, ?> def) throws IOException {
+        doWriteAttribute("factoryMethod", def.getFactoryMethod());
         doWriteAttribute("scriptLanguage", def.getScriptLanguage());
-        doWriteAttribute("name", def.getName());
+        doWriteAttribute("builderClass", def.getBuilderClass());
         doWriteAttribute("type", def.getType());
+        doWriteAttribute("factoryBean", def.getFactoryBean());
+        doWriteAttribute("initMethod", def.getInitMethod());
+        doWriteAttribute("name", def.getName());
+        doWriteAttribute("builderMethod", def.getBuilderMethod());
+        doWriteAttribute("destroyMethod", def.getDestroyMethod());
     }
     protected void doWriteBeanFactoryDefinitionElements(BeanFactoryDefinition<?, ?> def) throws IOException {
         doWriteElement("script", def.getScript(), this::doWriteString);
+        doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
     }
     protected void doWriteBeanFactoryDefinition(String name, BeanFactoryDefinition<?, ?> def) throws IOException {

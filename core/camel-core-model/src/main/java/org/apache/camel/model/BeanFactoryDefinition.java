@@ -16,8 +16,7 @@
  */
 package org.apache.camel.model;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -28,8 +27,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.model.app.BeanConstructorsAdapter;
 import org.apache.camel.model.app.BeanPropertiesAdapter;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * Base class for nodes that define a bean factory.
@@ -40,8 +42,12 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class BeanFactoryDefinition<
-        T extends BeanFactoryDefinition<T, P>, P> {
+        T extends BeanFactoryDefinition<T, P>, P> implements ResourceAware {
 
+    // TODO: fluent methods for new stuff such as builder/factory
+
+    @XmlTransient
+    private Resource resource;
     @XmlTransient
     private P parent;
     // special for java-dsl to allow using lambda style
@@ -55,10 +61,24 @@ public abstract class BeanFactoryDefinition<
     @XmlAttribute(required = true)
     private String type;
     @XmlAttribute
+    private String initMethod;
+    @XmlAttribute
+    private String destroyMethod;
+    @XmlAttribute
+    private String factoryMethod;
+    @XmlAttribute
+    private String factoryBean;
+    @XmlAttribute
+    private String builderClass;
+    @XmlAttribute
+    @Metadata(defaultValue = "build")
+    private String builderMethod;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String scriptLanguage;
-    @XmlTransient
-    private List<PropertyDefinition> propertyDefinitions;
+    @XmlElement(name = "constructors")
+    @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
+    private Map<Integer, Object> constructors;
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
     private Map<String, Object> properties;
@@ -68,30 +88,6 @@ public abstract class BeanFactoryDefinition<
 
     void setParent(P parent) {
         this.parent = parent;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Bean name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * What type to use for creating the bean (FQN classname). Can be prefixed with: #class or #type
-     *
-     * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**
@@ -105,35 +101,6 @@ public abstract class BeanFactoryDefinition<
         return beanClass;
     }
 
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    /**
-     * Optional properties to set on the created local bean
-     */
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
-    }
-
-    public List<PropertyDefinition> getPropertyDefinitions() {
-        return propertyDefinitions;
-    }
-
-    /**
-     * Optional properties to set on the created local bean
-     */
-    public void setPropertyDefinitions(List<PropertyDefinition> propertyDefinitions) {
-        this.propertyDefinitions = propertyDefinitions;
-    }
-
-    public void addProperty(PropertyDefinition property) {
-        if (propertyDefinitions == null) {
-            propertyDefinitions = new LinkedList<>();
-        }
-        propertyDefinitions.add(property);
-    }
-
     public RouteTemplateContext.BeanSupplier<Object> getBeanSupplier() {
         return beanSupplier;
     }
@@ -143,6 +110,121 @@ public abstract class BeanFactoryDefinition<
      */
     public void setBeanSupplier(RouteTemplateContext.BeanSupplier<Object> beanSupplier) {
         this.beanSupplier = beanSupplier;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * The name of the bean (bean id)
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * The class name (fully qualified) of the bean
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getInitMethod() {
+        return initMethod;
+    }
+
+    /**
+     * The name of the custom initialization method to invoke after setting bean properties. The method must have no
+     * arguments, but may throw any exception.
+     */
+    public void setInitMethod(String initMethod) {
+        this.initMethod = initMethod;
+    }
+
+    public String getDestroyMethod() {
+        return destroyMethod;
+    }
+
+    /**
+     * The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method
+     * must have no arguments, but may throw any exception.
+     */
+    public void setDestroyMethod(String destroyMethod) {
+        this.destroyMethod = destroyMethod;
+    }
+
+    public String getFactoryMethod() {
+        return factoryMethod;
+    }
+
+    /**
+     * Name of method to invoke when creating the bean via a factory bean.
+     */
+    public void setFactoryMethod(String factoryMethod) {
+        this.factoryMethod = factoryMethod;
+    }
+
+    public String getFactoryBean() {
+        return factoryBean;
+    }
+
+    /**
+     * Name of factory bean (bean id) to use for creating the bean.
+     */
+    public void setFactoryBean(String factoryBean) {
+        this.factoryBean = factoryBean;
+    }
+
+    public String getBuilderClass() {
+        return builderClass;
+    }
+
+    /**
+     * Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use
+     * the properties values to configure the bean.
+     */
+    public void setBuilderClass(String builderClass) {
+        this.builderClass = builderClass;
+    }
+
+    public String getBuilderMethod() {
+        return builderMethod;
+    }
+
+    /**
+     * Name of method when using builder class. This method is invoked after configuring to create the actual bean. This
+     * method is often named build (used by default).
+     */
+    public void setBuilderMethod(String builderMethod) {
+        this.builderMethod = builderMethod;
+    }
+
+    public Map<Integer, Object> getConstructors() {
+        return constructors;
+    }
+
+    /**
+     * Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor
+     * argument list, starting from zero.
+     */
+    public void setConstructors(Map<Integer, Object> constructors) {
+        this.constructors = constructors;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    /**
+     * Optional properties to set on the created bean.
+     */
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
     public String getScriptLanguage() {
@@ -355,10 +437,10 @@ public abstract class BeanFactoryDefinition<
      */
     @SuppressWarnings("unchecked")
     public T property(String key, String value) {
-        if (propertyDefinitions == null) {
-            propertyDefinitions = new LinkedList<>();
+        if (properties == null) {
+            properties = new LinkedHashMap<>();
         }
-        propertyDefinitions.add(new PropertyDefinition(key, value));
+        properties.put(key, value);
         return (T) this;
     }
 
@@ -373,6 +455,16 @@ public abstract class BeanFactoryDefinition<
 
     public P end() {
         return parent;
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
 }
