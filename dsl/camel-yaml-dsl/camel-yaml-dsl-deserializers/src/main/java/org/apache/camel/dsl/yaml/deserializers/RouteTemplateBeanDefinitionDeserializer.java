@@ -32,7 +32,14 @@ import org.apache.camel.spi.annotations.YamlType;
           properties = {
                   @YamlProperty(name = "name", type = "string", required = true),
                   @YamlProperty(name = "type", type = "string", required = true),
+                  @YamlProperty(name = "constructors", type = "object"),
                   @YamlProperty(name = "properties", type = "object"),
+                  @YamlProperty(name = "initMethod", type = "string"),
+                  @YamlProperty(name = "destroyMethod", type = "string"),
+                  @YamlProperty(name = "factoryMethod", type = "string"),
+                  @YamlProperty(name = "factoryBean", type = "string"),
+                  @YamlProperty(name = "builderClass", type = "string"),
+                  @YamlProperty(name = "builderMethod", type = "string"),
                   @YamlProperty(name = "scriptLanguage", type = "string"),
                   @YamlProperty(name = "script", type = "string")
           })

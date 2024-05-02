@@ -5191,6 +5191,27 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "builderClass" : {
+            "type" : "string"
+          },
+          "builderMethod" : {
+            "type" : "string"
+          },
+          "constructors" : {
+            "type" : "object"
+          },
+          "destroyMethod" : {
+            "type" : "string"
+          },
+          "factoryBean" : {
+            "type" : "string"
+          },
+          "factoryMethod" : {
+            "type" : "string"
+          },
+          "initMethod" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -6651,6 +6672,27 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "builderClass" : {
+            "type" : "string"
+          },
+          "builderMethod" : {
+            "type" : "string"
+          },
+          "constructors" : {
+            "type" : "object"
+          },
+          "destroyMethod" : {
+            "type" : "string"
+          },
+          "factoryBean" : {
+            "type" : "string"
+          },
+          "factoryMethod" : {
+            "type" : "string"
+          },
+          "initMethod" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },

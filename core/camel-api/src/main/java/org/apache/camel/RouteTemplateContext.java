@@ -93,6 +93,14 @@ public interface RouteTemplateContext extends HasCamelContext {
     void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean);
 
     /**
+     * Registers an optional destroy method to invoke on the bean when stopping Camel.
+     *
+     * @param id     the id of the bean
+     * @param method the destroy method name
+     */
+    void registerDestroyMethod(String id, String method);
+
+    /**
      * Gets the property with the given name
      *
      * @param  name name of property

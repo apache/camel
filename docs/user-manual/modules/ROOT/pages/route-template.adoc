@@ -288,6 +288,7 @@ Instead, the simple expression should be a literal String value _only_ as follow
 ----
     .when(simple("'{{color}}' == 'red'")
 ----
+
 === Using hardcoded node IDs in route templates
 
 If route templates contains hardcoded node IDs then routes created from templates will use the same IDs
@@ -548,7 +549,9 @@ a new local bean instance. When using this the created bean is created via defau
 The bean instance can be configured with properties via getter/setter style.
 The previous example with creating the AWS S3Client would not support this kind as this uses _fluent builder_ pattern (not getter/setter).
 
-So suppose we have a class as follows
+TIP: In *Camel 4.6* onwards you can also use constructor arguments for beans
+
+So suppose we have a class as follows:
 
 [source,java]
 ----
@@ -600,8 +603,10 @@ In XML DSL you would do:
         <templateParameter name="bar"/>
         <templateParameter name="street"/>
         <templateBean name="myBean" type="#class:com.foo.MyBar">
-            <property key="name" value="{{bar}}"/>
-            <property key="address" value="{{street}}"/>
+            <properties>
+                <property key="name" value="{{bar}}"/>
+                <property key="address" value="{{street}}"/>
+            </properties>
         </templateBean>
         <route>
             <from uri="direct:going-out"/>

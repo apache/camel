@@ -693,7 +693,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLocalBeanFactoryMethod() throws Exception {
+    public void testLocalBeanFactoryMethodInType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -726,12 +726,78 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     }
 
     @Test
-    public void testLocalBeanConstructorParameter() throws Exception {
+    public void testLocalBeanFactoryMethod() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar")
+                        .type("#class:org.apache.camel.builder.RouteTemplateLocalBeanTest")
+                        .factoryMethod("createBuilderProcessorThree('MyPrefix ')")
+                        .end()
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("MyPrefix Builder3 World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
+    public void testLocalBeanConstructorParameterInType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar").type("#class:org.apache.camel.builder.MyConstructorProcessor('MyCtr ')").end()
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("MyCtr World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
+    public void testLocalBeanConstructorParameter() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar").type("#class:org.apache.camel.builder.MyConstructorProcessor")
+                        .constructor(0, "MyCtr ").end()
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }

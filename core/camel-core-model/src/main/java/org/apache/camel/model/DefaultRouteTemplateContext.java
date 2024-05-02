@@ -86,6 +86,11 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
     }
 
     @Override
+    public void registerDestroyMethod(String id, String method) {
+        registry.registerDestroyMethod(id, method);
+    }
+
+    @Override
     public Object getProperty(String name) {
         return parameters.get(name);
     }

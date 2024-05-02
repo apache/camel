@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.yaml.deserializers;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.model.BeanFactoryDefinition;
-import org.apache.camel.model.PropertyDefinition;
 import org.snakeyaml.engine.v2.nodes.Node;
 
 /**
@@ -43,14 +45,42 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
                 target.setName(val);
                 break;
             }
-            case "property": {
-                java.util.List<PropertyDefinition> val
-                        = asFlatList(node, PropertyDefinition.class);
-                target.setPropertyDefinitions(val);
+            case "constructors": {
+                target.setConstructors(asConstructorMap(asMap(node)));
                 break;
             }
             case "properties": {
                 target.setProperties(asMap(node));
+                break;
+            }
+            case "initMethod": {
+                String val = asText(node);
+                target.setInitMethod(val);
+                break;
+            }
+            case "destroyMethod": {
+                String val = asText(node);
+                target.setDestroyMethod(val);
+                break;
+            }
+            case "factoryBean": {
+                String val = asText(node);
+                target.setFactoryBean(val);
+                break;
+            }
+            case "factoryMethod": {
+                String val = asText(node);
+                target.setFactoryMethod(val);
+                break;
+            }
+            case "builderClass": {
+                String val = asText(node);
+                target.setBuilderClass(val);
+                break;
+            }
+            case "builderMethod": {
+                String val = asText(node);
+                target.setBuilderMethod(val);
                 break;
             }
             case "scriptLanguage": {
@@ -73,5 +103,13 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
             }
         }
         return true;
+    }
+
+    private static Map<Integer, Object> asConstructorMap(Map<String, Object> map) {
+        Map<Integer, Object> answer = new LinkedHashMap<>();
+        map.forEach((k, v) -> {
+            answer.put(Integer.valueOf(k), v);
+        });
+        return answer;
     }
 }
