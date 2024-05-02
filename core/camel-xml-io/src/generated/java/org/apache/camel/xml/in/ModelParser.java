@@ -1122,7 +1122,7 @@ public class ModelParser extends BaseParser {
                 case "routeTemplateRef": def.setRouteTemplateRef(val); yield true;
                 default: yield false;
             }, (def, key) -> switch (key) {
-                case "bean": doAdd(doParseTemplatedRouteBeanDefinition(), def.getBeans(), def::setBeans); yield true;
+                case "bean": doAdd(doParseRegistryBeanDefinition(), def.getBeans(), def::setBeans); yield true;
                 case "parameter": doAdd(doParseTemplatedRouteParameterDefinition(), def.getParameters(), def::setParameters); yield true;
                 default: yield false;
             }, noValueHandler());

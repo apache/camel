@@ -1945,7 +1945,7 @@ Defines a templated route (a route built from a route template)
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A bean as input of a route template (local bean)
+Deprecated: A bean as input of a route template (local bean)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -13529,7 +13529,7 @@ Adds an input parameter of the template to build the route.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:templatedRouteBeanDefinition">
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:registryBeanDefinition">
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[

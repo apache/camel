@@ -1738,7 +1738,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("routeId", def.getRouteId());
         doWriteAttribute("routeTemplateRef", def.getRouteTemplateRef());
         doWriteAttribute("prefixId", def.getPrefixId());
-        doWriteList(null, "bean", def.getBeans(), this::doWriteTemplatedRouteBeanDefinition);
+        doWriteList(null, "bean", def.getBeans(), this::doWriteRegistryBeanDefinition);
         doWriteList(null, "parameter", def.getParameters(), this::doWriteTemplatedRouteParameterDefinition);
         endElement(name);
     }

@@ -47,7 +47,6 @@ import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.TemplatedRouteBeanDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -557,9 +556,9 @@ public class DefaultModel implements Model {
 
         final RouteTemplateContext routeTemplateContext = toRouteTemplateContext(templatedRouteDefinition);
         // Bind the beans into the context
-        final List<TemplatedRouteBeanDefinition> beans = templatedRouteDefinition.getBeans();
+        final List<RegistryBeanDefinition<TemplatedRouteDefinition>> beans = templatedRouteDefinition.getBeans();
         if (beans != null) {
-            for (TemplatedRouteBeanDefinition beanDefinition : beans) {
+            for (RegistryBeanDefinition<TemplatedRouteDefinition> beanDefinition : beans) {
                 BeanModelHelper.bind(beanDefinition, routeTemplateContext);
             }
         }

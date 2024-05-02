@@ -32,6 +32,7 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
@@ -61,7 +62,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
     private List<TemplatedRouteParameterDefinition> parameters;
     @XmlElement(name = "bean")
     @Metadata(description = "Adds a local bean as input of the template to build the route")
-    private List<TemplatedRouteBeanDefinition> beans;
+    private List<RegistryBeanDefinition<TemplatedRouteDefinition>> beans;
 
     public String getRouteTemplateRef() {
         return routeTemplateRef;
@@ -79,11 +80,11 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         this.parameters = parameters;
     }
 
-    public List<TemplatedRouteBeanDefinition> getBeans() {
+    public List<RegistryBeanDefinition<TemplatedRouteDefinition>> getBeans() {
         return beans;
     }
 
-    public void setBeans(List<TemplatedRouteBeanDefinition> beans) {
+    public void setBeans(List<RegistryBeanDefinition<TemplatedRouteDefinition>> beans) {
         this.beans = beans;
     }
 
@@ -157,7 +158,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        RegistryBeanDefinition<TemplatedRouteDefinition> def = new RegistryBeanDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         beans.add(def);
@@ -175,7 +176,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        RegistryBeanDefinition<TemplatedRouteDefinition> def = new RegistryBeanDefinition<>();
         def.setName(name);
         if (bean instanceof RouteTemplateContext.BeanSupplier) {
             def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
@@ -201,7 +202,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        RegistryBeanDefinition<TemplatedRouteDefinition> def = new RegistryBeanDefinition<>();
         def.setName(name);
         def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
         beans.add(def);
@@ -219,7 +220,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        RegistryBeanDefinition<TemplatedRouteDefinition> def = new RegistryBeanDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         def.setBeanSupplier(bean);
@@ -238,7 +239,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        RegistryBeanDefinition<TemplatedRouteDefinition> def = new RegistryBeanDefinition<>();
         def.setName(name);
         def.setType(language);
         def.setScript(script);
@@ -258,7 +259,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        RegistryBeanDefinition<TemplatedRouteDefinition> def = new RegistryBeanDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         def.setType(language);
@@ -273,11 +274,11 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
      * @param  name the name of the bean
      * @return      fluent builder to choose which language and script to use for creating the bean
      */
-    public TemplatedRouteBeanDefinition bean(String name) {
+    public RegistryBeanDefinition<TemplatedRouteDefinition> bean(String name) {
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        RegistryBeanDefinition<TemplatedRouteDefinition> def = new RegistryBeanDefinition<>();
         def.setParent(this);
         def.setName(name);
         beans.add(def);
