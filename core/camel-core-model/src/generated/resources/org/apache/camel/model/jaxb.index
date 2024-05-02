@@ -92,7 +92,6 @@ SortDefinition
 SplitDefinition
 StepDefinition
 StopDefinition
-TemplatedRouteBeanDefinition
 TemplatedRouteDefinition
 TemplatedRouteParameterDefinition
 TemplatedRoutesDefinition

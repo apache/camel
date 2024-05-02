@@ -303,9 +303,6 @@ public class ModelWriter extends BaseWriter {
     public void writeStopDefinition(StopDefinition def) throws IOException {
         doWriteStopDefinition("stop", def);
     }
-    public void writeTemplatedRouteBeanDefinition(TemplatedRouteBeanDefinition def) throws IOException {
-        doWriteTemplatedRouteBeanDefinition("templatedRouteBean", def);
-    }
     public void writeTemplatedRouteDefinition(TemplatedRouteDefinition def) throws IOException {
         doWriteTemplatedRouteDefinition("templatedRoute", def);
     }
@@ -1725,12 +1722,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteStopDefinition(String name, StopDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        endElement(name);
-    }
-    protected void doWriteTemplatedRouteBeanDefinition(String name, TemplatedRouteBeanDefinition def) throws IOException {
-        startElement(name);
-        doWriteBeanFactoryDefinitionAttributes(def);
-        doWriteBeanFactoryDefinitionElements(def);
         endElement(name);
     }
     protected void doWriteTemplatedRouteDefinition(String name, TemplatedRouteDefinition def) throws IOException {
