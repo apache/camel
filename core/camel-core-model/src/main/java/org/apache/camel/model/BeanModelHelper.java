@@ -49,9 +49,9 @@ public final class BeanModelHelper {
     /**
      * Creates a new bean.
      *
-     * @param def       the bean model
-     * @param context   the camel context
-     * @return  the created bean instance
+     * @param  def       the bean model
+     * @param  context   the camel context
+     * @return           the created bean instance
      * @throws Exception is thrown if error creating the bean
      */
     public static Object newInstance(RegistryBeanDefinition def, CamelContext context) throws Exception {
@@ -144,6 +144,7 @@ public final class BeanModelHelper {
         return target;
     }
 
+    // TODO: init and destroy method
 
     /**
      * Creates and binds the bean to the route-template repository (local beans for kamelets).
