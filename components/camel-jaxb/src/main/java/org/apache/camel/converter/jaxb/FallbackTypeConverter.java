@@ -94,27 +94,10 @@ public class FallbackTypeConverter {
 
     @Converter(fallback = true)
     public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-
-        boolean prettyPrint = defaultPrettyPrint;
-        String property = exchange != null ? exchange.getContext().getGlobalOption(PRETTY_PRINT) : null;
-        if (property != null) {
-            if (property.equalsIgnoreCase("false")) {
-                prettyPrint = false;
-            } else {
-                prettyPrint = true;
-            }
-        }
+        final boolean prettyPrint = isPrettyPrint(exchange);
 
         // configure object factory
-        boolean objectFactory = defaultObjectFactory;
-        property = exchange != null ? exchange.getContext().getGlobalOption(OBJECT_FACTORY) : null;
-        if (property != null) {
-            if (property.equalsIgnoreCase("false")) {
-                objectFactory = false;
-            } else {
-                objectFactory = true;
-            }
-        }
+        final boolean objectFactory = isObjectFactory(exchange);
 
         TypeConverter converter = null;
         if (registry instanceof TypeConverter) {
@@ -145,6 +128,22 @@ public class FallbackTypeConverter {
 
         // should return null if didn't even try to convert at all or for whatever reason the conversion is failed
         return null;
+    }
+
+    private boolean isPrettyPrint(Exchange exchange) {
+        final String property = exchange != null ? exchange.getContext().getGlobalOption(PRETTY_PRINT) : null;
+        if (property != null) {
+            return Boolean.parseBoolean(property);
+        }
+        return defaultPrettyPrint;
+    }
+
+    private boolean isObjectFactory(Exchange exchange) {
+        final String property = exchange != null ? exchange.getContext().getGlobalOption(OBJECT_FACTORY) : null;
+        if (property != null) {
+            return Boolean.parseBoolean(property);
+        }
+        return defaultObjectFactory;
     }
 
     private <T> boolean hasXmlRootElement(Class<T> type) {
