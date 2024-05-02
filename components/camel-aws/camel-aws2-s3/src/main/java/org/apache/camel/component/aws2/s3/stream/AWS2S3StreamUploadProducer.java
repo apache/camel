@@ -127,21 +127,37 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         UploadState state = null;
         int totalSize = 0;
         byte[] b;
-        while ((b = AWS2S3Utils.toByteArray(is, getConfiguration().getBufferSize())).length > 0) {
+        int maxRead = (getConfiguration().isMultiPartUpload()
+                ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
+        if (uploadAggregate != null) {
+            uploadAggregate.index++;
+            maxRead -= uploadAggregate.buffer.size();
+        }
+
+        while ((b = AWS2S3Utils.toByteArray(is, maxRead)).length
+               > 0) {
             totalSize += b.length;
+            if (getConfiguration().isMultiPartUpload())
+                maxRead -= b.length;
             synchronized (lock) {
                 // aggregate with previously received exchanges
                 if (ObjectHelper.isNotEmpty(uploadAggregate)) {
                     uploadAggregate.buffer.write(b);
-                    uploadAggregate.index++;
-
-                    if (uploadAggregate.buffer.size() >= getConfiguration().getBatchSize()
-                            || uploadAggregate.index == getConfiguration().getBatchMessageNumber()) {
-
+                    if (getConfiguration().isMultiPartUpload() &&
+                            uploadAggregate.buffer.size() >= getConfiguration().getPartSize()) {
                         uploadPart(uploadAggregate);
+                        maxRead = (getConfiguration().isMultiPartUpload()
+                                ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
+                        continue;
+                    }
+                    if (uploadAggregate.buffer.size() >= getConfiguration().getBatchSize()
+                            || (uploadAggregate.index >= getConfiguration().getBatchMessageNumber()
+                                    && uploadAggregate.buffer.size() < getConfiguration().getPartSize())) {
+
+                        if (uploadAggregate.buffer.size() > 0)
+                            uploadPart(uploadAggregate);
                         CompleteMultipartUploadResponse uploadResult = completeUpload(uploadAggregate);
                         this.uploadAggregate = null;
-
                         Message message = getMessageForResponse(exchange);
                         message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
                         if (uploadResult.versionId() != null) {
@@ -151,11 +167,10 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     continue;
                 }
             }
-
             if (state == null) {
                 state = new UploadState();
             } else {
-                state.index++;
+                state.index = 1;
             }
             state.buffer.write(b);
 
@@ -201,17 +216,21 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             try {
                 if (totalSize >= getConfiguration().getBatchSize()
                         || state.buffer.size() >= getConfiguration().getBatchSize()
-                        || state.index == getConfiguration().getBatchMessageNumber()) {
+                        || state.index >= getConfiguration().getBatchMessageNumber()) {
 
                     uploadPart(state);
                     CompleteMultipartUploadResponse uploadResult = completeUpload(state);
-
                     Message message = getMessageForResponse(exchange);
                     message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
                     if (uploadResult.versionId() != null) {
                         message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
                     }
                     state = null;
+                    continue;
+                }
+                if (getConfiguration().isMultiPartUpload() && state.buffer.size() >= getConfiguration().getPartSize()) {
+                    uploadPart(state);
+                    maxRead = Math.toIntExact(getConfiguration().getPartSize());
                 }
 
             } catch (Exception e) {
@@ -244,29 +263,41 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         .uploadId(state.initResponse.uploadId())
                         .build();
 
-        CompleteMultipartUploadResponse uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+        try {
+            final CompleteMultipartUploadResponse uploadResult
+                    = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
 
-        // Converting the index to String can cause extra overhead
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Completed upload for the part {} with etag {} at index {}", part, uploadResult.eTag(),
-                    state.index);
+            // Converting the index to String can cause extra overhead
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Completed upload for the part {}, multipart {} with etag {} at index {}", part, state.multipartIndex,
+                        uploadResult.eTag(),
+                        state.index);
+            }
+            part.getAndIncrement();
+            return uploadResult;
+        } catch (Exception e) {
+            LOG.error("Error completing multipart updload");
+            getEndpoint().getS3Client()
+                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
+                            .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId()).build());
+            throw e;
         }
-        return uploadResult;
     }
 
     private void uploadPart(UploadState state) {
         UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
                 .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId())
-                .partNumber(state.index).build();
+                .partNumber(state.multipartIndex).build();
 
-        LOG.trace("Uploading part {} at index {} for {}", state.part, state.index, getConfiguration().getKeyName());
+        LOG.trace("Uploading part {}, multipart {} at index {} for {}", state.part, state.multipartIndex, state.index,
+                getConfiguration().getKeyName());
 
         String etag = getEndpoint().getS3Client()
                 .uploadPart(uploadRequest, RequestBody.fromBytes(state.buffer.toByteArray())).eTag();
-        CompletedPart partUpload = CompletedPart.builder().partNumber(state.index).eTag(etag).build();
+        CompletedPart partUpload = CompletedPart.builder().partNumber(state.multipartIndex).eTag(etag).build();
         state.completedParts.add(partUpload);
         state.buffer.reset();
-        part.getAndIncrement();
+        state.multipartIndex++;
     }
 
     private String fileNameToUpload(
@@ -360,6 +391,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     private class UploadState {
         int index;
+        int multipartIndex;
         int part;
         List<CompletedPart> completedParts = new ArrayList<>();
         ByteArrayOutputStream buffer;
@@ -369,6 +401,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         UploadState() {
             index = 1;
+            multipartIndex = 1;
             part = AWS2S3StreamUploadProducer.this.part.get();
             buffer = new ByteArrayOutputStream();
         }
