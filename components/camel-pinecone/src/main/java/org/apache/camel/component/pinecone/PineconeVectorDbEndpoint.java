@@ -51,10 +51,7 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
     @UriParam
     private PineconeVectorDbConfiguration configuration;
 
-    private final Object lock;
-
-    private volatile boolean closeClient;
-    private volatile io.pinecone.clients.Pinecone client;
+    private Pinecone client;
 
     public PineconeVectorDbEndpoint(
                                     String endpointUri,
@@ -66,8 +63,6 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
         this.collection = collection;
         this.configuration = configuration;
-
-        this.lock = new Object();
     }
 
     public PineconeVectorDbConfiguration getConfiguration() {
@@ -80,19 +75,11 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     public synchronized Pinecone getClient() {
         if (this.client == null) {
-            synchronized (this.lock) {
-                if (this.client == null) {
-                    this.client = this.configuration.getClient();
-                    this.closeClient = false;
-
-                    if (this.client == null) {
-                        this.client = createClient();
-                        this.closeClient = true;
-                    }
-                }
+            this.client = this.configuration.getClient();
+            if (this.client == null) {
+                this.client = createClient();
             }
         }
-
         return this.client;
     }
 
@@ -118,7 +105,7 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     private Pinecone createClient() {
 
-        io.pinecone.clients.Pinecone pinecone = new io.pinecone.clients.Pinecone.Builder(configuration.getToken()).build();
+        Pinecone pinecone = new Pinecone.Builder(configuration.getToken()).build();
 
         return pinecone;
     }
