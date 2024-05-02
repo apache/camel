@@ -18,28 +18,22 @@ package org.apache.camel.dsl.xml.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringJoiner;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
@@ -54,18 +48,12 @@ import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.spi.ExchangeFactory;
-import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.util.KeyValueHolder;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.slf4j.Logger;
@@ -346,7 +334,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         String name = def.getName();
         String type = def.getType();
         try {
-            Object target = newInstance(def, getCamelContext());
+            Object target = BeanModelHelper.newInstance(def, getCamelContext());
             bindBean(def, name, target);
         } catch (Exception e) {
             if (delayIfFailed) {
@@ -357,90 +345,6 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 throw new RuntimeException(msg, e);
             }
         }
-    }
-
-    public Object newInstance(RegistryBeanDefinition def, CamelContext context) throws Exception {
-        Object target;
-
-        String type = def.getType();
-        if (!type.startsWith("#")) {
-            type = "#class:" + type;
-        }
-
-        if (def.getScriptLanguage() != null && def.getScript() != null) {
-            // create bean via the script
-            final Language lan = context.resolveLanguage(def.getScriptLanguage());
-            final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
-            String fqn = def.getType();
-            if (fqn.startsWith("#class:")) {
-                fqn = fqn.substring(7);
-            }
-            final Class<?> clazz = context.getClassResolver().resolveMandatoryClass(fqn);
-            if (slan != null) {
-                // scripting language should be evaluated with context as binding
-                Map<String, Object> bindings = new HashMap<>();
-                bindings.put("context", context);
-                target = slan.evaluate(def.getScript(), bindings, clazz);
-            } else {
-                // exchange based languages needs a dummy exchange to be evaluated
-                ExchangeFactory ef = context.getCamelContextExtension().getExchangeFactory();
-                Exchange dummy = ef.create(false);
-                try {
-                    String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, def.getScript());
-                    Expression exp = lan.createExpression(text);
-                    target = exp.evaluate(dummy, clazz);
-                } finally {
-                    ef.release(dummy);
-                }
-            }
-
-            // a bean must be created
-            if (target == null) {
-                throw new NoSuchBeanException(def.getName(), "Creating bean using script returned null");
-            }
-        } else if (def.getBuilderClass() != null) {
-            // builder class and method
-            Class<?> clazz = context.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
-            Object builder = context.getInjector().newInstance(clazz);
-            String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : "build";
-
-            // create bean via builder and assign as target output
-            target = PropertyBindingSupport.build()
-                    .withCamelContext(context)
-                    .withTarget(builder)
-                    .withRemoveParameters(true)
-                    .withProperties(def.getProperties())
-                    .build(Object.class, bm);
-        } else {
-            // factory bean/method
-            if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
-                type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
-            } else if (def.getFactoryMethod() != null) {
-                type = type + "#" + def.getFactoryMethod();
-            }
-            // property binding support has constructor arguments as part of the type
-            StringJoiner ctr = new StringJoiner(", ");
-            if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
-                // need to sort constructor args based on index position
-                Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
-                for (Object val : sorted.values()) {
-                    String text = val.toString();
-                    if (!StringHelper.isQuoted(text)) {
-                        text = "\"" + text + "\"";
-                    }
-                    ctr.add(text);
-                }
-                type = type + "(" + ctr + ")";
-            }
-
-            target = PropertyBindingSupport.resolveBean(context, type);
-        }
-
-        if (def.getProperties() != null && !def.getProperties().isEmpty()) {
-            PropertyBindingSupport.setPropertiesOnTarget(context, target, def.getProperties());
-        }
-
-        return target;
     }
 
     protected void bindBean(RegistryBeanDefinition def, String name, Object target) throws Exception {
