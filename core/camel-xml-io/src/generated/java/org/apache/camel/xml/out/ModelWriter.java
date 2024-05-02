@@ -1582,7 +1582,7 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteList(null, "templateParameter", def.getTemplateParameters(), this::doWriteRouteTemplateParameterDefinition);
         doWriteElement("route", def.getRoute(), this::doWriteRouteDefinition);
-        doWriteList(null, "templateBean", def.getTemplateBeans(), this::doWriteRouteTemplateBeanDefinition);
+        doWriteList(null, "templateBean", def.getTemplateBeans(), this::doWriteRegistryBeanDefinition);
         endElement(name);
     }
     protected void doWriteRouteTemplateParameterDefinition(String name, RouteTemplateParameterDefinition def) throws IOException {
@@ -1987,7 +1987,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("base-package", def.getBasePackage());
         endElement(name);
     }
-    protected void doWriteRegistryBeanDefinition(String name, RegistryBeanDefinition def) throws IOException {
+    protected void doWriteRegistryBeanDefinition(String name, RegistryBeanDefinition<?> def) throws IOException {
         startElement(name);
         doWriteBeanFactoryDefinitionAttributes(def);
         doWriteBeanFactoryDefinitionElements(def);

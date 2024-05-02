@@ -940,7 +940,7 @@ public class ModelParser extends BaseParser {
     protected RouteTemplateDefinition doParseRouteTemplateDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplateDefinition(), optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "route": def.setRoute(doParseRouteDefinition()); yield true;
-                case "templateBean": doAdd(doParseRouteTemplateBeanDefinition(), def.getTemplateBeans(), def::setTemplateBeans); yield true;
+                case "templateBean": doAdd(doParseRegistryBeanDefinition(), def.getTemplateBeans(), def::setTemplateBeans); yield true;
                 case "templateParameter": doAdd(doParseRouteTemplateParameterDefinition(), def.getTemplateParameters(), def::setTemplateParameters); yield true;
                 default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
@@ -953,6 +953,9 @@ public class ModelParser extends BaseParser {
                 case "required": def.setRequired(Boolean.valueOf(val)); yield true;
                 default: yield false;
             }, noElementHandler(), noValueHandler());
+    }
+    protected RegistryBeanDefinition doParseRegistryBeanDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RegistryBeanDefinition(), beanFactoryDefinitionAttributeHandler(), beanFactoryDefinitionElementHandler(), noValueHandler());
     }
     protected RouteTemplatesDefinition doParseRouteTemplatesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RouteTemplatesDefinition(), optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> switch (key) {
@@ -1347,9 +1350,6 @@ public class ModelParser extends BaseParser {
                 case "base-package": def.setBasePackage(val); yield true;
                 default: yield false;
             }, noElementHandler(), noValueHandler());
-    }
-    protected RegistryBeanDefinition doParseRegistryBeanDefinition() throws IOException, XmlPullParserException {
-        return doParse(new RegistryBeanDefinition(), beanFactoryDefinitionAttributeHandler(), beanFactoryDefinitionElementHandler(), noValueHandler());
     }
     protected RestConfigurationDefinition doParseRestConfigurationDefinition() throws IOException, XmlPullParserException {
         return doParse(new RestConfigurationDefinition(), (def, key, val) -> switch (key) {

@@ -5237,7 +5237,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
             }
           },
           "description" : {

@@ -44,6 +44,8 @@ import org.apache.camel.spi.ResourceAware;
 public abstract class BeanFactoryDefinition<
         T extends BeanFactoryDefinition<T, P>, P> implements ResourceAware {
 
+    // TODO: only 1 class of this
+
     @XmlTransient
     private Resource resource;
     @XmlTransient
@@ -84,7 +86,7 @@ public abstract class BeanFactoryDefinition<
     @Metadata(label = "advanced")
     private String script;
 
-    void setParent(P parent) {
+    public void setParent(P parent) {
         this.parent = parent;
     }
 

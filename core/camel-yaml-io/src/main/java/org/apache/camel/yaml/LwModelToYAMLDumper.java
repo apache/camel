@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
@@ -340,27 +341,23 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             }
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
                 buffer.write(String.format("      constructors:%n"));
-                int counter = 0;
-                for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
-                    Integer key = entry.getKey();
-                    Object value = entry.getValue();
+                final AtomicInteger counter = new AtomicInteger();
+                b.getConstructors().forEach((key, value) -> {
                     if (key == null) {
-                        key = counter++;
+                        key = counter.getAndIncrement();
                     }
                     buffer.write(String.format("        %d: \"%s\"%n", key, value));
-                }
+                });
             }
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("      properties:%n"));
-                for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
+                b.getProperties().forEach((key, value) -> {
                     if (value instanceof String) {
                         buffer.write(String.format("        %s: \"%s\"%n", key, value));
                     } else {
                         buffer.write(String.format("        %s: %s%n", key, value));
                     }
-                }
+                });
             }
         }
     }

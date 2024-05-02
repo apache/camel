@@ -340,24 +340,20 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             buffer.write(">\n");
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
                 buffer.write(String.format("        <constructors>%n"));
-                for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
-                    Integer idx = entry.getKey();
-                    Object value = entry.getValue();
+                b.getConstructors().forEach((idx, value) -> {
                     if (idx != null) {
                         buffer.write(String.format("            <constructor index=\"%d\" value=\"%s\"/>%n", idx, value));
                     } else {
                         buffer.write(String.format("            <constructor value=\"%s\"/>%n", value));
                     }
-                }
+                });
                 buffer.write(String.format("        </constructors>%n"));
             }
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("        <properties>%n"));
-                for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
+                b.getProperties().forEach((key, value) -> {
                     buffer.write(String.format("            <property key=\"%s\" value=\"%s\"/>%n", key, value));
-                }
+                });
                 buffer.write(String.format("        </properties>%n"));
             }
             buffer.write(String.format("    </bean>%n"));

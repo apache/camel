@@ -58,7 +58,7 @@ class RootDsl(
     }
 
     fun bean(i: RegistryBeanDsl.() -> Unit) {
-        val def = RegistryBeanDefinition()
+        val def = RegistryBeanDefinition<Any>()
         RegistryBeanDsl(def).apply(i)
         val type = ctx.classResolver.resolveMandatoryClass(def.type)
         val instance = ctx.injector.newInstance(type)

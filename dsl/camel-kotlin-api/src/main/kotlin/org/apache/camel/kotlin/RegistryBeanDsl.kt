@@ -20,7 +20,7 @@ import org.apache.camel.model.app.RegistryBeanDefinition
 
 @CamelDslMarker
 class RegistryBeanDsl(
-    val def: RegistryBeanDefinition
+    val def: RegistryBeanDefinition<Any>
 ) {
 
     init {
@@ -28,7 +28,7 @@ class RegistryBeanDsl(
     }
 
     fun name(name: String) {
-        def.name = name
+        def.name = name;
     }
 
     fun type(type: String) {

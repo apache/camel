@@ -1927,7 +1927,7 @@ Configures a ProducerTemplate
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-A route template bean (local bean)
+Deprecated: A route template bean (local bean)
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -12545,7 +12545,15 @@ Reference to the route templates in the xml dsl.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templateParameter"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templateBean"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="templateBean" type="tns:registryBeanDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
+<![CDATA[
+Adds a local bean the route template uses.
+]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element ref="tns:route"/>
         </xs:sequence>
       </xs:extension>
@@ -12590,6 +12598,13 @@ Description of the parameter.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="registryBeanDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:beanFactoryDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="routeTemplatesDefinition">
     <xs:complexContent>

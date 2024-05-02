@@ -29,6 +29,6 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RegistryBeanDefinition extends BeanFactoryDefinition<RegistryBeanDefinition, RegistryBeanDefinition> {
+public class RegistryBeanDefinition<P> extends BeanFactoryDefinition<RegistryBeanDefinition<P>, P> {
 
 }

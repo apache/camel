@@ -44,7 +44,6 @@ import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
-import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -546,7 +545,7 @@ public class DefaultModel implements Model {
 
     private static void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target)
             throws Exception {
-        for (RouteTemplateBeanDefinition b : target.getTemplateBeans()) {
+        for (RegistryBeanDefinition b : target.getTemplateBeans()) {
             BeanModelHelper.bind(b, routeTemplateContext);
         }
     }

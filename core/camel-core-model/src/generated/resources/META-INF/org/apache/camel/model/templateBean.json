@@ -4,7 +4,7 @@
     "name": "templateBean",
     "title": "Template Bean",
     "description": "A route template bean (local bean)",
-    "deprecated": false,
+    "deprecated": true,
     "label": "configuration",
     "javaType": "org.apache.camel.model.RouteTemplateBeanDefinition",
     "abstract": false,

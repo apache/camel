@@ -416,8 +416,8 @@ class KameletLoaderTest extends YamlTestSupport {
                 it.type == 'org.apache.camel.dsl.yaml.KameletBean'
                 it.properties == null
                 it.constructors.size() == 2
-                it.constructors[0] == '123'
-                it.constructors[1] == 'Hello World'
+                it.constructors['0'] == '123'
+                it.constructors['1']== 'Hello World'
             }
             with(it.templateBeans[1]) {
                 it.name == 'kameletBean2'
@@ -425,9 +425,9 @@ class KameletLoaderTest extends YamlTestSupport {
                 it.properties.size() == 1
                 it.properties['kbProp2'] == 'kbValue2'
                 it.constructors.size() == 3
-                it.constructors[0] == '123'
-                it.constructors[1] == 'Hello World'
-                it.constructors[2] == '#bean:kameletBean'
+                it.constructors['0'] == '123'
+                it.constructors['1'] == 'Hello World'
+                it.constructors['2'] == '#bean:kameletBean'
             }
 
             with(route) {

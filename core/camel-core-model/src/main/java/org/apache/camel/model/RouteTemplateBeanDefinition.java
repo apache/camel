@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "templateBean")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class RouteTemplateBeanDefinition
         extends BeanFactoryDefinition<RouteTemplateBeanDefinition, RouteTemplateDefinition> {
 }
