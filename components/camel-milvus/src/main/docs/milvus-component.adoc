@@ -39,5 +39,140 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Collection Samples
+
+In the route below, we use the milvus component to create a collection named _test_ with the given parameters:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+FieldType fieldType1 = FieldType.newBuilder()
+                .withName("userID")
+                .withDescription("user identification")
+                .withDataType(DataType.Int64)
+                .withPrimaryKey(true)
+                .withAutoID(true)
+                .build();
+
+FieldType fieldType2 = FieldType.newBuilder()
+                .withName("userFace")
+                .withDescription("face embedding")
+                .withDataType(DataType.FloatVector)
+                .withDimension(64)
+                .build();
+
+FieldType fieldType3 = FieldType.newBuilder()
+                .withName("userAge")
+                .withDescription("user age")
+                .withDataType(DataType.Int8)
+                .build();
+
+from("direct:in")
+    .setHeader(Milvus.Headers.ACTION)
+        .constant(MilvusAction.CREATE_COLLECTION)
+    .setBody()
+        .constant(
+                CreateCollectionParam.newBuilder()
+                    .withCollectionName("test")
+                    .withDescription("customer info")
+                    .withShardsNum(2)
+                    .withEnableDynamicField(false)
+                    .addFieldType(fieldType1)
+                    .addFieldType(fieldType2)
+                    .addFieldType(fieldType3)
+                    .build())
+    .to("milvus:test");
+----
+====
+
+== Points Samples
+
+=== Upsert
+
+In the route below we use the milvus component to perform insert on points in the collection named _test_:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+private List<List<Float>> generateFloatVectors(int count) {
+        Random ran = new Random();
+        List<List<Float>> vectors = new ArrayList<>();
+        for (int n = 0; n < count; ++n) {
+            List<Float> vector = new ArrayList<>();
+            for (int i = 0; i < 64; ++i) {
+                vector.add(ran.nextFloat());
+            }
+            vectors.add(vector);
+        }
+
+        return vectors;
+}
+
+
+Random ran = new Random();
+List<Integer> ages = new ArrayList<>();
+for (long i = 0L; i < 2; ++i) {
+    ages.add(ran.nextInt(99));
+}
+List<InsertParam.Field> fields = new ArrayList<>();
+fields.add(new InsertParam.Field("userAge", ages));
+fields.add(new InsertParam.Field("userFace", generateFloatVectors(2)));
+
+from("direct:in")
+    .setHeader(Milvus.Headers.ACTION)
+        .constant(MilvusAction.INSERT)
+    .setBody()
+        .constant(
+            InsertParam.newBuilder()
+                .withCollectionName("test")
+                .withFields(fields)
+                .build())
+    .to("qdrant:test");
+----
+====
+
+
+=== Search
+
+In the route below, we use the milvus component to retrieve information by query from the collection named _test_:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+private List<Float> generateFloatVector() {
+        Random ran = new Random();
+        List<Float> vector = new ArrayList<>();
+        for (int i = 0; i < 64; ++i) {
+            vector.add(ran.nextFloat());
+        }
+        return vector;
+}
+
+from("direct:in")
+    .setHeader(Milvus.Headers.ACTION)
+        .constant(MilvusAction.SEARCH)
+    .setBody()
+        .constant(SearchSimpleParam.newBuilder()
+                .withCollectionName("test")
+                .withVectors(generateFloatVector())
+                .withFilter("userAge>0")
+                .withLimit(100L)
+                .withOffset(0L)
+                .withOutputFields(Lists.newArrayList("userAge"))
+                .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
+                .build())
+    .to("qdrant:myCollection");
+----
+====
+
 
 include::spring-boot:partial$starter.adoc[]
