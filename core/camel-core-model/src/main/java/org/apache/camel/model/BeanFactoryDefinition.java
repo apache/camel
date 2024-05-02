@@ -480,12 +480,11 @@ public abstract class BeanFactoryDefinition<
     }
 
     /**
-     * Sets a constructor for creating the bean.
-     * Arguments correspond to specific index of the constructor
-     * argument list, starting from zero.
+     * Sets a constructor for creating the bean. Arguments correspond to specific index of the constructor argument
+     * list, starting from zero.
      *
-     * @param index   the constructor index (starting from zero)
-     * @param value   the constructor value
+     * @param index the constructor index (starting from zero)
+     * @param value the constructor value
      */
     @SuppressWarnings("unchecked")
     public T constructor(Integer index, String value) {
