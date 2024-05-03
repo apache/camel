@@ -46,7 +46,7 @@ For example:
 
 [source]
 ----
-location=file:{{karaf.home}}/etc/foo.properties
+location=file:{{sys:karaf.home}}/etc/foo.properties
 ----
 
 In the location above we defined a location using the file scheme using the JVM system property with key `karaf.home`.
@@ -113,7 +113,7 @@ For fine grained configuration of the location, then this can be done as follows
       optional = "false"/>
     <propertiesLocation
       resolver = "file"
-      path     = "{{karaf.home}}/etc/my-override.properties"
+      path     = "{{sys:karaf.home}}/etc/my-override.properties"
       optional = "true"/>
    </propertyPlaceholder>
 </camelContext>
