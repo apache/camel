@@ -57,6 +57,9 @@ public class ModelWriter extends BaseWriter {
     public void writeBeanDefinition(BeanDefinition def) throws IOException {
         doWriteBeanDefinition("bean", def);
     }
+    public void writeBeanFactoryDefinition(BeanFactoryDefinition def) throws IOException {
+        doWriteBeanFactoryDefinition("beanFactory", def);
+    }
     public void writeCatchDefinition(CatchDefinition def) throws IOException {
         doWriteCatchDefinition("doCatch", def);
     }

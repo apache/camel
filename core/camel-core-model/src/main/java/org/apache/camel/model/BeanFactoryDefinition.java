@@ -23,8 +23,8 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.RouteTemplateContext;
@@ -38,7 +38,7 @@ import org.apache.camel.spi.ResourceAware;
  * Define custom beans that can be used in your Camel routes and in general.
  */
 @Metadata(label = "configuration")
-@XmlType
+@XmlRootElement(name = "beanFactory")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanFactoryDefinition<P> implements ResourceAware {
 

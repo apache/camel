@@ -80,6 +80,15 @@ Calls a Java bean
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="beanFactory" type="tns:beanFactoryDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Define custom beans that can be used in your Camel routes and in general.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="beanPostProcessor" type="tns:camelBeanPostProcessor">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -4000,19 +4009,122 @@ implementation. Default value: Singleton
   </xs:complexType>
   <xs:complexType name="beanFactoryDefinition">
     <xs:sequence>
-      <xs:element minOccurs="0" name="constructors" type="tns:beanConstructorsDefinition"/>
-      <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
-      <xs:element minOccurs="0" name="script" type="xs:string"/>
+      <xs:element minOccurs="0" name="constructors" type="tns:beanConstructorsDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor argument
+list, starting from zero.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Optional properties to set on the created bean.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="script" type="xs:string">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+The script to execute that creates the bean when using scripting languages. If the script use the prefix resource: such
+as resource:classpath:com/foo/myscript.groovy, resource:file:/var/myscript.groovy, then its loaded from the external
+resource.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:string" use="required"/>
-    <xs:attribute name="type" type="xs:string" use="required"/>
-    <xs:attribute name="initMethod" type="xs:string"/>
-    <xs:attribute name="destroyMethod" type="xs:string"/>
-    <xs:attribute name="factoryMethod" type="xs:string"/>
-    <xs:attribute name="factoryBean" type="xs:string"/>
-    <xs:attribute name="builderClass" type="xs:string"/>
-    <xs:attribute name="builderMethod" type="xs:string"/>
-    <xs:attribute name="scriptLanguage" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the bean (bean id).
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The class name (fully qualified) of the bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="initMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the custom initialization method to invoke after setting bean properties. The method must have no arguments,
+but may throw any exception.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="destroyMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method must
+have no arguments, but may throw any exception.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="factoryMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of method to invoke when creating the bean via a factory bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="factoryBean" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of factory bean (bean id) to use for creating the bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="builderClass" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the
+properties values to configure the bean.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="builderMethod" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Name of method when using builder class. This method is invoked after configuring to create the actual bean. This method
+is often named build (used by default). Default value: build
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="scriptLanguage" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="beanConstructorsDefinition">
     <xs:sequence>

@@ -1172,21 +1172,28 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = {
+                    "bean-factory",
+                    "beanFactory"
+            },
             types = org.apache.camel.model.BeanFactoryDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Bean Factory",
+            description = "Define custom beans that can be used in your Camel routes and in general.",
+            deprecated = false,
             properties = {
-                    @YamlProperty(name = "builderClass", type = "string"),
-                    @YamlProperty(name = "builderMethod", type = "string"),
-                    @YamlProperty(name = "constructors", type = "object"),
-                    @YamlProperty(name = "destroyMethod", type = "string"),
-                    @YamlProperty(name = "factoryBean", type = "string"),
-                    @YamlProperty(name = "factoryMethod", type = "string"),
-                    @YamlProperty(name = "initMethod", type = "string"),
-                    @YamlProperty(name = "name", type = "string", required = true),
-                    @YamlProperty(name = "properties", type = "object"),
-                    @YamlProperty(name = "script", type = "string"),
-                    @YamlProperty(name = "scriptLanguage", type = "string"),
-                    @YamlProperty(name = "type", type = "string", required = true)
+                    @YamlProperty(name = "builderClass", type = "string", description = "Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the properties values to configure the bean.", displayName = "Builder Class"),
+                    @YamlProperty(name = "builderMethod", type = "string", defaultValue = "build", description = "Name of method when using builder class. This method is invoked after configuring to create the actual bean. This method is often named build (used by default).", displayName = "Builder Method"),
+                    @YamlProperty(name = "constructors", type = "object", description = "Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor argument list, starting from zero.", displayName = "Constructors"),
+                    @YamlProperty(name = "destroyMethod", type = "string", description = "The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method must have no arguments, but may throw any exception.", displayName = "Destroy Method"),
+                    @YamlProperty(name = "factoryBean", type = "string", description = "Name of factory bean (bean id) to use for creating the bean.", displayName = "Factory Bean"),
+                    @YamlProperty(name = "factoryMethod", type = "string", description = "Name of method to invoke when creating the bean via a factory bean.", displayName = "Factory Method"),
+                    @YamlProperty(name = "initMethod", type = "string", description = "The name of the custom initialization method to invoke after setting bean properties. The method must have no arguments, but may throw any exception.", displayName = "Init Method"),
+                    @YamlProperty(name = "name", type = "string", required = true, description = "The name of the bean (bean id)", displayName = "Name"),
+                    @YamlProperty(name = "properties", type = "object", description = "Optional properties to set on the created bean.", displayName = "Properties"),
+                    @YamlProperty(name = "script", type = "string", description = "The script to execute that creates the bean when using scripting languages. If the script use the prefix resource: such as resource:classpath:com/foo/myscript.groovy, resource:file:/var/myscript.groovy, then its loaded from the external resource.", displayName = "Script"),
+                    @YamlProperty(name = "scriptLanguage", type = "string", description = "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.", displayName = "Script Language"),
+                    @YamlProperty(name = "type", type = "string", required = true, description = "The class name (fully qualified) of the bean", displayName = "Type")
             }
     )
     public static class BeanFactoryDefinitionDeserializer extends YamlDeserializerBase<BeanFactoryDefinition> {

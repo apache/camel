@@ -38,6 +38,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.app.BeanConstructorsDefinition": return new ModelDeserializers.BeanConstructorsDefinitionDeserializer();
             case "bean": return new ModelDeserializers.BeanDefinitionDeserializer();
             case "org.apache.camel.model.BeanDefinition": return new ModelDeserializers.BeanDefinitionDeserializer();
+            case "bean-factory": return new ModelDeserializers.BeanFactoryDefinitionDeserializer();
+            case "beanFactory": return new ModelDeserializers.BeanFactoryDefinitionDeserializer();
             case "org.apache.camel.model.BeanFactoryDefinition": return new ModelDeserializers.BeanFactoryDefinitionDeserializer();
             case "org.apache.camel.model.app.BeanPropertiesDefinition": return new ModelDeserializers.BeanPropertiesDefinitionDeserializer();
             case "org.apache.camel.model.app.BeanPropertyDefinition": return new ModelDeserializers.BeanPropertyDefinitionDeserializer();
