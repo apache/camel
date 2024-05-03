@@ -27,9 +27,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
@@ -48,7 +48,7 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "__extends",
-                                type = "array:org.apache.camel.model.app.RegistryBeanDefinition")
+                                type = "array:org.apache.camel.model.BeanFactoryDefinition")
           })
 public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
 
@@ -66,7 +66,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         for (Node item : sn.getValue()) {
             setDeserializationContext(item, dc);
 
-            RegistryBeanDefinition bean = asType(item, RegistryBeanDefinition.class);
+            BeanFactoryDefinition<?> bean = asType(item, BeanFactoryDefinition.class);
             if (dc != null) {
                 bean.setResource(dc.getResource());
             }
@@ -101,8 +101,8 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
     protected void registerBean(
             CamelContext camelContext,
-            List<RegistryBeanDefinition> delayedRegistrations,
-            RegistryBeanDefinition def, boolean delayIfFailed) {
+            List<BeanFactoryDefinition<?>> delayedRegistrations,
+            BeanFactoryDefinition<?> def, boolean delayIfFailed) {
 
         String name = def.getName();
         String type = def.getType();
@@ -122,22 +122,22 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
     private class BeansCustomizer implements CamelContextCustomizer {
 
-        private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
-        private final List<RegistryBeanDefinition> beans = new ArrayList<>();
+        private final List<BeanFactoryDefinition<?>> delayedRegistrations = new ArrayList<>();
+        private final List<BeanFactoryDefinition<?>> beans = new ArrayList<>();
 
-        public void addBean(RegistryBeanDefinition bean) {
+        public void addBean(BeanFactoryDefinition<?> bean) {
             beans.add(bean);
         }
 
         @Override
         public void configure(CamelContext camelContext) {
             // first-pass of creating beans
-            for (RegistryBeanDefinition bean : beans) {
+            for (BeanFactoryDefinition<?> bean : beans) {
                 registerBean(camelContext, delayedRegistrations, bean, true);
             }
             beans.clear();
             // second-pass of creating beans should fail if not possible
-            for (RegistryBeanDefinition bean : delayedRegistrations) {
+            for (BeanFactoryDefinition<?> bean : delayedRegistrations) {
                 registerBean(camelContext, delayedRegistrations, bean, false);
             }
             delayedRegistrations.clear();
@@ -145,7 +145,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     }
 
     protected void bindBean(
-            CamelContext camelContext, RegistryBeanDefinition def,
+            CamelContext camelContext, BeanFactoryDefinition<?> def,
             String name, Object target)
             throws Exception {
 

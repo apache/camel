@@ -16,11 +16,11 @@
  */
 package org.apache.camel.kotlin
 
-import org.apache.camel.model.app.RegistryBeanDefinition
+import org.apache.camel.model.BeanFactoryDefinition
 
 @CamelDslMarker
-class RegistryBeanDsl(
-    val def: RegistryBeanDefinition<Any>
+class BeanFactoryDsl(
+    val def: BeanFactoryDefinition<Any>
 ) {
 
     init {

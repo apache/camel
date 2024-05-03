@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,7 +41,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.main.util.XmlHelper;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
@@ -66,7 +66,7 @@ public class BlueprintXmlBeansHandler {
     // that's why some beans should be processed later
     private final Map<String, Node> delayedBeans = new LinkedHashMap<>();
     private final Map<String, Resource> resources = new LinkedHashMap<>();
-    private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
+    private final List<BeanFactoryDefinition<?>> delayedRegistrations = new ArrayList<>();
     private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
     private boolean transform;
 
@@ -109,7 +109,7 @@ public class BlueprintXmlBeansHandler {
         for (Map.Entry<String, Node> entry : delayedBeans.entrySet()) {
             String id = entry.getKey();
             Node n = entry.getValue();
-            RegistryBeanDefinition def = createBeanModel(camelContext, id, n);
+            BeanFactoryDefinition<?> def = createBeanModel(camelContext, id, n);
             if (transform) {
                 // transform mode should only discover and remember bean in model
                 LOG.debug("Discovered bean: {}", def.getName());
@@ -122,7 +122,7 @@ public class BlueprintXmlBeansHandler {
 
         if (!delayedRegistrations.isEmpty()) {
             // some of the beans were not available yet, so we have to try register them now
-            for (RegistryBeanDefinition def : delayedRegistrations) {
+            for (BeanFactoryDefinition<?> def : delayedRegistrations) {
                 LOG.debug("Creating bean (2nd-try): {}", def.getName());
                 registerAndCreateBean(camelContext, def, false);
             }
@@ -131,32 +131,32 @@ public class BlueprintXmlBeansHandler {
 
     }
 
-    private RegistryBeanDefinition createBeanModel(CamelContext camelContext, String name, Node node) {
-        RegistryBeanDefinition rrd = new RegistryBeanDefinition();
-        rrd.setResource(resources.get(name));
-        rrd.setType(XmlHelper.getAttribute(node, "class"));
-        rrd.setName(name);
+    private BeanFactoryDefinition<?> createBeanModel(CamelContext camelContext, String name, Node node) {
+        BeanFactoryDefinition<?> def = new BeanFactoryDefinition<>();
+        def.setResource(resources.get(name));
+        def.setType(XmlHelper.getAttribute(node, "class"));
+        def.setName(name);
 
         // factory bean/method
         String fb = XmlHelper.getAttribute(node, "factory-ref");
         if (fb != null) {
-            rrd.setFactoryBean(fb);
+            def.setFactoryBean(fb);
         }
         String fm = XmlHelper.getAttribute(node, "factory-method");
         if (fm != null) {
-            rrd.setFactoryMethod(fm);
+            def.setFactoryMethod(fm);
         }
         String im = XmlHelper.getAttribute(node, "init-method");
         if (im != null) {
-            rrd.setInitMethod(im);
+            def.setInitMethod(im);
         }
         String dm = XmlHelper.getAttribute(node, "destroy-method");
         if (dm != null) {
-            rrd.setDestroyMethod(dm);
+            def.setDestroyMethod(dm);
         }
         // constructor arguments
         Map<Integer, Object> constructors = new LinkedHashMap<>();
-        rrd.setConstructors(constructors);
+        def.setConstructors(constructors);
         NodeList props = node.getChildNodes();
         int index = 0;
         for (int i = 0; i < props.getLength(); i++) {
@@ -173,7 +173,7 @@ public class BlueprintXmlBeansHandler {
             }
         }
         if (!constructors.isEmpty()) {
-            rrd.setConstructors(constructors);
+            def.setConstructors(constructors);
         }
 
         // property values
@@ -215,10 +215,10 @@ public class BlueprintXmlBeansHandler {
             }
         }
         if (!properties.isEmpty()) {
-            rrd.setProperties(properties);
+            def.setProperties(properties);
         }
 
-        return rrd;
+        return def;
     }
 
     private static List<Node> getChildNodes(Node node, String name) {
@@ -432,7 +432,7 @@ public class BlueprintXmlBeansHandler {
     /**
      * Try to instantiate bean from the definition.
      */
-    private void registerAndCreateBean(CamelContext camelContext, RegistryBeanDefinition def, boolean delayIfFailed) {
+    private void registerAndCreateBean(CamelContext camelContext, BeanFactoryDefinition<?> def, boolean delayIfFailed) {
         String type = def.getType();
         String name = def.getName();
         if (name == null || name.isBlank()) {
@@ -487,7 +487,7 @@ public class BlueprintXmlBeansHandler {
         }
     }
 
-    protected void bindBean(CamelContext camelContext, RegistryBeanDefinition def, String name, Object target)
+    protected void bindBean(CamelContext camelContext, BeanFactoryDefinition<?> def, String name, Object target)
             throws Exception {
         // destroy and unbind any existing bean
         destroyBean(name, true);
@@ -508,7 +508,7 @@ public class BlueprintXmlBeansHandler {
         addBeanToCamelModel(camelContext, name, def);
     }
 
-    protected void addBeanToCamelModel(CamelContext camelContext, String name, RegistryBeanDefinition def) {
+    protected void addBeanToCamelModel(CamelContext camelContext, String name, BeanFactoryDefinition<?> def) {
         // register bean in model
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         if (model != null) {

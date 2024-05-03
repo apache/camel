@@ -3998,7 +3998,7 @@ implementation. Default value: Singleton
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType abstract="true" name="beanFactoryDefinition">
+  <xs:complexType name="beanFactoryDefinition">
     <xs:sequence>
       <xs:element minOccurs="0" name="constructors" type="tns:beanConstructorsDefinition"/>
       <xs:element minOccurs="0" name="properties" type="tns:beanPropertiesDefinition"/>
@@ -12417,7 +12417,7 @@ Reference to the route templates in the xml dsl.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:templateParameter"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="templateBean" type="tns:registryBeanDefinition">
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="templateBean" type="tns:beanFactoryDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en">
 <![CDATA[
@@ -12470,13 +12470,6 @@ Description of the parameter.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="registryBeanDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:beanFactoryDefinition">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="routeTemplatesDefinition">
     <xs:complexContent>
@@ -13410,7 +13403,7 @@ Adds an input parameter of the template to build the route.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:registryBeanDefinition">
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="bean" type="tns:beanFactoryDefinition">
         <xs:annotation>
           <xs:documentation xml:lang="en">
 <![CDATA[

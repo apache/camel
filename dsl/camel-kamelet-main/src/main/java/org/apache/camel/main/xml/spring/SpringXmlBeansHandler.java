@@ -30,12 +30,12 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -220,40 +220,40 @@ public class SpringXmlBeansHandler {
         // register bean into model (as a BeanRegistry that allows Camel DSL to know about these beans)
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         if (model != null) {
-            RegistryBeanDefinition rrd = new RegistryBeanDefinition();
+            BeanFactoryDefinition<?> bean = new BeanFactoryDefinition<>();
             if (def instanceof GenericBeanDefinition gbd) {
                 // set camel resource to refer to the source file
                 Resource res = gbd.getResource();
                 if (res != null) {
                     String fn = res.getFilename();
                     if (fn != null) {
-                        rrd.setResource(camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                        bean.setResource(camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
                                 .resolveResource("file:" + fn));
                     }
                 }
             }
-            rrd.setType(def.getBeanClassName());
-            rrd.setName(name);
+            bean.setType(def.getBeanClassName());
+            bean.setName(name);
             LOG.debug("Adding Spring <beans> XML bean: {} to DSL model", name);
-            model.addRegistryBean(rrd);
+            model.addRegistryBean(bean);
 
             // factory bean/method
             if (def.getFactoryBeanName() != null) {
-                rrd.setFactoryBean(def.getFactoryBeanName());
+                bean.setFactoryBean(def.getFactoryBeanName());
             }
             if (def.getFactoryMethodName() != null) {
-                rrd.setFactoryMethod(def.getFactoryMethodName());
+                bean.setFactoryMethod(def.getFactoryMethodName());
             }
             if (def.getInitMethodName() != null) {
-                rrd.setInitMethod(def.getInitMethodName());
+                bean.setInitMethod(def.getInitMethodName());
             }
             if (def.getDestroyMethodName() != null) {
-                rrd.setDestroyMethod(def.getDestroyMethodName());
+                bean.setDestroyMethod(def.getDestroyMethodName());
             }
             // constructor arguments
             if (def.hasConstructorArgumentValues()) {
                 Map<Integer, Object> constructors = new LinkedHashMap<>();
-                rrd.setConstructors(constructors);
+                bean.setConstructors(constructors);
 
                 ConstructorArgumentValues ctrs = def.getConstructorArgumentValues();
                 for (int i = 0; i < ctrs.getArgumentCount(); i++) {
@@ -272,7 +272,7 @@ public class SpringXmlBeansHandler {
             // property values
             if (def.hasPropertyValues()) {
                 Map<String, Object> properties = new LinkedHashMap<>();
-                rrd.setProperties(properties);
+                bean.setProperties(properties);
 
                 MutablePropertyValues values = def.getPropertyValues();
                 for (PropertyValue v : values) {

@@ -33,6 +33,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
@@ -44,7 +45,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -71,7 +71,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     private final Map<String, Resource> resourceCache = new ConcurrentHashMap<>();
     private final Map<String, XmlStreamInfo> xmlInfoCache = new ConcurrentHashMap<>();
     private final Map<String, BeansDefinition> camelAppCache = new ConcurrentHashMap<>();
-    private final List<RegistryBeanDefinition> delayedRegistrations = new ArrayList<>();
+    private final List<BeanFactoryDefinition<?>> delayedRegistrations = new ArrayList<>();
     private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -172,7 +172,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             private void configureCamel(BeansDefinition app) {
                 if (!delayedRegistrations.isEmpty()) {
                     // some of the beans were not available yet, so we have to try register them now
-                    for (RegistryBeanDefinition def : delayedRegistrations) {
+                    for (BeanFactoryDefinition<?> def : delayedRegistrations) {
                         def.setResource(getResource());
                         registerBeanDefinition(def, false);
                     }
@@ -299,7 +299,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         PackageScanHelper.registerBeans(getCamelContext(), packagesToScan);
 
         // <bean>s - register Camel beans directly with Camel injection
-        for (RegistryBeanDefinition def : app.getBeans()) {
+        for (BeanFactoryDefinition<?> def : app.getBeans()) {
             def.setResource(resource);
             registerBeanDefinition(def, true);
         }
@@ -330,7 +330,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
      * Try to instantiate bean from the definition. Depending on the stage ({@link #preParseRoute} or
      * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
      */
-    private void registerBeanDefinition(RegistryBeanDefinition def, boolean delayIfFailed) {
+    private void registerBeanDefinition(BeanFactoryDefinition<?> def, boolean delayIfFailed) {
         String name = def.getName();
         String type = def.getType();
         try {
@@ -347,7 +347,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         }
     }
 
-    protected void bindBean(RegistryBeanDefinition def, String name, Object target) throws Exception {
+    protected void bindBean(BeanFactoryDefinition<?> def, String name, Object target) throws Exception {
         // destroy and unbind any existing bean
         destroyBean(name, true);
         getCamelContext().getRegistry().unbind(name);

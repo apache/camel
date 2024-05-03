@@ -28,7 +28,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
  *
  * @param <T> the type of nodes that define a bean factory
  */
-public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDefinition<?, ?>> extends YamlDeserializerBase<T> {
+public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDefinition<?>> extends YamlDeserializerBase<T> {
 
     protected BeanFactoryDefinitionDeserializer(Class<T> clazz) {
         super(clazz);

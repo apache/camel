@@ -12,6 +12,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerEndpointAwareBase;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -109,7 +110,6 @@ import org.apache.camel.model.app.BeanConstructorsDefinition;
 import org.apache.camel.model.app.BeanPropertiesDefinition;
 import org.apache.camel.model.app.BeanPropertyDefinition;
 import org.apache.camel.model.app.ComponentScanDefinition;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
@@ -1161,6 +1161,107 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     String val = asText(node);
                     target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.BeanFactoryDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "builderClass", type = "string"),
+                    @YamlProperty(name = "builderMethod", type = "string"),
+                    @YamlProperty(name = "constructors", type = "object"),
+                    @YamlProperty(name = "destroyMethod", type = "string"),
+                    @YamlProperty(name = "factoryBean", type = "string"),
+                    @YamlProperty(name = "factoryMethod", type = "string"),
+                    @YamlProperty(name = "initMethod", type = "string"),
+                    @YamlProperty(name = "name", type = "string", required = true),
+                    @YamlProperty(name = "properties", type = "object"),
+                    @YamlProperty(name = "script", type = "string"),
+                    @YamlProperty(name = "scriptLanguage", type = "string"),
+                    @YamlProperty(name = "type", type = "string", required = true)
+            }
+    )
+    public static class BeanFactoryDefinitionDeserializer extends YamlDeserializerBase<BeanFactoryDefinition> {
+        public BeanFactoryDefinitionDeserializer() {
+            super(BeanFactoryDefinition.class);
+        }
+
+        @Override
+        protected BeanFactoryDefinition newInstance() {
+            return new BeanFactoryDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(BeanFactoryDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "builderClass": {
+                    String val = asText(node);
+                    target.setBuilderClass(val);
+                    break;
+                }
+                case "builderMethod": {
+                    String val = asText(node);
+                    target.setBuilderMethod(val);
+                    break;
+                }
+                case "constructors": {
+                    java.util.Map val = asMap(node);
+                    target.setConstructors(val);
+                    break;
+                }
+                case "destroyMethod": {
+                    String val = asText(node);
+                    target.setDestroyMethod(val);
+                    break;
+                }
+                case "factoryBean": {
+                    String val = asText(node);
+                    target.setFactoryBean(val);
+                    break;
+                }
+                case "factoryMethod": {
+                    String val = asText(node);
+                    target.setFactoryMethod(val);
+                    break;
+                }
+                case "initMethod": {
+                    String val = asText(node);
+                    target.setInitMethod(val);
+                    break;
+                }
+                case "name": {
+                    String val = asText(node);
+                    target.setName(val);
+                    break;
+                }
+                case "properties": {
+                    java.util.Map val = asMap(node);
+                    target.setProperties(val);
+                    break;
+                }
+                case "script": {
+                    String val = asText(node);
+                    target.setScript(val);
+                    break;
+                }
+                case "scriptLanguage": {
+                    String val = asText(node);
+                    target.setScriptLanguage(val);
+                    break;
+                }
+                case "type": {
+                    String val = asText(node);
+                    target.setType(val);
                     break;
                 }
                 default: {
@@ -12864,107 +12965,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            types = org.apache.camel.model.app.RegistryBeanDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "builderClass", type = "string"),
-                    @YamlProperty(name = "builderMethod", type = "string"),
-                    @YamlProperty(name = "constructors", type = "object"),
-                    @YamlProperty(name = "destroyMethod", type = "string"),
-                    @YamlProperty(name = "factoryBean", type = "string"),
-                    @YamlProperty(name = "factoryMethod", type = "string"),
-                    @YamlProperty(name = "initMethod", type = "string"),
-                    @YamlProperty(name = "name", type = "string", required = true),
-                    @YamlProperty(name = "properties", type = "object"),
-                    @YamlProperty(name = "script", type = "string"),
-                    @YamlProperty(name = "scriptLanguage", type = "string"),
-                    @YamlProperty(name = "type", type = "string", required = true)
-            }
-    )
-    public static class RegistryBeanDefinitionDeserializer extends YamlDeserializerBase<RegistryBeanDefinition> {
-        public RegistryBeanDefinitionDeserializer() {
-            super(RegistryBeanDefinition.class);
-        }
-
-        @Override
-        protected RegistryBeanDefinition newInstance() {
-            return new RegistryBeanDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(RegistryBeanDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "builderClass": {
-                    String val = asText(node);
-                    target.setBuilderClass(val);
-                    break;
-                }
-                case "builderMethod": {
-                    String val = asText(node);
-                    target.setBuilderMethod(val);
-                    break;
-                }
-                case "constructors": {
-                    java.util.Map val = asMap(node);
-                    target.setConstructors(val);
-                    break;
-                }
-                case "destroyMethod": {
-                    String val = asText(node);
-                    target.setDestroyMethod(val);
-                    break;
-                }
-                case "factoryBean": {
-                    String val = asText(node);
-                    target.setFactoryBean(val);
-                    break;
-                }
-                case "factoryMethod": {
-                    String val = asText(node);
-                    target.setFactoryMethod(val);
-                    break;
-                }
-                case "initMethod": {
-                    String val = asText(node);
-                    target.setInitMethod(val);
-                    break;
-                }
-                case "name": {
-                    String val = asText(node);
-                    target.setName(val);
-                    break;
-                }
-                case "properties": {
-                    java.util.Map val = asMap(node);
-                    target.setProperties(val);
-                    break;
-                }
-                case "script": {
-                    String val = asText(node);
-                    target.setScript(val);
-                    break;
-                }
-                case "scriptLanguage": {
-                    String val = asText(node);
-                    target.setScriptLanguage(val);
-                    break;
-                }
-                case "type": {
-                    String val = asText(node);
-                    target.setType(val);
-                    break;
-                }
-                default: {
-                    return false;
                 }
             }
             return true;

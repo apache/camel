@@ -214,7 +214,7 @@
         "type" : "array",
         "additionalProperties" : false,
         "items" : {
-          "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
+          "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
         }
       },
       "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerDeserializer" : {
@@ -566,6 +566,49 @@
             }
           }
         } ]
+      },
+      "org.apache.camel.model.BeanFactoryDefinition" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "builderClass" : {
+            "type" : "string"
+          },
+          "builderMethod" : {
+            "type" : "string"
+          },
+          "constructors" : {
+            "type" : "object"
+          },
+          "destroyMethod" : {
+            "type" : "string"
+          },
+          "factoryBean" : {
+            "type" : "string"
+          },
+          "factoryMethod" : {
+            "type" : "string"
+          },
+          "initMethod" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object"
+          },
+          "script" : {
+            "type" : "string"
+          },
+          "scriptLanguage" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.CatchDefinition" : {
         "title" : "Do Catch",
@@ -5194,7 +5237,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
             }
           },
           "description" : {
@@ -6632,7 +6675,7 @@
           "beans" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.app.RegistryBeanDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
             }
           },
           "parameters" : {
@@ -8384,49 +8427,6 @@
             "type" : "string"
           }
         }
-      },
-      "org.apache.camel.model.app.RegistryBeanDefinition" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "builderClass" : {
-            "type" : "string"
-          },
-          "builderMethod" : {
-            "type" : "string"
-          },
-          "constructors" : {
-            "type" : "object"
-          },
-          "destroyMethod" : {
-            "type" : "string"
-          },
-          "factoryBean" : {
-            "type" : "string"
-          },
-          "factoryMethod" : {
-            "type" : "string"
-          },
-          "initMethod" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "properties" : {
-            "type" : "object"
-          },
-          "script" : {
-            "type" : "string"
-          },
-          "scriptLanguage" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "name", "type" ]
       },
       "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration" : {
         "title" : "Blacklist Service Filter",
