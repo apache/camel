@@ -23,7 +23,6 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -493,11 +492,11 @@ public interface Model {
     /**
      * Adds the custom bean
      */
-    void addRegistryBean(RegistryBeanDefinition bean);
+    void addRegistryBean(BeanFactoryDefinition bean);
 
     /**
      * Gets the custom beans
      */
-    List<RegistryBeanDefinition> getRegistryBeans();
+    List<BeanFactoryDefinition> getRegistryBeans();
 
 }

@@ -44,6 +44,7 @@ import org.apache.camel.impl.engine.TransformerKey;
 import org.apache.camel.impl.engine.ValidatorKey;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -57,7 +58,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -523,12 +523,12 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    public void addRegistryBean(RegistryBeanDefinition bean) {
+    public void addRegistryBean(BeanFactoryDefinition bean) {
         model.addRegistryBean(bean);
     }
 
     @Override
-    public List<RegistryBeanDefinition> getRegistryBeans() {
+    public List<BeanFactoryDefinition> getRegistryBeans() {
         return model.getRegistryBeans();
     }
 

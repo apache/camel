@@ -29,6 +29,7 @@ import java.util.function.Function;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DefaultRouteTemplateContext;
@@ -50,7 +51,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -81,7 +81,7 @@ public class DefaultModel implements Model {
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
     // XML and YAML DSL allows to declare beans in the DSL
-    private final List<RegistryBeanDefinition> beans = new ArrayList<>();
+    private final List<BeanFactoryDefinition> beans = new ArrayList<>();
     private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
     private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
@@ -544,7 +544,7 @@ public class DefaultModel implements Model {
 
     private static void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target)
             throws Exception {
-        for (RegistryBeanDefinition b : target.getTemplateBeans()) {
+        for (BeanFactoryDefinition b : target.getTemplateBeans()) {
             BeanModelHelper.bind(b, routeTemplateContext);
         }
     }
@@ -556,9 +556,9 @@ public class DefaultModel implements Model {
 
         final RouteTemplateContext routeTemplateContext = toRouteTemplateContext(templatedRouteDefinition);
         // Bind the beans into the context
-        final List<RegistryBeanDefinition<TemplatedRouteDefinition>> beans = templatedRouteDefinition.getBeans();
+        final List<BeanFactoryDefinition<TemplatedRouteDefinition>> beans = templatedRouteDefinition.getBeans();
         if (beans != null) {
-            for (RegistryBeanDefinition<TemplatedRouteDefinition> beanDefinition : beans) {
+            for (BeanFactoryDefinition<TemplatedRouteDefinition> beanDefinition : beans) {
                 BeanModelHelper.bind(beanDefinition, routeTemplateContext);
             }
         }
@@ -784,14 +784,14 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void addRegistryBean(RegistryBeanDefinition bean) {
+    public void addRegistryBean(BeanFactoryDefinition bean) {
         // remove exiting bean with same name to update
         beans.removeIf(b -> bean.getName().equals(b.getName()));
         beans.add(bean);
     }
 
     @Override
-    public List<RegistryBeanDefinition> getRegistryBeans() {
+    public List<BeanFactoryDefinition> getRegistryBeans() {
         return beans;
     }
 

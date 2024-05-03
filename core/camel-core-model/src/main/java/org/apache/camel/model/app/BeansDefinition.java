@@ -26,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.w3c.dom.Element;
 
 import org.apache.camel.model.RouteConfigurationDefinition;
@@ -66,7 +67,7 @@ public class BeansDefinition {
     // to "bean processors"
 
     @XmlElement(name = "bean")
-    private List<RegistryBeanDefinition> beans = new ArrayList<>();
+    private List<BeanFactoryDefinition> beans = new ArrayList<>();
 
     // this is the only way I found to generate usable Schema without imports, while allowing elements
     // from different namespaces
@@ -112,14 +113,14 @@ public class BeansDefinition {
         this.componentScanning = componentScanning;
     }
 
-    public List<RegistryBeanDefinition> getBeans() {
+    public List<BeanFactoryDefinition> getBeans() {
         return beans;
     }
 
     /**
      * List of bean
      */
-    public void setBeans(List<RegistryBeanDefinition> beans) {
+    public void setBeans(List<BeanFactoryDefinition> beans) {
         this.beans = beans;
     }
 

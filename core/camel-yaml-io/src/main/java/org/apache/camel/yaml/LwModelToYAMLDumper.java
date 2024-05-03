@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -41,7 +42,6 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.NamespaceAware;
@@ -169,9 +169,9 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         StringWriter buffer = new StringWriter();
         BeanModelWriter writer = new BeanModelWriter(buffer);
 
-        List<RegistryBeanDefinition> list = new ArrayList<>();
+        List<BeanFactoryDefinition> list = new ArrayList<>();
         for (Object bean : beans) {
-            if (bean instanceof RegistryBeanDefinition rb) {
+            if (bean instanceof BeanFactoryDefinition rb) {
                 list.add(rb);
             }
         }
@@ -298,17 +298,17 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             // noop
         }
 
-        public void writeBeans(List<RegistryBeanDefinition> beans) {
+        public void writeBeans(List<BeanFactoryDefinition> beans) {
             if (beans.isEmpty()) {
                 return;
             }
             buffer.write("- beans:\n");
-            for (RegistryBeanDefinition b : beans) {
+            for (BeanFactoryDefinition b : beans) {
                 doWriteRegistryBeanDefinition(b);
             }
         }
 
-        private void doWriteRegistryBeanDefinition(RegistryBeanDefinition b) {
+        private void doWriteRegistryBeanDefinition(BeanFactoryDefinition b) {
             String type = b.getType();
             if (type.startsWith("#class:")) {
                 type = type.substring(7);
