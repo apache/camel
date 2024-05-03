@@ -254,49 +254,7 @@ public class ValidateMojo extends AbstractMojo {
 
             try (MavenDownloaderImpl downloader
                     = new MavenDownloaderImpl(repositorySystem, repositorySystemSession, session.getSettings())) {
-                downloader.init();
-                Set<String> repositorySet = Arrays.stream(extraMavenRepositories)
-                        .collect(Collectors.toSet());
-                List<String> artifactList = new ArrayList<>(artifacts);
-
-                // Remove already downloaded Artifacts
-                artifactList.removeAll(downloadedArtifacts);
-
-                if (!artifactList.isEmpty()) {
-                    getLog().info("Downloading the following artifacts: " + artifactList);
-                    List<MavenArtifact> mavenSourcesArtifacts
-                            = downloader.resolveArtifacts(artifactList, repositorySet, downloadTransitiveArtifacts, false);
-
-                    // Create folder into the target folder that will be used to unzip
-                    // the downloaded artifacts
-                    Path extraSourcesPath = Paths.get(projectBuildDir, "camel-validate-sources");
-                    if (!Files.exists(extraSourcesPath)) {
-                        Files.createDirectories(extraSourcesPath);
-                    }
-
-                    // Unzip all the downloaded artifacts and add javas and xmls files into the cache
-                    for (MavenArtifact artifact : mavenSourcesArtifacts) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(artifact.getGav().getGroupId()).append(":")
-                                .append(artifact.getGav().getArtifactId()).append(":")
-                                .append(artifact.getGav().getPackaging()).append(":")
-                                .append(artifact.getGav().getClassifier()).append(":")
-                                .append(artifact.getGav().getVersion());
-                        // Avoid downloading the same dependency multiple times
-                        downloadedArtifacts.add(sb.toString());
-
-                        Path target = extraSourcesPath.resolve(artifact.getGav().getArtifactId());
-                        getLog().info("Unzipping the artifact: " + artifact + " to " + target);
-                        if (Files.exists(target)) {
-                            continue;
-                        }
-
-                        unzipArtifact(artifact, target);
-
-                        FileUtil.findJavaFiles(target.toFile(), javaFiles);
-                        FileUtil.findXmlFiles(target.toFile(), xmlFiles);
-                    }
-                }
+                downloadArtifacts(downloader, artifacts);
             } catch (IOException e) {
                 throw new MojoExecutionException(e);
             } catch (MavenResolutionException e) {
@@ -346,6 +304,69 @@ public class ValidateMojo extends AbstractMojo {
         doExecuteConfigurationFiles(catalog);
     }
 
+    private void downloadArtifacts(MavenDownloaderImpl downloader, List<String> artifacts)
+            throws MavenResolutionException, IOException {
+        downloader.init();
+        Set<String> repositorySet = Arrays.stream(extraMavenRepositories)
+                .collect(Collectors.toSet());
+        List<String> artifactList = new ArrayList<>(artifacts);
+
+        // Remove already downloaded Artifacts
+        artifactList.removeAll(downloadedArtifacts);
+
+        if (!artifactList.isEmpty()) {
+            doDownloadArtifacts(artifactList, downloader, repositorySet);
+        }
+    }
+
+    private void doDownloadArtifacts(List<String> artifactList, MavenDownloaderImpl downloader, Set<String> repositorySet)
+            throws MavenResolutionException, IOException {
+        getLog().info("Downloading the following artifacts: " + artifactList);
+        List<MavenArtifact> mavenSourcesArtifacts
+                = downloader.resolveArtifacts(artifactList, repositorySet, downloadTransitiveArtifacts, false);
+
+        // Create folder into the target folder that will be used to unzip
+        // the downloaded artifacts
+        Path extraSourcesPath = Paths.get(projectBuildDir, "camel-validate-sources");
+        if (!Files.exists(extraSourcesPath)) {
+            Files.createDirectories(extraSourcesPath);
+        }
+
+        // Unzip all the downloaded artifacts and add javas and xmls files into the cache
+        unzipIntoCache(mavenSourcesArtifacts, extraSourcesPath);
+    }
+
+    private void unzipIntoCache(List<MavenArtifact> mavenSourcesArtifacts, Path extraSourcesPath) throws IOException {
+        for (MavenArtifact artifact : mavenSourcesArtifacts) {
+            final String gav = toGav(artifact);
+            // Avoid downloading the same dependency multiple times
+            downloadedArtifacts.add(gav);
+
+            Path target = extraSourcesPath.resolve(artifact.getGav().getArtifactId());
+            getLog().info("Unzipping the artifact: " + artifact + " to " + target);
+            if (Files.exists(target)) {
+                continue;
+            }
+
+            unzipArtifact(artifact, target);
+
+            FileUtil.findJavaFiles(target.toFile(), javaFiles);
+            FileUtil.findXmlFiles(target.toFile(), xmlFiles);
+        }
+    }
+
+    private static String toGav(MavenArtifact artifact) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(artifact.getGav().getGroupId()).append(":")
+                .append(artifact.getGav().getArtifactId()).append(":")
+                .append(artifact.getGav().getPackaging()).append(":")
+                .append(artifact.getGav().getClassifier()).append(":")
+                .append(artifact.getGav().getVersion());
+
+        final String gav = sb.toString();
+        return gav;
+    }
+
     private static void unzipArtifact(MavenArtifact artifact, Path target) throws IOException {
         try (ZipFile zipFile = new ZipFile(artifact.getFile().toPath().toFile())) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -393,7 +414,7 @@ public class ValidateMojo extends AbstractMojo {
         int incapableErrors = 0;
         int deprecatedOptions = 0;
         for (ConfigurationPropertiesValidationResult result : results) {
-            int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
+            int deprecated = countDeprecated(result.getDeprecated());
             deprecatedOptions += deprecated;
 
             boolean ok = result.isSuccess() && !result.hasWarnings();
@@ -420,31 +441,13 @@ public class ValidateMojo extends AbstractMojo {
                     configurationErrors++;
                 }
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("Configuration validation error at: ");
-                sb.append("(").append(result.getFileName());
-                if (result.getLineNumber() > 0) {
-                    sb.append(":").append(result.getLineNumber());
-                }
-                sb.append(")");
-                sb.append("\n\n");
-                String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
-                sb.append(out);
-                sb.append("\n\n");
+                final String validationFailed = buildValidationFailedSummary(result);
 
-                getLog().warn(sb.toString());
+                getLog().warn(validationFailed);
             } else if (showAll) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Configuration validation passed at: ");
-                sb.append(result.getFileName());
-                if (result.getLineNumber() > 0) {
-                    sb.append(":").append(result.getLineNumber());
-                }
-                sb.append("\n");
-                sb.append("\n\t").append(result.getText());
-                sb.append("\n\n");
+                final String validationPassed = buildValidationPassedSummary(result);
 
-                getLog().info(sb.toString());
+                getLog().info(validationPassed);
             }
         }
         String configurationSummary;
@@ -459,15 +462,42 @@ public class ValidateMojo extends AbstractMojo {
                     "Configuration validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
                     ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
         }
-        if (configurationErrors > 0) {
-            getLog().warn(configurationSummary);
-        } else {
-            getLog().info(configurationSummary);
-        }
+        logErrorSummary(configurationErrors, configurationSummary);
 
         if (failOnError && (configurationErrors > 0)) {
             throw new MojoExecutionException(configurationSummary + "\n");
         }
+    }
+
+    private String buildValidationFailedSummary(ConfigurationPropertiesValidationResult result) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Configuration validation error at: ");
+        sb.append("(").append(result.getFileName());
+        if (result.getLineNumber() > 0) {
+            sb.append(":").append(result.getLineNumber());
+        }
+        sb.append(")");
+        sb.append("\n\n");
+        String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
+        sb.append(out);
+        sb.append("\n\n");
+        final String validationFailed = sb.toString();
+        return validationFailed;
+    }
+
+    private static String buildValidationPassedSummary(ConfigurationPropertiesValidationResult result) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Configuration validation passed at: ");
+        sb.append(result.getFileName());
+        if (result.getLineNumber() > 0) {
+            sb.append(":").append(result.getLineNumber());
+        }
+        sb.append("\n");
+        sb.append("\n\t").append(result.getText());
+        sb.append("\n\n");
+
+        final String validationPassed = sb.toString();
+        return validationPassed;
     }
 
     private void parseProperties(CamelCatalog catalog, File file, List<ConfigurationPropertiesValidationResult> results) {
@@ -478,26 +508,34 @@ public class ValidateMojo extends AbstractMojo {
 
                 // validate each line
                 for (String name : prop.stringPropertyNames()) {
-                    String value = prop.getProperty(name);
-                    if (value != null) {
-                        String text = name + "=" + value;
-                        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
-                        // only include lines that camel can accept (as there may be non camel properties too)
-                        if (result.isAccepted()) {
-                            // try to find line number
-                            int lineNumber = findLineNumberInPropertiesFile(file, name);
-                            if (lineNumber != -1) {
-                                result.setLineNumber(lineNumber);
-                            }
-                            results.add(result);
-                            result.setText(text);
-                            result.setFileName(file.getName());
-                        }
-                    }
+                    validateLine(catalog, file, results, name, prop);
                 }
             } catch (Exception e) {
                 getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
             }
+        }
+    }
+
+    private void validateLine(
+            CamelCatalog catalog, File file, List<ConfigurationPropertiesValidationResult> results, String name,
+            Properties prop) {
+        String value = prop.getProperty(name);
+        if (value == null) {
+            return;
+        }
+
+        final String text = name + "=" + value;
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        // only include lines that camel can accept (as there may be non camel properties too)
+        if (result.isAccepted()) {
+            // try to find line number
+            int lineNumber = findLineNumberInPropertiesFile(file, name);
+            if (lineNumber != -1) {
+                result.setLineNumber(lineNumber);
+            }
+            results.add(result);
+            result.setText(text);
+            result.setFileName(file.getName());
         }
     }
 
@@ -561,7 +599,7 @@ public class ValidateMojo extends AbstractMojo {
             getLog().debug("Validating endpoint: " + detail.getEndpointUri());
             EndpointValidationResult result
                     = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
-            int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
+            int deprecated = countDeprecated(result.getDeprecated());
             deprecatedOptions += deprecated;
 
             boolean ok = result.isSuccess() && !result.hasWarnings();
@@ -599,20 +637,12 @@ public class ValidateMojo extends AbstractMojo {
         }
         String endpointSummary
                 = buildEndpointSummaryMessage(endpoints, endpointErrors, unknownComponents, incapableErrors, deprecatedOptions);
-        if (endpointErrors > 0) {
-            getLog().warn(endpointSummary);
-        } else {
-            getLog().info(endpointSummary);
-        }
+        logErrorSummary(endpointErrors, endpointSummary);
 
         // simple
         int simpleErrors = validateSimple(catalog, simpleExpressions);
         String simpleSummary = buildSimpleSummaryMessage(simpleExpressions, simpleErrors);
-        if (simpleErrors > 0) {
-            getLog().warn(simpleSummary);
-        } else {
-            getLog().info(simpleSummary);
-        }
+        logErrorSummary(simpleErrors, simpleSummary);
 
         // endpoint pairs
         int sedaDirectErrors = 0;
@@ -621,18 +651,8 @@ public class ValidateMojo extends AbstractMojo {
             long sedaDirectEndpoints
                     = (long) countEndpointPairs(endpoints, "direct") + (long) countEndpointPairs(endpoints, "seda");
             sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
-            if (sedaDirectErrors == 0) {
-                sedaDirectSummary
-                        = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
-            } else {
-                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)",
-                        sedaDirectEndpoints, sedaDirectErrors);
-            }
-            if (sedaDirectErrors > 0) {
-                getLog().warn(sedaDirectSummary);
-            } else {
-                getLog().info(sedaDirectSummary);
-            }
+            sedaDirectSummary = getSedaDirectSummary(sedaDirectErrors, sedaDirectEndpoints);
+            logErrorSummary(sedaDirectErrors, sedaDirectSummary);
         }
 
         // route id
@@ -648,6 +668,30 @@ public class ValidateMojo extends AbstractMojo {
         }
     }
 
+    private static String getSedaDirectSummary(int sedaDirectErrors, long sedaDirectEndpoints) {
+        String sedaDirectSummary;
+        if (sedaDirectErrors == 0) {
+            sedaDirectSummary
+                    = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
+        } else {
+            sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)",
+                    sedaDirectEndpoints, sedaDirectErrors);
+        }
+        return sedaDirectSummary;
+    }
+
+    private static int countDeprecated(Set<String> result) {
+        return result != null ? result.size() : 0;
+    }
+
+    private void logErrorSummary(int errors, String summary) {
+        if (errors > 0) {
+            getLog().warn(summary);
+        } else {
+            getLog().info(summary);
+        }
+    }
+
     private static boolean hasErrors(int endpointErrors, int simpleErrors, int duplicateRouteIdErrors) {
         return endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0;
     }
@@ -660,11 +704,7 @@ public class ValidateMojo extends AbstractMojo {
             routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)",
                     routeIds.size(), duplicateRouteIdErrors);
         }
-        if (duplicateRouteIdErrors > 0) {
-            getLog().warn(routeIdSummary);
-        } else {
-            getLog().info(routeIdSummary);
-        }
+        logErrorSummary(duplicateRouteIdErrors, routeIdSummary);
         return routeIdSummary;
     }
 
