@@ -55,7 +55,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
     private List<RouteTemplateParameterDefinition> templateParameters;
     @XmlElement(name = "templateBean")
     @Metadata(description = "Adds a local bean the route template uses")
-    private List<RouteTemplateBeanDefinition> templateBeans;
+    private List<BeanFactoryDefinition<RouteTemplateDefinition>> templateBeans;
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
     @XmlTransient
@@ -69,11 +69,11 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         this.templateParameters = templateParameters;
     }
 
-    public List<RouteTemplateBeanDefinition> getTemplateBeans() {
+    public List<BeanFactoryDefinition<RouteTemplateDefinition>> getTemplateBeans() {
         return templateBeans;
     }
 
-    public void setTemplateBeans(List<RouteTemplateBeanDefinition> templateBeans) {
+    public void setTemplateBeans(List<BeanFactoryDefinition<RouteTemplateDefinition>> templateBeans) {
         this.templateBeans = templateBeans;
     }
 
@@ -224,7 +224,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        BeanFactoryDefinition<RouteTemplateDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         templateBeans.add(def);
@@ -242,7 +242,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        BeanFactoryDefinition<RouteTemplateDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         if (bean instanceof RouteTemplateContext.BeanSupplier) {
             def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
@@ -268,7 +268,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        BeanFactoryDefinition<RouteTemplateDefinition> def = new BeanFactoryDefinition();
         def.setName(name);
         def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
         templateBeans.add(def);
@@ -286,7 +286,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        BeanFactoryDefinition<RouteTemplateDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         def.setBeanSupplier(bean);
@@ -305,7 +305,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        BeanFactoryDefinition<RouteTemplateDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setScriptLanguage(language);
         def.setScript(script);
@@ -325,7 +325,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        BeanFactoryDefinition<RouteTemplateDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         def.setScriptLanguage(language);
@@ -340,11 +340,11 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
      * @param  name the name of the bean
      * @return      fluent builder to choose which language and script to use for creating the bean
      */
-    public RouteTemplateBeanDefinition templateBean(String name) {
+    public BeanFactoryDefinition<RouteTemplateDefinition> templateBean(String name) {
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }
-        RouteTemplateBeanDefinition def = new RouteTemplateBeanDefinition();
+        BeanFactoryDefinition<RouteTemplateDefinition> def = new BeanFactoryDefinition<>();
         def.setParent(this);
         def.setName(name);
         templateBeans.add(def);

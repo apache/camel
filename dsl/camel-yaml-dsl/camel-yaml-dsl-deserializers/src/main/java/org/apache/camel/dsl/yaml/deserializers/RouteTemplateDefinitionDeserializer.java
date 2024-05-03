@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
 import org.apache.camel.dsl.yaml.common.exception.InvalidRouteException;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
@@ -46,7 +46,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "parameters",
                                 type = "array:org.apache.camel.model.RouteTemplateParameterDefinition"),
                   @YamlProperty(name = "beans",
-                                type = "array:org.apache.camel.model.RouteTemplateBeanDefinition")
+                                type = "array:org.apache.camel.model.BeanFactoryDefinition")
           })
 public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateDefinition> {
 
@@ -60,6 +60,7 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected boolean setProperty(
             RouteTemplateDefinition target, String propertyKey, String propertyName, Node node) {
 
@@ -92,7 +93,8 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
                 break;
             }
             case "beans": {
-                List<RouteTemplateBeanDefinition> items = asFlatList(node, RouteTemplateBeanDefinition.class);
+                List<BeanFactoryDefinition<RouteTemplateDefinition>> items
+                        = (List) asFlatList(node, BeanFactoryDefinition.class);
                 target.setTemplateBeans(items);
                 break;
             }

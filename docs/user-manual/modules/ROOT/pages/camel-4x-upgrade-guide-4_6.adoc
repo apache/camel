@@ -15,6 +15,12 @@ then the variable is no longer set. Also, if the route is marked for rollback, o
 
 This is the same logic that the routing engine uses, whether to continue routing the `Exchange` or not.
 
+=== camel-core-model
+
+Harmonized model for defining custom beans to be the same for Kamelets and generic beans in XML/YAML DSLs.
+Before there used to be 3 specialized model classes that has been refactored into a single class, offering the same capabilities
+for configuring beans (constructors, properties, builder classes, init/destroy methods etc.)
+
 === XML DSL
 
 When using XML DSL to define properties on `<bean>` then `<property>` must now be declared inside `<properties>`.

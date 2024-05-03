@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
@@ -38,7 +39,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.DumpRoutesStrategy;
@@ -164,20 +164,20 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final Set<String> files = new HashSet<>();
 
         if (include.contains("*") || include.contains("all") || include.contains("beans")) {
-            int size = model.getRegistryBeans().size();
+            int size = model.getCustomBeans().size();
             if (size > 0) {
-                Map<Resource, List<RegistryBeanDefinition>> groups = new LinkedHashMap<>();
-                for (RegistryBeanDefinition bean : model.getRegistryBeans()) {
+                Map<Resource, List<BeanFactoryDefinition>> groups = new LinkedHashMap<>();
+                for (BeanFactoryDefinition bean : model.getCustomBeans()) {
                     Resource res = bean.getResource();
                     if (res == null) {
                         res = dummy;
                     }
-                    List<RegistryBeanDefinition> beans = groups.computeIfAbsent(res, resource -> new ArrayList<>());
+                    List<BeanFactoryDefinition> beans = groups.computeIfAbsent(res, resource -> new ArrayList<>());
                     beans.add(bean);
                 }
                 StringBuilder sbLog = new StringBuilder();
-                for (Map.Entry<Resource, List<RegistryBeanDefinition>> entry : groups.entrySet()) {
-                    List<RegistryBeanDefinition> beans = entry.getValue();
+                for (Map.Entry<Resource, List<BeanFactoryDefinition>> entry : groups.entrySet()) {
+                    List<BeanFactoryDefinition> beans = entry.getValue();
                     Resource resource = entry.getKey();
 
                     StringBuilder sbLocal = new StringBuilder();
@@ -349,20 +349,20 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final Set<String> files = new HashSet<>();
 
         if (include.contains("*") || include.contains("all") || include.contains("beans")) {
-            int size = model.getRegistryBeans().size();
+            int size = model.getCustomBeans().size();
             if (size > 0) {
-                Map<Resource, List<RegistryBeanDefinition>> groups = new LinkedHashMap<>();
-                for (RegistryBeanDefinition bean : model.getRegistryBeans()) {
+                Map<Resource, List<BeanFactoryDefinition>> groups = new LinkedHashMap<>();
+                for (BeanFactoryDefinition bean : model.getCustomBeans()) {
                     Resource res = bean.getResource();
                     if (res == null) {
                         res = dummy;
                     }
-                    List<RegistryBeanDefinition> beans = groups.computeIfAbsent(res, resource -> new ArrayList<>());
+                    List<BeanFactoryDefinition> beans = groups.computeIfAbsent(res, resource -> new ArrayList<>());
                     beans.add(bean);
                 }
                 StringBuilder sbLog = new StringBuilder();
-                for (Map.Entry<Resource, List<RegistryBeanDefinition>> entry : groups.entrySet()) {
-                    List<RegistryBeanDefinition> beans = entry.getValue();
+                for (Map.Entry<Resource, List<BeanFactoryDefinition>> entry : groups.entrySet()) {
+                    List<BeanFactoryDefinition> beans = entry.getValue();
                     Resource resource = entry.getKey();
 
                     StringBuilder sbLocal = new StringBuilder();

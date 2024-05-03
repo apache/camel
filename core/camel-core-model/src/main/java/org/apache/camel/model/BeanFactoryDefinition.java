@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.RouteTemplateContext;
@@ -34,15 +35,12 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 
 /**
- * Base class for nodes that define a bean factory.
- *
- * @param <T> the type of the bean factory.
- * @param <P> the type of the parent node.
+ * Define custom beans that can be used in your Camel routes and in general.
  */
 @Metadata(label = "configuration")
+@XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class BeanFactoryDefinition<
-        T extends BeanFactoryDefinition<T, P>, P> implements ResourceAware {
+public class BeanFactoryDefinition<P> implements ResourceAware {
 
     @XmlTransient
     private Resource resource;
@@ -84,7 +82,7 @@ public abstract class BeanFactoryDefinition<
     @Metadata(label = "advanced")
     private String script;
 
-    void setParent(P parent) {
+    public void setParent(P parent) {
         this.parent = parent;
     }
 
@@ -258,8 +256,7 @@ public abstract class BeanFactoryDefinition<
      *
      * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
      */
-    @SuppressWarnings("unchecked")
-    public T type(String prefix, Class<?> type) {
+    public BeanFactoryDefinition<P> type(String prefix, Class<?> type) {
         if (prefix.startsWith("#type") || prefix.startsWith("#class")) {
             if (!prefix.endsWith(":")) {
                 prefix = prefix + ":";
@@ -267,7 +264,7 @@ public abstract class BeanFactoryDefinition<
             setType(prefix + type.getName());
         }
         setBeanType(type);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -275,14 +272,13 @@ public abstract class BeanFactoryDefinition<
      *
      * #class or #type then the bean is created via the fully qualified classname, such as #class:com.foo.MyBean
      */
-    @SuppressWarnings("unchecked")
-    public T type(String type) {
+    public BeanFactoryDefinition<P> type(String type) {
         if (!type.startsWith("#")) {
             // use #class as default
             type = "#class:" + type;
         }
         setType(type);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -290,10 +286,9 @@ public abstract class BeanFactoryDefinition<
      *
      * @param type the type of the class to create as bean
      */
-    @SuppressWarnings("unchecked")
-    public T typeClass(Class<?> type) {
+    public BeanFactoryDefinition<P> typeClass(Class<?> type) {
         setType("#class:" + type.getName());
-        return (T) this;
+        return this;
     }
 
     /**
@@ -301,10 +296,9 @@ public abstract class BeanFactoryDefinition<
      *
      * @param type the type of the class to create as bean
      */
-    @SuppressWarnings("unchecked")
-    public T typeClass(String type) {
+    public BeanFactoryDefinition<P> typeClass(String type) {
         setType("#class:" + type);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -312,10 +306,9 @@ public abstract class BeanFactoryDefinition<
      *
      * @param type the fully qualified type of the returned bean
      */
-    @SuppressWarnings("unchecked")
-    public T beanType(Class<?> type) {
+    public BeanFactoryDefinition<P> beanType(Class<?> type) {
         setBeanType(type);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -348,52 +341,52 @@ public abstract class BeanFactoryDefinition<
      * The name of the custom initialization method to invoke after setting bean properties. The method must have no
      * arguments, but may throw any exception.
      */
-    public T initMethod(String initMethod) {
+    public BeanFactoryDefinition<P> initMethod(String initMethod) {
         setInitMethod(initMethod);
-        return (T) this;
+        return this;
     }
 
     /**
      * The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method
      * must have no arguments, but may throw any exception.
      */
-    public T destroyMethod(String destroyMethod) {
+    public BeanFactoryDefinition<P> destroyMethod(String destroyMethod) {
         setDestroyMethod(destroyMethod);
-        return (T) this;
+        return this;
     }
 
     /**
      * Name of method to invoke when creating the bean via a factory bean.
      */
-    public T factoryMethod(String factoryMethod) {
+    public BeanFactoryDefinition<P> factoryMethod(String factoryMethod) {
         setFactoryMethod(factoryMethod);
-        return (T) this;
+        return this;
     }
 
     /**
      * Name of factory bean (bean id) to use for creating the bean.
      */
-    public T factoryBean(String factoryBean) {
+    public BeanFactoryDefinition<P> factoryBean(String factoryBean) {
         setFactoryBean(factoryBean);
-        return (T) this;
+        return this;
     }
 
     /**
      * Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use
      * the properties values to configure the bean.
      */
-    public T builderClass(String builderClass) {
+    public BeanFactoryDefinition<P> builderClass(String builderClass) {
         setBuilderClass(builderClass);
-        return (T) this;
+        return this;
     }
 
     /**
      * Name of method when using builder class. This method is invoked after configuring to create the actual bean. This
      * method is often named build (used by default).
      */
-    public T builderMethod(String builderMethod) {
+    public BeanFactoryDefinition<P> builderMethod(String builderMethod) {
         setBuilderMethod(builderMethod);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -486,23 +479,21 @@ public abstract class BeanFactoryDefinition<
      * @param index the constructor index (starting from zero)
      * @param value the constructor value
      */
-    @SuppressWarnings("unchecked")
-    public T constructor(Integer index, String value) {
+    public BeanFactoryDefinition<P> constructor(Integer index, String value) {
         if (constructors == null) {
             constructors = new LinkedHashMap<>();
         }
         constructors.put(index, value);
-        return (T) this;
+        return this;
     }
 
     /**
      * Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor
      * argument list, starting from zero.
      */
-    @SuppressWarnings("unchecked")
-    public T constructors(Map<Integer, Object> constructors) {
+    public BeanFactoryDefinition<P> constructors(Map<Integer, Object> constructors) {
         this.constructors = constructors;
-        return (T) this;
+        return this;
     }
 
     /**
@@ -511,22 +502,20 @@ public abstract class BeanFactoryDefinition<
      * @param key   the property name
      * @param value the property value
      */
-    @SuppressWarnings("unchecked")
-    public T property(String key, String value) {
+    public BeanFactoryDefinition<P> property(String key, String value) {
         if (properties == null) {
             properties = new LinkedHashMap<>();
         }
         properties.put(key, value);
-        return (T) this;
+        return this;
     }
 
     /**
      * Sets properties to set on the created local bean
      */
-    @SuppressWarnings("unchecked")
-    public T properties(Map<String, Object> properties) {
+    public BeanFactoryDefinition<P> properties(Map<String, Object> properties) {
         this.properties = properties;
-        return (T) this;
+        return this;
     }
 
     public P end() {

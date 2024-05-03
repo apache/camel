@@ -61,7 +61,7 @@ public interface ModelToYAMLDumper {
      * Dumps the beans as YAML
      *
      * @param  context   the CamelContext
-     * @param  beans     list of beans (RegistryBeanDefinition)
+     * @param  beans     list of beans (BeanFactoryDefinition)
      * @return           the output in YAML (is formatted)
      * @throws Exception is throw if error marshalling to YAML
      */

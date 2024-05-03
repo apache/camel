@@ -21,8 +21,8 @@ import org.apache.camel.kotlin.model.InterceptFromDsl
 import org.apache.camel.kotlin.model.InterceptSendToEndpointDsl
 import org.apache.camel.kotlin.model.OnExceptionDsl
 import org.apache.camel.kotlin.model.rest.RestDsl
+import org.apache.camel.model.BeanFactoryDefinition
 import org.apache.camel.model.ModelCamelContext
-import org.apache.camel.model.app.RegistryBeanDefinition
 import org.apache.camel.model.rest.RestConfigurationDefinition
 import org.apache.camel.support.PropertyBindingSupport
 import kotlin.reflect.KClass
@@ -57,9 +57,9 @@ class RootDsl(
         ctx.registry.bind(name, function())
     }
 
-    fun bean(i: RegistryBeanDsl.() -> Unit) {
-        val def = RegistryBeanDefinition()
-        RegistryBeanDsl(def).apply(i)
+    fun bean(i: BeanFactoryDsl.() -> Unit) {
+        val def = BeanFactoryDefinition<Any>()
+        BeanFactoryDsl(def).apply(i)
         val type = ctx.classResolver.resolveMandatoryClass(def.type)
         val instance = ctx.injector.newInstance(type)
         if (!def.properties.isNullOrEmpty()) {

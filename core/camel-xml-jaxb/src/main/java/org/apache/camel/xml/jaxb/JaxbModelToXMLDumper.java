@@ -45,11 +45,11 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
@@ -227,9 +227,9 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         StringWriter buffer = new StringWriter();
         BeanModelWriter writer = new BeanModelWriter(buffer);
 
-        List<RegistryBeanDefinition> list = new ArrayList<>();
+        List<BeanFactoryDefinition<?>> list = new ArrayList<>();
         for (Object bean : beans) {
-            if (bean instanceof RegistryBeanDefinition rb) {
+            if (bean instanceof BeanFactoryDefinition<?> rb) {
                 list.add(rb);
             }
         }
@@ -295,16 +295,16 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // noop
         }
 
-        public void writeBeans(List<RegistryBeanDefinition> beans) {
+        public void writeBeans(List<BeanFactoryDefinition<?>> beans) {
             if (beans.isEmpty()) {
                 return;
             }
-            for (RegistryBeanDefinition b : beans) {
-                doWriteRegistryBeanDefinition(b);
+            for (BeanFactoryDefinition<?> b : beans) {
+                doWriteBeanFactoryDefinition(b);
             }
         }
 
-        private void doWriteRegistryBeanDefinition(RegistryBeanDefinition b) {
+        private void doWriteBeanFactoryDefinition(BeanFactoryDefinition<?> b) {
             String type = b.getType();
             if (type.startsWith("#class:")) {
                 type = type.substring(7);
@@ -340,24 +340,20 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             buffer.write(">\n");
             if (b.getConstructors() != null && !b.getConstructors().isEmpty()) {
                 buffer.write(String.format("        <constructors>%n"));
-                for (Map.Entry<Integer, Object> entry : b.getConstructors().entrySet()) {
-                    Integer idx = entry.getKey();
-                    Object value = entry.getValue();
+                b.getConstructors().forEach((idx, value) -> {
                     if (idx != null) {
                         buffer.write(String.format("            <constructor index=\"%d\" value=\"%s\"/>%n", idx, value));
                     } else {
                         buffer.write(String.format("            <constructor value=\"%s\"/>%n", value));
                     }
-                }
+                });
                 buffer.write(String.format("        </constructors>%n"));
             }
             if (b.getProperties() != null && !b.getProperties().isEmpty()) {
                 buffer.write(String.format("        <properties>%n"));
-                for (Map.Entry<String, Object> entry : b.getProperties().entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
+                b.getProperties().forEach((key, value) -> {
                     buffer.write(String.format("            <property key=\"%s\" value=\"%s\"/>%n", key, value));
-                }
+                });
                 buffer.write(String.format("        </properties>%n"));
             }
             buffer.write(String.format("    </bean>%n"));

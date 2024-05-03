@@ -61,7 +61,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
     private List<TemplatedRouteParameterDefinition> parameters;
     @XmlElement(name = "bean")
     @Metadata(description = "Adds a local bean as input of the template to build the route")
-    private List<TemplatedRouteBeanDefinition> beans;
+    private List<BeanFactoryDefinition<TemplatedRouteDefinition>> beans;
 
     public String getRouteTemplateRef() {
         return routeTemplateRef;
@@ -79,11 +79,11 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         this.parameters = parameters;
     }
 
-    public List<TemplatedRouteBeanDefinition> getBeans() {
+    public List<BeanFactoryDefinition<TemplatedRouteDefinition>> getBeans() {
         return beans;
     }
 
-    public void setBeans(List<TemplatedRouteBeanDefinition> beans) {
+    public void setBeans(List<BeanFactoryDefinition<TemplatedRouteDefinition>> beans) {
         this.beans = beans;
     }
 
@@ -157,7 +157,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         beans.add(def);
@@ -175,7 +175,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         if (bean instanceof RouteTemplateContext.BeanSupplier) {
             def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
@@ -201,7 +201,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
         beans.add(def);
@@ -219,7 +219,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         def.setBeanSupplier(bean);
@@ -238,7 +238,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setType(language);
         def.setScript(script);
@@ -258,7 +258,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanType(type);
         def.setType(language);
@@ -273,11 +273,11 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
      * @param  name the name of the bean
      * @return      fluent builder to choose which language and script to use for creating the bean
      */
-    public TemplatedRouteBeanDefinition bean(String name) {
+    public BeanFactoryDefinition<TemplatedRouteDefinition> bean(String name) {
         if (beans == null) {
             beans = new ArrayList<>();
         }
-        TemplatedRouteBeanDefinition def = new TemplatedRouteBeanDefinition();
+        BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setParent(this);
         def.setName(name);
         beans.add(def);

@@ -59,7 +59,7 @@ public interface ModelToXMLDumper {
      * Dumps the beans as XML
      *
      * @param  context   the CamelContext
-     * @param  beans     list of beans (RegistryBeanDefinition)
+     * @param  beans     list of beans (BeanFactoryDefinition)
      * @return           the output in XML (is formatted)
      * @throws Exception is throw if error marshalling to XML
      */

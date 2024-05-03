@@ -27,7 +27,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.app.RegistryBeanDefinition;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ScriptingLanguage;
@@ -55,7 +54,7 @@ public final class BeanModelHelper {
      * @return           the created bean instance
      * @throws Exception is thrown if error creating the bean
      */
-    public static Object newInstance(RegistryBeanDefinition def, CamelContext context) throws Exception {
+    public static Object newInstance(BeanFactoryDefinition def, CamelContext context) throws Exception {
         Object target;
 
         String type = def.getType();
@@ -152,7 +151,7 @@ public final class BeanModelHelper {
      * @param  routeTemplateContext the context into which the bean factory should be bound.
      * @throws Exception            if an error occurs while trying to bind the bean factory
      */
-    public static void bind(BeanFactoryDefinition<?, ?> def, RouteTemplateContext routeTemplateContext)
+    public static void bind(BeanFactoryDefinition<?> def, RouteTemplateContext routeTemplateContext)
             throws Exception {
 
         final Map<String, Object> props = new HashMap<>();

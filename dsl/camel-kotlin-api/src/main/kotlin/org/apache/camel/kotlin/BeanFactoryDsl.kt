@@ -14,21 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.app;
+package org.apache.camel.kotlin
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import org.apache.camel.model.BeanFactoryDefinition
 
-import org.apache.camel.model.BeanFactoryDefinition;
-import org.apache.camel.spi.Metadata;
+@CamelDslMarker
+class BeanFactoryDsl(
+    val def: BeanFactoryDefinition<Any>
+) {
 
-/**
- * Define custom beans that can be used in your Camel routes and in general.
- */
-@Metadata(label = "configuration")
-@XmlType
-@XmlAccessorType(XmlAccessType.FIELD)
-public class RegistryBeanDefinition extends BeanFactoryDefinition<RegistryBeanDefinition, RegistryBeanDefinition> {
+    init {
+        def.properties = mutableMapOf()
+    }
 
+    fun name(name: String) {
+        def.name = name;
+    }
+
+    fun type(type: String) {
+        def.type = type
+    }
+
+    fun property(property: String, value: Any) {
+        def.properties[property] = value
+    }
 }
