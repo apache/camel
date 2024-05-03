@@ -472,11 +472,6 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             return;
         }
 
-        // end block to make doTry .. doCatch .. doFinally aligned
-        if ("doCatch".equals(node.getName()) || "doFinally".equals(node.getName())) {
-            level.decrementAndGet();
-        }
-
         RouteCoverageNode data = new RouteCoverageNode();
         data.setName(node.getName());
         data.setLineNumber(Integer.parseInt(node.getLineNumber()));
@@ -507,7 +502,11 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     }
 
     private static String padString(int level) {
-        return "  ".repeat(level);
+        if (level > 0) {
+            return "  ".repeat(level);
+        } else {
+            return "";
+        }
     }
 
     private boolean matchFile(File file) {
