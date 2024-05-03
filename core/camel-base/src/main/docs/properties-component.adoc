@@ -46,7 +46,7 @@ For example:
 
 [source]
 ----
-location=file:${karaf.home}/etc/foo.properties
+location=file:{{sys:karaf.home}}/etc/foo.properties
 ----
 
 In the location above we defined a location using the file scheme using the JVM system property with key `karaf.home`.
@@ -57,7 +57,7 @@ You can also prefix with `env.`, however this style is not recommended because a
 
 [source]
 ----
-location=file:${env:APP_HOME}/etc/foo.properties
+location=file:{{env:APP_HOME}}/etc/foo.properties
 ----
 
 Where `APP_HOME` is an OS environment.
@@ -72,7 +72,7 @@ You can have multiple placeholders in the same location, such as:
 
 [source]
 ----
-location=file:${env:APP_HOME}/etc/${prop.name}.properties
+location=file:{{env:APP_HOME}}/etc/{{prop.name}}.properties
 ----
 
 === Defining location of properties files in Spring XML
@@ -113,7 +113,7 @@ For fine grained configuration of the location, then this can be done as follows
       optional = "false"/>
     <propertiesLocation
       resolver = "file"
-      path     = "${karaf.home}/etc/my-override.properties"
+      path     = "{{sys:karaf.home}}/etc/my-override.properties"
       optional = "true"/>
    </propertyPlaceholder>
 </camelContext>
