@@ -800,7 +800,8 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("beanType", def.getBeanType());
         endElement(name);
     }
-    protected void doWriteBeanFactoryDefinitionAttributes(BeanFactoryDefinition<?, ?> def) throws IOException {
+    protected void doWriteBeanFactoryDefinition(String name, BeanFactoryDefinition<?> def) throws IOException {
+        startElement(name);
         doWriteAttribute("factoryMethod", def.getFactoryMethod());
         doWriteAttribute("scriptLanguage", def.getScriptLanguage());
         doWriteAttribute("builderClass", def.getBuilderClass());
@@ -810,16 +811,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("name", def.getName());
         doWriteAttribute("builderMethod", def.getBuilderMethod());
         doWriteAttribute("destroyMethod", def.getDestroyMethod());
-    }
-    protected void doWriteBeanFactoryDefinitionElements(BeanFactoryDefinition<?, ?> def) throws IOException {
         doWriteElement("script", def.getScript(), this::doWriteString);
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
-    }
-    protected void doWriteBeanFactoryDefinition(String name, BeanFactoryDefinition<?, ?> def) throws IOException {
-        startElement(name);
-        doWriteBeanFactoryDefinitionAttributes(def);
-        doWriteBeanFactoryDefinitionElements(def);
         endElement(name);
     }
     protected void doWriteCatchDefinition(String name, CatchDefinition def) throws IOException {
@@ -1570,7 +1564,7 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteList(null, "templateParameter", def.getTemplateParameters(), this::doWriteRouteTemplateParameterDefinition);
         doWriteElement("route", def.getRoute(), this::doWriteRouteDefinition);
-        doWriteList(null, "templateBean", def.getTemplateBeans(), this::doWriteRegistryBeanDefinition);
+        doWriteList(null, "templateBean", def.getTemplateBeans(), this::doWriteBeanFactoryDefinition);
         endElement(name);
     }
     protected void doWriteRouteTemplateParameterDefinition(String name, RouteTemplateParameterDefinition def) throws IOException {
@@ -1729,7 +1723,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("routeId", def.getRouteId());
         doWriteAttribute("routeTemplateRef", def.getRouteTemplateRef());
         doWriteAttribute("prefixId", def.getPrefixId());
-        doWriteList(null, "bean", def.getBeans(), this::doWriteRegistryBeanDefinition);
+        doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
         doWriteList(null, "parameter", def.getParameters(), this::doWriteTemplatedRouteParameterDefinition);
         endElement(name);
     }
@@ -1952,7 +1946,7 @@ public class ModelWriter extends BaseWriter {
         domElements(def.getSpringBeans());
         domElements(def.getBlueprintBeans());
         doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
-        doWriteList(null, "bean", def.getBeans(), this::doWriteRegistryBeanDefinition);
+        doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
         doWriteList(null, "restConfiguration", def.getRestConfigurations(), this::doWriteRestConfigurationDefinition);
         doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
         doWriteList(null, "routeConfiguration", def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinition);
@@ -1967,12 +1961,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteComponentScanDefinition(String name, ComponentScanDefinition def) throws IOException {
         startElement(name);
         doWriteAttribute("base-package", def.getBasePackage());
-        endElement(name);
-    }
-    protected void doWriteRegistryBeanDefinition(String name, RegistryBeanDefinition<?> def) throws IOException {
-        startElement(name);
-        doWriteBeanFactoryDefinitionAttributes(def);
-        doWriteBeanFactoryDefinitionElements(def);
         endElement(name);
     }
     protected void doWriteBlacklistServiceCallServiceFilterConfiguration(String name, BlacklistServiceCallServiceFilterConfiguration def) throws IOException {
