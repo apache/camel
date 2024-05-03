@@ -36,7 +36,7 @@
 ** xref:intercept.adoc[Intercept]
 ** xref:kamelet-eip.adoc[Kamelet]
 ** xref:loadBalance-eip.adoc[Load Balance]
-** xref:log-eip.adoc[Log]
+** xref:log-eip.adoc[Logger]
 ** xref:loop-eip.adoc[Loop]
 ** xref:marshal-eip.adoc[Marshal EIP]
 ** xref:message.adoc[Message]

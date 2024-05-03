@@ -2591,8 +2591,8 @@
         }
       },
       "org.apache.camel.model.LogDefinition" : {
-        "title" : "Log",
-        "description" : "Logs the defined message to the logger",
+        "title" : "Logger",
+        "description" : "Used for printing custom messages to the logger.",
         "oneOf" : [ {
           "type" : "string"
         }, {

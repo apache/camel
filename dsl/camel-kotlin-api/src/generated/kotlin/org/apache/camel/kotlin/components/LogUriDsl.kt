@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Log messages to the underlying logging mechanism.
+ * Prints data form the routed message (such as body and headers) to the logger.
  */
 public fun UriDsl.log(i: LogUriDsl.() -> Unit) {
   LogUriDsl(this).apply(i)

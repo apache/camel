@@ -40,11 +40,9 @@ import org.slf4j.Logger;
 import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 /**
- * Log messages to the underlying logging mechanism.
- *
- * Camel uses sfl4j which allows you to configure logging to the actual logging system.
+ * Prints data form the routed message (such as body and headers) to the logger.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log",
+@UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log Data",
              remote = false, syntax = "log:loggerName", producerOnly = true, category = { Category.CORE, Category.MONITORING })
 public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
 

@@ -217,7 +217,7 @@
 ** xref:language-component.adoc[Language]
 ** xref:ldap-component.adoc[LDAP]
 ** xref:ldif-component.adoc[LDIF]
-** xref:log-component.adoc[Log]
+** xref:log-component.adoc[Log Data]
 ** xref:lucene-component.adoc[Lucene]
 ** xref:lumberjack-component.adoc[Lumberjack]
 ** xref:mail-component.adoc[Mail]

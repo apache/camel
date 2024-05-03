@@ -2847,8 +2847,9 @@ public interface ComponentsBuilderFactory {
         return LdifComponentBuilderFactory.ldif();
     }
     /**
-     * Log (camel-log)
-     * Log messages to the underlying logging mechanism.
+     * Log Data (camel-log)
+     * Prints data form the routed message (such as body and headers) to the
+     * logger.
      * 
      * Category: core,monitoring
      * Since: 1.1

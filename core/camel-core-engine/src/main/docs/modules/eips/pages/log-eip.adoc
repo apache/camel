@@ -1,7 +1,7 @@
-= Log EIP
-:doctitle: Log
+= Logger EIP
+:doctitle: Logger
 :shortname: log
-:description: Logs the defined message to the logger
+:description: Used for printing custom messages to the logger.
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

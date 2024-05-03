@@ -9482,8 +9482,9 @@ public class StaticEndpointBuilders {
         return LdifEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Log (camel-log)
-     * Log messages to the underlying logging mechanism.
+     * Log Data (camel-log)
+     * Prints data form the routed message (such as body and headers) to the
+     * logger.
      * 
      * Category: core,monitoring
      * Since: 1.1
@@ -9501,8 +9502,9 @@ public class StaticEndpointBuilders {
         return log("log", path);
     }
     /**
-     * Log (camel-log)
-     * Log messages to the underlying logging mechanism.
+     * Log Data (camel-log)
+     * Prints data form the routed message (such as body and headers) to the
+     * logger.
      * 
      * Category: core,monitoring
      * Since: 1.1

@@ -2,8 +2,8 @@
   "component": {
     "kind": "component",
     "name": "log",
-    "title": "Log",
-    "description": "Log messages to the underlying logging mechanism.",
+    "title": "Log Data",
+    "description": "Prints data form the routed message (such as body and headers) to the logger.",
     "deprecated": false,
     "firstVersion": "1.1.0",
     "label": "core,monitoring",

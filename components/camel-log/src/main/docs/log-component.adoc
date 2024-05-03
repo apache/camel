@@ -1,8 +1,8 @@
-= Log Component
-:doctitle: Log
+= Log Data Component
+:doctitle: Log Data
 :shortname: log
 :artifactid: camel-log
-:description: Log messages to the underlying logging mechanism.
+:description: Prints data form the routed message (such as body and headers) to the logger.
 :since: 1.1
 :supportlevel: Stable
 :tabs-sync-option:

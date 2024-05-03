@@ -868,7 +868,7 @@ Deprecated: null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Logs the defined message to the logger
+Used for printing custom messages to the logger.
 ]]>
       </xs:documentation>
     </xs:annotation>
