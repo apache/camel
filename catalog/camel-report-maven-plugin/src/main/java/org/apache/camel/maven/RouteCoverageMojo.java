@@ -153,6 +153,17 @@ public class RouteCoverageMojo extends AbstractMojo {
     @Parameter(property = "camel.generateHtmlReport", defaultValue = "false")
     private boolean generateHtmlReport;
 
+    private File createJacocoDir() {
+        final File file = new File(project.getBasedir() + "/target/site/jacoco");
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                getLog().warn("Could not create jacoco directory: " + file.getAbsolutePath());
+            }
+        }
+
+        return file;
+    }
+
     @Override
     public void execute() throws MojoExecutionException {
         if (skip) {
@@ -175,10 +186,8 @@ public class RouteCoverageMojo extends AbstractMojo {
         if (generateJacocoXmlReport) {
             try {
                 // creates the folder for the xml.file
-                file = new File(project.getBasedir() + "/target/site/jacoco");
-                if (!file.exists()) {
-                    file.mkdirs();
-                }
+                file = createJacocoDir();
+
                 document = createDocument();
 
                 // report tag
@@ -229,9 +238,19 @@ public class RouteCoverageMojo extends AbstractMojo {
         getLog().info("Overall coverage summary:\n\n" + out);
         getLog().info("");
 
-        if (failOnError && notCovered.get() > 0) {
+        evalFailingConditions(notCovered, overallCoverageAboveThreshold);
+    }
+
+    private void evalFailingConditions(AtomicInteger notCovered, AtomicBoolean overallCoverageAboveThreshold)
+            throws MojoExecutionException {
+        if (!failOnError) {
+            return;
+        }
+
+        if (notCovered.get() > 0) {
             throw new MojoExecutionException("There are " + notCovered.get() + " route(s) not fully covered!");
-        } else if (failOnError && !overallCoverageAboveThreshold.get()) {
+        }
+        if (!overallCoverageAboveThreshold.get()) {
             throw new MojoExecutionException("The overall coverage is below " + overallCoverageThreshold + "%!");
         }
     }
