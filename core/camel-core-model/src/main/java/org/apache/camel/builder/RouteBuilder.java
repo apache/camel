@@ -930,7 +930,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         for (BeanFactoryDefinition def : beans) {
             // add to model
-            model.addRegistryBean(def);
+            model.addCustomBean(def);
         }
     }
 

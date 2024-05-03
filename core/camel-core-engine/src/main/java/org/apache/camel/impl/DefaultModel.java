@@ -81,7 +81,7 @@ public class DefaultModel implements Model {
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
     // XML and YAML DSL allows to declare beans in the DSL
-    private final List<BeanFactoryDefinition> beans = new ArrayList<>();
+    private final List<BeanFactoryDefinition<?>> beans = new ArrayList<>();
     private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
     private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
     private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
@@ -784,14 +784,14 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void addRegistryBean(BeanFactoryDefinition bean) {
+    public void addCustomBean(BeanFactoryDefinition<?> bean) {
         // remove exiting bean with same name to update
         beans.removeIf(b -> bean.getName().equals(b.getName()));
         beans.add(bean);
     }
 
     @Override
-    public List<BeanFactoryDefinition> getRegistryBeans() {
+    public List<BeanFactoryDefinition<?>> getCustomBeans() {
         return beans;
     }
 

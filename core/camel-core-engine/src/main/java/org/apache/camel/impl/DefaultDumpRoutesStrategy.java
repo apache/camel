@@ -164,10 +164,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final Set<String> files = new HashSet<>();
 
         if (include.contains("*") || include.contains("all") || include.contains("beans")) {
-            int size = model.getRegistryBeans().size();
+            int size = model.getCustomBeans().size();
             if (size > 0) {
                 Map<Resource, List<BeanFactoryDefinition>> groups = new LinkedHashMap<>();
-                for (BeanFactoryDefinition bean : model.getRegistryBeans()) {
+                for (BeanFactoryDefinition bean : model.getCustomBeans()) {
                     Resource res = bean.getResource();
                     if (res == null) {
                         res = dummy;
@@ -349,10 +349,10 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         final Set<String> files = new HashSet<>();
 
         if (include.contains("*") || include.contains("all") || include.contains("beans")) {
-            int size = model.getRegistryBeans().size();
+            int size = model.getCustomBeans().size();
             if (size > 0) {
                 Map<Resource, List<BeanFactoryDefinition>> groups = new LinkedHashMap<>();
-                for (BeanFactoryDefinition bean : model.getRegistryBeans()) {
+                for (BeanFactoryDefinition bean : model.getCustomBeans()) {
                     Resource res = bean.getResource();
                     if (res == null) {
                         res = dummy;

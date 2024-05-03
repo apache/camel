@@ -492,11 +492,11 @@ public interface Model {
     /**
      * Adds the custom bean
      */
-    void addRegistryBean(BeanFactoryDefinition bean);
+    void addCustomBean(BeanFactoryDefinition<?> bean);
 
     /**
      * Gets the custom beans
      */
-    List<BeanFactoryDefinition> getRegistryBeans();
+    List<BeanFactoryDefinition<?>> getCustomBeans();
 
 }

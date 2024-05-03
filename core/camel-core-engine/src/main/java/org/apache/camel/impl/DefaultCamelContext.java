@@ -523,13 +523,13 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    public void addRegistryBean(BeanFactoryDefinition bean) {
-        model.addRegistryBean(bean);
+    public void addCustomBean(BeanFactoryDefinition<?> bean) {
+        model.addCustomBean(bean);
     }
 
     @Override
-    public List<BeanFactoryDefinition> getRegistryBeans() {
-        return model.getRegistryBeans();
+    public List<BeanFactoryDefinition<?>> getCustomBeans() {
+        return model.getCustomBeans();
     }
 
     @Override
