@@ -169,9 +169,9 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         StringWriter buffer = new StringWriter();
         BeanModelWriter writer = new BeanModelWriter(buffer);
 
-        List<BeanFactoryDefinition> list = new ArrayList<>();
+        List<BeanFactoryDefinition<?>> list = new ArrayList<>();
         for (Object bean : beans) {
-            if (bean instanceof BeanFactoryDefinition rb) {
+            if (bean instanceof BeanFactoryDefinition<?> rb) {
                 list.add(rb);
             }
         }
@@ -298,17 +298,17 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             // noop
         }
 
-        public void writeBeans(List<BeanFactoryDefinition> beans) {
+        public void writeBeans(List<BeanFactoryDefinition<?>> beans) {
             if (beans.isEmpty()) {
                 return;
             }
             buffer.write("- beans:\n");
-            for (BeanFactoryDefinition b : beans) {
-                doWriteRegistryBeanDefinition(b);
+            for (BeanFactoryDefinition<?> b : beans) {
+                doWriteBeanFactoryDefinition(b);
             }
         }
 
-        private void doWriteRegistryBeanDefinition(BeanFactoryDefinition b) {
+        private void doWriteBeanFactoryDefinition(BeanFactoryDefinition<?> b) {
             String type = b.getType();
             if (type.startsWith("#class:")) {
                 type = type.substring(7);
