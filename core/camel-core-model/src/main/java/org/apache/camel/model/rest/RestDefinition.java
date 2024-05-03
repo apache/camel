@@ -827,23 +827,17 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         //
         // The VerbDefinition::setType and VerbDefinition::setOutType require
         // the class to be expressed as canonical with an optional [] to mark
-        // the type is an array but this i wrong as the canonical name can not
+        // the type is an array but this is wrong as the canonical name can not
         // be dynamically be loaded by the classloader thus this workaround
         // that for nested classes generates a class name that does not respect
         // any JLS convention.
-        //
-        // TODO: this probably need to be revisited
 
         String type;
 
-        if (!classType.isPrimitive()) {
-            if (classType.isArray()) {
-                type = StringHelper.between(classType.getName(), "[L", ";") + "[]";
-            } else {
-                type = classType.getName();
-            }
+        if (classType.isArray()) {
+            type = classType.getComponentType().getName() + "[]";
         } else {
-            type = classType.getCanonicalName();
+            type = classType.getName();
         }
 
         return type;
