@@ -30,11 +30,11 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.model.BeanFactoryDefinition;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.ObjectHelper;
@@ -235,7 +235,7 @@ public class SpringXmlBeansHandler {
             bean.setType(def.getBeanClassName());
             bean.setName(name);
             LOG.debug("Adding Spring <beans> XML bean: {} to DSL model", name);
-            model.addRegistryBean(bean);
+            model.addCustomBean(bean);
 
             // factory bean/method
             if (def.getFactoryBeanName() != null) {

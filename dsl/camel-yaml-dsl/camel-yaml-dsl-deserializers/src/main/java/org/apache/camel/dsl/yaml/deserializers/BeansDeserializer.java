@@ -167,7 +167,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
         // register bean in model
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-        model.addRegistryBean(def);
+        model.addCustomBean(def);
     }
 
     protected void destroyBean(String name, boolean remove) {

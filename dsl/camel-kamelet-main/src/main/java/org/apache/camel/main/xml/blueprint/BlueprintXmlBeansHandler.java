@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.model.BeanFactoryDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,6 +39,7 @@ import org.apache.camel.TypeConverterExists;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.main.util.XmlHelper;
+import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Resource;
@@ -513,7 +513,7 @@ public class BlueprintXmlBeansHandler {
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         if (model != null) {
             LOG.debug("Adding OSGi <blueprint> XML bean: {} to DSL model", name);
-            model.addRegistryBean(def);
+            model.addCustomBean(def);
         }
     }
 
