@@ -366,7 +366,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
         // register bean in model
         Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
-        model.addRegistryBean(def);
+        model.addCustomBean(def);
     }
 
     protected void destroyBean(String name, boolean remove) {
