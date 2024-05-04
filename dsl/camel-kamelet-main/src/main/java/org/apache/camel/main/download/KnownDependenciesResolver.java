@@ -28,9 +28,13 @@ public final class KnownDependenciesResolver {
 
     private final Map<String, String> mappings = new HashMap<>();
     private final CamelContext camelContext;
+    private final String springBootVersion;
+    private final String quarkusVersion;
 
-    public KnownDependenciesResolver(CamelContext camelContext) {
+    public KnownDependenciesResolver(CamelContext camelContext, String springBootVersion, String quarkusVersion) {
         this.camelContext = camelContext;
+        this.springBootVersion = springBootVersion;
+        this.quarkusVersion = quarkusVersion;
     }
 
     public void loadKnownDependencies() {
@@ -61,10 +65,19 @@ public final class KnownDependenciesResolver {
     }
 
     public MavenGav mavenGavForClass(String className) {
+        MavenGav answer = null;
         String gav = mappings.get(className);
         if (gav != null) {
-            return MavenGav.parseGav(gav, camelContext.getVersion());
+            answer = MavenGav.parseGav(gav, camelContext.getVersion());
         }
-        return null;
+        if (answer != null) {
+            String v = answer.getVersion();
+            if (springBootVersion != null && "${spring-boot-version}".equals(v)) {
+                answer.setVersion(springBootVersion);
+            } else if (quarkusVersion != null && "${quarkus-version}".equals(v)) {
+                answer.setVersion(quarkusVersion);
+            }
+        }
+        return answer;
     }
 }

@@ -45,6 +45,7 @@ import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
 import org.apache.camel.main.download.DependencyDownloaderDataFormatResolver;
 import org.apache.camel.main.download.DependencyDownloaderKamelet;
 import org.apache.camel.main.download.DependencyDownloaderLanguageResolver;
+import org.apache.camel.main.download.DependencyDownloaderPropertiesComponent;
 import org.apache.camel.main.download.DependencyDownloaderPropertiesFunctionResolver;
 import org.apache.camel.main.download.DependencyDownloaderPropertyBindingListener;
 import org.apache.camel.main.download.DependencyDownloaderResourceLoader;
@@ -569,7 +570,10 @@ public class KameletMain extends MainCommandLineSupport {
                 answer.addService(new CommandLineDependencyDownloader(answer, dependencies.toString()));
             }
 
-            KnownDependenciesResolver knownDeps = new KnownDependenciesResolver(answer);
+            String springBootVersion = (String) getInitialProperties().get("camel.jbang.springBootVersion");
+            String quarkusVersion = (String) getInitialProperties().get("camel.jbang.quarkusVersion");
+
+            KnownDependenciesResolver knownDeps = new KnownDependenciesResolver(answer, springBootVersion, quarkusVersion);
             knownDeps.loadKnownDependencies();
             DependencyDownloaderPropertyBindingListener listener
                     = new DependencyDownloaderPropertyBindingListener(answer, knownDeps);
@@ -610,6 +614,8 @@ public class KameletMain extends MainCommandLineSupport {
             }
             answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
                     new DownloadModelineParser(answer));
+
+            answer.addService(new DependencyDownloaderPropertiesComponent(answer, knownDeps, silent));
 
             // reloader
             if (sourceDir != null) {

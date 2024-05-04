@@ -2137,6 +2137,46 @@ For example we can customize used `org.apache.camel.spi.UuidGenerator` with this
 
 That's it - Camel context will then look up for the instances of `org.apache.camel.spi.UuidGenerator` and if one is found, it'll be used by Camel.
 
+=== Configuring JDBC DataSources
+
+When using SQL databases, then you would often need to configure a JDBC connection pool. You can do this:
+
+- Manually by adding 3rd party JAR dependency on a connection pool, and configure this from Java code.
+- *Camel 4.6* Spring Boot style with `spring.datasource.` configuration in `application.properties` (uses Hikari connection-pool)
+
+==== Using Spring Boot JDBC data source
+
+In `application.properties` you can set up the datasource such as:
+
+[source,properties]
+----
+spring.datasource.url= jdbc:sqlserver://db.example.net:1433;databaseName=test_db
+spring.datasource.username=user
+spring.datasource.password=password
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+----
+
+TIP: Some JDBC drivers are automatic detected by camel-jbang. If not then you need to add the JAR dependency manually.
+
+And you can configure the Hikari connection-pool (if needed) such as:
+
+[source,properties]
+----
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.idle-timeout=600000
+spring.datasource.hikari.max-lifetime=1800000
+spring.datasource.hikari.pool-name=collection-pool
+----
+
+And you can set logging to DEBUG on hikari to see the actual configuration:
+
+[source,properties]
+----
+logging.level.com.zaxxer.hikari = DEBUG
+----
+
 === Debugging
 
 There are two kinds of debugging:

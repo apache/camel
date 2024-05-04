@@ -535,6 +535,8 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.verbose", verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
+        writeSetting(main, profileProperties, "camel.jbang.springBootVersion", springBootVersion);
+        writeSetting(main, profileProperties, "camel.jbang.quarkusVersion", quarkusVersion);
 
         // command line arguments
         if (property != null) {
@@ -1084,6 +1086,8 @@ public class Run extends CamelCommand {
             jvmDebugPort = parseJvmDebugPort(answer.getProperty("camel.jbang.jvmDebug", Integer.toString(jvmDebugPort)));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
+            springBootVersion = answer.getProperty("camel.jbang.springBootVersion", springBootVersion);
+            quarkusVersion = answer.getProperty("camel.jbang.quarkusVersion", quarkusVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
             stub = answer.getProperty("camel.jbang.stub", stub);
             exclude = answer.getProperty("camel.jbang.exclude", exclude);

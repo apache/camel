@@ -47,6 +47,7 @@ import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,6 +235,21 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public Properties loadProperties(Predicate<String> filter) {
         return loadProperties(filter, k -> k);
+    }
+
+    @Override
+    public Properties extractProperties(String optionPrefix, boolean nested) {
+        Properties answer = new Properties();
+        var map = loadPropertiesAsMap(k -> {
+            boolean accept = k.startsWith(optionPrefix);
+            if (accept && !nested) {
+                int pos = k.lastIndexOf('.');
+                accept = pos == -1 || pos <= optionPrefix.length();
+            }
+            return accept;
+        });
+        answer.putAll(PropertiesHelper.extractProperties(map, optionPrefix));
+        return answer;
     }
 
     @Override

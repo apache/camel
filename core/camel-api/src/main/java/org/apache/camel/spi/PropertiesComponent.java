@@ -115,6 +115,15 @@ public interface PropertiesComponent extends StaticService {
     Properties loadProperties(Predicate<String> filter);
 
     /**
+     * Loads the properties from the default locations and extract properties by the given prefix.
+     *
+     * @param  optionPrefix prefix to filter
+     * @param  nested       whether to include nested properties
+     * @return              the properties loaded with option prefix removed.
+     */
+    Properties extractProperties(String optionPrefix, boolean nested);
+
+    /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate, and maps
      * the key using the key mapper.
      *

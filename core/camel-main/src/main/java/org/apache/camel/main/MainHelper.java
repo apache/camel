@@ -21,14 +21,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -42,11 +45,14 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.LocationHelper.locationSummary;
 
 public final class MainHelper {
     private static final Logger LOG = LoggerFactory.getLogger(MainHelper.class);
@@ -551,6 +557,57 @@ public final class MainHelper {
         toRemove.forEach(properties::remove);
 
         return rc;
+    }
+
+    public static void logConfigurationSummary(
+            Logger log, OrderedLocationProperties autoConfiguredProperties,
+            String title, Predicate<String> filter) {
+        if (log == null) {
+            log = LOG;
+        }
+        boolean header = false;
+        List<String> toRemove = new ArrayList<>();
+        for (var entry : autoConfiguredProperties.entrySet()) {
+            String k = entry.getKey().toString();
+            if (filter == null || filter.test(k)) {
+                Object v = entry.getValue();
+                String loc = locationSummary(autoConfiguredProperties, k);
+
+                // tone down logging noise for our own internal configurations
+                boolean debug = loc.contains("[camel-main]");
+                if (debug && !LOG.isDebugEnabled()) {
+                    continue;
+                }
+
+                if (!header) {
+                    log.info(title);
+                    header = true;
+                }
+
+                sensitiveAwareLogging(log, k, v, loc, debug);
+                toRemove.add(k);
+            }
+        }
+        toRemove.forEach(autoConfiguredProperties::remove);
+    }
+
+    public static void sensitiveAwareLogging(Logger log, String k, Object v, String loc, boolean debug) {
+        if (log == null) {
+            log = LOG;
+        }
+        if (SensitiveUtils.containsSensitive(k)) {
+            if (debug) {
+                log.debug("    {} {}=xxxxxx", loc, k);
+            } else {
+                log.info("    {} {}=xxxxxx", loc, k);
+            }
+        } else {
+            if (debug) {
+                log.debug("    {} {}={}", loc, k, v);
+            } else {
+                log.info("    {} {}={}", loc, k, v);
+            }
+        }
     }
 
 }
