@@ -31,10 +31,10 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.RuntimeProvider;
 import org.apache.camel.catalog.VersionManager;
-import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.tooling.maven.MavenArtifact;
 
 public final class CatalogLoader {
@@ -49,27 +49,21 @@ public final class CatalogLoader {
     }
 
     public static CamelCatalog loadCatalog(String repos, String version) throws Exception {
+        CamelCatalog answer = new DefaultCamelCatalog();
         if (version == null) {
-            CamelCatalog answer = new DefaultCamelCatalog();
+            answer = new DefaultCamelCatalog();
             answer.enableCache();
             return answer;
         }
 
-        // use kamelet-main to dynamic download dependency via maven
-        KameletMain main = new KameletMain();
+        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(null);
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setClassLoader(cl);
+        downloader.setRepos(repos);
         try {
-            main.setRepos(repos);
-            // enable stub in silent mode so we do not use real components
-            main.setSilent(true);
-            main.setStubPattern("*");
-            main.start();
-
-            // wrap downloaded catalog files in an isolated classloader
-            DependencyDownloaderClassLoader cl
-                    = new DependencyDownloaderClassLoader(null);
+            downloader.start();
 
             // download camel-catalog for that specific version
-            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
             MavenArtifact ma = downloader.downloadArtifact("org.apache.camel", "camel-catalog", version);
             if (ma != null) {
                 cl.addFile(ma.getFile());
@@ -78,16 +72,20 @@ public final class CatalogLoader {
             }
 
             // re-create answer with the classloader to be able to load resources in this catalog
-            Class<CamelCatalog> clazz2
-                    = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
-                            CamelCatalog.class);
-            CamelCatalog answer = main.getCamelContext().getInjector().newInstance(clazz2);
-            answer.setVersionManager(new DownloadCatalogVersionManager(version, cl));
+            Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
+            if (clazz != null) {
+                answer.setVersionManager(new DownloadCatalogVersionManager(version, cl));
+                RuntimeProvider provider = ObjectHelper.newInstance(clazz);
+                if (provider != null) {
+                    answer.setRuntimeProvider(provider);
+                }
+            }
             answer.enableCache();
-            return answer;
         } finally {
-            main.stop();
+            downloader.stop();
         }
+
+        return answer;
     }
 
     public static CamelCatalog loadSpringBootCatalog(String repos, String version) throws Exception {
@@ -96,18 +94,13 @@ public final class CatalogLoader {
             version = answer.getCatalogVersion();
         }
 
-        // use kamelet-main to dynamic download dependency via maven
-        KameletMain main = new KameletMain();
+        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setClassLoader(cl);
+        downloader.setRepos(repos);
         try {
-            main.setRepos(repos);
-            main.start();
+            downloader.start();
 
-            // wrap downloaded catalog files in an isolated classloader
-            DependencyDownloaderClassLoader cl
-                    = new DependencyDownloaderClassLoader(main.getCamelContext().getApplicationContextClassLoader());
-
-            // download camel-catalog for that specific version
-            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
             MavenArtifact ma;
             String camelCatalogVersion = version;
             try {
@@ -131,26 +124,30 @@ public final class CatalogLoader {
                         "Cannot download org.apache.camel.springboot:camel-catalog-provider-springboot:" + version);
             }
 
-            answer.setVersionManager(new DownloadCatalogVersionManager(version, cl));
             Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(SPRING_BOOT_CATALOG_PROVIDER);
             if (clazz != null) {
-                RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
+                Class<CamelCatalog> clazz2 = (Class<CamelCatalog>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
+                if (clazz2 != null) {
+                    answer = ObjectHelper.newInstance(clazz2);
+                }
+                RuntimeProvider provider = ObjectHelper.newInstance(clazz);
                 if (provider != null) {
                     answer.setRuntimeProvider(provider);
                 }
+                // use classloader that loaded spring-boot provider to ensure we can load its resources
+                answer.getVersionManager().setClassLoader(cl);
             }
             answer.enableCache();
-
         } finally {
-            main.stop();
+            downloader.stop();
         }
 
         return answer;
     }
 
-    public static CamelCatalog loadQuarkusCatalog(String repos, String quarkusVersion) {
+    public static CamelCatalog loadQuarkusCatalog(String repos, String quarkusVersion) throws Exception {
         String camelQuarkusVersion = null;
-        CamelCatalog answer = new DefaultCamelCatalog(true);
+        CamelCatalog answer = new DefaultCamelCatalog();
 
         if (quarkusVersion == null) {
             return answer;
@@ -161,15 +158,15 @@ public final class CatalogLoader {
             quarkusVersion += ".Final";
         }
 
-        // use kamelet-main to dynamic download dependency via maven
-        KameletMain main = new KameletMain();
+        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setRepos(repos);
+        downloader.setClassLoader(cl);
         try {
-            main.setRepos(repos);
-            main.start();
+            downloader.start();
 
             // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
             // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
-            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
             MavenArtifact ma = downloader.downloadArtifact("io.quarkus.platform", "quarkus-camel-bom:pom", quarkusVersion);
             if (ma != null && ma.getFile() != null) {
                 String name = ma.getFile().getAbsolutePath();
@@ -196,27 +193,23 @@ public final class CatalogLoader {
                 // download camel-quarkus-catalog we use to know if we have an extension or not
                 downloader.downloadDependency("org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
 
-                Class<RuntimeProvider> clazz = main.getCamelContext().getClassResolver().resolveClass(QUARKUS_CATALOG_PROVIDER,
-                        RuntimeProvider.class);
+                Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(QUARKUS_CATALOG_PROVIDER);
                 if (clazz != null) {
-                    RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
-                    if (provider != null) {
-                        // re-create answer with the classloader that loaded quarkus to be able to load resources in this catalog
-                        Class<CamelCatalog> clazz2
-                                = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
-                                        CamelCatalog.class);
-                        answer = main.getCamelContext().getInjector().newInstance(clazz2);
-                        answer.setRuntimeProvider(provider);
-                        // use classloader that loaded quarkus provider to ensure we can load its resources
-                        answer.getVersionManager().setClassLoader(main.getCamelContext().getApplicationContextClassLoader());
-                        answer.enableCache();
+                    Class<CamelCatalog> clazz2 = (Class<CamelCatalog>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
+                    if (clazz2 != null) {
+                        answer = ObjectHelper.newInstance(clazz2);
                     }
+                    RuntimeProvider provider = ObjectHelper.newInstance(clazz);
+                    if (provider != null) {
+                        answer.setRuntimeProvider(provider);
+                    }
+                    // use classloader that loaded quarkus provider to ensure we can load its resources
+                    answer.getVersionManager().setClassLoader(cl);
                 }
             }
-        } catch (Exception e) {
-            // ignore
+            answer.enableCache();
         } finally {
-            main.stop();
+            downloader.stop();
         }
 
         return answer;

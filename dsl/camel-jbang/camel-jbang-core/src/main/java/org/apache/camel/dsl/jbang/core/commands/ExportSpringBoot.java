@@ -104,9 +104,11 @@ class ExportSpringBoot extends Export {
         srcKameletsResourcesDir.mkdirs();
         // copy application properties files
         copyApplicationPropertiesFiles(srcResourcesDir);
+
         // copy source files
         copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
+
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
