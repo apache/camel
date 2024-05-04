@@ -423,8 +423,6 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
         answer.removeAll(toBeRemoved);
 
-        System.out.println(answer);
-
         return answer;
     }
 
