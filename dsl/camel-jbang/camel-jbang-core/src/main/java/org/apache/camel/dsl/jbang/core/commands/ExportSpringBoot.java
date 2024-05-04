@@ -233,6 +233,10 @@ class ExportSpringBoot extends Export {
                     gav.setVersion(camelVersion);
                 }
             }
+            // use spring-boot version from BOM
+            if ("org.springframework.boot".equals(gid)) {
+                gav.setVersion(null); // uses BOM so version should not be included
+            }
             gavs.add(gav);
         }
 
