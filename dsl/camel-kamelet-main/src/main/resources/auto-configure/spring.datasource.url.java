@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-var answer = "";
 var registry = context.getRegistry();
-answer = "Auto-configuring spring-datasource";
 
 var p = new org.springframework.boot.autoconfigure.jdbc.DataSourceProperties();
 p.setBeanClassLoader(context.getApplicationContextClassLoader());
@@ -41,6 +39,6 @@ org.apache.camel.main.MainHelper.setPropertiesOnTarget(context, ds, hikari, "spr
 registry.bind(name, ds);
 
 // log summary to see what was configured
-org.apache.camel.main.MainHelper.logConfigurationSummary(null, set, "Spring DataSource (" + name + ")", null);
+org.apache.camel.main.MainHelper.logConfigurationSummary(null, set, "Auto-configuration Spring Datasource: " + name + " summary", null);
 
-return answer;
+return null;
