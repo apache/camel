@@ -455,8 +455,8 @@ public class Run extends CamelCommand {
                                          + " because application.properties file does not exist or camel.main.routesIncludePattern is not configured");
                         return 1;
                     } else {
-                        // silent-run then auto-detect all files (except properties as they are loaded explicit)
-                        String[] allFiles = new File(".").list((dir, name) -> !name.endsWith(".properties"));
+                        // silent-run then auto-detect all files
+                        String[] allFiles = new File(".").list();
                         if (allFiles != null) {
                             files.addAll(Arrays.asList(allFiles));
                         }
