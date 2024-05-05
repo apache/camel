@@ -78,13 +78,18 @@ public class DependencyDownloaderPropertiesComponent extends ServiceSupport {
 
     protected void resolveKnownDependencies() {
         for (String key : properties.stringPropertyNames()) {
-            // check both key and values
+            // check both key and values (and combined)
             String value = properties.getProperty(key);
             MavenGav gav = knownDependenciesResolver.mavenGavForClass(key);
             if (gav != null) {
                 downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
             }
             gav = knownDependenciesResolver.mavenGavForClass(value);
+            if (gav != null) {
+                downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+            }
+            String line = key + "=" + value;
+            gav = knownDependenciesResolver.mavenGavForClass(line);
             if (gav != null) {
                 downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
             }
