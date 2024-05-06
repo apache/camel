@@ -29,12 +29,6 @@ public class PineconeVectorDb {
                   enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE")
         public static final String ACTION = "CamelPineconeAction";
 
-        @Metadata(description = "Operation Status.", javaType = "String")
-        public static final String OPERATION_STATUS = "CamelPineconeOperationStatus";
-
-        @Metadata(description = "Operation Status Value.", javaType = "int")
-        public static final String OPERATION_STATUS_VALUE = "CamelPineconeOperationStatusValue";
-
         @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
         public static final String TEXT_FIELD_NAME = "CamelPineconeTextFieldName";
 
