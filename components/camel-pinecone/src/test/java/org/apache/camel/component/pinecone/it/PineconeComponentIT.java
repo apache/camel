@@ -76,9 +76,27 @@ public class PineconeComponentIT extends CamelTestSupport {
 
     @Test
     @Order(3)
+    public void update() {
+
+        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
+
+        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.UPDATE)
+                .withBody(
+                        elements)
+                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDb.Headers.INDEX_ID, "elements")
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(3)
     public void queryByVector() {
 
-        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.0f);
+        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY)
