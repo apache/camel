@@ -35,7 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * KafkaManualCommit and NOOP Commit Manager
  */
 @Tags({ @Tag("breakOnFirstError") })
-
 
 class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorOff";

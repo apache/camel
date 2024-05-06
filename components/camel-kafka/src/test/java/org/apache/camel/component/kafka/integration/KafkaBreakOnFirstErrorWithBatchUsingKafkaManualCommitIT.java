@@ -35,7 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Camel default to use NOOP Commit Manager this means the route implementation MUST manage all offset commits
  */
 @Tags({ @Tag("breakOnFirstError") })
-
 
 class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitIT extends BaseKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchOnExceptionIT";

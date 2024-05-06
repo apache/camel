@@ -35,7 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Camel to handle when to commit an offset
  */
 @Tags({ @Tag("breakOnFirstError") })
-
 
 class KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT extends BaseKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchITSyncCommitManager";
