@@ -50,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
  */
 @Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+
+
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseExclusiveKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-19894";

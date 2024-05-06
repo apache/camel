@@ -45,8 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 @Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+
+
 class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20563";

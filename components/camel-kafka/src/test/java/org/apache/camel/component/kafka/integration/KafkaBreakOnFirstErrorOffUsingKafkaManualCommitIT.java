@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * KafkaManualCommit and NOOP Commit Manager
  */
 @Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+
+
 class KafkaBreakOnFirstErrorOffUsingKafkaManualCommitIT extends BaseKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorOff";
     public static final String TOPIC = "breakOnFirstErrorOff";

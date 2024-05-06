@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Camel to handle when to commit an offset
  */
 @Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+
+
 class KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT extends BaseKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchITSyncCommitManager";
     public static final String TOPIC = "breakOnFirstErrorBatchITSyncCommitManager";

@@ -50,8 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * will demonstrate how to retry
  */
 @Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+
+
 class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstErrorBatchRetryIT";
