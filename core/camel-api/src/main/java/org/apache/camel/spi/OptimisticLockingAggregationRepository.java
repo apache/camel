@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.io.Serial;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
@@ -34,7 +36,7 @@ public interface OptimisticLockingAggregationRepository extends AggregationRepos
      * <p/>
      */
     class OptimisticLockingException extends RuntimeException {
-        private static final long serialVersionUID = 1L;
+        private static final @Serial long serialVersionUID = 1L;
     }
 
     /**

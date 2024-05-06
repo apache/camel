@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,7 @@ import org.apache.camel.spi.CamelEvent.CamelContextEvent;
  * Base class for {@link CamelContext} events.
  */
 public abstract class AbstractContextEvent extends EventObject implements CamelContextEvent {
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
     private final CamelContext context;
     private long timestamp;
 

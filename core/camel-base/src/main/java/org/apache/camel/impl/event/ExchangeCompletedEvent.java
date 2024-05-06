@@ -16,12 +16,14 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.util.TimeUtils;
 
 public class ExchangeCompletedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeCompletedEvent {
-    private static final long serialVersionUID = -3231801412021356098L;
+    private static final @Serial long serialVersionUID = -3231801412021356098L;
     private final long timeTaken;
 
     public ExchangeCompletedEvent(Exchange source) {

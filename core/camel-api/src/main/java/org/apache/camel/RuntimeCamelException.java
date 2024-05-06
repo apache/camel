@@ -16,11 +16,13 @@
  */
 package org.apache.camel;
 
+import java.io.Serial;
+
 /**
  * Base class for all Camel unchecked exceptions.
  */
 public class RuntimeCamelException extends RuntimeException {
-    private static final long serialVersionUID = 8046489554418284257L;
+    private static final @Serial long serialVersionUID = 8046489554418284257L;
 
     public RuntimeCamelException() {
     }

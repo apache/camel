@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support.processor.validation;
 
+import java.io.Serial;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
@@ -23,7 +25,7 @@ import org.apache.camel.ValidationException;
  * An exception thrown if the XML header is not available on the inbound message
  */
 public class NoXmlHeaderValidationException extends ValidationException {
-    private static final long serialVersionUID = 4502520681354358599L;
+    private static final @Serial long serialVersionUID = 4502520681354358599L;
 
     public NoXmlHeaderValidationException(Exchange exchange, String header) {
         super(exchange, "XML header \"" + header + "\" could not be found on the input message");

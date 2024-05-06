@@ -16,11 +16,13 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 
 public class CamelContextSuspendedEvent extends AbstractContextEvent implements CamelEvent.CamelContextSuspendedEvent {
-    private static final long serialVersionUID = 6761726800283072242L;
+    private static final @Serial long serialVersionUID = 6761726800283072242L;
 
     public CamelContextSuspendedEvent(CamelContext source) {
         super(source);

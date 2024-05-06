@@ -16,13 +16,15 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Exchange;
 
 /**
  * Base class for step events.
  */
 public abstract class AbstractStepEvent extends AbstractExchangeEvent {
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
 
     private final String stepId;
 

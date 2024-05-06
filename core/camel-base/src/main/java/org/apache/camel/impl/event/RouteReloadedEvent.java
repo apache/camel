@@ -16,12 +16,14 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 
 public class RouteReloadedEvent extends AbstractRouteEvent implements CamelEvent.RouteReloadedEvent {
 
-    private static final long serialVersionUID = 7966471393751298718L;
+    private static final @Serial long serialVersionUID = 7966471393751298718L;
 
     private final int index;
     private final int total;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +111,7 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
      */
     private static final class GroupedExchangeList<E> extends ArrayList<E> {
 
-        private static final long serialVersionUID = 1L;
+        private static final @Serial long serialVersionUID = 1L;
 
         @Override
         public String toString() {

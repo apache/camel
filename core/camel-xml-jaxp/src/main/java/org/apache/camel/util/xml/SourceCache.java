@@ -18,6 +18,7 @@ package org.apache.camel.util.xml;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serial;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
@@ -32,7 +33,7 @@ import org.apache.camel.util.IOHelper;
  */
 public final class SourceCache extends StringSource implements StreamCache {
 
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
     private final int length;
 
     public SourceCache(String data) {

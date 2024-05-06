@@ -16,13 +16,15 @@
  */
 package org.apache.camel.language.simple.types;
 
+import java.io.Serial;
+
 import org.apache.camel.ExpressionIllegalSyntaxException;
 
 /**
  * Syntax error in the simple language expression.
  */
 public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxException {
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
     private static final String FORMATTED_NULL = "[null]";
     private final int index;
     private final String message;

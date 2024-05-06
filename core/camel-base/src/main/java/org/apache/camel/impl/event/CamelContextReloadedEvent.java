@@ -16,13 +16,15 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 
 public class CamelContextReloadedEvent extends AbstractContextEvent
         implements CamelEvent.CamelContextReloadedEvent {
 
-    private static final long serialVersionUID = 7966471393751298719L;
+    private static final @Serial long serialVersionUID = 7966471393751298719L;
 
     private final Object action;
 

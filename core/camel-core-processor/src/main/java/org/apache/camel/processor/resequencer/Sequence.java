@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.resequencer;
 
+import java.io.Serial;
 import java.util.TreeSet;
 
 /**
@@ -25,7 +26,7 @@ import java.util.TreeSet;
  */
 public class Sequence<E> extends TreeSet<E> {
 
-    private static final long serialVersionUID = 5647393631147741711L;
+    private static final @Serial long serialVersionUID = 5647393631147741711L;
 
     private final SequenceElementComparator<E> comparator;
 

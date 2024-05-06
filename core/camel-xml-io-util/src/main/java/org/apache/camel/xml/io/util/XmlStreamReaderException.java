@@ -36,6 +36,7 @@ package org.apache.camel.xml.io.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 
 /**
  * The XmlReaderException is thrown by the XmlReader constructors if the charset encoding can not be determined
@@ -45,7 +46,7 @@ import java.io.InputStream;
  * stream. Note that the original InputStream given to the XmlReader cannot be used as that one has been already read.
  */
 public class XmlStreamReaderException extends IOException {
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
     private final String bomEncoding;
     private final String xmlGuessEncoding;
     private final String xmlEncoding;
