@@ -146,8 +146,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     if (getConfiguration().isMultiPartUpload() &&
                             uploadAggregate.buffer.size() >= getConfiguration().getPartSize()) {
                         uploadPart(uploadAggregate);
-                        maxRead = (getConfiguration().isMultiPartUpload()
-                                ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
+                        maxRead = Math.toIntExact(getConfiguration().getPartSize());
                         continue;
                     }
                     if (uploadAggregate.buffer.size() >= getConfiguration().getBatchSize()
