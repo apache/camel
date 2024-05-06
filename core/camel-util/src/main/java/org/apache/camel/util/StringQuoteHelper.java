@@ -120,7 +120,6 @@ public final class StringQuoteHelper {
 
         boolean singleQuoted = false;
         boolean doubleQuoted = false;
-        boolean skipLeadingWhitespace = true;
 
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
@@ -185,9 +184,7 @@ public final class StringQuoteHelper {
                 }
                 continue;
             } else if (!isQuoting && separator != ' ' && ch == ' ') {
-                if (skipLeadingWhitespace) {
-                    continue;
-                }
+                continue;
             } else if (!isQuoting && ch == separator) {
                 // add as answer if we are not in a quote
                 if (!sb.isEmpty()) {

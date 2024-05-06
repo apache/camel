@@ -332,9 +332,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     public abstract Processor createErrorHandler(Processor processor) throws Exception;
 
     public void configure(ErrorHandler handler) {
-        if (handler instanceof ErrorHandlerSupport) {
-            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
-
+        if (handler instanceof ErrorHandlerSupport handlerSupport) {
             for (NamedNode exception : route.getErrorHandlers(definition)) {
                 addExceptionPolicy(handlerSupport, (OnExceptionDefinition) exception);
             }
@@ -465,7 +463,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         return pred;
     }
 
-    protected <T> T getBean(Class<T> clazz, T bean, String ref) {
+    protected <U> U getBean(Class<U> clazz, U bean, String ref) {
         if (bean == null && ref != null) {
             bean = lookupByNameAndType(ref, clazz);
         }

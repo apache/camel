@@ -46,11 +46,7 @@ import org.apache.camel.util.CastUtils;
  */
 public class JndiContext implements Context, Serializable {
     public static final String SEPARATOR = "/";
-    protected static final NameParser NAME_PARSER = new NameParser() {
-        public Name parse(String name) throws NamingException {
-            return new CompositeName(name);
-        }
-    };
+    protected static final NameParser NAME_PARSER = CompositeName::new;
     private static final @Serial long serialVersionUID = -5754338187296859149L;
 
     private final Hashtable<String, Object> environment; // environment for this context

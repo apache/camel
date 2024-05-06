@@ -240,7 +240,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             camelContextMBean = (ManagedCamelContext) mc;
         }
 
-        // register any pre registered now that we are initialized
+        // register any pre-registered now that we are initialized
         enlistPreRegisteredServices();
 
         // register health check if detected
@@ -438,7 +438,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     @Override
     public void onServiceAdd(CamelContext context, Service service, Route route) {
         if (!initialized) {
-            // pre register so we can register later when we have been initialized
+            // pre-register so we can register later when we have been initialized
             preServices.add(lf -> lf.onServiceAdd(camelContext, service, route));
             return;
         }

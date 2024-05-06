@@ -24,7 +24,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ErrorHandler;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -60,15 +59,6 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
         super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, null, null,
               true, false, false, retryWhile,
               executorService, onPrepareProcessor, onExceptionOccurredProcessor);
-    }
-
-    private DefaultErrorHandler(Logger log) {
-        // used for eager loading
-        super(log);
-        SimpleTask dummy = new SimpleTask();
-        log.trace("Loaded {}", dummy.getClass().getName());
-        RedeliveryTask dummy2 = new RedeliveryTask();
-        log.trace("Loaded {}", dummy2.getClass().getName());
     }
 
     @Override

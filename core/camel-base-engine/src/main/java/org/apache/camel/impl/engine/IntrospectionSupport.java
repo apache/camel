@@ -402,10 +402,8 @@ final class IntrospectionSupport {
     static boolean isPropertyIsGetter(Class<?> type, String propertyName) {
         try {
             Method method = type.getMethod("is" + StringHelper.capitalize(propertyName, true));
-            if (method != null) {
-                return method.getReturnType().isAssignableFrom(boolean.class)
-                        || method.getReturnType().isAssignableFrom(Boolean.class);
-            }
+            return method.getReturnType().isAssignableFrom(boolean.class)
+                    || method.getReturnType().isAssignableFrom(Boolean.class);
         } catch (NoSuchMethodException e) {
             // ignore
         }
@@ -481,7 +479,7 @@ final class IntrospectionSupport {
                 }
             }
             if (obj instanceof Map) {
-                Map map = (Map) obj;
+                Map<Object, Object> map = (Map) obj;
                 if (context != null && refName != null && value == null) {
                     String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);
@@ -489,7 +487,7 @@ final class IntrospectionSupport {
                 map.put(lookupKey, value);
                 return true;
             } else if (obj instanceof List) {
-                List list = (List) obj;
+                List<Object> list = (List) obj;
                 if (context != null && refName != null && value == null) {
                     String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);
@@ -507,8 +505,8 @@ final class IntrospectionSupport {
                         //
                         // Note that ArrayList is the default List impl that
                         // is automatically created if the property is null.
-                        if (list instanceof ArrayList) {
-                            ((ArrayList) list).ensureCapacity(idx + 1);
+                        if (list instanceof ArrayList<?> al) {
+                            al.ensureCapacity(idx + 1);
                         }
                         while (list.size() < idx) {
                             list.add(null);
@@ -519,7 +517,7 @@ final class IntrospectionSupport {
                     list.add(value);
                 }
                 return true;
-            } else if (obj.getClass().isArray() && lookupKey != null) {
+            } else if (obj != null && obj.getClass().isArray()) {
                 if (context != null && refName != null && value == null) {
                     String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);
@@ -618,8 +616,7 @@ final class IntrospectionSupport {
                     } else {
                         // We need to convert it
                         // special for boolean values with string values as we only want to accept "true" or "false"
-                        if ((parameterType == Boolean.class || parameterType == boolean.class) && ref instanceof String) {
-                            String val = (String) ref;
+                        if ((parameterType == Boolean.class || parameterType == boolean.class) && ref instanceof String val) {
                             if (!val.equalsIgnoreCase("true") && !val.equalsIgnoreCase("false")) {
                                 // this is our self
                                 myself = true;

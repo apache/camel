@@ -110,50 +110,48 @@ public final class RouteCoverageXmlParser {
                 }
 
                 String id = el.getAttribute("id");
-                if (id != null) {
-                    try {
-                        if ("route".equals(qName)) {
-                            ManagedRouteMBean route = camelContext.getCamelContextExtension()
-                                    .getContextPlugin(ManagedCamelContext.class).getManagedRoute(id);
+                try {
+                    if ("route".equals(qName)) {
+                        ManagedRouteMBean route = camelContext.getCamelContextExtension()
+                                .getContextPlugin(ManagedCamelContext.class).getManagedRoute(id);
+                        if (route != null) {
+                            long total = route.getExchangesTotal();
+                            el.setAttribute("exchangesTotal", Long.toString(total));
+                            long totalTime = route.getTotalProcessingTime();
+                            el.setAttribute("totalProcessingTime", Long.toString(totalTime));
+                        }
+                    } else if ("from".equals(qName)) {
+                        // grab statistics from the parent route as from would be the same
+                        Element parent = elementStack.peek();
+                        if (parent != null) {
+                            String routeId = parent.getAttribute("id");
+                            ManagedRouteMBean route
+                                    = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                                            .getManagedRoute(routeId);
                             if (route != null) {
                                 long total = route.getExchangesTotal();
                                 el.setAttribute("exchangesTotal", Long.toString(total));
                                 long totalTime = route.getTotalProcessingTime();
                                 el.setAttribute("totalProcessingTime", Long.toString(totalTime));
-                            }
-                        } else if ("from".equals(qName)) {
-                            // grab statistics from the parent route as from would be the same
-                            Element parent = elementStack.peek();
-                            if (parent != null) {
-                                String routeId = parent.getAttribute("id");
-                                ManagedRouteMBean route
-                                        = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
-                                                .getManagedRoute(routeId);
-                                if (route != null) {
-                                    long total = route.getExchangesTotal();
-                                    el.setAttribute("exchangesTotal", Long.toString(total));
-                                    long totalTime = route.getTotalProcessingTime();
-                                    el.setAttribute("totalProcessingTime", Long.toString(totalTime));
-                                    // from is index-0
-                                    el.setAttribute("index", "0");
-                                }
-                            }
-                        } else {
-                            ManagedProcessorMBean processor
-                                    = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
-                                            .getManagedProcessor(id);
-                            if (processor != null) {
-                                long total = processor.getExchangesTotal();
-                                el.setAttribute("exchangesTotal", Long.toString(total));
-                                long totalTime = processor.getTotalProcessingTime();
-                                el.setAttribute("totalProcessingTime", Long.toString(totalTime));
-                                int index = processor.getIndex();
-                                el.setAttribute("index", Integer.toString(index));
+                                // from is index-0
+                                el.setAttribute("index", "0");
                             }
                         }
-                    } catch (Exception e) {
-                        // ignore
+                    } else {
+                        ManagedProcessorMBean processor
+                                = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                                        .getManagedProcessor(id);
+                        if (processor != null) {
+                            long total = processor.getExchangesTotal();
+                            el.setAttribute("exchangesTotal", Long.toString(total));
+                            long totalTime = processor.getTotalProcessingTime();
+                            el.setAttribute("totalProcessingTime", Long.toString(totalTime));
+                            int index = processor.getIndex();
+                            el.setAttribute("index", Integer.toString(index));
+                        }
                     }
+                } catch (Exception e) {
+                    // ignore
                 }
 
                 // we do not want customId in output of the EIPs

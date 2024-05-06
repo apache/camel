@@ -53,7 +53,7 @@ public final class OrderedLocationProperties extends BaseOrderedProperties {
         }
     }
 
-    public void putAll(String location, Map<Object, Object> map) {
+    public void putAll(String location, Map<?, ?> map) {
         for (var entry : map.entrySet()) {
             put(location, entry.getKey(), entry.getValue());
         }

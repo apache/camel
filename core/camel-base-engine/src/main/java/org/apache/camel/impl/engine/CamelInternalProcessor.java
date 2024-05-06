@@ -76,6 +76,8 @@ import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
  * <ul>
@@ -119,7 +121,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
+        this.reactiveExecutor = requireNonNull(camelContext.getCamelContextExtension().getReactiveExecutor());
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
@@ -128,14 +130,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
-    }
-
-    private CamelInternalProcessor(Logger log) {
-        // used for eager loading
-        camelContext = null;
-        reactiveExecutor = null;
-        shutdownStrategy = null;
-        log.trace("Loaded {}", AsyncAfterTask.class.getSimpleName());
     }
 
     @Override

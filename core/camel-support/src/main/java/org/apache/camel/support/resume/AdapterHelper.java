@@ -63,7 +63,7 @@ public final class AdapterHelper {
             final ResumeStrategyConfiguration resumeStrategyConfiguration = resumeStrategy.getResumeStrategyConfiguration();
 
             final ResumeCache<?> resumeCache = resumeStrategyConfiguration.getResumeCache();
-            if (resumeStrategyConfiguration != null && resumeCache != null) {
+            if (resumeCache != null) {
                 cacheableAdapter.setCache(resumeCache);
             } else {
                 LOG.error("No cache was provided in the configuration for the cacheable resume adapter {}",

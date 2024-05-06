@@ -225,13 +225,12 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             String next = scanner.next();
 
             // only grab text after the start token
-            if (next != null && next.contains(startToken)) {
+            if (next.contains(startToken)) {
                 next = StringHelper.after(next, startToken);
 
                 // include tokens in answer
                 if (next != null && includeTokens) {
-                    StringBuilder sb = new StringBuilder();
-                    next = sb.append(startToken).append(next).append(endToken).toString();
+                    next = startToken + next + endToken;
                 }
             } else {
                 // must have start token, otherwise we have reached beyond last tokens

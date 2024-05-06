@@ -713,13 +713,13 @@ public final class MessageHelper {
     }
 
     /**
-     * Dumps the {@link MessageHistory} from the {@link Exchange} in a human readable format.
+     * Dumps the {@link MessageHistory} from the {@link Exchange} in a human-readable format.
      *
      * @param  exchange          the exchange
      * @param  exchangeFormatter if provided then information about the exchange is included in the dump
      * @param  logStackTrace     whether to include a header for the stacktrace, to be added (not included in this
      *                           dump).
-     * @return                   a human readable message history as a table
+     * @return                   a human-readable message history as a table, never {@code null}
      */
     public static String dumpMessageHistoryStacktrace(
             Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {

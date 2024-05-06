@@ -517,8 +517,8 @@ public abstract class AbstractCamelCatalog {
             // grab authority part and grab username and/or password
             String authority = u.getAuthority();
             if (authority != null && authority.contains("@")) {
-                String username = null;
-                String password = null;
+                String username;
+                String password;
 
                 // grab unserinfo part before @
                 String userInfo = authority.substring(0, authority.indexOf('@'));
@@ -529,6 +529,7 @@ public abstract class AbstractCamelCatalog {
                 } else {
                     // only username
                     username = userInfo;
+                    password = null;
                 }
 
                 // remember the username and/or password which we add later to the options
@@ -1326,9 +1327,9 @@ public abstract class AbstractCamelCatalog {
 
         LanguageValidationResult answer = new LanguageValidationResult(simple);
 
-        Object context = null;
+        Object context;
         Object instance = null;
-        Class<?> clazz = null;
+        Class<?> clazz;
 
         try {
             // need a simple camel context for the simple language parser to be able to parse
@@ -1343,7 +1344,7 @@ public abstract class AbstractCamelCatalog {
             answer.setError(e.getMessage());
         }
 
-        if (clazz != null && context != null && instance != null) {
+        if (clazz != null) {
             Throwable cause = null;
             try {
                 if (predicate) {

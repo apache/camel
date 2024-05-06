@@ -285,9 +285,8 @@ public final class ObjectHelper {
             return leftNum.compareTo(rightNum);
         } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
                 leftValue instanceof String && isNumber((String) leftValue)) {
-            if (rightValue instanceof Integer) {
+            if (rightValue instanceof Integer rightNum) {
                 Integer leftNum = Integer.valueOf((String) leftValue);
-                Integer rightNum = (Integer) rightValue;
                 return leftNum.compareTo(rightNum);
             } else {
                 Long leftNum = Long.valueOf((String) leftValue);
@@ -296,8 +295,7 @@ public final class ObjectHelper {
             }
         } else if (rightValue instanceof String &&
                 (leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue)) {
-            if (leftValue instanceof Integer) {
-                Integer leftNum = (Integer) leftValue;
+            if (leftValue instanceof Integer leftNum) {
                 Integer rightNum = Integer.valueOf((String) rightValue);
                 return leftNum.compareTo(rightNum);
             } else {
@@ -305,16 +303,14 @@ public final class ObjectHelper {
                 Long rightNum = Long.valueOf((String) rightValue);
                 return leftNum.compareTo(rightNum);
             }
-        } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
+        } else if (rightValue instanceof Double rightNum && leftValue instanceof String
+                && isFloatingNumber((String) leftValue)) {
             Double leftNum = Double.valueOf((String) leftValue);
-            Double rightNum = (Double) rightValue;
             return leftNum.compareTo(rightNum);
-        } else if (rightValue instanceof Boolean && leftValue instanceof String) {
+        } else if (rightValue instanceof Boolean rightBool && leftValue instanceof String) {
             Boolean leftBool = Boolean.valueOf((String) leftValue);
-            Boolean rightBool = (Boolean) rightValue;
             return leftBool.compareTo(rightBool);
-        } else if (rightValue instanceof String && leftValue instanceof Boolean) {
-            Boolean leftBool = (Boolean) leftValue;
+        } else if (rightValue instanceof String && leftValue instanceof Boolean leftBool) {
             Boolean rightBool = Boolean.valueOf((String) rightValue);
             return leftBool.compareTo(rightBool);
         }
@@ -338,7 +334,7 @@ public final class ObjectHelper {
         // as all types can be converted to String which does not work well for comparison
         // as eg "10" < 6 would return true, where as 10 < 6 will return false.
         // if they are both String then it doesn't matter
-        if (rightValue instanceof String && !(leftValue instanceof String)) {
+        if (rightValue instanceof String) {
             // if right is String and left is not then flip order (remember to * -1 the result then)
             return typeCoerceCompare(converter, rightValue, leftValue) * -1;
         }

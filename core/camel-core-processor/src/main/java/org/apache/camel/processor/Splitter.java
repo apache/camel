@@ -109,9 +109,8 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         AggregationStrategy strategy = getAggregationStrategy();
 
         // set original exchange if not already pre-configured
-        if (strategy instanceof UseOriginalAggregationStrategy) {
+        if (strategy instanceof UseOriginalAggregationStrategy original) {
             // need to create a new private instance, as we can also have concurrency issue so we cannot store state
-            UseOriginalAggregationStrategy original = (UseOriginalAggregationStrategy) strategy;
             AggregationStrategy clone = original.newInstance(exchange);
             if (isShareUnitOfWork()) {
                 clone = new ShareUnitOfWorkAggregationStrategy(clone);
@@ -163,23 +162,11 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         // create a copy which we use as master to copy during splitting
         // this avoids any side effect reflected upon the incoming exchange
-        final Object value;
-        final Iterator<?> iterator;
+        private final Object value;
+        private final Iterator<?> iterator;
         private Exchange copy;
         private final Route route;
         private final Exchange original;
-
-        private SplitterIterable() {
-            // used for eager classloading
-            value = null;
-            iterator = null;
-            copy = null;
-            route = null;
-            original = null;
-            // for loading classes from iterator
-            Object dummy = iterator();
-            LOG.trace("Loaded {}", dummy.getClass().getName());
-        }
 
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;

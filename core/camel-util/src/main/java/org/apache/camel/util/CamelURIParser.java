@@ -97,10 +97,6 @@ public final class CamelURIParser {
             }
         }
 
-        if (pathStart == 0 && schemeEnd != 0) {
-            // skip colon
-            pathStart = schemeEnd + 1;
-        }
         // invalid if there is no path anyway
         if (pathStart >= len) {
             return null;

@@ -125,7 +125,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
 
     private Object doNext() throws IOException, NoTypeConversionAvailableException {
         int count = 0;
-        Object data = "";
+        Object data;
         while (count < group && it.hasNext()) {
             data = it.next();
 

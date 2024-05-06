@@ -416,8 +416,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
                     = CamelContextHelper.lookup(camelContext, lookupName, ServiceExpressionFactory.class);
             if (factory != null) {
                 // If a factory is found in the registry do not re-configure it
-                // as
-                // it should be pre-configured.
+                // as it should be pre-configured.
                 return factory.newInstance(camelContext);
             } else {
 
@@ -427,7 +426,7 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
                     // Then use Service factory.
                     type = camelContext.getCamelContextExtension()
                             .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName).orElse(null);
-                } catch (Exception e) {
+                } catch (Exception ignore) {
                 }
 
                 if (ObjectHelper.isNotEmpty(type)) {
