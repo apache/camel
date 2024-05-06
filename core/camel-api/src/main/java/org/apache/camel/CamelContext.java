@@ -37,6 +37,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
@@ -395,7 +396,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Gets the {@link org.apache.camel.spi.EndpointRegistry}
      */
-    EndpointRegistry<? extends ValueHolder<String>> getEndpointRegistry();
+    EndpointRegistry<NormalizedEndpointUri> getEndpointRegistry();
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type. If the name has a singleton endpoint
