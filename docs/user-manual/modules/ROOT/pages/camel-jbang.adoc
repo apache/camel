@@ -2141,8 +2141,27 @@ That's it - Camel context will then look up for the instances of `org.apache.cam
 
 When using SQL databases, then you would often need to configure a JDBC connection pool. You can do this:
 
-- Manually by adding 3rd party JAR dependency on a connection pool, and configure this from Java code.
+- Manually by adding 3rd party JAR dependency for the data source (and connection pool), and configure this from Java or XML/YAML DSL.
 - *Camel 4.6* Spring Boot style with `spring.datasource.` configuration in `application.properties` (uses Hikari connection-pool)
+
+==== Defining datasource in YAML DSL as a bean
+
+Here is a snippet how you can declare a bean as the `DataSource` for a Postgres database in YAML DSL:
+
+[source,yaml]
+----
+- beans:
+    - name: PostgresqlDataSource
+      properties:
+        databaseName: "postgres"
+        password: "postgres"
+        portNumber: "5432"
+        serverName: localhost
+        user: postgres
+      type: org.postgresql.ds.PGSimpleDataSource
+----
+
+You would then also need to add the JAR dependency with Maven coordinates: `org.postgresql:postgresql:42.7.3`.
 
 ==== Using Spring Boot JDBC data source
 
@@ -2154,6 +2173,13 @@ spring.datasource.url= jdbc:sqlserver://db.example.net:1433;databaseName=test_db
 spring.datasource.username=user
 spring.datasource.password=password
 spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+----
+
+The name of the `DataSource` will be registered with `springDataSource`, however you can configure the name via:
+
+[source,properties]
+----
+spring.datasource.name=myDataSourceNameHere
 ----
 
 TIP: Some JDBC drivers are automatic detected by camel-jbang. If not then you need to add the JAR dependency manually.
