@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
-    public static final String TOPIC = "test-full";
+    public static final String TOPIC = "test-full-KafkaConsumerFullIT"; //CAMEL-20722: try a more unique name to avoid clash
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerFullIT.class);
 

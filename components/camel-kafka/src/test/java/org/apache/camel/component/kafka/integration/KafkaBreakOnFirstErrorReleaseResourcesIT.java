@@ -118,8 +118,9 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
         Set<Thread> threads = Thread.getAllStackTraces().keySet();
         int count = 0;
 
-        for (Thread t : threads) {
-            if (t.getName().contains("heartbeat")) {
+        for (Thread t : threads) { //CAMEL-20722: Look for more specific heartbeat thread, log the full thread name.
+            if (t.getName().contains("heartbeat") && t.getName().contains("breakOnFirstError-20563")) {
+                LOG.info(" Thread name: {}", t.getName());
                 count++;
             }
         }
