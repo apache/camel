@@ -52,7 +52,7 @@ public interface PooledExchange extends Exchange {
      * <p/>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
-    @Deprecated
+    @Deprecated(since = "4.4.0")
     void reset(long created);
 
     /**

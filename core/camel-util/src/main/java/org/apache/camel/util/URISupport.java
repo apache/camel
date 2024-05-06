@@ -495,7 +495,7 @@ public final class URISupport {
      *                            is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    @Deprecated
+    @Deprecated(since = "4.1.0")
     public static String createQueryString(Map<String, String> options, String ampersand, boolean encode) {
         if (!options.isEmpty()) {
             StringBuilder rc = new StringBuilder();
@@ -519,7 +519,7 @@ public final class URISupport {
         }
     }
 
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode) {
         return createQueryString(sortedKeys.toArray(new String[0]), options, encode);
     }

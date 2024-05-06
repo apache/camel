@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "kubernetesServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     @Metadata(defaultValue = "environment", enums = "environment,dns,client")

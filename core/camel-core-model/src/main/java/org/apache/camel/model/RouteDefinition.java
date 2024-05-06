@@ -550,7 +550,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      *
      * @return the builder
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public RouteDefinition noAutoStartup() {
         setAutoStartup("false");
         return this;

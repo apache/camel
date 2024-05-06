@@ -30,7 +30,7 @@ import org.apache.camel.spi.CamelLogger;
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @XmlTransient
-@Deprecated
+@Deprecated(since = "3.17.0")
 public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProperties {
 
     private CamelLogger logger;

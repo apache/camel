@@ -32,11 +32,14 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * @deprecated
+ */
 @Metadata(label = "routing,cloud,service-filter")
 @XmlRootElement(name = "blacklistServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     @XmlElement
     private List<String> servers;

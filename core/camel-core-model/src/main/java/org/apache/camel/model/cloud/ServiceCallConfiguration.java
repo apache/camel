@@ -41,7 +41,7 @@ import org.apache.camel.support.PluginHelper;
 @XmlType(name = "serviceCallConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer
-@Deprecated
+@Deprecated(since = "3.19.0")
 public abstract class ServiceCallConfiguration extends IdentifiedType {
     @XmlElement(name = "properties")
     @Metadata(label = "advanced")

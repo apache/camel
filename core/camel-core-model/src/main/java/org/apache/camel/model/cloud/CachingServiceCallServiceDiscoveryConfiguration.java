@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "cachingServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     @Metadata(defaultValue = "60", javaType = "java.lang.Integer")

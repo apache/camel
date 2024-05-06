@@ -31,7 +31,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 /**
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
-@Deprecated
+@Deprecated(since = "3.17.0")
 public class LegacyDefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties> extends ErrorHandlerReifier<T> {
 
     public LegacyDefaultErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {

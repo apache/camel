@@ -47,7 +47,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      *
      * @deprecated use {@link #CAMEL_FILTER_STARTS_WITH}
      */
-    @Deprecated
+    @Deprecated(since = "3.9.0")
     public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
 
     /**

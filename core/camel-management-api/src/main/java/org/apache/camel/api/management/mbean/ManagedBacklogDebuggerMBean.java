@@ -147,7 +147,7 @@ public interface ManagedBacklogDebuggerMBean {
     String dumpTracedMessagesAsXml(String nodeId);
 
     @ManagedOperation(description = "Dumps the messages in XML format from the suspended breakpoint at the given node.")
-    @Deprecated
+    @Deprecated(since = "4.2.0")
     String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties);
 
     @ManagedOperation(description = "Dumps the messages in JSon format from the suspended breakpoint at the given node.")

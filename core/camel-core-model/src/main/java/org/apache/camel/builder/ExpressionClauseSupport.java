@@ -390,7 +390,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
-    @Deprecated
+    @Deprecated(since = "4.3.0")
     public T joor(String text) {
         return expression(new JoorExpression(text));
     }
@@ -402,7 +402,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * @param  resultType the return type expected by the expression
      * @return            the builder to continue processing the DSL
      */
-    @Deprecated
+    @Deprecated(since = "4.3.0")
     public T joor(String text, Class<?> resultType) {
         JoorExpression exp = new JoorExpression(text);
         exp.setResultType(resultType);

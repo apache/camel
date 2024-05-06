@@ -41,7 +41,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "serviceCall")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinition> {
     @XmlAttribute
     @Metadata(required = true)

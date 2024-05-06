@@ -545,7 +545,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         return doLookup(toType, fromType);
     }
 
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     protected TypeConverter getOrFindTypeConverter(Class<?> toType, Class<?> fromType) {
         TypeConvertible<?, ?> typeConvertible = new TypeConvertible<>(fromType, toType);
 

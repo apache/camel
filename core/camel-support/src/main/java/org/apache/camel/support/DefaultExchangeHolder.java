@@ -217,7 +217,7 @@ public class DefaultExchangeHolder implements Serializable {
         return null;
     }
 
-    @Deprecated
+    @Deprecated(since = "3.0.0")
     private Map<String, Object> safeSetOutHeaders(Exchange exchange, boolean allowSerializedHeaders) {
         if (exchange.hasOut() && exchange.getOut().hasHeaders()) {
             Map<String, Object> map
