@@ -127,7 +127,7 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
             producer.send(data);
         }
 
-        Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> to.assertIsSatisfied());
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> to.assertIsSatisfied()); // changed to 10 sec for CAMEL-20722
 
         List<Exchange> exchangeList = to.getExchanges();
         assertEquals(5, exchangeList.size());
