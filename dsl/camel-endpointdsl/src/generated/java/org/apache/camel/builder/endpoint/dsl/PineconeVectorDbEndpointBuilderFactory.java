@@ -197,30 +197,6 @@ public interface PineconeVectorDbEndpointBuilderFactory {
             return "CamelPineconeAction";
         }
         /**
-         * Operation Status.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code PineconeOperationStatus}.
-         */
-        public String pineconeOperationStatus() {
-            return "CamelPineconeOperationStatus";
-        }
-        /**
-         * Operation Status Value.
-         * 
-         * The option is a: {@code int} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code PineconeOperationStatusValue}.
-         */
-        public String pineconeOperationStatusValue() {
-            return "CamelPineconeOperationStatusValue";
-        }
-        /**
          * Text Field Name for Insert/Upsert operation.
          * 
          * The option is a: {@code String} type.

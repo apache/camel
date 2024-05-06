@@ -23,5 +23,6 @@ public enum PineconeVectorDbAction {
     UPSERT,
     DELETE_INDEX,
     DELETE_COLLECTION,
-    QUERY
+    QUERY,
+    UPDATE
 }

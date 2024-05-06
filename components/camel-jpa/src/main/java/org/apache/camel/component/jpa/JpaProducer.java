@@ -182,26 +182,7 @@ public class JpaProducer extends DefaultProducer {
         Query innerQuery = getQueryFactory().createQuery(entityManager);
         configureParameters(innerQuery, exchange);
 
-        transactionStrategy.executeInTransaction(() -> {
-            if (getEndpoint().isJoinTransaction()) {
-                entityManager.joinTransaction();
-            }
-
-            final Object answer;
-            if (isUseExecuteUpdate()) {
-                answer = innerQuery.executeUpdate();
-            } else if (getEndpoint().isSingleResult()) {
-                answer = innerQuery.getSingleResult();
-            } else {
-                answer = innerQuery.getResultList();
-            }
-
-            putAnswer(exchange, answer, getEndpoint().getOutputTarget());
-
-            if (getEndpoint().isFlushOnSend()) {
-                entityManager.flush();
-            }
-        });
+        transactionStrategy.executeInTransaction(new QueryProcessor(entityManager, innerQuery, exchange));
     }
 
     @SuppressWarnings("unchecked")
@@ -242,27 +223,7 @@ public class JpaProducer extends DefaultProducer {
         final Object key = exchange.getMessage().getBody();
 
         if (key != null) {
-            transactionStrategy.executeInTransaction(() -> {
-                if (getEndpoint().isJoinTransaction()) {
-                    entityManager.joinTransaction();
-                }
-
-                Object answer = entityManager.find(getEndpoint().getEntityType(), key);
-                LOG.debug("Find: {} -> {}", key, answer);
-
-                if (getEndpoint().isSingleResult() && answer == null) {
-                    throw new NoResultException(
-                            String.format(
-                                    "No results for key %s and singleResult requested",
-                                    key));
-                }
-
-                putAnswer(exchange, answer, getEndpoint().getOutputTarget());
-
-                if (getEndpoint().isFlushOnSend()) {
-                    entityManager.flush();
-                }
-            });
+            transactionStrategy.executeInTransaction(new FindProcessor(entityManager, key, exchange));
         }
     }
 
@@ -270,104 +231,7 @@ public class JpaProducer extends DefaultProducer {
         final Object values = expression.evaluate(exchange, Object.class);
 
         if (values != null) {
-            transactionStrategy.executeInTransaction(new Runnable() {
-                @Override
-                public void run() {
-                    if (getEndpoint().isJoinTransaction()) {
-                        entityManager.joinTransaction();
-                    }
-
-                    if (values.getClass().isArray()) {
-                        Object[] array = (Object[]) values;
-                        // need to create an array to store returned values as they can be updated
-                        // by JPA such as setting auto assigned ids
-                        Object[] managedArray = new Object[array.length];
-                        Object managedEntity;
-                        for (int i = 0; i < array.length; i++) {
-                            Object element = array[i];
-                            if (!getEndpoint().isRemove()) {
-                                managedEntity = save(element);
-                            } else {
-                                managedEntity = remove(element);
-                            }
-                            managedArray[i] = managedEntity;
-                        }
-                        if (!getEndpoint().isUsePersist()) {
-                            // and copy back to original array
-                            System.arraycopy(managedArray, 0, array, 0, array.length);
-                            exchange.getIn().setBody(array);
-                        }
-                    } else if (values instanceof Collection) {
-                        Collection<?> collection = (Collection<?>) values;
-                        // need to create a list to store returned values as they can be updated
-                        // by JPA such as setting auto assigned ids
-                        Collection<Object> managedCollection = new ArrayList<>(collection.size());
-                        Object managedEntity;
-                        for (Object entity : collection) {
-                            if (!getEndpoint().isRemove()) {
-                                managedEntity = save(entity);
-                            } else {
-                                managedEntity = remove(entity);
-                            }
-                            managedCollection.add(managedEntity);
-                        }
-                        if (!getEndpoint().isUsePersist()) {
-                            exchange.getIn().setBody(managedCollection);
-                        }
-                    } else {
-                        Object managedEntity;
-                        if (!getEndpoint().isRemove()) {
-                            managedEntity = save(values);
-                        } else {
-                            managedEntity = remove(values);
-                        }
-                        if (!getEndpoint().isUsePersist()) {
-                            exchange.getIn().setBody(managedEntity);
-                        }
-                    }
-
-                    if (getEndpoint().isFlushOnSend()) {
-                        entityManager.flush();
-                    }
-                }
-
-                /**
-                 * Save the given entity and return the managed entity
-                 *
-                 * @return the managed entity
-                 */
-                private Object save(final Object entity) {
-                    LOG.debug("save: {}", entity);
-                    if (getEndpoint().isUsePersist()) {
-                        entityManager.persist(entity);
-                        return entity;
-                    } else {
-                        return entityManager.merge(entity);
-                    }
-                }
-
-                /**
-                 * Remove the given entity and return the managed entity
-                 *
-                 * @return the managed entity
-                 */
-                private Object remove(final Object entity) {
-                    LOG.debug("remove: {}", entity);
-
-                    Object managedEntity;
-
-                    // First check if entity is attached to the persistence context
-                    if (entityManager.contains(entity)) {
-                        managedEntity = entity;
-                    } else {
-                        // If not, merge entity state into context before removing it
-                        managedEntity = entityManager.merge(entity);
-                    }
-
-                    entityManager.remove(managedEntity);
-                    return managedEntity;
-                }
-            });
+            transactionStrategy.executeInTransaction(new EntityProcessor(entityManager, values, exchange));
         }
     }
 
@@ -396,5 +260,195 @@ public class JpaProducer extends DefaultProducer {
     @Override
     protected void doBuild() throws Exception {
         simple = getEndpoint().getCamelContext().resolveLanguage("simple");
+    }
+
+    private class EntityProcessor implements Runnable {
+        private final EntityManager entityManager;
+        private final Object values;
+        private final Exchange exchange;
+
+        public EntityProcessor(EntityManager entityManager, Object values, Exchange exchange) {
+            this.entityManager = entityManager;
+            this.values = values;
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void run() {
+            if (getEndpoint().isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
+
+            if (values.getClass().isArray()) {
+                processArray();
+            } else if (values instanceof Collection) {
+                processCollection();
+            } else {
+                processOther();
+            }
+
+            if (getEndpoint().isFlushOnSend()) {
+                entityManager.flush();
+            }
+        }
+
+        private void processOther() {
+            Object managedEntity;
+            if (!getEndpoint().isRemove()) {
+                managedEntity = save(values);
+            } else {
+                managedEntity = remove(values);
+            }
+            if (!getEndpoint().isUsePersist()) {
+                exchange.getIn().setBody(managedEntity);
+            }
+        }
+
+        private void processCollection() {
+            Collection<?> collection = (Collection<?>) values;
+            // need to create a list to store returned values as they can be updated
+            // by JPA such as setting auto assigned ids
+            Collection<Object> managedCollection = new ArrayList<>(collection.size());
+            Object managedEntity;
+            for (Object entity : collection) {
+                if (!getEndpoint().isRemove()) {
+                    managedEntity = save(entity);
+                } else {
+                    managedEntity = remove(entity);
+                }
+                managedCollection.add(managedEntity);
+            }
+            if (!getEndpoint().isUsePersist()) {
+                exchange.getIn().setBody(managedCollection);
+            }
+        }
+
+        private void processArray() {
+            Object[] array = (Object[]) values;
+            // need to create an array to store returned values as they can be updated
+            // by JPA such as setting auto assigned ids
+            Object[] managedArray = new Object[array.length];
+            Object managedEntity;
+            for (int i = 0; i < array.length; i++) {
+                Object element = array[i];
+                if (!getEndpoint().isRemove()) {
+                    managedEntity = save(element);
+                } else {
+                    managedEntity = remove(element);
+                }
+                managedArray[i] = managedEntity;
+            }
+            if (!getEndpoint().isUsePersist()) {
+                // and copy back to original array
+                System.arraycopy(managedArray, 0, array, 0, array.length);
+                exchange.getIn().setBody(array);
+            }
+        }
+
+        /**
+         * Save the given entity and return the managed entity
+         *
+         * @return the managed entity
+         */
+        private Object save(final Object entity) {
+            LOG.debug("save: {}", entity);
+            if (getEndpoint().isUsePersist()) {
+                entityManager.persist(entity);
+                return entity;
+            } else {
+                return entityManager.merge(entity);
+            }
+        }
+
+        /**
+         * Remove the given entity and return the managed entity
+         *
+         * @return the managed entity
+         */
+        private Object remove(final Object entity) {
+            LOG.debug("remove: {}", entity);
+
+            Object managedEntity;
+
+            // First check if entity is attached to the persistence context
+            if (entityManager.contains(entity)) {
+                managedEntity = entity;
+            } else {
+                // If not, merge entity state into context before removing it
+                managedEntity = entityManager.merge(entity);
+            }
+
+            entityManager.remove(managedEntity);
+            return managedEntity;
+        }
+    }
+
+    private class QueryProcessor implements Runnable {
+        private final EntityManager entityManager;
+        private final Query innerQuery;
+        private final Exchange exchange;
+
+        public QueryProcessor(EntityManager entityManager, Query innerQuery, Exchange exchange) {
+            this.entityManager = entityManager;
+            this.innerQuery = innerQuery;
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void run() {
+            if (JpaProducer.this.getEndpoint().isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
+
+            final Object answer;
+            if (JpaProducer.this.isUseExecuteUpdate()) {
+                answer = innerQuery.executeUpdate();
+            } else if (JpaProducer.this.getEndpoint().isSingleResult()) {
+                answer = innerQuery.getSingleResult();
+            } else {
+                answer = innerQuery.getResultList();
+            }
+
+            putAnswer(exchange, answer, JpaProducer.this.getEndpoint().getOutputTarget());
+
+            if (JpaProducer.this.getEndpoint().isFlushOnSend()) {
+                entityManager.flush();
+            }
+        }
+    }
+
+    private class FindProcessor implements Runnable {
+        private final EntityManager entityManager;
+        private final Object key;
+        private final Exchange exchange;
+
+        public FindProcessor(EntityManager entityManager, Object key, Exchange exchange) {
+            this.entityManager = entityManager;
+            this.key = key;
+            this.exchange = exchange;
+        }
+
+        @Override
+        public void run() {
+            if (JpaProducer.this.getEndpoint().isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
+
+            Object answer = entityManager.find(JpaProducer.this.getEndpoint().getEntityType(), key);
+            LOG.debug("Find: {} -> {}", key, answer);
+
+            if (JpaProducer.this.getEndpoint().isSingleResult() && answer == null) {
+                throw new NoResultException(
+                        String.format(
+                                "No results for key %s and singleResult requested",
+                                key));
+            }
+
+            putAnswer(exchange, answer, JpaProducer.this.getEndpoint().getOutputTarget());
+
+            if (JpaProducer.this.getEndpoint().isFlushOnSend()) {
+                entityManager.flush();
+            }
+        }
     }
 }

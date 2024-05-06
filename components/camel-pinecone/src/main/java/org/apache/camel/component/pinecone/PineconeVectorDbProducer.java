@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 import io.pinecone.clients.Index;
 import io.pinecone.clients.Pinecone;
+import io.pinecone.proto.UpdateResponse;
 import io.pinecone.proto.UpsertResponse;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import org.apache.camel.CamelContext;
@@ -73,6 +74,9 @@ public class PineconeVectorDbProducer extends DefaultProducer {
                     break;
                 case UPSERT:
                     upsert(exchange);
+                    break;
+                case UPDATE:
+                    update(exchange);
                     break;
                 case DELETE_INDEX:
                     deleteIndex(exchange);
@@ -153,6 +157,19 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     }
 
+    private void update(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        List elements = in.getMandatoryBody(List.class);
+        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
+        Index index = this.client.getIndexConnection(indexName);
+
+        UpdateResponse result = index.update(indexId, elements);
+
+        populateUpdateResponse(result, exchange);
+
+    }
+
     private void deleteIndex(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
@@ -198,6 +215,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     }
 
     private void populateUpsertResponse(UpsertResponse r, Exchange exchange) {
+        Message out = exchange.getMessage();
+        out.setBody(r);
+    }
+
+    private void populateUpdateResponse(UpdateResponse r, Exchange exchange) {
         Message out = exchange.getMessage();
         out.setBody(r);
     }
