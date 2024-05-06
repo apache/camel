@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serial;
 import java.io.Serializable;
 
 import javax.xml.transform.stream.StreamSource;
@@ -29,7 +30,7 @@ import javax.xml.transform.stream.StreamSource;
  * many times as required.
  */
 public class BytesSource extends StreamSource implements Serializable {
-    private static final long serialVersionUID = 124123201106542082L;
+    private static final @Serial long serialVersionUID = 124123201106542082L;
 
     private final byte[] data;
 

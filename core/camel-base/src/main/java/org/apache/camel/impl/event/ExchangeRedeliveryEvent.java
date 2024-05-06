@@ -16,11 +16,13 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 
 public class ExchangeRedeliveryEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeRedeliveryEvent {
-    private static final long serialVersionUID = -19248832613958122L;
+    private static final @Serial long serialVersionUID = -19248832613958122L;
 
     private final int attempt;
 

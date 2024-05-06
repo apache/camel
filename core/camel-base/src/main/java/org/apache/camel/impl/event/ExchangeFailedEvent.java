@@ -16,11 +16,13 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 
 public class ExchangeFailedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeFailedEvent {
-    private static final long serialVersionUID = -8484326904627268101L;
+    private static final @Serial long serialVersionUID = -8484326904627268101L;
 
     public ExchangeFailedEvent(Exchange source) {
         super(source);

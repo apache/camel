@@ -16,10 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.io.Serial;
 import java.util.concurrent.RejectedExecutionException;
 
 public class ThrottlerRejectedExecutionException extends RejectedExecutionException {
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
 
     public ThrottlerRejectedExecutionException(String message) {
         super(message);

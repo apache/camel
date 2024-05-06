@@ -16,12 +16,14 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 
 public class RouteRemovedEvent extends AbstractRouteEvent implements CamelEvent.RouteRemovedEvent {
 
-    private static final long serialVersionUID = 7966471393751298719L;
+    private static final @Serial long serialVersionUID = 7966471393751298719L;
 
     public RouteRemovedEvent(Route source) {
         super(source);

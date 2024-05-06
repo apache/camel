@@ -16,11 +16,13 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 
 public class RouteStoppedEvent extends AbstractRouteEvent implements CamelEvent.RouteStoppedEvent {
-    private static final long serialVersionUID = -4466503512787398888L;
+    private static final @Serial long serialVersionUID = -4466503512787398888L;
 
     public RouteStoppedEvent(Route source) {
         super(source);

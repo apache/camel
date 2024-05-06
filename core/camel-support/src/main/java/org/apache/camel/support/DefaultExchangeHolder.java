@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.io.File;
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -61,7 +62,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultExchangeHolder implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+    private static final @Serial long serialVersionUID = 2L;
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExchangeHolder.class);
 
     private String exchangeId;

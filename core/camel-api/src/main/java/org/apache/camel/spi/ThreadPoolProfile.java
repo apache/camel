@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
  */
 public class ThreadPoolProfile implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
 
     private String id;
     private Boolean defaultProfile;

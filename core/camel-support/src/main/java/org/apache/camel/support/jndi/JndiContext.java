@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.jndi;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -50,7 +51,7 @@ public class JndiContext implements Context, Serializable {
             return new CompositeName(name);
         }
     };
-    private static final long serialVersionUID = -5754338187296859149L;
+    private static final @Serial long serialVersionUID = -5754338187296859149L;
 
     private final Hashtable<String, Object> environment; // environment for this context
     private final Map<String, Object> bindings; // bindings at my level

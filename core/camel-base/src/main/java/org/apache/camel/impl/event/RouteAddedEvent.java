@@ -16,12 +16,14 @@
  */
 package org.apache.camel.impl.event;
 
+import java.io.Serial;
+
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 
 public class RouteAddedEvent extends AbstractRouteEvent implements CamelEvent.RouteAddedEvent {
 
-    private static final long serialVersionUID = 9155960708789798708L;
+    private static final @Serial long serialVersionUID = 9155960708789798708L;
 
     public RouteAddedEvent(Route source) {
         super(source);

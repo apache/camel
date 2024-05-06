@@ -16,13 +16,15 @@
  */
 package org.apache.camel.processor.resequencer;
 
+import java.io.Serial;
+
 import org.apache.camel.RuntimeCamelException;
 
 /**
  * An exception thrown if message is rejected by the resequencer
  */
 public class MessageRejectedException extends RuntimeCamelException {
-    private static final long serialVersionUID = 5755929795399134568L;
+    private static final @Serial long serialVersionUID = 5755929795399134568L;
 
     public MessageRejectedException(String message) {
         super(message);

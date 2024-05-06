@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.io.Serial;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 
@@ -23,7 +25,7 @@ import org.apache.camel.Exchange;
  * The correlation key has been closed and the Exchange cannot be aggregated.
  */
 public class ClosedCorrelationKeyException extends CamelExchangeException {
-    private static final long serialVersionUID = 1L;
+    private static final @Serial long serialVersionUID = 1L;
     private final String correlationKey;
 
     public ClosedCorrelationKeyException(String correlationKey, Exchange exchange) {

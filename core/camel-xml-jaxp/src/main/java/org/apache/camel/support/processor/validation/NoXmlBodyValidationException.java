@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support.processor.validation;
 
+import java.io.Serial;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
@@ -23,7 +25,7 @@ import org.apache.camel.ValidationException;
  * An exception found if no XML body is available on the inbound message
  */
 public class NoXmlBodyValidationException extends ValidationException {
-    private static final long serialVersionUID = 4502520681354358599L;
+    private static final @Serial long serialVersionUID = 4502520681354358599L;
 
     public NoXmlBodyValidationException(Exchange exchange) {
         super(exchange, "No XML body could be found on the input message");

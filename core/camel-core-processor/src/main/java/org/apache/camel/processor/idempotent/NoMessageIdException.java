@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.idempotent;
 
+import java.io.Serial;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
@@ -25,7 +27,7 @@ import org.apache.camel.RuntimeCamelException;
  * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  */
 public class NoMessageIdException extends RuntimeCamelException {
-    private static final long serialVersionUID = 5755929795399134568L;
+    private static final @Serial long serialVersionUID = 5755929795399134568L;
 
     private final Exchange exchange;
     private final Expression expression;
