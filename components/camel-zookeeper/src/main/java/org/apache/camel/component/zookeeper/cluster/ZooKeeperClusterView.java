@@ -120,7 +120,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     protected void doStop() throws Exception {
         if (leaderSelector != null) {
             leaderSelector.interruptLeadership();
-            fireLeadershipChangedEvent(getLeader());
+            fireLeadershipChangedEvent(getLeader().orElse(null));
         }
     }
 
@@ -142,7 +142,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private final class CamelLeaderElectionListener extends LeaderSelectorListenerAdapter {
         @Override
         public void takeLeadership(CuratorFramework curatorFramework) throws Exception {
-            fireLeadershipChangedEvent(Optional.of(localMember));
+            fireLeadershipChangedEvent(localMember);
 
             BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
                     .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
@@ -152,7 +152,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
 
             task.run(() -> !isRunAllowed());
 
-            fireLeadershipChangedEvent(getLeader());
+            fireLeadershipChangedEvent(getLeader().orElse(null));
         }
     }
 

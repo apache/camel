@@ -45,10 +45,11 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
     private List<LeadershipInfo> leaderships = new CopyOnWriteArrayList<>();
 
     @Override
-    public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
+    public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
         LOG.info("Cluster view {} - leader changed to: {}", view.getLocalMember(), leader);
         this.leaderships
-                .add(new LeadershipInfo(leader.map(CamelClusterMember::getId).orElse(null), System.currentTimeMillis()));
+                .add(new LeadershipInfo(
+                        Optional.ofNullable(leader).map(CamelClusterMember::getId).orElse(null), System.currentTimeMillis()));
     }
 
     public List<LeadershipInfo> getLeadershipInfo() {

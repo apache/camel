@@ -27,13 +27,13 @@ import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
 
 public final class ResultBuilder {
-    private Optional<ComponentVerifierExtension.Scope> scope;
-    private Optional<ComponentVerifierExtension.Result.Status> status;
+    private ComponentVerifierExtension.Scope scope;
+    private ComponentVerifierExtension.Result.Status status;
     private List<ComponentVerifierExtension.VerificationError> verificationErrors;
 
     public ResultBuilder() {
-        this.scope = Optional.empty();
-        this.status = Optional.empty();
+        this.scope = null;
+        this.status = null;
     }
 
     // **********************************
@@ -41,32 +41,34 @@ public final class ResultBuilder {
     // **********************************
 
     public ResultBuilder scope(ComponentVerifierExtension.Scope scope) {
-        this.scope = Optional.of(scope);
+        this.scope = scope;
         return this;
     }
 
     public ResultBuilder status(ComponentVerifierExtension.Result.Status status) {
-        this.status = Optional.of(status);
+        this.status = status;
         return this;
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    @Deprecated
+    public ResultBuilder error(Optional<ComponentVerifierExtension.VerificationError> verificationError) {
+        return error(verificationError.orElse(null));
     }
 
     public ResultBuilder error(ComponentVerifierExtension.VerificationError verificationError) {
-        if (this.verificationErrors == null) {
-            this.verificationErrors = new ArrayList<>();
+        if (verificationError != null) {
+            if (this.verificationErrors == null) {
+                this.verificationErrors = new ArrayList<>();
+            }
+
+            this.verificationErrors.add(verificationError);
+            this.status = ComponentVerifierExtension.Result.Status.ERROR;
         }
-
-        this.verificationErrors.add(verificationError);
-        this.status = Optional.of(ComponentVerifierExtension.Result.Status.ERROR);
-
         return this;
     }
 
-    public ResultBuilder error(Optional<ComponentVerifierExtension.VerificationError> error) {
-        error.ifPresent(e -> error(e));
-        return this;
-    }
-
-    public ResultBuilder error(Supplier<Optional<ComponentVerifierExtension.VerificationError>> supplier) {
+    public ResultBuilder error(Supplier<ComponentVerifierExtension.VerificationError> supplier) {
         return error(supplier.get());
     }
 
@@ -109,8 +111,8 @@ public final class ResultBuilder {
 
     public ComponentVerifierExtension.Result build() {
         return new DefaultResult(
-                scope.orElse(ComponentVerifierExtension.Scope.PARAMETERS),
-                status.orElse(ComponentVerifierExtension.Result.Status.UNSUPPORTED),
+                scope != null ? scope : ComponentVerifierExtension.Scope.PARAMETERS,
+                status != null ? status : ComponentVerifierExtension.Result.Status.UNSUPPORTED,
                 verificationErrors != null ? Collections.unmodifiableList(verificationErrors) : Collections.emptyList());
     }
 

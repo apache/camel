@@ -18,7 +18,6 @@ package org.apache.camel.service.lra;
 
 import java.net.URL;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.Exchange;
@@ -72,7 +71,7 @@ public class LRASagaCoordinatorTest extends CamelTestSupport {
     @DisplayName("Tests whether join is called on LRAClient")
     @Test
     void testBeginStep() throws Exception {
-        CamelSagaStep step = new CamelSagaStep(Optional.empty(), Optional.empty(), Collections.emptyMap(), Optional.empty());
+        CamelSagaStep step = new CamelSagaStep(null, null, Collections.emptyMap(), null);
 
         CompletableFuture<Void> expected = CompletableFuture.completedFuture(null);
         Mockito.when(client.join(Mockito.eq(url), Mockito.any(LRASagaStep.class), Mockito.eq(exchange))).thenReturn(expected);

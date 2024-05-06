@@ -80,7 +80,8 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
                         // the consumer can catch up.
 
                         if (CamelClusterEventListener.Leadership.class.isInstance(listener)) {
-                            CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this, getLeader());
+                            CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this,
+                                    getLeader().orElse(null));
                         }
 
                         if (CamelClusterEventListener.Membership.class.isInstance(listener)) {
@@ -121,7 +122,13 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
                 });
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    @Deprecated
     protected void fireLeadershipChangedEvent(Optional<CamelClusterMember> leader) {
+        fireLeadershipChangedEvent(leader.orElse(null));
+    }
+
+    protected void fireLeadershipChangedEvent(CamelClusterMember leader) {
         doWithListener(
                 CamelClusterEventListener.Leadership.class,
                 listener -> listener.leadershipChanged(this, leader));

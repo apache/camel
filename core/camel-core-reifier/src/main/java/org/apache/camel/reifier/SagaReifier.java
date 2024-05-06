@@ -42,13 +42,15 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Optional<Endpoint> compensationEndpoint = Optional.ofNullable(definition.getCompensation())
+        Endpoint compensationEndpoint = Optional.ofNullable(definition.getCompensation())
                 .map(SagaActionUriDefinition::getUri)
-                .map(this::resolveEndpoint);
+                .map(this::resolveEndpoint)
+                .orElse(null);
 
-        Optional<Endpoint> completionEndpoint = Optional.ofNullable(definition.getCompletion())
+        Endpoint completionEndpoint = Optional.ofNullable(definition.getCompletion())
                 .map(SagaActionUriDefinition::getUri)
-                .map(this::resolveEndpoint);
+                .map(this::resolveEndpoint)
+                .orElse(null);
 
         Map<String, Expression> optionsMap = new TreeMap<>();
         if (definition.getOptions() != null) {
@@ -62,7 +64,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         String timeout = definition.getTimeout();
         CamelSagaStep step = new CamelSagaStep(
                 compensationEndpoint, completionEndpoint, optionsMap,
-                Optional.ofNullable(parseDuration(timeout)));
+                parseDuration(timeout));
 
         SagaPropagation propagation = parse(SagaPropagation.class, definition.getPropagation());
         if (propagation == null) {

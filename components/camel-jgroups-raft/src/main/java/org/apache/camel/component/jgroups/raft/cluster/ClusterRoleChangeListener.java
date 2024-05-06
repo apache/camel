@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.jgroups.raft.cluster;
 
-import java.util.Optional;
-
+import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.util.ObjectHelper;
 import org.jgroups.protocols.raft.RAFT;
 import org.jgroups.protocols.raft.Role;
@@ -43,13 +42,13 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
                 if (!jgroupsRaftClusterView.isMaster()) {
                     jgroupsRaftClusterView.setMaster(true);
                     jgroupsRaftClusterView
-                            .fireLeadershipChangedEvent(Optional.ofNullable(jgroupsRaftClusterView.getLocalMember()));
+                            .fireLeadershipChangedEvent(jgroupsRaftClusterView.getLocalMember());
                 }
                 break;
             case Follower:
                 if (jgroupsRaftClusterView.isMaster()) {
                     jgroupsRaftClusterView.setMaster(false);
-                    jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.empty());
+                    jgroupsRaftClusterView.fireLeadershipChangedEvent((CamelClusterMember) null);
                 }
                 break;
             default:
