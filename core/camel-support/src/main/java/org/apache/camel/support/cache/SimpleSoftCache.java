@@ -95,6 +95,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         return false;
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public V get(Object key) {
         SoftReference<V> ref = delegate.get(key);
@@ -202,6 +203,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         }
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public boolean remove(Object key, Object value) {
         if (key == null || value == null) {

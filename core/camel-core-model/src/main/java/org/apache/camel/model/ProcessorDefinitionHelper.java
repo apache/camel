@@ -202,7 +202,7 @@ public final class ProcessorDefinitionHelper {
 
         // add ourselves
         if (node.getId() != null) {
-            if (!onlyCustomId || node.hasCustomIdAssigned() && onlyCustomId) {
+            if (!onlyCustomId || node.hasCustomIdAssigned()) {
                 set.add(node.getId());
             }
         }

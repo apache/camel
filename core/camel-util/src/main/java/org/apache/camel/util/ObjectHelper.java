@@ -608,7 +608,7 @@ public final class ObjectHelper {
      */
     public static URL loadResourceAsURL(String name, ClassLoader loader) {
 
-        URL url = null;
+        URL url;
         String resolvedName = resolveUriPath(name);
 
         // #1 First, try the given class loader

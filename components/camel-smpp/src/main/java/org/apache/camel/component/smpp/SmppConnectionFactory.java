@@ -170,7 +170,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             }
 
             // read until empty line
-            for (; response.length() > 0;) {
+            while (!response.isEmpty()) {
                 response = reader.readLine();
                 if (response == null) {
                     throw new RuntimeCamelException("Proxy error: reached end of stream");

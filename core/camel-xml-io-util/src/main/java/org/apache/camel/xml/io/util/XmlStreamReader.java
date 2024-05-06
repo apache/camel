@@ -80,7 +80,7 @@ public class XmlStreamReader extends Reader {
     private static final String CP1047 = "CP1047";
     private static final Pattern CHARSET_PATTERN = Pattern.compile("charset=([.[^; ]]*)");
     private static final Pattern ENCODING_PATTERN
-            = Pattern.compile("<\\?xml.*encoding[\\s]*=[\\s]*((?:\".[^\"]*\")|(?:'.[^']*'))", Pattern.MULTILINE);
+            = Pattern.compile("<\\?xml.*encoding[\\s]*=[\\s]*(\".[^\"]*\"|'.[^']*')", Pattern.MULTILINE);
     private static final MessageFormat RAW_EX_1
             = new MessageFormat("Invalid encoding, BOM [{0}] XML guess [{1}] XML prolog [{2}] encoding mismatch");
     private static final MessageFormat RAW_EX_2

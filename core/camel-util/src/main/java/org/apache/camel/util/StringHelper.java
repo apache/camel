@@ -249,7 +249,7 @@ public final class StringHelper {
     public static boolean isClassName(String text) {
         if (text != null) {
             int lastIndexOf = text.lastIndexOf('.');
-            if (lastIndexOf <= 0 || lastIndexOf == text.length()) {
+            if (lastIndexOf <= 0) {
                 return false;
             }
 

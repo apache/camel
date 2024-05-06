@@ -88,13 +88,13 @@ public final class HostUtils {
     private static InetAddress chooseAddress() throws UnknownHostException {
         Set<InetAddress> addresses = getAddresses();
         if (addresses.contains(InetAddress.getLocalHost())) {
-            //Then if local host address is not bound to a loop-back interface, use it.
+            // if local host address is not bound to a loop-back interface, use it
             return InetAddress.getLocalHost();
-        } else if (addresses != null && !addresses.isEmpty()) {
-            //else return the first available addrress
-            return addresses.toArray(new InetAddress[0])[0];
+        } else if (!addresses.isEmpty()) {
+            // else return the first available address
+            return addresses.iterator().next();
         } else {
-            //else we are forcedt to use the localhost address.
+            // else we are forced to use the localhost address.
             return InetAddress.getLocalHost();
         }
     }

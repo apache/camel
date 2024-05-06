@@ -184,7 +184,7 @@ public abstract class ApiMethodParser<T> {
                     argTypes.add(type);
 
                     String typeDesc = null;
-                    if (parameters != null && name != null && argName != null) {
+                    if (parameters != null && argName != null) {
                         Map<String, String> params = parameters.get(name);
                         if (params != null) {
                             typeDesc = params.get(argName);

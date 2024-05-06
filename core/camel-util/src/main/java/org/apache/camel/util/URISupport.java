@@ -750,7 +750,7 @@ public final class URISupport {
                 prev = key;
             }
             if (sort) {
-                final String[] array = entries.toArray(new String[entries.size()]);
+                final String[] array = entries.toArray(new String[0]);
                 Arrays.sort(array);
 
                 query = URISupport.createQueryString(array, parameters, true);

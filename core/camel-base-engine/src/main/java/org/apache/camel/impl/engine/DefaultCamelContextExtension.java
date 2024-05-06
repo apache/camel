@@ -229,9 +229,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Endpoint hasEndpoint(NormalizedEndpointUri uri) {
-        if (camelContext.getEndpointRegistry().isEmpty()) {
-            return null;
-        }
         return camelContext.getEndpointRegistry().get(uri);
     }
 

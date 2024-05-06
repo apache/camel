@@ -324,17 +324,16 @@ public final class FileUtil {
         Deque<String> stack = new ArrayDeque<>();
 
         // separator can either be windows or unix style
-        String separatorRegex = "\\\\|/";
+        String separatorRegex = "[\\\\/]";
         String[] parts = path.split(separatorRegex);
         for (String part : parts) {
             if (part.equals("..") && !stack.isEmpty() && !"..".equals(stack.peek())) {
                 // only pop if there is a previous path, which is not a ".." path either
                 stack.pop();
-            } else if (part.equals(".") || part.isEmpty()) {
-                // do nothing because we don't want a path like foo/./bar or foo//bar
-            } else {
+            } else if (!part.equals(".") && !part.isEmpty()) {
                 stack.push(part);
             }
+            // else do nothing because we don't want a path like foo/./bar or foo//bar
         }
 
         // build path based on stack

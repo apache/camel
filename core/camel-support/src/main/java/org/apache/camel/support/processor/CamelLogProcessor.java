@@ -62,7 +62,6 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
 
     public CamelLogProcessor(CamelLogger logger, ExchangeFormatter formatter, MaskingFormatter maskingFormatter,
                              Set<LogListener> listeners) {
-        this.formatter = new ToStringExchangeFormatter();
         this.logger = logger;
         this.formatter = formatter;
         this.maskingFormatter = maskingFormatter;

@@ -182,7 +182,7 @@ public final class JaxbHelper {
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
             String nsPrefix = item.getNodeName();
-            if (nsPrefix != null && nsPrefix.startsWith("xmlns")) {
+            if (nsPrefix.startsWith("xmlns")) {
                 String nsValue = item.getNodeValue();
                 String[] nsParts = nsPrefix.split(":");
                 if (nsParts.length == 1) {
@@ -642,12 +642,10 @@ public final class JaxbHelper {
                     id = ((Element) parent).getAttribute("id");
                 }
             }
-            if (id != null) {
-                var loc = locations.get(id);
-                if (loc != null) {
-                    el.setAttribute("sourceLineNumber", loc.getKey().toString());
-                    el.setAttribute("sourceLocation", loc.getValue());
-                }
+            var loc = locations.get(id);
+            if (loc != null) {
+                el.setAttribute("sourceLineNumber", loc.getKey().toString());
+                el.setAttribute("sourceLocation", loc.getValue());
             }
         }
         if (node.hasChildNodes()) {

@@ -192,7 +192,7 @@ public class ResequencerEngine<E> {
         }
 
         // validate the exchange shouldn't be 'rejected' (if applicable)
-        if (rejectOld != null && rejectOld.booleanValue() && beforeLastDelivered(element)) {
+        if (rejectOld != null && rejectOld && beforeLastDelivered(element)) {
             throw new MessageRejectedException(
                     "rejecting message [" + element.getObject()
                                                + "], it should have been sent before the last delivered message ["
@@ -211,11 +211,7 @@ public class ResequencerEngine<E> {
         }
 
         // start delivery if current element is successor of last delivered element
-        if (successorOfLastDelivered(element)) {
-            // nothing to schedule
-        } else if (sequence.predecessor(element) != null) {
-            // nothing to schedule
-        } else {
+        if (!successorOfLastDelivered(element) && sequence.predecessor(element) == null) {
             element.schedule(defineTimeout());
         }
     }
@@ -227,6 +223,7 @@ public class ResequencerEngine<E> {
      *
      * @see              ResequencerEngine#deliverNext()
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     public synchronized void deliver() throws Exception {
         while (deliverNext()) {
             // do nothing here

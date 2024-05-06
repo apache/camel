@@ -182,7 +182,6 @@ public final class CatalogHelper {
         Map<String, Object> rc = new LinkedHashMap<>();
 
         boolean isKey = true;
-        boolean isValue = false;
         boolean isRaw = false;
         StringBuilder key = new StringBuilder();
         StringBuilder value = new StringBuilder();
@@ -197,7 +196,6 @@ public final class CatalogHelper {
             // if its a key and there is a = sign then the key ends and we are in value mode
             if (isKey && ch == '=') {
                 isKey = false;
-                isValue = true;
                 isRaw = false;
                 continue;
             }
@@ -211,7 +209,6 @@ public final class CatalogHelper {
                 key.setLength(0);
                 value.setLength(0);
                 isKey = true;
-                isValue = false;
                 isRaw = false;
                 continue;
             }
@@ -219,7 +216,7 @@ public final class CatalogHelper {
             // regular char so add it to the key or value
             if (isKey) {
                 key.append(ch);
-            } else if (isValue) {
+            } else {
                 value.append(ch);
             }
         }

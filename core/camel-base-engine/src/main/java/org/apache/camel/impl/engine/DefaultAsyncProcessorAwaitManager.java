@@ -188,9 +188,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
                 // dump a route stack trace of the exchange
                 String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, exchangeFormatter, false);
-                if (routeStackTrace != null) {
-                    sb.append(routeStackTrace);
-                }
+                sb.append(routeStackTrace);
                 LOG.warn(sb.toString());
 
             } catch (Exception e) {

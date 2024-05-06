@@ -645,7 +645,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     }
 
                     // copy parameters/bean repository to not cause side effect
-                    Map<Object, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
+                    Map<String, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
                     LocalBeanRegistry bbr
                             = (LocalBeanRegistry) routeDefinition.getRouteTemplateContext().getLocalBeanRepository();
                     LocalBeanRegistry bbrCopy = new LocalBeanRegistry();
@@ -655,10 +655,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     // no side-effect from previously used values that Camel may use in its endpoint
                     // registry and elsewhere
                     if (bbr != null && !bbr.isEmpty()) {
-                        for (Map.Entry<Object, Object> param : params.entrySet()) {
+                        for (Map.Entry<String, Object> param : params.entrySet()) {
                             Object value = param.getValue();
-                            if (value instanceof String) {
-                                String oldKey = (String) value;
+                            if (value instanceof String oldKey) {
                                 boolean clash = bbr.keys().stream().anyMatch(k -> k.equals(oldKey));
                                 if (clash) {
                                     String newKey = oldKey + "-" + UUID.generateUuid();
@@ -702,7 +701,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     pc.setLocalProperties(prop);
 
                     // we need to shadow the bean registry on the CamelContext with the local beans from the route template context
-                    if (localBeans != null && bbrCopy != null) {
+                    if (localBeans != null) {
                         localBeans.setLocalBeanRepository(bbrCopy);
                     }
 

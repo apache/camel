@@ -291,9 +291,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
                 collection = collectionType.cast(oldValue);
             }
 
-            if (collection != null) {
-                collection.add(toInsert);
-            }
+            collection.add(toInsert);
 
         } catch (ClassCastException exception) {
             if (!ignoreInvalidCasts) {

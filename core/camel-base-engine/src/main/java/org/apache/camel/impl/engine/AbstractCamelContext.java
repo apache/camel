@@ -923,7 +923,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public List<Route> getRoutes() {
-        // lets return a copy of the collection as objects are removed later
+        // let's return a copy of the collection as objects are removed later
         // when services are stopped
         if (routes.isEmpty()) {
             return Collections.emptyList();

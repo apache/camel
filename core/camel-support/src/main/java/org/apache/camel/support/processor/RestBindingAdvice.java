@@ -523,16 +523,13 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                 }
             } else {
                 // we could not bind
-                if (bindingMode.equals("auto")) {
+                if (bindingMode.contains("xml")) {
+                    exchange.setException(new CamelExchangeException(
+                            "Cannot bind to xml as message body is not xml compatible", exchange));
+                } else if (!bindingMode.equals("auto")) {
                     // okay for auto we do not mind if we could not bind
-                } else {
-                    if (bindingMode.contains("xml")) {
-                        exchange.setException(new CamelExchangeException(
-                                "Cannot bind to xml as message body is not xml compatible", exchange));
-                    } else {
-                        exchange.setException(new CamelExchangeException(
-                                "Cannot bind to json as message body is not json compatible", exchange));
-                    }
+                    exchange.setException(new CamelExchangeException(
+                            "Cannot bind to json as message body is not json compatible", exchange));
                 }
             }
         } catch (Exception e) {
