@@ -51,13 +51,13 @@ debezium-mysql:name[?options]
 
 [NOTE]
 ====
-Due to licensing issues, you will need to add the dependency for `mysql-connector-java` if you are using MySQL connector, add the following to your POM file:
+Due to licensing issues, you will need to add the dependency for `mysql-connector-j` if you are using MySQL connector, add the following to your POM file:
 
 [source,xml]
 ----
 <dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
     <version>8.0.15</version>
 </dependency>
 ----
