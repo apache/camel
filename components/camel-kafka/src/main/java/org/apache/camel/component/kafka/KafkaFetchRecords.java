@@ -549,7 +549,9 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     public boolean isPaused() {
-        return !consumer.paused().isEmpty();
+        // cannot use consumer directly as you can have ConcurrentModificationException as kafka client does not permit
+        // multiple threads to use the client consumer, so we check the state only
+        return state == State.PAUSED;
     }
 
     public void setConnected(boolean connected) {
