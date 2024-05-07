@@ -37,9 +37,11 @@ public class PineconeEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         Embedding embedding = message.getHeader("CamelLangChain4jEmbeddingsVector", Embedding.class);
+        String indexId = message.getHeader(PineconeVectorDb.Headers.INDEX_ID, UUID.randomUUID(), String.class);
+        String indexName = message.getHeader(PineconeVectorDb.Headers.INDEX_NAME, "embeddings", String.class);
 
-        message.setHeader(PineconeVectorDb.Headers.INDEX_NAME, "embeddings");
-        message.setHeader(PineconeVectorDb.Headers.INDEX_ID, UUID.randomUUID());
+        message.setHeader(PineconeVectorDb.Headers.INDEX_NAME, indexName);
+        message.setHeader(PineconeVectorDb.Headers.INDEX_ID, indexId);
         message.setBody(embedding.vectorAsList());
     }
 }
