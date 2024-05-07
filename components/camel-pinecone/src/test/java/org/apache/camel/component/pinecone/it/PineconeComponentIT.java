@@ -115,6 +115,22 @@ public class PineconeComponentIT extends CamelTestSupport {
 
     @Test
     @Order(4)
+    public void queryById() {
+
+        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY_BY_ID)
+                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDb.Headers.INDEX_ID, "elements")
+                .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 3)
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(((QueryResponseWithUnsignedIndices) result.getMessage().getBody()).getMatchesList()).isNotEmpty();
+    }
+
+    @Test
+    @Order(5)
     public void deleteIndex() {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
