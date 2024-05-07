@@ -66,6 +66,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String BOUNDARY_PARAM_NAME = "boundary";
 
+    public static final String DISPOSITION_TYPE = "Disposition-Type";
+
     private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n"
                                                                + " Message ID: $requestHeaders[\"Message-Id\"]\n"
                                                                + "  Subject: $requestHeaders[\"Subject\"]\n"
@@ -139,7 +141,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity;
         if (AS2DispositionType.FAILED.getType()
-                .equals(HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE))) {
+                .equals(coreContext.getAttribute(DISPOSITION_TYPE, String.class))) {
             // Return a failed Message Disposition Notification Receipt in response body
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
