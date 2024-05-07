@@ -101,7 +101,7 @@
 
         <!-- for testing sftp through http proxy -->
         <dependency>
-            <groupId>xyz.rogfam</groupId>
+            <groupId>io.github.littleproxy</groupId>
             <artifactId>littleproxy</artifactId>
             <version>${littleproxy-version}</version>
             <scope>test</scope>
