@@ -267,15 +267,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
 
             // Converting the index to String can cause extra overhead
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Completed upload for the part {}, multipart {} with etag {} at index {}", part, state.multipartIndex,
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Completed upload for the part {}, multipart {} with etag {} at index {}", part, state.multipartIndex,
                         uploadResult.eTag(),
                         state.index);
             }
             part.getAndIncrement();
             return uploadResult;
         } catch (Exception e) {
-            LOG.error("Error completing multipart updload");
+            LOG.warn("Error completing multipart upload - Multipart upload will be aborted", e);
             getEndpoint().getS3Client()
                     .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
                             .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId()).build());
