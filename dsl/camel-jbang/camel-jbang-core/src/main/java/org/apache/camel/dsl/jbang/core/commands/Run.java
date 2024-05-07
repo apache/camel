@@ -855,6 +855,8 @@ public class Run extends CamelCommand {
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
         eq.symbolicLink = true;
+        eq.mavenWrapper = true;
+        eq.gradleWrapper = false;
         eq.quarkusVersion = this.quarkusVersion;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
@@ -920,6 +922,8 @@ public class Run extends CamelCommand {
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
         eq.symbolicLink = true;
+        eq.mavenWrapper = true;
+        eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = this.camelVersion;
