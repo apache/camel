@@ -114,7 +114,7 @@ public final class LanguageBuilderFactory {
     /**
      * Uses the JOOR language
      */
-    @Deprecated
+    @Deprecated(since = "4.3.0")
     public JoorExpression.Builder joor() {
         return new JoorExpression.Builder();
     }

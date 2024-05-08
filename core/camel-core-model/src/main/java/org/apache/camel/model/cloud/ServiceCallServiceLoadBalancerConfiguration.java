@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "loadBalancerConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConfiguration
         implements ServiceLoadBalancerFactory {
     @XmlTransient

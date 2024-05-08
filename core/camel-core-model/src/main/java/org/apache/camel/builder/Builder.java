@@ -174,7 +174,7 @@ public final class Builder {
     /**
      * Returns a JOOR expression value builder
      */
-    @Deprecated
+    @Deprecated(since = "4.3.0")
     public static ValueBuilder joor(String value) {
         JoorExpression exp = new JoorExpression(value);
         return new ValueBuilder(exp);
@@ -183,7 +183,7 @@ public final class Builder {
     /**
      * Returns a JOOR expression value builder
      */
-    @Deprecated
+    @Deprecated(since = "4.3.0")
     public static ValueBuilder joor(String value, Class<?> resultType) {
         JoorExpression exp = new JoorExpression(value);
         exp.setResultType(resultType);

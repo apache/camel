@@ -21,7 +21,7 @@ import org.apache.camel.ErrorHandlerFactory;
 /**
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
-@Deprecated
+@Deprecated(since = "3.17.0")
 public interface LegacyErrorHandlerBuilder extends ErrorHandlerFactory {
 
 }

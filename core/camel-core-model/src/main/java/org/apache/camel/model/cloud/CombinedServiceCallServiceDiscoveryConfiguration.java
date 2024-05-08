@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "combinedServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlElements({
             @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),

@@ -376,7 +376,7 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "3.10.0")
     public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
             throws Exception {
         RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);

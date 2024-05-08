@@ -30,7 +30,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @XmlRootElement(name = "consulServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     private String url;

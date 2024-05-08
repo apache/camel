@@ -63,7 +63,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
      * @see        JmsConfiguration#getUsername()
      * @deprecated - use JmsConfiguration#getUsername()
      */
-    @Deprecated
+    @Deprecated(since = "3.0.0")
     public String getUserName() {
         return getUsername();
     }
@@ -72,7 +72,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
      * @see        JmsConfiguration#setUsername(String)
      * @deprecated - use JmsConfiguration#setUsername(String)
      */
-    @Deprecated
+    @Deprecated(since = "3.0.0")
     public void setUserName(String userName) {
         setUsername(userName);
     }

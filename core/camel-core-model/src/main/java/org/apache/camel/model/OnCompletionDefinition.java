@@ -236,7 +236,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * @return     the builder
      * @deprecated use {@link #useOriginalMessage()}
      */
-    @Deprecated
+    @Deprecated(since = "4.6.0")
     public OnCompletionDefinition useOriginalBody() {
         setUseOriginalMessage(Boolean.toString(true));
         return this;

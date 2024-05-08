@@ -123,7 +123,7 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "4.4.0")
     public void reset(long created) {
         clock.reset();
     }

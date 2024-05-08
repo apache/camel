@@ -69,7 +69,7 @@ public interface Exchange extends VariableAware {
 
     String AUTHENTICATION = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
-    @Deprecated
+    @Deprecated(since = "2.20.0")
     String ACCEPT_CONTENT_TYPE = "CamelAcceptContentType";
     @Metadata(label = "aggregate", description = "Number of exchanges that was grouped together.", javaType = "int")
     String AGGREGATED_SIZE = "CamelAggregatedSize";
@@ -107,9 +107,9 @@ public interface Exchange extends VariableAware {
     String BREADCRUMB_ID = "breadcrumbId";
 
     String CHARSET_NAME = "CamelCharsetName";
-    @Deprecated
+    @Deprecated(since = "4.5.0")
     String CIRCUIT_BREAKER_STATE = "CamelCircuitBreakerState";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String CREATED_TIMESTAMP = "CamelCreatedTimestamp";
     String CLAIM_CHECK_REPOSITORY = "CamelClaimCheckRepository";
     String CONTENT_ENCODING = "Content-Encoding";
@@ -142,12 +142,12 @@ public interface Exchange extends VariableAware {
     String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
     String ERRORHANDLER_BRIDGE = "CamelErrorHandlerBridge";
     String ERRORHANDLER_CIRCUIT_DETECTED = "CamelErrorHandlerCircuitDetected";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String EXTERNAL_REDELIVERED = "CamelExternalRedelivered";
 
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     String FAILURE_HANDLED = "CamelFailureHandled";
 
     @Metadata(label = "doCatch,doFinally,errorHandler,onException",
@@ -174,7 +174,7 @@ public interface Exchange extends VariableAware {
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";
-    @Deprecated
+    @Deprecated(since = "3.9.0")
     String FILTER_MATCHED = "CamelFilterMatched";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
 
@@ -202,7 +202,7 @@ public interface Exchange extends VariableAware {
               javaType = "String")
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = "CamelInterceptSendToEndpointWhenMatched";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String INTERRUPTED = "CamelInterrupted";
 
     String LANGUAGE_SCRIPT = "CamelLanguageScript";
@@ -236,7 +236,7 @@ public interface Exchange extends VariableAware {
     @Metadata(label = "multicast", description = "Whether this Exchange is the last.", javaType = "boolean")
     String MULTICAST_COMPLETE = "CamelMulticastComplete";
 
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String NOTIFY_EVENT = "CamelNotifyEvent";
 
     @Metadata(label = "onCompletion",
@@ -255,26 +255,26 @@ public interface Exchange extends VariableAware {
     String REDELIVERED = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
     String REDELIVERY_MAX_COUNTER = "CamelRedeliveryMaxCounter";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String REDELIVERY_EXHAUSTED = "CamelRedeliveryExhausted";
     String REDELIVERY_DELAY = "CamelRedeliveryDelay";
     String REST_HTTP_URI = "CamelRestHttpUri";
     String REST_HTTP_QUERY = "CamelRestHttpQuery";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String ROLLBACK_ONLY = "CamelRollbackOnly";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String ROLLBACK_ONLY_LAST = "CamelRollbackOnlyLast";
-    @Deprecated
+    @Deprecated(since = "3.1.0")
     String ROUTE_STOP = "CamelRouteStop";
 
     String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
     String COMPILE_SCRIPT = "CamelCompileScript";
 
-    @Deprecated
+    @Deprecated(since = "3.15.0")
     String SAXPARSER_FACTORY = "CamelSAXParserFactory";
 
     String SCHEDULER_POLLED_MESSAGES = "CamelSchedulerPolledMessages";
-    @Deprecated
+    @Deprecated(since = "3.15.0")
     String SOAP_ACTION = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding";
@@ -303,17 +303,17 @@ public interface Exchange extends VariableAware {
     @Metadata(label = "enrich,multicast,pollEnrich,recipientList,routingSlip,toD,to,wireTap",
               description = "Endpoint URI where this Exchange is being sent to", javaType = "String")
     String TO_ENDPOINT = "CamelToEndpoint";
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     String TRACE_EVENT = "CamelTraceEvent";
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     String TRACE_EVENT_NODE_ID = "CamelTraceEventNodeId";
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     String TRACE_EVENT_EXCHANGE = "CamelTraceEventExchange";
-    @Deprecated
+    @Deprecated(since = "3.15.0")
     String TRACING_HEADER_FORMAT = "CamelTracingHeaderFormat";
-    @Deprecated
+    @Deprecated(since = "3.15.0")
     String TRACING_OUTPUT_FORMAT = "CamelTracingOutputFormat";
     String TRANSACTION_CONTEXT_DATA = "CamelTransactionContextData";
     String TRY_ROUTE_BLOCK = "TryRouteBlock";
@@ -594,7 +594,7 @@ public interface Exchange extends VariableAware {
      * @see        #getIn()
      * @deprecated use {@link #getMessage()}
      */
-    @Deprecated
+    @Deprecated(since = "3.0.0")
     Message getOut();
 
     /**
@@ -615,7 +615,7 @@ public interface Exchange extends VariableAware {
      * @see             #getIn(Class)
      * @deprecated      use {@link #getMessage(Class)}
      */
-    @Deprecated
+    @Deprecated(since = "3.0.0")
     <T> T getOut(Class<T> type);
 
     /**
@@ -624,7 +624,7 @@ public interface Exchange extends VariableAware {
      * @return     <tt>true</tt> if an OUT message exists, <tt>false</tt> otherwise.
      * @deprecated use {@link #getMessage()}
      */
-    @Deprecated
+    @Deprecated(since = "3.0.0")
     boolean hasOut();
 
     /**
@@ -633,7 +633,7 @@ public interface Exchange extends VariableAware {
      * @param      out the outbound message
      * @deprecated     use {@link #setMessage(Message)}
      */
-    @Deprecated
+    @Deprecated(since = "3.0.0")
     void setOut(Message out);
 
     /**
@@ -777,7 +777,7 @@ public interface Exchange extends VariableAware {
      *
      * @see Message#getMessageTimestamp()
      */
-    @Deprecated
+    @Deprecated(since = "4.4.0")
     long getCreated();
 
     /**
