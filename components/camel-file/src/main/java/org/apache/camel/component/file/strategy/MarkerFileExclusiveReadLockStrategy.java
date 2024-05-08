@@ -27,6 +27,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -318,6 +319,18 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         String path
                 = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
         return path + "-" + key;
+    }
+
+    protected static boolean isTimedOut(StopWatch watch, File target, long timeout, LoggingLevel readLockLoggingLevel) {
+        long delta = watch.taken();
+        if (delta > timeout) {
+            CamelLogger.log(LOG, readLockLoggingLevel,
+                    "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
+            // we could not get the lock within the timeout period,
+            // so return false
+            return true;
+        }
+        return false;
     }
 
 }

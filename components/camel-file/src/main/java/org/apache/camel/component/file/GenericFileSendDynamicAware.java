@@ -65,51 +65,37 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
 
             Map<String, Object> originalParams = URISupport.parseQuery(URISupport.extractQuery(entry.getOriginalUri()));
             if (fileName) {
-                Object val = originalParams.get(PROP_FILE_NAME);
-                if (val != null) {
-                    params.put(PROP_FILE_NAME, val.toString());
-                }
+                compute(originalParams, PROP_FILE_NAME, params);
             }
             if (tempFileName) {
-                Object val = originalParams.get(PROP_TEMP_FILE_NAME);
-                if (val != null) {
-                    params.put(PROP_TEMP_FILE_NAME, val.toString());
-                }
+                compute(originalParams, PROP_TEMP_FILE_NAME, params);
             }
             if (idempotentKey) {
-                Object val = originalParams.get(PROP_IDEMPOTENT_KEY);
-                if (val != null) {
-                    params.put(PROP_IDEMPOTENT_KEY, val.toString());
-                }
+                compute(originalParams, PROP_IDEMPOTENT_KEY, params);
             }
             if (move) {
-                Object val = originalParams.get(PROP_MOVE);
-                if (val != null) {
-                    params.put(PROP_MOVE, val.toString());
-                }
+                compute(originalParams, PROP_MOVE, params);
             }
             if (moveFailed) {
-                Object val = originalParams.get(PROP_MOVE_FAILED);
-                if (val != null) {
-                    params.put(PROP_MOVE_FAILED, val.toString());
-                }
+                compute(originalParams, PROP_MOVE_FAILED, params);
             }
             if (preMove) {
-                Object val = originalParams.get(PROP_PRE_MOVE);
-                if (val != null) {
-                    params.put(PROP_PRE_MOVE, val.toString());
-                }
+                compute(originalParams, PROP_PRE_MOVE, params);
             }
             if (moveExisting) {
-                Object val = originalParams.get(PROP_MOVE_EXISTING);
-                if (val != null) {
-                    params.put(PROP_MOVE_EXISTING, val.toString());
-                }
+                compute(originalParams, PROP_MOVE_EXISTING, params);
             }
 
             return asEndpointUri(exchange, uri, params);
         } else {
             return uri;
+        }
+    }
+
+    private static void compute(Map<String, Object> originalParams, String propFileName, Map<String, Object> params) {
+        Object val = originalParams.get(propFileName);
+        if (val != null) {
+            params.put(propFileName, val.toString());
         }
     }
 

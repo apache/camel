@@ -87,10 +87,18 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             Arrays.sort(files, Comparator.comparing(File::getAbsoluteFile));
         }
 
+        if (processPolledFiles(fileList, depth, files)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean processPolledFiles(List<GenericFile<File>> fileList, int depth, File[] files) {
         for (File file : files) {
             // check if we can continue polling in files
             if (!canPollMoreFiles(fileList)) {
-                return false;
+                return true;
             }
 
             // trace log as Windows/Unix can have different views what the file is
@@ -117,11 +125,10 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             }
 
             if (processEntry(fileList, depth, file, gf, files)) {
-                return false;
+                return true;
             }
         }
-
-        return true;
+        return false;
     }
 
     private boolean processEntry(List<GenericFile<File>> fileList, int depth, File file, GenericFile<File> gf, File[] files) {
