@@ -35,6 +35,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * will demonstrate how to retry
  */
 @Tags({ @Tag("breakOnFirstError") })
+@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
+             architectures = { "amd64", "aarch64", "s390x", "x86", "x86_64" },
+             disabledReason = "This test does not run reliably on ppc64le")
 
 class KafkaBreakOnFirstErrorWithBatchUsingKafkaManualCommitRetryIT extends BaseKafkaTestSupport {
 
