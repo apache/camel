@@ -18,7 +18,6 @@ package org.apache.camel.component.spring.security.config;
 
 import org.w3c.dom.Element;
 
-import org.apache.camel.component.spring.security.SpringSecurityAccessPolicy;
 import org.apache.camel.component.spring.security.SpringSecurityAuthorizationPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -32,7 +31,7 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
 
     @Override
     protected boolean isEligibleAttribute(String attributeName) {
-        if ("access".equals(attributeName) || "accessDecisionManager".equals(attributeName)
+        if ("access".equals(attributeName) || "authorizationManager".equals(attributeName)
                 || "authenticationManager".equals(attributeName)) {
             return false;
         } else {
@@ -42,16 +41,11 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
 
     @Override
     protected void postProcess(BeanDefinitionBuilder builder, Element element) {
-        setReferenceIfAttributeDefine(builder, element, "accessDecisionManager");
+        setReferenceIfAttributeDefine(builder, element, "authorizationManager");
         setReferenceIfAttributeDefine(builder, element, "authenticationManager");
         if (ObjectHelper.isNotEmpty(element.getAttribute("authenticationAdapter"))) {
             builder.addPropertyReference("authenticationAdapter", element.getAttribute("authenticationAdapter"));
         }
-
-        BeanDefinitionBuilder accessPolicyBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-                SpringSecurityAccessPolicy.class.getCanonicalName());
-        accessPolicyBuilder.addConstructorArgValue(element.getAttribute("access"));
-        builder.addPropertyValue("springSecurityAccessPolicy", accessPolicyBuilder.getBeanDefinition());
     }
 
     protected void setReferenceIfAttributeDefine(BeanDefinitionBuilder builder, Element element, String attribute) {

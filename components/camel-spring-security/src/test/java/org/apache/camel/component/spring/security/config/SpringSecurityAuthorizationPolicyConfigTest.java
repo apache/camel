@@ -47,18 +47,16 @@ public class SpringSecurityAuthorizationPolicyConfigTest {
 
         SpringSecurityAuthorizationPolicy adminPolicy = context.getBean("admin", SpringSecurityAuthorizationPolicy.class);
         assertNotNull(adminPolicy, "We should get admin policy");
-        assertNotNull(adminPolicy.getAccessDecisionManager(), "The accessDecisionManager should not be null");
+        assertNotNull(adminPolicy.getAuthorizationManager(), "The authorizationManager should not be null");
         assertNotNull(adminPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
-        assertNotNull(adminPolicy.getSpringSecurityAccessPolicy(), "The springSecurityAccessPolicy should not be null");
 
         SpringSecurityAuthorizationPolicy userPolicy = context.getBean("user", SpringSecurityAuthorizationPolicy.class);
         assertNotNull(userPolicy, "We should get user policy");
-        assertNotNull(userPolicy.getAccessDecisionManager(), "The accessDecisionManager should not be null");
+        assertNotNull(adminPolicy.getAuthorizationManager(), "The authorizationManager should not be null");
         assertNotNull(userPolicy.getAuthenticationManager(), "The authenticationManager should not be null");
-        assertNotNull(userPolicy.getSpringSecurityAccessPolicy(), "The springSecurityAccessPolicy should not be null");
 
-        assertEquals(adminPolicy.getAccessDecisionManager(), userPolicy.getAccessDecisionManager(),
-                "user policy and admin policy should have same accessDecisionManager");
+        assertEquals(adminPolicy.getAuthorizationManager(), userPolicy.getAuthorizationManager(),
+                "user policy and admin policy should have same authorizationManager");
         assertEquals(adminPolicy.getAuthenticationManager(), userPolicy.getAuthenticationManager(),
                 "user policy and admin policy should have same authenticationManager");
     }

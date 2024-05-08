@@ -30,9 +30,9 @@
     <!-- import the spring security configuration  -->
     <import resource="classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
 
-    <authorizationPolicy id="admin" access="ROLE_ADMIN"
+    <authorizationPolicy id="admin"
                          authenticationManager="authenticationManager"
-                         accessDecisionManager="accessDecisionManager"
+                         authorizationManager="authorizationManager"
                          xmlns="http://camel.apache.org/schema/spring-security"/>
 
     <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
