@@ -430,42 +430,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         try {
 
             if (isRetrieveFile()) {
-                // retrieve the file using the stream
-                LOG.trace("Retrieving file: {} from: {}", name, endpoint);
-
-                // retrieve the file and check it was a success
-                boolean retrieved;
-                Exception cause = null;
-                try {
-                    retrieved = operations.retrieveFile(name, exchange, target.getFileLength());
-                } catch (Exception e) {
-                    retrieved = false;
-                    cause = e;
+                if (tryRetrievingFile(exchange, name, target, absoluteFileName, file)) {
+                    return false;
                 }
-
-                if (!retrieved) {
-                    if (ignoreCannotRetrieveFile(name, exchange, cause)) {
-                        LOG.trace("Cannot retrieve file {} maybe it does not exist. Ignoring.", name);
-                        // remove file from the in progress list as we could not
-                        // retrieve it, but should ignore
-                        endpoint.getInProgressRepository().remove(absoluteFileName);
-                        return false;
-                    } else {
-                        // throw exception to handle the problem with retrieving
-                        // the file
-                        // then if the method return false or throws an
-                        // exception is handled the same in here
-                        // as in both cases an exception is being thrown
-                        if (cause instanceof GenericFileOperationFailedException) {
-                            throw cause;
-                        } else {
-                            throw new GenericFileOperationFailedException(
-                                    "Cannot retrieve file: " + file + " from: " + endpoint, cause);
-                        }
-                    }
-                }
-
-                LOG.trace("Retrieved file: {} from: {}", name, endpoint);
             } else {
                 LOG.trace("Skipped retrieval of file: {} from: {}", name, endpoint);
                 exchange.getIn().setBody(null);
@@ -506,6 +473,48 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         return true;
+    }
+
+    private boolean tryRetrievingFile(
+            Exchange exchange, String name, GenericFile<T> target, String absoluteFileName, GenericFile<T> file)
+            throws Exception {
+        // retrieve the file using the stream
+        LOG.trace("Retrieving file: {} from: {}", name, endpoint);
+
+        // retrieve the file and check it was a success
+        boolean retrieved;
+        Exception cause = null;
+        try {
+            retrieved = operations.retrieveFile(name, exchange, target.getFileLength());
+        } catch (Exception e) {
+            retrieved = false;
+            cause = e;
+        }
+
+        if (!retrieved) {
+            if (ignoreCannotRetrieveFile(name, exchange, cause)) {
+                LOG.trace("Cannot retrieve file {} maybe it does not exist. Ignoring.", name);
+                // remove file from the in progress list as we could not
+                // retrieve it, but should ignore
+                endpoint.getInProgressRepository().remove(absoluteFileName);
+                return true;
+            } else {
+                // throw exception to handle the problem with retrieving
+                // the file
+                // then if the method return false or throws an
+                // exception is handled the same in here
+                // as in both cases an exception is being thrown
+                if (cause instanceof GenericFileOperationFailedException) {
+                    throw cause;
+                } else {
+                    throw new GenericFileOperationFailedException(
+                            "Cannot retrieve file: " + file + " from: " + endpoint, cause);
+                }
+            }
+        }
+
+        LOG.trace("Retrieved file: {} from: {}", name, endpoint);
+        return false;
     }
 
     /**
@@ -697,34 +706,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
-        // exclude take precedence over include
-        if (excludePattern != null) {
-            if (excludePattern.matcher(name).matches()) {
-                return false;
-            }
-        }
-        if (excludeExt != null) {
-            String fname = file.getFileName().toLowerCase();
-            for (String exclude : excludeExt) {
-                if (fname.endsWith("." + exclude)) {
-                    return false;
-                }
-            }
-        }
-        if (includePattern != null) {
-            if (!includePattern.matcher(name).matches()) {
-                return false;
-            }
-        }
-        if (includeExt != null) {
-            String fname = file.getFileName().toLowerCase();
-            boolean any = false;
-            for (String include : includeExt) {
-                any |= fname.endsWith("." + include);
-            }
-            if (!any) {
-                return false;
-            }
+        if (hasInclusionsOrExclusions(file, name)) {
+            return false;
         }
 
         if (endpoint.getFileName() != null) {
@@ -766,6 +749,53 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         return true;
+    }
+
+    private boolean hasInclusionsOrExclusions(GenericFile<T> file, String name) {
+        // exclude take precedence over include
+        if (excludePattern != null) {
+            if (excludePattern.matcher(name).matches()) {
+                return true;
+            }
+        }
+        if (excludeExt != null) {
+            String fname = file.getFileName().toLowerCase();
+            if (hasExtExlusions(fname)) {
+                return true;
+            }
+        }
+        if (includePattern != null) {
+            if (!includePattern.matcher(name).matches()) {
+                return true;
+            }
+        }
+        if (includeExt != null) {
+            String fname = file.getFileName().toLowerCase();
+            if (hasExtInclusions(fname)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasExtInclusions(String fname) {
+        boolean any = false;
+        for (String include : includeExt) {
+            any |= fname.endsWith("." + include);
+        }
+        if (!any) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasExtExlusions(String fname) {
+        for (String exclude : excludeExt) {
+            if (fname.endsWith("." + exclude)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

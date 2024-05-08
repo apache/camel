@@ -104,14 +104,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         if (!file.exists() && !file.isDirectory()) {
             tryCreateDirectory();
         }
-        if (!isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
-            throw new IllegalArgumentException(
-                    "You cannot set startingDirectoryMustHaveAccess=true without setting startingDirectoryMustExist=true");
-        } else if (isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
-            if (!file.canRead() || !file.canWrite()) {
-                throw new IOException("Starting directory permission denied: " + file);
-            }
-        }
+        tryReadingStartDirectory();
+
         FileConsumer result = newFileConsumer(processor, operations);
 
         if (isDelete() && getMove() != null) {
@@ -140,6 +134,17 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         configureConsumer(result);
         return result;
+    }
+
+    private void tryReadingStartDirectory() throws IOException {
+        if (!isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
+            throw new IllegalArgumentException(
+                    "You cannot set startingDirectoryMustHaveAccess=true without setting startingDirectoryMustExist=true");
+        } else if (isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
+            if (!file.canRead() || !file.canWrite()) {
+                throw new IOException("Starting directory permission denied: " + file);
+            }
+        }
     }
 
     private void readLockCheck() {
