@@ -30,7 +30,7 @@
 
     <authorizationPolicy id="admin" access="ROLE_ADMIN"
                          authenticationManager="authenticationManager"
-                         accessDecisionManager="accessDecisionManager"
+                         authorizationManager="authorizationManager"
                          xmlns="http://camel.apache.org/schema/spring-security"/>
 
     <authorizationPolicy id="user" access="ROLE_USER"
