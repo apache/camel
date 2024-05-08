@@ -122,7 +122,7 @@ public class GreeterClientTest {
                     "Get a wrong exception message");
             assertTrue(
                     ex.getMessage().endsWith(
-                            "Caused by: [org.springframework.security.access.AccessDeniedException - Access is denied]"),
+                            "Caused by: [org.springframework.security.access.AccessDeniedException - Access Denied]"),
                     "Get a wrong exception message");
         }
     }

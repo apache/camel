@@ -34,7 +34,7 @@
     <authorizationPolicy id="admin" access="ROLE_ADMIN"
                          authenticationAdapter="myAuthenticationAdapter"
                          authenticationManager="authenticationManager"
-                         accessDecisionManager="accessDecisionManager"
+                         authorizationManager="authorizationManager"
                          xmlns="http://camel.apache.org/schema/spring-security"/>
 
     <bean id="myAuthenticationAdapter"  class="org.apache.camel.itest.security.MyAuthenticationAdapter"/>
