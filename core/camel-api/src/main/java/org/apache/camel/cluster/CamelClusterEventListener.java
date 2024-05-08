@@ -16,8 +16,6 @@
  */
 package org.apache.camel.cluster;
 
-import java.util.Optional;
-
 /**
  * Marker interface for cluster events
  */
@@ -31,7 +29,7 @@ public interface CamelClusterEventListener {
          * @param view   the cluster view
          * @param leader the optional new leader
          */
-        void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader);
+        void leadershipChanged(CamelClusterView view, CamelClusterMember leader);
 
     }
 

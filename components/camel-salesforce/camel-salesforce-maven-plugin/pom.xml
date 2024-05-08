@@ -162,7 +162,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>xyz.rogfam</groupId>
+            <groupId>io.github.littleproxy</groupId>
             <artifactId>littleproxy</artifactId>
             <version>${littleproxy-version}</version>
             <scope>test</scope>

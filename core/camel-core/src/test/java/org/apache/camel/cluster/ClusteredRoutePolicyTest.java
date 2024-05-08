@@ -214,7 +214,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
             this.leader = leader;
 
             if (isRunAllowed()) {
-                fireLeadershipChangedEvent(getLeader());
+                fireLeadershipChangedEvent(getLeader().orElse(null));
             }
         }
 

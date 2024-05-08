@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "serviceChooserConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class ServiceCallServiceChooserConfiguration extends ServiceCallConfiguration implements ServiceChooserFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;

@@ -55,7 +55,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
 
     private Map<String, KubernetesClusterMember> memberCache;
 
-    private volatile Optional<CamelClusterMember> currentLeader = Optional.empty();
+    private volatile CamelClusterMember currentLeader = null;
 
     private volatile List<CamelClusterMember> currentMembers = Collections.emptyList();
 
@@ -77,7 +77,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
 
     @Override
     public Optional<CamelClusterMember> getLeader() {
-        return currentLeader;
+        return Optional.ofNullable(currentLeader);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
                     // New leader
                     Optional<String> leader
                             = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class.cast(event).getData();
-                    currentLeader = leader.map(this::toMember);
+                    currentLeader = leader.map(this::toMember).orElse(null);
                     fireLeadershipChangedEvent(currentLeader);
                 } else if (event instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
                     Set<String> members
@@ -168,7 +168,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
 
         @Override
         public boolean isLeader() {
-            return currentLeader.isPresent() && currentLeader.get().getId().equals(podName);
+            return currentLeader != null && currentLeader.getId().equals(podName);
         }
 
         @Override

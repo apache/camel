@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.errorhandler;
+package org.apache.camel.dsl.jbang.core.commands.action;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Predicate;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.json.JsonObject;
+import picocli.CommandLine;
 
-/**
- * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
- */
-@Deprecated(since = "3.17.0")
-public interface DeadLetterChannelProperties extends DefaultErrorHandlerProperties {
+@CommandLine.Command(name = "suspend-route",
+                     description = "Suspend Camel routes", sortOptions = false)
+public class CamelRouteSuspendAction extends CamelRouteAction {
 
-    // has no additional configurations
+    public CamelRouteSuspendAction(CamelJBangMain main) {
+        super(main);
+    }
 
-    Predicate getRetryWhilePolicy(CamelContext context);
+    @Override
+    protected void onAction(JsonObject root) {
+        root.put("command", "suspend");
+    }
 
 }

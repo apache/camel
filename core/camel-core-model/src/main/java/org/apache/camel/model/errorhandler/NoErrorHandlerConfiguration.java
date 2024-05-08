@@ -24,7 +24,7 @@ import org.apache.camel.ErrorHandlerFactory;
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
 @XmlTransient
-@Deprecated
+@Deprecated(since = "3.17.0")
 public class NoErrorHandlerConfiguration implements NoErrorHandlerProperties {
 
     // no configuration

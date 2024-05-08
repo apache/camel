@@ -6,6 +6,10 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.6 to 4.7
 
+=== camel-core
+
+Add default values to `ThrottlingExceptionRoutePolicy` route policy.
+
 === camel-spring-security
 
 The `camel-spring-security` component has been updated to improve readiness for Spring Security 7.x. Since Spring Security 5.8 the `AccessDecisionManager` interface and the related cooperating classes have been deprecated in favor of `AuthorizationManager` based patterns.
@@ -26,3 +30,4 @@ authorizationPolicy.setAuthorizationManager(AuthorityAuthorizationManager.hasRol
 ```
 This new pattern supports a more expressive language to define your own authorization rules, exposing the full power of the Spring Security framework to Camel route policies.
 See the https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler[spring documentation] for further details on how to migrate your custom code from `AccessDecisionManager` to `AuthorizationManager`.
+

@@ -21,7 +21,7 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
 /**
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
-@Deprecated
+@Deprecated(since = "3.17.0")
 public class LegacyNoErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport implements NoErrorHandlerProperties {
 
     @Override

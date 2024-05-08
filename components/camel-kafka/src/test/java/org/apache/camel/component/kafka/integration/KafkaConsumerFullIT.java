@@ -25,6 +25,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.KafkaConsumer;
 import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.SeekPolicy;
@@ -43,6 +44,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -221,6 +223,56 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
         KafkaEndpoint kafkaEndpoint
                 = context.getEndpoint("kafka:random_topic?headerDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
         assertInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getHeaderDeserializer());
+    }
+
+    @Order(6)
+    @Test
+    public void kafkaMessageIsConsumedByCamelAfterSuspendResume() throws Exception {
+        MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
+
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+
+        for (int k = 0; k < 5; k++) {
+            String msg = "message-" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+
+        to.assertIsSatisfied(3000);
+
+        assertEquals(5, MockConsumerInterceptor.recordsCaptured.stream()
+                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+
+        // suspend route
+        CamelContext context = contextExtension.getContext();
+        context.getRouteController().suspendRoute("full-it");
+
+        // wait until the kafka client is really paused
+        KafkaConsumer kc = (KafkaConsumer) context.getRoute("full-it").getConsumer();
+        Awaitility.await().until(() -> {
+            boolean paused = kc.isKafkaPaused();
+            LOG.info("Waiting for kafka client to be paused: {}", paused);
+            return paused;
+        });
+
+        context.getRouteController().resumeRoute("full-it");
+
+        to.reset();
+
+        to.expectedMessageCount(3);
+        to.expectedBodiesReceivedInAnyOrder("message-5", "message-6", "message-7");
+
+        for (int k = 5; k < 8; k++) {
+            String msg = "message-" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+
+        to.assertIsSatisfied(3000);
+
+        assertEquals(5 + 3, MockConsumerInterceptor.recordsCaptured.stream()
+                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
     }
 
     private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {

@@ -50,9 +50,31 @@ After:
           payload: "test-payload"
 ----
 
-=== camel-as2
+Renamed `streamCaching` to `streamCache` on the `route`
 
-The `camel-as2` component has upgraded HTTP Client 4.x to 5.x and because of that, there are some options that have changed.
+Before:
+
+[source,yaml]
+----
+route:
+  streamCaching: false
+  from:
+    uri: "direct:foo"
+    steps:
+      - to: "mock:bar"
+----
+
+After:
+
+[source,yaml]
+----
+route:
+  streamCache: false
+  from:
+    uri: "direct:foo"
+    steps:
+      - to: "mock:bar"
+----
 
 === camel-elasticsearch
 
@@ -121,41 +143,23 @@ The Camel Azure ServiceBus consumer has been refactored to internally use the hi
 - The `receiverAsyncClient` option has been replaced with a `processorClient` option to enable use of a custom-configured client. The parameter type accepted by this option is `ServiceBusProcessorClient`.
 - The `reconnectDelay` option has been removed, since reconnection is now handled internally by the client.
 
-
-=== camel-yaml-dsl
-
-Renamed `streamCaching` to `streamCache` on the `route`
-
-Before:
-
-[source,yaml]
-----
-route:
-  streamCaching: false
-  from:
-    uri: "direct:foo"
-    steps:
-      - to: "mock:bar"
-----
-
-After:
-
-[source,yaml]
-----
-route:
-  streamCache: false
-  from:
-    uri: "direct:foo"
-    steps:
-      - to: "mock:bar"
-----
-
 === camel-jbang
 
 When running using `camel run --source-dir=mydir` then Camel JBang will now preload existing files on startup, such as `application.properties`,
 and beans and routes (same as if you run with `cd mydir; camel run *`). This allows to configure settings on Camel on startup, which was not possible beforehand.
 
 The `--open-api` option has changed from _code-first_ to use the new _contract-first_ Rest DSL style by using the specification file direct as-is.
+
+=== camel-as2
+
+The `camel-as2` component has upgraded HTTP Client 4.x to 5.x and because of that, there are some options that have changed.
+
+Changes for AS2-MDN asynchronous delivery:
+
+ - Added an option allowing clients to request an asynchronous receipt by including a 'Receipt-Delivery-Option' header specifying
+the return URL in the request that is sent to the server.
+ - Added a consumer capable of receiving signed or unsigned asynchronous message disposition notifications sent by the
+message receiver confirming receipt of the message.
 
 === camel-spring-boot
 
@@ -181,11 +185,3 @@ The Cluster Services are turned on by default unless they are explicit disabled,
 camel.cluster.consul.enabled = false
 ----
 
-=== camel-as2
-
-Changes for AS2-MDN asynchronous delivery:
-
- - Added an option allowing clients to request an asynchronous receipt by including a 'Receipt-Delivery-Option' header specifying
-the return URL in the request that is sent to the server.
- - Added a consumer capable of receiving signed or unsigned asynchronous message disposition notifications sent by the
-message receiver confirming receipt of the message.

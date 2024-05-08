@@ -52,7 +52,7 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      * @param      timeUnit the time unit
      * @deprecated          use setRecoveryInterval
      */
-    @Deprecated
+    @Deprecated(since = "4.5.0")
     void setRecoveryInterval(long interval, TimeUnit timeUnit);
 
     /**
@@ -75,7 +75,7 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      * @return     the interval in millis
      * @deprecated use getRecoveryInterval
      */
-    @Deprecated
+    @Deprecated(since = "3.5.0")
     default long getRecoveryIntervalInMillis() {
         return getRecoveryInterval();
     }

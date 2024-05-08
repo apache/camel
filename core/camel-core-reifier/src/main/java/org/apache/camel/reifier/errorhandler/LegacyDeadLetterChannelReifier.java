@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
-@Deprecated
+@Deprecated(since = "3.17.0")
 public class LegacyDeadLetterChannelReifier extends LegacyDefaultErrorHandlerReifier<DeadLetterChannelProperties> {
 
     public LegacyDeadLetterChannelReifier(Route route, ErrorHandlerFactory definition) {

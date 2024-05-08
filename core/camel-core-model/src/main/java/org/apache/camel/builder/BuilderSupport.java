@@ -129,7 +129,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @deprecated use java instead
      */
-    @Deprecated
+    @Deprecated(since = "4.3.0")
     public ValueBuilder joor(String value) {
         return Builder.joor(value);
     }
@@ -139,7 +139,7 @@ public abstract class BuilderSupport implements CamelContextAware {
      *
      * @deprecated use java instead
      */
-    @Deprecated
+    @Deprecated(since = "4.3.0")
     public ValueBuilder joor(String value, Class<?> resultType) {
         return Builder.joor(value, resultType);
     }

@@ -1258,7 +1258,7 @@ public final class PropertyBindingSupport {
     public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', false);
-        Constructor<?> found = findMatchingConstructor(type.getConstructors(), params);
+        Constructor<?> found = findMatchingConstructor(camelContext, type.getConstructors(), params);
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
             for (int i = 0; i < found.getParameterCount(); i++) {
@@ -1300,7 +1300,8 @@ public final class PropertyBindingSupport {
      * @param  params       the parameters
      * @return              the constructor, or null if no matching constructor can be found
      */
-    private static Constructor<?> findMatchingConstructor(Constructor<?>[] constructors, String[] params) {
+    private static Constructor<?> findMatchingConstructor(
+            CamelContext camelContext, Constructor<?>[] constructors, String[] params) {
         List<Constructor<?>> candidates = new ArrayList<>();
         Constructor<?> fallbackCandidate = null;
 
@@ -1317,7 +1318,7 @@ public final class PropertyBindingSupport {
                     parameter = parameter.trim();
                 }
 
-                Class<?> parameterType = getValidParameterType(parameter);
+                Class<?> parameterType = getValidParameterType(camelContext, parameter);
                 Class<?> expectedType = ctr.getParameterTypes()[i];
 
                 if (parameterType != null && expectedType != null) {
@@ -1358,7 +1359,7 @@ public final class PropertyBindingSupport {
             CamelContext camelContext, Class<?> type, String factoryMethod, String parameters)
             throws Exception {
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', false);
-        Method found = findMatchingFactoryMethod(type.getMethods(), factoryMethod, params);
+        Method found = findMatchingFactoryMethod(camelContext, type.getMethods(), factoryMethod, params);
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
             for (int i = 0; i < found.getParameterCount(); i++) {
@@ -1397,12 +1398,14 @@ public final class PropertyBindingSupport {
      * <p/>
      * This implementation is similar to the logic in camel-bean.
      *
+     * @param  camelContext  the camel context
      * @param  methods       the methods
      * @param  factoryMethod the name of the factory method
      * @param  params        the parameters
      * @return               the constructor, or null if no matching constructor can be found
      */
-    private static Method findMatchingFactoryMethod(Method[] methods, String factoryMethod, String[] params) {
+    private static Method findMatchingFactoryMethod(
+            CamelContext camelContext, Method[] methods, String factoryMethod, String[] params) {
         List<Method> candidates = new ArrayList<>();
         Method fallbackCandidate = null;
 
@@ -1430,7 +1433,7 @@ public final class PropertyBindingSupport {
                     parameter = parameter.trim();
                 }
 
-                Class<?> parameterType = getValidParameterType(parameter);
+                Class<?> parameterType = getValidParameterType(camelContext, parameter);
                 Class<?> expectedType = method.getParameterTypes()[i];
 
                 if (parameterType != null && expectedType != null) {
@@ -1462,10 +1465,11 @@ public final class PropertyBindingSupport {
      * <p/>
      * This implementation is similar to the logic in camel-bean.
      *
-     * @param  value the value
-     * @return       the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
+     * @param  camelContext the camel context
+     * @param  value        the value
+     * @return              the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
      */
-    private static Class<?> getValidParameterType(String value) {
+    private static Class<?> getValidParameterType(CamelContext camelContext, String value) {
         if (org.apache.camel.util.ObjectHelper.isEmpty(value)) {
             return null;
         }
@@ -1491,6 +1495,15 @@ public final class PropertyBindingSupport {
         // null is valid (to force a null value)
         if (value.equals("null")) {
             return Object.class;
+        }
+
+        // reference to #bean then lookup to get the type
+        if (value.startsWith("#")) {
+            value = value.startsWith("#bean:") ? value.substring(6) : value.substring(1);
+            Object bean = CamelContextHelper.lookup(camelContext, value);
+            if (bean != null) {
+                return bean.getClass();
+            }
         }
 
         // simple language tokens is valid
@@ -1528,7 +1541,15 @@ public final class PropertyBindingSupport {
                 return true;
             }
         }
-        return parameterType.isAssignableFrom(expectedType);
+
+        boolean match = false;
+        while (!match && parameterType != null && parameterType != Object.class) {
+            match = parameterType.isAssignableFrom(expectedType) || expectedType.isAssignableFrom(parameterType);
+            if (!match) {
+                parameterType = parameterType.getSuperclass();
+            }
+        }
+        return match;
     }
 
     /**

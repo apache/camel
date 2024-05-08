@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.master;
 
-import java.util.Optional;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -169,7 +167,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware {
 
     private final class LeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
-        public void leadershipChanged(CamelClusterView view, Optional<CamelClusterMember> leader) {
+        public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
             if (!isRunAllowed()) {
                 return;
             }

@@ -272,7 +272,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "4.2.0")
     public String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties) {
         return dumpTracedMessagesAsXml(nodeId);
     }

@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RouteAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
@@ -286,6 +287,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 // this ensures Camel can control the lifecycle of the policy
                 if (!camelContext.hasService(policy)) {
                     try {
+                        // inject route
+                        if (policy instanceof RouteAware ra) {
+                            ra.setRoute(route);
+                        }
                         camelContext.addService(policy);
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);

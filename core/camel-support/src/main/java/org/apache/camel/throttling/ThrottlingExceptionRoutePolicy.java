@@ -28,7 +28,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
+import org.apache.camel.RouteAware;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
@@ -54,7 +57,7 @@ import org.slf4j.LoggerFactory;
                         + " from an endpoint based on the type of exceptions that are thrown and the threshold settings.",
           annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
 @Configurer(metadataOnly = true)
-public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware, RouteAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicy.class);
 
@@ -63,17 +66,26 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private static final int STATE_OPEN = 2;
 
     private CamelContext camelContext;
+    private Route route;
     private final Lock lock = new ReentrantLock();
+    private CamelLogger stateLogger;
 
     // configuration
-    @Metadata(description = "How many failed messages within the window would trigger the circuit breaker to open")
-    private int failureThreshold;
-    @Metadata(description = "Sliding window for how long time to go back (in millis) when counting number of failures")
-    private long failureWindow;
-    @Metadata(description = "Interval (in millis) for how often to check whether a currently open circuit breaker may work again")
-    private long halfOpenAfter;
+    @Metadata(description = "How many failed messages within the window would trigger the circuit breaker to open",
+              defaultValue = "50")
+    private int failureThreshold = 50;
+    @Metadata(description = "Sliding window for how long time to go back (in millis) when counting number of failures",
+              defaultValue = "60000")
+    private long failureWindow = 60000;
+    @Metadata(description = "Interval (in millis) for how often to check whether a currently open circuit breaker may work again",
+              defaultValue = "30000")
+    private long halfOpenAfter = 30000;
+    @Metadata(description = "Whether to always keep the circuit breaker open (never closes). This is only intended for development and testing purposes.")
+    private boolean keepOpen;
     @Metadata(description = "Allows to only throttle based on certain types of exceptions. Multiple exceptions (use FQN class name) can be separated by comma.")
     private String exceptions;
+    @Metadata(description = "Logging level for state changes", defaultValue = "DEBUG")
+    private LoggingLevel stateLoggingLevel = LoggingLevel.DEBUG;
     private List<Class<?>> throttledExceptions;
     // handler for half open circuit can be used instead of resuming route to check on resources
     @Metadata(label = "advanced",
@@ -85,7 +97,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private final AtomicInteger failures = new AtomicInteger();
     private final AtomicInteger success = new AtomicInteger();
     private final AtomicInteger state = new AtomicInteger(STATE_CLOSED);
-    private final AtomicBoolean keepOpen = new AtomicBoolean();
+    private final AtomicBoolean keepOpenBool = new AtomicBoolean();
     private volatile Timer halfOpenTimer;
     private volatile long lastFailure;
     private volatile long openedAt;
@@ -104,7 +116,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         this.failureWindow = failureWindow;
         this.halfOpenAfter = halfOpenAfter;
         this.failureThreshold = threshold;
-        this.keepOpen.set(keepOpen);
+        this.keepOpenBool.set(keepOpen);
     }
 
     @Override
@@ -115,6 +127,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    public Route getRoute() {
+        return route;
+    }
+
+    @Override
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public List<Class<?>> getThrottledExceptions() {
@@ -132,6 +154,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        this.stateLogger = new CamelLogger(LOG, stateLoggingLevel);
 
         if (exceptions != null && throttledExceptions == null) {
             var list = new ArrayList<Class<?>>();
@@ -152,7 +176,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     public void onStart(Route route) {
         // if keepOpen then start w/ the circuit open
-        if (keepOpen.get()) {
+        if (keepOpenBool.get()) {
             openCircuit(route);
         }
     }
@@ -168,7 +192,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
-        if (keepOpen.get()) {
+        if (keepOpenBool.get()) {
             if (state.get() != STATE_OPEN) {
                 LOG.debug("Opening circuit (keepOpen is true)");
                 openCircuit(route);
@@ -242,7 +266,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 closeCircuit(route);
             }
         } else if (state.get() == STATE_OPEN) {
-            if (!keepOpen.get()) {
+            if (!keepOpenBool.get()) {
                 long elapsedTimeSinceOpened = System.currentTimeMillis() - openedAt;
                 if (halfOpenAfter <= elapsedTimeSinceOpened) {
                     LOG.debug("Checking an open circuit...");
@@ -332,8 +356,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     private void logState() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(dumpState());
+        if (stateLogger != null) {
+            stateLogger.log(dumpState());
         }
     }
 
@@ -384,11 +408,11 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     public boolean getKeepOpen() {
-        return this.keepOpen.get();
+        return this.keepOpenBool.get();
     }
 
     public void setKeepOpen(boolean keepOpen) {
-        this.keepOpen.set(keepOpen);
+        this.keepOpenBool.set(keepOpen);
     }
 
     public int getFailureThreshold() {
@@ -429,6 +453,21 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     public long getOpenedAt() {
         return openedAt;
+    }
+
+    public LoggingLevel getStateLoggingLevel() {
+        return stateLoggingLevel;
+    }
+
+    public void setStateLoggingLevel(LoggingLevel stateLoggingLevel) {
+        this.stateLoggingLevel = stateLoggingLevel;
+        if (stateLogger != null) {
+            stateLogger.setLevel(stateLoggingLevel);
+        }
+    }
+
+    public void setStateLoggingLevel(String stateLoggingLevel) {
+        setStateLoggingLevel(LoggingLevel.valueOf(stateLoggingLevel));
     }
 
 }

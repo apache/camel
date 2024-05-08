@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR")
 @XmlRootElement(name = "joor")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
+@Deprecated(since = "4.3.0")
 public class JoorExpression extends TypedExpressionDefinition {
 
     @XmlAttribute

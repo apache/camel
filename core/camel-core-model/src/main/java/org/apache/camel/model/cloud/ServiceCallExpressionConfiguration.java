@@ -41,7 +41,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 @XmlRootElement(name = "serviceExpression")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
-@Deprecated
+@Deprecated(since = "3.19.0")
 public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration implements ServiceExpressionFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;

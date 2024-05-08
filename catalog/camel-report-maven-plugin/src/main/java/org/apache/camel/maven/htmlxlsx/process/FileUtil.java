@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 public class FileUtil {
@@ -100,6 +101,7 @@ public class FileUtil {
 
     public String readFileFromClassPath(String path) throws IOException {
 
-        return IOUtils.resourceToString(path, Charset.defaultCharset(), FileUtil.class.getClassLoader());
+        return IOUtils.resourceToString(FilenameUtils.separatorsToUnix(path), Charset.defaultCharset(),
+                FileUtil.class.getClassLoader());
     }
 }

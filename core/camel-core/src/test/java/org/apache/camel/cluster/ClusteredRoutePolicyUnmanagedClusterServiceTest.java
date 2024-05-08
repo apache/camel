@@ -129,7 +129,7 @@ public class ClusteredRoutePolicyUnmanagedClusterServiceTest extends ContextTest
             this.leader = leader;
 
             if (isRunAllowed()) {
-                fireLeadershipChangedEvent(getLeader());
+                fireLeadershipChangedEvent(getLeader().orElse(null));
             }
         }
 

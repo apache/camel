@@ -87,6 +87,9 @@ public class PineconeVectorDbProducer extends DefaultProducer {
                 case QUERY:
                     query(exchange);
                     break;
+                case QUERY_BY_ID:
+                    queryById(exchange);
+                    break;
                 default:
                     throw new UnsupportedOperationException("Unsupported action: " + action.name());
             }
@@ -190,6 +193,18 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         Index index = this.client.getIndexConnection(indexName);
 
         QueryResponseWithUnsignedIndices result = index.queryByVector(topK, elements);
+
+        populateQueryResponse(result, exchange);
+    }
+
+    private void queryById(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        int topK = in.getHeader(PineconeVectorDb.Headers.QUERY_TOP_K, Integer.class);
+        Index index = this.client.getIndexConnection(indexName);
+
+        String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
+        QueryResponseWithUnsignedIndices result = index.queryByVectorId(topK, indexId);
 
         populateQueryResponse(result, exchange);
     }

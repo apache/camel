@@ -22,7 +22,7 @@ import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 /**
  * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
  */
-@Deprecated
+@Deprecated(since = "3.17.0")
 public class LegacyErrorHandlerBuilderRef extends LegacyErrorHandlerBuilderSupport implements ErrorHandlerRefProperties {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = ErrorHandlerRefProperties.DEFAULT_ERROR_HANDLER_BUILDER;

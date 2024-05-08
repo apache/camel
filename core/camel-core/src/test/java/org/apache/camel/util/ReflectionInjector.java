@@ -29,7 +29,7 @@ import org.apache.camel.support.ObjectHelper;
  *
  * Use {@link org.apache.camel.impl.engine.DefaultInjector} instead.
  */
-@Deprecated
+@Deprecated(since = "4.1.0")
 public class ReflectionInjector implements Injector {
 
     @Override

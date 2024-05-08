@@ -771,9 +771,21 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         camelContext.getRouteController().stopRoute(id);
                     }
                 } else if ("suspend".equals(command)) {
-                    camelContext.getRouteController().suspendRoute(id);
+                    if ("*".equals(id)) {
+                        for (Route r : camelContext.getRoutes()) {
+                            camelContext.getRouteController().suspendRoute(r.getRouteId());
+                        }
+                    } else {
+                        camelContext.getRouteController().suspendRoute(id);
+                    }
                 } else if ("resume".equals(command)) {
-                    camelContext.getRouteController().resumeRoute(id);
+                    if ("*".equals(id)) {
+                        for (Route r : camelContext.getRoutes()) {
+                            camelContext.getRouteController().resumeRoute(r.getRouteId());
+                        }
+                    } else {
+                        camelContext.getRouteController().resumeRoute(id);
+                    }
                 }
             } catch (Exception e) {
                 // ignore

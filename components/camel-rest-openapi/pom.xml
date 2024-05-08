@@ -133,10 +133,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
+            <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
-            <!-- TODO: needs code changes to update -->
-            <version>3.0.1</version>
+            <version>${wiremock-version}</version>
             <scope>test</scope>
         </dependency>
 

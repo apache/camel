@@ -407,7 +407,7 @@ public interface ExtendedCamelContext {
     /**
      * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
      */
-    @Deprecated
+    @Deprecated(since = "4.0.0")
     default RuntimeCamelCatalog getRuntimeCamelCatalog() {
         return getContextPlugin(RuntimeCamelCatalog.class);
     }
