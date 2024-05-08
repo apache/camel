@@ -21,35 +21,34 @@ import java.util.Optional;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Defines the configuration of a saga step.
  */
 public class CamelSagaStep {
 
-    private final Optional<Endpoint> compensation;
+    private final Endpoint compensation;
 
-    private final Optional<Endpoint> completion;
+    private final Endpoint completion;
 
     private final Map<String, Expression> options;
 
-    private final Optional<Long> timeoutInMilliseconds;
+    private final Long timeoutInMilliseconds;
 
-    public CamelSagaStep(Optional<Endpoint> compensation, Optional<Endpoint> completion,
-                         Map<String, Expression> options, Optional<Long> timeoutInMilliseconds) {
-        this.compensation = ObjectHelper.notNull(compensation, "compensation");
-        this.completion = ObjectHelper.notNull(completion, "completionCallbacks");
-        this.options = ObjectHelper.notNull(options, "options");
-        this.timeoutInMilliseconds = ObjectHelper.notNull(timeoutInMilliseconds, "timeoutInMilliseconds");
+    public CamelSagaStep(Endpoint compensation, Endpoint completion,
+                         Map<String, Expression> options, Long timeoutInMilliseconds) {
+        this.compensation = compensation;
+        this.completion = completion;
+        this.options = options;
+        this.timeoutInMilliseconds = timeoutInMilliseconds;
     }
 
     public Optional<Endpoint> getCompensation() {
-        return compensation;
+        return Optional.ofNullable(compensation);
     }
 
     public Optional<Endpoint> getCompletion() {
-        return completion;
+        return Optional.ofNullable(completion);
     }
 
     public Map<String, Expression> getOptions() {
@@ -57,10 +56,10 @@ public class CamelSagaStep {
     }
 
     public Optional<Long> getTimeoutInMilliseconds() {
-        return timeoutInMilliseconds;
+        return Optional.ofNullable(timeoutInMilliseconds);
     }
 
     public boolean isEmpty() {
-        return compensation.isEmpty() && completion.isEmpty() && options.isEmpty() && timeoutInMilliseconds.isEmpty();
+        return compensation == null && completion == null && options.isEmpty() && timeoutInMilliseconds == null;
     }
 }

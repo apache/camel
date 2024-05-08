@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 @Deprecated(since = "3.19.0")
 public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfiguration implements ServiceDiscoveryFactory {
     @XmlTransient
-    private final Optional<ServiceCallDefinition> parent;
+    private final ServiceCallDefinition parent;
     @XmlTransient
     private final String factoryKey;
 
@@ -51,16 +51,16 @@ public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfigu
     }
 
     public ServiceCallServiceDiscoveryConfiguration(ServiceCallDefinition parent, String factoryKey) {
-        this.parent = Optional.ofNullable(parent);
+        this.parent = parent;
         this.factoryKey = factoryKey;
     }
 
     public ServiceCallDefinition end() {
-        return this.parent.orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
+        return Optional.ofNullable(parent).orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
     }
 
     public ProcessorDefinition<?> endParent() {
-        return this.parent.map(ServiceCallDefinition::end)
+        return Optional.ofNullable(parent).map(ServiceCallDefinition::end)
                 .orElseThrow(() -> new IllegalStateException("Parent definition is not set"));
     }
 

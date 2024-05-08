@@ -76,7 +76,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         if (lockFile != null) {
             closeInternal();
 
-            fireLeadershipChangedEvent(Optional.empty());
+            fireLeadershipChangedEvent((CamelClusterMember) null);
         }
 
         if (!Files.exists(path.getParent())) {
@@ -137,7 +137,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 synchronized (FileLockClusterView.this) {
                     if (lock != null) {
                         LOGGER.info("Lock on file {} lost (lock={})", path, lock);
-                        fireLeadershipChangedEvent(Optional.empty());
+                        fireLeadershipChangedEvent((CamelClusterMember) null);
                     }
 
                     LOGGER.debug("Try to acquire a lock on {}", path);
@@ -148,7 +148,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
                     if (lock != null) {
                         LOGGER.info("Lock on file {} acquired (lock={})", path, lock);
-                        fireLeadershipChangedEvent(Optional.of(localMember));
+                        fireLeadershipChangedEvent(localMember);
                     } else {
                         LOGGER.debug("Lock on file {} not acquired ", path);
                     }

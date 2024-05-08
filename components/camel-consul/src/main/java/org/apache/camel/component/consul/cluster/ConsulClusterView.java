@@ -141,12 +141,12 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         void setMaster(boolean master) {
             if (master && this.master.compareAndSet(false, true)) {
                 LOGGER.debug("Leadership taken for session id {}", sessionId.get());
-                fireLeadershipChangedEvent(Optional.of(this));
+                fireLeadershipChangedEvent(this);
                 return;
             }
             if (!master && this.master.compareAndSet(true, false)) {
                 LOGGER.debug("Leadership lost for session id {}", sessionId.get());
-                fireLeadershipChangedEvent(getLeader());
+                fireLeadershipChangedEvent(getLeader().orElse(null));
                 return;
             }
         }

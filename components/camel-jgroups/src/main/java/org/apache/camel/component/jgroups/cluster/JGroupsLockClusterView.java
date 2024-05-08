@@ -99,7 +99,7 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
                     lockName, jgroupsClusterName, jgroupsConfig);
             lock.lock();
             isMaster = true;
-            fireLeadershipChangedEvent(Optional.ofNullable(localMember));
+            fireLeadershipChangedEvent(localMember);
             LOG.info("Became master by acquiring the lock for group: {} in JGroups cluster {} with configuration: {}",
                     lockName, jgroupsClusterName, jgroupsConfig);
         });
@@ -109,7 +109,7 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
     protected void doStop() throws Exception {
         shutdownExecutor();
         isMaster = false;
-        fireLeadershipChangedEvent(Optional.empty());
+        fireLeadershipChangedEvent((CamelClusterMember) null);
         clearLock();
         channel.disconnect();
     }
@@ -118,7 +118,7 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
     protected void doShutdown() throws Exception {
         shutdownExecutor();
         isMaster = false;
-        fireLeadershipChangedEvent(Optional.empty());
+        fireLeadershipChangedEvent((CamelClusterMember) null);
         clearLock();
         if (channel != null) {
             channel.close();
