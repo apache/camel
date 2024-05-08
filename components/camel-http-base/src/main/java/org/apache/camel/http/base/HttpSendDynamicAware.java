@@ -139,13 +139,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         boolean httpComponent = "http".equals(getScheme()) || "https".equals(getScheme());
         boolean vertxHttpComponent = "vertx-http".equals(getScheme());
         if (!httpComponent && !vertxHttpComponent) {
-            String prefix = getScheme() + "://";
-            String prefix2 = getScheme() + ":";
-            if (u.startsWith(prefix)) {
-                u = u.substring(prefix.length());
-            } else if (u.startsWith(prefix2)) {
-                u = u.substring(prefix2.length());
-            }
+            u = parseDefaultUri(u);
         }
 
         // remove query parameters
@@ -154,12 +148,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         }
 
         if (vertxHttpComponent && u.startsWith("vertx-http:")) {
-            u = u.substring(11);
-            // must include http prefix
-            String scheme = ResourceHelper.getScheme(u);
-            if (scheme == null) {
-                u = "http://" + u;
-            }
+            u = parseVertexUri(u);
         }
 
         // must include :// in scheme to be parsable via java.net.URI
@@ -209,6 +198,27 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
 
         // no context path
         return new String[] { u, null, null };
+    }
+
+    private String parseDefaultUri(String u) {
+        String prefix = getScheme() + "://";
+        String prefix2 = getScheme() + ":";
+        if (u.startsWith(prefix)) {
+            u = u.substring(prefix.length());
+        } else if (u.startsWith(prefix2)) {
+            u = u.substring(prefix2.length());
+        }
+        return u;
+    }
+
+    private static String parseVertexUri(String u) {
+        u = u.substring(11);
+        // must include http prefix
+        String scheme = ResourceHelper.getScheme(u);
+        if (scheme == null) {
+            u = "http://" + u;
+        }
+        return u;
     }
 
 }
