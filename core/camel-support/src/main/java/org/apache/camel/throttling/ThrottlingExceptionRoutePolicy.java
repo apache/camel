@@ -72,6 +72,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private long failureWindow;
     @Metadata(description = "Interval (in millis) for how often to check whether a currently open circuit breaker may work again")
     private long halfOpenAfter;
+    @Metadata(description = "Whether to always keep the circuit breaker open (never closes). This is only intended for development and testing purposes.")
+    private boolean keepOpen;
     @Metadata(description = "Allows to only throttle based on certain types of exceptions. Multiple exceptions (use FQN class name) can be separated by comma.")
     private String exceptions;
     private List<Class<?>> throttledExceptions;
@@ -85,7 +87,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private final AtomicInteger failures = new AtomicInteger();
     private final AtomicInteger success = new AtomicInteger();
     private final AtomicInteger state = new AtomicInteger(STATE_CLOSED);
-    private final AtomicBoolean keepOpen = new AtomicBoolean();
+    private final AtomicBoolean keepOpenBool = new AtomicBoolean();
     private volatile Timer halfOpenTimer;
     private volatile long lastFailure;
     private volatile long openedAt;
@@ -104,7 +106,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         this.failureWindow = failureWindow;
         this.halfOpenAfter = halfOpenAfter;
         this.failureThreshold = threshold;
-        this.keepOpen.set(keepOpen);
+        this.keepOpenBool.set(keepOpen);
     }
 
     @Override
@@ -152,7 +154,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     public void onStart(Route route) {
         // if keepOpen then start w/ the circuit open
-        if (keepOpen.get()) {
+        if (keepOpenBool.get()) {
             openCircuit(route);
         }
     }
@@ -168,7 +170,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
-        if (keepOpen.get()) {
+        if (keepOpenBool.get()) {
             if (state.get() != STATE_OPEN) {
                 LOG.debug("Opening circuit (keepOpen is true)");
                 openCircuit(route);
@@ -242,7 +244,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                 closeCircuit(route);
             }
         } else if (state.get() == STATE_OPEN) {
-            if (!keepOpen.get()) {
+            if (!keepOpenBool.get()) {
                 long elapsedTimeSinceOpened = System.currentTimeMillis() - openedAt;
                 if (halfOpenAfter <= elapsedTimeSinceOpened) {
                     LOG.debug("Checking an open circuit...");
@@ -384,11 +386,11 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     public boolean getKeepOpen() {
-        return this.keepOpen.get();
+        return this.keepOpenBool.get();
     }
 
     public void setKeepOpen(boolean keepOpen) {
-        this.keepOpen.set(keepOpen);
+        this.keepOpenBool.set(keepOpen);
     }
 
     public int getFailureThreshold() {
