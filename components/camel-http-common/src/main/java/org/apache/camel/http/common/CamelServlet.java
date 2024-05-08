@@ -106,42 +106,48 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
 
     protected void handleService(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         if (isAsync()) {
-            if (executorRef != null) {
-                HttpConsumer consumer = doResolve(req, resp); // can be done sync
-                if (consumer == null) {
-                    return;
-                }
-                Executor pool = ObjectHelper.notNull(getExecutorService(consumer), executorRef);
-                final AsyncContext context = req.startAsync();
-                try {
-                    pool.execute(() -> {
-                        try {
-                            final CompletionStage<?> promise = doExecute(req, resp, consumer);
-                            if (promise == null) { // early quit
-                                context.complete();
-                            } else {
-                                promise.whenComplete((r, e) -> context.complete());
-                            }
-                        } catch (Exception e) {
-                            onError(resp, e);
-                            context.complete();
-                        }
-                    });
-                } catch (final RuntimeException re) { // submit fails
-                    context.complete();
-                    throw re;
-                }
-            } else { // will use http servlet threads so normally http threads so better to enable useCamelExecutor
-                final AsyncContext context = req.startAsync();
-                try {
-                    context.start(() -> doServiceAsync(context));
-                } catch (final RuntimeException re) { // submit fails
-                    context.complete();
-                    throw re;
-                }
-            }
+            handleAsync(req, resp);
         } else {
             doService(req, resp);
+        }
+    }
+
+    private void handleAsync(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        if (executorRef != null) {
+            HttpConsumer consumer = doResolve(req, resp); // can be done sync
+            if (consumer == null) {
+                return;
+            }
+            Executor pool = ObjectHelper.notNull(getExecutorService(consumer), executorRef);
+            final AsyncContext context = req.startAsync();
+            try {
+                pool.execute(() -> doAsyncExecution(req, resp, consumer, context));
+            } catch (final RuntimeException re) { // submit fails
+                context.complete();
+                throw re;
+            }
+        } else { // will use http servlet threads so normally http threads so better to enable useCamelExecutor
+            final AsyncContext context = req.startAsync();
+            try {
+                context.start(() -> doServiceAsync(context));
+            } catch (final RuntimeException re) { // submit fails
+                context.complete();
+                throw re;
+            }
+        }
+    }
+
+    private void doAsyncExecution(HttpServletRequest req, HttpServletResponse resp, HttpConsumer consumer, AsyncContext context) {
+        try {
+            final CompletionStage<?> promise = doExecute(req, resp, consumer);
+            if (promise == null) { // early quit
+                context.complete();
+            } else {
+                promise.whenComplete((r, e) -> context.complete());
+            }
+        } catch (Exception e) {
+            onError(resp, e);
+            context.complete();
         }
     }
 
