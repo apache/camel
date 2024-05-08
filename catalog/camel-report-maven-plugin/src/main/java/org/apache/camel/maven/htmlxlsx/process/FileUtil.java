@@ -101,6 +101,7 @@ public class FileUtil {
 
     public String readFileFromClassPath(String path) throws IOException {
 
-        return IOUtils.resourceToString(FilenameUtils.separatorsToUnix(path), Charset.defaultCharset(), FileUtil.class.getClassLoader());
+        return IOUtils.resourceToString(FilenameUtils.separatorsToUnix(path), Charset.defaultCharset(),
+                FileUtil.class.getClassLoader());
     }
 }
