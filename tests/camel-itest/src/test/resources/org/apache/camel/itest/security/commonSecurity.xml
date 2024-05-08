@@ -32,11 +32,8 @@
     	</spring-security:authentication-provider>
     </spring-security:authentication-manager>
 
-    <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-        <constructor-arg index="0">
-          <bean class="org.springframework.security.access.vote.RoleVoter"/>
-        </constructor-arg>
-        <property name="allowIfAllAbstainDecisions" value="true"/>
+    <bean id="authorizationManager" class=" org.springframework.security.authorization.AuthorityAuthorizationManager">
+        <constructor-arg name="authorities" value="ROLE_ADMIN"/>
     </bean>
 
     <bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>

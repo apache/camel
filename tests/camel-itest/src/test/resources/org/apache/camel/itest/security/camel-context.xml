@@ -31,10 +31,10 @@
     <!-- import the spring security configuration  -->
     <import resource="classpath:org/apache/camel/itest/security/commonSecurity.xml"/>
 
-    <authorizationPolicy id="admin" access="ROLE_ADMIN"
+    <authorizationPolicy id="admin"
                          authenticationAdapter="myAuthenticationAdapter"
                          authenticationManager="authenticationManager"
-                         accessDecisionManager="accessDecisionManager"
+                         authorizationManager="authorizationManager"
                          xmlns="http://camel.apache.org/schema/spring-security"/>
 
     <bean id="myAuthenticationAdapter"  class="org.apache.camel.itest.security.MyAuthenticationAdapter"/>

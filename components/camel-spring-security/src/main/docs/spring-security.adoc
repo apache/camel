@@ -30,8 +30,8 @@ Access to a route is controlled by an instance of a
 `SpringSecurityAuthorizationPolicy` object. A policy object contains the
 name of the Spring Security authority (role) required to run a set of
 endpoints and references to Spring Security `AuthenticationManager` and
-`AccessDecisionManager` objects used to determine whether the current
-principal has been assigned that role. Policy objects may be configured
+`AuthorizationManager` objects used to determine whether the current
+principal is authorized. Policy objects may be configured
 as Spring beans or by using an `<authorizationPolicy>` element in Spring
 XML.
 
@@ -45,13 +45,10 @@ attributes:
 |`id` |`null` |The unique Spring bean identifier which is used to reference the policy
 in routes (required)
 
-|`access` |`null` |The Spring Security authority name that is passed to the access decision
-manager (required)
-
 |`authenticationManager` |`authenticationManager` |The name of the Spring Security `AuthenticationManager` object in the
 context
 
-|`accessDecisionManager` |`accessDecisionManager` |The name of the Spring Security `AccessDecisionManager` object in the
+|`authorizationManager` |`authorizationManager` |The name of the Spring Security `AuthorizationManager` object in the
 context
 
 |`authenticationAdapter` |DefaultAuthenticationAdapter |The name of a *camel-spring-security*
@@ -70,7 +67,7 @@ header under `Exchange.AUTHENTICATION`, check the Spring Security
 [[SpringSecurity-ControllingaccesstoCamelroutes]]
 == Controlling access to Camel routes
 
-A Spring Security `AuthenticationManager` and `AccessDecisionManager`
+A Spring Security `AuthenticationManager` and `AuthorizationManager`
 are required to use this component. Here is an example of how to
 configure these objects in Spring XML using the Spring Security
 namespace:
@@ -83,14 +80,9 @@ namespace:
    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-   <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-      <property name="allowIfAllAbstainDecisions" value="true"/>
-      <property name="decisionVoters">
-         <list>
-            <bean class="org.springframework.security.access.vote.RoleVoter"/>
-         </list>
-      </property>
-   </bean>
+    <bean id="authorizationManager" class=" org.springframework.security.authorization.AuthorityAuthorizationManager">
+        <constructor-arg name="authorities" value="ROLE_ADMIN"/>
+    </bean>
 
    <spring-security:authentication-manager alias="authenticationManager">
       <spring-security:authentication-provider user-service-ref="userDetailsService"/>
@@ -121,10 +113,10 @@ to a route:
     <!-- import the Spring security configuration  -->
     <import resource= "classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
 
-    <authorizationPolicy id="admin" access="ROLE_ADMIN"
+    <authorizationPolicy id="admin"
+      authorizationManager="authorizationManager"
       authenticationManager="authenticationManager"
-      accessDecisionManager="accessDecisionManager"
-      xmlns="http://camel.apache.org/schema/spring-security"/>
+      xmlns="http://camel.apache.org/schema/spring-security "/>
 
     <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
       <route>
