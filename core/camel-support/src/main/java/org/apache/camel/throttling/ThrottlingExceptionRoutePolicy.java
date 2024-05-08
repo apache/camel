@@ -30,6 +30,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
+import org.apache.camel.RouteAware;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -56,7 +57,7 @@ import org.slf4j.LoggerFactory;
                         + " from an endpoint based on the type of exceptions that are thrown and the threshold settings.",
           annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
 @Configurer(metadataOnly = true)
-public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware, RouteAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicy.class);
 
@@ -65,6 +66,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private static final int STATE_OPEN = 2;
 
     private CamelContext camelContext;
+    private Route route;
     private final Lock lock = new ReentrantLock();
     private CamelLogger stateLogger;
 
@@ -122,6 +124,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    public Route getRoute() {
+        return route;
+    }
+
+    @Override
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public List<Class<?>> getThrottledExceptions() {
