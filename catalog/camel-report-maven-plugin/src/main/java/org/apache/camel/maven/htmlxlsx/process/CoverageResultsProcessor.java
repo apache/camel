@@ -72,7 +72,7 @@ public class CoverageResultsProcessor {
 
         parseAllTestResults(xmlPath);
 
-        if (testResults.size() > 0) {
+        if (!testResults.isEmpty()) {
 
             gatherBestRouteCoverages();
 

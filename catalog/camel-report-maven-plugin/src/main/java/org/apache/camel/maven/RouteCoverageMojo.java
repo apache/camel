@@ -361,7 +361,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             String out = processor.generateReport(project, xmlPath, htmlPath);
             getLog().info(out);
         } catch (Exception e) {
-            getLog().warn("Error generating HTML route coverage reports " + e.getMessage());
+            getLog().warn("Error generating HTML route coverage reports due " + e.getMessage());
         }
     }
 
