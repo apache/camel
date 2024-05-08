@@ -6,3 +6,7 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.6 to 4.7
 
+=== camel-core
+
+Add default values to `ThrottlingExceptionRoutePolicy` route policy.
+

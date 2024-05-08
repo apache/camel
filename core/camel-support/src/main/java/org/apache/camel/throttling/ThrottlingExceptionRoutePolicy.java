@@ -71,12 +71,15 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private CamelLogger stateLogger;
 
     // configuration
-    @Metadata(description = "How many failed messages within the window would trigger the circuit breaker to open")
-    private int failureThreshold;
-    @Metadata(description = "Sliding window for how long time to go back (in millis) when counting number of failures")
-    private long failureWindow;
-    @Metadata(description = "Interval (in millis) for how often to check whether a currently open circuit breaker may work again")
-    private long halfOpenAfter;
+    @Metadata(description = "How many failed messages within the window would trigger the circuit breaker to open",
+              defaultValue = "50")
+    private int failureThreshold = 50;
+    @Metadata(description = "Sliding window for how long time to go back (in millis) when counting number of failures",
+              defaultValue = "60000")
+    private long failureWindow = 60000;
+    @Metadata(description = "Interval (in millis) for how often to check whether a currently open circuit breaker may work again",
+              defaultValue = "30000")
+    private long halfOpenAfter = 30000;
     @Metadata(description = "Whether to always keep the circuit breaker open (never closes). This is only intended for development and testing purposes.")
     private boolean keepOpen;
     @Metadata(description = "Allows to only throttle based on certain types of exceptions. Multiple exceptions (use FQN class name) can be separated by comma.")
