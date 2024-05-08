@@ -91,6 +91,16 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService
     }
 
     @Override
+    public String getStateLoggingLevel() {
+        return getPolicy().getStateLoggingLevel().name();
+    }
+
+    @Override
+    public void setStateLoggingLevel(String stateLoggingLevel) {
+        getPolicy().setStateLoggingLevel(stateLoggingLevel);
+    }
+
+    @Override
     public String currentState() {
         return getPolicy().dumpState();
     }

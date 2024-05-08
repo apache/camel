@@ -34,6 +34,8 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
         case "halfOpenHandler": target.setHalfOpenHandler(property(camelContext, org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler.class, value)); return true;
         case "keepopen":
         case "keepOpen": target.setKeepOpen(property(camelContext, boolean.class, value)); return true;
+        case "statelogginglevel":
+        case "stateLoggingLevel": target.setStateLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         default: return false;
         }
     }
@@ -52,6 +54,8 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
         case "halfOpenHandler": return org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler.class;
         case "keepopen":
         case "keepOpen": return boolean.class;
+        case "statelogginglevel":
+        case "stateLoggingLevel": return org.apache.camel.LoggingLevel.class;
         default: return null;
         }
     }
@@ -71,6 +75,8 @@ public class ThrottlingExceptionRoutePolicyConfigurer extends org.apache.camel.s
         case "halfOpenHandler": return target.getHalfOpenHandler();
         case "keepopen":
         case "keepOpen": return target.getKeepOpen();
+        case "statelogginglevel":
+        case "stateLoggingLevel": return target.getStateLoggingLevel();
         default: return null;
         }
     }

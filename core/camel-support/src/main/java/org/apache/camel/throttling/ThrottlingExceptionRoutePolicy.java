@@ -28,7 +28,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
@@ -64,6 +66,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     private CamelContext camelContext;
     private final Lock lock = new ReentrantLock();
+    private CamelLogger stateLogger;
 
     // configuration
     @Metadata(description = "How many failed messages within the window would trigger the circuit breaker to open")
@@ -76,6 +79,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     private boolean keepOpen;
     @Metadata(description = "Allows to only throttle based on certain types of exceptions. Multiple exceptions (use FQN class name) can be separated by comma.")
     private String exceptions;
+    @Metadata(description = "Logging level for state changes", defaultValue = "DEBUG")
+    private LoggingLevel stateLoggingLevel = LoggingLevel.DEBUG;
     private List<Class<?>> throttledExceptions;
     // handler for half open circuit can be used instead of resuming route to check on resources
     @Metadata(label = "advanced",
@@ -134,6 +139,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        this.stateLogger = new CamelLogger(LOG, stateLoggingLevel);
 
         if (exceptions != null && throttledExceptions == null) {
             var list = new ArrayList<Class<?>>();
@@ -334,8 +341,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     private void logState() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(dumpState());
+        if (stateLogger != null) {
+            stateLogger.log(dumpState());
         }
     }
 
@@ -431,6 +438,21 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     public long getOpenedAt() {
         return openedAt;
+    }
+
+    public LoggingLevel getStateLoggingLevel() {
+        return stateLoggingLevel;
+    }
+
+    public void setStateLoggingLevel(LoggingLevel stateLoggingLevel) {
+        this.stateLoggingLevel = stateLoggingLevel;
+        if (stateLogger != null) {
+            stateLogger.setLevel(stateLoggingLevel);
+        }
+    }
+
+    public void setStateLoggingLevel(String stateLoggingLevel) {
+        setStateLoggingLevel(LoggingLevel.valueOf(stateLoggingLevel));
     }
 
 }
