@@ -81,6 +81,16 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService
     }
 
     @Override
+    public boolean getKeepOpen() {
+        return getPolicy().getKeepOpen();
+    }
+
+    @Override
+    public void setKeepOpen(boolean keepOpen) {
+        getPolicy().setKeepOpen(keepOpen);
+    }
+
+    @Override
     public String currentState() {
         return getPolicy().dumpState();
     }
