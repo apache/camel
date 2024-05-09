@@ -4899,7 +4899,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -6327,7 +6327,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -6788,7 +6788,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -11301,7 +11301,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -11783,7 +11783,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -12313,7 +12313,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -13828,7 +13828,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setConsumes(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -14008,7 +14008,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatProperties(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -14204,7 +14204,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCORS": {
+                case "enableCors": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;

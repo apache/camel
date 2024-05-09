@@ -272,4 +272,39 @@ class RestTest extends YamlTestSupport {
             Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
         }
     }
+
+    def "load rest enableCORS"() {
+        when:
+        loadRoutes """
+                - rest:
+                    get:
+                      - path: "/foo"
+                        type: ${MyFooBar.name}
+                        outType: ${MyBean.name}
+                        enableCORS: true
+                        to: "direct:bar"
+                - from:
+                    uri: 'direct:bar'
+                    steps:
+                      - to: 'mock:bar'          
+            """
+        then:
+        context.restDefinitions.size() == 1
+
+        with(context.restDefinitions[0], RestDefinition) {
+            verbs.size() == 1
+
+            with(verbs[0], VerbDefinition) {
+                path == '/foo'
+                type == MyFooBar.name
+                outType == MyBean.name
+                enableCORS == "true"
+
+                with(to, ToDefinition) {
+                    endpointUri == 'direct:bar'
+                }
+            }
+        }
+    }
+
 }
