@@ -930,7 +930,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         //
         // Others
         //
-        cb.beginControlFlow("case $S:", fieldName);
+        if ("enableCORS".equals(fieldName)) {
+            // special hack for this name
+            cb.beginControlFlow("case $S:", "enableCors");
+        } else {
+            cb.beginControlFlow("case $S:", fieldName);
+        }
 
         ClassInfo c = view.getClassByName(field.type().name());
         if (hasAnnotation(field, XML_JAVA_TYPE_ADAPTER_CLASS)) {
