@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
  * Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.
  */
 @Metadata(label = "eip,routing")
-@XmlRootElement(name = "sticky")
+@XmlRootElement(name = "stickyLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
 

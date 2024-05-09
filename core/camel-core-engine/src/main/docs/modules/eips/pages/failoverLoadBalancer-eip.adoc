@@ -47,7 +47,7 @@ XML::
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-        <failover/>
+        <failoverLoadBalancer/>
         <to uri="http:service1"/>
         <to uri="http:service2"/>
         <to uri="http:service3"/>
@@ -95,7 +95,7 @@ In XML, it is straightforward as shown:
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-        <failover roundRobin="true" maximumFailoverAttempts="10"/>
+        <failoverLoadBalancer roundRobin="true" maximumFailoverAttempts="10"/>
         <to uri="http:service1"/>
         <to uri="http:service2"/>
         <to uri="http:service3"/>
@@ -141,7 +141,7 @@ XML::
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-        <failover roundRobin="true" maximumFailoverAttempts="10" stickyMode="true"/>
+        <failoverLoadBalancer roundRobin="true" maximumFailoverAttempts="10" stickyMode="true"/>
         <to uri="http:service1"/>
         <to uri="http:service2"/>
         <to uri="http:service3"/>
@@ -173,10 +173,10 @@ And in XML DSL:
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-        <failover>
+        <failoverLoadBalancer>
             <exception>java.io.IOException</exception>
             <exception>org.apache.camel.http.base.HttpOperationFailedException</exception>
-        </failover>
+        </failoverLoadBalancer>
         <to uri="http:service1"/>
         <to uri="http:service2"/>
         <to uri="http:service3"/>

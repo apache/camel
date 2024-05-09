@@ -46,7 +46,7 @@ In XML, you'll have a route like this:
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-       <roundRobin/>
+       <roundRobinLoadBalancer/>
        <to uri="seda:x"/>
        <to uri="seda:y"/>
        <to uri="seda:z"/>

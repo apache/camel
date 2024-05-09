@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
  * Topic which sends to all destinations.
  */
 @Metadata(label = "eip,routing")
-@XmlRootElement(name = "topic")
+@XmlRootElement(name = "topicLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {
 

@@ -50,7 +50,7 @@ XML::
 <route>
     <from uri="direct:start"/>
       <loadBalance>
-        <weighted distributionRatio="4 2 1"/>
+        <weightedLoadBalancer distributionRatio="4 2 1"/>
         <to uri="seda:x"/>
         <to uri="seda:y"/>
         <to uri="seda:z"/>

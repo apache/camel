@@ -47,12 +47,12 @@ import org.apache.camel.spi.Metadata;
 public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinition> {
     @XmlElements({
             @XmlElement(name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
-            @XmlElement(name = "failover", type = FailoverLoadBalancerDefinition.class),
-            @XmlElement(name = "random", type = RandomLoadBalancerDefinition.class),
-            @XmlElement(name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
-            @XmlElement(name = "sticky", type = StickyLoadBalancerDefinition.class),
-            @XmlElement(name = "topic", type = TopicLoadBalancerDefinition.class),
-            @XmlElement(name = "weighted", type = WeightedLoadBalancerDefinition.class) })
+            @XmlElement(name = "failoverLoadBalancer", type = FailoverLoadBalancerDefinition.class),
+            @XmlElement(name = "randomLoadBalancer", type = RandomLoadBalancerDefinition.class),
+            @XmlElement(name = "roundRobinLoadBalancer", type = RoundRobinLoadBalancerDefinition.class),
+            @XmlElement(name = "stickyLoadBalancer", type = StickyLoadBalancerDefinition.class),
+            @XmlElement(name = "topicLoadBalancer", type = TopicLoadBalancerDefinition.class),
+            @XmlElement(name = "weightedLoadBalancer", type = WeightedLoadBalancerDefinition.class) })
     private LoadBalancerDefinition loadBalancerType;
 
     public LoadBalanceDefinition() {

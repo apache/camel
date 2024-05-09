@@ -1,12 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "roundRobin",
-    "title": "Round Robin",
-    "description": "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
+    "name": "topicLoadBalancer",
+    "title": "Topic Load Balancer",
+    "description": "Topic which sends to all destinations.",
     "deprecated": false,
     "label": "eip,routing",
-    "javaType": "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition",
+    "javaType": "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition",
     "abstract": false,
     "input": false,
     "output": false

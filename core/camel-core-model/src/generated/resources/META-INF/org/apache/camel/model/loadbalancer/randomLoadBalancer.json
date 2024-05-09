@@ -1,12 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "topic",
-    "title": "Topic",
-    "description": "Topic which sends to all destinations.",
+    "name": "randomLoadBalancer",
+    "title": "Random Load Balancer",
+    "description": "The destination endpoints are selected randomly.",
     "deprecated": false,
     "label": "eip,routing",
-    "javaType": "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition",
+    "javaType": "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition",
     "abstract": false,
     "input": false,
     "output": false

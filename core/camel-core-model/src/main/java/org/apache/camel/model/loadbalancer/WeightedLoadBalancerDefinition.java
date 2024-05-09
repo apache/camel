@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  * Uses a weighted load distribution ratio for each server with respect to others.
  */
 @Metadata(label = "eip,routing")
-@XmlRootElement(name = "weighted")
+@XmlRootElement(name = "weightedLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
 
