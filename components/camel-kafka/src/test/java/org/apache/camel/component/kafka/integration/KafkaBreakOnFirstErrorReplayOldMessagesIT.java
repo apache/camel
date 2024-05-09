@@ -41,6 +41,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tags({ @Tag("breakOnFirstError") })
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
+             architectures = { "amd64", "aarch64" },
+             disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20044";

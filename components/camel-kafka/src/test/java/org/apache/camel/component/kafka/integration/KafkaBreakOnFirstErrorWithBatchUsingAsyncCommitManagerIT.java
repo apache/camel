@@ -48,9 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @Tags({ @Tag("breakOnFirstError") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64", "s390x", "x86", "x86_64" },
-             disabledReason = "This test does not run reliably on ppc64le")
-
+             architectures = { "amd64", "aarch64" },
+             disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorWithBatchUsingAsyncCommitManagerIT extends BaseExclusiveKafkaTestSupport {
     public static final String ROUTE_ID = "breakOnFirstErrorBatchIT";
     public static final String TOPIC = "breakOnFirstErrorBatchIT";

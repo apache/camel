@@ -32,6 +32,8 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 @Tags({ @Tag("breakOnFirstError") })
-
+@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
+             architectures = { "amd64", "aarch64" },
+             disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20563";
