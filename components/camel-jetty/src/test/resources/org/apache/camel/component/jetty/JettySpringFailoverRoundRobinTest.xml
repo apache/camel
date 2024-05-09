@@ -43,7 +43,7 @@
                  Also do not inherit error handler which means the failover LB will not fallback
                  and use error handler but trigger failover to next endpoint immediately -->
             <loadBalance inheritErrorHandler="false">
-                <failover roundRobin="true"/>
+                <failoverLoadBalancer roundRobin="true"/>
                 <!-- and this is the four endpoints we will load balance with failover -->
                 <to uri="ref:hbad"/>
                 <to uri="ref:hbad2"/>

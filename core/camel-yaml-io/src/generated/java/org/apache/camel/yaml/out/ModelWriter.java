@@ -664,22 +664,22 @@ public class ModelWriter extends BaseWriter {
         doWriteCustomLoadBalancerDefinition("customLoadBalancer", def);
     }
     public void writeFailoverLoadBalancerDefinition(FailoverLoadBalancerDefinition def) throws IOException {
-        doWriteFailoverLoadBalancerDefinition("failover", def);
+        doWriteFailoverLoadBalancerDefinition("failoverLoadBalancer", def);
     }
     public void writeRandomLoadBalancerDefinition(RandomLoadBalancerDefinition def) throws IOException {
-        doWriteRandomLoadBalancerDefinition("random", def);
+        doWriteRandomLoadBalancerDefinition("randomLoadBalancer", def);
     }
     public void writeRoundRobinLoadBalancerDefinition(RoundRobinLoadBalancerDefinition def) throws IOException {
-        doWriteRoundRobinLoadBalancerDefinition("roundRobin", def);
+        doWriteRoundRobinLoadBalancerDefinition("roundRobinLoadBalancer", def);
     }
     public void writeStickyLoadBalancerDefinition(StickyLoadBalancerDefinition def) throws IOException {
-        doWriteStickyLoadBalancerDefinition("sticky", def);
+        doWriteStickyLoadBalancerDefinition("stickyLoadBalancer", def);
     }
     public void writeTopicLoadBalancerDefinition(TopicLoadBalancerDefinition def) throws IOException {
-        doWriteTopicLoadBalancerDefinition("topic", def);
+        doWriteTopicLoadBalancerDefinition("topicLoadBalancer", def);
     }
     public void writeWeightedLoadBalancerDefinition(WeightedLoadBalancerDefinition def) throws IOException {
-        doWriteWeightedLoadBalancerDefinition("weighted", def);
+        doWriteWeightedLoadBalancerDefinition("weightedLoadBalancer", def);
     }
     public void writeApiKeyDefinition(ApiKeyDefinition def) throws IOException {
         doWriteApiKeyDefinition("apiKey", def);
@@ -1080,12 +1080,12 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getLoadBalancerType(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "CustomLoadBalancerDefinition" -> doWriteCustomLoadBalancerDefinition("customLoadBalancer", (CustomLoadBalancerDefinition) v);
-                case "FailoverLoadBalancerDefinition" -> doWriteFailoverLoadBalancerDefinition("failover", (FailoverLoadBalancerDefinition) v);
-                case "RandomLoadBalancerDefinition" -> doWriteRandomLoadBalancerDefinition("random", (RandomLoadBalancerDefinition) v);
-                case "RoundRobinLoadBalancerDefinition" -> doWriteRoundRobinLoadBalancerDefinition("roundRobin", (RoundRobinLoadBalancerDefinition) v);
-                case "StickyLoadBalancerDefinition" -> doWriteStickyLoadBalancerDefinition("sticky", (StickyLoadBalancerDefinition) v);
-                case "TopicLoadBalancerDefinition" -> doWriteTopicLoadBalancerDefinition("topic", (TopicLoadBalancerDefinition) v);
-                case "WeightedLoadBalancerDefinition" -> doWriteWeightedLoadBalancerDefinition("weighted", (WeightedLoadBalancerDefinition) v);
+                case "FailoverLoadBalancerDefinition" -> doWriteFailoverLoadBalancerDefinition("failoverLoadBalancer", (FailoverLoadBalancerDefinition) v);
+                case "RandomLoadBalancerDefinition" -> doWriteRandomLoadBalancerDefinition("randomLoadBalancer", (RandomLoadBalancerDefinition) v);
+                case "RoundRobinLoadBalancerDefinition" -> doWriteRoundRobinLoadBalancerDefinition("roundRobinLoadBalancer", (RoundRobinLoadBalancerDefinition) v);
+                case "StickyLoadBalancerDefinition" -> doWriteStickyLoadBalancerDefinition("stickyLoadBalancer", (StickyLoadBalancerDefinition) v);
+                case "TopicLoadBalancerDefinition" -> doWriteTopicLoadBalancerDefinition("topicLoadBalancer", (TopicLoadBalancerDefinition) v);
+                case "WeightedLoadBalancerDefinition" -> doWriteWeightedLoadBalancerDefinition("weightedLoadBalancer", (WeightedLoadBalancerDefinition) v);
             }
         });
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);

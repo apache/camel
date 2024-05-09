@@ -1,8 +1,8 @@
 {
   "model": {
     "kind": "model",
-    "name": "sticky",
-    "title": "Sticky",
+    "name": "stickyLoadBalancer",
+    "title": "Sticky Load Balancer",
     "description": "Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.",
     "deprecated": false,
     "label": "eip,routing",

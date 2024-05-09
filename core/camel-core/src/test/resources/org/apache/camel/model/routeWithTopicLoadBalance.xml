@@ -21,7 +21,7 @@
     <route>
         <from uri="seda:a"/>
         <loadBalance>
-            <topic/>
+            <topicLoadBalancer/>
             <to uri="seda:b"/>
             <to uri="seda:c"/>
             <to uri="seda:d"/>

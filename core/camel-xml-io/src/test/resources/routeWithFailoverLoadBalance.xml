@@ -21,10 +21,10 @@
     <route>
         <from uri="seda:a"/>
         <loadBalance>
-            <failover>
+            <failoverLoadBalancer>
                 <exception>java.io.IOException</exception>
                 <exception>java.text.ParseException</exception>
-            </failover>
+            </failoverLoadBalancer>
             <to uri="seda:b"/>
             <to uri="seda:c"/>
             <to uri="seda:d"/>

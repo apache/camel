@@ -473,12 +473,12 @@ public class ModelParser extends BaseParser {
     protected LoadBalanceDefinition doParseLoadBalanceDefinition() throws IOException, XmlPullParserException {
         return doParse(new LoadBalanceDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "customLoadBalancer": def.setLoadBalancerType(doParseCustomLoadBalancerDefinition()); yield true;
-                case "failover": def.setLoadBalancerType(doParseFailoverLoadBalancerDefinition()); yield true;
-                case "random": def.setLoadBalancerType(doParseRandomLoadBalancerDefinition()); yield true;
-                case "roundRobin": def.setLoadBalancerType(doParseRoundRobinLoadBalancerDefinition()); yield true;
-                case "sticky": def.setLoadBalancerType(doParseStickyLoadBalancerDefinition()); yield true;
-                case "topic": def.setLoadBalancerType(doParseTopicLoadBalancerDefinition()); yield true;
-                case "weighted": def.setLoadBalancerType(doParseWeightedLoadBalancerDefinition()); yield true;
+                case "failoverLoadBalancer": def.setLoadBalancerType(doParseFailoverLoadBalancerDefinition()); yield true;
+                case "randomLoadBalancer": def.setLoadBalancerType(doParseRandomLoadBalancerDefinition()); yield true;
+                case "roundRobinLoadBalancer": def.setLoadBalancerType(doParseRoundRobinLoadBalancerDefinition()); yield true;
+                case "stickyLoadBalancer": def.setLoadBalancerType(doParseStickyLoadBalancerDefinition()); yield true;
+                case "topicLoadBalancer": def.setLoadBalancerType(doParseTopicLoadBalancerDefinition()); yield true;
+                case "weightedLoadBalancer": def.setLoadBalancerType(doParseWeightedLoadBalancerDefinition()); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
     }

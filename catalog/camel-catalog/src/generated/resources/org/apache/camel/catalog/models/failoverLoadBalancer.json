@@ -1,8 +1,8 @@
 {
   "model": {
     "kind": "model",
-    "name": "failover",
-    "title": "Failover",
+    "name": "failoverLoadBalancer",
+    "title": "Failover Load Balancer",
     "description": "In case of failures the exchange will be tried on the next endpoint.",
     "deprecated": false,
     "label": "eip,routing",

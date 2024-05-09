@@ -1,6 +1,6 @@
-= Round Robin EIP
-:doctitle: Round Robin
-:shortname: roundRobin
+= Round Robin Load Balancer EIP
+:doctitle: Round Robin Load Balancer
+:shortname: roundRobinLoadBalancer
 :description: The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.
 :since: 
 :supportlevel: Stable
@@ -46,7 +46,7 @@ In XML, you'll have a route like this:
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-       <roundRobin/>
+       <roundRobinLoadBalancer/>
        <to uri="seda:x"/>
        <to uri="seda:y"/>
        <to uri="seda:z"/>

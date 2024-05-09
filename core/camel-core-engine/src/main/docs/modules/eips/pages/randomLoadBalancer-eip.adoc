@@ -1,6 +1,6 @@
-= Random EIP
-:doctitle: Random
-:shortname: random
+= Random Load Balancer EIP
+:doctitle: Random Load Balancer
+:shortname: randomLoadBalancer
 :description: The destination endpoints are selected randomly.
 :since: 
 :supportlevel: Stable
@@ -48,7 +48,7 @@ XML::
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-       <random/>
+       <randomLoadBalancer/>
        <to uri="seda:x"/>
        <to uri="seda:y"/>
        <to uri="seda:z"/>

@@ -5534,10 +5534,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = "failover",
+            nodes = {
+                    "failover-load-balancer",
+                    "failoverLoadBalancer"
+            },
             types = org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Failover",
+            displayName = "Failover Load Balancer",
             description = "In case of failures the exchange will be tried on the next endpoint.",
             deprecated = false,
             properties = {
@@ -8869,15 +8872,15 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "customLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition", oneOf = "loadBalancerType"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "failover", type = "object:org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition", oneOf = "loadBalancerType"),
+                    @YamlProperty(name = "failoverLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition", oneOf = "loadBalancerType"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean", description = "Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy.", displayName = "Inherit Error Handler"),
-                    @YamlProperty(name = "random", type = "object:org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition", oneOf = "loadBalancerType"),
-                    @YamlProperty(name = "roundRobin", type = "object:org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition", oneOf = "loadBalancerType"),
+                    @YamlProperty(name = "randomLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition", oneOf = "loadBalancerType"),
+                    @YamlProperty(name = "roundRobinLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition", oneOf = "loadBalancerType"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
-                    @YamlProperty(name = "sticky", type = "object:org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition", oneOf = "loadBalancerType"),
-                    @YamlProperty(name = "topic", type = "object:org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition", oneOf = "loadBalancerType"),
-                    @YamlProperty(name = "weighted", type = "object:org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition", oneOf = "loadBalancerType")
+                    @YamlProperty(name = "stickyLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition", oneOf = "loadBalancerType"),
+                    @YamlProperty(name = "topicLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition", oneOf = "loadBalancerType"),
+                    @YamlProperty(name = "weightedLoadBalancer", type = "object:org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition", oneOf = "loadBalancerType")
             }
     )
     public static class LoadBalanceDefinitionDeserializer extends YamlDeserializerBase<LoadBalanceDefinition> {
@@ -8915,32 +8918,32 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setLoadBalancerType(val);
                     break;
                 }
-                case "failover": {
+                case "failoverLoadBalancer": {
                     org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
                     break;
                 }
-                case "random": {
+                case "randomLoadBalancer": {
                     org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
                     break;
                 }
-                case "roundRobin": {
+                case "roundRobinLoadBalancer": {
                     org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
                     break;
                 }
-                case "sticky": {
+                case "stickyLoadBalancer": {
                     org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
                     break;
                 }
-                case "topic": {
+                case "topicLoadBalancer": {
                     org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
                     break;
                 }
-                case "weighted": {
+                case "weightedLoadBalancer": {
                     org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition val = asType(node, org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition.class);
                     target.setLoadBalancerType(val);
                     break;
@@ -12464,10 +12467,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = "random",
+            nodes = {
+                    "random-load-balancer",
+                    "randomLoadBalancer"
+            },
             types = org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Random",
+            displayName = "Random Load Balancer",
             description = "The destination endpoints are selected randomly.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
@@ -14691,12 +14697,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = {
-                    "round-robin",
-                    "roundRobin"
+                    "round-robin-load-balancer",
+                    "roundRobinLoadBalancer"
             },
             types = org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Round Robin",
+            displayName = "Round Robin Load Balancer",
             description = "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
@@ -17394,10 +17400,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = "sticky",
+            nodes = {
+                    "sticky-load-balancer",
+                    "stickyLoadBalancer"
+            },
             types = org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Sticky",
+            displayName = "Sticky Load Balancer",
             description = "Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.",
             deprecated = false,
             properties = {
@@ -18703,10 +18712,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = "topic",
+            nodes = {
+                    "topic-load-balancer",
+                    "topicLoadBalancer"
+            },
             types = org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Topic",
+            displayName = "Topic Load Balancer",
             description = "Topic which sends to all destinations.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
@@ -20189,10 +20201,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = "weighted",
+            nodes = {
+                    "weighted-load-balancer",
+                    "weightedLoadBalancer"
+            },
             types = org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Weighted",
+            displayName = "Weighted Load Balancer",
             description = "Uses a weighted load distribution ratio for each server with respect to others.",
             deprecated = false,
             properties = {

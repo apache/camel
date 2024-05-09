@@ -1,12 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "random",
-    "title": "Random",
-    "description": "The destination endpoints are selected randomly.",
+    "name": "roundRobinLoadBalancer",
+    "title": "Round Robin Load Balancer",
+    "description": "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
     "deprecated": false,
     "label": "eip,routing",
-    "javaType": "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition",
+    "javaType": "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition",
     "abstract": false,
     "input": false,
     "output": false

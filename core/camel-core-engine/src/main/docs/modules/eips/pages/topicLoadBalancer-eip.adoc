@@ -1,6 +1,6 @@
-= Topic EIP
-:doctitle: Topic
-:shortname: topic
+= Topic Load Balancer EIP
+:doctitle: Topic Load Balancer
+:shortname: topicLoadBalancer
 :description: Topic which sends to all destinations.
 :since: 
 :supportlevel: Stable
@@ -48,7 +48,7 @@ XML::
 <route>
 <from uri="direct:start"/>
     <loadBalance>
-       <topic/>
+       <topicLoadBalancer/>
        <to uri="seda:x"/>      
        <to uri="seda:y"/>      
        <to uri="seda:z"/>       

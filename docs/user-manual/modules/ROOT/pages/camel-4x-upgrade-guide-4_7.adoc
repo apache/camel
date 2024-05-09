@@ -10,6 +10,56 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Add default values to `ThrottlingExceptionRoutePolicy` route policy.
 
+=== DSL
+
+The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:
+
+|===
+|*Old Name* |*New Name*
+
+| failOver | failOverLoadBalancer
+| random | randomLoadBalancer
+| roundRobin | roundRobinLoadBalancer
+| sticky | stickyLoadBalancer
+| topic | topicLoadBalancer
+| weighted | weightedLoadBalancer
+|===
+
+For example in XML you need to change from:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loadBalance>
+      <failover>
+          <exception>java.io.IOException</exception>
+      </failover>
+      <to uri="direct:x"/>
+      <to uri="direct:y"/>
+      <to uri="direct:z"/>
+  </loadBalance>
+</route>
+----
+
+To:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loadBalance>
+      <failoverLoadBalancer>
+          <exception>java.io.IOException</exception>
+      </failoverLoadBalancer>
+      <to uri="direct:x"/>
+      <to uri="direct:y"/>
+      <to uri="direct:z"/>
+  </loadBalance>
+</route>
+----
+
+
 === camel-spring-security
 
 The `camel-spring-security` component has been updated to improve readiness for Spring Security 7.x. Since Spring Security 5.8 the `AccessDecisionManager` interface and the related cooperating classes have been deprecated in favor of `AuthorizationManager` based patterns.

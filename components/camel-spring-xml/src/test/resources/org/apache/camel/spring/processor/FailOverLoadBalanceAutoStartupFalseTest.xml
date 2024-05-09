@@ -30,7 +30,7 @@
     <route id="foo" autoStartup="false">
       <from uri="direct:start"/>
       <loadBalance inheritErrorHandler="true">
-        <failover maximumFailoverAttempts="3" roundRobin="true"/>
+        <failoverLoadBalancer maximumFailoverAttempts="3" roundRobin="true"/>
         <to uri="direct:x"/>
         <to uri="direct:y"/>
         <to uri="direct:z"/>

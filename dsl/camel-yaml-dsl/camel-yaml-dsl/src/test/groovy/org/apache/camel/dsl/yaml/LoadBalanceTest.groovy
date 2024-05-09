@@ -29,7 +29,7 @@ class LoadBalanceTest extends YamlTestSupport {
                    uri: "direct:start"
                    steps:
                      - loadBalance:
-                         weighted:
+                         weightedLoadBalancer:
                            distributionRatio: "2,1"
                            roundRobin: false
                          steps:
@@ -63,7 +63,7 @@ class LoadBalanceTest extends YamlTestSupport {
                    uri: "direct:start"
                    steps:
                      - load-balance:
-                         weighted:
+                         weightedLoadBalancer:
                            distributionRatio: "2,1"
                            roundRobin: false
                          steps:
@@ -86,7 +86,7 @@ class LoadBalanceTest extends YamlTestSupport {
                    uri: "direct:start"
                    steps:
                      - loadBalance:
-                         weighted:
+                         weightedLoadBalancer:
                            distribution-ratio: "2,1"
                            roundRobin: false
                          steps:

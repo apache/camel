@@ -1,8 +1,8 @@
 {
   "model": {
     "kind": "model",
-    "name": "weighted",
-    "title": "Weighted",
+    "name": "weightedLoadBalancer",
+    "title": "Weighted Load Balancer",
     "description": "Uses a weighted load distribution ratio for each server with respect to others.",
     "deprecated": false,
     "label": "eip,routing",

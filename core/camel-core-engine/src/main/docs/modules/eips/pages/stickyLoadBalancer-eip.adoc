@@ -1,6 +1,6 @@
-= Sticky EIP
-:doctitle: Sticky
-:shortname: sticky
+= Sticky Load Balancer EIP
+:doctitle: Sticky Load Balancer
+:shortname: stickyLoadBalancer
 :description: Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.
 :since: 
 :supportlevel: Stable
@@ -48,11 +48,11 @@ XML::
 <route>
 <from uri="direct:start"/>
     <loadBalance>
-       <sticky>
+       <stickyLoadBalancer>
            <correlationExpression>
                <header>myKey</header>
            </correlationExpression>
-       </sticky>
+       </stickyLoadBalancer>
        <to uri="seda:x"/>      
        <to uri="seda:y"/>      
        <to uri="seda:z"/>       
