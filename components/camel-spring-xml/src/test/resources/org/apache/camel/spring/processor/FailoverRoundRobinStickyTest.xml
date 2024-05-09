@@ -42,7 +42,7 @@
                 <!-- failover using stateful round robin and sticky mode,
                      which will keep retrying forever those 4 endpoints until success.
                      You can set the maximumFailoverAttempt to break out after X attempts -->
-                <failover roundRobin="true" sticky="true"/>
+                <failoverLoadBalancer roundRobin="true" sticky="true"/>
                 <to uri="direct:bad"/>
                 <to uri="direct:bad2"/>
                 <to uri="direct:good"/>

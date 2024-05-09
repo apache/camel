@@ -30,9 +30,9 @@
     <route>
       <from uri="direct:start"/>
       <loadBalance>
-          <sticky>
+          <stickyLoadBalancer>
               <correlationExpression><header>foo</header></correlationExpression>
-          </sticky>
+          </stickyLoadBalancer>
           <to uri="mock:x"/>
           <to uri="mock:y"/>
           <to uri="mock:z"/>

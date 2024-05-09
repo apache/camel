@@ -21,7 +21,7 @@
   <route>
     <from uri="seda:a"/>
     <loadBalance>
-       <roundRobin/>
+       <roundRobinLoadBalancer/>
        <to uri="seda:b"/>      
        <to uri="seda:c"/>      
        <to uri="seda:d"/>       

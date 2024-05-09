@@ -45,7 +45,7 @@
             <loadBalance>
                 <!-- failover using stateful round robin,
                      which will at most failover 2 times before exhausting -->
-                <failover maximumFailoverAttempts="2" roundRobin="true"/>
+                <failoverLoadBalancer maximumFailoverAttempts="2" roundRobin="true"/>
                 <to uri="direct:bad"/>
                 <to uri="direct:bad2"/>
                 <to uri="direct:bad3"/>

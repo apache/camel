@@ -43,7 +43,7 @@
     <route>
       <from uri="direct:error"/>
       <loadBalance>
-        <roundRobin id="round"/>
+        <roundRobinLoadBalancer id="round"/>
         <to uri="mock:error"/>
         <to uri="mock:error2"/>
         <to uri="mock:error3"/>

@@ -21,11 +21,11 @@
   <route>
     <from uri="seda:a"/>
     <loadBalance>
-       <sticky>
+       <stickyLoadBalancer>
            <correlationExpression>
                <language language="juel">in.header.foo == 'bar'</language>
            </correlationExpression>
-       </sticky>
+       </stickyLoadBalancer>
        <to uri="seda:b"/>      
        <to uri="seda:c"/>      
        <to uri="seda:d"/>       
