@@ -1104,7 +1104,7 @@ public final class StringHelper {
         StringBuilder answer = new StringBuilder();
 
         Character prev = null;
-        Character next = null;
+        Character next;
         char[] arr = text.toCharArray();
         for (int i = 0; i < arr.length; i++) {
             char ch = arr[i];
