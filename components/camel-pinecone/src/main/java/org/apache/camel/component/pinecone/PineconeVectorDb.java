@@ -47,7 +47,7 @@ public class PineconeVectorDb {
         @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
         public static final String COLLECTION_NAME = "CamelPineconeCollectionName";
 
-        @Metadata(description = "Collection Similarity Metric", javaType = "String")
+        @Metadata(description = "Collection Similarity Metric", javaType = "String", enums = "cosine,euclidean,dotproduct")
         public static final String COLLECTION_SIMILARITY_METRIC = "CamelPineconeCollectionSimilarityMetric";
 
         @Metadata(description = "Collection Dimension", javaType = "int")
