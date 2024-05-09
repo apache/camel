@@ -44,7 +44,7 @@
         <route>
             <from uri="direct:start"/>
             <loadBalance>
-                <failover/>
+                <failoverLoadBalancer/>
                 <to uri="jms:queue:foo?transferException=true"/>
                 <to uri="jms:queue:bar?transferException=true"/>
             </loadBalance>
