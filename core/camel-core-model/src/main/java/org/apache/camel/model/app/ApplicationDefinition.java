@@ -22,6 +22,9 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Root tag for Camel application, that can contain beans, routes, and more.
+ *
+ * Important this is only supported when using XML DSL with camel-xml-io-dsl. This is NOT for the classic old Spring XML
+ * DSL used by Camel 1.x/2.x.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "camel")

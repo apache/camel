@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "camel",
     "title": "Camel",
-    "description": "Root tag for Camel application, that can contain beans, routes, and more.",
+    "description": "Root tag for Camel application, that can contain beans, routes, and more. Important this is only supported when using XML DSL with camel-xml-io-dsl. This is NOT for the classic old Spring XML DSL used by Camel 1.x\/2.x.",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.app.ApplicationDefinition",
