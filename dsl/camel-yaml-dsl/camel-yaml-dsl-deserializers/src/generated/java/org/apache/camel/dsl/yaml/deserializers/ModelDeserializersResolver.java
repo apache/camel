@@ -145,7 +145,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "exchange-property": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "exchangeProperty": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "org.apache.camel.model.language.ExchangePropertyExpression": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
-            case "failover": return new ModelDeserializers.FailoverLoadBalancerDefinitionDeserializer();
+            case "failover-load-balancer": return new ModelDeserializers.FailoverLoadBalancerDefinitionDeserializer();
+            case "failoverLoadBalancer": return new ModelDeserializers.FailoverLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition": return new ModelDeserializers.FailoverLoadBalancerDefinitionDeserializer();
             case "fault-tolerance-configuration": return new ModelDeserializers.FaultToleranceConfigurationDefinitionDeserializer();
             case "faultToleranceConfiguration": return new ModelDeserializers.FaultToleranceConfigurationDefinitionDeserializer();
@@ -328,7 +329,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.PutDefinition": return new ModelDeserializers.PutDefinitionDeserializer();
             case "python": return new ModelDeserializers.PythonExpressionDeserializer();
             case "org.apache.camel.model.language.PythonExpression": return new ModelDeserializers.PythonExpressionDeserializer();
-            case "random": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
+            case "random-load-balancer": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
+            case "randomLoadBalancer": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
             case "recipient-list": return new ModelDeserializers.RecipientListDefinitionDeserializer();
             case "recipientList": return new ModelDeserializers.RecipientListDefinitionDeserializer();
@@ -390,8 +392,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ResumableDefinition": return new ModelDeserializers.ResumableDefinitionDeserializer();
             case "rollback": return new ModelDeserializers.RollbackDefinitionDeserializer();
             case "org.apache.camel.model.RollbackDefinition": return new ModelDeserializers.RollbackDefinitionDeserializer();
-            case "round-robin": return new ModelDeserializers.RoundRobinLoadBalancerDefinitionDeserializer();
-            case "roundRobin": return new ModelDeserializers.RoundRobinLoadBalancerDefinitionDeserializer();
+            case "round-robin-load-balancer": return new ModelDeserializers.RoundRobinLoadBalancerDefinitionDeserializer();
+            case "roundRobinLoadBalancer": return new ModelDeserializers.RoundRobinLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition": return new ModelDeserializers.RoundRobinLoadBalancerDefinitionDeserializer();
             case "route-builder": return new ModelDeserializers.RouteBuilderDefinitionDeserializer();
             case "routeBuilder": return new ModelDeserializers.RouteBuilderDefinitionDeserializer();
@@ -481,7 +483,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.StaticServiceCallServiceDiscoveryConfigurationDeserializer();
             case "step": return new ModelDeserializers.StepDefinitionDeserializer();
             case "org.apache.camel.model.StepDefinition": return new ModelDeserializers.StepDefinitionDeserializer();
-            case "sticky": return new ModelDeserializers.StickyLoadBalancerDefinitionDeserializer();
+            case "sticky-load-balancer": return new ModelDeserializers.StickyLoadBalancerDefinitionDeserializer();
+            case "stickyLoadBalancer": return new ModelDeserializers.StickyLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition": return new ModelDeserializers.StickyLoadBalancerDefinitionDeserializer();
             case "stop": return new ModelDeserializers.StopDefinitionDeserializer();
             case "org.apache.camel.model.StopDefinition": return new ModelDeserializers.StopDefinitionDeserializer();
@@ -524,7 +527,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ToDynamicDefinition": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "tokenize": return new ModelDeserializers.TokenizerExpressionDeserializer();
             case "org.apache.camel.model.language.TokenizerExpression": return new ModelDeserializers.TokenizerExpressionDeserializer();
-            case "topic": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
+            case "topic-load-balancer": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
+            case "topicLoadBalancer": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "transacted": return new ModelDeserializers.TransactedDefinitionDeserializer();
             case "org.apache.camel.model.TransactedDefinition": return new ModelDeserializers.TransactedDefinitionDeserializer();
@@ -559,7 +563,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.VariableExpression": return new ModelDeserializers.VariableExpressionDeserializer();
             case "wasm": return new ModelDeserializers.WasmExpressionDeserializer();
             case "org.apache.camel.model.language.WasmExpression": return new ModelDeserializers.WasmExpressionDeserializer();
-            case "weighted": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
+            case "weighted-load-balancer": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
+            case "weightedLoadBalancer": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "when": return new ModelDeserializers.WhenDefinitionDeserializer();
             case "org.apache.camel.model.WhenDefinition": return new ModelDeserializers.WhenDefinitionDeserializer();

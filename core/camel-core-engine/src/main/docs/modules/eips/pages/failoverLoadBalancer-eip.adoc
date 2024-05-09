@@ -1,6 +1,6 @@
-= Failover EIP
-:doctitle: Failover
-:shortname: failover
+= Failover Load Balancer EIP
+:doctitle: Failover Load Balancer
+:shortname: failoverLoadBalancer
 :description: In case of failures the exchange will be tried on the next endpoint.
 :since: 
 :supportlevel: Stable

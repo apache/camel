@@ -1,6 +1,6 @@
-= Topic EIP
-:doctitle: Topic
-:shortname: topic
+= Topic Load Balancer EIP
+:doctitle: Topic Load Balancer
+:shortname: topicLoadBalancer
 :description: Topic which sends to all destinations.
 :since: 
 :supportlevel: Stable

@@ -499,7 +499,7 @@ A useful base class for an expression
     </xs:annotation>
   </xs:element>
   <xs:element name="expressionDefinition" type="tns:expression"/>
-  <xs:element name="failover" type="tns:failoverLoadBalancerDefinition">
+  <xs:element name="failoverLoadBalancer" type="tns:failoverLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -1249,7 +1249,7 @@ Evaluates a Python expression.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="random" type="tns:randomLoadBalancerDefinition">
+  <xs:element name="randomLoadBalancer" type="tns:randomLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -1465,7 +1465,7 @@ Forces a rollback by stopping routing the message
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="roundRobin" type="tns:roundRobinLoadBalancerDefinition">
+  <xs:element name="roundRobinLoadBalancer" type="tns:roundRobinLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -1871,7 +1871,7 @@ Routes the message to a sequence of processors which is grouped together as one 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="sticky" type="tns:stickyLoadBalancerDefinition">
+  <xs:element name="stickyLoadBalancer" type="tns:stickyLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -2078,7 +2078,7 @@ Tokenize text payloads using delimiter patterns.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="topic" type="tns:topicLoadBalancerDefinition">
+  <xs:element name="topicLoadBalancer" type="tns:topicLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -2213,7 +2213,7 @@ Call a wasm (web assembly) function.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="weighted" type="tns:weightedLoadBalancerDefinition">
+  <xs:element name="weightedLoadBalancer" type="tns:weightedLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -6842,12 +6842,12 @@ mynamecount=4&type=gold.
         <xs:sequence>
           <xs:choice minOccurs="0">
             <xs:element ref="tns:customLoadBalancer"/>
-            <xs:element ref="tns:failover"/>
-            <xs:element ref="tns:random"/>
-            <xs:element ref="tns:roundRobin"/>
-            <xs:element ref="tns:sticky"/>
-            <xs:element ref="tns:topic"/>
-            <xs:element ref="tns:weighted"/>
+            <xs:element ref="tns:failoverLoadBalancer"/>
+            <xs:element ref="tns:randomLoadBalancer"/>
+            <xs:element ref="tns:roundRobinLoadBalancer"/>
+            <xs:element ref="tns:stickyLoadBalancer"/>
+            <xs:element ref="tns:topicLoadBalancer"/>
+            <xs:element ref="tns:weightedLoadBalancer"/>
           </xs:choice>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>

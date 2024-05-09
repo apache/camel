@@ -2491,64 +2491,64 @@
               "anyOf" : [ {
                 "required" : [ "customLoadBalancer" ]
               }, {
-                "required" : [ "failover" ]
+                "required" : [ "failoverLoadBalancer" ]
               }, {
-                "required" : [ "random" ]
+                "required" : [ "randomLoadBalancer" ]
               }, {
-                "required" : [ "roundRobin" ]
+                "required" : [ "roundRobinLoadBalancer" ]
               }, {
-                "required" : [ "sticky" ]
+                "required" : [ "stickyLoadBalancer" ]
               }, {
-                "required" : [ "topic" ]
+                "required" : [ "topicLoadBalancer" ]
               }, {
-                "required" : [ "weighted" ]
+                "required" : [ "weightedLoadBalancer" ]
               } ]
             }
           }, {
             "type" : "object",
-            "required" : [ "failover" ],
+            "required" : [ "failoverLoadBalancer" ],
             "properties" : {
-              "failover" : {
+              "failoverLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "random" ],
+            "required" : [ "randomLoadBalancer" ],
             "properties" : {
-              "random" : {
+              "randomLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "roundRobin" ],
+            "required" : [ "roundRobinLoadBalancer" ],
             "properties" : {
-              "roundRobin" : {
+              "roundRobinLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "sticky" ],
+            "required" : [ "stickyLoadBalancer" ],
             "properties" : {
-              "sticky" : {
+              "stickyLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "topic" ],
+            "required" : [ "topicLoadBalancer" ],
             "properties" : {
-              "topic" : {
+              "topicLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition"
               }
             }
           }, {
             "type" : "object",
-            "required" : [ "weighted" ],
+            "required" : [ "weightedLoadBalancer" ],
             "properties" : {
-              "weighted" : {
+              "weightedLoadBalancer" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition"
               }
             }
@@ -2582,12 +2582,12 @@
             }
           },
           "customLoadBalancer" : { },
-          "failover" : { },
-          "random" : { },
-          "roundRobin" : { },
-          "sticky" : { },
-          "topic" : { },
-          "weighted" : { }
+          "failoverLoadBalancer" : { },
+          "randomLoadBalancer" : { },
+          "roundRobinLoadBalancer" : { },
+          "stickyLoadBalancer" : { },
+          "topicLoadBalancer" : { },
+          "weightedLoadBalancer" : { }
         }
       },
       "org.apache.camel.model.LogDefinition" : {
@@ -13992,7 +13992,7 @@
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition" : {
-        "title" : "Failover",
+        "title" : "Failover Load Balancer",
         "description" : "In case of failures the exchange will be tried on the next endpoint.",
         "type" : "object",
         "additionalProperties" : false,
@@ -14029,7 +14029,7 @@
         }
       },
       "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition" : {
-        "title" : "Random",
+        "title" : "Random Load Balancer",
         "description" : "The destination endpoints are selected randomly.",
         "type" : "object",
         "additionalProperties" : false,
@@ -14042,7 +14042,7 @@
         }
       },
       "org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition" : {
-        "title" : "Round Robin",
+        "title" : "Round Robin Load Balancer",
         "description" : "The destination endpoints are selected in a round-robin fashion. This is a well-known and classic policy, which spreads the load evenly.",
         "type" : "object",
         "additionalProperties" : false,
@@ -14055,7 +14055,7 @@
         }
       },
       "org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition" : {
-        "title" : "Sticky",
+        "title" : "Sticky Load Balancer",
         "description" : "Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.",
         "type" : "object",
         "additionalProperties" : false,
@@ -14073,7 +14073,7 @@
         }
       },
       "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition" : {
-        "title" : "Topic",
+        "title" : "Topic Load Balancer",
         "description" : "Topic which sends to all destinations.",
         "type" : "object",
         "additionalProperties" : false,
@@ -14086,7 +14086,7 @@
         }
       },
       "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition" : {
-        "title" : "Weighted",
+        "title" : "Weighted Load Balancer",
         "description" : "Uses a weighted load distribution ratio for each server with respect to others.",
         "type" : "object",
         "additionalProperties" : false,
