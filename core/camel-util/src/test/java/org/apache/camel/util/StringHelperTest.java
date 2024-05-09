@@ -59,6 +59,12 @@ public class StringHelperTest {
         assertEquals("available-phone-number-country", camelCaseToDash("available_phone_number_country"));
         assertEquals("available-phone-number-country", camelCaseToDash("availablePhoneNumberCountry"));
         assertEquals("available-phone-number-country", camelCaseToDash("AvailablePhoneNumberCountry"));
+        assertEquals("enable-cors", camelCaseToDash("enableCORS"));
+    }
+
+    @Test
+    public void testDashToCamelCase() {
+        assertEquals("enableCors", dashToCamelCase("enable-cors"));
     }
 
     @Nested
