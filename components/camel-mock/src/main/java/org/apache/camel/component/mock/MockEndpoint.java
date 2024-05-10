@@ -462,18 +462,26 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                     expectedMinimumCount <= receivedCounter);
         }
 
+        runTests();
+
+        evalFailures();
+    }
+
+    private void evalFailures() {
+        for (Throwable failure : failures) {
+            if (failure != null) {
+                LOG.error("Caught exception on {} due to: {}", getEndpointUri(), failure.getMessage(), failure);
+                fail(failure);
+            }
+        }
+    }
+
+    private void runTests() {
         for (Runnable test : tests) {
             // skip tasks which we have already been running in fail fast mode
             boolean skip = failFast && test instanceof AssertionTask;
             if (!skip) {
                 test.run();
-            }
-        }
-
-        for (Throwable failure : failures) {
-            if (failure != null) {
-                LOG.error("Caught exception on {} due to: {}", getEndpointUri(), failure.getMessage(), failure);
-                fail(failure);
             }
         }
     }
@@ -587,36 +595,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 // should not really happen but some tests don't start camel context
                 expectedHeaderValues = new HashMap<>();
             }
-            // we just wants to expect to be called once
-            expects(new AssertionTask() {
-                @Override
-                public void assertOnIndex(int i) {
-                    final Exchange exchange = getReceivedExchange(i);
-
-                    for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
-                        String key = entry.getKey();
-                        Object expectedValue = entry.getValue();
-
-                        // we accept that an expectedValue of null also means that the header may be absent
-                        if (expectedValue != null) {
-                            assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
-                            boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
-                            assertTrue("No header with name " + key + " found for message: " + i, hasKey);
-                        }
-
-                        Object actualValue = exchange.getIn().getHeader(key);
-                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
-
-                        assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
-                    }
-                }
-
-                public void run() {
-                    for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                        assertOnIndex(i);
-                    }
-                }
-            });
+            // we just want to expect to be called once
+            expects(new MockAssertionTask());
         }
         expectedHeaderValues.put(name, value);
     }
@@ -1696,27 +1676,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             performAssertions(exchange, copy);
 
             if (failFast) {
-                // fail fast mode so check nth expectations as soon as possible
-                int index = getReceivedCounter() - 1;
-                for (Runnable test : tests) {
-                    // only assertion tasks can support fail fast mode
-                    if (test instanceof AssertionTask) {
-                        AssertionTask task = (AssertionTask) test;
-                        try {
-                            LOG.debug("Running assertOnIndex({}) on task: {}", index, task);
-                            task.assertOnIndex(index);
-                        } catch (AssertionError e) {
-                            failFastAssertionError = e;
-                            // signal latch we are done as we are failing fast
-                            LOG.debug("Assertion failed fast on {} received exchange due to {}", index, e.getMessage());
-                            while (latch != null && latch.getCount() > 0) {
-                                latch.countDown();
-                            }
-                            // we are failing fast
-                            break;
-                        }
-                    }
-                }
+                doFailFast();
             }
         } catch (AssertionError | Exception e) {
             // AssertionError extends java.lang.Error
@@ -1729,6 +1689,29 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    private void doFailFast() {
+        // fail fast mode so check nth expectations as soon as possible
+        int index = getReceivedCounter() - 1;
+        for (Runnable test : tests) {
+            // only assertion tasks can support fail fast mode
+            if (test instanceof AssertionTask task) {
+                try {
+                    LOG.debug("Running assertOnIndex({}) on task: {}", index, task);
+                    task.assertOnIndex(index);
+                } catch (AssertionError e) {
+                    failFastAssertionError = e;
+                    // signal latch we are done as we are failing fast
+                    LOG.debug("Assertion failed fast on {} received exchange due to {}", index, e.getMessage());
+                    while (latch != null && latch.getCount() > 0) {
+                        latch.countDown();
+                    }
+                    // we are failing fast
+                    break;
+                }
+            }
+        }
+    }
+
     /**
      * Performs the assertions on the incoming exchange.
      *
@@ -1737,46 +1720,21 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @throws Exception can be thrown if something went wrong
      */
     protected void performAssertions(Exchange exchange, Exchange copy) throws Exception {
-        Message in = copy.getIn();
-        Object actualBody = in.getBody();
+        final Message in = copy.getIn();
 
         if (expectedHeaderValues != null) {
-            if (actualHeaderValues == null) {
-                HeadersMapFactory factory = getCamelContext().getCamelContextExtension().getHeadersMapFactory();
-                if (factory != null) {
-                    actualHeaderValues = factory.newMap();
-                } else {
-                    // should not really happen but some tests don't start camel context
-                    actualHeaderValues = new HashMap<>();
-                }
-            }
-            if (in.hasHeaders()) {
-                actualHeaderValues.putAll(in.getHeaders());
-            }
+            assertExpectedHeaderValues(in);
         }
 
+        Object actualBody = in.getBody();
+
         if (expectedBodyValues != null) {
-            int index = actualBodyValues.size();
-            if (expectedBodyValues.size() > index) {
-                Object expectedBody = expectedBodyValues.get(index);
-                if (expectedBody != null) {
-                    // prefer to convert body early, for example when using files
-                    // we need to read the content at this time
-                    Object body = in.getBody(expectedBody.getClass());
-                    if (body != null) {
-                        actualBody = body;
-                    }
-                }
-                actualBodyValues.add(actualBody);
-            }
+            actualBody = assertExpectedBodyValues(in, actualBody);
         }
 
         // let counter be 0 index-based in the logs
         if (LOG.isDebugEnabled()) {
-            String msg = getEndpointUri() + " >>>> " + counter + " : " + copy + " with body: " + actualBody;
-            if (copy.getIn().hasHeaders()) {
-                msg += " and headers:" + copy.getIn().getHeaders();
-            }
+            final String msg = buildLogMessage(getEndpointUri(), counter, copy, actualBody);
             LOG.debug(msg);
         }
 
@@ -1792,14 +1750,59 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 ? processors.get(receivedCounter) : defaultProcessor;
 
         if (processor != null) {
-            try {
-                // must process the incoming exchange and NOT the copy as the idea
-                // is the end user can manipulate the exchange
-                processor.process(exchange);
-            } catch (Exception e) {
-                // set exceptions on exchange so we can throw exceptions to simulate errors
-                exchange.setException(e);
+            tryProcessing(exchange, processor);
+        }
+    }
+
+    private static void tryProcessing(Exchange exchange, Processor processor) {
+        try {
+            // must process the incoming exchange and NOT the copy as the idea
+            // is the end user can manipulate the exchange
+            processor.process(exchange);
+        } catch (Exception e) {
+            // set exceptions on exchange, so we can throw exceptions to simulate errors
+            exchange.setException(e);
+        }
+    }
+
+    private static String buildLogMessage(String endpontUri, AtomicInteger counter, Exchange copy, Object actualBody) {
+        String msg = endpontUri + " >>>> " + counter + " : " + copy
+                     + (actualBody != null ? " with body: " + actualBody : "null body");
+        if (copy.getIn().hasHeaders()) {
+            msg += " and headers:" + copy.getIn().getHeaders();
+        }
+        return msg;
+    }
+
+    private Object assertExpectedBodyValues(Message in, Object actualBody) {
+        int index = actualBodyValues.size();
+        if (expectedBodyValues.size() > index) {
+            Object expectedBody = expectedBodyValues.get(index);
+            if (expectedBody != null) {
+                // prefer to convert body early, for example when using files
+                // we need to read the content at this time
+                Object body = in.getBody(expectedBody.getClass());
+                if (body != null) {
+                    actualBody = body;
+                }
             }
+            actualBodyValues.add(actualBody);
+        }
+        return actualBody;
+    }
+
+    private void assertExpectedHeaderValues(Message in) {
+        if (actualHeaderValues == null) {
+            HeadersMapFactory factory = getCamelContext().getCamelContextExtension().getHeadersMapFactory();
+            if (factory != null) {
+                actualHeaderValues = factory.newMap();
+            } else {
+                // should not really happen but some tests don't start camel context
+                actualHeaderValues = new HashMap<>();
+            }
+        }
+        if (in.hasHeaders()) {
+            actualHeaderValues.putAll(in.getHeaders());
         }
     }
 
@@ -1809,30 +1812,45 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @param copy a copy of the received exchange
      */
     protected void addReceivedExchange(Exchange copy) {
-        if (retainFirst == 0 && retainLast == 0) {
+        if (isNotRetain()) {
             // do not retain any messages at all
-        } else if (retainFirst < 0 && retainLast < 0) {
+            return;
+        }
+
+        if (retainAll()) {
             // no limitation so keep them all
             receivedExchanges.add(copy);
         } else {
-            // okay there is some sort of limitations, so figure out what to retain
-            if (retainFirst > 0 && counter.get() < retainFirst) {
-                // store a copy as it is within the retain first limitation
-                receivedExchanges.add(copy);
-            } else if (retainLast > 0) {
-                // remove the oldest from the last retained boundary,
-                int index = receivedExchanges.size() - retainLast;
-                if (index >= 0) {
-                    // but must be outside the first range as well
-                    // otherwise we should not remove the oldest
-                    if (retainFirst <= 0 || retainFirst <= index) {
-                        receivedExchanges.remove(index);
-                    }
-                }
-                // store a copy of the last nth received
-                receivedExchanges.add(copy);
-            }
+            retainSome(copy);
         }
+    }
+
+    private void retainSome(Exchange copy) {
+        // okay there is some sort of limitations, so figure out what to retain
+        if (retainFirst > 0 && counter.get() < retainFirst) {
+            // store a copy as it is within the retain first limitation
+            receivedExchanges.add(copy);
+        } else if (retainLast > 0) {
+            // remove the oldest from the last retained boundary,
+            int index = receivedExchanges.size() - retainLast;
+            if (index >= 0) {
+                // but must be outside the first range as well
+                // otherwise we should not remove the oldest
+                if (retainFirst <= 0 || retainFirst <= index) {
+                    receivedExchanges.remove(index);
+                }
+            }
+            // store a copy of the last nth received
+            receivedExchanges.add(copy);
+        }
+    }
+
+    private boolean retainAll() {
+        return retainFirst < 0 && retainLast < 0;
+    }
+
+    private boolean isNotRetain() {
+        return retainFirst == 0 && retainLast == 0;
     }
 
     /**
@@ -1985,4 +2003,33 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    private class MockAssertionTask implements AssertionTask {
+        @Override
+        public void assertOnIndex(int i) {
+            final Exchange exchange = getReceivedExchange(i);
+
+            for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
+                String key = entry.getKey();
+                Object expectedValue = entry.getValue();
+
+                // we accept that an expectedValue of null also means that the header may be absent
+                if (expectedValue != null) {
+                    assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
+                    boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
+                    assertTrue("No header with name " + key + " found for message: " + i, hasKey);
+                }
+
+                Object actualValue = exchange.getIn().getHeader(key);
+                actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
+            }
+        }
+
+        public void run() {
+            for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                assertOnIndex(i);
+            }
+        }
+    }
 }
