@@ -29,7 +29,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  */
 public class MockExpressionClauseSupport<T> {
 
-    private T result;
+    private final T result;
     private Expression expressionValue;
     private ExpressionFactory expressionType;
     private volatile boolean initDone;
