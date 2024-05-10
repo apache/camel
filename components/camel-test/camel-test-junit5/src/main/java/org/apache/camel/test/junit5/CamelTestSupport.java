@@ -642,7 +642,7 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Whether or not JMX should be used during testing.
+     * Whether JMX should be used during testing.
      *
      * @return <tt>false</tt> by default.
      */
@@ -858,7 +858,7 @@ public abstract class CamelTestSupport
      * mock:foo and mock:foo?retainFirst=5 would match as the queue name is foo.
      *
      * @param  uri                     the URI which typically starts with "mock:" and has some name
-     * @param  create                  whether or not to allow the endpoint to be created if it doesn't exist
+     * @param  create                  whether to allow the endpoint to be created if it doesn't exist
      * @return                         the mock endpoint or an {@link NoSuchEndpointException} is thrown if it could not
      *                                 be resolved
      * @throws NoSuchEndpointException is the mock endpoint does not exist
