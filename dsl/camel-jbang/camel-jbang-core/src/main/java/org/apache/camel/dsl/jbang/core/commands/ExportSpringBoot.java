@@ -34,6 +34,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -181,6 +182,8 @@ class ExportSpringBoot extends Export {
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
         if (camelSpringBootVersion != null) {
             context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelSpringBootVersion);
+        } else {
+            context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
         }
         if (additionalProperties != null) {
             String properties = Arrays.stream(additionalProperties.split(","))
@@ -297,6 +300,11 @@ class ExportSpringBoot extends Export {
         context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
+        if (camelSpringBootVersion != null) {
+            context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelSpringBootVersion);
+        } else {
+            context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
+        }
 
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
@@ -395,9 +403,12 @@ class ExportSpringBoot extends Export {
 
     @Override
     protected String applicationPropertyLine(String key, String value) {
-        // camel.main.x should be renamed to camel.springboot.x
-        if (key.startsWith("camel.main.")) {
-            key = "camel.springboot." + key.substring(11);
+        boolean camel44orOlder = camelSpringBootVersion != null && VersionHelper.isLE("4.4", camelSpringBootVersion);
+        if (camel44orOlder) {
+            // camel.main.x should be renamed to camel.springboot.x (for camel 4.4.x or older)
+            if (key.startsWith("camel.main.")) {
+                key = "camel.springboot." + key.substring(11);
+            }
         }
         return super.applicationPropertyLine(key, value);
     }
