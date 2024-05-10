@@ -49,6 +49,34 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
                         getCamelContext().getVersion());
             }
         }
+        if ("aws".equals(name)) {
+            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-aws-secrets-manager",
+                    getCamelContext().getVersion())) {
+                downloader.downloadDependency("org.apache.camel", "camel-aws-secrets-manager",
+                        getCamelContext().getVersion());
+            }
+        }
+        if ("azure".equals(name)) {
+            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-azure-key-vault",
+                    getCamelContext().getVersion())) {
+                downloader.downloadDependency("org.apache.camel", "camel-azure-key-vault",
+                        getCamelContext().getVersion());
+            }
+        }
+        if ("gcp".equals(name)) {
+            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-google-secret-manager",
+                    getCamelContext().getVersion())) {
+                downloader.downloadDependency("org.apache.camel", "camel-google-secret-manager",
+                        getCamelContext().getVersion());
+            }
+        }
+        if ("hashicorp".equals(name)) {
+            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-hashicorp-vault",
+                    getCamelContext().getVersion())) {
+                downloader.downloadDependency("org.apache.camel", "camel-hashicorp-vault",
+                        getCamelContext().getVersion());
+            }
+        }
         return super.resolvePropertiesFunction(name);
     }
 }
