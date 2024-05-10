@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents time based clauses for setting expectations on the mocks. Such as time constrains for the received
+ * Represents time-based clauses for setting expectations on the mocks. Such as time constrains for the received
  * messages.
  */
 public class TimeClause implements BinaryPredicate {
@@ -128,7 +128,7 @@ public class TimeClause implements BinaryPredicate {
 
     @Override
     public String matchesReturningFailureMessage(Exchange exchange) {
-        // we must not store any state, so we can be thread safe
+        // we must not store any state, so we can be thread-safe,
         // and thus we offer this method which returns a failure message if
         // we did not match
         String answer = null;
@@ -155,7 +155,7 @@ public class TimeClause implements BinaryPredicate {
 
         final Date otherDate = getOtherDate(leftValue, rightValue);
 
-        // if we could not grab the value, we hit a boundary (ie. either 0 message or last message)
+        // if we could not grab the value, we hit a boundary (i.e., either 0 message or last message)
         if (otherDate == null) {
             return true;
         }
@@ -163,7 +163,7 @@ public class TimeClause implements BinaryPredicate {
         // compute if we were within the allowed time range
         Time current = new Time(currentDate.getTime(), TimeUnit.MILLISECONDS);
         Time other = new Time(otherDate.getTime(), TimeUnit.MILLISECONDS);
-        // must absolute delta as when we hit the boundaries the delta would negative
+        // must absolute delta as when we hit the boundaries, the delta would negative
         long delta = Math.abs(other.toMillis() - current.toMillis());
         was = "delta: " + delta + " millis";
 

@@ -104,7 +104,7 @@ public class MockValueBuilder implements Expression, Predicate {
                 return answer.evaluate(exchange, Object.class);
             }
         };
-        // okay now we can set the reference to the right-hand-side
+        // okay, now we can set the reference to the right-hand-side
         ref.set(right);
 
         return answer;
@@ -187,7 +187,7 @@ public class MockValueBuilder implements Expression, Predicate {
     }
 
     /**
-     * Create a predicate that the left hand expression contains the value of the right hand expression
+     * Create a predicate that the left-hand expression contains the value of the right-hand expression
      *
      * @param  value the element which is compared to be contained within this expression
      * @return       a predicate which evaluates to true if the given value expression is contained within this
@@ -227,7 +227,7 @@ public class MockValueBuilder implements Expression, Predicate {
     public MockValueBuilder tokenize(String token, String group, boolean skipFirst) {
         Expression newExp = ExpressionBuilder.tokenizeExpression(expression, token);
         if (group == null && skipFirst) {
-            // wrap in skip first (if group then it has its own skip first logic)
+            // wrap in skip first (if group then it has its own skip-first logic)
             newExp = ExpressionBuilder.skipFirstExpression(newExp);
         }
         newExp = ExpressionBuilder.groupIteratorExpression(newExp, token, group, skipFirst);

@@ -99,7 +99,7 @@ public class MockExpressionClauseSupport<T> {
     }
 
     /**
-     * An expression of an inbound message header of the given name
+     * An expression of an inbound message header with the given name
      */
     public T header(String name) {
         return expression(ExpressionBuilder.headerExpression(name));
@@ -120,7 +120,7 @@ public class MockExpressionClauseSupport<T> {
     }
 
     /**
-     * An expression of an exchange property of the given name
+     * An expression of an exchange property with the given name
      */
     public T exchangeProperty(String name) {
         return expression(ExpressionBuilder.exchangePropertyExpression(name));
@@ -276,7 +276,7 @@ public class MockExpressionClauseSupport<T> {
     }
 
     /**
-     * An expression of a variable of the given name
+     * An expression of a variable with the given name
      */
     public T variable(String name) {
         return expression(ExpressionBuilder.variableExpression(name));
