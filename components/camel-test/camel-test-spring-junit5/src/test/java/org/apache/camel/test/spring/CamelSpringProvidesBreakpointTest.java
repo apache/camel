@@ -25,6 +25,7 @@ import org.apache.camel.test.spring.junit5.ProvidesBreakpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,7 +48,7 @@ public class CamelSpringProvidesBreakpointTest
         assertNotNull(camelContext.getDebugger().getBreakpoints());
         assertEquals(1, camelContext.getDebugger().getBreakpoints().size());
 
-        assertTrue(camelContext.getDebugger().getBreakpoints().get(0) instanceof TestBreakpoint);
+        assertInstanceOf(TestBreakpoint.class, camelContext.getDebugger().getBreakpoints().get(0));
         assertTrue(((TestBreakpoint) camelContext.getDebugger().getBreakpoints().get(0)).isBreakpointHit());
     }
 

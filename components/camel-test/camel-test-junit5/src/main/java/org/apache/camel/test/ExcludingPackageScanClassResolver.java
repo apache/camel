@@ -26,7 +26,7 @@ import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 public class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
 
     public void setExcludedClasses(Set<Class<?>> excludedClasses) {
-        Set<Class<?>> parents = excludedClasses == null ? Collections.<Class<?>> emptySet() : excludedClasses;
+        Set<Class<?>> parents = excludedClasses == null ? Collections.emptySet() : excludedClasses;
         addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(parents)));
     }
 
