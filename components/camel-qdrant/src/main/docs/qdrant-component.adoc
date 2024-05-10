@@ -4,7 +4,7 @@
 :artifactid: camel-qdrant
 :description: Perform operations on the Qdrant Vector Database.
 :since: 4.5
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

@@ -4,7 +4,7 @@
 :artifactid: camel-aws-bedrock
 :description: Invoke Model of AWS Bedrock Agent Runtime service.
 :since: 4.5
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

@@ -4,7 +4,7 @@
 :artifactid: camel-langchain4j-embeddings
 :description: LangChain4j Embeddings
 :since: 4.5
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

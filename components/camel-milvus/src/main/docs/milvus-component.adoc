@@ -4,7 +4,7 @@
 :artifactid: camel-milvus
 :description: Perform operations on the Milvus Vector Database.
 :since: 4.5
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
