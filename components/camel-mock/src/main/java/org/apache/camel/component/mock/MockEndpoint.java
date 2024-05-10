@@ -72,26 +72,26 @@ import org.slf4j.LoggerFactory;
  * A Mock endpoint which provides a literate, fluent API for testing routes using a <a href="http://jmock.org/">JMock
  * style</a> API.
  * <p/>
- * The mock endpoint have two set of methods
+ * The mock endpoint have two sets of methods
  * <ul>
  * <li>expectedXXX or expectsXXX - To set pre conditions, before the test is executed</li>
  * <li>assertXXX - To assert assertions, after the test has been executed</li>
  * </ul>
- * Its <b>important</b> to know the difference between the two set. The former is used to set expectations before the
- * test is being started (eg before the mock receives messages). The latter is used after the test has been executed, to
- * verify the expectations; or other assertions which you can perform after the test has been completed.
+ * Its <b>important</b> to know the difference between the two sets. The former is used to set expectations before the
+ * test is being started (e.g., before the mock receives messages). The latter is used after the test has been executed,
+ * to verify the expectations; or other assertions which you can perform after the test has been completed.
  * <p/>
  * <b>Beware:</b> If you want to expect a mock does not receive any messages, by calling
  * {@link #setExpectedMessageCount(int)} with <tt>0</tt>, then take extra care, as <tt>0</tt> matches when the tests
- * starts, so you need to set a assert period time to let the test run for a while to make sure there are still no
+ * start, so you need to set an assert period time to let the test run for a while to make sure there are still no
  * messages arrived; for that use {@link #setAssertPeriod(long)}. An alternative is to use
  * <a href="http://camel.apache.org/notifybuilder.html">NotifyBuilder</a>, and use the notifier to know when Camel is
  * done routing some messages, before you call the {@link #assertIsSatisfied()} method on the mocks. This allows you to
- * not use a fixed assert period, to speedup testing times.
+ * not use a fixed assertion period to speed up testing times.
  * <p/>
  * <b>Important:</b> If using {@link #expectedMessageCount(int)} and also
  * {@link #expectedBodiesReceived(java.util.List)} or {@link #expectedHeaderReceived(String, Object)} then the latter
- * overrides the number of expected message based on the number of values provided in the bodies/headers.
+ * overrides the number of expected messages based on the number of values provided in the bodies/headers.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true,
              remote = false, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
@@ -99,7 +99,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
 
-    // must be volatile so changes is visible between the thread which performs the assertions
+    // must be volatile so changes are visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
 
@@ -158,7 +158,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * A helper method to resolve the mock endpoint of the given URI on the given context
      *
-     * @param  context the camel context to try resolve the mock endpoint from
+     * @param  context the camel context to try to resolve the mock endpoint from
      * @param  uri     the uri of the endpoint to resolve
      * @return         the endpoint
      */
@@ -204,7 +204,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         ObjectHelper.notNull(context, "camelContext");
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
-            // if the endpoint was intercepted we should get the delegate
+            // if the endpoint was intercepted, we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
                 endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
@@ -228,7 +228,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         Collection<Endpoint> endpoints = context.getEndpoints();
         long millis = unit.toMillis(timeout);
         for (Endpoint endpoint : endpoints) {
-            // if the endpoint was intercepted we should get the delegate
+            // if the endpoint was intercepted, we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
                 endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
@@ -241,7 +241,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Sets the assert period on all the expectations on any {@link MockEndpoint} instances registered in the given
+     * Sets the assertion period on all the expectations on any {@link MockEndpoint} instances registered in the given
      * context.
      *
      * @param context the camel context used to find all the available endpoints
@@ -251,7 +251,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         ObjectHelper.notNull(context, "camelContext");
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
-            // if the endpoint was intercepted we should get the delegate
+            // if the endpoint was intercepted, we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
                 endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
@@ -271,7 +271,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         ObjectHelper.notNull(context, "camelContext");
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
-            // if the endpoint was intercepted we should get the delegate
+            // if the endpoint was intercepted, we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
                 endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
@@ -359,7 +359,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
-     * Set the processor that will be invoked when the some message is received.
+     * Set the processor that will be invoked when some message is received.
      *
      * This processor could be overwritten by {@link #whenExchangeReceived(int, Processor)} method.
      */
@@ -370,7 +370,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Set the expression which value will be set to the message body
      *
-     * @param expression which is use to set the message body
+     * @param expression expression used to set the message body
      */
     public void returnReplyBody(Expression expression) {
         this.defaultProcessor = new Processor() {
@@ -392,7 +392,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Set the expression which value will be set to the message header
      *
      * @param headerName that will be set value
-     * @param expression which is use to set the message header
+     * @param expression expression used to set the message header
      */
     public void returnReplyHeader(String headerName, Expression expression) {
         this.defaultProcessor = new Processor() {
@@ -426,7 +426,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         LOG.info("Asserting: {} is satisfied", this);
         doAssertIsSatisfied(timeoutForEmptyEndpoints);
         if (assertPeriod > 0) {
-            // if an assert period was set then re-assert again to ensure the assertion is still valid
+            // if an assertion period was set, then re-assert again to ensure the assertion is still valid
             Thread.sleep(assertPeriod);
             LOG.info("Re-asserting: {} is satisfied after {} millis", this, assertPeriod);
             // do not use timeout when we re-assert
@@ -537,7 +537,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Specifies the expected number of message exchanges that should be received by this endpoint
      *
-     * If you want to assert that <b>exactly</b> n messages arrives to this mock endpoint, then see also the
+     * If you want to assert that <b>exactly</b> n messages arrive to this mock endpoint, then see also the
      * {@link #setAssertPeriod(long)} method for further details.
      *
      * @param expectedCount the number of message exchanges that should be expected by this endpoint
@@ -555,12 +555,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still
      * valid.
      * <p/>
-     * This is used for example to assert that <b>exactly</b> a number of messages arrives. For example if expected
-     * count was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5
-     * messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what
-     * you can use this method for.
+     * This is used, for example, to assert that <b>exactly</b> a number of messages arrive. For example, if the
+     * expected count was set to 5, then the assertion is satisfied when five or more messages arrive. To ensure that
+     * exactly 5 messages arrive, then you would need to wait a little period to ensure no further message arrives. This
+     * is what you can use this method for.
      * <p/>
-     * By default this period is disabled.
+     * By default, this period is disabled.
      *
      * @param period grace period in millis
      */
@@ -628,8 +628,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given header values in any order.
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 values.
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect three
+     * messages, then there must be three values.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -662,8 +662,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given header values in any order
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 values.
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect three
+     * messages, then there must be three values.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -716,8 +716,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given variable values in any order.
      * <p/>
-     * <b>Important:</b> The number of variable must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 values.
+     * <b>Important:</b> The number of variable must match the expected number of messages, so if you expect three
+     * messages, then there must be three values.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -750,8 +750,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given variable values in any order
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 values.
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect three
+     * messages, then there must be three values.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -804,8 +804,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given property values in any order.
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 values.
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect three
+     * messages, then there must be three values.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -838,8 +838,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given property values in any order
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 values.
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect three
+     * messages, then there must be three values.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -851,8 +851,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given body values in the specified order
      * <p/>
-     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 values.
+     * <b>Important:</b> The number of values must match the expected number of messages, so if you expect three
+     * messages, then there must be three values.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -927,8 +927,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Sets an expectation that the given body values are received by this endpoint
      * <p/>
-     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 bodies.
+     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect three
+     * messages, then there must be three bodies.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -967,8 +967,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given body values in any order
      * <p/>
-     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 bodies.
+     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect three
+     * messages, then there must be three bodies.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
@@ -992,8 +992,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Adds an expectation that this endpoint receives the given body values in any order
      * <p/>
-     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect 3 messages,
-     * then there must be 3 bodies.
+     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect three
+     * messages, then there must be three bodies.
      * <p/>
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */

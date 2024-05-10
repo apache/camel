@@ -78,14 +78,14 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
             // we should not intercept mock endpoints
             return endpoint;
         } else if (matchPattern(uri, endpoint, pattern)) {
-            // if pattern is null then it mean to match all
+            // if a pattern is null, then it means to match all
 
             // only proxy if the uri is matched decorate endpoint with our proxy
             // should be false by default
             InterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
 
             // create mock endpoint which we will use as interceptor
-            // replace :// from scheme to make it easy to lookup the mock endpoint without having double :// in uri
+            // replace :// from scheme to make it easy to look up the mock endpoint without having double :// in uri
             String key = "mock:" + endpoint.getEndpointKey().replaceFirst("://", ":");
             // strip off parameters as well
             if (key.contains("?")) {
