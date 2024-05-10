@@ -38,7 +38,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToMockEndpointStrategy.class);
     private final String pattern;
-    private boolean skip;
+    private final boolean skip;
 
     /**
      * Mock all endpoints.

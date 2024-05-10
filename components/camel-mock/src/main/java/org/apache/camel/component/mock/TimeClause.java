@@ -53,8 +53,8 @@ public class TimeClause implements BinaryPredicate {
     public class TimeClassUnit {
 
         private final TimeClause clause;
-        private int from;
-        private int to;
+        private final int from;
+        private final int to;
 
         public TimeClassUnit(TimeClause clause, int to) {
             this(clause, -1, to);

@@ -37,7 +37,7 @@ import org.apache.camel.support.builder.PredicateBuilder;
  * specialized for being used with the mock component and separated from camel-core.
  */
 public class MockValueBuilder implements Expression, Predicate {
-    private Expression expression;
+    private final Expression expression;
     private boolean not;
 
     public MockValueBuilder(Expression expression) {

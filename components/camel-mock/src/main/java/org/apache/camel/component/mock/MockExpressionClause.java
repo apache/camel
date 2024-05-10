@@ -38,7 +38,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
  * are specialized for being used with the mock component and separated from camel-core.
  */
 public class MockExpressionClause<T> implements Expression, Predicate {
-    private MockExpressionClauseSupport<T> delegate;
+    private final MockExpressionClauseSupport<T> delegate;
 
     private volatile Expression expr;
 
