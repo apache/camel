@@ -44,7 +44,7 @@ public final class Kamelet {
     public static final String PARAM_TEMPLATE_ID = "templateId";
     public static final String PARAM_LOCATION = "location";
     public static final String PARAM_UUID = "uuid";
-    public static final String DEFAULT_LOCATION = "classpath:/kamelets";
+    public static final String DEFAULT_LOCATION = "classpath:kamelets";
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
 
     // use a running counter as uuid

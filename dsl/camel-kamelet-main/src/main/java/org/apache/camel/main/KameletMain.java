@@ -101,7 +101,7 @@ import org.apache.camel.tooling.maven.MavenGav;
  */
 public class KameletMain extends MainCommandLineSupport {
 
-    public static final String DEFAULT_KAMELETS_LOCATION = "classpath:/kamelets,github:apache:camel-kamelets/kamelets";
+    public static final String DEFAULT_KAMELETS_LOCATION = "classpath:kamelets,github:apache:camel-kamelets/kamelets";
 
     protected final MainRegistry registry = new MainRegistry();
     private String profile = "dev";
