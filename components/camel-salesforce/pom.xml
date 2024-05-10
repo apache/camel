@@ -32,6 +32,12 @@
     <name>Camel :: Salesforce :: Parent</name>
     <description>Camel Salesforce parent</description>
 
+    <modules>
+        <module>camel-salesforce-component</module>
+        <module>camel-salesforce-codegen</module>
+        <module>camel-salesforce-maven-plugin</module>
+    </modules>
+    
     <properties>
         <salesforce.component.root>${project.basedir}</salesforce.component.root>
 
@@ -44,33 +50,4 @@
         <skipITs>true</skipITs>
     </properties>
 
-    <profiles>
-        <!-- there is no gRPC library available for Windows on ARM so we need to skip building the Salesforce component -->
-        <profile>
-            <id>win-arm</id>
-            <activation>
-                <os>
-                    <arch>aarch64</arch>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <modules>
-                <module>camel-salesforce-maven-plugin</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>not-win-arm</id>
-            <activation>
-                <os>
-                    <arch>!aarch64</arch>
-                    <family>!windows</family>
-                </os>
-            </activation>
-            <modules>
-                <module>camel-salesforce-component</module>
-                <module>camel-salesforce-codegen</module>
-                <module>camel-salesforce-maven-plugin</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
