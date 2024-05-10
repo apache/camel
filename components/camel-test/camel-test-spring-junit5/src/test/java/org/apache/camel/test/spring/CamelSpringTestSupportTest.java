@@ -42,9 +42,11 @@ public class CamelSpringTestSupportTest {
         byte[] buf = new byte[1024];
         int l = tr.getInputStream().read(buf);
         String output = new String(buf, 0, l, StandardCharsets.UTF_8);
-        assertEquals("<camel id='camel-context-id'>\n" +
-                     "    <bean class='{{fooClass}}'/>\n" +
-                     "</camel>\n",
+        assertEquals("""
+                <camel id='camel-context-id'>
+                    <bean class='{{fooClass}}'/>
+                </camel>
+                """,
                 output);
     }
 }

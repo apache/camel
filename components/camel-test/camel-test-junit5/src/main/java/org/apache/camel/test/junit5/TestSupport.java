@@ -191,16 +191,21 @@ public final class TestSupport {
      * Asserts that the given expression when evaluated returns the given answer.
      */
     public static Object assertExpression(Expression expression, Exchange exchange, Object expectedAnswer) {
+        final Object actualAnswer = getActualAnswer(expression, exchange, expectedAnswer);
+
+        LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, actualAnswer);
+
+        assertEquals(expectedAnswer, actualAnswer, "Expression: " + expression + " on Exchange: " + exchange);
+        return actualAnswer;
+    }
+
+    private static Object getActualAnswer(Expression expression, Exchange exchange, Object expectedAnswer) {
         Object actualAnswer;
         if (expectedAnswer != null) {
             actualAnswer = expression.evaluate(exchange, expectedAnswer.getClass());
         } else {
             actualAnswer = expression.evaluate(exchange, Object.class);
         }
-
-        LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, actualAnswer);
-
-        assertEquals(expectedAnswer, actualAnswer, "Expression: " + expression + " on Exchange: " + exchange);
         return actualAnswer;
     }
 
@@ -483,8 +488,10 @@ public final class TestSupport {
 
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (File child : files) {
-                recursivelyDeleteDirectory(child);
+            if (files != null) {
+                for (File child : files) {
+                    recursivelyDeleteDirectory(child);
+                }
             }
         }
         try {

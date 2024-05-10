@@ -17,9 +17,11 @@
 package org.apache.camel.test.spring;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTestContextLoaderTestExecutionListener;
+import org.apache.camel.test.spring.junit5.SpringTestExecutionListenerSorter;
 import org.apache.camel.test.spring.junit5.StopWatchTestExecutionListener;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +39,7 @@ public class SpringTestExecutionListenerSorterTest {
         listenersInExpectedOrder.add(StopWatchTestExecutionListener.class);
 
         List<Class<?>> listenersSortedByPrecedence = new ArrayList<>(listenersInExpectedOrder);
-        listenersSortedByPrecedence.sort((c1, c2) -> Integer.compare(getPrecedence(c1), getPrecedence(c2)));
+        listenersSortedByPrecedence.sort(Comparator.comparingInt(SpringTestExecutionListenerSorter::getPrecedence));
 
         assertEquals(listenersInExpectedOrder, listenersSortedByPrecedence);
     }

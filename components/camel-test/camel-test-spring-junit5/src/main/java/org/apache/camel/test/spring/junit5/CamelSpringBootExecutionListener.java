@@ -25,7 +25,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 public class CamelSpringBootExecutionListener extends AbstractTestExecutionListener {
 
-    protected static ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
+    protected static final ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
     private static final String PROPERTY_SKIP_STARTING_CAMEL_CONTEXT = "skipStartingCamelContext";

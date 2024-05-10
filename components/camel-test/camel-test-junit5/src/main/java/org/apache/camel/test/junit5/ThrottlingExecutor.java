@@ -24,8 +24,8 @@ import java.util.function.IntConsumer;
 
 public final class ThrottlingExecutor {
 
-    private List<IntConsumer> beforeTasks = new ArrayList<>();
-    private List<IntConsumer> afterTasks = new ArrayList<>();
+    private final List<IntConsumer> beforeTasks = new ArrayList<>();
+    private final List<IntConsumer> afterTasks = new ArrayList<>();
     private int repetitions;
     private long beforeWait;
     private long awaiting;

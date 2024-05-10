@@ -45,16 +45,12 @@ public class CamelTestSupportTest extends CamelTestSupport {
 
     @Test
     public void exceptionThrownWhenEndpointNotFoundAndNoCreate() {
-        assertThrows(NoSuchEndpointException.class, () -> {
-            getMockEndpoint("mock:bogus", false);
-        });
+        assertThrows(NoSuchEndpointException.class, () -> getMockEndpoint("mock:bogus", false));
     }
 
     @Test
     public void exceptionThrownWhenEndpointNotAMockEndpoint() {
-        assertThrows(NoSuchEndpointException.class, () -> {
-            getMockEndpoint("direct:something", false);
-        });
+        assertThrows(NoSuchEndpointException.class, () -> getMockEndpoint("direct:something", false));
     }
 
     @Test
