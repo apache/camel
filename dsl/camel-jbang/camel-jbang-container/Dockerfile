@@ -19,5 +19,5 @@ FROM docker.io/jbangdev/jbang-action
 
 RUN jbang trust add https://github.com/apache/camel
     
-ENTRYPOINT [ "jbang",  "-Dcamel.jbang.version=4.5.0", "camel@apache/camel"]
+ENTRYPOINT [ "jbang",  "-Dcamel.jbang.version=4.6.0", "camel@apache/camel"]
 
