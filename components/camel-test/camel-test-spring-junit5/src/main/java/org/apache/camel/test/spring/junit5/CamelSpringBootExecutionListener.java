@@ -31,7 +31,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
     private static final String PROPERTY_SKIP_STARTING_CAMEL_CONTEXT = "skipStartingCamelContext";
 
     /**
-     * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
+     * Returns the precedence used by Spring to choose the appropriate execution order of test listeners.
      *
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */

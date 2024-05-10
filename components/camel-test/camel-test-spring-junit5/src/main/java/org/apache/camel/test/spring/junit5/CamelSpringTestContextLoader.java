@@ -233,8 +233,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
     }
 
     /**
-     * Returns the class under test in order to enable inspection of annotations while the Spring context is being
-     * created.
+     * Returns the class under test to enable inspection of annotations while the Spring context is being created.
      *
      * @return the test class that is being executed
      * @see    CamelSpringTestHelper

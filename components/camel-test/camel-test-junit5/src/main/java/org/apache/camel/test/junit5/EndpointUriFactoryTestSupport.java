@@ -26,7 +26,7 @@ public abstract class EndpointUriFactoryTestSupport extends CamelTestSupport {
 
     @Test
     public void buildUri() {
-        // let's just see if the route starts successfully
+        // let's see if the route starts successfully
     }
 
     protected abstract String scheme();

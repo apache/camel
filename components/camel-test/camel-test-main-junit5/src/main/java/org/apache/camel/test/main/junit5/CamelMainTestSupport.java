@@ -121,8 +121,8 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Allows to specify the main class of the application to test if needed in order to simulate the same behavior as
-     * with {@link org.apache.camel.main.Main#Main(Class)}.
+     * Allows specifying the main class of the application to test if needed to simulate the same behavior as with
+     * {@link org.apache.camel.main.Main#Main(Class)}.
      *
      * @return the main class of the application to test if any. {@code null} by default indicating that there is no
      *         specific main class.

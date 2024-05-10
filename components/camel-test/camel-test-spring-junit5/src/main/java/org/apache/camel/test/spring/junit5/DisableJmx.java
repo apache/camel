@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Indicates if JMX should be globally disabled in the {@code CamelContext}s that are bootstrapped during the test
  * through the use of Spring Test loaded application contexts. Note that the presence of this annotation will result in
- * the manipulation of System Properties that will affect Camel contexts constructed outside of the Spring Test loaded
+ * the manipulation of System Properties that will affect Camel contexts constructed outside the Spring Test loaded
  * application contexts.
  */
 @Documented
