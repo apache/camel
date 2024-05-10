@@ -153,25 +153,7 @@ public class TimeClause implements BinaryPredicate {
 
         Date currentDate = exchange.getProperty(Exchange.RECEIVED_TIMESTAMP, Date.class);
 
-        // the other date is either the previous or the next
-        Date otherDate;
-        if (beforeNext) {
-            // grab the previous value (left)
-            if (leftValue != null) {
-                otherDate = (Date) leftValue;
-            } else {
-                // we hit a boundary so grab the other
-                otherDate = (Date) rightValue;
-            }
-        } else {
-            // grab the next value (right)
-            if (rightValue != null) {
-                otherDate = (Date) rightValue;
-            } else {
-                // we hit a boundary so grab the other
-                otherDate = (Date) leftValue;
-            }
-        }
+        final Date otherDate = getOtherDate(leftValue, rightValue);
 
         // if we could not grab the value, we hit a boundary (ie. either 0 message or last message)
         if (otherDate == null) {
@@ -200,6 +182,29 @@ public class TimeClause implements BinaryPredicate {
         }
 
         return answer;
+    }
+
+    private Date getOtherDate(Object leftValue, Object rightValue) {
+        // the other date is either the previous or the next
+        Date otherDate;
+        if (beforeNext) {
+            // grab the previous value (left)
+            if (leftValue != null) {
+                otherDate = (Date) leftValue;
+            } else {
+                // we hit a boundary so grab the other
+                otherDate = (Date) rightValue;
+            }
+        } else {
+            // grab the next value (right)
+            if (rightValue != null) {
+                otherDate = (Date) rightValue;
+            } else {
+                // we hit a boundary so grab the other
+                otherDate = (Date) leftValue;
+            }
+        }
+        return otherDate;
     }
 
     @Override
