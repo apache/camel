@@ -66,13 +66,13 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("</rests>"));
 
         assertTrue(xml.contains(
-                "<param dataType=\"integer\" defaultValue=\"1\" description=\"header param description1\" name=\"header_count\" required=\"true\" type=\"header\">"));
+                "<param defaultValue=\"1\" dataType=\"integer\" name=\"header_count\" description=\"header param description1\" type=\"header\" required=\"true\""));
         assertTrue(xml.contains(
-                "<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" description=\"header param description2\" name=\"header_letter\" required=\"false\" type=\"query\">"));
+                "<param defaultValue=\"b\" dataType=\"string\" name=\"header_letter\" description=\"header param description2\" type=\"query\" collectionFormat=\"multi\" required=\"false\""));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
-        assertTrue(xml.contains("<responseMessage code=\"300\" message=\"test msg\" responseModel=\"java.lang.Integer\"/>"));
+        assertTrue(xml.contains("<responseMessage code=\"300\" responseModel=\"java.lang.Integer\" message=\"test msg\"/>"));
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);
@@ -100,11 +100,12 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                 rest("/say/bye")
                         .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer")
-                        .allowableValues(Arrays.asList("1", "2", "3", "4"))
-                        .defaultValue("1").name("header_count").required(true)
-                        .endParam().param().type(RestParamType.query).description("header param description2")
-                        .dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
+                            .allowableValues(Arrays.asList("1", "2", "3", "4"))
+                            .defaultValue("1").name("header_count").required(true)
+                        .endParam()
+                        .param().type(RestParamType.query).description("header param description2")
+                            .dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
+                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")

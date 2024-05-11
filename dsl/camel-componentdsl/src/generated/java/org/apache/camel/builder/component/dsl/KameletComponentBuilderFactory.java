@@ -57,7 +57,7 @@ public interface KameletComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: classpath:/kamelets
+         * Default: classpath:kamelets
          * Group: common
          * 
          * @param location the value to set
