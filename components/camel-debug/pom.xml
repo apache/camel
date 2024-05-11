@@ -48,10 +48,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-management</artifactId>
         </dependency>
-        <!-- jaxb needed for dumping messages as XML -->
+        <!-- xml-io needed for dumping messages as XML -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-jaxb</artifactId>
+            <artifactId>camel-xml-io</artifactId>
         </dependency>
 
     </dependencies>
