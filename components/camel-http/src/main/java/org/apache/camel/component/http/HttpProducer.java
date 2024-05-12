@@ -348,17 +348,7 @@ public class HttpProducer extends DefaultProducer {
             throws IOException, ClassNotFoundException {
         // We just make the out message is not create when extractResponseBody throws exception
         Object response = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
-        Message answer = exchange.getOut();
-
-        // optimize for 200 response code as the boxing is outside the cached integers
-        if (responseCode == 200) {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
-        } else {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
-        }
-        if (httpResponse.getReasonPhrase() != null) {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getReasonPhrase());
-        }
+        final Message answer = createResponseMessage(exchange, httpResponse, responseCode);
         answer.setBody(response);
 
         if (!getEndpoint().isSkipResponseHeaders()) {
@@ -407,6 +397,21 @@ public class HttpProducer extends DefaultProducer {
         if (getEndpoint().isCopyHeaders()) {
             MessageHelper.copyHeaders(exchange.getIn(), answer, httpProtocolHeaderFilterStrategy, false);
         }
+    }
+
+    private static Message createResponseMessage(Exchange exchange, ClassicHttpResponse httpResponse, int responseCode) {
+        Message answer = exchange.getOut();
+
+        // optimize for 200 response code as the boxing is outside the cached integers
+        if (responseCode == 200) {
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
+        } else {
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
+        }
+        if (httpResponse.getReasonPhrase() != null) {
+            answer.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getReasonPhrase());
+        }
+        return answer;
     }
 
     protected Exception populateHttpOperationFailedException(
@@ -624,21 +629,7 @@ public class HttpProducer extends DefaultProducer {
         // the exchange can have some headers that override the default url and forces to create
         // a new url that is dynamic based on header values
         // these checks are checks that is done in HttpHelper.createURL and HttpHelper.createURI methods
-        boolean create = false;
-        Message in = exchange.getIn();
-        if (in.getHeader(HttpConstants.REST_HTTP_URI) != null) {
-            create = true;
-        } else if (in.getHeader(HttpConstants.HTTP_URI) != null && !getEndpoint().isBridgeEndpoint()) {
-            create = true;
-        } else if (in.getHeader(HttpConstants.HTTP_PATH) != null) {
-            create = true;
-        } else if (in.getHeader(HttpConstants.REST_HTTP_QUERY) != null) {
-            create = true;
-        } else if (in.getHeader(HttpConstants.HTTP_RAW_QUERY) != null) {
-            create = true;
-        } else if (in.getHeader(HttpConstants.HTTP_QUERY) != null) {
-            create = true;
-        }
+        final boolean create = isCreateNewURL(exchange);
 
         if (create) {
             // creating the url to use takes 2-steps
@@ -677,6 +668,25 @@ public class HttpProducer extends DefaultProducer {
         }
 
         return method;
+    }
+
+    private boolean isCreateNewURL(Exchange exchange) {
+        boolean create = false;
+        Message in = exchange.getIn();
+        if (in.getHeader(HttpConstants.REST_HTTP_URI) != null) {
+            create = true;
+        } else if (in.getHeader(HttpConstants.HTTP_URI) != null && !getEndpoint().isBridgeEndpoint()) {
+            create = true;
+        } else if (in.getHeader(HttpConstants.HTTP_PATH) != null) {
+            create = true;
+        } else if (in.getHeader(HttpConstants.REST_HTTP_QUERY) != null) {
+            create = true;
+        } else if (in.getHeader(HttpConstants.HTTP_RAW_QUERY) != null) {
+            create = true;
+        } else if (in.getHeader(HttpConstants.HTTP_QUERY) != null) {
+            create = true;
+        }
+        return create;
     }
 
     /**
