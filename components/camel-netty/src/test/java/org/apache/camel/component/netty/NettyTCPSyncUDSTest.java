@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -31,6 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
              architectures = { "amd64", "aarch_64" })
+// This is to avoid "bind(..) failed: File name too long" when running on CI.
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Most CI environments use temporary build directories whose path is too long for the Netty native code leading to failure")
 public class NettyTCPSyncUDSTest extends BaseNettyTest {
 
     @Test
