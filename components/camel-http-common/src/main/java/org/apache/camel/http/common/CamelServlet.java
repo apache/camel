@@ -406,7 +406,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         }
     }
 
-    private HttpConsumer doResolve(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private HttpConsumer doResolve(HttpServletRequest request, HttpServletResponse response) {
         // Is there a consumer registered for the request.
         HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
