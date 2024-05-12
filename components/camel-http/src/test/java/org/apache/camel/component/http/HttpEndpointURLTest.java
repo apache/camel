@@ -23,6 +23,7 @@ import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpEndpointURLTest extends CamelTestSupport {
@@ -62,7 +63,7 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         HttpEndpoint http1
                 = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
         HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
-        assertTrue(connectionManager instanceof PoolingHttpClientConnectionManager, "Get a wrong type of connection manager");
+        assertInstanceOf(PoolingHttpClientConnectionManager.class, connectionManager, "Get a wrong type of connection manager");
         PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager) connectionManager;
         assertEquals(40, poolManager.getMaxTotal(), "Get a wrong setting of maxTotalConnections");
         assertEquals(5, poolManager.getDefaultMaxPerRoute(), "Get a wrong setting of connectionsPerRoute");
