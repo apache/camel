@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -32,12 +33,13 @@ public class RestJettyInvalidContentTypeClientRequestValidationTest extends Base
 
     @Test
     public void testJettyInvalidContentType() {
-        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json; charset=utf-8")
-                .withHeader(Exchange.HTTP_METHOD, "post")
-                .withBody("{\"name\": \"Donald\"}")
-                .to("http://localhost:" + getPort() + "/users/123/update");
+        FluentProducerTemplate requestTemplate
+                = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json; charset=utf-8")
+                        .withHeader(Exchange.HTTP_METHOD, "post")
+                        .withBody("{\"name\": \"Donald\"}")
+                        .to("http://localhost:" + getPort() + "/users/123/update");
 
-        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> requestTemplate.request(String.class));
 
         // we send json but the service accepts only text/plain, so we get a 415
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());

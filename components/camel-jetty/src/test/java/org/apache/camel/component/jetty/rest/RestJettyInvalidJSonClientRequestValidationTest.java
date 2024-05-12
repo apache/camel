@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -32,12 +33,12 @@ public class RestJettyInvalidJSonClientRequestValidationTest extends BaseJettyTe
 
     @Test
     public void testJettyInvalidJSon() {
-        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{\"name\": \"Donald\"") // the body is invalid as the ending } is missing
                 .to("http://localhost:" + getPort() + "/users/123/update");
 
-        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> requestTemplate.request(String.class));
 
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(400, cause.getStatusCode());
