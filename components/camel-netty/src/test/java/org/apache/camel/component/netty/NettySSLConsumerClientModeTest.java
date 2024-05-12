@@ -54,9 +54,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Isolated("Does not seem to run reliably in parallel")
 public class NettySSLConsumerClientModeTest extends BaseNettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(NettySSLConsumerClientModeTest.class);
     private MyServer server;
