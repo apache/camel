@@ -32,6 +32,8 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 
 final class HttpComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
@@ -51,15 +53,7 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         // Make a copy to avoid clashing with parent validation
         final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
         // Check if validation is rest-related
-        final boolean isRest = verifyParams.entrySet().stream().anyMatch(HttpComponentVerifierExtension::isRest);
-
-        if (isRest) {
-            // Build the httpUri from rest configuration
-            verifyParams.put("httpUri", buildHttpUriFromRestParameters(parameters));
-
-            // Cleanup parameters map from rest related stuffs
-            verifyParams.entrySet().removeIf(HttpComponentVerifierExtension::isRest);
-        }
+        restRelatedSetup(parameters, verifyParams);
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, verifyParams);
@@ -78,16 +72,7 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
                 = ResultBuilder.withStatusAndScope(Result.Status.OK, ComponentVerifierExtension.Scope.CONNECTIVITY);
         // Make a copy to avoid clashing with parent validation
         final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
-        // Check if validation is rest-related
-        final boolean isRest = verifyParams.entrySet().stream().anyMatch(HttpComponentVerifierExtension::isRest);
-
-        if (isRest) {
-            // Build the httpUri from rest configuration
-            verifyParams.put("httpUri", buildHttpUriFromRestParameters(parameters));
-
-            // Cleanup parameters from rest related stuffs
-            verifyParams.entrySet().removeIf(HttpComponentVerifierExtension::isRest);
-        }
+        final boolean isRest = restRelatedSetup(parameters, verifyParams);
 
         String httpUri = getOption(verifyParams, "httpUri", String.class).orElse(null);
         if (ObjectHelper.isEmpty(httpUri)) {
@@ -100,39 +85,7 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         try (CloseableHttpClient httpclient = createHttpClient(verifyParams)) {
             httpclient.execute(
                     new HttpGet(httpUri),
-                    response -> {
-                        int code = response.getCode();
-                        String okCodes = getOption(verifyParams, "okStatusCodeRange", String.class).orElse("200-299");
-
-                        if (!HttpHelper.isStatusCodeOk(code, okCodes)) {
-                            if (code == 401) {
-                                // Unauthorized, add authUsername and authPassword to the list
-                                // of parameters in error
-                                builder.error(
-                                        ResultErrorBuilder.withHttpCode(code)
-                                                .description(response.getReasonPhrase())
-                                                .parameterKey("authUsername")
-                                                .parameterKey("authPassword")
-                                                .build());
-                            } else if (code >= 300 && code < 400) {
-                                // redirect
-                                builder.error(
-                                        ResultErrorBuilder.withHttpCode(code)
-                                                .description(response.getReasonPhrase())
-                                                .parameterKey("httpUri")
-                                                .detail(VerificationError.HttpAttribute.HTTP_REDIRECT,
-                                                        () -> HttpUtil.responseHeaderValue(response, "location"))
-                                                .build());
-                            } else if (code >= 400) {
-                                // generic http error
-                                builder.error(
-                                        ResultErrorBuilder.withHttpCode(code)
-                                                .description(response.getReasonPhrase())
-                                                .build());
-                            }
-                        }
-                        return null;
-                    });
+                    createObjectHttpClientResponseHandler(verifyParams, builder));
 
         } catch (UnknownHostException e) {
             builder.error(
@@ -144,6 +97,69 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         }
 
         return builder.build();
+    }
+
+    private HttpClientResponseHandler<Object> createObjectHttpClientResponseHandler(
+            HashMap<String, Object> verifyParams, ResultBuilder builder) {
+        return response -> {
+            int code = response.getCode();
+            String okCodes = getOption(verifyParams, "okStatusCodeRange", String.class).orElse("200-299");
+
+            if (!HttpHelper.isStatusCodeOk(code, okCodes)) {
+                if (code == 401) {
+                    setupUnauthorizedRespose(builder, response, code);
+                } else if (code >= 300 && code < 400) {
+                    setupRedirect(builder, response, code);
+                } else if (code >= 400) {
+                    setupOtherHttpErrors(builder, response, code);
+                }
+            }
+            return null;
+        };
+    }
+
+    private static void setupOtherHttpErrors(ResultBuilder builder, ClassicHttpResponse response, int code) {
+        // generic http error
+        builder.error(
+                ResultErrorBuilder.withHttpCode(code)
+                        .description(response.getReasonPhrase())
+                        .build());
+    }
+
+    private static void setupRedirect(ResultBuilder builder, ClassicHttpResponse response, int code) {
+        // redirect
+        builder.error(
+                ResultErrorBuilder.withHttpCode(code)
+                        .description(response.getReasonPhrase())
+                        .parameterKey("httpUri")
+                        .detail(VerificationError.HttpAttribute.HTTP_REDIRECT,
+                                () -> HttpUtil.responseHeaderValue(response, "location"))
+                        .build());
+    }
+
+    private static void setupUnauthorizedRespose(ResultBuilder builder, ClassicHttpResponse response, int code) {
+        // Unauthorized, add authUsername and authPassword to the list
+        // of parameters in error
+        builder.error(
+                ResultErrorBuilder.withHttpCode(code)
+                        .description(response.getReasonPhrase())
+                        .parameterKey("authUsername")
+                        .parameterKey("authPassword")
+                        .build());
+    }
+
+    private boolean restRelatedSetup(Map<String, Object> parameters, HashMap<String, Object> verifyParams) {
+        // Check if validation is rest-related
+        final boolean isRest = verifyParams.entrySet().stream().anyMatch(HttpComponentVerifierExtension::isRest);
+
+        if (isRest) {
+            // Build the httpUri from rest configuration
+            verifyParams.put("httpUri", buildHttpUriFromRestParameters(parameters));
+
+            // Cleanup parameters from rest related stuffs
+            verifyParams.entrySet().removeIf(HttpComponentVerifierExtension::isRest);
+        }
+        return isRest;
     }
 
     private static boolean isRest(Map.Entry<String, Object> e) {

@@ -49,16 +49,7 @@ public enum HttpMethods implements Expression {
     }
 
     public HttpUriRequest createMethod(final String url) {
-        return switch (this) {
-            case GET -> new HttpGet(url);
-            case PATCH -> new HttpPatch(url);
-            case POST -> new HttpPost(url);
-            case PUT -> new HttpPut(url);
-            case DELETE -> new HttpDelete(url);
-            case HEAD -> new HttpHead(url);
-            case OPTIONS -> new HttpOptions(url);
-            case TRACE -> new HttpTrace(url);
-        };
+        return createMethod(URI.create(url));
     }
 
     public HttpUriRequest createMethod(final URI uri) {
