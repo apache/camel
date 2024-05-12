@@ -25,8 +25,8 @@ import org.apache.camel.spi.EndpointUriFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpEndpointUriAssemblerTest {
 
@@ -46,7 +46,7 @@ public class HttpEndpointUriAssemblerTest {
             EndpointUriFactory assembler = context.getCamelContextExtension().getEndpointUriFactory("https");
 
             assertNotNull(assembler);
-            assertTrue(assembler instanceof HttpEndpointUriFactory);
+            assertInstanceOf(HttpEndpointUriFactory.class, assembler);
 
             String uri = assembler.buildUri("https", params);
             assertNotNull(uri);

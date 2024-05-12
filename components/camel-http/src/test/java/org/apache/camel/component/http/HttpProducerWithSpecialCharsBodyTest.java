@@ -67,7 +67,7 @@ class HttpProducerWithSpecialCharsBodyTest {
 
         HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
 
-        assertTrue(requestEntity instanceof StringEntity);
+        assertInstanceOf(StringEntity.class, requestEntity);
         StringEntity entity = (StringEntity) requestEntity;
         assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(), "Content type should be given content type and charset");
         assertNull(entity.getContentEncoding(), "Content encoding should not be given");
@@ -91,7 +91,7 @@ class HttpProducerWithSpecialCharsBodyTest {
 
         HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
 
-        assertTrue(requestEntity instanceof StringEntity);
+        assertInstanceOf(StringEntity.class, requestEntity);
         StringEntity entity = (StringEntity) requestEntity;
         assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(), "Content type should be given content type and charset");
         assertNull(entity.getContentEncoding(), "Content encoding should not be given");
