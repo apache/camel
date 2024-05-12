@@ -22,9 +22,11 @@ public enum AS2MessageStructure {
     ENCRYPTED(false, true, false),
     SIGNED_ENCRYPTED(true, true, false),
     PLAIN_COMPRESSED(false, false, true),
+    COMPRESSED_SIGNED(true, false, true),
     SIGNED_COMPRESSED(true, false, true),
     ENCRYPTED_COMPRESSED(false, true, true),
-    ENCRYPTED_COMPRESSED_SIGNED(true, true, true);
+    ENCRYPTED_COMPRESSED_SIGNED(true, true, true),
+    ENCRYPTED_SIGNED_COMPRESSED(true, true, true);
 
     private final boolean isSigned;
     private final boolean isEncrypted;
