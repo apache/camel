@@ -45,13 +45,13 @@ public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
 
     @Test
     public void testJettyInvalid() {
-        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{ \"name\": \"Donald Duck\" }")
                 .to("http://localhost:" + getPort() + "/users/123/update");
 
-        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> requestTemplate.request(String.class));
 
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(400, cause.getStatusCode());
