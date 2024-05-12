@@ -18,16 +18,19 @@ package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Isolated("Run isolatedly to reduce flakiness on the CI")
 public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
 
     @Test
