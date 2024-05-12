@@ -26,10 +26,18 @@
 		<bindings-directory>target/tx/data/bindings</bindings-directory>
 		<paging-directory>target/tx/data/paging</paging-directory>
 		<large-messages-directory>target/tx/data/large-messages</large-messages-directory>
+		<max-disk-usage>98</max-disk-usage>
+
 
 		<acceptors>
 			<acceptor name="in-vm">vm://999</acceptor>
 		</acceptors>
+
+		<address-settings>
+			<address-setting match="#">
+				<address-full-policy>FAIL</address-full-policy>
+			</address-setting>
+		</address-settings>
 
 		<security-settings>
 			<!-- any user can have full control of generic topics -->
