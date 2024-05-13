@@ -743,11 +743,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
         }
 
-        @Override
-        public boolean hasState() {
-            return true;
-        }
-
     }
 
     /**

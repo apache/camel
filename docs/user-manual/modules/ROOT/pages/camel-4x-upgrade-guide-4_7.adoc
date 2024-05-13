@@ -59,6 +59,14 @@ To:
 </route>
 ----
 
+=== camel-debug
+
+The debugger (using `org.apache.camel.spi.BacklogDebugger`) used for tooling such as IDEA and Visual Studio, is fixed
+to work better out-of-the-box by just having `camel-debug` JAR or `camel-debug-starter` (for Spring Boot) on the classpath.
+
+An internal change is that the MBean operation `messageHistoryOnBreakpointAsXml` on `ManagedBacklogDebugger` now includes
+the current node as last message history, which was expected by IDEA tooling, to make it function again.
+
 === camel-spring-security
 
 The `camel-spring-security` component has been updated to improve readiness for Spring Security 7.x. Since Spring Security 5.8 the `AccessDecisionManager` interface and the related cooperating classes have been deprecated in favor of `AuthorizationManager` based patterns.
