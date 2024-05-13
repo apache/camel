@@ -65,6 +65,8 @@ import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -689,6 +691,8 @@ public abstract class BaseMainSupport extends BaseService {
         configureLifecycle(camelContext);
 
         if (standalone) {
+            // detect if camel-debug JAR is on classpath as we need to know this before configuring routes
+            detectCamelDebugJar(camelContext);
             step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
             configureRoutes(camelContext);
             recorder.endStep(step);
@@ -708,6 +712,15 @@ public abstract class BaseMainSupport extends BaseService {
         // but before camel context logs that it has been started, so we need to use an event listener
         if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
             camelContext.getManagementStrategy().addEventNotifier(new PlaceholderSummaryEventNotifier(propertyPlaceholders));
+        }
+    }
+
+    protected void detectCamelDebugJar(CamelContext camelContext) {
+        DebuggerFactory df = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                .newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+        if (df != null) {
+            // if camel-debug is on classpath then we need to eager to turn on source location which is needed for Java DSL
+            camelContext.setSourceLocationEnabled(true);
         }
     }
 
