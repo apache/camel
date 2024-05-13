@@ -897,7 +897,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertTrue(response.getClass().isAssignableFrom(String.class));
         String history = (String) response;
         int count = (history.split("messageHistoryEntry", -1).length) - 1;
-        assertEquals(3, count);
+        assertEquals(4, count);
         assertTrue(history.contains("processor=\"from[seda://start?concurrentConsumers=2]\""));
         assertTrue(history.contains("routeId=\"route1\""));
         assertTrue(history.contains("processorId=\"route1\""));

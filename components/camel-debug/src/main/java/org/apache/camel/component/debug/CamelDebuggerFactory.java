@@ -35,6 +35,14 @@ public class CamelDebuggerFactory implements DebuggerFactory {
             BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(camelContext);
             backlog.setStandby(camelContext.isDebugStandby());
 
+            // must enable source location and history
+            // so debugger tooling knows to map breakpoints to source code
+            camelContext.setSourceLocationEnabled(true);
+            camelContext.setMessageHistory(true);
+
+            // enable debugger on camel
+            camelContext.setDebugging(true);
+
             // we need to enable debugger after context is started
             camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
                 @Override

@@ -1617,8 +1617,10 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
-        // must enable source location so debugger tooling knows to map breakpoints to source code
+        // must enable source location and history
+        // so debugger tooling knows to map breakpoints to source code
         camelContext.setSourceLocationEnabled(true);
+        camelContext.setMessageHistory(true);
 
         // enable debugger on camel
         camelContext.setDebugging(config.isEnabled());
