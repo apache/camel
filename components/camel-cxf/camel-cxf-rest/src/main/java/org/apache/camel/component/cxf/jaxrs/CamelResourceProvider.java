@@ -24,7 +24,7 @@ import org.apache.cxf.message.Message;
 
 public class CamelResourceProvider implements ResourceProvider {
     // Using the dynamical proxy to provide the instance of client to invoke
-    private Class<?> clazz;
+    private final Class<?> clazz;
     private ResourceProvider provider;
 
     public CamelResourceProvider(Class<?> clazz) {

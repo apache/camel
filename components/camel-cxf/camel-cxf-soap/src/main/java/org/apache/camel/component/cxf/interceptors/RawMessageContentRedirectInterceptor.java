@@ -41,38 +41,47 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         // check the fault from the message
         Throwable ex = message.getContent(Throwable.class);
         if (ex != null) {
-            if (ex instanceof Fault) {
-                throw (Fault) ex;
-            } else {
-                throw new Fault(ex);
-            }
+            throwFault(ex);
         }
 
         List<?> params = message.getContent(List.class);
         if (null != params) {
-            InputStream is = (InputStream) params.get(0);
-            OutputStream os = message.getContent(OutputStream.class);
-            Writer writer = message.getContent(Writer.class);
+            final OutputStream os = message.getContent(OutputStream.class);
+            final Writer writer = message.getContent(Writer.class);
             if (os == null && writer == null) {
                 //InOny
                 return;
             }
-            try {
-                if (os == null && writer != null) {
-                    IOUtils.copyAndCloseInput(new InputStreamReader(is), writer);
+
+            final InputStream is = (InputStream) params.get(0);
+            tryIO(os, writer, is);
+        }
+    }
+
+    private static void tryIO(OutputStream os, Writer writer, InputStream is) {
+        try {
+            if (os == null && writer != null) {
+                IOUtils.copyAndCloseInput(new InputStreamReader(is), writer);
+            } else {
+                if (is instanceof StreamCache) {
+                    ((StreamCache) is).writeTo(os);
                 } else {
-                    if (is instanceof StreamCache) {
-                        ((StreamCache) is).writeTo(os);
-                    } else {
-                        IOUtils.copy(is, os);
-                    }
+                    IOUtils.copy(is, os);
                 }
-            } catch (Exception e) {
-                throw new Fault(e);
-            } finally {
-                IOHelper.close(is, "input stream", null);
-                // Should not close the output stream as the interceptor chain will close it
             }
+        } catch (Exception e) {
+            throw new Fault(e);
+        } finally {
+            IOHelper.close(is, "input stream", null);
+            // Should not close the output stream as the interceptor chain will close it
+        }
+    }
+
+    private static void throwFault(Throwable ex) {
+        if (ex instanceof Fault) {
+            throw (Fault) ex;
+        } else {
+            throw new Fault(ex);
         }
     }
 }

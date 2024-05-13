@@ -38,7 +38,7 @@ import org.apache.cxf.staxutils.StaxUtils;
 public class CxfPayload<T> {
 
     private List<Source> body;
-    private List<T> headers;
+    private final List<T> headers;
     private Map<String, String> nsMap;
 
     public CxfPayload(List<T> headers, List<Source> body, Map<String, String> nsMap) {

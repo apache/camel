@@ -332,50 +332,72 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         }
 
         private void checkFailure(org.apache.camel.Exchange camelExchange, Exchange cxfExchange) throws Fault {
-            Throwable t = camelExchange.getException();
-            if (t == null) {
-                // SOAP faults can be stored as exceptions as message body (to be backwards compatible)
-                Object body = camelExchange.getMessage().getBody();
-                if (body instanceof Throwable) {
-                    t = (Throwable) body;
-                }
-            }
+            final Throwable t = extractThrowable(camelExchange);
 
             if (t != null) {
                 cxfExchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
                 if (t instanceof Fault) {
-                    cxfExchange.getInMessage().put(FaultMode.class, FaultMode.CHECKED_APPLICATION_FAULT);
-                    throw (Fault) t;
+                    handleFault(cxfExchange, (Fault) t);
                 } else {
                     // This is not a CXF Fault. Build the CXF Fault manually.
-                    Fault fault = new Fault(t);
-                    if (fault.getMessage() == null) {
-                        // The Fault has no Message. This is the case if it has
-                        // no message, for example was a NullPointerException.
-                        fault.setMessage(t.getClass().getSimpleName());
-                    }
-                    WebFault faultAnnotation = t.getClass().getAnnotation(WebFault.class);
-                    Object faultInfo = null;
-                    try {
-                        Method method = t.getClass().getMethod("getFaultInfo");
-                        faultInfo = method.invoke(t, new Object[0]);
-                    } catch (Exception e) {
-                        // do nothing here
-                    }
-                    if (faultAnnotation != null && faultInfo == null) {
-                        // t has a JAX-WS WebFault annotation, which describes
-                        // in detail the Web Service Fault that should be thrown. Add the
-                        // detail.
-                        Element detail = fault.getOrCreateDetail();
-                        Element faultDetails = detail.getOwnerDocument()
-                                .createElementNS(faultAnnotation.targetNamespace(), faultAnnotation.name());
-                        detail.appendChild(faultDetails);
-                    }
-
-                    throw fault;
+                    buildFaultFromThrowable(t);
                 }
 
             }
+        }
+
+        private static void buildFaultFromThrowable(Throwable t) {
+            Fault fault = new Fault(t);
+            if (fault.getMessage() == null) {
+                // The Fault has no Message. This is the case if it has
+                // no message, for example was a NullPointerException.
+                fault.setMessage(t.getClass().getSimpleName());
+            }
+            WebFault faultAnnotation = t.getClass().getAnnotation(WebFault.class);
+            Object faultInfo = null;
+            try {
+                Method method = t.getClass().getMethod("getFaultInfo");
+                faultInfo = method.invoke(t, new Object[0]);
+            } catch (Exception e) {
+                // do nothing here
+            }
+            if (faultAnnotation != null && faultInfo == null) {
+                // t has a JAX-WS WebFault annotation, which describes
+                // in detail the Web Service Fault that should be thrown. Add the
+                // detail.
+                handleFaultAnnotation(fault, faultAnnotation);
+            }
+
+            throw fault;
+        }
+
+        private static void handleFaultAnnotation(Fault fault, WebFault faultAnnotation) {
+            Element detail = fault.getOrCreateDetail();
+            Element faultDetails = detail.getOwnerDocument()
+                    .createElementNS(faultAnnotation.targetNamespace(), faultAnnotation.name());
+            detail.appendChild(faultDetails);
+        }
+
+        private static void handleFault(Exchange cxfExchange, Fault t) {
+            cxfExchange.getInMessage().put(FaultMode.class, FaultMode.CHECKED_APPLICATION_FAULT);
+            throw t;
+        }
+
+        private static Throwable extractThrowable(org.apache.camel.Exchange camelExchange) {
+            Throwable t = camelExchange.getException();
+            if (t == null) {
+                // SOAP faults can be stored as exceptions as message body (to be backwards compatible)
+                t = extractFromBody(camelExchange, t);
+            }
+            return t;
+        }
+
+        private static Throwable extractFromBody(org.apache.camel.Exchange camelExchange, Throwable t) {
+            Object body = camelExchange.getMessage().getBody();
+            if (body instanceof Throwable) {
+                t = (Throwable) body;
+            }
+            return t;
         }
 
     }

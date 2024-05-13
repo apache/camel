@@ -374,28 +374,40 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
 
         if (getProperties() != null) {
-            if (factory.getProperties() != null) {
-                // add to existing properties
-                factory.getProperties().putAll(getProperties());
-            } else {
-                factory.setProperties(getProperties());
-            }
-            LOG.debug("JAXRS FactoryBean: {} added properties: {}", factory, getProperties());
+            setupProperties(factory);
         }
 
         if (isLoggingFeatureEnabled()) {
-            LoggingFeature loggingFeature = new LoggingFeature();
-            if (getLoggingSizeLimit() >= -1) {
-                loggingFeature.setLimit(getLoggingSizeLimit());
-            }
-            factory.getFeatures().add(loggingFeature);
+            setupLoggingFeature(factory);
         }
         if (this.isSkipFaultLogging()) {
-            if (factory.getProperties() == null) {
-                factory.setProperties(new HashMap<>());
-            }
-            factory.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+            setupSkipFaultLogging(factory);
         }
+    }
+
+    private void setupProperties(AbstractJAXRSFactoryBean factory) {
+        if (factory.getProperties() != null) {
+            // add to existing properties
+            factory.getProperties().putAll(getProperties());
+        } else {
+            factory.setProperties(getProperties());
+        }
+        LOG.debug("JAXRS FactoryBean: {} added properties: {}", factory, getProperties());
+    }
+
+    private void setupLoggingFeature(AbstractJAXRSFactoryBean factory) {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        if (getLoggingSizeLimit() >= -1) {
+            loggingFeature.setLimit(getLoggingSizeLimit());
+        }
+        factory.getFeatures().add(loggingFeature);
+    }
+
+    private static void setupSkipFaultLogging(AbstractJAXRSFactoryBean factory) {
+        if (factory.getProperties() == null) {
+            factory.setProperties(new HashMap<>());
+        }
+        factory.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
     }
 
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {

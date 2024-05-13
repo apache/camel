@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.mtom;
 import java.awt.image.BufferedImage;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -157,7 +158,7 @@ public class CxfMtomProducerPayloadModeTest {
 
     // CXF encoding the XOP reference since 3.0.1
     private String decodingReference(String reference) throws UnsupportedEncodingException {
-        return java.net.URLDecoder.decode(reference, "UTF-8");
+        return java.net.URLDecoder.decode(reference, StandardCharsets.UTF_8);
     }
 
     protected boolean isMtomEnabled() {

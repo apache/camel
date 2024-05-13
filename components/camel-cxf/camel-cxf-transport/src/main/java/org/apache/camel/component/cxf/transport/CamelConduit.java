@@ -44,12 +44,12 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     private static final java.util.logging.Logger JUL_LOG = LogUtils.getL7dLogger(CamelConduit.class);
 
     private CamelContext camelContext;
-    private EndpointInfo endpointInfo;
+    private final EndpointInfo endpointInfo;
     private String targetCamelEndpointUri;
-    private Producer producer;
+    private final Producer producer;
     private ProducerTemplate camelTemplate;
-    private Bus bus;
-    private HeaderFilterStrategy headerFilterStrategy;
+    private final Bus bus;
+    private final HeaderFilterStrategy headerFilterStrategy;
 
     public CamelConduit(CamelContext context, Bus b, EndpointInfo endpointInfo) {
         this(context, b, endpointInfo, null);
