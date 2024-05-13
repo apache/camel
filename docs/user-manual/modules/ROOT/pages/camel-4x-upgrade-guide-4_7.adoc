@@ -87,6 +87,10 @@ The `camel-as2` component has been updated so that the client can compress a MIM
 sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and https://datatracker.ietf.org/doc/html/rfc5402/#section-3.5[3.5] of https://datatracker.ietf.org/doc/html/rfc5402/[rfc 5402].
 
 
+== Camel Spring Boot
 
+=== camel-debug-starter
 
+Using camel debugger with Spring Boot is now moved from `camel-spring-boot` into `camel-debug-starter` where you can configure the debugger
+via `camel.debug.` options in `application.properties`.
 
