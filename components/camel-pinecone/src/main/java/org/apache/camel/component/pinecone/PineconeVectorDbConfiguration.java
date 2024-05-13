@@ -32,7 +32,7 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     private String token;
 
     @Metadata(autowired = true)
-    private io.pinecone.clients.Pinecone client;
+    private Pinecone client;
 
     public String getToken() {
         return token;
