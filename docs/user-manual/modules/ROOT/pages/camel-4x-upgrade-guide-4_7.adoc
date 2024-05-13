@@ -59,25 +59,30 @@ To:
 </route>
 ----
 
-
 === camel-spring-security
 
 The `camel-spring-security` component has been updated to improve readiness for Spring Security 7.x. Since Spring Security 5.8 the `AccessDecisionManager` interface and the related cooperating classes have been deprecated in favor of `AuthorizationManager` based patterns.
 If you are creating Spring Security route policies in your code, you must now refactor them to be based on an `AuthorizationManager`.
 
 For example, you might have a route policy defined as follows:
-```java
+
+[source,java]
+----
 SpringSecurityAuthorizationPolicy authorizationPolicy = new SpringSecurityAuthorizationPolicy();
 authorizationPolicy.setAuthenticationManager(authenticationManager);
 authorizationPolicy.setSpringSecurityAccessPolicy(new SpringSecurityAccessPolicy("ROLE_ADMIN"));
 authorizationPolicy.setAccessDecisionManager(new AffirmativeBased(Collections.singletonList(new RoleVoter())));
-```
+----
+
 With the changes implemented in this release, that must be refactored to:
-```java
+
+[source,java]
+----
 SpringSecurityAuthorizationPolicy authorizationPolicy = new SpringSecurityAuthorizationPolicy();
 authorizationPolicy.setAuthenticationManager(authenticationManager);
 authorizationPolicy.setAuthorizationManager(AuthorityAuthorizationManager.hasRole("ADMIN"));
-```
+----
+
 This new pattern supports a more expressive language to define your own authorization rules, exposing the full power of the Spring Security framework to Camel route policies.
 See the https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler[spring documentation] for further details on how to migrate your custom code from `AccessDecisionManager` to `AuthorizationManager`.
 
@@ -87,10 +92,13 @@ The `camel-as2` component has been updated so that the client can compress a MIM
 sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and https://datatracker.ietf.org/doc/html/rfc5402/#section-3.5[3.5] of https://datatracker.ietf.org/doc/html/rfc5402/[rfc 5402].
 
 
-== Camel Spring Boot
+=== Camel Spring Boot
 
-=== camel-debug-starter
+==== camel-debug-starter
 
 Using camel debugger with Spring Boot is now moved from `camel-spring-boot` into `camel-debug-starter` where you can configure the debugger
 via `camel.debug.` options in `application.properties`.
+
+The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
+by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
 
