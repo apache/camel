@@ -53,8 +53,8 @@ public class CsvMarshalTest extends CamelTestSupport {
         output.expectedMessageCount(1);
 
         template.sendBody("direct:default", Arrays.<List> asList(
-                Arrays.asList("1"),
-                Arrays.asList("one")));
+                List.of("1"),
+                List.of("one")));
         output.assertIsSatisfied();
 
         String[] actuals = readOutputLines(0);
