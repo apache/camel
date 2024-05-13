@@ -73,11 +73,11 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Test
     public void testProducerComplexByExpression() {
-        String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
+        String expression = "target/filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody(fileUri("?jailStartingDirectory=false&fileName=" + expression), "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists(testFile("../filelanguageinbox/myfile-123-" + date + ".txt"));
+        assertFileExists(testFile("target/filelanguageinbox/myfile-123-" + date + ".txt"));
     }
 
     @Test
