@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.mtom;
 
 import java.awt.Image;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import jakarta.xml.ws.Holder;
@@ -44,7 +45,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
             return;
         }
 
-        final Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes("UTF-8"));
+        final Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes(StandardCharsets.UTF_8));
         final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
 
         Exchange exchange = context.createProducerTemplate().send(MTOM_ENDPOINT_URI_MTOM_ENABLE, new Processor() {
@@ -66,7 +67,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         final Holder<byte[]> responsePhoto = (Holder<byte[]>) parameter.get(1);
         assertNotNull(responsePhoto.value, "The photo should not be null");
         assertEquals("ResponseFromCamel",
-                new String(responsePhoto.value, "UTF-8"), "Should get the right response");
+                new String(responsePhoto.value, StandardCharsets.UTF_8), "Should get the right response");
 
         final Holder<Image> responseImage = (Holder<Image>) parameter.get(2);
         assertNotNull(responseImage.value, "We should get the image here");

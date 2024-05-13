@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
+import java.nio.charset.StandardCharsets;
+
 import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
@@ -68,7 +70,7 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
                         Node node = in.getBody(Node.class);
                         assertNotNull(node);
                         CachedOutputStream cos = new CachedOutputStream(exchange);
-                        cos.write(RESPONSE.getBytes("UTF-8"));
+                        cos.write(RESPONSE.getBytes(StandardCharsets.UTF_8));
                         cos.close();
                         exchange.getMessage().setBody(cos.newStreamCache());
 

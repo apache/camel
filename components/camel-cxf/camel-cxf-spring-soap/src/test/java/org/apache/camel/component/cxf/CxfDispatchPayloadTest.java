@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,7 +94,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
         CxfPayload<T> payload = null;
         try {
             Document doc = getDocumentBuilderFactory().newDocumentBuilder()
-                    .parse(new ByteArrayInputStream(payloadstr.getBytes("utf-8")));
+                    .parse(new ByteArrayInputStream(payloadstr.getBytes(StandardCharsets.UTF_8)));
             payload = CxfPayloadConverter.documentToCxfPayload(doc, exchange);
         } catch (Exception e) {
             // ignore and let it fail
