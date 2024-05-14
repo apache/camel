@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -69,6 +70,7 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.FilterIterator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
@@ -407,7 +409,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
-            this.iterator = pairs.iterator();
+            this.iterator = new FilterIterator<>(pairs.iterator(), Objects::nonNull);
             if (timeout > 0) {
                 timeoutTask = schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
             } else {
@@ -544,13 +546,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
                 ProcessorExchangePair pair = iterator.next();
                 boolean hasNext = iterator.hasNext();
-                // some iterators may return true for hasNext() but then null in next()
-                if (pair == null && !hasNext) {
-                    doDone(result.get(), true);
-                    return;
-                }
 
-                // TODO looks like pair can still be null as the if above has composite condition?
                 Exchange exchange = pair.getExchange();
                 int index = nbExchangeSent.getAndIncrement();
                 updateNewExchange(exchange, index, pairs, hasNext);
@@ -654,13 +650,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
             ProcessorExchangePair pair = iterator.next();
             boolean hasNext = iterator.hasNext();
-            // some iterators may return true for hasNext() but then null in next()
-            if (pair == null && !hasNext) {
-                doDone(result.get(), true);
-                return false;
-            }
 
-            // TODO looks like pair can still be null as the if above has composite condition?
             Exchange exchange = pair.getExchange();
             int index = nbExchangeSent.getAndIncrement();
             updateNewExchange(exchange, index, pairs, hasNext);
