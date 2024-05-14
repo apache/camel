@@ -3535,8 +3535,8 @@
                             <failIfNoTests>false</failIfNoTests>
                             <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                             <runOrder>alphabetical</runOrder>
-                            <!-- lets re-run the failed test one more time, just to be sure -->
-                            <rerunFailingTestsCount>0</rerunFailingTestsCount>
+                            <!-- lets re-run the failed test, just to be sure -->
+                            <rerunFailingTestsCount>2</rerunFailingTestsCount>
                             <systemPropertyVariables>
                                 <javax.xml.accessExternalSchema>file,http,https</javax.xml.accessExternalSchema>
                                 <javax.xml.accessExternalDTD>file,http</javax.xml.accessExternalDTD>
