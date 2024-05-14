@@ -539,17 +539,7 @@ public abstract class CamelTestSupport
         if (extra != null && !extra.isEmpty()) {
             pc.setOverrideProperties(extra);
         }
-        pc.addPropertiesSource(new PropertiesSource() {
-            @Override
-            public String getName() {
-                return "junit-store";
-            }
-
-            @Override
-            public String getProperty(String name) {
-                return globalStore.get(name, String.class);
-            }
-        });
+        pc.addPropertiesSource(new JunitPropertiesSource(globalStore));
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         if (ignore != null) {
             pc.setIgnoreMissingLocation(ignore);
