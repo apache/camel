@@ -104,18 +104,14 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     // add method name alias
                     String alias = matcher.replaceAll(aliasEntry.getValue());
                     // convert first character to lowercase
-                    ObjectHelper.isNotEmpty(alias);
+                    ObjectHelper.notNullOrEmpty(alias, "alias");
                     final char firstChar = alias.charAt(0);
                     if (!Character.isLowerCase(firstChar)) {
                         final StringBuilder builder = new StringBuilder();
                         builder.append(Character.toLowerCase(firstChar)).append(alias, 1, alias.length());
                         alias = builder.toString();
                     }
-                    Set<String> names = tmpAliasesMap.get(alias);
-                    if (names == null) {
-                        names = new HashSet<>();
-                        tmpAliasesMap.put(alias, names);
-                    }
+                    Set<String> names = tmpAliasesMap.computeIfAbsent(alias, k -> new HashSet<>());
                     names.add(name);
                 }
             }
