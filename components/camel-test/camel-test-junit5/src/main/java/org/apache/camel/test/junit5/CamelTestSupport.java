@@ -343,8 +343,7 @@ public abstract class CamelTestSupport
     public void setUp() throws Exception {
         testStartHeader(getClass(), currentTestName);
 
-        doSpringBootCheck();
-        doQuarkusCheck();
+        ExtensionHelper.hasUnsupported(getClass());
 
         if (isCreateCamelContextPerClass()) {
             createCamelContextPerClass();
@@ -360,8 +359,6 @@ public abstract class CamelTestSupport
         watch.restart();
     }
 
-
-
     private void createCamelContextPerClass() throws Exception {
         INSTANCE.set(this);
         AtomicInteger v = TESTS.get();
@@ -372,7 +369,6 @@ public abstract class CamelTestSupport
         if (v.getAndIncrement() == 0) {
             LOG.debug("Setup CamelContext before running first test");
             // test is per class, so only setup once (the first time)
-            doSpringBootCheck();
             setupResources();
             doPreSetup();
             doSetUp();
@@ -401,10 +397,12 @@ public abstract class CamelTestSupport
 
     /**
      * Detects if this is a Spring-Boot test and throws an exception, as these base classes is not intended for testing
-     * Camel on Spring Boot.
+     * Camel on Spring Boot. Use ExtensionHelper.hasClassAnnotation instead
      */
+    @Deprecated(since = "4.7.0")
     protected void doSpringBootCheck() {
-        boolean springBoot = ExtensionHelper.hasClassAnnotation(getClass(),"org.springframework.boot.test.context.SpringBootTest");
+        boolean springBoot
+                = ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.boot.test.context.SpringBootTest");
         if (springBoot) {
             throw new RuntimeException(
                     "Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot.");
@@ -413,10 +411,12 @@ public abstract class CamelTestSupport
 
     /**
      * Detects if this is a Camel-quarkus test and throw an exception, as these base classes is not intended for testing
-     * Camel onQuarkus.
+     * Camel onQuarkus. Use ExtensionHelper.hasClassAnnotation instead.
      */
+    @Deprecated(since = "4.7.0")
     protected void doQuarkusCheck() {
-        boolean quarkus = ExtensionHelper.hasClassAnnotation(getClass(), "io.quarkus.test.junit.QuarkusTest", "org.apache.camel.quarkus.test.CamelQuarkusTest");
+        boolean quarkus = ExtensionHelper.hasClassAnnotation(getClass(), "io.quarkus.test.junit.QuarkusTest",
+                "org.apache.camel.quarkus.test.CamelQuarkusTest");
         if (quarkus) {
             throw new RuntimeException(
                     "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");

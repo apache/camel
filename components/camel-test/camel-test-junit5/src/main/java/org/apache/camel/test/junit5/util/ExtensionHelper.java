@@ -18,6 +18,7 @@
 package org.apache.camel.test.junit5.util;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Consumer;
 
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -26,11 +27,46 @@ import org.slf4j.LoggerFactory;
 public final class ExtensionHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ExtensionHelper.class);
     public static final String SEPARATOR = "*".repeat(80);
+    private static final String SPRING_BOOT_TEST = "org.springframework.boot.test.context.SpringBootTest";
+    private static final String QUARKUS_TEST = "io.quarkus.test.junit.QuarkusTest";
+    private static final String CAMEL_QUARKUS_TEST = "org.apache.camel.quarkus.test.CamelQuarkusTest";
+
+    private static void throwUnsupportedClassException(String name) {
+        switch (name) {
+            case SPRING_BOOT_TEST:
+                throw new RuntimeException(
+                        "Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot.");
+            case QUARKUS_TEST:
+            case CAMEL_QUARKUS_TEST: {
+                throw new RuntimeException(
+                        "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
+            }
+        }
+
+        throw new RuntimeException(
+                "Unspecified class detected: The " + name + " class is not intended for Camel testing");
+    }
+
+    public static boolean hasUnsupported(Class<?> clazz) {
+        hasClassAnnotation(clazz, ExtensionHelper::throwUnsupportedClassException, SPRING_BOOT_TEST, QUARKUS_TEST,
+                CAMEL_QUARKUS_TEST);
+        return true;
+    }
 
     /**
      * Does the test class have any of the following annotations on the class-level?
-     * @return true if has or false otherwise
      */
+    public static void hasClassAnnotation(Class<?> clazz, Consumer<String> classConsumer, String... names) {
+        for (String name : names) {
+            for (Annotation ann : clazz.getAnnotations()) {
+                String annName = ann.annotationType().getName();
+                if (annName.equals(name)) {
+                    classConsumer.accept(name);
+                }
+            }
+        }
+    }
+
     public static boolean hasClassAnnotation(Class<?> clazz, String... names) {
         for (String name : names) {
             for (Annotation ann : clazz.getAnnotations()) {
@@ -56,7 +92,8 @@ public final class ExtensionHelper {
         LOG.info(SEPARATOR);
     }
 
-    public static void testEndFooter(Class<?> testClass, String currentTestName, long time, RouteCoverageDumperExtension routeCoverageWrapper)
+    public static void testEndFooter(
+            Class<?> testClass, String currentTestName, long time, RouteCoverageDumperExtension routeCoverageWrapper)
             throws Exception {
         LOG.info(SEPARATOR);
         LOG.info("Testing done: {} ({})", currentTestName, testClass.getName());
