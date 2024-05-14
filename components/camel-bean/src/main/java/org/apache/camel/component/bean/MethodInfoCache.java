@@ -28,8 +28,8 @@ import org.apache.camel.support.LRUCacheFactory;
  */
 public class MethodInfoCache {
     private final CamelContext camelContext;
-    private Map<Method, MethodInfo> methodCache;
-    private Map<Class<?>, BeanInfo> classCache;
+    private final Map<Method, MethodInfo> methodCache;
+    private final Map<Class<?>, BeanInfo> classCache;
 
     public MethodInfoCache(CamelContext camelContext) {
         this(camelContext, 1000, 10000);
