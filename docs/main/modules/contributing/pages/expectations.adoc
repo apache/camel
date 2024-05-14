@@ -1,0 +1,76 @@
+= Contributing expectations
+
+Thank you for your interest in contributing to Apache Camel.
+
+In this document, we provide some guidelines on approaching the Apache Camel community and how to contribute to the community in the best possible way.
+
+== Expectations
+
+As we continue to work together as an open-source community, it's essential that we maintain a secure and collaborative environment.
+
+To achieve this, we've established the following expectations for contributions:
+
+
+=== Valid Profile Requirements
+
+To ensure the integrity of our project, all contributors are required to have a valid profile. A valid profile means:
+
+* Your real name is provided
+* You have a legitimate email address associated with your profile
+* If you created your account recently (within the last 1 month, please reach out to us on the https://camel.zulipchat.com[#camel-core-dev channel on ZulipChat] to confirm your identity before making any contributions
+
+NOTE: everyone that participates in an Apache Community must follow the https://www.apache.org/foundation/policies/conduct[ASF Code of Conduct]. Please make sure you read it before contributing.
+
+=== Small contributions
+
+To maintain the quality and coherence of our project, we expect contributions to be *focused and small* in scope.
+This means that each contribution should:
+
+* Address a single specific issue or feature
+* Be limited in size and complexity to avoid overwhelming other contributors or the community as a whole
+
+=== Larger or far-reaching code contributions
+
+Inevitably, some changes may be far-reaching or may require adding a significant amount of code.
+
+NOTE: Larger contributions, regardless of being to existing code or new code, also require opening a ticket on
+https://issues.apache.org/jira/projects/CAMEL/summary[Jira].
+
+For larger contributions to *existing code* that *require significant changes* or have far-reaching implications,
+please discuss your plans with us in advance. You can do this by:
+
+* Posting on our dev mailing list to gather feedback and input from the community
+* Joining discussions on the Zulip chat to ensure everyone is aligned on the proposal
+
+For larger contributions of *new code*, such as a new component or feature, that it is more isolated than the rest of the code,
+are easier to get accepted. In such circumstances, only the Jira ticket may suffice.
+
+These measures are in place due to recent social-based attacks on open-source projects.
+By following these guidelines, we can:
+
+* Increase security by limiting potential vulnerabilities
+* Foster a sense of trust and accountability within our community
+* Encourage open and transparent communication among contributors
+
+We appreciate your understanding and cooperation in maintaining a safe and productive environment for everyone involved in the project.
+
+If you have any questions or concerns about these expectations, please don't hesitate to reach out to us on the Zulip chat or dev mailing list.
+
+== How to help and look for areas to contribute
+
+Please remember that a community is much more than just code. There are many ways you can help make Camel a better piece of software. Please dive in and help!
+
+- Try surfing the documentation: if something confuses you, bring it to our attention or suggest an improvement.
+- Download the code & try it out and see what you think.
+- Browse the source code. Got an itch to scratch, want to tune some operation, or add some feature?
+- Want to do some hacking on Camel? Try surfing on our https://issues.apache.org/jira/browse/CAMEL[issue tracker] for open issues, feature requests, and planned tasks. Take ownership of a particular issue, and try to fix it.
+- If you are a new Camel rider and would like to help us, you can also find some https://issues.apache.org/jira/issues/?filter=12348073[easy-to-resolve issues] or issues we need https://issues.apache.org/jira/issues/?filter=12348074[help with].
+- Leave a comment on the issue to let us know you are working on it, and add yourself as a watcher to get informed about all modifications.
+
+Identify areas you can contribute initially. You don’t have to be an expert in an area, the Apache Camel developers are available to offer help and guidance.
+
+Introduce yourself on the link:/community/mailing-list/[developers' mailing-list], tell us what area of work or problem you wish to address in Camel. Create a draft of your solution, which can be simple 1-2 sentences on the change you wish to make. Try to be as specific as you can: include a short description of your intent, what you tried and what did not work, or what you need help with. The best way of approaching the developers is by describing what you would like to work on and asking specific questions on how to get started. We will do our best to guide you and help you make your contribution.
+
+We often participate in https://summerofcode.withgoogle.com/[Google Summer of Code] and https://www.outreachy.org/[Outreachy] programs. For information about those, look at those program websites. If you wish to participate in either of those, follow the guidelines and schedule set by those programs. If you are unsure, please reach out using one of the communication channels, or ask on the developer’s mailing list for help.
+
+
