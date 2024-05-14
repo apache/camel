@@ -4,22 +4,9 @@
 
 Thank you for your interest in contributing to Apache Camel.
 
-In this document, we provide some guidelines on approaching the Apache Camel community and how to contribute to the community in the best possible way.
+Our community encourages and welcomes everyone to participate.
 
-Please remember that a community is much more than just code. There are many ways you can help make Camel a better piece of software. Please dive in and help!
-
-- Try surfing the documentation: if something confuses you, bring it to our attention or suggest an improvement.
-- Download the code & try it out and see what you think.
-- Browse the source code. Got an itch to scratch, want to tune some operation, or add some feature?
-- Want to do some hacking on Camel? Try surfing on our https://issues.apache.org/jira/browse/CAMEL[issue tracker] for open issues, feature requests, and planned tasks. Take ownership of a particular issue, and try to fix it.
-- If you are a new Camel rider and would like to help us, you can also find some https://issues.apache.org/jira/issues/?filter=12348073[easy-to-resolve issues] or issues we need https://issues.apache.org/jira/issues/?filter=12348074[help with].
-- Leave a comment on the issue to let us know you are working on it, and add yourself as a watcher to get informed about all modifications.
-
-Identify areas you can contribute initially. You don’t have to be an expert in an area, the Apache Camel developers are available to offer help and guidance.
-
-Introduce yourself on the link:/community/mailing-list/[developers' mailing-list], tell us what area of work or problem you wish to address in Camel. Create a draft of your solution, which can be simple 1-2 sentences on the change you wish to make. Try to be as specific as you can: include a short description of your intent, what you tried and what did not work, or what you need help with. The best way of approaching the developers is by describing what you would like to work on and asking specific questions on how to get started. We will do our best to guide you and help you make your contribution.
-
-We often participate in https://summerofcode.withgoogle.com/[Google Summer of Code] and https://www.outreachy.org/[Outreachy] programs. For information about those, look at those program websites. If you wish to participate in either of those, follow the guidelines and schedule set by those programs. If you are unsure, please reach out using one of the communication channels, or ask on the developer’s mailing list for help.
+The link:expectations.adoc[Contributing expectations document] describes how to contribute and what our expectations are.
 
 == Getting in touch
 
