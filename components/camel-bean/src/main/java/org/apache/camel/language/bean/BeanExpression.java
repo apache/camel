@@ -59,10 +59,10 @@ public class BeanExpression implements Expression, Predicate {
     private BeanComponent beanComponent;
     private Language simple;
     private Class<?> resultType;
-    private Object bean;
+    private final Object bean;
     private String beanName;
     private Class<?> type;
-    private String method;
+    private final String method;
     private BeanHolder beanHolder;
     private boolean ognlMethod;
     private BeanScope scope = BeanScope.Singleton;

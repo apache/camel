@@ -70,14 +70,14 @@ import static org.apache.camel.util.ObjectHelper.asString;
 public class MethodInfo {
     private static final Logger LOG = LoggerFactory.getLogger(MethodInfo.class);
 
-    private CamelContext camelContext;
-    private Class<?> type;
-    private Method method;
+    private final CamelContext camelContext;
+    private final Class<?> type;
+    private final Method method;
     private final List<ParameterInfo> parameters;
     private final List<ParameterInfo> bodyParameters;
     private final boolean hasCustomAnnotation;
     private final boolean hasHandlerAnnotation;
-    private Expression parametersExpression;
+    private final Expression parametersExpression;
     private ExchangePattern pattern = ExchangePattern.InOut;
     private AsyncProcessor recipientList;
     private AsyncProcessor routingSlip;
