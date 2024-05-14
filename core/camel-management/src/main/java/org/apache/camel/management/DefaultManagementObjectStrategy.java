@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.Iterator;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
@@ -111,33 +110,12 @@ import org.apache.camel.management.mbean.ManagedUnmarshal;
 import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
-import org.apache.camel.model.AggregateDefinition;
-import org.apache.camel.model.CatchDefinition;
-import org.apache.camel.model.DynamicRouterDefinition;
-import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.FinallyDefinition;
-import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
-import org.apache.camel.model.LoopDefinition;
-import org.apache.camel.model.MarshalDefinition;
-import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
-import org.apache.camel.model.RoutingSlipDefinition;
-import org.apache.camel.model.ScriptDefinition;
-import org.apache.camel.model.SetBodyDefinition;
-import org.apache.camel.model.SetHeaderDefinition;
-import org.apache.camel.model.SetHeadersDefinition;
-import org.apache.camel.model.SetPropertyDefinition;
-import org.apache.camel.model.SetVariableDefinition;
-import org.apache.camel.model.SetVariablesDefinition;
-import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.TransformDefinition;
-import org.apache.camel.model.TryDefinition;
-import org.apache.camel.model.UnmarshalDefinition;
-import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
@@ -344,9 +322,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         if (definition instanceof RecipientListDefinition) {
             // special for RecipientListDefinition, as the processor is wrapped in a pipeline as last
             Pipeline pipeline = (Pipeline) processor;
-            Iterator<Processor> it = pipeline.next().iterator();
-            while (it.hasNext()) {
-                processor = it.next();
+            for (Processor value : pipeline.next()) {
+                processor = value;
             }
         }
 
@@ -373,49 +350,49 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof DisabledProcessor) {
                 answer = new ManagedDisabled(context, (DisabledProcessor) target, definition);
-            } else if (target instanceof TryProcessor) {
-                answer = new ManagedDoTry(context, (TryProcessor) target, (TryDefinition) definition);
+            } else if (target instanceof TryProcessor tryProc) {
+                answer = new ManagedDoTry(context, tryProc, cast(definition));
             } else if (target instanceof CatchProcessor) {
-                answer = new ManagedDoCatch(context, (CatchProcessor) target, (CatchDefinition) definition);
+                answer = new ManagedDoCatch(context, (CatchProcessor) target, cast(definition));
             } else if (target instanceof FinallyProcessor) {
-                answer = new ManagedDoFinally(context, (FinallyProcessor) target, (FinallyDefinition) definition);
+                answer = new ManagedDoFinally(context, (FinallyProcessor) target, cast(definition));
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof DynamicRouter) {
-                answer = new ManagedDynamicRouter(context, (DynamicRouter) target, (DynamicRouterDefinition) definition);
+                answer = new ManagedDynamicRouter(context, (DynamicRouter) target, cast(definition));
             } else if (target instanceof RoutingSlip) {
-                answer = new ManagedRoutingSlip(context, (RoutingSlip) target, (RoutingSlipDefinition) definition);
+                answer = new ManagedRoutingSlip(context, (RoutingSlip) target, cast(definition));
             } else if (target instanceof FilterProcessor) {
                 answer = new ManagedFilter(context, (FilterProcessor) target, (ExpressionNode) definition);
             } else if (target instanceof LogProcessor) {
                 answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
-                answer = new ManagedLoop(context, (LoopProcessor) target, (LoopDefinition) definition);
+                answer = new ManagedLoop(context, (LoopProcessor) target, cast(definition));
             } else if (target instanceof MarshalProcessor) {
-                answer = new ManagedMarshal(context, (MarshalProcessor) target, (MarshalDefinition) definition);
+                answer = new ManagedMarshal(context, (MarshalProcessor) target, cast(definition));
             } else if (target instanceof UnmarshalProcessor) {
-                answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, (UnmarshalDefinition) definition);
+                answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, cast(definition));
             } else if (target instanceof FailOverLoadBalancer) {
                 answer = new ManagedFailoverLoadBalancer(
-                        context, (FailOverLoadBalancer) target, (LoadBalanceDefinition) definition);
+                        context, (FailOverLoadBalancer) target, cast(definition));
             } else if (target instanceof RandomLoadBalancer) {
                 answer = new ManagedRandomLoadBalancer(
-                        context, (RandomLoadBalancer) target, (LoadBalanceDefinition) definition);
+                        context, (RandomLoadBalancer) target, cast(definition));
             } else if (target instanceof RoundRobinLoadBalancer) {
                 answer = new ManagedRoundRobinLoadBalancer(
-                        context, (RoundRobinLoadBalancer) target, (LoadBalanceDefinition) definition);
+                        context, (RoundRobinLoadBalancer) target, cast(definition));
             } else if (target instanceof StickyLoadBalancer) {
                 answer = new ManagedStickyLoadBalancer(
-                        context, (StickyLoadBalancer) target, (LoadBalanceDefinition) definition);
+                        context, (StickyLoadBalancer) target, cast(definition));
             } else if (target instanceof TopicLoadBalancer) {
-                answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, (LoadBalanceDefinition) definition);
+                answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, cast(definition));
             } else if (target instanceof WeightedLoadBalancer) {
                 answer = new ManagedWeightedLoadBalancer(
-                        context, (WeightedLoadBalancer) target, (LoadBalanceDefinition) definition);
+                        context, (WeightedLoadBalancer) target, cast(definition));
             } else if (target instanceof RecipientList) {
-                answer = new ManagedRecipientList(context, (RecipientList) target, (RecipientListDefinition) definition);
+                answer = new ManagedRecipientList(context, (RecipientList) target, cast(definition));
             } else if (target instanceof Splitter) {
-                answer = new ManagedSplitter(context, (Splitter) target, (SplitDefinition) definition);
+                answer = new ManagedSplitter(context, (Splitter) target, cast(definition));
             } else if (target instanceof MulticastProcessor) {
                 answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
             } else if (target instanceof SamplingThrottler) {
@@ -427,19 +404,19 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof StreamResequencer) {
                 answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
             } else if (target instanceof SetBodyProcessor) {
-                answer = new ManagedSetBody(context, (SetBodyProcessor) target, (SetBodyDefinition) definition);
+                answer = new ManagedSetBody(context, (SetBodyProcessor) target, cast(definition));
             } else if (target instanceof RemoveHeaderProcessor) {
                 answer = new ManagedRemoveHeader(context, (RemoveHeaderProcessor) target, definition);
             } else if (target instanceof RemoveHeadersProcessor) {
                 answer = new ManagedRemoveHeaders(context, (RemoveHeadersProcessor) target, definition);
             } else if (target instanceof SetHeaderProcessor) {
-                answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, (SetHeaderDefinition) definition);
+                answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, cast(definition));
             } else if (target instanceof SetHeadersProcessor) {
-                answer = new ManagedSetHeaders(context, (SetHeadersProcessor) target, (SetHeadersDefinition) definition);
+                answer = new ManagedSetHeaders(context, (SetHeadersProcessor) target, cast(definition));
             } else if (target instanceof SetVariableProcessor) {
-                answer = new ManagedSetVariable(context, (SetVariableProcessor) target, (SetVariableDefinition) definition);
+                answer = new ManagedSetVariable(context, (SetVariableProcessor) target, cast(definition));
             } else if (target instanceof SetVariablesProcessor) {
-                answer = new ManagedSetVariables(context, (SetVariablesProcessor) target, (SetVariablesDefinition) definition);
+                answer = new ManagedSetVariables(context, (SetVariablesProcessor) target, cast(definition));
             } else if (target instanceof RemovePropertyProcessor) {
                 answer = new ManagedRemoveProperty(context, (RemovePropertyProcessor) target, definition);
             } else if (target instanceof RemovePropertiesProcessor) {
@@ -447,11 +424,11 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof RemoveVariableProcessor) {
                 answer = new ManagedRemoveVariable(context, (RemoveVariableProcessor) target, definition);
             } else if (target instanceof SetPropertyProcessor) {
-                answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, (SetPropertyDefinition) definition);
+                answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, cast(definition));
             } else if (target instanceof ExchangePatternProcessor) {
                 answer = new ManagedSetExchangePattern(context, (ExchangePatternProcessor) target, definition);
             } else if (target instanceof ScriptProcessor) {
-                answer = new ManagedScript(context, (ScriptProcessor) target, (ScriptDefinition) definition);
+                answer = new ManagedScript(context, (ScriptProcessor) target, cast(definition));
             } else if (target instanceof StepProcessor) {
                 answer = new ManagedStep(context, (StepProcessor) target, definition);
             } else if (target instanceof StopProcessor) {
@@ -461,24 +438,19 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof ThrowExceptionProcessor) {
                 answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
-                answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
+                answer = new ManagedTransformer(context, target, cast(definition));
             } else if (target instanceof DataTypeProcessor && definition instanceof TransformDefinition) {
                 answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
             } else if (target instanceof PredicateValidatingProcessor) {
-                answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, (ValidateDefinition) definition);
+                answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, cast(definition));
             } else if (target instanceof WireTapProcessor) {
                 answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
             } else if (target instanceof SendDynamicProcessor) {
                 answer = new ManagedSendDynamicProcessor(context, (SendDynamicProcessor) target, definition);
-            } else if (target instanceof SendProcessor) {
-                SendProcessor sp = (SendProcessor) target;
+            } else if (target instanceof SendProcessor sp) {
                 // special for sending to throughput logger
-                if (sp.getDestination() instanceof LogEndpoint) {
-                    LogEndpoint le = (LogEndpoint) sp.getDestination();
-                    if (le.getLogger() instanceof ThroughputLogger) {
-                        ThroughputLogger tl = (ThroughputLogger) le.getLogger();
-                        answer = new ManagedThroughputLogger(context, tl, definition);
-                    }
+                if (sp.getDestination() instanceof LogEndpoint le && le.getLogger() instanceof ThroughputLogger tl) {
+                    answer = new ManagedThroughputLogger(context, tl, definition);
                 }
                 // regular send processor
                 if (answer == null) {
@@ -488,18 +460,17 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof IdempotentConsumer) {
                 answer = new ManagedIdempotentConsumer(
-                        context, (IdempotentConsumer) target, (IdempotentConsumerDefinition) definition);
+                        context, (IdempotentConsumer) target, cast(definition));
             } else if (target instanceof AggregateProcessor) {
-                answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, (AggregateDefinition) definition);
+                answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, cast(definition));
             } else if (target instanceof Enricher) {
-                answer = new ManagedEnricher(context, (Enricher) target, (EnrichDefinition) definition);
+                answer = new ManagedEnricher(context, (Enricher) target, cast(definition));
             } else if (target instanceof PollEnricher) {
-                answer = new ManagedPollEnricher(context, (PollEnricher) target, (PollEnrichDefinition) definition);
+                answer = new ManagedPollEnricher(context, (PollEnricher) target, cast(definition));
             }
 
             // special for custom load balancer
-            if (definition instanceof LoadBalanceDefinition) {
-                LoadBalanceDefinition lb = (LoadBalanceDefinition) definition;
+            if (definition instanceof LoadBalanceDefinition lb) {
                 if (lb.getLoadBalancerType() instanceof CustomLoadBalancerDefinition) {
                     answer = new ManagedCustomLoadBalancer(context, (LoadBalancer) target, (LoadBalanceDefinition) definition);
                 }
@@ -529,6 +500,11 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         answer.setRoute(route);
         answer.init(context.getManagementStrategy());
         return answer;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends ProcessorDefinition<?>> T cast(ProcessorDefinition<?> definition) {
+        return (T) definition;
     }
 
 }
