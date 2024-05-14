@@ -19,7 +19,13 @@ package org.apache.camel.test.junit5.util;
 
 import java.lang.annotation.Annotation;
 
+import org.apache.camel.util.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class ExtensionHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(ExtensionHelper.class);
+    public static final String SEPARATOR = "*".repeat(80);
 
     /**
      * Does the test class have any of the following annotations on the class-level?
@@ -35,5 +41,31 @@ public final class ExtensionHelper {
             }
         }
         return false;
+    }
+
+    public static void testStartHeader(Class<?> testClass, String currentTestName) {
+        LOG.info(SEPARATOR);
+        LOG.info("Testing: {} ({})", currentTestName, testClass.getName());
+        LOG.info(SEPARATOR);
+    }
+
+    public static void testEndFooter(Class<?> testClass, String currentTestName, long time) {
+        LOG.info(SEPARATOR);
+        LOG.info("Testing done: {} ({})", currentTestName, testClass.getName());
+        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
+        LOG.info(SEPARATOR);
+    }
+
+    public static void testEndFooter(Class<?> testClass, String currentTestName, long time, RouteCoverageDumperExtension routeCoverageWrapper)
+            throws Exception {
+        LOG.info(SEPARATOR);
+        LOG.info("Testing done: {} ({})", currentTestName, testClass.getName());
+        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
+
+        if (routeCoverageWrapper != null) {
+            routeCoverageWrapper.dumpRouteCoverage(testClass, currentTestName, time);
+        }
+
+        LOG.info(SEPARATOR);
     }
 }

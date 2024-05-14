@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.junit5;
 
-import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +39,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.api.management.ManagedCamelContext;
-import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -55,16 +52,14 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.test.CamelRouteCoverageDumper;
 import org.apache.camel.test.junit5.util.ExtensionHelper;
+import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,6 +76,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
+import static org.apache.camel.test.junit5.util.ExtensionHelper.testStartHeader;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -103,7 +99,7 @@ public abstract class CamelTestSupport
     private static final ThreadLocal<FluentProducerTemplate> THREAD_FLUENT_TEMPLATE = new ThreadLocal<>();
     private static final ThreadLocal<ConsumerTemplate> THREAD_CONSUMER = new ThreadLocal<>();
     private static final ThreadLocal<Service> THREAD_SERVICE = new ThreadLocal<>();
-    public static final String SEPARATOR = "********************************************************************************";
+
     protected Properties extra;
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
@@ -120,7 +116,7 @@ public abstract class CamelTestSupport
     private static final ThreadLocal<CamelTestSupport> INSTANCE = new ThreadLocal<>();
     private String currentTestName;
     private boolean isCreateCamelContextPerClass = false;
-    private final CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
+
     private ExtensionContext.Store globalStore;
 
     @Override
@@ -133,6 +129,7 @@ public abstract class CamelTestSupport
         watch.restart();
     }
 
+    @Deprecated(since = "4.7.0")
     public long timeTaken() {
         return watch.taken();
     }
@@ -344,9 +341,7 @@ public abstract class CamelTestSupport
 
     @BeforeEach
     public void setUp() throws Exception {
-        LOG.info(SEPARATOR);
-        LOG.info("Testing: {} ({})", currentTestName, getClass().getName());
-        LOG.info(SEPARATOR);
+        testStartHeader(getClass(), currentTestName);
 
         doSpringBootCheck();
         doQuarkusCheck();
@@ -364,6 +359,8 @@ public abstract class CamelTestSupport
         // only start timing after all the setup
         watch.restart();
     }
+
+
 
     private void createCamelContextPerClass() throws Exception {
         INSTANCE.set(this);
@@ -590,15 +587,11 @@ public abstract class CamelTestSupport
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        LOG.info(SEPARATOR);
-        LOG.info("Testing done: {} ({})", currentTestName, getClass().getName());
-        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
-
-        // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {
-            dumpRouteCoverage();
+            ExtensionHelper.testEndFooter(getClass(), currentTestName, time, new RouteCoverageDumperExtension(context));
+        } else {
+            ExtensionHelper.testEndFooter(getClass(), currentTestName, time);
         }
-        LOG.info(SEPARATOR);
 
         if (isCreateCamelContextPerClass()) {
             // will tear down test specially in afterAll callback
@@ -611,23 +604,6 @@ public abstract class CamelTestSupport
         doPostTearDown();
         cleanupResources();
 
-    }
-
-    private void dumpRouteCoverage() throws Exception {
-        String className = this.getClass().getSimpleName();
-        String dir = "target/camel-route-coverage";
-        String name = className + "-" + StringHelper.before(currentTestName, "(") + ".xml";
-
-        ManagedCamelContext mc
-                = context != null ? context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class) : null;
-        ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
-        if (managedCamelContext == null) {
-            LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
-                     + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
-        } else {
-            routeCoverageDumper.dump(managedCamelContext, context, dir, name, getClass().getName(), currentTestName,
-                    timeTaken());
-        }
     }
 
     void tearDownCreateCamelContextPerClass() throws Exception {
