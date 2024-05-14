@@ -523,7 +523,7 @@ class BedrockProducerIT extends CamelTestSupport {
                         .to(result);
 
                 from("direct:send_titan_premier")
-                        .to("aws-bedrock:label?useDefaultCredentialsProvider=true&region=us-east-1&operation=invokeTextModel&modelId="
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeTextModel&modelId="
                             + BedrockModels.TITAN_TEXT_PREMIER_V1.model)
                         .to(result);
 
