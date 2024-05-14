@@ -61,6 +61,7 @@ import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.CamelRouteCoverageDumper;
+import org.apache.camel.test.junit5.util.ExtensionHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -406,7 +407,7 @@ public abstract class CamelTestSupport
      * Camel on Spring Boot.
      */
     protected void doSpringBootCheck() {
-        boolean springBoot = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest");
+        boolean springBoot = ExtensionHelper.hasClassAnnotation(getClass(),"org.springframework.boot.test.context.SpringBootTest");
         if (springBoot) {
             throw new RuntimeException(
                     "Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot.");
@@ -418,8 +419,7 @@ public abstract class CamelTestSupport
      * Camel onQuarkus.
      */
     protected void doQuarkusCheck() {
-        boolean quarkus = hasClassAnnotation("io.quarkus.test.junit.QuarkusTest") ||
-                hasClassAnnotation("org.apache.camel.quarkus.test.CamelQuarkusTest");
+        boolean quarkus = ExtensionHelper.hasClassAnnotation(getClass(), "io.quarkus.test.junit.QuarkusTest", "org.apache.camel.quarkus.test.CamelQuarkusTest");
         if (quarkus) {
             throw new RuntimeException(
                     "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
@@ -727,7 +727,7 @@ public abstract class CamelTestSupport
     protected void applyCamelPostProcessor() throws Exception {
         // use the bean post processor if the test class is not dependency
         // injected already by Spring Framework
-        boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest",
+        boolean spring = ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.boot.test.context.SpringBootTest",
                 "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
             PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(this,
@@ -740,16 +740,9 @@ public abstract class CamelTestSupport
     /**
      * Does this test class have any of the following annotations on the class-level.
      */
+    @Deprecated
     protected boolean hasClassAnnotation(String... names) {
-        for (String name : names) {
-            for (Annotation ann : getClass().getAnnotations()) {
-                String annName = ann.annotationType().getName();
-                if (annName.equals(name)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ExtensionHelper.hasClassAnnotation(getClass(), names);
     }
 
     protected void stopCamelContext() throws Exception {
