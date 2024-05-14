@@ -545,7 +545,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedProducerCache(context, (ProducerCache) service);
         } else if (service instanceof ExchangeFactoryManager) {
             answer = new ManagedExchangeFactoryManager(context, (ExchangeFactoryManager) service);
-        } else if (service instanceof EndpointRegistry<?> endpointRegistry) {
+        } else if (service instanceof EndpointRegistry endpointRegistry) {
             answer = new ManagedEndpointRegistry(context, endpointRegistry);
         } else if (service instanceof BeanIntrospection) {
             answer = new ManagedBeanIntrospection(context, (BeanIntrospection) service);

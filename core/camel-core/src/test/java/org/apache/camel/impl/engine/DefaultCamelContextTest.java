@@ -35,7 +35,6 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultUuidGenerator;
@@ -425,7 +424,7 @@ public class DefaultCamelContextTest extends TestSupport {
         });
         ctx.start();
 
-        EndpointRegistry<NormalizedEndpointUri> endpoints = ctx.getEndpointRegistry();
+        EndpointRegistry endpoints = ctx.getEndpointRegistry();
         Map<String, RouteService> routeServices = ctx.getRouteServices();
         Set<Endpoint> routeEndpoints = routeServices.get("rawRoute").gatherEndpoints();
 

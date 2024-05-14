@@ -29,7 +29,7 @@ import org.apache.camel.support.NormalizedUri;
  * Default implementation of {@link org.apache.camel.spi.EndpointRegistry}
  */
 public class DefaultEndpointRegistry extends AbstractDynamicRegistry<NormalizedEndpointUri, Endpoint>
-        implements EndpointRegistry<NormalizedEndpointUri> {
+        implements EndpointRegistry {
 
     public DefaultEndpointRegistry(CamelContext context) {
         super(context, CamelContextHelper.getMaximumEndpointCacheSize(context));

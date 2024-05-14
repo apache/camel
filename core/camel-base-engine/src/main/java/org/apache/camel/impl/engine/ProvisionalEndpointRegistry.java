@@ -34,7 +34,7 @@ import org.apache.camel.support.LRUCacheFactory;
  * Camel faster while {@link LRUCacheFactory} is warming up etc.
  */
 class ProvisionalEndpointRegistry extends HashMap<NormalizedEndpointUri, Endpoint>
-        implements EndpointRegistry<NormalizedEndpointUri> {
+        implements EndpointRegistry {
 
     @Override
     public void start() {

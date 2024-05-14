@@ -46,7 +46,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
         if (runtimeReg != null) {
             stats = runtimeReg.getEndpointStatistics();
         }
-        EndpointRegistry<?> reg = getCamelContext().getEndpointRegistry();
+        EndpointRegistry reg = getCamelContext().getEndpointRegistry();
         sb.append(
                 String.format("    Endpoints: %s (static: %s dynamic: %s)\n", reg.size(), reg.staticSize(), reg.dynamicSize()));
         sb.append(String.format("    Maximum Cache Size: %s\n", reg.getMaximumCacheSize()));
@@ -83,7 +83,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
         if (runtimeReg != null) {
             stats = runtimeReg.getEndpointStatistics();
         }
-        EndpointRegistry<?> reg = getCamelContext().getEndpointRegistry();
+        EndpointRegistry reg = getCamelContext().getEndpointRegistry();
         root.put("size", reg.size());
         root.put("staticSize", reg.staticSize());
         root.put("dynamicSize", reg.dynamicSize());

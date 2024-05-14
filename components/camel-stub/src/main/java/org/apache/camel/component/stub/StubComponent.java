@@ -26,7 +26,6 @@ import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
 
@@ -112,7 +111,7 @@ public class StubComponent extends SedaComponent {
         super.doInit();
 
         if (shadow) {
-            final EndpointRegistry<NormalizedEndpointUri> registry = getCamelContext().getEndpointRegistry();
+            final EndpointRegistry registry = getCamelContext().getEndpointRegistry();
             getCamelContext().getCamelContextExtension().registerEndpointCallback((uri, endpoint) -> {
                 boolean match = shadowPattern == null || EndpointHelper.matchEndpoint(getCamelContext(), uri, shadowPattern);
                 if (match) {

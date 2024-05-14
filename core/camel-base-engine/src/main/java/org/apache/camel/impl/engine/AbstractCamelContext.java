@@ -267,7 +267,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private EndpointRegistry<NormalizedEndpointUri> endpoints;
+    private EndpointRegistry endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
@@ -612,7 +612,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public EndpointRegistry<NormalizedEndpointUri> getEndpointRegistry() {
+    public EndpointRegistry getEndpointRegistry() {
         return endpoints;
     }
 
@@ -4060,7 +4060,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract RestRegistryFactory createRestRegistryFactory();
 
-    protected abstract EndpointRegistry<NormalizedEndpointUri> createEndpointRegistry(
+    protected abstract EndpointRegistry createEndpointRegistry(
             Map<NormalizedEndpointUri, Endpoint> endpoints);
 
     protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry();

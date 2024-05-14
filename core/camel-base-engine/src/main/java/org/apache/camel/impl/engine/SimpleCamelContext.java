@@ -669,7 +669,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    protected EndpointRegistry<NormalizedEndpointUri> createEndpointRegistry(Map<NormalizedEndpointUri, Endpoint> endpoints) {
+    protected EndpointRegistry createEndpointRegistry(Map<NormalizedEndpointUri, Endpoint> endpoints) {
         return new DefaultEndpointRegistry(getCamelContextReference(), endpoints);
     }
 
