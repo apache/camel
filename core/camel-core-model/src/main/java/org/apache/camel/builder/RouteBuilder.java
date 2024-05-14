@@ -77,7 +77,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private final List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private final List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     // XML and YAML DSL allows to define custom beans which we need to capture
-    private final List<BeanFactoryDefinition> beans = new ArrayList<>();
+    private final List<BeanFactoryDefinition<?>> beans = new ArrayList<>();
 
     private RestsDefinition restCollection = new RestsDefinition();
     private RestConfigurationDefinition restConfiguration;
@@ -928,7 +928,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         CamelContext camelContext = notNullCamelContext();
 
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
-        for (BeanFactoryDefinition def : beans) {
+        for (BeanFactoryDefinition<?> def : beans) {
             // add to model
             model.addCustomBean(def);
         }
@@ -944,7 +944,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return getRestCollection();
     }
 
-    public List<BeanFactoryDefinition> getBeans() {
+    public List<BeanFactoryDefinition<?>> getBeans() {
         return beans;
     }
 

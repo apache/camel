@@ -517,6 +517,7 @@ public final class IOHelper {
         doWriteText(text, file, false);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void doWriteText(String text, File file, boolean append) throws IOException {
         if (!file.exists()) {
             String path = FileUtil.onlyPath(file.getPath());
