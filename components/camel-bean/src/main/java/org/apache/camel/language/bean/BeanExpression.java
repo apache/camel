@@ -193,7 +193,7 @@ public class BeanExpression implements Expression, Predicate {
     public String toString() {
         StringBuilder sb = new StringBuilder("BeanExpression[");
         if (bean != null) {
-            sb.append(bean.toString());
+            sb.append(bean);
         } else if (beanName != null) {
             sb.append(beanName);
         } else if (type != null) {
