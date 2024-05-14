@@ -94,7 +94,9 @@ public class DebuggerJmxConnectorService extends ServiceSupport implements Camel
                 cs.stop();
                 LOG.debug("Stopped Debugger JMX Connector");
             } catch (IOException e) {
-                LOG.debug("Error occurred during stopping CamelDebugger JMX Connector: " + cs + ". This exception will be ignored.", e);
+                LOG.debug("Error occurred during stopping CamelDebugger JMX Connector: " + cs
+                          + ". This exception will be ignored.",
+                        e);
             }
             cs = null;
         }
@@ -129,7 +131,7 @@ public class DebuggerJmxConnectorService extends ServiceSupport implements Camel
             // we do not allow remote RMI access so this code is disabled
             url = new JMXServiceURL(
                     "service:jmx:rmi://" + host + ":" + connectorPort + "/jndi/rmi://" + host
-                    + ":" + registryPort + path);
+                                    + ":" + registryPort + path);
         } else {
             url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort + path);
         }
