@@ -1199,7 +1199,7 @@ Properties to use with properties placeholder
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Bean property
+A key value pair where the value is a literal value
 ]]>
       </xs:documentation>
     </xs:annotation>
