@@ -727,8 +727,7 @@ public abstract class CamelTestSupport
     protected void applyCamelPostProcessor() throws Exception {
         // use the bean post processor if the test class is not dependency
         // injected already by Spring Framework
-        boolean spring = ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.boot.test.context.SpringBootTest",
-                "org.springframework.context.annotation.ComponentScan");
+        boolean spring = ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
             PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(this,
                     getClass().getName());
