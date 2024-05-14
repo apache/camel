@@ -51,6 +51,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.impl.debugger.DebuggerJmxConnectorService;
 import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
@@ -1650,8 +1651,16 @@ public abstract class BaseMainSupport extends BaseService {
         debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
         debugger.setIncludeException(config.isIncludeException());
         debugger.setLoggingLevel(config.getLoggingLevel().name());
-        debugger.setSuspendMode(config.isWaitForAttach());
+        debugger.setSuspendMode(config.isWaitForAttach()); // this option is named wait-for-attach
         debugger.setFallbackTimeout(config.getFallbackTimeout());
+
+        // enable jmx connector if port is set
+        if (config.isJmxConnectorEnabled()) {
+            DebuggerJmxConnectorService connector = new DebuggerJmxConnectorService();
+            connector.setCreateConnector(true);
+            connector.setRegistryPort(config.getJmxConnectorPort());
+            camelContext.addService(connector);
+        }
 
         // start debugger after context is started
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
