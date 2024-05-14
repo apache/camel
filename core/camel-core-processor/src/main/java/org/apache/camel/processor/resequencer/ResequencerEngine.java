@@ -187,8 +187,8 @@ public class ResequencerEngine<E> {
         Element<E> element = new Element<>(o);
 
         // validate the exchange has no problem
-        if (!sequence.comparator().isValid(element)) {
-            throw new IllegalArgumentException("Element cannot be used in comparator: " + sequence.comparator());
+        if (!sequence.seqComparator().isValid(element)) {
+            throw new IllegalArgumentException("Element cannot be used in comparator: " + sequence.seqComparator());
         }
 
         // validate the exchange shouldn't be 'rejected' (if applicable)
@@ -275,7 +275,7 @@ public class ResequencerEngine<E> {
         if (lastDelivered == null) {
             return false;
         }
-        if (sequence.comparator().successor(element, lastDelivered)) {
+        if (sequence.seqComparator().successor(element, lastDelivered)) {
             return true;
         }
         return false;
@@ -291,7 +291,7 @@ public class ResequencerEngine<E> {
         if (lastDelivered == null) {
             return false;
         }
-        if (sequence.comparator().compare(element, lastDelivered) < 0) {
+        if (sequence.seqComparator().compare(element, lastDelivered) < 0) {
             return true;
         }
         return false;
