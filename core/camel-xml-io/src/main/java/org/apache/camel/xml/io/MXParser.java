@@ -2858,10 +2858,9 @@ public class MXParser implements XmlPullParser {
                 if (!compact) {
                     // freeSpace
                     // if at least half of buffer can be reclaimed --> worthwhile effort!!!
+                    // else less than half buffer available for compacting --> expand instead!!!
                     if (bufStart >= buf.length / 2) {
                         compact = true;
-                    } else {
-                        // less than half buffer available for compacting --> expand instead!!!
                     }
                 }
             }

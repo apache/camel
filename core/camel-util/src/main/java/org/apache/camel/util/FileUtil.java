@@ -83,6 +83,7 @@ public final class FileUtil {
         return IS_WINDOWS;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static File createTempFile(String prefix, String suffix, File parentDir) throws IOException {
         Objects.requireNonNull(parentDir);
 

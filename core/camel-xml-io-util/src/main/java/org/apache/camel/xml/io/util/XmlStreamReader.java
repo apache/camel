@@ -649,6 +649,7 @@ public class XmlStreamReader extends Reader {
 
     // returns the BOM in the stream, NULL if not present,
     // if there was BOM the in the stream it is consumed
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static String getBOMEncoding(final BufferedInputStream is) throws IOException {
         String encoding = null;
         final int[] bytes = new int[3];
