@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "property",
     "title": "Property",
-    "description": "Bean property",
+    "description": "A key value pair where the value is a literal value",
     "deprecated": false,
     "label": "configuration",
     "javaType": "org.apache.camel.model.app.BeanPropertyDefinition",
