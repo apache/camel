@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -116,7 +117,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
-    private Object[] emptyStatefulStates;
     private PooledObjectFactory<CamelInternalTask> taskFactory;
 
     public CamelInternalProcessor(CamelContext camelContext) {
@@ -142,9 +142,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
             LOG.trace("Using TaskFactory: {}", taskFactory);
-
-            // create empty array we can use for reset
-            emptyStatefulStates = new Object[statefulAdvices];
         }
 
         ServiceHelper.buildService(taskFactory, processor);
@@ -236,8 +233,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public void reset() {
-            // reset array by copying over from empty which is a very fast JVM optimized operation
-            System.arraycopy(emptyStatefulStates, 0, states, 0, statefulAdvices);
+            Arrays.fill(this.states, null);
             this.exchange = null;
             this.originalCallback = null;
         }
