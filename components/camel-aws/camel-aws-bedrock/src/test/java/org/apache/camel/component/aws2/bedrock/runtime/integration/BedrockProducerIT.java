@@ -461,6 +461,34 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeTitanPremierModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_titan_premier", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("inputText",
+                    new TextNode(
+                            "User: Generate synthetic data for daily product sales in various categories - include row number, product name, category, date of sale and price. Produce output in JSON format. Count records and ensure there are no more than 5."));
+
+            ArrayNode stopSequences = mapper.createArrayNode();
+            stopSequences.add("User:");
+            ObjectNode childNode = mapper.createObjectNode();
+            childNode.putIfAbsent("maxTokenCount", new IntNode(1024));
+            childNode.putIfAbsent("stopSequences", stopSequences);
+            childNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            childNode.putIfAbsent("topP", new DoubleNode(0.9));
+
+            rootNode.putIfAbsent("textGenerationConfig", childNode);
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -492,6 +520,11 @@ class BedrockProducerIT extends CamelTestSupport {
                 from("direct:send_titan_multimodal_embeddings")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeEmbeddingsModel&modelId="
                             + BedrockModels.TITAN_MULTIMODAL_EMBEDDINGS_G1.model)
+                        .to(result);
+
+                from("direct:send_titan_premier")
+                        .to("aws-bedrock:label?useDefaultCredentialsProvider=true&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.TITAN_TEXT_PREMIER_V1.model)
                         .to(result);
 
                 from("direct:send_jurassic2_model")
