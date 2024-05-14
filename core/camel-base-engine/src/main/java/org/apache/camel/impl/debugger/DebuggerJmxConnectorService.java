@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.debug;
+package org.apache.camel.impl.debugger;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -36,22 +36,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To make it possible to do JMX debugging via JMX remote
+ * To make it possible to do Camel debugging via JMX remote
  */
-public class JmxConnectorService extends ServiceSupport implements CamelContextAware {
+public class DebuggerJmxConnectorService extends ServiceSupport implements CamelContextAware {
 
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_REGISTRY_PORT = 1099;
     public static final int DEFAULT_CONNECTION_PORT = -1;
     public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
 
-    private static final Logger LOG = LoggerFactory.getLogger(JmxConnectorService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DebuggerJmxConnectorService.class);
 
     private CamelContext camelContext;
     private MBeanServer server;
     private JMXConnectorServer cs;
     private Registry registry;
 
+    private int registryPort = DEFAULT_REGISTRY_PORT;
     private boolean createConnector = true;
 
     @Override
@@ -72,11 +73,15 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
         this.createConnector = createConnector;
     }
 
+    public void setRegistryPort(int registryPort) {
+        this.registryPort = registryPort;
+    }
+
     @Override
     protected void doStart() throws Exception {
         server = ManagementFactory.getPlatformMBeanServer();
 
-        if (createConnector) {
+        if (createConnector && registryPort > 0) {
             createJmxConnector(DEFAULT_HOST);
         }
     }
@@ -87,9 +92,9 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
         if (cs != null) {
             try {
                 cs.stop();
-                LOG.debug("Stopped JMX Connector");
+                LOG.debug("Stopped Debugger JMX Connector");
             } catch (IOException e) {
-                LOG.debug("Error occurred during stopping JMXConnectorService: {}. This exception will be ignored.", cs);
+                LOG.debug("Error occurred during stopping CamelDebugger JMX Connector: " + cs + ". This exception will be ignored.", e);
             }
             cs = null;
         }
@@ -100,13 +105,12 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
                 UnicastRemoteObject.unexportObject(registry, true);
                 LOG.debug("Unexported JMX RMI Registry");
             } catch (NoSuchObjectException e) {
-                LOG.debug("Error occurred while unexporting JMX RMI registry. This exception will be ignored.");
+                LOG.debug("Error occurred while unexporting JMX RMI registry. This exception will be ignored.", e);
             }
         }
     }
 
     protected void createJmxConnector(String host) throws IOException {
-        int registryPort = DEFAULT_REGISTRY_PORT;
         String serviceUrlPath = DEFAULT_SERVICE_URL_PATH;
         int connectorPort = DEFAULT_CONNECTION_PORT;
 
@@ -114,7 +118,7 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
             registry = LocateRegistry.createRegistry(registryPort);
             LOG.debug("Created JMXConnector RMI registry on port {}", registryPort);
         } catch (RemoteException ex) {
-            // The registry may had been created, we could get the registry instead
+            // The registry may have been created, we could get the registry instead
         }
 
         // must start with leading slash
@@ -122,9 +126,10 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
         // Create an RMI connector and start it
         final JMXServiceURL url;
         if (connectorPort > 0) {
+            // we do not allow remote RMI access so this code is disabled
             url = new JMXServiceURL(
                     "service:jmx:rmi://" + host + ":" + connectorPort + "/jndi/rmi://" + host
-                                    + ":" + registryPort + path);
+                    + ":" + registryPort + path);
         } else {
             url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort + path);
         }
@@ -133,13 +138,13 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
 
         // use async thread for starting the JMX Connector
         // (no need to use a thread pool or enlist in JMX as this thread is terminated when the JMX connector has been started)
-        Thread thread = getCamelContext().getExecutorServiceManager().newThread("CamelJMXConnector", () -> {
+        Thread thread = getCamelContext().getExecutorServiceManager().newThread("DebuggerJMXConnector", () -> {
             try {
-                LOG.debug("Staring JMX Connector thread to listen at: {}", url);
+                LOG.debug("Staring Debugger JMX Connector thread to listen at: {}", url);
                 cs.start();
-                LOG.info("JMX Connector thread started and listening at: {}", url);
-            } catch (IOException ioe) {
-                LOG.warn("Could not start JMXConnector thread at: {}. JMX Connector not in use.", url, ioe);
+                LOG.info("Debugger JMXConnector listening at: {}", url);
+            } catch (IOException e) {
+                LOG.warn("Cannot start Debugger JMX Connector thread at: {}. JMX Connector not in use.", url, e);
             }
         });
         thread.start();

@@ -39,6 +39,10 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "includeExchangeProperties": target.setIncludeExchangeProperties(property(camelContext, boolean.class, value)); return true;
         case "includeexchangevariables":
         case "includeExchangeVariables": target.setIncludeExchangeVariables(property(camelContext, boolean.class, value)); return true;
+        case "jmxconnectorenabled":
+        case "jmxConnectorEnabled": target.setJmxConnectorEnabled(property(camelContext, boolean.class, value)); return true;
+        case "jmxconnectorport":
+        case "jmxConnectorPort": target.setJmxConnectorPort(property(camelContext, int.class, value)); return true;
         case "logginglevel":
         case "loggingLevel": target.setLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "singlestepincludestartend":
@@ -69,6 +73,10 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "includeExchangeProperties": return boolean.class;
         case "includeexchangevariables":
         case "includeExchangeVariables": return boolean.class;
+        case "jmxconnectorenabled":
+        case "jmxConnectorEnabled": return boolean.class;
+        case "jmxconnectorport":
+        case "jmxConnectorPort": return int.class;
         case "logginglevel":
         case "loggingLevel": return org.apache.camel.LoggingLevel.class;
         case "singlestepincludestartend":
@@ -100,6 +108,10 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         case "includeExchangeProperties": return target.isIncludeExchangeProperties();
         case "includeexchangevariables":
         case "includeExchangeVariables": return target.isIncludeExchangeVariables();
+        case "jmxconnectorenabled":
+        case "jmxConnectorEnabled": return target.isJmxConnectorEnabled();
+        case "jmxconnectorport":
+        case "jmxConnectorPort": return target.getJmxConnectorPort();
         case "logginglevel":
         case "loggingLevel": return target.getLoggingLevel();
         case "singlestepincludestartend":
