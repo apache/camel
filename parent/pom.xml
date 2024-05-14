@@ -3497,6 +3497,9 @@
                     <name>!quickly</name>
                 </property>
             </activation>
+            <properties>
+                <surefire.rerunFailingTestsCount>2</surefire.rerunFailingTestsCount>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -3536,7 +3539,7 @@
                             <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                             <runOrder>alphabetical</runOrder>
                             <!-- lets re-run the failed test, just to be sure -->
-                            <rerunFailingTestsCount>2</rerunFailingTestsCount>
+                            <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
                             <systemPropertyVariables>
                                 <javax.xml.accessExternalSchema>file,http,https</javax.xml.accessExternalSchema>
                                 <javax.xml.accessExternalDTD>file,http</javax.xml.accessExternalDTD>
