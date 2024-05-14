@@ -30,9 +30,33 @@ public class ProfileConfigurer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ProfileConfigurer.class);
 
-    public static void configure(CamelContext camelContext, String profile, MainConfigurationProperties config)
-            throws Exception {
+    /**
+     * Configures camel-main to run in given profile
+     *
+     * @param camelContext the camel context
+     * @param profile      the profile
+     * @param config       the main configuration
+     */
+    public static void configureMain(CamelContext camelContext, String profile, MainConfigurationProperties config) {
+        if (profile == null || profile.isBlank()) {
+            // no profile is active
+            return;
+        }
 
+        // enable backlog tracing
+        config.tracerConfig().withEnabled(true);
+
+        configureCommon(camelContext, profile, config);
+    }
+
+    /**
+     * Configures camel in general (standalone, quarkus, spring-boot etc) to run in given profile
+     *
+     * @param camelContext the camel context
+     * @param profile      the profile
+     * @param config       the core configuration
+     */
+    public static void configureCommon(CamelContext camelContext, String profile, DefaultConfigurationProperties<?> config) {
         camelContext.getCamelContextExtension().setProfile(profile);
 
         if (profile == null || profile.isBlank()) {
@@ -57,8 +81,6 @@ public class ProfileConfigurer {
             config.setShutdownLogInflightExchangesOnTimeout(false);
             config.setShutdownTimeout(10);
             config.setStartupRecorder("backlog");
-            // enable backlog tracing
-            config.tracerConfig().withEnabled(true);
         }
 
         if ("prod".equals(profile)) {

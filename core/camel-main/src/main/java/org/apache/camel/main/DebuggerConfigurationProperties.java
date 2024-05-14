@@ -230,8 +230,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to create JMX connector that allows tooling to control the Camel debugger.
-     * This is what the IDEA and VSCode tooling is using.
+     * Whether to create JMX connector that allows tooling to control the Camel debugger. This is what the IDEA and
+     * VSCode tooling is using.
      */
     public void setJmxConnectorEnabled(boolean jmxConnectorEnabled) {
         this.jmxConnectorEnabled = jmxConnectorEnabled;
@@ -362,8 +362,8 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to create JMX connector that allows tooling to control the Camel debugger.
-     * This is what the IDEA and VSCode tooling is using.
+     * Whether to create JMX connector that allows tooling to control the Camel debugger. This is what the IDEA and
+     * VSCode tooling is using.
      */
     public DebuggerConfigurationProperties withJmxConnectorEnabled(boolean jmxConnectorEnabled) {
         this.jmxConnectorEnabled = jmxConnectorEnabled;
