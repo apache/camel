@@ -24,6 +24,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
@@ -107,10 +108,14 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
 
     @Override
     protected void doStart() throws Exception {
-        if (redisConfiguration == null) {
+        if (redisConfiguration == null && this.redisTemplate == null) {
+            // create configuration if no custom template has been configured
             redisConfiguration = new RedisConfiguration();
         }
-        this.redisTemplate = (RedisTemplate<String, String>) redisConfiguration.getRedisTemplate();
+        if (this.redisTemplate == null) {
+            this.redisTemplate = (RedisTemplate<String, String>) redisConfiguration.getRedisTemplate();
+        }
+        ObjectHelper.notNull(this.redisTemplate, "redisTemplate", this);
         this.setOperations = redisTemplate.opsForSet();
         redisTemplate.getConnectionFactory().getConnection().flushDb();
     }
