@@ -44,6 +44,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     private static final int MAX_CACHE_SIZE = 1000;
 
     private Map<String, Object> cache;
+    private final Object cacheAndStoreLock = new Object();
 
     @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "" + MAX_CACHE_SIZE)
     private int cacheSize;
@@ -88,7 +89,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             if (cache.containsKey(key)) {
                 return false;
             } else {
@@ -101,7 +102,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             return cache.containsKey(key);
         }
     }
@@ -109,7 +110,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             return cache.remove(key) != null;
         }
     }
@@ -123,7 +124,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             cache.clear();
         }
     }
