@@ -23,7 +23,7 @@ public class AMQPEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(99);
+        Set<String> props = new HashSet<>(101);
         props.add("acceptMessagesWhileStopping");
         props.add("acknowledgementModeName");
         props.add("allowAdditionalHeaders");
@@ -123,6 +123,8 @@ public class AMQPEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("username");
         props.add("waitForProvisionCorrelationToBeUpdatedCounter");
         props.add("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime");
+        props.add("waitForTemporaryReplyToToBeUpdatedCounter");
+        props.add("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");

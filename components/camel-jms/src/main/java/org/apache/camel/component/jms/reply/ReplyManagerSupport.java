@@ -18,10 +18,8 @@ package org.apache.camel.component.jms.reply;
 
 import java.time.Duration;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
@@ -59,10 +57,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected ScheduledExecutorService scheduledExecutorService;
     protected ExecutorService executorService;
     protected JmsEndpoint endpoint;
-    protected Destination replyTo;
+    protected volatile Destination replyTo;
     protected AbstractMessageListenerContainer listenerContainer;
-    protected final CountDownLatch replyToLatch = new CountDownLatch(1);
-    protected final long replyToTimeout = 10000;
     protected CorrelationTimeoutMap correlation;
     protected String correlationProperty;
 
@@ -87,10 +83,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     @Override
     public void setReplyTo(Destination replyTo) {
-        log.trace("ReplyTo destination: {}", replyTo);
+        log.debug("ReplyTo destination: {}", replyTo);
         this.replyTo = replyTo;
-        // trigger latch as the reply to has been resolved and set
-        replyToLatch.countDown();
     }
 
     @Override
@@ -103,19 +97,23 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         if (replyTo != null) {
             return replyTo;
         }
-        try {
-            // the reply to destination has to be resolved using a DestinationResolver using
-            // the MessageListenerContainer which occurs asynchronously so we have to wait
-            // for that to happen before we can retrieve the reply to destination to be used
-            log.trace("Waiting for replyTo to be set");
-            boolean done = replyToLatch.await(replyToTimeout, TimeUnit.MILLISECONDS);
-            if (!done) {
-                log.warn("ReplyTo destination was not set and timeout occurred");
-            } else {
-                log.trace("Waiting for replyTo to be set done");
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        // the reply to destination has to be resolved using a DestinationResolver using
+        // the MessageListenerContainer which occurs asynchronously so we have to wait
+        // for that to happen before we can retrieve the reply to destination to be used
+        long interval = endpoint.getConfiguration().getWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime();
+        int max = endpoint.getConfiguration().getWaitForTemporaryReplyToToBeUpdatedCounter();
+        log.trace("Waiting for replyTo destination to be ready (timeout: {} millis)", interval * max);
+        ForegroundTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
+                .withMaxIterations(max)
+                .withInterval(Duration.ofMillis(interval))
+                .build())
+                .build();
+        boolean done = task.run(() -> {
+            log.trace("Waiting for replyTo to be ready: {}", replyTo != null);
+            return replyTo != null;
+        });
+        if (!done) {
+            log.warn("ReplyTo destination was not ready and timeout ({} millis) occurred", interval * max);
         }
         return replyTo;
     }

@@ -1896,6 +1896,43 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 200
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder waitForTemporaryReplyToToBeUpdatedCounter(int waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+    
+        
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+    
         /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
@@ -2211,6 +2248,8 @@ public interface AmqpComponentBuilderFactory {
             case "useMessageIDAsCorrelationID": getOrCreateConfiguration((AMQPComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "waitForTemporaryReplyToToBeUpdatedCounter": getOrCreateConfiguration((AMQPComponent) component).setWaitForTemporaryReplyToToBeUpdatedCounter((int) value); return true;
+            case "waitForTemporaryReplyToToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((AMQPComponent) component).setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime((long) value); return true;
             case "headerFilterStrategy": ((AMQPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
