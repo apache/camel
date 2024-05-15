@@ -10,6 +10,9 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Add default values to `ThrottlingExceptionRoutePolicy` route policy.
 
+The `EndpointRegistry` interface has been slightly changed to now directly extends `Map<NormalizedEndpointUri, Endpoint>` 
+instead of being a parameterized type.  This may cause some compilation failures if the code is declaring a variable for the registry.
+
 === DSL
 
 The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:
