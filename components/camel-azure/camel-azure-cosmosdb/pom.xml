@@ -58,14 +58,6 @@
             <version>${commons-io-version}</version>
         </dependency>
 
-        <!-- optional CloudEvent support -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cloudevents</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

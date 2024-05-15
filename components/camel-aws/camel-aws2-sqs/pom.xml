@@ -60,14 +60,6 @@
             <artifactId>camel-health</artifactId>
         </dependency>
 
-        <!-- optional CloudEvent support -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cloudevents</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
