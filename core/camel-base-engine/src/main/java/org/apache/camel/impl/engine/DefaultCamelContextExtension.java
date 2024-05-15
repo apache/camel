@@ -950,7 +950,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void disposeModel() {
-        camelContext.disposeModel();
     }
 
     @Override
