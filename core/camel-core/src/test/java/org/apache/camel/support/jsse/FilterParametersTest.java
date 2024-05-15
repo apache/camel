@@ -22,9 +22,11 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated("This test is regularly flaky")
 public class FilterParametersTest extends AbstractJsseParametersTest {
 
     @Test
