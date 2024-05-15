@@ -153,10 +153,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               label = "common,security")
     private String jwtAudience;
 
-    @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT."
+    @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN, CLIENT_CREDENTIALS, or JWT."
                             + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
                             + " property to eliminate any ambiguity.",
-              label = "common,security", enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
+              label = "common,security", enums = "USERNAME_PASSWORD,REFRESH_TOKEN,CLIENT_CREDENTIALS,JWT")
     private AuthenticationType authenticationType;
 
     @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
