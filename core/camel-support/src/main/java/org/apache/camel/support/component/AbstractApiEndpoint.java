@@ -74,7 +74,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     private List<ApiMethod> candidates;
 
     // cached Executor service
-    private ExecutorService executorService;
+    private volatile ExecutorService executorService;
 
     // cached property names and values
     private Set<String> endpointPropertyNames;
@@ -337,13 +337,14 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     }
 
     public final ExecutorService getExecutorService() {
-        if (this.executorService == null) {
-            // synchronize on class to avoid creating duplicate class level executors
-            synchronized (getClass()) {
-                this.executorService = getExecutorService(getClass(), getCamelContext(), getThreadProfileName());
+        if (executorService == null) {
+            synchronized (this) {
+                if (executorService == null) {
+                    executorService = getExecutorService(getClass(), getCamelContext(), getThreadProfileName());
+                }
             }
         }
-        return this.executorService;
+        return executorService;
     }
 
     /**
