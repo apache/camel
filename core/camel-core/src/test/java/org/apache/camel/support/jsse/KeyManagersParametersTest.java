@@ -27,9 +27,11 @@ import javax.net.ssl.X509KeyManager;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated("This test is regularly flaky")
 public class KeyManagersParametersTest extends AbstractJsseParametersTest {
 
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
@@ -63,7 +65,7 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         ksp.setType("{{keyStoreParameters.type}}");
         ksp.setProvider("{{keyStoreParameters.provider}}");
         ksp.setResource("{{keyStoreParameters.resource}}");
-        ksp.setPassword("{{keyStoreParamerers.password}}");
+        ksp.setPassword("{{keyStoreParameters.password}}");
 
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setCamelContext(context);
