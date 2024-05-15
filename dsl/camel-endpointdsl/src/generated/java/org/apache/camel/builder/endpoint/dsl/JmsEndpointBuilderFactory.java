@@ -2427,6 +2427,72 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointConsumerBuilder waitForTemporaryReplyToToBeUpdatedCounter(int waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+        /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointConsumerBuilder waitForTemporaryReplyToToBeUpdatedCounter(String waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointConsumerBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointConsumerBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(String waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
@@ -4815,6 +4881,72 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointProducerBuilder waitForTemporaryReplyToToBeUpdatedCounter(int waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+        /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointProducerBuilder waitForTemporaryReplyToToBeUpdatedCounter(String waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointProducerBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointProducerBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(String waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
@@ -6371,6 +6503,72 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointBuilder waitForTemporaryReplyToToBeUpdatedCounter(int waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+        /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointBuilder waitForTemporaryReplyToToBeUpdatedCounter(String waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(String waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**

@@ -211,6 +211,10 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "waitForProvisionCorrelationToBeUpdatedCounter": target.getConfiguration().setWaitForProvisionCorrelationToBeUpdatedCounter(property(camelContext, int.class, value)); return true;
         case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
         case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": target.getConfiguration().setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "waitfortemporaryreplytotobeupdatedcounter":
+        case "waitForTemporaryReplyToToBeUpdatedCounter": target.getConfiguration().setWaitForTemporaryReplyToToBeUpdatedCounter(property(camelContext, int.class, value)); return true;
+        case "waitfortemporaryreplytotobeupdatedthreadsleepingtime":
+        case "waitForTemporaryReplyToToBeUpdatedThreadSleepingTime": target.getConfiguration().setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }
@@ -406,6 +410,10 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "waitForProvisionCorrelationToBeUpdatedCounter": return int.class;
         case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
         case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": return long.class;
+        case "waitfortemporaryreplytotobeupdatedcounter":
+        case "waitForTemporaryReplyToToBeUpdatedCounter": return int.class;
+        case "waitfortemporaryreplytotobeupdatedthreadsleepingtime":
+        case "waitForTemporaryReplyToToBeUpdatedThreadSleepingTime": return long.class;
         default: return null;
         }
     }
@@ -602,6 +610,10 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "waitForProvisionCorrelationToBeUpdatedCounter": return target.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedCounter();
         case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
         case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": return target.getConfiguration().getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+        case "waitfortemporaryreplytotobeupdatedcounter":
+        case "waitForTemporaryReplyToToBeUpdatedCounter": return target.getConfiguration().getWaitForTemporaryReplyToToBeUpdatedCounter();
+        case "waitfortemporaryreplytotobeupdatedthreadsleepingtime":
+        case "waitForTemporaryReplyToToBeUpdatedThreadSleepingTime": return target.getConfiguration().getWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime();
         default: return null;
         }
     }
