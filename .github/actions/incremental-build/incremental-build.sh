@@ -37,11 +37,12 @@ function findProjectRoot () {
 function hasLabel() {
     local issueNumber=${1}
     local label="incremental-${2}"
+    local repository=${3}
     curl -s \
       -H "Accept: application/vnd.github+json" \
       -H "Authorization: Bearer ${GITHUB_TOKEN}"\
       -H "X-GitHub-Api-Version: 2022-11-28" \
-      "https://api.github.com/repos/apache/camel/issues/${issueNumber}/labels" | jq -r '.[].name' | grep -c "$label"
+      "https://api.github.com/repos/${repository}/issues/${issueNumber}/labels" | jq -r '.[].name' | grep -c "$label"
 }
 
 function main() {
@@ -50,10 +51,11 @@ function main() {
   local log="incremental-${mode}.log"
   local prId=${3}
   local ret=0
+  local repository=${4}
 
   echo "Searching for affected projects"
   local projects
-  projects=$(curl -s "https://patch-diff.githubusercontent.com/raw/apache/camel/pull/${prId}.diff" | sed -n -e '/^diff --git a/p' | awk '{print $3}' | cut -b 3- | sed 's|\(.*\)/.*|\1|' | uniq | sort)
+  projects=$(curl -s "https://patch-diff.githubusercontent.com/raw/${repository}/pull/${prId}.diff" | sed -n -e '/^diff --git a/p' | awk '{print $3}' | cut -b 3- | sed 's|\(.*\)/.*|\1|' | uniq | sort)
   local pl=""
   local lastProjectRoot=""
   local buildAll=false
@@ -87,7 +89,7 @@ function main() {
 
   if [[ ${mode} = "build" ]] ; then
     local mustBuildAll
-    mustBuildAll=$(hasLabel ${prId} "build-all")
+    mustBuildAll=$(hasLabel ${prId} "build-all" ${repository})
     if [[ ${mustBuildAll} = "1" ]] ; then
       echo "The build-all label has been detected thus all projects must be built"
       buildAll=true
@@ -98,7 +100,7 @@ function main() {
       ret=$?
     else
       local buildDependents
-      buildDependents=$(hasLabel ${prId} "build-dependents")
+      buildDependents=$(hasLabel ${prId} "build-dependents" ${repository})
       local totalTestableProjects
       if [[ ${buildDependents} = "1" ]] ; then
         echo "The build-dependents label has been detected thus the projects that depend on the affected projects will be built"
@@ -119,7 +121,7 @@ function main() {
     [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
   else
     local mustSkipTests
-    mustSkipTests=$(hasLabel ${prId} "skip-tests")
+    mustSkipTests=$(hasLabel ${prId} "skip-tests" ${repository})
     if [[ ${mustSkipTests} = "1" ]] ; then
       echo "The skip-tests label has been detected thus no test will be launched"
       buildAll=true
@@ -127,7 +129,7 @@ function main() {
       echo "Cannot launch the tests of all projects, so no test will be launched"
     else
       local testDependents
-      testDependents=$(hasLabel ${prId} "test-dependents")
+      testDependents=$(hasLabel ${prId} "test-dependents" ${repository})
       local totalTestableProjects
       if [[ ${testDependents} = "1" ]] ; then
         echo "The test-dependents label has been detected thus the projects that depend on affected projects will be tested"

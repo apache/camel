@@ -31,16 +31,20 @@ inputs:
     description: 'Flag indicating whether the installation of mvnd should be skipped'
     required: false
     default: 'false'
+  github-repo:
+    description: 'The GitHub repository name (example, apache/camel)'
+    required: false
+    default: 'apache/camel'
 runs:
   using: "composite"
   steps:
     - id: install-mvnd
-      uses: ./.github/actions/install-mvnd
+      uses: apache/camel/.github/actions/install-mvnd
       with:
         dry-run: ${{ inputs.skip-mvnd-install }}
     - name: maven build
       shell: bash
-      run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd ${{ inputs.mode }} ${{ inputs.pr-id }}
+      run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd ${{ inputs.mode }} ${{ inputs.pr-id }} ${{ inputs.github-repo }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
     - name: archive logs
