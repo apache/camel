@@ -152,6 +152,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         paho.setBody(mqttMessage.getPayload());
         paho.setHeader(PahoMqtt5Constants.MQTT_TOPIC, topic);
         paho.setHeader(PahoMqtt5Constants.MQTT_QOS, mqttMessage.getQos());
+        paho.setHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES, mqttMessage.getProperties());
 
         exchange.setIn(paho);
         return exchange;
