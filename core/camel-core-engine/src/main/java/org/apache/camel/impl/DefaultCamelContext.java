@@ -105,7 +105,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
-    private Model model = new DefaultModel(this);
+    private final Model model = new DefaultModel(this);
 
     /**
      * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -229,12 +229,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             resolver.addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
         }
         return resolver;
-    }
-
-    @Override
-    public void disposeModel() {
-        LOG.debug("Disposing Model on CamelContext");
-        model = null;
     }
 
     @Override

@@ -4085,6 +4085,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     public abstract Processor createErrorHandler(Route route, Processor processor) throws Exception;
 
+    @Deprecated
     public abstract void disposeModel();
 
     public abstract String getTestExcludeRoutes();
