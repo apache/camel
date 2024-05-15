@@ -28,7 +28,7 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Router;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
-import org.apache.camel.component.cloudevents.CloudEvent;
+import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.support.CamelContextHelper;
 

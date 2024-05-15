@@ -16,67 +16,54 @@
  */
 package org.apache.camel.component.aws2.s3.transform;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
-import org.apache.camel.component.cloudevents.CloudEvent;
-import org.apache.camel.component.cloudevents.CloudEvents;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.TransformerKey;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AWS2S3TransformCloudEventsTest extends CamelTestSupport {
-    protected MockEndpoint resultEndpoint;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class AWS2S3TransformCloudEventsTest {
+
+    private final DefaultCamelContext camelContext = new DefaultCamelContext();
+
+    private final AWS2S3CloudEventDataTypeTransformer transformer = new AWS2S3CloudEventDataTypeTransformer();
 
     @Test
-    public void testCloudEventDataTypeTransformation() throws Exception {
-        resultEndpoint.expectedBodiesReceived("Hello World!");
+    void shouldMapToCloudEvent() {
+        Exchange exchange = new DefaultExchange(camelContext);
 
-        Exchange exchange = template.request("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel");
-                exchange.getMessage().setHeader(AWS2S3Constants.KEY, "camel.txt");
-                exchange.getMessage().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
-                exchange.getMessage().setBody("Hello");
-            }
-        });
+        exchange.getMessage().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel");
+        exchange.getMessage().setHeader(AWS2S3Constants.KEY, "camel.txt");
+        exchange.getMessage().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
+        exchange.getMessage().setBody("Hello");
 
-        resultEndpoint.assertIsSatisfied();
-        CloudEvent cloudEvent = CloudEvents.v1_0;
-        Message received = exchange.getMessage();
-        Assertions.assertEquals("org.apache.camel.event.aws.s3.getObject",
-                received.getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).http()));
-        Assertions.assertEquals("aws.s3.bucket.mycamel",
-                received.getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE).http()));
-        Assertions.assertEquals(cloudEvent.version(),
-                received.getHeader(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION).http()));
-        Assertions.assertEquals("Hello World!", received.getBody());
+        exchange.getMessage().setBody(new ByteArrayInputStream("Test1".getBytes(StandardCharsets.UTF_8)));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertTrue(exchange.getMessage().hasHeaders());
+        Assertions.assertTrue(exchange.getMessage().getHeaders().containsKey(AWS2S3Constants.BUCKET_NAME));
+        assertEquals("org.apache.camel.event.aws.s3.getObject",
+                exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
+        assertEquals("camel.txt", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+        assertEquals("aws.s3.bucket.mycamel", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
-        resultEndpoint = getMockEndpoint("mock:result");
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start")
-                        .inputType("aws2-s3:application-cloudevents")
-                        .setBody(body().append(" World!"))
-                        .outputType("http:application-cloudevents")
-                        .to("mock:result");
-            }
-        };
+    @Test
+    public void shouldLookupDataTypeTransformer() throws Exception {
+        Transformer transformer = camelContext.getTransformerRegistry()
+                .resolveTransformer(new TransformerKey("aws2-s3:application-cloudevents"));
+        Assertions.assertNotNull(transformer);
+        Assertions.assertEquals(AWS2S3CloudEventDataTypeTransformer.class, transformer.getClass());
     }
 }

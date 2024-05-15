@@ -17,6 +17,8 @@
 package org.apache.camel.component.cloudevents;
 
 import org.apache.camel.Converter;
+import org.apache.camel.cloudevents.CloudEvent;
+import org.apache.camel.cloudevents.CloudEvents;
 
 @Converter(generateLoader = true)
 public final class CloudEventTypeConverter {

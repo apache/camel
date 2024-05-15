@@ -21,7 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cloudevents.CloudEvent;
+import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.TransformerKey;
