@@ -56,6 +56,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.test.junit5.util.ExtensionHelper;
 import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.apache.camel.util.StopWatch;
@@ -768,16 +769,7 @@ public abstract class CamelTestSupport
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        Registry registry = createCamelRegistry();
-
-        CamelContext retContext;
-        if (registry != null) {
-            retContext = new DefaultCamelContext(registry);
-        } else {
-            retContext = new DefaultCamelContext();
-        }
-
-        return retContext;
+        return CamelContextTestHelper.createCamelContext(createCamelRegistry());
     }
 
     /**
