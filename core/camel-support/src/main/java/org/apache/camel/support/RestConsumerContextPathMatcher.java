@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
  */
 public final class RestConsumerContextPathMatcher {
 
+    private static final Pattern CONSUMER_PATH_PARAMETER_PATTERN = Pattern.compile("([^{]*)(\\{.*?\\})([^{]*)");
     private static final Map<String, Pattern> PATH_PATTERN = new ConcurrentHashMap<>();
 
     private RestConsumerContextPathMatcher() {
@@ -252,9 +253,14 @@ public final class RestConsumerContextPathMatcher {
      * @param consumerPath a consumer path
      */
     public static void register(String consumerPath) {
+        // Remove hyphens and underscores from parameter names
+        // as these are not supported in regex named group names
+        String regex = prepareConsumerPathRegex(consumerPath);
+
         // Convert URI template to a regex pattern
-        String regex = consumerPath
+        regex = regex
                 .replace("/", "\\/")
+                .replace("-", "\\-")
                 .replace("{", "(?<")
                 .replace("}", ">[^\\/]+)");
 
@@ -407,6 +413,26 @@ public final class RestConsumerContextPathMatcher {
         Matcher matcher = pattern.matcher(requestPath);
 
         return matcher.matches();
+    }
+
+    /**
+     * Removes any hyphens or underscores from parameter names to create valid java regex named group names
+     *
+     * @param  consumerPath
+     * @return
+     */
+    private static String prepareConsumerPathRegex(String consumerPath) {
+        Matcher m = CONSUMER_PATH_PARAMETER_PATTERN.matcher(consumerPath);
+        StringBuilder regexBuilder = new StringBuilder();
+        while (m.find()) {
+            m.appendReplacement(regexBuilder, m.group(1) + m.group(2).replaceAll("[\\_\\-]", "") + m.group(3));
+        }
+        // No matches so return the original path
+        if (regexBuilder.isEmpty()) {
+            return consumerPath;
+        } else {
+            return regexBuilder.toString();
+        }
     }
 
 }

@@ -18,9 +18,14 @@ package org.apache.camel.support;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -79,6 +84,32 @@ public class RestConsumerContextPathMatcherTest {
         RestConsumerContextPathMatcher.ConsumerPath<?> path = RestConsumerContextPathMatcher.matchBestPath("GET",
                 "/camel/a/b/3", consumerPaths);
         assertEquals(path.getConsumerPath(), "/camel/a/b/{c}");
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    public void testRestConsumerContextPathMatcherTemplateParseSuccess(String consumerPath, String requestPath) {
+
+        assertDoesNotThrow(() -> RestConsumerContextPathMatcher.register(consumerPath));
+
+        List<RestConsumerContextPathMatcher.ConsumerPath<MockConsumerPath>> consumerPaths = new ArrayList<>();
+        consumerPaths.add(new MockConsumerPath("GET", consumerPath));
+
+        RestConsumerContextPathMatcher.ConsumerPath<?> path = RestConsumerContextPathMatcher.matchBestPath("GET",
+                requestPath, consumerPaths);
+
+        assertEquals(consumerPath, path.getConsumerPath());
+    }
+
+    private static Stream<Arguments> testRestConsumerContextPathMatcherTemplateParseSuccess() {
+        return Stream.of(
+                Arguments.of("/camel/{myparamname1}", "/camel/param"),
+                Arguments.of("/camel/{myParamName1}", "/camel/param"),
+                Arguments.of("/camel/{my_param_name1}", "/camel/param"),
+                Arguments.of("/camel/{my-param-name1}", "/camel/param"),
+                Arguments.of("/camel/{my-param_name1}", "/camel/param"),
+                Arguments.of("/camel/{my-param_name1}/path-ab/{my-param_name2}", "/camel/param1/path-ab/param2"),
+                Arguments.of("/camel/{my-param_name1}/path-ab/{my-param_name2}/*", "/camel/param1/path-ab/param2/something"));
     }
 
     @Test
