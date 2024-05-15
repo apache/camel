@@ -350,10 +350,7 @@ public abstract class CamelTestSupport
             createCamelContextPerClass();
         } else {
             // test is per test so always setup
-            setupResources();
-            doPreSetup();
-            doSetUp();
-            doPostSetup();
+            initialize();
         }
 
         // only start timing after all the setup
@@ -370,16 +367,20 @@ public abstract class CamelTestSupport
         if (v.getAndIncrement() == 0) {
             LOG.debug("Setup CamelContext before running first test");
             // test is per class, so only setup once (the first time)
-            setupResources();
-            doPreSetup();
-            doSetUp();
-            doPostSetup();
+            initialize();
         } else {
             LOG.debug("Reset between test methods");
             // and in between tests we must do IoC and reset mocks
             postProcessTest();
             MockEndpoint.resetMocks(context);
         }
+    }
+
+    private void initialize() throws Exception {
+        setupResources();
+        doPreSetup();
+        doSetUp();
+        doPostSetup();
     }
 
     /**
