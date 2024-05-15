@@ -237,7 +237,57 @@ public class ValidateMojo extends AbstractMojo {
             return;
         }
 
-        // Download extra sources only if artifacts sources are defined and the current project is not a parent project
+        downloadExtraSources();
+
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        // add activemq as known component
+        catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
+        // enable did you mean
+        catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
+        // enable loading other catalog versions dynamically
+        catalog.setVersionManager(
+                new MavenVersionManager(repositorySystem, repositorySystemSession, session.getSettings()));
+        // use custom class loading
+        catalog.getJSonSchemaResolver().setClassLoader(ValidateMojo.class.getClassLoader());
+        // enable caching
+        catalog.enableCache();
+
+        String detectedVersion = findCamelVersion(project);
+        if (detectedVersion != null) {
+            getLog().info("Detected Camel version used in project: " + detectedVersion);
+        }
+
+        downloadCamelCatalogVersion(catalog);
+
+        if (catalog.getLoadedVersion() != null) {
+            getLog().info("Validating using downloaded Camel version: " + catalog.getLoadedVersion());
+        } else {
+            getLog().info("Validating using Camel version: " + catalog.getCatalogVersion());
+        }
+
+        doExecuteRoutes(catalog);
+        doExecuteConfigurationFiles(catalog);
+    }
+
+    private void downloadCamelCatalogVersion(CamelCatalog catalog) {
+        if (downloadVersion) {
+            String catalogVersion = catalog.getCatalogVersion();
+            String version = findCamelVersion(project);
+            if (version != null && !version.equals(catalogVersion)) {
+                // the project uses a different Camel version so attempt to load it
+                getLog().info("Downloading Camel version: " + version);
+                boolean loaded = catalog.loadVersion(version);
+                if (!loaded) {
+                    getLog().warn("Error downloading Camel version: " + version);
+                }
+            }
+        }
+    }
+
+    /**
+     * Download extra sources only if artifacts sources are defined and the current project is not a parent project
+     */
+    private void downloadExtraSources() throws MojoExecutionException {
         if (!"pom".equals(project.getPackaging()) && sourcesArtifacts != null && sourcesArtifacts.length > 0) {
             // setup MavenDownloader, it will be used to download and locate artifacts declared via sourcesArtifacts
 
@@ -262,46 +312,6 @@ public class ValidateMojo extends AbstractMojo {
                 getLog().warn(e.getMessage());
             }
         }
-
-        CamelCatalog catalog = new DefaultCamelCatalog();
-        // add activemq as known component
-        catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
-        // enable did you mean
-        catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
-        // enable loading other catalog versions dynamically
-        catalog.setVersionManager(
-                new MavenVersionManager(repositorySystem, repositorySystemSession, session.getSettings()));
-        // use custom class loading
-        catalog.getJSonSchemaResolver().setClassLoader(ValidateMojo.class.getClassLoader());
-        // enable caching
-        catalog.enableCache();
-
-        String detectedVersion = findCamelVersion(project);
-        if (detectedVersion != null) {
-            getLog().info("Detected Camel version used in project: " + detectedVersion);
-        }
-
-        if (downloadVersion) {
-            String catalogVersion = catalog.getCatalogVersion();
-            String version = findCamelVersion(project);
-            if (version != null && !version.equals(catalogVersion)) {
-                // the project uses a different Camel version so attempt to load it
-                getLog().info("Downloading Camel version: " + version);
-                boolean loaded = catalog.loadVersion(version);
-                if (!loaded) {
-                    getLog().warn("Error downloading Camel version: " + version);
-                }
-            }
-        }
-
-        if (catalog.getLoadedVersion() != null) {
-            getLog().info("Validating using downloaded Camel version: " + catalog.getLoadedVersion());
-        } else {
-            getLog().info("Validating using Camel version: " + catalog.getCatalogVersion());
-        }
-
-        doExecuteRoutes(catalog);
-        doExecuteConfigurationFiles(catalog);
     }
 
     private void downloadArtifacts(MavenDownloaderImpl downloader, List<String> artifacts)
@@ -409,62 +419,38 @@ public class ValidateMojo extends AbstractMojo {
     }
 
     private void validateResults(List<ConfigurationPropertiesValidationResult> results) throws MojoExecutionException {
-        int configurationErrors = 0;
-        int unknownComponents = 0;
-        int incapableErrors = 0;
-        int deprecatedOptions = 0;
+        ValidationComputedResult validationComputedResult = new ValidationComputedResult();
+
         for (ConfigurationPropertiesValidationResult result : results) {
             int deprecated = countDeprecated(result.getDeprecated());
-            deprecatedOptions += deprecated;
+            validationComputedResult.incrementDeprecatedOptionsBy(deprecated);
 
-            boolean ok = result.isSuccess() && !result.hasWarnings();
-            if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
-                // if we failed due unknown component then be okay if we should ignore that
-                unknownComponents++;
-                ok = true;
-            }
-            if (!ok && ignoreIncapable && result.getIncapable() != null) {
-                // if we failed due incapable then be okay if we should ignore that
-                incapableErrors++;
-                ok = true;
-            }
-            if (ok && !ignoreDeprecated && deprecated > 0) {
-                ok = false;
-            }
-
-            if (!ok) {
-                if (result.getUnknownComponent() != null) {
-                    unknownComponents++;
-                } else if (result.getIncapable() != null) {
-                    incapableErrors++;
-                } else {
-                    configurationErrors++;
-                }
-
-                final String validationFailed = buildValidationFailedSummary(result);
-
-                getLog().warn(validationFailed);
-            } else if (showAll) {
-                final String validationPassed = buildValidationPassedSummary(result);
-
-                getLog().info(validationPassed);
-            }
+            boolean validationPassed = checkValidationPassed(validationComputedResult, result, deprecated);
+            handleValidationResult(validationComputedResult, result, validationPassed);
         }
         String configurationSummary;
-        if (configurationErrors == 0) {
-            int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
+        if (validationComputedResult.getConfigurationErrors() == 0) {
+            int ok = results.size() - validationComputedResult.getConfigurationErrors()
+                     - validationComputedResult.getIncapableErrors() -
+                     validationComputedResult.getUnknownComponents();
             configurationSummary = String.format(
                     "Configuration validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
-                    ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
+                    ok, validationComputedResult.getConfigurationErrors(), validationComputedResult.getIncapableErrors(),
+                    validationComputedResult.getUnknownComponents(),
+                    validationComputedResult.getDeprecatedOptions());
         } else {
-            int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
+            int ok = results.size() - validationComputedResult.getConfigurationErrors()
+                     - validationComputedResult.getIncapableErrors() -
+                     validationComputedResult.getUnknownComponents();
             configurationSummary = String.format(
                     "Configuration validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
-                    ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
+                    ok, validationComputedResult.getConfigurationErrors(), validationComputedResult.getIncapableErrors(),
+                    validationComputedResult.getUnknownComponents(),
+                    validationComputedResult.getDeprecatedOptions());
         }
-        logErrorSummary(configurationErrors, configurationSummary);
+        logErrorSummary(validationComputedResult.getConfigurationErrors(), configurationSummary);
 
-        if (failOnError && (configurationErrors > 0)) {
+        if (failOnError && (validationComputedResult.getConfigurationErrors() > 0)) {
             throw new MojoExecutionException(configurationSummary + "\n");
         }
     }
@@ -591,53 +577,23 @@ public class ValidateMojo extends AbstractMojo {
             CamelCatalog catalog, List<CamelEndpointDetails> endpoints, List<CamelSimpleExpressionDetails> simpleExpressions,
             List<CamelRouteDetails> routeIds)
             throws MojoExecutionException {
-        int endpointErrors = 0;
-        int unknownComponents = 0;
-        int incapableErrors = 0;
-        int deprecatedOptions = 0;
+        ValidationComputedResult validationComputedResult = new ValidationComputedResult();
+
         for (CamelEndpointDetails detail : endpoints) {
             getLog().debug("Validating endpoint: " + detail.getEndpointUri());
             EndpointValidationResult result
                     = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
-            int deprecated = countDeprecated(result.getDeprecated());
-            deprecatedOptions += deprecated;
+            int deprecatedCount = countDeprecated(result.getDeprecated());
+            validationComputedResult.incrementDeprecatedOptionsBy(deprecatedCount);
 
-            boolean ok = result.isSuccess() && !result.hasWarnings();
-            if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
-                // if we failed due unknown component then be okay if we should ignore that
-                unknownComponents++;
-                ok = true;
-            }
-            if (!ok && ignoreIncapable && result.getIncapable() != null) {
-                // if we failed due incapable then be okay if we should ignore that
-                incapableErrors++;
-                ok = true;
-            }
-            if (ok && !ignoreDeprecated && deprecated > 0) {
-                ok = false;
-            }
-
-            if (!ok) {
-                if (result.getUnknownComponent() != null) {
-                    unknownComponents++;
-                } else if (result.getIncapable() != null) {
-                    incapableErrors++;
-                } else {
-                    endpointErrors++;
-                }
-
-                String msg = buildValidationErrorMessage(detail, result);
-
-                getLog().warn(msg);
-            } else if (showAll) {
-                String msg = buildValidationPassedMessage(detail, result);
-
-                getLog().info(msg);
-            }
+            boolean validationPassed = checkValidationPassed(validationComputedResult, result, deprecatedCount);
+            handleValidationResult(validationComputedResult, detail, result, validationPassed);
         }
         String endpointSummary
-                = buildEndpointSummaryMessage(endpoints, endpointErrors, unknownComponents, incapableErrors, deprecatedOptions);
-        logErrorSummary(endpointErrors, endpointSummary);
+                = buildEndpointSummaryMessage(endpoints, validationComputedResult.getEndpointErrors(),
+                        validationComputedResult.getUnknownComponents(), validationComputedResult.getIncapableErrors(),
+                        validationComputedResult.getDeprecatedOptions());
+        logErrorSummary(validationComputedResult.getEndpointErrors(), endpointSummary);
 
         // simple
         int simpleErrors = validateSimple(catalog, simpleExpressions);
@@ -662,10 +618,90 @@ public class ValidateMojo extends AbstractMojo {
             routeIdSummary = handleDuplicateRouteId(duplicateRouteIdErrors, routeIds);
         }
 
-        if (failOnError && hasErrors(endpointErrors, simpleErrors, duplicateRouteIdErrors) || sedaDirectErrors > 0) {
+        if (failOnError && hasErrors(validationComputedResult.getEndpointErrors(), simpleErrors, duplicateRouteIdErrors)
+                || sedaDirectErrors > 0) {
             throw new MojoExecutionException(
                     endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
         }
+    }
+
+    private void handleValidationResult(
+            ValidationComputedResult validationComputedResult, CamelEndpointDetails detail, EndpointValidationResult result,
+            boolean validationPassed) {
+        if (!validationPassed) {
+            if (result.getUnknownComponent() != null) {
+                validationComputedResult.incrementUnknownComponents();
+            } else if (result.getIncapable() != null) {
+                validationComputedResult.incrementIncapableErrors();
+            } else {
+                validationComputedResult.incrementEndpointErrors();
+            }
+
+            String msg = buildValidationErrorMessage(detail, result);
+
+            getLog().warn(msg);
+        } else if (showAll) {
+            String msg = buildValidationPassedMessage(detail, result);
+
+            getLog().info(msg);
+        }
+    }
+
+    private void handleValidationResult(
+            ValidationComputedResult validationComputedResult, ConfigurationPropertiesValidationResult result,
+            boolean validationPassed) {
+        if (!validationPassed) {
+            if (result.getUnknownComponent() != null) {
+                validationComputedResult.incrementUnknownComponents();
+            } else if (result.getIncapable() != null) {
+                validationComputedResult.incrementIncapableErrors();
+            } else {
+                validationComputedResult.incrementConfigurationErrors();
+            }
+
+            final String validationFailed = buildValidationFailedSummary(result);
+
+            getLog().warn(validationFailed);
+        } else if (showAll) {
+            final String validationPassedSummary = buildValidationPassedSummary(result);
+
+            getLog().info(validationPassedSummary);
+        }
+    }
+
+    private boolean checkValidationPassed(
+            ValidationComputedResult validationComputedResult, EndpointValidationResult result, int deprecatedCount) {
+        boolean validationPassed = checkValidationPassed(result.isSuccess(), result.hasWarnings(), result.getUnknownComponent(),
+                validationComputedResult, result.getIncapable(), deprecatedCount);
+        return validationPassed;
+    }
+
+    private boolean checkValidationPassed(
+            ValidationComputedResult validationComputedResult, ConfigurationPropertiesValidationResult result,
+            int deprecatedCount) {
+        boolean validationPassed = checkValidationPassed(result.isSuccess(), result.hasWarnings(), result.getUnknownComponent(),
+                validationComputedResult, result.getIncapable(), deprecatedCount);
+        return validationPassed;
+    }
+
+    private boolean checkValidationPassed(
+            boolean success, boolean hasWarning, String unknownComponent, ValidationComputedResult validationComputedResult,
+            String incapable, int deprecatedCount) {
+        boolean validationPassed = success && !hasWarning;
+        if (!validationPassed && ignoreUnknownComponent && unknownComponent != null) {
+            // if we failed due unknown component then be okay if we should ignore that
+            validationComputedResult.incrementUnknownComponents();
+            validationPassed = true;
+        }
+        if (!validationPassed && ignoreIncapable && incapable != null) {
+            // if we failed due incapable then be okay if we should ignore that
+            validationComputedResult.incrementIncapableErrors();
+            validationPassed = true;
+        }
+        if (validationPassed && !ignoreDeprecated && deprecatedCount > 0) {
+            validationPassed = false;
+        }
+        return validationPassed;
     }
 
     private static String getSedaDirectSummary(int sedaDirectErrors, long sedaDirectEndpoints) {
@@ -1081,6 +1117,54 @@ public class ValidateMojo extends AbstractMojo {
             return className.substring(dot + 1);
         } else {
             return className;
+        }
+    }
+
+    private class ValidationComputedResult {
+        private int endpointErrors = 0;
+        private int configurationErrors = 0;
+        private int unknownComponents = 0;
+        private int incapableErrors = 0;
+        private int deprecatedOptions = 0;
+
+        public void incrementEndpointErrors() {
+            endpointErrors++;
+        }
+
+        public void incrementConfigurationErrors() {
+            configurationErrors++;
+        }
+
+        public void incrementUnknownComponents() {
+            unknownComponents++;
+        }
+
+        public void incrementIncapableErrors() {
+            incapableErrors++;
+        }
+
+        public void incrementDeprecatedOptionsBy(int extra) {
+            deprecatedOptions += extra;
+        }
+
+        public int getEndpointErrors() {
+            return endpointErrors;
+        }
+
+        public int getConfigurationErrors() {
+            return configurationErrors;
+        }
+
+        public int getUnknownComponents() {
+            return unknownComponents;
+        }
+
+        public int getIncapableErrors() {
+            return incapableErrors;
+        }
+
+        public int getDeprecatedOptions() {
+            return deprecatedOptions;
         }
     }
 }
