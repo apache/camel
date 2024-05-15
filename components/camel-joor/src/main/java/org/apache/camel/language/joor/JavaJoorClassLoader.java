@@ -76,6 +76,18 @@ public class JavaJoorClassLoader extends ClassLoader {
         }
     }
 
+    public void removeClass(String name) {
+        if (name != null) {
+            classes.remove(name);
+            if (compileDirectory != null) {
+                String fname = name.replace('.', '/');
+                fname = compileDirectory + "/" + fname + ".class";
+                File target = new File(fname);
+                FileUtil.deleteFile(target);
+            }
+        }
+    }
+
     private static void saveByteCodeToDisk(String outputDirectory, String name, byte[] byteCode) {
         // write to disk (can be triggered multiple times so only write once)
         String fname = name.replace('.', '/');
