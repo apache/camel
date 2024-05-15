@@ -395,7 +395,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Gets the {@link org.apache.camel.spi.EndpointRegistry}
      */
-    EndpointRegistry<? extends ValueHolder<String>> getEndpointRegistry();
+    EndpointRegistry getEndpointRegistry();
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type. If the name has a singleton endpoint

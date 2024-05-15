@@ -133,6 +133,7 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
@@ -266,7 +267,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
     private Map<String, String> globalOptions = new HashMap<>();
-    private EndpointRegistry<NormalizedUri> endpoints;
+    private EndpointRegistry endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
@@ -611,7 +612,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public EndpointRegistry<NormalizedUri> getEndpointRegistry() {
+    public EndpointRegistry getEndpointRegistry() {
         return endpoints;
     }
 
@@ -648,8 +649,8 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void removeEndpoint(Endpoint endpoint) {
         Endpoint oldEndpoint = null;
-        NormalizedUri oldKey = null;
-        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+        NormalizedEndpointUri oldKey = null;
+        for (Map.Entry<NormalizedEndpointUri, Endpoint> entry : endpoints.entrySet()) {
             if (endpoint == entry.getValue()) {
                 oldKey = entry.getKey();
                 oldEndpoint = endpoint;
@@ -701,8 +702,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     private void tryMatchingEndpoints(String uri, Collection<Endpoint> answer) {
         Endpoint oldEndpoint;
-        List<NormalizedUri> toRemove = new ArrayList<>();
-        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
+        List<NormalizedEndpointUri> toRemove = new ArrayList<>();
+        for (Map.Entry<NormalizedEndpointUri, Endpoint> entry : endpoints.entrySet()) {
             oldEndpoint = entry.getValue();
             if (EndpointHelper.matchEndpoint(this, oldEndpoint.getEndpointUri(), uri)) {
                 try {
@@ -714,7 +715,7 @@ public abstract class AbstractCamelContext extends BaseService
                 toRemove.add(entry.getKey());
             }
         }
-        for (NormalizedUri key : toRemove) {
+        for (NormalizedEndpointUri key : toRemove) {
             endpoints.remove(key);
         }
     }
@@ -1389,14 +1390,11 @@ public abstract class AbstractCamelContext extends BaseService
 
     private String doLoadResource(String resourceName, String path, String resourceType) throws IOException {
         final ClassResolver resolver = getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        LOG.debug("Loading {} JSON Schema for: {} using class resolver: {} -> {}", resourceType, resourceName, resolver,
-                inputStream);
-        if (inputStream != null) {
-            try {
+        try (InputStream inputStream = resolver.loadResourceAsStream(path)) {
+            LOG.debug("Loading {} JSON Schema for: {} using class resolver: {} -> {}", resourceType, resourceName, resolver,
+                    inputStream);
+            if (inputStream != null) {
                 return IOHelper.loadText(inputStream);
-            } finally {
-                IOHelper.close(inputStream);
             }
         }
         return null;
@@ -1495,11 +1493,7 @@ public abstract class AbstractCamelContext extends BaseService
     public String getPojoBeanParameterJsonSchema(String beanName) throws IOException {
         String name = sanitizeFileName(beanName) + ".json";
         String path = "META-INF/services/org/apache/camel/bean/" + name;
-        String inputStream = doLoadResource(beanName, path, "bean");
-        if (inputStream != null) {
-            return inputStream;
-        }
-        return null;
+        return doLoadResource(beanName, path, "bean");
     }
 
     // Helper methods
@@ -4066,7 +4060,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract RestRegistryFactory createRestRegistryFactory();
 
-    protected abstract EndpointRegistry<NormalizedUri> createEndpointRegistry(Map<NormalizedUri, Endpoint> endpoints);
+    protected abstract EndpointRegistry createEndpointRegistry(
+            Map<NormalizedEndpointUri, Endpoint> endpoints);
 
     protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry();
 

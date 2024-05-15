@@ -26,14 +26,15 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.NormalizedUri;
 
 /**
  * A provisional (temporary) {@link EndpointRegistry} that is only used during startup of Apache Camel to make starting
  * Camel faster while {@link LRUCacheFactory} is warming up etc.
  */
-class ProvisionalEndpointRegistry extends HashMap<NormalizedUri, Endpoint> implements EndpointRegistry<NormalizedUri> {
+class ProvisionalEndpointRegistry extends HashMap<NormalizedEndpointUri, Endpoint>
+        implements EndpointRegistry {
 
     @Override
     public void start() {
@@ -118,7 +119,7 @@ class ProvisionalEndpointRegistry extends HashMap<NormalizedUri, Endpoint> imple
         boolean done = false;
         while (!done) {
             try {
-                for (Entry<NormalizedUri, Endpoint> entry : entrySet()) {
+                for (Entry<NormalizedEndpointUri, Endpoint> entry : entrySet()) {
                     String k = entry.getKey().toString();
                     answer.put(k, entry.getValue());
                 }
