@@ -22,10 +22,12 @@ import java.security.SecureRandom;
 
 import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Isolated("This test is regularly flaky")
 public class SecureRandomParametersTest extends AbstractJsseParametersTest {
 
     @Test

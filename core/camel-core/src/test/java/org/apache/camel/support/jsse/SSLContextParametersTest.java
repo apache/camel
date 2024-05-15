@@ -30,9 +30,11 @@ import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated("This test is regularly flaky")
 public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
     @Test
@@ -68,7 +70,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         ksp.setType("{{keyStoreParameters.type}}");
         ksp.setProvider("{{keyStoreParameters.provider}}");
         ksp.setResource("{{keyStoreParameters.resource}}");
-        ksp.setPassword("{{keyStoreParamerers.password}}");
+        ksp.setPassword("{{keyStoreParameters.password}}");
 
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setCamelContext(camelContext);
