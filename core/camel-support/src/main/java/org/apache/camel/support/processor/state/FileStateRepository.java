@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.RuntimeCamelException;
@@ -48,6 +49,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     private static final String KEY_VALUE_DELIMITER = "=";
     private final AtomicBoolean init = new AtomicBoolean();
     private Map<String, String> cache;
+    private final Object cacheAndStoreLock = new Object();
     private File fileStore;
     private long maxFileStoreSize = 1024 * 1000L; // 1mb store file
 
@@ -106,7 +108,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         if (value.contains(STORE_DELIMITER)) {
             throw new IllegalArgumentException("Value " + value + " contains illegal character: <newline>");
         }
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             cache.put(key, value);
             if (fileStore.length() < maxFileStoreSize) {
                 // just append to store
@@ -121,7 +123,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     @Override
     @ManagedOperation(description = "Gets the value of the given key from store")
     public String getState(String key) {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             return cache.get(key);
         }
     }
@@ -131,7 +133,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
      */
     @ManagedOperation(description = "Reset and reloads the file store")
     public synchronized void reset() throws IOException {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             // trunk and clear, before we reload the store
             trunkStore();
             cache.clear();
@@ -272,7 +274,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
     }
 
     public void setCache(Map<String, String> cache) {
-        this.cache = cache;
+        this.cache = Objects.requireNonNull(cache, "cache");
     }
 
     @ManagedAttribute(description = "The maximum file size for the file store in bytes")

@@ -64,6 +64,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     private final AtomicBoolean init = new AtomicBoolean();
     private Map<String, Object> cache;
+    private final Object cacheAndStoreLock = new Object();
 
     @Metadata(description = "The maximum size of the 1st-level in-memory cache", defaultValue = "1000")
     private int cacheSize;
@@ -80,9 +81,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     public FileIdempotentRepository() {
     }
 
-    public FileIdempotentRepository(File fileStore, Map<String, Object> set) {
+    public FileIdempotentRepository(File fileStore, Map<String, Object> cache) {
         this.fileStore = fileStore;
-        this.cache = set;
+        this.cache = cache;
     }
 
     /**
@@ -133,7 +134,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             if (cache.containsKey(key)) {
                 return false;
             } else {
@@ -165,7 +166,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             // check 1st-level first and then fallback to check the actual file
             return cache.containsKey(key) || containsStore(key);
         }
@@ -175,7 +176,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
         boolean answer;
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             answer = cache.remove(key) != null;
             // remove from file cache also
             removeFromStore(key);
@@ -192,7 +193,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @Override
     @ManagedOperation(description = "Clear the store (danger this removes all entries)")
     public void clear() {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             cache.clear();
             if (cache instanceof LRUCache<String, Object> lruCache) {
                 lruCache.cleanUp();
@@ -279,7 +280,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      */
     @ManagedOperation(description = "Reset and reloads the file store")
     public synchronized void reset() throws IOException {
-        synchronized (cache) {
+        synchronized (cacheAndStoreLock) {
             // run the cleanup task first
             if (cache instanceof LRUCache<String, Object> lruCache) {
                 lruCache.cleanUp();
