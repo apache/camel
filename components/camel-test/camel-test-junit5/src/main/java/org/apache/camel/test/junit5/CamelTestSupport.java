@@ -582,7 +582,7 @@ public abstract class CamelTestSupport
     }
 
     private boolean isRouteCoverageEnabled() {
-        return System.getProperty(ROUTE_COVERAGE_ENABLED, "false").equalsIgnoreCase("true") || isDumpRouteCoverage();
+        return Boolean.parseBoolean(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || isDumpRouteCoverage();
     }
 
     @AfterEach
