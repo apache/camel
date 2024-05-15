@@ -384,7 +384,9 @@ public abstract class BaseMainSupport extends BaseService {
                 if (profile != null) {
                     mainConfigurationProperties.setProfile(profile);
                     String loc = profilePropertyPlaceholderLocation(profile);
-                    defaultPropertyPlaceholderLocation = loc + "," + defaultPropertyPlaceholderLocation;
+                    if (!defaultPropertyPlaceholderLocation.contains(loc)) {
+                        defaultPropertyPlaceholderLocation = loc + "," + defaultPropertyPlaceholderLocation;
+                    }
                 }
                 locations
                         = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROPERTY_PLACEHOLDER_LOCATION)
