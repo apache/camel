@@ -2432,7 +2432,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -2448,7 +2448,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -4886,7 +4886,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -4902,7 +4902,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -6511,7 +6511,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -6527,7 +6527,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set

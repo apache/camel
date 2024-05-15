@@ -2478,7 +2478,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -2494,7 +2494,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -4932,7 +4932,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -4948,7 +4948,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -6557,7 +6557,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
@@ -6573,7 +6573,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set

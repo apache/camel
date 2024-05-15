@@ -109,7 +109,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 .build())
                 .build();
         boolean done = task.run(() -> {
-            log.warn("Waiting replyTo ready: {}", replyTo);
+            log.trace("Waiting for replyTo to be ready: {}", replyTo != null);
             return replyTo != null;
         });
         if (!done) {

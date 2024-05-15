@@ -207,7 +207,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "100", label = "advanced", javaType = "java.time.Duration",
               description = "Interval in millis to sleep each time while waiting for temporary replyTo queue to be ready.")
     private long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime = 100L;
-    @UriParam(defaultValue = "50", label = "advanced",
+    @UriParam(defaultValue = "200", label = "advanced",
               description = "Number of times to wait for temporary replyTo queue to be created and ready when doing request/reply over JMS.")
     private int waitForTemporaryReplyToToBeUpdatedCounter = 200;
     @UriParam(label = "consumer",
