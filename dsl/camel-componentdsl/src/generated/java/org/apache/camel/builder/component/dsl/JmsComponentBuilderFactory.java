@@ -1883,7 +1883,7 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 50
+         * Default: 200
          * Group: advanced
          * 
          * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
