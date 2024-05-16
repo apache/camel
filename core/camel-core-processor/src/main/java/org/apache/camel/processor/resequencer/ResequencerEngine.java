@@ -16,7 +16,11 @@
  */
 package org.apache.camel.processor.resequencer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Predicate;
 
 import org.apache.camel.util.concurrent.ThreadHelper;
 
@@ -79,6 +83,12 @@ public class ResequencerEngine<E> {
     private Boolean rejectOld;
 
     /**
+     * List containing wait conditions to be evaluated whenever the sequence is modified. Access to this field should be
+     * done inside a {@code synchronized(this)} block.
+     */
+    private Map<CountDownLatch, Predicate<Sequence<?>>> waitConditions = new HashMap<>();
+
+    /**
      * Creates a new resequencer instance with a default timeout of 2000 milliseconds.
      *
      * @param comparator a sequence element comparator.
@@ -108,6 +118,37 @@ public class ResequencerEngine<E> {
      */
     public synchronized int size() {
         return sequence.size();
+    }
+
+    /**
+     * Wait for the following condition to happen. Do not call this method while holding a lock on the resequencer
+     * engine, as it will deadlock. The predicate will be evaluated while holding a lock on the resequencer engine.
+     *
+     * @param  pred                 the condition to wait for
+     * @throws InterruptedException if the thread is interrupted
+     */
+    public void waitUntil(Predicate<Sequence<?>> pred) throws InterruptedException {
+        CountDownLatch latch;
+        synchronized (this) {
+            if (pred.test(sequence)) {
+                return;
+            }
+            latch = new CountDownLatch(1);
+            waitConditions.put(latch, pred);
+        }
+        latch.await();
+    }
+
+    private void evaluateConditions() {
+        synchronized (this) {
+            for (var it = waitConditions.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<CountDownLatch, Predicate<Sequence<?>>> e = it.next();
+                if (e.getValue().test(sequence)) {
+                    e.getKey().countDown();
+                    it.remove();
+                }
+            }
+        }
     }
 
     /**
@@ -214,6 +255,9 @@ public class ResequencerEngine<E> {
         if (!successorOfLastDelivered(element) && sequence.predecessor(element) == null) {
             element.schedule(defineTimeout());
         }
+
+        // evaluate wait conditions
+        evaluateConditions();
     }
 
     /**
@@ -240,7 +284,7 @@ public class ResequencerEngine<E> {
      * @throws Exception thrown by {@link SequenceSender#sendElement(Object)}.
      *
      */
-    public boolean deliverNext() throws Exception {
+    public synchronized boolean deliverNext() throws Exception {
         if (sequence.isEmpty()) {
             return false;
         }
@@ -260,6 +304,9 @@ public class ResequencerEngine<E> {
 
         // deliver the sequence element
         sequenceSender.sendElement(element.getObject());
+
+        // evaluate wait conditions
+        evaluateConditions();
 
         // element has been delivered
         return true;

@@ -1530,6 +1530,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          * This task is for the synchronous blocking. If using async delayed then a scheduled thread pool is used for
          * sleeping and trigger redeliveries.
          */
+        @SuppressWarnings("BusyWait")
         public boolean sleep() throws InterruptedException {
             // for small delays then just sleep
             if (redeliveryDelay < 1000) {

@@ -239,16 +239,14 @@ public class StreamResequencer extends AsyncProcessorSupport
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        while (engine.size() >= capacity) {
-            try {
-                Thread.sleep(getTimeout());
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // we were interrupted so break out
-                exchange.setException(e);
-                callback.done(true);
-                return true;
-            }
+        try {
+            engine.waitUntil(s -> s.size() < capacity);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // we were interrupted so break out
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
         try {
