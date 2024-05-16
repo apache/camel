@@ -220,14 +220,14 @@ public final class JacksonTypeConverters {
             String text = globalOptions.get(JacksonConstants.ENABLE_TYPE_CONVERTER);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
-                enabled = "true".equalsIgnoreCase(text);
+                enabled = Boolean.parseBoolean(text);
             }
 
             // pojoOnly is disabled by default
             text = globalOptions.get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
-                toPojo = "true".equalsIgnoreCase(text);
+                toPojo = Boolean.parseBoolean(text);
             }
 
             moduleClassNames = globalOptions.get(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES);
