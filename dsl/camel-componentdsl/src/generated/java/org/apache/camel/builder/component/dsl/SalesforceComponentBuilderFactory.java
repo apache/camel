@@ -1386,9 +1386,9 @@ public interface SalesforceComponentBuilderFactory {
     
         /**
          * Explicit authentication method to be used, one of USERNAME_PASSWORD,
-         * REFRESH_TOKEN or JWT. Salesforce component can auto-determine the
-         * authentication method to use from the properties set, set this
-         * property to eliminate any ambiguity.
+         * REFRESH_TOKEN, CLIENT_CREDENTIALS, or JWT. Salesforce component can
+         * auto-determine the authentication method to use from the properties
+         * set, set this property to eliminate any ambiguity.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.salesforce.AuthenticationType&lt;/code&gt; type.

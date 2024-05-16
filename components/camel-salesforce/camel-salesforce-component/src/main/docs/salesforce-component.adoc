@@ -87,7 +87,7 @@ For each of the flows, different sets of properties need to be set:
 | Property     | Where to find it on Salesforce     | Flow
 
 | clientId     | Connected App, Consumer Key        | All flows
-| clientSecret | Connected App, Consumer Secret     | Username-Password, Refresh Token
+| clientSecret | Connected App, Consumer Secret     | Username-Password, Refresh Token, Client Credentials
 | userName     | Salesforce user username           | Username-Password, JWT Bearer Token
 | password     | Salesforce user password           | Username-Password
 | refreshToken | From OAuth flow callback           | Refresh Token
