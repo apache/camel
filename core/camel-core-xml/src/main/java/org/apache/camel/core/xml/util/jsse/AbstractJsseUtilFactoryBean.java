@@ -24,10 +24,5 @@ public abstract class AbstractJsseUtilFactoryBean<T> extends AbstractCamelFactor
     public abstract T getObject() throws Exception;
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public abstract Class<? extends T> getObjectType();
 }
