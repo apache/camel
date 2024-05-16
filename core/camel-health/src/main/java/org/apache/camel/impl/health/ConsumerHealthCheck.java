@@ -48,7 +48,9 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
     protected void doCallCheck(HealthCheckResultBuilder builder, Map<String, Object> options) {
         // only need to do consumer check if the route is UP
         boolean up = builder.state().compareTo(State.UP) == 0;
-        if (up && consumer instanceof HealthCheckAware) {
+        // if a route is configured to not to automatically start, then skip consumer checks
+        boolean external = route.getRouteController() == null && !route.isAutoStartup();
+        if (up && !external && consumer instanceof HealthCheckAware) {
             // health check is optional
             HealthCheck hc = ((HealthCheckAware) consumer).getHealthCheck();
             if (hc != null) {
