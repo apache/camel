@@ -136,7 +136,7 @@ public final class JacksonTypeConverters {
     @Converter
     public Map<String, Object> toMap(JsonNode node, Exchange exchange) throws Exception {
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
-        return mapper.convertValue(node, new TypeReference<Map<String, Object>>() {
+        return mapper.convertValue(node, new TypeReference<>() {
         });
     }
 
@@ -214,24 +214,7 @@ public final class JacksonTypeConverters {
 
         // only do this if enabled (disabled by default)
         if (!init && exchange != null) {
-            Map<String, String> globalOptions = exchange.getContext().getGlobalOptions();
-
-            // init to see if this is enabled
-            String text = globalOptions.get(JacksonConstants.ENABLE_TYPE_CONVERTER);
-            if (text != null) {
-                text = exchange.getContext().resolvePropertyPlaceholders(text);
-                enabled = Boolean.parseBoolean(text);
-            }
-
-            // pojoOnly is disabled by default
-            text = globalOptions.get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
-            if (text != null) {
-                text = exchange.getContext().resolvePropertyPlaceholders(text);
-                toPojo = Boolean.parseBoolean(text);
-            }
-
-            moduleClassNames = globalOptions.get(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES);
-            init = true;
+            initialize(exchange);
         }
 
         if (!enabled) {
@@ -281,6 +264,27 @@ public final class JacksonTypeConverters {
 
         // Just return null to let other fallback converter to do the job
         return null;
+    }
+
+    private void initialize(Exchange exchange) {
+        Map<String, String> globalOptions = exchange.getContext().getGlobalOptions();
+
+        // init to see if this is enabled
+        String text = globalOptions.get(JacksonConstants.ENABLE_TYPE_CONVERTER);
+        if (text != null) {
+            text = exchange.getContext().resolvePropertyPlaceholders(text);
+            enabled = Boolean.parseBoolean(text);
+        }
+
+        // pojoOnly is disabled by default
+        text = globalOptions.get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
+        if (text != null) {
+            text = exchange.getContext().resolvePropertyPlaceholders(text);
+            toPojo = Boolean.parseBoolean(text);
+        }
+
+        moduleClassNames = globalOptions.get(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES);
+        init = true;
     }
 
     /**
