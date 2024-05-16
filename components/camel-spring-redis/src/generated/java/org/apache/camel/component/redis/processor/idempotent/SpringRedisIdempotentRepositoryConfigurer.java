@@ -23,6 +23,8 @@ public class SpringRedisIdempotentRepositoryConfigurer extends org.apache.camel.
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository target = (org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "flushonstartup":
+        case "flushOnStartup": target.setFlushOnStartup(property(camelContext, boolean.class, value)); return true;
         case "repositoryname":
         case "repositoryName": target.setRepositoryName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -32,6 +34,8 @@ public class SpringRedisIdempotentRepositoryConfigurer extends org.apache.camel.
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "flushonstartup":
+        case "flushOnStartup": return boolean.class;
         case "repositoryname":
         case "repositoryName": return java.lang.String.class;
         default: return null;
@@ -42,6 +46,8 @@ public class SpringRedisIdempotentRepositoryConfigurer extends org.apache.camel.
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository target = (org.apache.camel.component.redis.processor.idempotent.SpringRedisIdempotentRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "flushonstartup":
+        case "flushOnStartup": return target.isFlushOnStartup();
         case "repositoryname":
         case "repositoryName": return target.getRepositoryName();
         default: return null;

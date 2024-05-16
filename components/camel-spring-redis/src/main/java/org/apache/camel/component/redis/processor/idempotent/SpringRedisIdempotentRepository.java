@@ -41,6 +41,9 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
     @Metadata(description = "Redis configuration")
     private RedisConfiguration redisConfiguration;
     private RedisTemplate<String, String> redisTemplate;
+    @Metadata(label = "advanced", description = "Delete all keys of the currently selected database."
+                                                + " Be careful if enabling this as all existing data will be deleted.")
+    private boolean flushOnStartup;
 
     public SpringRedisIdempotentRepository() {
     }
@@ -62,6 +65,18 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
     public static SpringRedisIdempotentRepository redisIdempotentRepository(
             RedisTemplate<String, String> redisTemplate, String processorName) {
         return new SpringRedisIdempotentRepository(redisTemplate, processorName);
+    }
+
+    public boolean isFlushOnStartup() {
+        return flushOnStartup;
+    }
+
+    /**
+     * Delete all keys of the currently selected database. Be careful if enabling this as all existing data will be
+     * deleted.
+     */
+    public void setFlushOnStartup(boolean flushOnStartup) {
+        this.flushOnStartup = flushOnStartup;
     }
 
     @Override
@@ -117,7 +132,9 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
         }
         ObjectHelper.notNull(this.redisTemplate, "redisTemplate", this);
         this.setOperations = redisTemplate.opsForSet();
-        redisTemplate.getConnectionFactory().getConnection().flushDb();
+        if (flushOnStartup) {
+            redisTemplate.getConnectionFactory().getConnection().flushDb();
+        }
     }
 
     @Override
