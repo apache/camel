@@ -86,6 +86,9 @@ See the https://docs.spring.io/spring-security/reference/5.8/migration/servlet/a
 The `camel-as2` component has been updated so that the client can compress a MIME body before signing or compress a MIME body before signing and encrypting as described in
 sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and https://datatracker.ietf.org/doc/html/rfc5402/#section-3.5[3.5] of https://datatracker.ietf.org/doc/html/rfc5402/[rfc 5402].
 
+=== camel-cloudevents
+
+Moved the `camel-cloudevents` api into `camel-api` and removed the `camel-cloudevents` dependency from all components that provide CloudEvent transformers.
 
 == Camel Spring Boot
 
