@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cloudevents.CloudEvent;
+import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.knative.KnativeComponent;
 import org.apache.camel.component.knative.spi.KnativeEnvironment;
 import org.apache.camel.component.knative.spi.KnativeResource;

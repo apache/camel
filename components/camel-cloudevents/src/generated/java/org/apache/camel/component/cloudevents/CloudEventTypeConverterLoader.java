@@ -44,7 +44,7 @@ public final class CloudEventTypeConverterLoader implements TypeConverterLoader,
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, org.apache.camel.component.cloudevents.CloudEvent.class, java.lang.String.class, false,
+        addTypeConverter(registry, org.apache.camel.cloudevents.CloudEvent.class, java.lang.String.class, false,
             (type, exchange, value) -> org.apache.camel.component.cloudevents.CloudEventTypeConverter.fromSpecVersion((java.lang.String) value));
     }
 

@@ -21,8 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
-import org.apache.camel.component.cloudevents.CloudEvent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.TransformerKey;
 import org.apache.camel.spi.DataType;

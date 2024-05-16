@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cloudevents;
+package org.apache.camel.cloudevents;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Attributes for cloud even specs
+ * Attributes for cloud event specs.
  */
 final class CloudEventAttributes {
 

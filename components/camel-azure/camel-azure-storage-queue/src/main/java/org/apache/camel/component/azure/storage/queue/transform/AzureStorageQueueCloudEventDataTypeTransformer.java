@@ -20,9 +20,9 @@ package org.apache.camel.component.azure.storage.queue.transform;
 import java.util.Map;
 
 import org.apache.camel.Message;
+import org.apache.camel.cloudevents.CloudEvent;
+import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.component.azure.storage.queue.QueueConstants;
-import org.apache.camel.component.cloudevents.CloudEvent;
-import org.apache.camel.component.cloudevents.CloudEvents;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
