@@ -49,7 +49,7 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
 
     @Test
     public void testIteratorThrowExceptionOnSecond() throws Exception {
-        getMockEndpoint("mock:line").expectedMessageCount(0);
+        getMockEndpoint("mock:line").expectedMessageCount(1);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
         try {
@@ -65,7 +65,7 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
 
     @Test
     public void testIteratorThrowExceptionOnThird() throws Exception {
-        getMockEndpoint("mock:line").expectedMessageCount(1);
+        getMockEndpoint("mock:line").expectedMessageCount(2);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
         try {

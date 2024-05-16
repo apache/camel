@@ -70,7 +70,6 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.FilterIterator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
@@ -313,6 +312,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         try {
             pairs = createProcessorExchangePairs(exchange);
             if (pairs instanceof Collection) {
+                pairs = ((Collection<ProcessorExchangePair>) pairs)
+                            .stream().filter(Objects::nonNull).toList();
                 size = ((Collection<ProcessorExchangePair>) pairs).size();
             }
         } catch (Exception e) {
@@ -409,7 +410,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
-            this.iterator = new FilterIterator<>(pairs.iterator(), Objects::nonNull);
+            this.iterator = pairs.iterator();
             if (timeout > 0) {
                 timeoutTask = schedule(aggregateExecutorService, this::timeout, timeout, TimeUnit.MILLISECONDS);
             } else {
@@ -535,16 +536,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     return;
                 }
 
-                // Check if the iterator is empty
-                // This can happen the very first time we check the existence
-                // of an item before queuing the run.
-                // or some iterators may return true for hasNext() but then null in next()
-                if (!iterator.hasNext()) {
+                // Get next processor exchange pair to sent, skipping null ones
+                ProcessorExchangePair pair = getNextProcessorExchangePair();
+                if (pair == null) {
                     doDone(result.get(), true);
                     return;
                 }
 
-                ProcessorExchangePair pair = iterator.next();
                 boolean hasNext = iterator.hasNext();
 
                 Exchange exchange = pair.getExchange();
@@ -604,6 +602,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 original.setException(e);
                 doDone(null, false);
             }
+        }
+
+        private ProcessorExchangePair getNextProcessorExchangePair() {
+            ProcessorExchangePair tpair = null;
+            while (tpair == null && iterator.hasNext()) {
+                tpair = iterator.next();
+            }
+            return tpair;
         }
     }
 
