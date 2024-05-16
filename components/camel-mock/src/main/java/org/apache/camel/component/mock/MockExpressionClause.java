@@ -38,7 +38,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
  * are specialized for being used with the mock component and separated from camel-core.
  */
 public class MockExpressionClause<T> implements Expression, Predicate {
-    private MockExpressionClauseSupport<T> delegate;
+    private final MockExpressionClauseSupport<T> delegate;
 
     private volatile Expression expr;
 
@@ -261,7 +261,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * An expression of an inbound message header of the given name
+     * An expression of an inbound message header with the given name
      */
     public T header(String name) {
         return delegate.header(name);
@@ -275,7 +275,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * An expression of an exchange property of the given name
+     * An expression of an exchange property with the given name
      */
     public T exchangeProperty(String name) {
         return delegate.exchangeProperty(name);

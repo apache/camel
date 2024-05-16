@@ -29,10 +29,10 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
  */
 public class StopWatchTestExecutionListener extends AbstractTestExecutionListener {
 
-    protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<>();
+    protected static final ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<>();
 
     /**
-     * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
+     * Returns the precedence used by Spring to choose the appropriate execution order of test listeners.
      *
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */

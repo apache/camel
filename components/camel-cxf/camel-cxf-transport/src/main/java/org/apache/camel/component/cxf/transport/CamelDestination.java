@@ -62,7 +62,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     String camelDestinationUri;
 
     private Endpoint destinationEndpoint;
-    private HeaderFilterStrategy headerFilterStrategy;
+    private final HeaderFilterStrategy headerFilterStrategy;
     private boolean checkException;
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) {
@@ -270,7 +270,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
      * Receives a response from CXF and forwards it to the camel route the request came in from
      */
     private class CamelOutputStream extends CachedOutputStream {
-        private Message outMessage;
+        private final Message outMessage;
 
         CamelOutputStream(Message m) {
             outMessage = m;

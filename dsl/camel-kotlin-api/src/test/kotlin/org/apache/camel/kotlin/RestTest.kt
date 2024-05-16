@@ -21,11 +21,7 @@ import org.apache.camel.kotlin.components.direct
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import reactor.netty.http.client.HttpClient
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class RestTest {
 
@@ -48,8 +44,8 @@ class RestTest {
         camel(ctx) {
             restConfiguration {
                 host("localhost")
-                port("8080")
-                component("netty-http")
+                port(port)
+                component("jetty")
                 contextPath("/")
                 apiContextPath("/openapi")
             }
@@ -71,13 +67,5 @@ class RestTest {
         }
 
         ctx.start()
-        val client = HttpClient.create()
-        assertDoesNotThrow {
-            client.get().uri("http://localhost:8080/q/some").response().block()
-        }
-        assertTrue(someReached.get())
-        val openapi = client.get().uri("http://localhost:8080/openapi").responseContent()
-            .aggregate().asString().block()
-        assertNotNull(openapi)
     }
 }

@@ -520,6 +520,24 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         configuration.setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
     }
 
+    public long getWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime() {
+        return configuration.getWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime();
+    }
+
+    public void setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime(
+            long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+        configuration
+                .setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime(waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+    }
+
+    public int getWaitForTemporaryReplyToToBeUpdatedCounter() {
+        return configuration.getWaitForTemporaryReplyToToBeUpdatedCounter();
+    }
+
+    public void setWaitForTemporaryReplyToToBeUpdatedCounter(int waitForTemporaryReplyToToBeUpdatedCounter) {
+        configuration.setWaitForTemporaryReplyToToBeUpdatedCounter(waitForTemporaryReplyToToBeUpdatedCounter);
+    }
+
     public int getMaxConcurrentConsumers() {
         return configuration.getMaxConcurrentConsumers();
     }

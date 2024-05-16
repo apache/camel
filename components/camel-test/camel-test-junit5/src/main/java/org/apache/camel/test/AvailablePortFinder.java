@@ -43,7 +43,7 @@ public final class AvailablePortFinder {
     public class Port implements BeforeEachCallback, AfterAllCallback, AutoCloseable {
         final int port;
         String testClass;
-        Throwable creation;
+        final Throwable creation;
 
         public Port(int port) {
             this.port = port;

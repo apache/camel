@@ -84,8 +84,8 @@ public class MockComponent extends DefaultComponent {
     /**
      * To turn on logging when the mock receives an incoming message.
      * <p/>
-     * This will log only one time at INFO level for the incoming message. For more detailed logging then set the logger
-     * to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.
+     * This will log only one time at INFO level for the incoming message. For more detailed logging, then set the
+     * logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.
      */
     public void setLog(boolean log) {
         this.log = log;

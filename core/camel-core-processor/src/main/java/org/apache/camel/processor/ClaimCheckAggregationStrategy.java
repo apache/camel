@@ -117,10 +117,10 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             Iterable<?> it = ObjectHelper.createIterable(filter, ",");
             for (Object k : it) {
                 String part = k.toString();
-                if (("body".equals(part) || "+body".equals(part)) && !"-body".equals(part)) {
+                if ("body".equals(part) || "+body".equals(part)) {
                     oldExchange.getMessage().setBody(newExchange.getMessage().getBody());
                     LOG.trace("Including: body");
-                } else if (("headers".equals(part) || "+headers".equals(part)) && !"-headers".equals(part)) {
+                } else if ("headers".equals(part) || "+headers".equals(part)) {
                     oldExchange.getMessage().getHeaders().putAll(newExchange.getMessage().getHeaders());
                     LOG.trace("Including: headers");
                 }

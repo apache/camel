@@ -27,9 +27,8 @@ import java.util.StringJoiner;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.MeterBinder;
-import io.micrometer.prometheus.PrometheusConfig;
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-import io.prometheus.client.exporter.common.TextFormat;
+import io.micrometer.prometheusmetrics.PrometheusConfig;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
@@ -72,6 +71,9 @@ import org.slf4j.LoggerFactory;
 public class MicrometerPrometheus extends ServiceSupport implements CamelMetricsService, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerPrometheus.class);
+
+    private static final String CONTENT_TYPE_004 = "text/plain; version=0.0.4; charset=utf-8";
+    private static final String CONTENT_TYPE_100 = "application/openmetrics-text; version=1.0.0; charset=utf-8";
 
     private MainHttpServer server;
     private VertxPlatformHttpRouter router;
@@ -389,7 +391,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         metrics.method(HttpMethod.GET);
 
         final String format
-                = "0.0.4".equals(textFormatVersion) ? TextFormat.CONTENT_TYPE_004 : TextFormat.CONTENT_TYPE_OPENMETRICS_100;
+                = "0.0.4".equals(textFormatVersion) ? CONTENT_TYPE_004 : CONTENT_TYPE_100;
         metrics.produces(format);
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
@@ -399,7 +401,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
                 // the client may ask for version 1.0.0 via accept header
                 String ah = ctx.request().getHeader("Accept");
                 if (ah != null && ah.contains("application/openmetrics-text")) {
-                    ct = TextFormat.chooseContentType(ah);
+                    ct = CONTENT_TYPE_100;
                 }
 
                 ctx.response().putHeader("Content-Type", ct);

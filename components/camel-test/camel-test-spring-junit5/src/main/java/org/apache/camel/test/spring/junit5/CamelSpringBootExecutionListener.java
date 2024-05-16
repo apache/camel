@@ -25,13 +25,13 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 public class CamelSpringBootExecutionListener extends AbstractTestExecutionListener {
 
-    protected static ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
+    protected static final ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
     private static final String PROPERTY_SKIP_STARTING_CAMEL_CONTEXT = "skipStartingCamelContext";
 
     /**
-     * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
+     * Returns the precedence used by Spring to choose the appropriate execution order of test listeners.
      *
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */

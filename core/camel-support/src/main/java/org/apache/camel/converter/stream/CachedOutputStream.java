@@ -76,7 +76,11 @@ public class CachedOutputStream extends OutputStream {
 
     @Override
     public boolean equals(Object obj) {
-        return currentStream.equals(obj);
+        if (obj instanceof CachedOutputStream cos) {
+            return currentStream.equals(cos.currentStream);
+        } else {
+            return currentStream.equals(obj);
+        }
     }
 
     @Override

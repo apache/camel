@@ -201,7 +201,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
 
     @Override
     public boolean isSchedulerStarted() {
-        return futures != null && !futures.isEmpty();
+        return !futures.isEmpty();
     }
 
     @Override

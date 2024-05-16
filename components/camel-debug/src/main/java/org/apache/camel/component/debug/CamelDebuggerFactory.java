@@ -17,6 +17,7 @@
 package org.apache.camel.component.debug;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.debugger.DebuggerJmxConnectorService;
 import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.Debugger;
@@ -35,6 +36,19 @@ public class CamelDebuggerFactory implements DebuggerFactory {
             BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(camelContext);
             backlog.setStandby(camelContext.isDebugStandby());
 
+            // must enable source location and history
+            // so debugger tooling knows to map breakpoints to source code
+            camelContext.setSourceLocationEnabled(true);
+            camelContext.setMessageHistory(true);
+
+            // enable debugger on camel
+            camelContext.setDebugging(true);
+
+            // to make debugging possible for tooling we need to make it possible to do remote JMX connection
+            DebuggerJmxConnectorService connector = new DebuggerJmxConnectorService();
+            connector.setCreateConnector(true);
+            camelContext.addService(connector);
+
             // we need to enable debugger after context is started
             camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
                 @Override
@@ -52,9 +66,6 @@ public class CamelDebuggerFactory implements DebuggerFactory {
             });
             camelContext.addService(backlog, true, true);
         }
-
-        // to make debugging possible for tooling we need to make it possible to do remote JMX connection
-        camelContext.addService(new JmxConnectorService());
 
         // return null as we fool camel-core into using this backlog debugger as we added it as a service
         return null;

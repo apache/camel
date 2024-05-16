@@ -190,16 +190,14 @@ public class MBeanInfoAssembler implements Service {
         }
 
         // and then any additional interfaces (as interfaces can be annotated as well)
-        if (managedClass.getInterfaces() != null) {
-            for (Class<?> clazz : managedClass.getInterfaces()) {
-                // recursive as there may be multiple interfaces
-                if (clazz.getName().startsWith("java")) {
-                    // skip any JDK classes
-                    continue;
-                }
-                LOG.trace("Extracting attributes and operations from implemented interface: {}", clazz);
-                doExtractAttributesAndOperations(clazz, attributes, operations);
+        for (Class<?> clazz : managedClass.getInterfaces()) {
+            // recursive as there may be multiple interfaces
+            if (clazz.getName().startsWith("java")) {
+                // skip any JDK classes
+                continue;
             }
+            LOG.trace("Extracting attributes and operations from implemented interface: {}", clazz);
+            doExtractAttributesAndOperations(clazz, attributes, operations);
         }
     }
 

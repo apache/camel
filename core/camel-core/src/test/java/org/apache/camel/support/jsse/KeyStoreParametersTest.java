@@ -56,7 +56,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         ksp.setType("{{keyStoreParameters.type}}");
         ksp.setProvider("{{keyStoreParameters.provider}}");
         ksp.setResource("{{keyStoreParameters.resource}}");
-        ksp.setPassword("{{keyStoreParamerers.password}}");
+        ksp.setPassword("{{keyStoreParameters.password}}");
 
         KeyStore ks = ksp.createKeyStore();
         assertNotNull(ks.getCertificate("localhost"));

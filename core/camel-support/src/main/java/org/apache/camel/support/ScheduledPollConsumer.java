@@ -186,7 +186,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
         while (!done) {
             try {
-                cause = null;
                 // eager assume we are done
                 done = true;
                 if (isPollAllowed()) {

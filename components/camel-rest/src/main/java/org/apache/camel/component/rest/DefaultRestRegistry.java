@@ -33,7 +33,7 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StaticService;
-import org.apache.camel.ValueHolder;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -76,8 +76,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         if (apiProducer == null) {
             Endpoint restApiEndpoint = null;
             Endpoint restEndpoint = null;
-            for (Map.Entry<? extends ValueHolder<String>, Endpoint> entry : camelContext.getEndpointRegistry().entrySet()) {
-                String uri = entry.getKey().get();
+            for (Map.Entry<NormalizedEndpointUri, Endpoint> entry : camelContext.getEndpointRegistry().entrySet()) {
+                String uri = entry.getKey().getUri();
                 if (uri.startsWith("rest-api:")) {
                     restApiEndpoint = entry.getValue();
                     break;

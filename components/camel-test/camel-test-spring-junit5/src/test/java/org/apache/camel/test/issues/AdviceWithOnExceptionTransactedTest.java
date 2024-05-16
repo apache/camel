@@ -62,9 +62,8 @@ public class AdviceWithOnExceptionTransactedTest extends CamelSpringTestSupport 
 
     @Test
     public void testAddFirstWithOnException() throws Exception {
-        AdviceWith.adviceWith(context, "advice-with-on-exception-transacted-test-route", a -> {
-            a.weaveAddFirst().transform(constant("Bye World"));
-        });
+        AdviceWith.adviceWith(context, "advice-with-on-exception-transacted-test-route",
+                a -> a.weaveAddFirst().transform(constant("Bye World")));
 
         context.start();
 

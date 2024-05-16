@@ -271,6 +271,26 @@ public class CxfProducer extends DefaultAsyncProducer {
     }
 
     private void checkParameterSize(CxfEndpoint endpoint, Exchange exchange, Object[] parameters) {
+        final BindingOperationInfo boi = lookupBindingOperationInfo(endpoint, exchange);
+        final int expectMessagePartsSize = tryGetExpectMessagePartsSize(parameters, boi);
+
+        if (parameters.length > expectMessagePartsSize) {
+            // need to check the holder parameters
+            final int holdersSize = computeHoldersSize(parameters);
+            // need to check the soap header information
+            final int soapHeadersSize = computeSoapHeadersSize(boi);
+
+            if (isValidSize(parameters, holdersSize, expectMessagePartsSize, soapHeadersSize)) {
+                throw new IllegalArgumentException(
+                        "Get the wrong parameter size to invoke the out service, Expect size "
+                                                   + (expectMessagePartsSize + holdersSize + soapHeadersSize)
+                                                   + ", Parameter size " + parameters.length
+                                                   + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
+            }
+        }
+    }
+
+    private BindingOperationInfo lookupBindingOperationInfo(CxfEndpoint endpoint, Exchange exchange) {
         BindingOperationInfo boi = getBindingOperationInfo(exchange);
         if (boi == null) {
             throw new RuntimeCamelException("Can't find the binding operation information from camel exchange");
@@ -280,6 +300,36 @@ public class CxfProducer extends DefaultAsyncProducer {
                 boi = boi.getUnwrappedOperation();
             }
         }
+        return boi;
+    }
+
+    private static int computeSoapHeadersSize(BindingOperationInfo boi) {
+        int soapHeadersSize = 0;
+        BindingMessageInfo bmi = boi.getInput();
+        if (bmi != null) {
+            List<SoapHeaderInfo> headers = bmi.getExtensors(SoapHeaderInfo.class);
+            if (headers != null) {
+                soapHeadersSize = headers.size();
+            }
+        }
+        return soapHeadersSize;
+    }
+
+    private static boolean isValidSize(Object[] parameters, int holdersSize, int expectMessagePartsSize, int soapHeadersSize) {
+        return holdersSize + expectMessagePartsSize + soapHeadersSize < parameters.length;
+    }
+
+    private static int computeHoldersSize(Object[] parameters) {
+        int holdersSize = 0;
+        for (Object parameter : parameters) {
+            if (parameter instanceof Holder) {
+                holdersSize++;
+            }
+        }
+        return holdersSize;
+    }
+
+    private static int tryGetExpectMessagePartsSize(Object[] parameters, BindingOperationInfo boi) {
         int expectMessagePartsSize = boi.getInput().getMessageParts().size();
 
         if (parameters.length < expectMessagePartsSize) {
@@ -288,33 +338,7 @@ public class CxfProducer extends DefaultAsyncProducer {
                                                + expectMessagePartsSize + ", Parameter size " + parameters.length
                                                + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
         }
-
-        if (parameters.length > expectMessagePartsSize) {
-            // need to check the holder parameters
-            int holdersSize = 0;
-            for (Object parameter : parameters) {
-                if (parameter instanceof Holder) {
-                    holdersSize++;
-                }
-            }
-            // need to check the soap header information
-            int soapHeadersSize = 0;
-            BindingMessageInfo bmi = boi.getInput();
-            if (bmi != null) {
-                List<SoapHeaderInfo> headers = bmi.getExtensors(SoapHeaderInfo.class);
-                if (headers != null) {
-                    soapHeadersSize = headers.size();
-                }
-            }
-
-            if (holdersSize + expectMessagePartsSize + soapHeadersSize < parameters.length) {
-                throw new IllegalArgumentException(
-                        "Get the wrong parameter size to invoke the out service, Expect size "
-                                                   + (expectMessagePartsSize + holdersSize + soapHeadersSize)
-                                                   + ", Parameter size " + parameters.length
-                                                   + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
-            }
-        }
+        return expectMessagePartsSize;
     }
 
     /**

@@ -213,10 +213,11 @@ public final class AdviceWith {
         RoutesDefinition routes = builder.configureRoutes(camelContext);
 
         // was logging enabled or disabled
-        boolean logRoutesAsXml = true;
-        if (builder instanceof AdviceWithRouteBuilder) {
-            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder) builder;
+        boolean logRoutesAsXml;
+        if (builder instanceof AdviceWithRouteBuilder arb) {
             logRoutesAsXml = arb.isLogRouteAsXml();
+        } else {
+            logRoutesAsXml = true;
         }
 
         LOG.debug("AdviceWith routes: {}", routes);
@@ -276,7 +277,7 @@ public final class AdviceWith {
             LOG.info("AdviceWith route after: {}", merged);
         }
 
-        if (beforeAsXml != null && logRoutesAsXml && LOG.isInfoEnabled()) {
+        if (beforeAsXml != null && LOG.isInfoEnabled()) {
             try {
                 ModelToXMLDumper modelToXMLDumper = PluginHelper.getModelToXMLDumper(ecc);
                 String afterAsXml = modelToXMLDumper.dumpModelAsXml(camelContext, merged);

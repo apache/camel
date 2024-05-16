@@ -41,6 +41,8 @@ import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A base class for a pool for either producers or consumers used by {@link org.apache.camel.spi.ProducerCache} and
  * {@link org.apache.camel.spi.ConsumerCache}.
@@ -189,9 +191,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * Cleanup the pool (removing stale instances that should be evicted)
      */
+    @SuppressWarnings("rawtypes")
     public void cleanUp() {
-        if (cache instanceof LRUCache) {
-            ((LRUCache) cache).cleanUp();
+        if (cache instanceof LRUCache lru) {
+            lru.cleanUp();
         }
         pool.values().forEach(Pool::cleanUp);
     }
@@ -231,13 +234,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private volatile S s;
 
-        private SinglePool() {
-            // only used for eager classloading
-            this.endpoint = null;
-        }
-
         SinglePool(Endpoint endpoint) {
-            this.endpoint = endpoint;
+            this.endpoint = requireNonNull(endpoint);
         }
 
         @Override
@@ -332,13 +330,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private final BlockingQueue<S> queue;
         private final List<S> evicts;
-
-        private MultiplePool() {
-            // only used for eager classloading
-            this.endpoint = null;
-            this.queue = null;
-            this.evicts = null;
-        }
 
         MultiplePool(Endpoint endpoint) {
             this.endpoint = endpoint;

@@ -1055,7 +1055,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     @Override
-    public <T> T evaluate(Exchange exchange, Class<T> type) {
+    public <U> U evaluate(Exchange exchange, Class<U> type) {
         init(exchange.getContext());
         return expr.evaluate(exchange, type);
     }

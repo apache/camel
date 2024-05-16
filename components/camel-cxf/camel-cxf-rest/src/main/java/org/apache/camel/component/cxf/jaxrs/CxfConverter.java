@@ -37,6 +37,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageContentsList;
 
 import static org.apache.camel.TypeConverter.MISS_VALUE;
+import static org.apache.camel.component.cxf.converter.CxfConverter.tryCoerceFirstArrayElement;
 
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a> for CXF related types' converting .
@@ -144,34 +145,7 @@ public final class CxfConverter {
             MessageContentsList list = (MessageContentsList) value;
 
             // try to turn the first array element into the object that we want
-            for (Object embedded : list) {
-                if (embedded != null) {
-                    if (type.isInstance(embedded)) {
-                        return type.cast(embedded);
-                    } else {
-                        TypeConverter tc = registry.lookup(type, embedded.getClass());
-                        if (tc == null) {
-                            // maybe one of its interface fits
-                            for (Class<?> clazz : embedded.getClass().getInterfaces()) {
-                                tc = registry.lookup(type, clazz);
-                                if (tc != null) {
-                                    break;
-                                }
-                            }
-                        }
-                        if (tc != null) {
-                            Object result = tc.convertTo(type, exchange, embedded);
-                            if (result != null) {
-                                return (T) result;
-                            }
-                            // there is no suitable result will be return
-                            break;
-                        }
-                    }
-                }
-            }
-            // return void to indicate its not possible to convert at this time
-            return (T) MISS_VALUE;
+            return tryCoerceFirstArrayElement(type, exchange, registry, list);
         }
 
         // CXF-RS Response class

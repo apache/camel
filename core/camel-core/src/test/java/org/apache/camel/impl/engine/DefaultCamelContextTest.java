@@ -38,7 +38,6 @@ import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultUuidGenerator;
-import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
@@ -425,7 +424,7 @@ public class DefaultCamelContextTest extends TestSupport {
         });
         ctx.start();
 
-        EndpointRegistry<NormalizedUri> endpoints = ctx.getEndpointRegistry();
+        EndpointRegistry endpoints = ctx.getEndpointRegistry();
         Map<String, RouteService> routeServices = ctx.getRouteServices();
         Set<Endpoint> routeEndpoints = routeServices.get("rawRoute").gatherEndpoints();
 

@@ -51,6 +51,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.impl.debugger.DebuggerJmxConnectorService;
 import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
@@ -65,6 +66,8 @@ import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -381,7 +384,9 @@ public abstract class BaseMainSupport extends BaseService {
                 if (profile != null) {
                     mainConfigurationProperties.setProfile(profile);
                     String loc = profilePropertyPlaceholderLocation(profile);
-                    defaultPropertyPlaceholderLocation = loc + "," + defaultPropertyPlaceholderLocation;
+                    if (!defaultPropertyPlaceholderLocation.contains(loc)) {
+                        defaultPropertyPlaceholderLocation = loc + "," + defaultPropertyPlaceholderLocation;
+                    }
                 }
                 locations
                         = MainHelper.lookupPropertyFromSysOrEnv(MainConstants.PROPERTY_PLACEHOLDER_LOCATION)
@@ -454,7 +459,7 @@ public abstract class BaseMainSupport extends BaseService {
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
 
         // configure the profile with pre-configured settings
-        ProfileConfigurer.configure(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
+        ProfileConfigurer.configureMain(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
 
         // need to eager allow to auto-configure properties component
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
@@ -689,6 +694,8 @@ public abstract class BaseMainSupport extends BaseService {
         configureLifecycle(camelContext);
 
         if (standalone) {
+            // detect if camel-debug JAR is on classpath as we need to know this before configuring routes
+            detectCamelDebugJar(camelContext);
             step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
             configureRoutes(camelContext);
             recorder.endStep(step);
@@ -708,6 +715,15 @@ public abstract class BaseMainSupport extends BaseService {
         // but before camel context logs that it has been started, so we need to use an event listener
         if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
             camelContext.getManagementStrategy().addEventNotifier(new PlaceholderSummaryEventNotifier(propertyPlaceholders));
+        }
+    }
+
+    protected void detectCamelDebugJar(CamelContext camelContext) {
+        DebuggerFactory df = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                .newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+        if (df != null) {
+            // if camel-debug is on classpath then we need to eager to turn on source location which is needed for Java DSL
+            camelContext.setSourceLocationEnabled(true);
         }
     }
 
@@ -1617,8 +1633,10 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
-        // must enable source location so debugger tooling knows to map breakpoints to source code
+        // must enable source location and history
+        // so debugger tooling knows to map breakpoints to source code
         camelContext.setSourceLocationEnabled(true);
+        camelContext.setMessageHistory(true);
 
         // enable debugger on camel
         camelContext.setDebugging(config.isEnabled());
@@ -1635,8 +1653,16 @@ public abstract class BaseMainSupport extends BaseService {
         debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
         debugger.setIncludeException(config.isIncludeException());
         debugger.setLoggingLevel(config.getLoggingLevel().name());
-        debugger.setSuspendMode(config.isWaitForAttach());
+        debugger.setSuspendMode(config.isWaitForAttach()); // this option is named wait-for-attach
         debugger.setFallbackTimeout(config.getFallbackTimeout());
+
+        // enable jmx connector if port is set
+        if (config.isJmxConnectorEnabled()) {
+            DebuggerJmxConnectorService connector = new DebuggerJmxConnectorService();
+            connector.setCreateConnector(true);
+            connector.setRegistryPort(config.getJmxConnectorPort());
+            camelContext.addService(connector);
+        }
 
         // start debugger after context is started
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {

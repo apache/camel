@@ -26,8 +26,6 @@ import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.CatchProcessor;
-import org.apache.camel.spi.IdAware;
-import org.apache.camel.spi.RouteIdAware;
 
 public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
@@ -63,13 +61,9 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
         CatchProcessor processor
                 = new CatchProcessor(getCamelContext(), definition.getExceptionClasses(), childProcessor, when);
         // inject id
-        if (processor instanceof IdAware) {
-            String id = getId(definition);
-            ((IdAware) processor).setId(id);
-        }
-        if (processor instanceof RouteIdAware) {
-            ((RouteIdAware) processor).setRouteId(route.getRouteId());
-        }
+        String id = getId(definition);
+        processor.setId(id);
+        processor.setRouteId(route.getRouteId());
         return wrapProcessor(processor);
     }
 

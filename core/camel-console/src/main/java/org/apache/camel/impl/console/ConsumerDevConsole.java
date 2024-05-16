@@ -211,10 +211,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                         }
                     }
 
-                    if (mr != null) {
-                        final JsonObject stats = toJsonObject(mr);
-                        jo.put("statistics", stats);
-                    }
+                    final JsonObject stats = toJsonObject(mr);
+                    jo.put("statistics", stats);
 
                     list.add(jo);
                 }

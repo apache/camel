@@ -125,7 +125,7 @@ public class MXParser implements XmlPullParser {
                 System.err.println("TRACE_SIZING elStackSize " + elStackSize + " ==> " + newSize);
             }
             final boolean needsCopying = elStackSize > 0;
-            String[] arr = null;
+            String[] arr;
             // reuse arr local variable slot
             arr = new String[newSize];
             if (needsCopying)
@@ -210,7 +210,7 @@ public class MXParser implements XmlPullParser {
                 System.err.println("TRACE_SIZING attrPosSize " + attrPosSize + " ==> " + newSize);
             }
             final boolean needsCopying = attrPosSize > 0;
-            String[] arr = null;
+            String[] arr;
 
             arr = new String[newSize];
             if (needsCopying)
@@ -238,8 +238,6 @@ public class MXParser implements XmlPullParser {
                     System.arraycopy(attributeNameHash, 0, iarr, 0, attrPosSize);
                 attributeNameHash = iarr;
             }
-
-            arr = null;
             // //assert attrUri.length > size
         }
     }
@@ -1388,7 +1386,7 @@ public class MXParser implements XmlPullParser {
         seenMarkup = false;
         boolean gotS = false;
         posStart = pos - 1;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
         while (true) {
             // deal with Misc
@@ -1607,15 +1605,11 @@ public class MXParser implements XmlPullParser {
         } catch (EOFException ex) {
             reachedEnd = true;
         }
-        if (reachedEnd) {
-            if (tokenize && gotS) {
-                posEnd = pos; // well - this is LAST available character pos
-                return eventType = IGNORABLE_WHITESPACE;
-            }
-            return eventType = END_DOCUMENT;
-        } else {
-            throw new XmlPullParserException("internal error in parseEpilog");
+        if (tokenize && gotS) {
+            posEnd = pos; // well - this is LAST available character pos
+            return eventType = IGNORABLE_WHITESPACE;
         }
+        return eventType = END_DOCUMENT;
     }
 
     public int parseEndTag() throws XmlPullParserException, IOException {
@@ -1733,7 +1727,7 @@ public class MXParser implements XmlPullParser {
                         // (pos -1) - (colonPos + 1));
                         pos - 2 - (colonPos - bufAbsoluteStart));
             } else {
-                prefix = elPrefix[depth] = null;
+                elPrefix[depth] = null;
                 elName[depth] = newString(buf, nameStart - bufAbsoluteStart, elLen);
             }
         } else {
@@ -2050,7 +2044,7 @@ public class MXParser implements XmlPullParser {
         }
 
         if (processNamespaces && startsWithXmlns) {
-            String ns = null;
+            String ns;
             if (!usePC) {
                 ns = newStringIntern(buf, posStart, pos - 1 - posStart);
             } else {
@@ -2856,21 +2850,18 @@ public class MXParser implements XmlPullParser {
         if (bufEnd > bufSoftLimit) {
 
             // expand buffer it makes sense!!!!
-            boolean compact = bufStart > bufSoftLimit;
-            boolean expand = false;
+            boolean compact;
             if (preventBufferCompaction) {
                 compact = false;
-                expand = true;
-            } else if (!compact) {
-                // freeSpace
-                if (bufStart < buf.length / 2) {
-                    // less then half buffer available forcompactin --> expand
-                    // instead!!!
-                    expand = true;
-                } else {
-                    // at least half of buffer can be reclaimed --> worthwhile
-                    // effort!!!
-                    compact = true;
+            } else {
+                compact = bufStart > bufSoftLimit;
+                if (!compact) {
+                    // freeSpace
+                    // if at least half of buffer can be reclaimed --> worthwhile effort!!!
+                    // else less than half buffer available for compacting --> expand instead!!!
+                    if (bufStart >= buf.length / 2) {
+                        compact = true;
+                    }
                 }
             }
 
@@ -2883,11 +2874,11 @@ public class MXParser implements XmlPullParser {
                     System.out.println("TRACE_SIZING fillBuf() compacting " + bufStart + " bufEnd=" + bufEnd + " pos=" + pos
                                        + " posStart=" + posStart + " posEnd=" + posEnd
                                        + " buf first 100 chars:"
-                                       + new String(buf, bufStart, bufEnd - bufStart < 100 ? bufEnd - bufStart : 100));
+                                       + new String(buf, bufStart, Math.min(bufEnd - bufStart, 100)));
 
-            } else if (expand) {
+            } else {
                 final int newSize = 2 * buf.length;
-                final char newBuf[] = new char[newSize];
+                final char[] newBuf = new char[newSize];
                 if (TRACE_SIZING)
                     System.out.println("TRACE_SIZING fillBuf() " + buf.length + " => " + newSize);
                 System.arraycopy(buf, bufStart, newBuf, 0, bufEnd - bufStart);
@@ -2897,8 +2888,6 @@ public class MXParser implements XmlPullParser {
                     bufSoftLimit = (int) ((((long) bufLoadFactor) * buf.length) / 100);
                 }
 
-            } else {
-                throw new XmlPullParserException("internal error in fillBuffer()");
             }
             bufEnd -= bufStart;
             pos -= bufStart;

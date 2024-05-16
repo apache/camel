@@ -58,18 +58,6 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    public Destination getReplyTo() {
-        try {
-            destinationResolver.destinationReady();
-        } catch (InterruptedException e) {
-            log.warn("Interrupted while waiting for JMSReplyTo destination refresh due to: {}.",
-                    e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        return super.getReplyTo();
-    }
-
-    @Override
     protected ReplyHandler createReplyHandler(
             ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
             String originalCorrelationId, String correlationId, long requestTimeout) {
@@ -259,14 +247,22 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             String msg
                     = "Exception inside the DMLC for Temporary ReplyTo Queue for destination " + endpoint.getDestinationName()
                       + ", refreshing ReplyTo destination (stacktrace in DEBUG logging level).";
-            log.warn(msg);
+            boolean stopped = camelContext.isStopped();
+            if (stopped) {
+                // if camel is stopped then an exception can happen during stopping connection to broker
+                log.debug(msg);
+            } else {
+                log.warn(msg);
+            }
             if (log.isDebugEnabled()) {
                 log.debug(msg, exception);
             }
-            destResolver.scheduleRefresh();
-            // serve as a proxy for any exception listener the user may have set explicitly
-            if (delegate != null) {
-                delegate.onException(exception);
+            if (!stopped) {
+                destResolver.scheduleRefresh();
+                // serve as a proxy for any exception listener the user may have set explicitly
+                if (delegate != null) {
+                    delegate.onException(exception);
+                }
             }
         }
 
@@ -286,27 +282,24 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
                 throws JMSException {
             // use a temporary queue to gather the reply message
-            synchronized (refreshWanted) {
-                if (queue == null || refreshWanted.get()) {
-                    refreshWanted.set(false);
-                    if (custom != null) {
-                        if (queue != null) {
-                            // delete previous queue
-                            try {
-                                custom.delete(queue);
-                            } catch (Exception e) {
-                                // ignore
-                            }
+            if (queue == null || refreshWanted.get()) {
+                refreshWanted.set(false);
+                if (custom != null) {
+                    if (queue != null) {
+                        // delete previous queue
+                        try {
+                            custom.delete(queue);
+                        } catch (Exception e) {
+                            // ignore
                         }
-                        queue = custom.createTemporaryQueue(session);
-                    } else {
-                        queue = session.createTemporaryQueue();
                     }
-                    setReplyTo(queue);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", queue.getQueueName());
-                    }
-                    refreshWanted.notifyAll();
+                    queue = custom.createTemporaryQueue(session);
+                } else {
+                    queue = session.createTemporaryQueue();
+                }
+                setReplyTo(queue);
+                if (log.isDebugEnabled()) {
+                    log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", queue.getQueueName());
                 }
             }
             return queue;
@@ -314,18 +307,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         public void scheduleRefresh() {
             refreshWanted.set(true);
-        }
-
-        public void destinationReady() throws InterruptedException {
-            if (refreshWanted.get()) {
-                synchronized (refreshWanted) {
-                    //check if requestWanted is still true
-                    if (refreshWanted.get()) {
-                        log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
-                        refreshWanted.wait();
-                    }
-                }
-            }
+            replyTo = null;
         }
 
         @Override

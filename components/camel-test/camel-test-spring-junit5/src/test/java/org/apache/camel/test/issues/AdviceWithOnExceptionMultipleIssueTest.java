@@ -16,8 +16,6 @@
  */
 package org.apache.camel.test.issues;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,9 +38,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
-        AdviceWith.adviceWith(context, "RouteA", a -> {
-            a.interceptSendToEndpoint("mock:resultA").process();
-        });
+        AdviceWith.adviceWith(context, "RouteA", a -> a.interceptSendToEndpoint("mock:resultA").process());
 
         AdviceWith.adviceWith(context, "RouteB", a -> {
         });
@@ -56,11 +52,9 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
-        AdviceWith.adviceWith(context, "RouteA", a -> {
-            a.interceptSendToEndpoint("mock:resultA").process(e -> {
-                throw new Exception("my exception");
-            });
-        });
+        AdviceWith.adviceWith(context, "RouteA", a -> a.interceptSendToEndpoint("mock:resultA").process(e -> {
+            throw new Exception("my exception");
+        }));
 
         context.start();
 
@@ -74,11 +68,8 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
         AdviceWith.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:resultA").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        throw new Exception("my exception");
-                    }
+                interceptSendToEndpoint("mock:resultA").process(exchange -> {
+                    throw new Exception("my exception");
                 });
             }
         });

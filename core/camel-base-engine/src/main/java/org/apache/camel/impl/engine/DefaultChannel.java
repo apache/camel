@@ -176,8 +176,10 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // as we do not want regular tracer to trace the debugger)
         if (camelContext.isDebugStandby() || route.isDebugging()) {
             final Debugger customDebugger = camelContext.getDebugger();
+            final MessageHistoryFactory messageHistoryFactory = camelContext.getMessageHistoryFactory();
             if (customDebugger != null) {
                 // use custom debugger
+                addAdvice(new MessageHistoryAdvice(messageHistoryFactory, targetOutputDef));
                 addAdvice(new DebuggerAdvice(customDebugger, nextProcessor, targetOutputDef));
             }
             BacklogDebugger debugger = getBacklogDebugger(camelContext, customDebugger == null);
@@ -192,12 +194,13 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 if (!skip && routeDefinition != null) {
                     backlogDebuggerSetupInitialBreakpoints(definition, routeDefinition, first, debugger, targetOutputDef);
                     if (first && debugger.isSingleStepIncludeStartEnd()) {
-                        // add breakpoint on route input instead of first node
-                        addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
                         // debugger captures message history, and we need to capture history of incoming
                         addAdvice(
                                 new MessageHistoryAdvice(camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
+                        // add breakpoint on route input instead of first node
+                        addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
                     }
+                    addAdvice(new MessageHistoryAdvice(messageHistoryFactory, targetOutputDef));
                     addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
                 }
             }
@@ -214,10 +217,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
         }
 
-        if (route.isMessageHistory()) {
-            // add message history advice
-            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
-            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
+        // debugger will automatically include message history
+        boolean debugging = camelContext.isDebugStandby() || route.isDebugging();
+        if (!debugging && route.isMessageHistory()) {
+            final MessageHistoryFactory messageHistoryFactory = camelContext.getMessageHistoryFactory();
+            // add message history advice (when not debugging)
+            addAdvice(new MessageHistoryAdvice(messageHistoryFactory, targetOutputDef));
         }
         // add advice that keeps track of which node is processing
         addAdvice(new NodeHistoryAdvice(targetOutputDef));

@@ -32,7 +32,7 @@ import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromT
 @Experimental
 @ManagedResource(description = "Managed KotlinRoutesBuilderLoader")
 @RoutesLoader(EXTENSION)
-class KotlinRoutesBuilderLoader : org.apache.camel.endpointdsl.support.EndpointRouteBuilderLoaderSupport(EXTENSION) {
+class KotlinRoutesBuilderLoader : EndpointRouteBuilderLoaderSupport(EXTENSION) {
     @Throws(Exception::class)
     override fun doLoadEndpointRouteBuilder(reader: Reader, builder: EndpointRouteBuilder) {
         val host = BasicJvmScriptingHost()

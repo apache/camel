@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +112,7 @@ public class CamelRouteCoverageDumper {
 
         // sort processors by position in route definition
         for (Map.Entry<String, List<ManagedProcessorMBean>> entry : processorsForRoute.entrySet()) {
-            Collections.sort(entry.getValue(), Comparator.comparing(ManagedProcessorMBean::getIndex));
+            entry.getValue().sort(Comparator.comparing(ManagedProcessorMBean::getIndex));
         }
 
         return processorsForRoute;

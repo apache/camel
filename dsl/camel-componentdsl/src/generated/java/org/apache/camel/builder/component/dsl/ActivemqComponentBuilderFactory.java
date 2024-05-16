@@ -1979,6 +1979,43 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Number of times to wait for temporary replyTo queue to be created and
+         * ready when doing request/reply over JMS.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 200
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedCounter the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder waitForTemporaryReplyToToBeUpdatedCounter(int waitForTemporaryReplyToToBeUpdatedCounter) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedCounter", waitForTemporaryReplyToToBeUpdatedCounter);
+            return this;
+        }
+    
+        
+        /**
+         * Interval in millis to sleep each time while waiting for temporary
+         * replyTo queue to be ready.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param waitForTemporaryReplyToToBeUpdatedThreadSleepingTime the value
+         * to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+    
         /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
@@ -2298,6 +2335,8 @@ public interface ActivemqComponentBuilderFactory {
             case "useMessageIDAsCorrelationID": getOrCreateConfiguration((ActiveMQComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "waitForTemporaryReplyToToBeUpdatedCounter": getOrCreateConfiguration((ActiveMQComponent) component).setWaitForTemporaryReplyToToBeUpdatedCounter((int) value); return true;
+            case "waitForTemporaryReplyToToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((ActiveMQComponent) component).setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime((long) value); return true;
             case "headerFilterStrategy": ((ActiveMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;

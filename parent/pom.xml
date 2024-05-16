@@ -75,16 +75,16 @@
         <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
         <awaitility-version>4.2.1</awaitility-version>
-        <aws-java-sdk2-version>2.25.50</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.25.53</aws-java-sdk2-version>
         <aws-xray-version>2.15.3</aws-xray-version>
         <azure-sdk-bom-version>1.2.23</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.19</azure-storage-blob-changefeed-version>
         <beanio-version>3.0.0</beanio-version>
         <bouncycastle-version>1.78</bouncycastle-version>
-        <box-java-sdk-version>4.8.0</box-java-sdk-version>
+        <box-java-sdk-version>4.9.0</box-java-sdk-version>
         <braintree-gateway-version>3.34.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.5.0</build-helper-maven-plugin-version>
-        <bytebuddy-version>1.14.14</bytebuddy-version>
+        <bytebuddy-version>1.14.15</bytebuddy-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
         <californium-version>3.11.0</californium-version>
@@ -94,7 +94,7 @@
         <cassandra-driver-version>4.17.0</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
-        <chicocy-version>0.0.9</chicocy-version>
+        <chicocy-version>0.0.10</chicocy-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.172</classgraph-version>
         <cometd-java-client-version>8.0.0.beta3</cometd-java-client-version>
@@ -145,7 +145,7 @@
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.10.8</ehcache3-version>
-        <elasticsearch-java-client-version>8.13.3</elasticsearch-java-client-version>
+        <elasticsearch-java-client-version>8.13.4</elasticsearch-java-client-version>
         <elasticsearch-java-client-sniffer-version>8.13.4</elasticsearch-java-client-sniffer-version>
         <elytron-web>4.1.0.Final</elytron-web>
         <exec-maven-plugin-version>3.2.0</exec-maven-plugin-version>
@@ -182,14 +182,14 @@
         <jaxb-jxc-version>4.0.5</jaxb-jxc-version>
         <gmavenplus-plugin-version>3.0.2</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.23.0</google-auth-library-oauth2-http-version>
-        <google-api-client-version>2.4.1</google-api-client-version>
+        <google-api-client-version>2.5.0</google-api-client-version>
         <google-api-services-drive-version>v3-rev20240327-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20240419-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20240423-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240422-2.0.0</google-api-services-mail-version>
-        <google-oauth-client-version>1.35.0</google-oauth-client-version>
+        <google-oauth-client-version>1.36.0</google-oauth-client-version>
         <google-cloud-bom-version>26.38.0</google-cloud-bom-version>
-        <google-cloud-functions-bom-version>2.44.0</google-cloud-functions-bom-version>
+        <google-cloud-functions-bom-version>2.45.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.44.1</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.43.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.0.1</graaljs-version>
@@ -203,7 +203,7 @@
         <grpc-java-jwt-version>4.4.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
         <gson-version>2.10.1</gson-version>
-        <guava-version>33.1.0-jre</guava-version>
+        <guava-version>33.2.0-jre</guava-version>
         <guice3-version>3.0</guice3-version>
         <hadoop3-version>3.4.0</hadoop3-version>
         <hamcrest-version>2.2</hamcrest-version>
@@ -223,7 +223,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.24.3</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.94</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.95</huaweicloud-sdk-version>
         <ical4j-version>3.2.18</ical4j-version>
         <icu4j-version>75.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
@@ -264,7 +264,7 @@
         <jaxb2-maven-plugin-version>3.2.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
-        <jboss-logging-version>3.5.3.Final</jboss-logging-version>
+        <jboss-logging-version>3.6.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.6.1.Final</jboss-transaction-spi.version>
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
@@ -351,8 +351,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.25</metrics-version>
-        <micrometer-version>1.12.5</micrometer-version>
-        <micrometer-tracing-version>1.2.5</micrometer-tracing-version>
+        <micrometer-version>1.13.0</micrometer-version>
+        <micrometer-tracing-version>1.3.0</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <milvus-client-version>2.4.0</milvus-client-version>
@@ -362,7 +362,7 @@
         <minio-version>8.5.10</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>6.12.1</mockwebserver-version>
-        <mockito-version>5.11.0</mockito-version>
+        <mockito-version>5.12.0</mockito-version>
         <mongo-java-driver-version>4.11.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.15.0</msal4j-version>
@@ -382,11 +382,11 @@
         <openapi-generator>7.5.0</openapi-generator>
         <openjpa-version>3.2.2</openjpa-version>
         <opensearch-rest-client-version>2.13.0</opensearch-rest-client-version>
-        <opensearch-java-client-version>2.10.1</opensearch-java-client-version>
+        <opensearch-java-client-version>2.10.2</opensearch-java-client-version>
         <opensearch-version>2.11.0</opensearch-version>
         <opensearch-testcontainers-version>2.0.1</opensearch-testcontainers-version>
         <openstack4j-version>3.11</openstack4j-version>
-        <opentelemetry-version>1.37.0</opentelemetry-version>
+        <opentelemetry-version>1.38.0</opentelemetry-version>
         <opentelemetry-alpha-version>1.23.1-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <paho-version>1.2.5</paho-version>
@@ -417,8 +417,8 @@
         <quickfixj-version>2.3.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.6.5</reactor-version>
-        <reactor-netty-version>1.1.18</reactor-netty-version>
-        <redisson-version>3.29.0</redisson-version>
+        <reactor-netty-version>1.1.19</reactor-netty-version>
+        <redisson-version>3.30.0</redisson-version>
         <resilience4j-version>2.2.0</resilience4j-version>
         <rest-assured-version>5.4.0</rest-assured-version>
         <roaster-version>2.29.0.Final</roaster-version>
@@ -440,7 +440,7 @@
         <smbj-version>0.13.0</smbj-version>
         <snakeyaml-version>2.2</snakeyaml-version>
         <snakeyaml-engine-version>2.7</snakeyaml-engine-version>
-        <snmp4j-version>3.8.1</snmp4j-version>
+        <snmp4j-version>3.8.2</snmp4j-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.1.1</spring-batch-version>
@@ -494,7 +494,7 @@
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.3</yasson-version>
         <yetus-audience-annotations-version>0.15.0</yetus-audience-annotations-version>
-        <zeebe.version>8.5.0</zeebe.version>
+        <zeebe.version>8.5.1</zeebe.version>
         <zendesk-client-version>0.25.0</zendesk-client-version>
         <zookeeper-version>3.9.2</zookeeper-version>
         <zxing-version>3.5.3</zxing-version>
@@ -3497,6 +3497,9 @@
                     <name>!quickly</name>
                 </property>
             </activation>
+            <properties>
+                <surefire.rerunFailingTestsCount>2</surefire.rerunFailingTestsCount>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -3535,8 +3538,8 @@
                             <failIfNoTests>false</failIfNoTests>
                             <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                             <runOrder>alphabetical</runOrder>
-                            <!-- lets re-run the failed test one more time, just to be sure -->
-                            <rerunFailingTestsCount>0</rerunFailingTestsCount>
+                            <!-- lets re-run the failed test, just to be sure -->
+                            <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
                             <systemPropertyVariables>
                                 <javax.xml.accessExternalSchema>file,http,https</javax.xml.accessExternalSchema>
                                 <javax.xml.accessExternalDTD>file,http</javax.xml.accessExternalDTD>

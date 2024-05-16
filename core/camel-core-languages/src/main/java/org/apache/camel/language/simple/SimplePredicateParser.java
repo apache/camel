@@ -664,13 +664,13 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
             // based on the parameter types the binary operator support, we need to set this state into
             // the following booleans so we know how to proceed in the grammar
-            boolean literalWithFunctionsSupported = false;
-            boolean literalSupported = false;
-            boolean functionSupported = false;
-            boolean numericSupported = false;
-            boolean booleanSupported = false;
-            boolean nullSupported = false;
-            boolean minusSupported = false;
+            boolean literalWithFunctionsSupported;
+            boolean literalSupported;
+            boolean functionSupported;
+            boolean numericSupported;
+            boolean booleanSupported;
+            boolean nullSupported;
+            boolean minusSupported;
             if (types == null || types.length == 0) {
                 literalWithFunctionsSupported = true;
                 // favor literal with functions over literals without functions
@@ -681,6 +681,13 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 nullSupported = true;
                 minusSupported = true;
             } else {
+                literalWithFunctionsSupported = false;
+                literalSupported = false;
+                functionSupported = false;
+                numericSupported = false;
+                booleanSupported = false;
+                nullSupported = false;
+                minusSupported = false;
                 for (BinaryOperatorType.ParameterType parameterType : types) {
                     literalSupported |= parameterType.isLiteralSupported();
                     literalWithFunctionsSupported |= parameterType.isLiteralWithFunctionSupport();

@@ -188,7 +188,7 @@ The camel.server supports 13 options, which are listed below.
 
 
 === Camel Debugger configurations
-The camel.debug supports 13 options, which are listed below.
+The camel.debug supports 15 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -202,6 +202,8 @@ The camel.debug supports 13 options, which are listed below.
 | *camel.debug.includeException* | Trace messages to include exception if the message failed | true | boolean
 | *camel.debug.includeExchange{zwsp}Properties* | Whether to include the exchange properties in the traced message | true | boolean
 | *camel.debug.includeExchange{zwsp}Variables* | Whether to include the exchange variables in the traced message | true | boolean
+| *camel.debug.jmxConnector{zwsp}Enabled* | Whether to create JMX connector that allows tooling to control the Camel debugger. This is what the IDEA and VSCode tooling is using. | true | boolean
+| *camel.debug.jmxConnectorPort* | Port number to expose a JMX RMI connector for tooling that needs to control the debugger. | 1099 | int
 | *camel.debug.loggingLevel* | The debugger logging level to use when logging activity. | INFO | LoggingLevel
 | *camel.debug.singleStepInclude{zwsp}StartEnd* | In single step mode, then when the exchange is created and completed, then simulate a breakpoint at start and end, that allows to suspend and watch the incoming/complete exchange at the route (you can see message body as response, failed exception etc). | false | boolean
 | *camel.debug.standby* | To set the debugger in standby mode, where the debugger will be installed by not automatic enabled. The debugger can then later be enabled explicit from Java, JMX or tooling. | false | boolean

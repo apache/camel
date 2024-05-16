@@ -17,6 +17,7 @@
 package org.apache.camel.processor.resequencer;
 
 import java.io.Serial;
+import java.util.Objects;
 import java.util.TreeSet;
 
 /**
@@ -28,16 +29,13 @@ public class Sequence<E> extends TreeSet<E> {
 
     private static final @Serial long serialVersionUID = 5647393631147741711L;
 
-    private final SequenceElementComparator<E> comparator;
-
     /**
      * Creates a new {@link Sequence} instance.
      *
      * @param comparator a strategy for comparing elements of this sequence.
      */
     public Sequence(SequenceElementComparator<E> comparator) {
-        super(comparator);
-        this.comparator = comparator;
+        super(Objects.requireNonNull(comparator));
     }
 
     /**
@@ -52,7 +50,7 @@ public class Sequence<E> extends TreeSet<E> {
         if (elem == null) {
             return null;
         }
-        if (comparator.predecessor(elem, e)) {
+        if (seqComparator().predecessor(elem, e)) {
             return elem;
         }
         return null;
@@ -70,7 +68,7 @@ public class Sequence<E> extends TreeSet<E> {
         if (elem == null) {
             return null;
         }
-        if (comparator.successor(elem, e)) {
+        if (seqComparator().successor(elem, e)) {
             return elem;
         }
         return null;
@@ -81,9 +79,9 @@ public class Sequence<E> extends TreeSet<E> {
      *
      * @return this sequence's comparator.
      */
-    @Override
-    public SequenceElementComparator<E> comparator() {
-        return comparator;
+    @SuppressWarnings("unchecked")
+    public SequenceElementComparator<E> seqComparator() {
+        return Objects.requireNonNull((SequenceElementComparator<E>) super.comparator());
     }
 
     /**
@@ -102,7 +100,7 @@ public class Sequence<E> extends TreeSet<E> {
             if (found) {
                 return current;
             }
-            if (comparator.compare(e, current) == 0) {
+            if (seqComparator().compare(e, current) == 0) {
                 found = true;
             }
         }
@@ -122,7 +120,7 @@ public class Sequence<E> extends TreeSet<E> {
     public E lower(E e) {
         E last = null;
         for (E current : this) {
-            if (comparator.compare(e, current) == 0) {
+            if (seqComparator().compare(e, current) == 0) {
                 return last;
             }
             last = current;

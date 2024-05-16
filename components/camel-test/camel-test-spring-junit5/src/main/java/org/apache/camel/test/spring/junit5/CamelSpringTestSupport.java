@@ -315,7 +315,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
         @Override
         public InputStream getInputStream() throws IOException {
-            if (properties.size() > 0) {
+            if (!properties.isEmpty()) {
                 StringWriter sw = new StringWriter();
                 try (InputStreamReader r = new InputStreamReader(delegate.getInputStream(), StandardCharsets.UTF_8)) {
                     char[] buf = new char[32768];

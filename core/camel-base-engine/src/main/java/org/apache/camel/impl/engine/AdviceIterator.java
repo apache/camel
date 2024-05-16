@@ -36,12 +36,16 @@ final class AdviceIterator {
             if (task.hasState()) {
                 state = states[stateIndex--];
             }
-            try {
-                task.after(exchange, state);
-            } catch (Exception e) {
-                exchange.setException(e);
-                // allow all advices to complete even if there was an exception
-            }
+            runAfterTask(task, state, exchange);
+        }
+    }
+
+    static void runAfterTask(CamelInternalProcessorAdvice task, Object state, Exchange exchange) {
+        try {
+            task.after(exchange, state);
+        } catch (Exception e) {
+            exchange.setException(e);
+            // allow all advices to complete even if there was an exception
         }
     }
 }

@@ -151,6 +151,7 @@ public class DebugDevConsole extends AbstractDevConsole {
 
         BacklogDebugger backlog = getCamelContext().hasService(BacklogDebugger.class);
         if (backlog != null) {
+            root.put("version", getCamelContext().getVersion());
             root.put("enabled", backlog.isEnabled());
             root.put("standby", backlog.isStandby());
             root.put("suspendedMode", backlog.isSuspendMode());

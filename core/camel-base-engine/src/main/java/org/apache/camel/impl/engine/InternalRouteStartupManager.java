@@ -276,14 +276,13 @@ final class InternalRouteStartupManager {
         // check in existing already started as well
         for (RouteStartupOrder order : camelContext.getCamelContextExtension().getRouteStartupOrder()) {
             String otherId = order.getRoute().getId();
-            if (answer.getRoute().getId().equals(otherId)) {
-                // its the same route id so skip clash check as its the same
-                // route (can happen when using suspend/resume)
-            } else if (answer.getStartupOrder() == order.getStartupOrder()) {
+            // skip clash check if it's the same route id, as it's the same
+            // route (can happen when using suspend/resume)
+            if (!answer.getRoute().getId().equals(otherId)
+                    && answer.getStartupOrder() == order.getStartupOrder()) {
                 throw new FailedToStartRouteException(
                         answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
-                                                   + answer
-                                                           .getStartupOrder()
+                                                   + answer.getStartupOrder()
                                                    + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
             }
         }

@@ -25,7 +25,7 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Bean property
+ * A key value pair where the value is a literal value
  */
 @Metadata(label = "configuration")
 @XmlType

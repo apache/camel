@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.w3c.dom.Document;
 
@@ -87,7 +88,7 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
         String payloadstr = String.format(form, name);
         InputStream message = null;
         try {
-            message = new ByteArrayInputStream(payloadstr.getBytes("utf-8"));
+            message = new ByteArrayInputStream(payloadstr.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             // ignore and let it fail
         }

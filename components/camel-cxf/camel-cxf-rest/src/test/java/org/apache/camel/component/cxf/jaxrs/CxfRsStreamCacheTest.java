@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -61,7 +63,7 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
                         .process(exchange -> {
                             // respond with OK
                             CachedOutputStream cos = new CachedOutputStream(exchange);
-                            cos.write(RESPONSE.getBytes("UTF-8"));
+                            cos.write(RESPONSE.getBytes(StandardCharsets.UTF_8));
                             cos.close();
                             exchange.getMessage().setBody(cos.newStreamCache());
 

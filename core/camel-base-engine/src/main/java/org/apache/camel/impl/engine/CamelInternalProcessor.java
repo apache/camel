@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,6 +77,8 @@ import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
  * <ul>
@@ -114,12 +117,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     private final ShutdownStrategy shutdownStrategy;
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
     private byte statefulAdvices;
-    private Object[] emptyStatefulStates;
     private PooledObjectFactory<CamelInternalTask> taskFactory;
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
+        this.reactiveExecutor = requireNonNull(camelContext.getCamelContextExtension().getReactiveExecutor());
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
@@ -128,14 +130,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
-    }
-
-    private CamelInternalProcessor(Logger log) {
-        // used for eager loading
-        camelContext = null;
-        reactiveExecutor = null;
-        shutdownStrategy = null;
-        log.trace("Loaded {}", AsyncAfterTask.class.getSimpleName());
     }
 
     @Override
@@ -148,9 +142,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
             LOG.trace("Using TaskFactory: {}", taskFactory);
-
-            // create empty array we can use for reset
-            emptyStatefulStates = new Object[statefulAdvices];
         }
 
         ServiceHelper.buildService(taskFactory, processor);
@@ -242,8 +233,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public void reset() {
-            // reset array by copying over from empty which is a very fast JVM optimized operation
-            System.arraycopy(emptyStatefulStates, 0, states, 0, statefulAdvices);
+            Arrays.fill(this.states, null);
             this.exchange = null;
             this.originalCallback = null;
         }
@@ -741,11 +731,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     data.setExceptionAsJSon(json);
                 }
             }
-        }
-
-        @Override
-        public boolean hasState() {
-            return true;
         }
 
     }

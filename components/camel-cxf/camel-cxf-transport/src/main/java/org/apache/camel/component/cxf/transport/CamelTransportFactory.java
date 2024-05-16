@@ -165,26 +165,34 @@ public class CamelTransportFactory extends AbstractTransportFactory
         }
         DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
         if (null != dfm && getTransportIds() != null) {
-            for (String ns : getTransportIds()) {
-                try {
-                    if (dfm.getDestinationFactory(ns) == this) {
-                        dfm.deregisterDestinationFactory(ns);
-                    }
-                } catch (BusException e) {
-                    //ignore
-                }
-            }
+            unregisterDestinationFactories(dfm);
         }
         ConduitInitiatorManager cim = bus.getExtension(ConduitInitiatorManager.class);
         if (cim != null && getTransportIds() != null) {
-            for (String ns : getTransportIds()) {
-                try {
-                    if (cim.getConduitInitiator(ns) == this) {
-                        cim.deregisterConduitInitiator(ns);
-                    }
-                } catch (BusException e) {
-                    //ignore
+            unregisterConduitInitiators(cim);
+        }
+    }
+
+    private void unregisterConduitInitiators(ConduitInitiatorManager cim) {
+        for (String ns : getTransportIds()) {
+            try {
+                if (cim.getConduitInitiator(ns) == this) {
+                    cim.deregisterConduitInitiator(ns);
                 }
+            } catch (BusException e) {
+                //ignore
+            }
+        }
+    }
+
+    private void unregisterDestinationFactories(DestinationFactoryManager dfm) {
+        for (String ns : getTransportIds()) {
+            try {
+                if (dfm.getDestinationFactory(ns) == this) {
+                    dfm.deregisterDestinationFactory(ns);
+                }
+            } catch (BusException e) {
+                //ignore
             }
         }
     }

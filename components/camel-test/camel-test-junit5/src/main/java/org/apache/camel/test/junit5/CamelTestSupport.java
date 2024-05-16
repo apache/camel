@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.junit5;
 
-import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +39,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.api.management.ManagedCamelContext;
-import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -55,15 +52,14 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.test.CamelRouteCoverageDumper;
+import org.apache.camel.test.junit5.util.ExtensionHelper;
+import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +76,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
+import static org.apache.camel.test.junit5.util.ExtensionHelper.testStartHeader;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -102,7 +99,7 @@ public abstract class CamelTestSupport
     private static final ThreadLocal<FluentProducerTemplate> THREAD_FLUENT_TEMPLATE = new ThreadLocal<>();
     private static final ThreadLocal<ConsumerTemplate> THREAD_CONSUMER = new ThreadLocal<>();
     private static final ThreadLocal<Service> THREAD_SERVICE = new ThreadLocal<>();
-    public static final String SEPARATOR = "********************************************************************************";
+
     protected Properties extra;
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
@@ -119,7 +116,7 @@ public abstract class CamelTestSupport
     private static final ThreadLocal<CamelTestSupport> INSTANCE = new ThreadLocal<>();
     private String currentTestName;
     private boolean isCreateCamelContextPerClass = false;
-    private final CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
+
     private ExtensionContext.Store globalStore;
 
     @Override
@@ -132,6 +129,7 @@ public abstract class CamelTestSupport
         watch.restart();
     }
 
+    @Deprecated(since = "4.7.0")
     public long timeTaken() {
         return watch.taken();
     }
@@ -343,34 +341,12 @@ public abstract class CamelTestSupport
 
     @BeforeEach
     public void setUp() throws Exception {
-        LOG.info(SEPARATOR);
-        LOG.info("Testing: {} ({})", currentTestName, getClass().getName());
-        LOG.info(SEPARATOR);
+        testStartHeader(getClass(), currentTestName);
 
-        doSpringBootCheck();
-        doQuarkusCheck();
+        ExtensionHelper.hasUnsupported(getClass());
 
         if (isCreateCamelContextPerClass()) {
-            INSTANCE.set(this);
-            AtomicInteger v = TESTS.get();
-            if (v == null) {
-                v = new AtomicInteger();
-                TESTS.set(v);
-            }
-            if (v.getAndIncrement() == 0) {
-                LOG.debug("Setup CamelContext before running first test");
-                // test is per class, so only setup once (the first time)
-                doSpringBootCheck();
-                setupResources();
-                doPreSetup();
-                doSetUp();
-                doPostSetup();
-            } else {
-                LOG.debug("Reset between test methods");
-                // and in between tests we must do IoC and reset mocks
-                postProcessTest();
-                MockEndpoint.resetMocks(context);
-            }
+            createCamelContextPerClass();
         } else {
             // test is per test so always setup
             setupResources();
@@ -381,6 +357,28 @@ public abstract class CamelTestSupport
 
         // only start timing after all the setup
         watch.restart();
+    }
+
+    private void createCamelContextPerClass() throws Exception {
+        INSTANCE.set(this);
+        AtomicInteger v = TESTS.get();
+        if (v == null) {
+            v = new AtomicInteger();
+            TESTS.set(v);
+        }
+        if (v.getAndIncrement() == 0) {
+            LOG.debug("Setup CamelContext before running first test");
+            // test is per class, so only setup once (the first time)
+            setupResources();
+            doPreSetup();
+            doSetUp();
+            doPostSetup();
+        } else {
+            LOG.debug("Reset between test methods");
+            // and in between tests we must do IoC and reset mocks
+            postProcessTest();
+            MockEndpoint.resetMocks(context);
+        }
     }
 
     /**
@@ -399,10 +397,12 @@ public abstract class CamelTestSupport
 
     /**
      * Detects if this is a Spring-Boot test and throws an exception, as these base classes is not intended for testing
-     * Camel on Spring Boot.
+     * Camel on Spring Boot. Use ExtensionHelper.hasClassAnnotation instead
      */
+    @Deprecated(since = "4.7.0")
     protected void doSpringBootCheck() {
-        boolean springBoot = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest");
+        boolean springBoot
+                = ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.boot.test.context.SpringBootTest");
         if (springBoot) {
             throw new RuntimeException(
                     "Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot.");
@@ -411,11 +411,12 @@ public abstract class CamelTestSupport
 
     /**
      * Detects if this is a Camel-quarkus test and throw an exception, as these base classes is not intended for testing
-     * Camel onQuarkus.
+     * Camel onQuarkus. Use ExtensionHelper.hasClassAnnotation instead.
      */
+    @Deprecated(since = "4.7.0")
     protected void doQuarkusCheck() {
-        boolean quarkus = hasClassAnnotation("io.quarkus.test.junit.QuarkusTest") ||
-                hasClassAnnotation("org.apache.camel.quarkus.test.CamelQuarkusTest");
+        boolean quarkus = ExtensionHelper.hasClassAnnotation(getClass(), "io.quarkus.test.junit.QuarkusTest",
+                "org.apache.camel.quarkus.test.CamelQuarkusTest");
         if (quarkus) {
             throw new RuntimeException(
                     "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
@@ -445,17 +446,36 @@ public abstract class CamelTestSupport
 
         // set debugger if enabled
         if (isUseDebugger()) {
-            if (context.getStatus().equals(ServiceStatus.Started)) {
-                LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
-                // we need to stop the context first to setup the debugger
-                context.stop();
-            }
-            context.setDebugging(true);
-            context.setDebugger(new DefaultDebugger());
-            context.getDebugger().addBreakpoint(breakpoint);
-            // when stopping CamelContext it will automatically remove the breakpoint
+            setupDebugger();
         }
 
+        setupTemplates();
+
+        // enable auto mocking if enabled
+        enableAutoMocking();
+
+        // configure properties component (mandatory for testing)
+        configurePropertiesComponent();
+
+        setupIncludeExcludePatterns();
+
+        // prepare for in-between tests
+        postProcessTest();
+
+        if (isUseRouteBuilder()) {
+            setupRoutes();
+
+            tryStartCamelContext();
+        } else {
+            replaceFromEndpoints();
+            LOG.debug("Using route builder from the created context: {}", context);
+        }
+        LOG.debug("Routing Rules are: {}", context.getRoutes());
+
+        assertValidContext(context);
+    }
+
+    private void setupTemplates() {
         template = context.createProducerTemplate();
         template.start();
         fluentTemplate = context.createFluentProducerTemplate();
@@ -466,8 +486,64 @@ public abstract class CamelTestSupport
         THREAD_TEMPLATE.set(template);
         THREAD_FLUENT_TEMPLATE.set(fluentTemplate);
         THREAD_CONSUMER.set(consumer);
+    }
 
-        // enable auto mocking if enabled
+    private void setupRoutes() throws Exception {
+        RoutesBuilder[] builders = createRouteBuilders();
+        // add configuration before routes
+        for (RoutesBuilder builder : builders) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                LOG.debug("Using created route configuration: {}", builder);
+                context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+            }
+        }
+        for (RoutesBuilder builder : builders) {
+            LOG.debug("Using created route builder to add routes: {}", builder);
+            context.addRoutes(builder);
+        }
+        for (RoutesBuilder builder : builders) {
+            LOG.debug("Using created route builder to add templated routes: {}", builder);
+            context.addTemplatedRoutes(builder);
+        }
+        replaceFromEndpoints();
+    }
+
+    private void tryStartCamelContext() throws Exception {
+        boolean skip = Boolean.parseBoolean(System.getProperty("skipStartingCamelContext"));
+        if (skip) {
+            LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+        } else if (isUseAdviceWith()) {
+            LOG.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
+        } else {
+            startCamelContext();
+        }
+    }
+
+    private void setupIncludeExcludePatterns() {
+        final String include = getRouteFilterIncludePattern();
+        final String exclude = getRouteFilterExcludePattern();
+        if (include != null || exclude != null) {
+            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(include, exclude);
+        }
+    }
+
+    private void configurePropertiesComponent() {
+        PropertiesComponent pc = context.getPropertiesComponent();
+        if (extra == null) {
+            extra = useOverridePropertiesWithPropertiesComponent();
+        }
+        if (extra != null && !extra.isEmpty()) {
+            pc.setOverrideProperties(extra);
+        }
+        pc.addPropertiesSource(new JunitPropertiesSource(globalStore));
+        Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
+        if (ignore != null) {
+            pc.setIgnoreMissingLocation(ignore);
+        }
+    }
+
+    private void enableAutoMocking() {
         String pattern = isMockEndpoints();
         if (pattern != null) {
             context.getCamelContextExtension()
@@ -478,74 +554,18 @@ public abstract class CamelTestSupport
             context.getCamelContextExtension()
                     .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
+    }
 
-        // configure properties component (mandatory for testing)
-        PropertiesComponent pc = context.getPropertiesComponent();
-        if (extra == null) {
-            extra = useOverridePropertiesWithPropertiesComponent();
+    private void setupDebugger() {
+        if (context.getStatus().equals(ServiceStatus.Started)) {
+            LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
+            // we need to stop the context first to setup the debugger
+            context.stop();
         }
-        if (extra != null && !extra.isEmpty()) {
-            pc.setOverrideProperties(extra);
-        }
-        pc.addPropertiesSource(new PropertiesSource() {
-            @Override
-            public String getName() {
-                return "junit-store";
-            }
-
-            @Override
-            public String getProperty(String name) {
-                return globalStore.get(name, String.class);
-            }
-        });
-        Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
-        if (ignore != null) {
-            pc.setIgnoreMissingLocation(ignore);
-        }
-
-        String include = getRouteFilterIncludePattern();
-        String exclude = getRouteFilterExcludePattern();
-        if (include != null || exclude != null) {
-            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
-            context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(include, exclude);
-        }
-
-        // prepare for in-between tests
-        postProcessTest();
-
-        if (isUseRouteBuilder()) {
-            RoutesBuilder[] builders = createRouteBuilders();
-            // add configuration before routes
-            for (RoutesBuilder builder : builders) {
-                if (builder instanceof RouteConfigurationsBuilder) {
-                    LOG.debug("Using created route configuration: {}", builder);
-                    context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
-                }
-            }
-            for (RoutesBuilder builder : builders) {
-                LOG.debug("Using created route builder to add routes: {}", builder);
-                context.addRoutes(builder);
-            }
-            for (RoutesBuilder builder : builders) {
-                LOG.debug("Using created route builder to add templated routes: {}", builder);
-                context.addTemplatedRoutes(builder);
-            }
-            replaceFromEndpoints();
-            boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
-            if (skip) {
-                LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
-            } else if (isUseAdviceWith()) {
-                LOG.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
-            } else {
-                startCamelContext();
-            }
-        } else {
-            replaceFromEndpoints();
-            LOG.debug("Using route builder from the created context: {}", context);
-        }
-        LOG.debug("Routing Rules are: {}", context.getRoutes());
-
-        assertValidContext(context);
+        context.setDebugging(true);
+        context.setDebugger(new DefaultDebugger());
+        context.getDebugger().addBreakpoint(breakpoint);
+        // when stopping CamelContext it will automatically remove the breakpoint
     }
 
     private void replaceFromEndpoints() throws Exception {
@@ -567,38 +587,23 @@ public abstract class CamelTestSupport
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        LOG.info(SEPARATOR);
-        LOG.info("Testing done: {} ({})", currentTestName, getClass().getName());
-        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
-
-        // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {
-            String className = this.getClass().getSimpleName();
-            String dir = "target/camel-route-coverage";
-            String name = className + "-" + StringHelper.before(currentTestName, "(") + ".xml";
-
-            ManagedCamelContext mc
-                    = context != null ? context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class) : null;
-            ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
-            if (managedCamelContext == null) {
-                LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
-                         + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
-            } else {
-                routeCoverageDumper.dump(managedCamelContext, context, dir, name, getClass().getName(), currentTestName,
-                        timeTaken());
-            }
+            ExtensionHelper.testEndFooter(getClass(), currentTestName, time, new RouteCoverageDumperExtension(context));
+        } else {
+            ExtensionHelper.testEndFooter(getClass(), currentTestName, time);
         }
-        LOG.info(SEPARATOR);
 
         if (isCreateCamelContextPerClass()) {
             // will tear down test specially in afterAll callback
-        } else {
-            LOG.debug("tearDown()");
-            doStopTemplates(consumer, template, fluentTemplate);
-            doStopCamelContext(context, camelContextService);
-            doPostTearDown();
-            cleanupResources();
+            return;
         }
+
+        LOG.debug("tearDown()");
+        doStopTemplates(consumer, template, fluentTemplate);
+        doStopCamelContext(context, camelContextService);
+        doPostTearDown();
+        cleanupResources();
+
     }
 
     void tearDownCreateCamelContextPerClass() throws Exception {
@@ -642,7 +647,7 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Whether or not JMX should be used during testing.
+     * Whether JMX should be used during testing.
      *
      * @return <tt>false</tt> by default.
      */
@@ -688,8 +693,7 @@ public abstract class CamelTestSupport
     protected void applyCamelPostProcessor() throws Exception {
         // use the bean post processor if the test class is not dependency
         // injected already by Spring Framework
-        boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest",
-                "org.springframework.context.annotation.ComponentScan");
+        boolean spring = ExtensionHelper.hasClassAnnotation(getClass(), "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
             PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(this,
                     getClass().getName());
@@ -701,16 +705,9 @@ public abstract class CamelTestSupport
     /**
      * Does this test class have any of the following annotations on the class-level.
      */
+    @Deprecated
     protected boolean hasClassAnnotation(String... names) {
-        for (String name : names) {
-            for (Annotation ann : getClass().getAnnotations()) {
-                String annName = ann.annotationType().getName();
-                if (annName.equals(name)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ExtensionHelper.hasClassAnnotation(getClass(), names);
     }
 
     protected void stopCamelContext() throws Exception {
@@ -858,7 +855,7 @@ public abstract class CamelTestSupport
      * mock:foo and mock:foo?retainFirst=5 would match as the queue name is foo.
      *
      * @param  uri                     the URI which typically starts with "mock:" and has some name
-     * @param  create                  whether or not to allow the endpoint to be created if it doesn't exist
+     * @param  create                  whether to allow the endpoint to be created if it doesn't exist
      * @return                         the mock endpoint or an {@link NoSuchEndpointException} is thrown if it could not
      *                                 be resolved
      * @throws NoSuchEndpointException is the mock endpoint does not exist

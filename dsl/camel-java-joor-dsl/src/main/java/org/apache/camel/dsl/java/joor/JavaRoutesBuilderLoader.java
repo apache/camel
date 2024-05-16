@@ -188,6 +188,8 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 String content = IOHelper.loadText(is);
                 String name = determineName(resource, content);
                 unit.addClass(name, content);
+                // ensure class gets recompiled
+                classLoader.removeClass(name);
                 nameToResource.put(name, resource);
             }
         }

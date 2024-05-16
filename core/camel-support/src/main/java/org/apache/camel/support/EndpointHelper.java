@@ -327,7 +327,7 @@ public final class EndpointHelper {
      * @throws NoSuchBeanException if object was not found in registry and <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        Object answer = null;
+        Object answer;
         if (value.startsWith("#class:")) {
             try {
                 answer = createBean(context, value, type);

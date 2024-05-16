@@ -58,7 +58,7 @@ class XMLStreamReaderInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         byte[] ba = new byte[1];
-        return read(ba, 0, 1) == 1 ? ba[0] : -1;
+        return read(ba, 0, 1) == 1 ? ba[0] & 0xFF : -1;
     }
 
     @Override

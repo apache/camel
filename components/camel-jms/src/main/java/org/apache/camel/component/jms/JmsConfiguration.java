@@ -204,6 +204,12 @@ public class JmsConfiguration implements Cloneable {
               description = "Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS"
                             + " and when the option useMessageIDAsCorrelationID is enabled.")
     private int waitForProvisionCorrelationToBeUpdatedCounter = 50;
+    @UriParam(defaultValue = "100", label = "advanced", javaType = "java.time.Duration",
+              description = "Interval in millis to sleep each time while waiting for temporary replyTo queue to be ready.")
+    private long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime = 100L;
+    @UriParam(defaultValue = "200", label = "advanced",
+              description = "Number of times to wait for temporary replyTo queue to be created and ready when doing request/reply over JMS.")
+    private int waitForTemporaryReplyToToBeUpdatedCounter = 200;
     @UriParam(label = "consumer",
               description = "Specifies the maximum number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
                             + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads."
@@ -1273,6 +1279,29 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = sleepingTime;
+    }
+
+    public long getWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime() {
+        return waitForTemporaryReplyToToBeUpdatedThreadSleepingTime;
+    }
+
+    /**
+     * Interval in millis to sleep each time while waiting for temporary replyTo queue to be ready.
+     */
+    public void setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime(
+            long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
+        this.waitForTemporaryReplyToToBeUpdatedThreadSleepingTime = waitForTemporaryReplyToToBeUpdatedThreadSleepingTime;
+    }
+
+    public int getWaitForTemporaryReplyToToBeUpdatedCounter() {
+        return waitForTemporaryReplyToToBeUpdatedCounter;
+    }
+
+    /**
+     * Number of times to wait for temporary replyTo queue to be created and ready when doing request/reply over JMS.
+     */
+    public void setWaitForTemporaryReplyToToBeUpdatedCounter(int waitForTemporaryReplyToToBeUpdatedCounter) {
+        this.waitForTemporaryReplyToToBeUpdatedCounter = waitForTemporaryReplyToToBeUpdatedCounter;
     }
 
     public int getMaxConcurrentConsumers() {

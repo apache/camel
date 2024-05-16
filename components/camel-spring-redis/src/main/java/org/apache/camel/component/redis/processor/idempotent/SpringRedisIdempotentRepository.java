@@ -24,6 +24,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
@@ -40,6 +41,9 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
     @Metadata(description = "Redis configuration")
     private RedisConfiguration redisConfiguration;
     private RedisTemplate<String, String> redisTemplate;
+    @Metadata(label = "advanced", description = "Delete all keys of the currently selected database."
+                                                + " Be careful if enabling this as all existing data will be deleted.")
+    private boolean flushOnStartup;
 
     public SpringRedisIdempotentRepository() {
     }
@@ -61,6 +65,18 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
     public static SpringRedisIdempotentRepository redisIdempotentRepository(
             RedisTemplate<String, String> redisTemplate, String processorName) {
         return new SpringRedisIdempotentRepository(redisTemplate, processorName);
+    }
+
+    public boolean isFlushOnStartup() {
+        return flushOnStartup;
+    }
+
+    /**
+     * Delete all keys of the currently selected database. Be careful if enabling this as all existing data will be
+     * deleted.
+     */
+    public void setFlushOnStartup(boolean flushOnStartup) {
+        this.flushOnStartup = flushOnStartup;
     }
 
     @Override
@@ -107,12 +123,18 @@ public class SpringRedisIdempotentRepository extends ServiceSupport implements I
 
     @Override
     protected void doStart() throws Exception {
-        if (redisConfiguration == null) {
+        if (redisConfiguration == null && this.redisTemplate == null) {
+            // create configuration if no custom template has been configured
             redisConfiguration = new RedisConfiguration();
         }
-        this.redisTemplate = (RedisTemplate<String, String>) redisConfiguration.getRedisTemplate();
+        if (this.redisTemplate == null) {
+            this.redisTemplate = (RedisTemplate<String, String>) redisConfiguration.getRedisTemplate();
+        }
+        ObjectHelper.notNull(this.redisTemplate, "redisTemplate", this);
         this.setOperations = redisTemplate.opsForSet();
-        redisTemplate.getConnectionFactory().getConnection().flushDb();
+        if (flushOnStartup) {
+            redisTemplate.getConnectionFactory().getConnection().flushDb();
+        }
     }
 
     @Override

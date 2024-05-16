@@ -10,6 +10,17 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Add default values to `ThrottlingExceptionRoutePolicy` route policy.
 
+The `EndpointRegistry` interface has been slightly changed to now directly extends `Map<NormalizedEndpointUri, Endpoint>` 
+instead of being a parameterized type.  This may cause some compilation failures if the code is declaring a variable for the registry.
+
+=== camel-health
+
+Routes which has are set to **not** auto-startup are reported as UP in health-checks.
+We have now implemented similar logic for the consumer health check as well (the route and consumer health check are linked together).
+
+Previously a route that has not been started due to `auto-startup=false` would still have its consumer health-check being executed,
+which could lead to DOWN due to consumer failing the check.
+
 === DSL
 
 The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:
@@ -59,6 +70,13 @@ To:
 </route>
 ----
 
+=== camel-debug
+
+The debugger (using `org.apache.camel.spi.BacklogDebugger`) used for tooling such as IDEA and Visual Studio, is fixed
+to work better out-of-the-box by just having `camel-debug` JAR or `camel-debug-starter` (for Spring Boot) on the classpath.
+
+An internal change is that the MBean operation `messageHistoryOnBreakpointAsXml` on `ManagedBacklogDebugger` now includes
+the current node as last message history, which was expected by IDEA tooling, to make it function again.
 
 === camel-spring-security
 
@@ -66,18 +84,24 @@ The `camel-spring-security` component has been updated to improve readiness for 
 If you are creating Spring Security route policies in your code, you must now refactor them to be based on an `AuthorizationManager`.
 
 For example, you might have a route policy defined as follows:
-```java
+
+[source,java]
+----
 SpringSecurityAuthorizationPolicy authorizationPolicy = new SpringSecurityAuthorizationPolicy();
 authorizationPolicy.setAuthenticationManager(authenticationManager);
 authorizationPolicy.setSpringSecurityAccessPolicy(new SpringSecurityAccessPolicy("ROLE_ADMIN"));
 authorizationPolicy.setAccessDecisionManager(new AffirmativeBased(Collections.singletonList(new RoleVoter())));
-```
+----
+
 With the changes implemented in this release, that must be refactored to:
-```java
+
+[source,java]
+----
 SpringSecurityAuthorizationPolicy authorizationPolicy = new SpringSecurityAuthorizationPolicy();
 authorizationPolicy.setAuthenticationManager(authenticationManager);
 authorizationPolicy.setAuthorizationManager(AuthorityAuthorizationManager.hasRole("ADMIN"));
-```
+----
+
 This new pattern supports a more expressive language to define your own authorization rules, exposing the full power of the Spring Security framework to Camel route policies.
 See the https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler[spring documentation] for further details on how to migrate your custom code from `AccessDecisionManager` to `AuthorizationManager`.
 
@@ -90,10 +114,13 @@ sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and htt
 
 Moved the `camel-cloudevents` api into `camel-api` and removed the `camel-cloudevents` dependency from all components that provide CloudEvent transformers.
 
-== Camel Spring Boot
+=== Camel Spring Boot
 
-=== camel-debug-starter
+==== camel-debug-starter
 
 Using camel debugger with Spring Boot is now moved from `camel-spring-boot` into `camel-debug-starter` where you can configure the debugger
 via `camel.debug.` options in `application.properties`.
+
+The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
+by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
 

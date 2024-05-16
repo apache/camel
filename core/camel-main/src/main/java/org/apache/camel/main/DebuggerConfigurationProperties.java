@@ -55,6 +55,10 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
     private boolean includeException = true;
     @Metadata(label = "advanced", defaultValue = "300")
     private long fallbackTimeout = 300;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean jmxConnectorEnabled = true;
+    @Metadata(label = "advanced", defaultValue = "1099")
+    private int jmxConnectorPort = 1099;
 
     public DebuggerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -221,6 +225,29 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
         this.fallbackTimeout = fallbackTimeout;
     }
 
+    public boolean isJmxConnectorEnabled() {
+        return jmxConnectorEnabled;
+    }
+
+    /**
+     * Whether to create JMX connector that allows tooling to control the Camel debugger. This is what the IDEA and
+     * VSCode tooling is using.
+     */
+    public void setJmxConnectorEnabled(boolean jmxConnectorEnabled) {
+        this.jmxConnectorEnabled = jmxConnectorEnabled;
+    }
+
+    public int getJmxConnectorPort() {
+        return jmxConnectorPort;
+    }
+
+    /**
+     * Port number to expose a JMX RMI connector for tooling that needs to control the debugger.
+     */
+    public void setJmxConnectorPort(int jmxConnectorPort) {
+        this.jmxConnectorPort = jmxConnectorPort;
+    }
+
     /**
      * Enables Debugger in your Camel application.
      */
@@ -331,6 +358,23 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
      */
     public DebuggerConfigurationProperties withFallbackTimeout(long fallbackTimeout) {
         this.fallbackTimeout = fallbackTimeout;
+        return this;
+    }
+
+    /**
+     * Whether to create JMX connector that allows tooling to control the Camel debugger. This is what the IDEA and
+     * VSCode tooling is using.
+     */
+    public DebuggerConfigurationProperties withJmxConnectorEnabled(boolean jmxConnectorEnabled) {
+        this.jmxConnectorEnabled = jmxConnectorEnabled;
+        return this;
+    }
+
+    /**
+     * Port number to expose a JMX RMI connector for tooling that needs to control the debugger.
+     */
+    public DebuggerConfigurationProperties withJmxConnectorPort(int jmxConnectorPort) {
+        this.jmxConnectorPort = jmxConnectorPort;
         return this;
     }
 

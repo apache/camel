@@ -97,6 +97,7 @@ abstract class AbstractExchange implements Exchange {
         privateExtension.setUnitOfWork(parent.getUnitOfWork());
     }
 
+    @SuppressWarnings("CopyConstructorMissesField")
     protected AbstractExchange(AbstractExchange parent) {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();

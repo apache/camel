@@ -256,7 +256,7 @@ public class GsonDataFormat extends ServiceSupport
     }
 
     public Type getUnmarshalGenericType() {
-        return this.unmarshalType;
+        return this.unmarshalGenericType;
     }
 
     public void setUnmarshalGenericType(Type unmarshalGenericType) {

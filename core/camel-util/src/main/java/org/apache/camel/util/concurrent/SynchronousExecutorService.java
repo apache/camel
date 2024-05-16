@@ -41,7 +41,7 @@ public class SynchronousExecutorService extends AbstractExecutorService {
     @Override
     public List<Runnable> shutdownNow() {
         // not implemented
-        return null;
+        return List.of();
     }
 
     @Override

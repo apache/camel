@@ -467,7 +467,7 @@ public final class AdviceWithTasks {
         List<ProcessorDefinition<?>> outputs = parent.getOutputs();
         boolean allAbstract = true;
         for (ProcessorDefinition<?> def : outputs) {
-            allAbstract &= def.isAbstract();
+            allAbstract = def.isAbstract();
             if (!allAbstract) {
                 break;
             }

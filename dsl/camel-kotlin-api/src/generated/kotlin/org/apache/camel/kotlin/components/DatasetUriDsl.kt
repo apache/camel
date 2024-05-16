@@ -153,11 +153,11 @@ public class DatasetUriDsl(
 
   /**
    * Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary
-   * assertion is still valid. This is used for example to assert that exactly a number of messages
-   * arrives. For example if expected count was set to 5, then the assertion is satisfied when 5 or
-   * more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a
+   * assertion is still valid. This is used, for example, to assert that exactly a number of messages
+   * arrive. For example, if the expected count was set to 5, then the assertion is satisfied when five
+   * or more messages arrive. To ensure that exactly 5 messages arrive, then you would need to wait a
    * little period to ensure no further message arrives. This is what you can use this method for. By
-   * default this period is disabled.
+   * default, this period is disabled.
    */
   public fun assertPeriod(assertPeriod: String) {
     it.property("assertPeriod", assertPeriod)

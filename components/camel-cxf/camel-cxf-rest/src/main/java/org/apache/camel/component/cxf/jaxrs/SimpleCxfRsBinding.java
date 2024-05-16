@@ -130,7 +130,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     private static final Object[] NO_PARAMETERS = null;
 
     /** Caches the Method to Parameters associations to avoid reflection with every request */
-    private Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<>();
+    private final Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<>();
 
     @Override
     public void populateExchangeFromCxfRsRequest(
@@ -342,26 +342,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
             answer.multipartTypes = new String[paramCount];
             // remember the names of parameters to be bound to headers and/or attachments
             for (int i = 0; i < paramCount; i++) {
-                // if the parameter has no annotations, let its array element remain = null
-                for (Annotation a : annotations[i]) {
-                    // am I a header?
-                    if (HEADER_ANNOTATIONS.contains(a.annotationType())) {
-                        try {
-                            answer.paramNames[i] = (String) a.annotationType().getMethod("value", NO_PARAMETER_TYPES).invoke(a,
-                                    NO_PARAMETERS);
-                            answer.numberParameters++;
-                        } catch (Exception e) {
-                        }
-                    }
-
-                    // am I multipart?
-                    if (Multipart.class.equals(a.annotationType())) {
-                        Multipart multipart = (Multipart) a;
-                        answer.multipart = true;
-                        answer.multipartNames[i] = multipart.value();
-                        answer.multipartTypes[i] = multipart.type();
-                    }
-                }
+                rememberParameter(annotations, i, answer);
             }
 
             // if we are not multipart and the number of detected JAX-RS parameters (query, headers, etc.) is less than the number of method parameters
@@ -376,6 +357,32 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
             }
 
             return answer;
+        }
+
+        private static void rememberParameter(Annotation[][] annotations, int i, MethodSpec answer) {
+            // if the parameter has no annotations, let its array element remain = null
+            for (Annotation a : annotations[i]) {
+                // am I a header?
+                if (HEADER_ANNOTATIONS.contains(a.annotationType())) {
+                    try {
+                        answer.paramNames[i] = (String) a.annotationType().getMethod("value", NO_PARAMETER_TYPES).invoke(a,
+                                NO_PARAMETERS);
+                        answer.numberParameters++;
+                    } catch (Exception e) {
+                    }
+                }
+
+                // am I multipart?
+                if (Multipart.class.equals(a.annotationType())) {
+                    rememberMultiPart(i, answer, (Multipart) a);
+                }
+            }
+        }
+
+        private static void rememberMultiPart(int i, MethodSpec answer, Multipart multipart) {
+            answer.multipart = true;
+            answer.multipartNames[i] = multipart.value();
+            answer.multipartTypes[i] = multipart.type();
         }
 
     }

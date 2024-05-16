@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 // START SNIPPET: e1
 
 /**
- * Just extend the CamelSpringTestSupport and use Camel test kit for easy Camel based unit testing.
+ * Extend the CamelSpringTestSupport and use Camel test kit for easy Camel based unit testing.
  */
 public class CamelSpringTestSupportActiveProfileTest extends CamelSpringTestSupport {
 

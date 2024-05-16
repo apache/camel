@@ -542,6 +542,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected void doDumpToDirectory(Resource resource, StringBuilder sbLocal, String kind, String ext, Set<String> files) {
         if (output != null && !sbLocal.isEmpty()) {
             // make sure directory exists

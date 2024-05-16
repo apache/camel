@@ -200,18 +200,15 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         // optimize for recipient without need for using delimiter
         // (if its list/collection/array type)
-        if (recipientList instanceof List) {
-            List<?> col = (List<?>) recipientList;
+        if (recipientList instanceof List<?> col) {
             int size = col.size();
             List<ProcessorExchangePair> result = new ArrayList<>(size);
             int index = 0;
-            for (int i = 0; i < size; i++) {
-                Object recipient = col.get(i);
+            for (Object recipient : col) {
                 index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
             }
             return result;
-        } else if (recipientList instanceof Collection) {
-            Collection<?> col = (Collection<?>) recipientList;
+        } else if (recipientList instanceof Collection<?> col) {
             int size = col.size();
             List<ProcessorExchangePair> result = new ArrayList<>(size);
             int index = 0;
@@ -224,8 +221,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             int size = Array.getLength(recipientList);
             List<ProcessorExchangePair> result = new ArrayList<>(size);
             int index = 0;
-            for (int i = 0; i < size; i++) {
-                Object recipient = arr[i];
+            for (Object recipient : arr) {
                 index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
             }
             return result;

@@ -1371,6 +1371,35 @@ public class JmsUriDsl(
   }
 
   /**
+   * Number of times to wait for temporary replyTo queue to be created and ready when doing
+   * request/reply over JMS.
+   */
+  public
+      fun waitForTemporaryReplyToToBeUpdatedCounter(waitForTemporaryReplyToToBeUpdatedCounter: String) {
+    it.property("waitForTemporaryReplyToToBeUpdatedCounter",
+        waitForTemporaryReplyToToBeUpdatedCounter)
+  }
+
+  /**
+   * Number of times to wait for temporary replyTo queue to be created and ready when doing
+   * request/reply over JMS.
+   */
+  public
+      fun waitForTemporaryReplyToToBeUpdatedCounter(waitForTemporaryReplyToToBeUpdatedCounter: Int) {
+    it.property("waitForTemporaryReplyToToBeUpdatedCounter",
+        waitForTemporaryReplyToToBeUpdatedCounter.toString())
+  }
+
+  /**
+   * Interval in millis to sleep each time while waiting for temporary replyTo queue to be ready.
+   */
+  public
+      fun waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(waitForTemporaryReplyToToBeUpdatedThreadSleepingTime: String) {
+    it.property("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime",
+        waitForTemporaryReplyToToBeUpdatedThreadSleepingTime)
+  }
+
+  /**
    * Allows to configure the default errorHandler logging level for logging uncaught exceptions.
    */
   public fun errorHandlerLoggingLevel(errorHandlerLoggingLevel: String) {

@@ -93,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-netty-http</artifactId>
+            <artifactId>camel-jetty</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -109,19 +109,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-openapi-java</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.projectreactor.netty</groupId>
-            <artifactId>reactor-netty-core</artifactId>
-            <version>${reactor-netty-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor.netty</groupId>
-            <artifactId>reactor-netty-http</artifactId>
-            <version>${reactor-netty-version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -153,7 +153,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
 
     private void verifyReceivedMessage(Message inMessage, String content) throws IOException {
         InputStream bis = inMessage.getContent(InputStream.class);
-        byte bytes[] = new byte[bis.available()];
+        byte[] bytes = new byte[bis.available()];
         bis.read(bytes);
         String reponse = new String(bytes);
         assertEquals(content, reponse, "The reponse date should be equals");

@@ -517,6 +517,7 @@ public final class IOHelper {
         doWriteText(text, file, false);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void doWriteText(String text, File file, boolean append) throws IOException {
         if (!file.exists()) {
             String path = FileUtil.onlyPath(file.getPath());
@@ -785,7 +786,7 @@ public final class IOHelper {
         StringBuilder result = new StringBuilder();
         try (Stream<String> lines = Files.lines(path)) {
             lines
-                    .filter(l -> stripBlankLines ? !l.isBlank() : true)
+                    .filter(l -> !stripBlankLines || !l.isBlank())
                     .filter(line -> !line.startsWith(commentPrefix))
                     .forEach(line -> result.append(line).append('\n'));
         } catch (IOException e) {

@@ -113,7 +113,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             return;
         }
 
-        if (this.camelContext != null && this.camelContext != camelContext) {
+        if (this.camelContext != null) {
             throw new IllegalStateException(
                     "CamelContext should not be changed: current=" + this.camelContext + ", new=" + camelContext);
         }

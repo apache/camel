@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.mtom;
 
 import java.awt.Image;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import jakarta.xml.ws.BindingProvider;
@@ -74,8 +75,8 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                         Holder<byte[]> photo = (Holder<byte[]>) parameter.get(0);
                         assertNotNull(photo.value, "The photo should not be null");
                         assertEquals("RequestFromCXF",
-                                new String(photo.value, "UTF-8"), "Should get the right request");
-                        photo.value = "ResponseFromCamel".getBytes("UTF-8");
+                                new String(photo.value, StandardCharsets.UTF_8), "Should get the right request");
+                        photo.value = "ResponseFromCamel".getBytes(StandardCharsets.UTF_8);
                         Holder<Image> image = (Holder<Image>) parameter.get(1);
                         assertNotNull(image.value, "We should get the image here");
                         // set the holder message back
@@ -114,7 +115,7 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
             return;
         }
 
-        Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes("UTF-8"));
+        Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes(StandardCharsets.UTF_8));
         Holder<Image> image = new Holder<>(getImage("/java.jpg"));
 
         Hello port = getPort();
@@ -124,7 +125,7 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
 
         port.detail(photo, image);
 
-        assertEquals("ResponseFromCamel", new String(photo.value, "UTF-8"));
+        assertEquals("ResponseFromCamel", new String(photo.value, StandardCharsets.UTF_8));
         assertNotNull(image.value);
 
     }
