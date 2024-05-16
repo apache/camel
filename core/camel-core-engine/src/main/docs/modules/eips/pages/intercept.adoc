@@ -23,43 +23,8 @@ messages from this endpoint, then the `interceptFrom` is not triggered.
 
 === Interceptor scopes
 
-All the interceptors can be configured on global, route scope, or with
+All the interceptors can be configured on global, or with
 xref:manual::route-configuration.adoc[Route Configuration].
-
-This means multiple interceptors can be _triggered_.
-
-Most of the examples in this page are on global scope.
-To use route scope, then it is similar, but it is done on the route as shown in the following example:
-
-[tabs]
-====
-
-Java::
-+
-
-[source,java]
--------------------------------------------------------------------------
-from("jms:queue:order")
-   .intercept().to("log:hello").end() // intercepts only in this route
-  .to("bean:validateOrder")
-  .to("bean:processOrder");
--------------------------------------------------------------------------
-
-XML::
-+
-[source,xml]
-----
-  <route>
-    <from uri="jms:queue:order"/>
-    <intercept>
-      <to uri="log:hello"/>
-    </intercept>
-    <to uri="bean:validateOrder"/>
-    <to uri="bean:processOrder"/>
-  </route>
-----
-
-====
 
 === Common features of the interceptors
 
