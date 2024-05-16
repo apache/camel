@@ -49,6 +49,10 @@ public class ListVault extends ProcessWatchCommand {
 
     }
 
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration",
+                            arity = "0..1")
+    String name = "*";
+
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameCompletionCandidates.class,
                         description = "Sort by pid, name", defaultValue = "pid")
     String sort;
@@ -61,7 +65,7 @@ public class ListVault extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids("*");
+        List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
                 .forEach(ph -> {

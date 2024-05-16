@@ -27,11 +27,7 @@ import picocli.CommandLine;
 public abstract class CamelRouteAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
-    String name;
-
-    @CommandLine.Option(names = { "--all" },
-                        description = "To select all running Camel integrations")
-    boolean all;
+    String name = "*";
 
     @CommandLine.Option(names = { "--id" },
                         description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
@@ -43,12 +39,6 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        if (!all && name == null) {
-            return 0;
-        } else if (all) {
-            name = "*";
-        }
-
         List<Long> pids = findPids(name);
 
         for (long pid : pids) {

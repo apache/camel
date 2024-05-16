@@ -1595,18 +1595,33 @@ To start the routes, you can do:
 camel cmd start-route chuck
 ----
 
-To stop _all_ routes in every Camel integration you need to use the `--all` flag as follows:
+To stop _all_ routes in every Camel integration:
 
 [source,bash]
 ----
-camel cmd stop-route --all
+camel cmd stop-route
 ----
 
 And you can start _all_ routes using:
 
 [source,bash]
 ----
-camel cmd start-route --all
+camel cmd start-route
+----
+
+To start a specific route, you need to use `--id` parameter such as the following,
+which will start routes named `route1` in all running integrations:
+
+[source,bash]
+----
+camel cmd start-route --id=route1
+----
+
+If you want to do this in a specific integration you must include the name or pid:
+
+[source,bash]
+----
+camel cmd start-route bar --id=route1
 ----
 
 TIP: You can stop one or more route by their ids by separating using
