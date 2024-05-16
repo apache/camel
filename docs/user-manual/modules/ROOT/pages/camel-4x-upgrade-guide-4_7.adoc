@@ -13,6 +13,14 @@ Add default values to `ThrottlingExceptionRoutePolicy` route policy.
 The `EndpointRegistry` interface has been slightly changed to now directly extends `Map<NormalizedEndpointUri, Endpoint>` 
 instead of being a parameterized type.  This may cause some compilation failures if the code is declaring a variable for the registry.
 
+=== camel-health
+
+Routes which has are set to **not** auto-startup are reported as UP in health-checks.
+We have now implemented similar logic for the consumer health check as well (the route and consumer health check are linked together).
+
+Previously a route that has not been started due to `auto-startup=false` would still have its consumer health-check being executed,
+which could lead to DOWN due to consumer failing the check.
+
 === DSL
 
 The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:

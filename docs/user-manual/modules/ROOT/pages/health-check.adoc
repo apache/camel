@@ -94,6 +94,11 @@ You can specify multiple patterns (and use wildcards) such as:
 camel.health.exclude-pattern = myroute,foo,bar*
 ----
 
+==== Routes that are not automatically started
+
+If a route is configured to not to automatically start (`autoStartup=false`),
+then the route and its corresponding consumer health checks is always up as it is externally managed.
+
 === Turning off consumer level health-checks
 
 If routes health check is enabled then they will execute consumer health-checks as well
