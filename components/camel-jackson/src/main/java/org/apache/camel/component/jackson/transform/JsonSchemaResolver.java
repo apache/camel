@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson.transform;
 import java.io.InputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -110,37 +111,13 @@ public class JsonSchemaResolver implements SchemaResolver, Processor {
         JsonNode answer = exchange.getProperty(SchemaHelper.CONTENT_SCHEMA, JsonNode.class);
 
         if (answer == null && exchange.getProperties().containsKey(SchemaHelper.SCHEMA)) {
-            String schemaJson = exchange.getProperty(SchemaHelper.SCHEMA, String.class);
-            try {
-                answer = Json.mapper().readTree(schemaJson);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Unable to load Json schema", e);
-            }
+            answer = tryLoadingSchema(exchange);
         }
 
         if (answer == null) {
             String contentClass = SchemaHelper.resolveContentClass(exchange, this.contentClass);
             if (contentClass != null) {
-                answer = this.schemes.computeIfAbsent(contentClass, t -> {
-                    Resource res = PluginHelper.getResourceLoader(exchange.getContext())
-                            .resolveResource(
-                                    "classpath:schemas/" + SchemaType.JSON.type() + "/" + t + "." + SchemaType.JSON.type());
-
-                    try {
-                        if (res.exists()) {
-                            try (InputStream is = res.getInputStream()) {
-                                if (is != null) {
-                                    return Json.mapper().readTree(is);
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException(
-                                "Unable to load Json schema for type: " + t + ", resource: " + res.getLocation(), e);
-                    }
-
-                    return null;
-                });
+                answer = this.schemes.computeIfAbsent(contentClass, tryLoadingSchemaFromResourceLoader(exchange));
             }
         }
 
@@ -148,6 +125,40 @@ public class JsonSchemaResolver implements SchemaResolver, Processor {
             this.schema = answer;
         }
 
+        return answer;
+    }
+
+    private static Function<String, JsonNode> tryLoadingSchemaFromResourceLoader(Exchange exchange) {
+        return t -> {
+            Resource res = PluginHelper.getResourceLoader(exchange.getContext())
+                    .resolveResource(
+                            "classpath:schemas/" + SchemaType.JSON.type() + "/" + t + "." + SchemaType.JSON.type());
+
+            try {
+                if (res.exists()) {
+                    try (InputStream is = res.getInputStream()) {
+                        if (is != null) {
+                            return Json.mapper().readTree(is);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(
+                        "Unable to load Json schema for type: " + t + ", resource: " + res.getLocation(), e);
+            }
+
+            return null;
+        };
+    }
+
+    private static JsonNode tryLoadingSchema(Exchange exchange) {
+        JsonNode answer;
+        String schemaJson = exchange.getProperty(SchemaHelper.SCHEMA, String.class);
+        try {
+            answer = Json.mapper().readTree(schemaJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to load Json schema", e);
+        }
         return answer;
     }
 

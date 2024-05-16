@@ -47,7 +47,7 @@ public class JacksonConcurrentTest extends CamelTestSupport {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
-            executor.submit(new Callable<Object>() {
+            executor.submit(new Callable<>() {
                 public Object call() {
                     TestPojo pojo = new TestPojo();
                     pojo.setName("Hi " + index);
