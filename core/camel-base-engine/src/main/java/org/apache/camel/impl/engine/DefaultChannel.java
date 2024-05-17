@@ -36,6 +36,7 @@ import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.ErrorHandlerRedeliveryCustomizer;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.Tracer;
@@ -233,24 +234,28 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
         Processor target = nextProcessor;
-        for (InterceptStrategy strategy : interceptors) {
-            Processor next = target == nextProcessor ? null : nextProcessor;
-            // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
-            Processor wrapped = strategy.wrapProcessorInInterceptors(route.getCamelContext(), targetOutputDef, target, next);
-            if (!(wrapped instanceof AsyncProcessor)) {
-                LOG.warn("Interceptor: {} at: {} does not return an AsyncProcessor instance."
-                         + " This causes the asynchronous routing engine to not work as optimal as possible."
-                         + " See more details at the InterceptStrategy javadoc."
-                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
-                         + " but its not the most optimal solution. Please consider changing your interceptor to comply.",
-                        strategy, definition);
+        boolean skip = target instanceof InterceptableProcessor && !((InterceptableProcessor) target).canIntercept();
+        if (!skip) {
+            for (InterceptStrategy strategy : interceptors) {
+                Processor next = target == nextProcessor ? null : nextProcessor;
+                // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
+                Processor wrapped
+                        = strategy.wrapProcessorInInterceptors(route.getCamelContext(), targetOutputDef, target, next);
+                if (!(wrapped instanceof AsyncProcessor)) {
+                    LOG.warn("Interceptor: {} at: {} does not return an AsyncProcessor instance."
+                             + " This causes the asynchronous routing engine to not work as optimal as possible."
+                             + " See more details at the InterceptStrategy javadoc."
+                             + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
+                             + " but its not the most optimal solution. Please consider changing your interceptor to comply.",
+                            strategy, definition);
+                }
+                if (!(wrapped instanceof WrapAwareProcessor)) {
+                    // wrap the target so it becomes a service and we can manage its lifecycle
+                    wrapped = PluginHelper.getInternalProcessorFactory(camelContext)
+                            .createWrapProcessor(wrapped, target);
+                }
+                target = wrapped;
             }
-            if (!(wrapped instanceof WrapAwareProcessor)) {
-                // wrap the target so it becomes a service and we can manage its lifecycle
-                wrapped = PluginHelper.getInternalProcessorFactory(camelContext)
-                        .createWrapProcessor(wrapped, target);
-            }
-            target = wrapped;
         }
 
         if (route.isStreamCaching()) {

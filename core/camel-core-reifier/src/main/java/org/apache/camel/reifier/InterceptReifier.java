@@ -45,6 +45,7 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
             public Processor wrapProcessorInInterceptors(
                     CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
                     throws Exception {
+
                 // store the target we are intercepting
                 this.interceptedTarget = target;
 
