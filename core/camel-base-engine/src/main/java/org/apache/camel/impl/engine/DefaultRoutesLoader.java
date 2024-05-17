@@ -249,6 +249,14 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
      */
     protected RoutesBuilderLoader resolveService(String extension) {
         final CamelContext ecc = getCamelContext();
+
+        // check registry first
+        for (RoutesBuilderLoader loader : ecc.getRegistry().findByType(RoutesBuilderLoader.class)) {
+            if (loader.isSupportedExtension(extension)) {
+                return loader;
+            }
+        }
+
         final FactoryFinder finder = ecc.getCamelContextExtension().getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
         // the marker files are generated with dot as dash
