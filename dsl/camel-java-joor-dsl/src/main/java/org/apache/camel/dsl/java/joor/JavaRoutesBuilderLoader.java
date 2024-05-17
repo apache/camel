@@ -195,7 +195,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         }
 
         // include classloader from Camel, so we can load any already compiled and loaded classes
-        ClassLoader parent = MethodHandles.lookup().lookupClass().getClassLoader();
+        ClassLoader parent = resolveParentClassLoader();
         if (parent instanceof URLClassLoader ucl) {
             ClassLoader cl = new CamelJoorClassLoader(ucl, getCamelContext());
             unit.withClassLoader(cl);
@@ -219,6 +219,13 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         }
 
         return result;
+    }
+
+    /**
+     * Resolves the parent {@link ClassLoader} to use for compilation.
+     */
+    protected ClassLoader resolveParentClassLoader() {
+        return MethodHandles.lookup().lookupClass().getClassLoader();
     }
 
     @Override
