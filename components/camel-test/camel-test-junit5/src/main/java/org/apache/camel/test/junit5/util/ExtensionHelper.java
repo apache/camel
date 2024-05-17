@@ -29,7 +29,6 @@ public final class ExtensionHelper {
     public static final String SEPARATOR = "*".repeat(80);
     private static final String SPRING_BOOT_TEST = "org.springframework.boot.test.context.SpringBootTest";
     private static final String QUARKUS_TEST = "io.quarkus.test.junit.QuarkusTest";
-    private static final String CAMEL_QUARKUS_TEST = "org.apache.camel.quarkus.test.CamelQuarkusTest";
 
     private static void throwUnsupportedClassException(String name) {
         switch (name) {
@@ -37,10 +36,8 @@ public final class ExtensionHelper {
                 throw new RuntimeException(
                         "Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot.");
             case QUARKUS_TEST:
-            case CAMEL_QUARKUS_TEST: {
                 throw new RuntimeException(
                         "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
-            }
         }
 
         throw new RuntimeException(
@@ -48,8 +45,7 @@ public final class ExtensionHelper {
     }
 
     public static boolean hasUnsupported(Class<?> clazz) {
-        hasClassAnnotation(clazz, ExtensionHelper::throwUnsupportedClassException, SPRING_BOOT_TEST, QUARKUS_TEST,
-                CAMEL_QUARKUS_TEST);
+        hasClassAnnotation(clazz, ExtensionHelper::throwUnsupportedClassException, SPRING_BOOT_TEST, QUARKUS_TEST);
         return true;
     }
 
