@@ -313,7 +313,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             pairs = createProcessorExchangePairs(exchange);
             if (pairs instanceof Collection) {
                 pairs = ((Collection<ProcessorExchangePair>) pairs)
-                            .stream().filter(Objects::nonNull).toList();
+                        .stream().filter(Objects::nonNull).toList();
                 size = ((Collection<ProcessorExchangePair>) pairs).size();
             }
         } catch (Exception e) {
