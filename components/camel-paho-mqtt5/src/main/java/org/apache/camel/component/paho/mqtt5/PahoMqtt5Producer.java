@@ -21,6 +21,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +46,14 @@ public class PahoMqtt5Producer extends DefaultProducer {
                 getEndpoint().getConfiguration().getQos(), Integer.class);
         boolean retained = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_RETAINED,
                 getEndpoint().getConfiguration().isRetained(), Boolean.class);
+        MqttProperties properties
+                = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
         byte[] payload = exchange.getIn().getBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
         message.setQos(qos);
         message.setRetained(retained);
+        message.setProperties(properties);
 
         LOG.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
         client.publish(topic, message);

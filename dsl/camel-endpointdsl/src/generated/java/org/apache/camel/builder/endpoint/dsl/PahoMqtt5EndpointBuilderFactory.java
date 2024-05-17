@@ -3241,6 +3241,20 @@ public interface PahoMqtt5EndpointBuilderFactory {
         public String pahoMqtt5OverrideTopic() {
             return "CamelPahoMqtt5OverrideTopic";
         }
+        /**
+         * Consumer: The properties set on the incoming message. Producer: The
+         * properties to be set on the outgoing message.
+         * 
+         * The option is a: {@code
+         * org.eclipse.paho.mqttv5.common.packet.MqttProperties} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PahoMqtt5MsgProperties}.
+         */
+        public String pahoMqtt5MsgProperties() {
+            return "CamelPahoMqtt5MsgProperties";
+        }
     }
     static PahoMqtt5EndpointBuilder endpointBuilder(String componentName, String path) {
         class PahoMqtt5EndpointBuilderImpl extends AbstractEndpointBuilder implements PahoMqtt5EndpointBuilder, AdvancedPahoMqtt5EndpointBuilder {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.paho.mqtt5.integration;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,9 +29,12 @@ import org.apache.camel.component.paho.mqtt5.PahoMqtt5Endpoint;
 import org.apache.camel.component.paho.mqtt5.PahoMqtt5Message;
 import org.apache.camel.component.paho.mqtt5.PahoMqtt5Persistence;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.eclipse.paho.mqttv5.common.packet.UserProperty;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.paho.mqtt5.PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -115,6 +119,28 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
     }
 
     @Test
+    public void shouldSendAndReadMessagePropertiesFromMqtt() throws InterruptedException {
+        // Given
+        String msg = "msg";
+        MqttProperties publishedMqttProperties = createMqttProperties(
+                "text/plain",
+                "some-response-topic",
+                List.of(new UserProperty("key1", "value1"), new UserProperty("key2", "value2")));
+        mock.expectedBodiesReceived(msg);
+
+        // When
+        template.sendBodyAndHeader("direct:test", msg, CAMEL_PAHO_MSG_PROPERTIES, publishedMqttProperties);
+
+        // Then
+        mock.assertIsSatisfied();
+        MqttProperties receivedMqttProperties
+                = mock.getExchanges().get(0).getIn().getHeader(CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
+        assertEquals(receivedMqttProperties.getContentType(), publishedMqttProperties.getContentType());
+        assertEquals(receivedMqttProperties.getResponseTopic(), publishedMqttProperties.getResponseTopic());
+        assertEquals(receivedMqttProperties.getUserProperties(), publishedMqttProperties.getUserProperties());
+    }
+
+    @Test
     public void shouldNotReadMessageFromUnregisteredTopic() throws InterruptedException {
         // Given
         mock.expectedMessageCount(0);
@@ -187,6 +213,14 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
 
         // Then
         mock.assertIsSatisfied();
+    }
+
+    private MqttProperties createMqttProperties(String contentType, String responseTopic, List<UserProperty> userProperties) {
+        MqttProperties properties = new MqttProperties();
+        properties.setContentType(contentType);
+        properties.setResponseTopic(responseTopic);
+        properties.setUserProperties(userProperties);
+        return properties;
     }
 
 }
