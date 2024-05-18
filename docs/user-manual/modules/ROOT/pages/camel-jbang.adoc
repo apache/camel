@@ -1176,6 +1176,59 @@ spec:
 The Camel K JBang plugin also provides the bind command. It enhances the arbitrary bind command with the option to directly create this resource on the
 Kubernetes cluster. Please refer to the plugin documentation for more complex examples and a full description on how to use the bind command options.
 
+=== Creating a new Kamelet
+
+You can create a new kamelet with the `init` command by using kamelet naming convention.
+
+For example to create a new kamelet source, you can do:
+
+[source,bash]
+----
+camel init cheese-source.kamelet.yaml
+----
+
+This will create a basic kamelet (based on the timer source).
+
+And to use the kamelet you could create the following route:
+
+[source,yaml]
+----
+- from:
+    uri: "kamelet:cheese-source"
+    parameters:
+      period: "2000"
+      message: "Hello World"
+    steps:
+      - log: "${body}"
+----
+
+If you want to create a sink kamelet, then you just name it with sink as follows (based on log sink):
+
+[source,bash]
+----
+camel init wine-sink.kamelet.yaml
+----
+
+You can then change the route to use the wine kamelet as follows:
+
+[source,yaml]
+----
+- from:
+    uri: "kamelet:cheese-source"
+    parameters:
+      period: "2000"
+      message: "Hello World"
+    steps:
+      - to: "kamelet:wine-sink"
+----
+
+If you want to create a new Kamelet based on an existing Kamelet, for example to create a new sink based on the existing MySQL:
+
+[source,bash]
+----
+camel init orderdb-sink.kamelet.yaml --from-kamelet=mysql-sink
+----
+
 === Run from clipboard
 
 You can also run Camel routes directly from the OS clipboard. This allows to copy some code,
