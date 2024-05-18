@@ -30,8 +30,8 @@
     <artifactId>camel-activemq</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: ActiveMQ</name>
-    <description>ActiveMQ component for Camel</description>
+    <name>Camel :: ActiveMQ 5.x</name>
+    <description>ActiveMQ 5.x component for Camel</description>
 
     <properties>
         <camel.surefire.parallel>true</camel.surefire.parallel>

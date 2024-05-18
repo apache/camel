@@ -46,8 +46,8 @@ import org.apache.camel.builder.component.dsl.*;
 public interface ComponentsBuilderFactory {
 
     /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * ActiveMQ 5.x (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
      * 
      * Category: messaging

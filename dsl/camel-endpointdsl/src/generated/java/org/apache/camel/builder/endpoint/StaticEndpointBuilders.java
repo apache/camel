@@ -27,8 +27,8 @@ import org.apache.camel.builder.endpoint.dsl.*;
 public class StaticEndpointBuilders {
 
     /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * ActiveMQ 5.x (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
      * 
      * Category: messaging
@@ -53,8 +53,8 @@ public class StaticEndpointBuilders {
         return activemq("activemq", path);
     }
     /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * ActiveMQ 5.x (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
      * 
      * Category: messaging
@@ -78,6 +78,60 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(String componentName, String path) {
+        return ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * ActiveMQ 6.x (camel-activemq6)
+     * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 4.7
+     * Maven coordinates: org.apache.camel:camel-activemq6
+     * 
+     * Syntax: <code>activemq6:destinationType:destinationName</code>
+     * 
+     * Path parameter: destinationType
+     * The kind of destination to use
+     * Default value: queue
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
+     * 
+     * Path parameter: destinationName (required)
+     * Name of the queue or topic to use as destination
+     * 
+     * @param path destinationType:destinationName
+     * @return the dsl builder
+     */
+    public static ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq6(String path) {
+        return activemq6("activemq6", path);
+    }
+    /**
+     * ActiveMQ 6.x (camel-activemq6)
+     * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 4.7
+     * Maven coordinates: org.apache.camel:camel-activemq6
+     * 
+     * Syntax: <code>activemq6:destinationType:destinationName</code>
+     * 
+     * Path parameter: destinationType
+     * The kind of destination to use
+     * Default value: queue
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
+     * 
+     * Path parameter: destinationName (required)
+     * Name of the queue or topic to use as destination
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path destinationType:destinationName
+     * @return the dsl builder
+     */
+    public static ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq6(String componentName, String path) {
         return ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**

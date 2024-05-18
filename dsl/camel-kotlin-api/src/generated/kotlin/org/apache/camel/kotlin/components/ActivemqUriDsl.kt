@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS
+ * Send messages to (or consume from) Apache ActiveMQ 5.x. This component extends the Camel JMS
  * component.
  */
 public fun UriDsl.activemq(i: ActivemqUriDsl.() -> Unit) {
