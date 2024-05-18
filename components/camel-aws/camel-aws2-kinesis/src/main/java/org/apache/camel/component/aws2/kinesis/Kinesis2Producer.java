@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import java.nio.ByteBuffer;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -57,12 +55,12 @@ public class Kinesis2Producer extends DefaultProducer {
     }
 
     private PutRecordRequest createRequest(Exchange exchange) {
-        ByteBuffer body = exchange.getIn().getBody(ByteBuffer.class);
+        byte[] body = exchange.getIn().getBody(byte[].class);
         Object partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY);
         Object sequenceNumber = exchange.getIn().getHeader(Kinesis2Constants.SEQUENCE_NUMBER);
 
         PutRecordRequest.Builder putRecordRequest = PutRecordRequest.builder();
-        putRecordRequest.data(SdkBytes.fromByteBuffer(body));
+        putRecordRequest.data(SdkBytes.fromByteArray(body));
         putRecordRequest.streamName(getEndpoint().getConfiguration().getStreamName());
         putRecordRequest.partitionKey(partitionKey.toString());
         if (sequenceNumber != null) {

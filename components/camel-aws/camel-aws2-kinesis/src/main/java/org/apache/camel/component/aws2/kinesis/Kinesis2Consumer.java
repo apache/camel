@@ -303,7 +303,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     protected Exchange createExchange(Shard shard, Record dataRecord) {
         LOG.debug("Received Kinesis record with partition_key={}", dataRecord.partitionKey());
         Exchange exchange = createExchange(true);
-        exchange.getIn().setBody(dataRecord.data().asInputStream());
+        exchange.getIn().setBody(dataRecord.data().asByteArray());
         exchange.getIn().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, dataRecord.approximateArrivalTimestamp());
         exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
         exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
