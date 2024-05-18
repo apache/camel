@@ -29,6 +29,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -41,7 +42,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Implements try/catch/finally type processing
  */
-public class TryProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+public class TryProcessor extends AsyncProcessorSupport
+        implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, InterceptableProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
@@ -70,6 +72,11 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
     @Override
     public String getTraceLabel() {
         return "doTry";
+    }
+
+    @Override
+    public boolean canIntercept() {
+        return false;
     }
 
     @Override
