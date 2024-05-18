@@ -29,7 +29,7 @@
 
   <artifactId>camel-nitrite</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Nitrite</name>
+  <name>Camel :: Nitrite (deprecated)</name>
   <description>Camel Nitrite component</description>
 
   <dependencies>

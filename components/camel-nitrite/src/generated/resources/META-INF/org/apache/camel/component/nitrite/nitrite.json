@@ -4,7 +4,7 @@
     "name": "nitrite",
     "title": "Nitrite",
     "description": "Access Nitrite databases.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.0.0",
     "label": "database",
     "javaType": "org.apache.camel.component.nitrite.NitriteComponent",

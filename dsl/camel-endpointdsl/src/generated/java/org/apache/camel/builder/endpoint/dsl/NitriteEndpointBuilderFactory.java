@@ -554,6 +554,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default NitriteHeaderNameBuilder nitrite() {
             return NitriteHeaderNameBuilder.INSTANCE;
         }
@@ -573,6 +574,7 @@ public interface NitriteEndpointBuilderFactory {
          * @param path database
          * @return the dsl builder
          */
+        @Deprecated
         default NitriteEndpointBuilder nitrite(String path) {
             return NitriteEndpointBuilderFactory.endpointBuilder("nitrite", path);
         }
@@ -594,6 +596,7 @@ public interface NitriteEndpointBuilderFactory {
          * @param path database
          * @return the dsl builder
          */
+        @Deprecated
         default NitriteEndpointBuilder nitrite(String componentName, String path) {
             return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

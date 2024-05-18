@@ -10601,6 +10601,7 @@ public class StaticEndpointBuilders {
      * @param path database
      * @return the dsl builder
      */
+    @Deprecated
     public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String path) {
         return nitrite("nitrite", path);
     }
@@ -10622,6 +10623,7 @@ public class StaticEndpointBuilders {
      * @param path database
      * @return the dsl builder
      */
+    @Deprecated
     public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String componentName, String path) {
         return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

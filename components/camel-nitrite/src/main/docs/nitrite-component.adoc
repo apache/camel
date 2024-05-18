@@ -1,10 +1,11 @@
-= Nitrite Component
+= Nitrite Component (deprecated)
 :doctitle: Nitrite
 :shortname: nitrite
 :artifactid: camel-nitrite
 :description: Access Nitrite databases.
 :since: 3.0
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
