@@ -46,8 +46,8 @@ import org.apache.camel.builder.component.dsl.*;
 public interface ComponentsBuilderFactory {
 
     /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
+     * ActiveMQ 5.x (camel-activemq)
+     * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
      * 
      * Category: messaging
@@ -58,6 +58,20 @@ public interface ComponentsBuilderFactory {
      */
     static ActivemqComponentBuilderFactory.ActivemqComponentBuilder activemq() {
         return ActivemqComponentBuilderFactory.activemq();
+    }
+    /**
+     * ActiveMQ 6.x (camel-activemq6)
+     * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
+     * extends the Camel JMS component.
+     * 
+     * Category: messaging
+     * Since: 4.7
+     * Maven coordinates: org.apache.camel:camel-activemq6
+     * 
+     * @return the dsl builder
+     */
+    static Activemq6ComponentBuilderFactory.Activemq6ComponentBuilder activemq6() {
+        return Activemq6ComponentBuilderFactory.activemq6();
     }
     /**
      * AMQP (camel-amqp)

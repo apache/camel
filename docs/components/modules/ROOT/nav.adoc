@@ -2,7 +2,8 @@
 // make edits in docs/*nav.adoc.template files instead
 
 * xref:ROOT:index.adoc[Components]
-** xref:activemq-component.adoc[ActiveMQ]
+** xref:activemq-component.adoc[ActiveMQ 5.x]
+** xref:activemq6-component.adoc[ActiveMQ 6.x]
 ** xref:amqp-component.adoc[AMQP]
 ** xref:arangodb-component.adoc[ArangoDb]
 ** xref:as2-component.adoc[AS2]

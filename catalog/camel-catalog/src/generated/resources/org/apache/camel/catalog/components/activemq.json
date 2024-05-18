@@ -2,8 +2,8 @@
   "component": {
     "kind": "component",
     "name": "activemq",
-    "title": "ActiveMQ",
-    "description": "Send messages to (or consume from) Apache ActiveMQ. This component extends the Camel JMS component.",
+    "title": "ActiveMQ 5.x",
+    "description": "Send messages to (or consume from) Apache ActiveMQ 5.x. This component extends the Camel JMS component.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "messaging",
