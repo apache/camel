@@ -24,7 +24,9 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -33,13 +35,19 @@ import org.junit.jupiter.api.Test;
 public class MailDisconnectTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
-    private CountDownLatch latch = new CountDownLatch(5);
+    private int expectedCount = 5;
+    private CountDownLatch latch = new CountDownLatch(expectedCount);
 
-    @Test
-    public void testDisconnect() throws Exception {
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("mail-disconnect").getUptimeMillis() > 1000);
+    }
+
+    @BeforeEach
+    void setup() {
         Mailbox.clearAll();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(5);
+        mock.expectedMessageCount(expectedCount);
 
         // send 5 mails with some delay so we do multiple polls with disconnect between
         template.sendBodyAndHeader(jones.uriPrefix(Protocol.smtp), "A Bla bla", "Subject", "Hello A");
@@ -48,8 +56,14 @@ public class MailDisconnectTest extends CamelTestSupport {
         template.sendBodyAndHeader(jones.uriPrefix(Protocol.smtp), "D Bla bla", "Subject", "Hello D");
         template.sendBodyAndHeader(jones.uriPrefix(Protocol.smtp), "E Bla bla", "Subject", "Hello E");
 
+        waitForConnections();
+    }
+
+    @Test
+    public void testDisconnect() throws Exception {
         if (!latch.await(2500, TimeUnit.MILLISECONDS)) {
-            Assertions.fail("Not all messages were received as expected");
+            Assertions.fail("Not all messages were received as expected: " + (expectedCount - latch.getCount())
+                            + " message(s) missing");
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -59,7 +73,8 @@ public class MailDisconnectTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(jones.uriPrefix(Protocol.imap) + "&disconnect=true&initialDelay=100&delay=100")
+                from(jones.uriPrefix(Protocol.imap) + "&disconnect=true&initialDelay=100&delay=500")
+                        .routeId("mail-disconnect")
                         .process(e -> latch.countDown())
                         .to("mock:result");
             }
