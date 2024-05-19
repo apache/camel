@@ -59,7 +59,7 @@ public class VersionList extends CamelCommand {
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
-                        description = "Runtime (spring-boot, quarkus, or camel-main)")
+                        description = "Runtime (${COMPLETION-CANDIDATES})")
     String runtime;
 
     @CommandLine.Option(names = { "--from-version" },

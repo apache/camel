@@ -47,7 +47,7 @@ public class Script extends CamelCommand {
     boolean logging;
 
     @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-                        defaultValue = "info", description = "Logging level")
+                        defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
     String loggingLevel;
 
     @CommandLine.Option(names = { "--properties" },

@@ -45,7 +45,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     String camelVersion;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
-                        description = "Runtime (spring-boot, quarkus, or camel-main)")
+                        description = "Runtime (${COMPLETION-CANDIDATES})")
     String runtime;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",

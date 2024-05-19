@@ -96,7 +96,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String dependencies;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
-                        description = "Runtime (spring-boot, quarkus, or camel-main)")
+                        description = "Runtime (${COMPLETION-CANDIDATES})")
     protected String runtime;
 
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")

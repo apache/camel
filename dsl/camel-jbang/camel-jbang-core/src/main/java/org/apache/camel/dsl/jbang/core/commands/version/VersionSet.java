@@ -29,7 +29,7 @@ public class VersionSet extends CamelCommand {
     String version;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
-                        description = "Runtime (spring-boot, quarkus, or camel-main)")
+                        description = "Runtime (${COMPLETION-CANDIDATES})")
     String runtime;
 
     @CommandLine.Option(names = { "--repo", "--repos" }, description = "Maven repository for downloading the dependencies")

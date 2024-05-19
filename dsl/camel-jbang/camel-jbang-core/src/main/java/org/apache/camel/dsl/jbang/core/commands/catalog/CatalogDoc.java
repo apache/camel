@@ -60,7 +60,7 @@ public class CatalogDoc extends CamelCommand {
     String camelVersion;
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
-                        description = "Runtime (spring-boot, quarkus, or camel-main)")
+                        description = "Runtime (${COMPLETION-CANDIDATES})")
     String runtime;
 
     @CommandLine.Option(names = { "--repos" },

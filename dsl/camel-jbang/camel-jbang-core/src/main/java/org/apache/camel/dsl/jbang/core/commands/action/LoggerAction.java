@@ -47,7 +47,7 @@ public class LoggerAction extends ActionBaseCommand {
     String sort;
 
     @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-                        description = "To change logging level")
+                        description = "To change logging level (${COMPLETION-CANDIDATES})")
     String loggingLevel;
 
     @CommandLine.Option(names = { "--logger" },
