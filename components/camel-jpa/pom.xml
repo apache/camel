@@ -126,11 +126,6 @@
     <profiles>
         <profile>
             <id>openjpa</id>
-            <activation>
-                <property>
-                    <name>!hibernate</name>
-                </property>
-            </activation>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -208,48 +203,6 @@
                     <groupId>org.apache.openjpa</groupId>
                     <artifactId>openjpa</artifactId>
                     <version>${openjpa-version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>hibernate</id>
-            <activation>
-                <property>
-                    <name>hibernate</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-hibernate-persistence-xml</id>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <phase>generate-test-resources</phase>
-                                <configuration>
-                                    <resources>
-                                        <resource>
-                                            <directory>
-                                                ${project.basedir}/src/test/resources/profiles/hibernate/META-INF
-                                            </directory>
-                                        </resource>
-                                    </resources>
-                                    <outputDirectory>${project.build.testOutputDirectory}/META-INF</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core-jakarta</artifactId>
-                    <version>${hibernate-version}</version>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
