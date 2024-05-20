@@ -245,9 +245,6 @@ public class Bind extends CamelCommand {
     /**
      * Extracts properties from given property arguments. Filter properties by given prefix. This way each component in
      * pipe (source, sink, errorHandler, step[1-n]) can have its individual properties.
-     *
-     * @param  keyPrefix
-     * @return
      */
     private Map<String, Object> getProperties(String keyPrefix) {
         Map<String, Object> props = new HashMap<>();

@@ -69,6 +69,10 @@ public class Init extends CamelCommand {
             description = "When creating a yaml file should it be created as a Camel K Integration CRD")
     private boolean integration;
 
+    @Option(names = { "--pipe" },
+            description = "When creating a yaml file should it be created as a Camel K Pipe CRD")
+    private boolean pipe;
+
     public Init(CamelJBangMain main) {
         super(main);
     }
@@ -96,6 +100,8 @@ public class Init extends CamelCommand {
         String ext = FileUtil.onlyExt(file, false);
         if ("yaml".equals(ext) && integration) {
             ext = "integration.yaml";
+        } else if ("yaml".equals(ext) && pipe) {
+            ext = "init-pipe.yaml";
         }
 
         if (fromKamelet != null && !"kamelet.yaml".equals(ext)) {
