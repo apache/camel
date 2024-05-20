@@ -58,7 +58,8 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createCamelRegistry());
+
+        final CamelContext context = new DefaultCamelContext();
 
         // add FhirComponent to Camel context but don't set up componentConfiguration
         final FhirComponent component = new FhirComponent(context);

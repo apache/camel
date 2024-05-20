@@ -43,7 +43,7 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createCamelRegistry());
+        final CamelContext context = new DefaultCamelContext();
 
         // add GoogleMailComponent to Camel context but don't set up configuration
         final GoogleMailComponent component = new GoogleMailComponent(context);
