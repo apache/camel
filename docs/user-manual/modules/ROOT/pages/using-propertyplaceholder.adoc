@@ -527,8 +527,10 @@ IMPORTANT: The method must be a public no-arg method (i.e. no parameters) and re
 
 The `camel-kubernetes` component include the following functions:
 
-* `configmap` - A function to lookup the property from Kubernetes ConfigMaps.
-* `secret` - A function to lookup the property from Kubernetes Secrets.
+* `configmap` - A function to lookup the string property from Kubernetes ConfigMaps.
+* `configmap-binary` - A function to lookup the binary property from Kubernetes ConfigMaps.
+* `secret` - A function to lookup the string property from Kubernetes Secrets.
+* `secret-binary` - A function to lookup the binary property from Kubernetes Secrets.
 
 The syntax for both functions are:
 
@@ -551,6 +553,15 @@ In this example then it would not fail as a default value is provided:
 ----
 configmap:mymap/mykey:123
 ----
+
+If the value stored in the configmap is in binary format, so it is stored as `Binary Data`, it will be downloaded in a file, and it returns the absolute path of the file
+
+[source]
+----
+configmap-binary:mymap/mybinkey
+----
+
+it returns a path like `/tmp/camel11787545916150467474/mybinkey`
 
 Before the Kubernetes property placeholder functions can be used they need to be configured with either (or both)
 

@@ -49,7 +49,7 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
 
         KubernetesClient client = new KubernetesClientBuilder().withConfig(builder.build()).build();
 
-        Map<String, String> data = Map.of("foo", "123", "bar", "Moes Bar");
+        Map<String, String> data = Map.of("foo.txt", "123", "bar.txt", "Moes Bar");
         ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data).build();
         client.resource(cm).serverSideApply();
 
