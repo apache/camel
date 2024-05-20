@@ -24,12 +24,10 @@ import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class MongoDbStopEndpointIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private static final String MY_ID = "myId";

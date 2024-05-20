@@ -24,12 +24,10 @@ import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.mongodb.integration.AbstractMongoDbITSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class MongoDbVerifierExtensionIT extends AbstractMongoDbITSupport {
     // We simulate the presence of an authenticated user
     @BeforeEach
