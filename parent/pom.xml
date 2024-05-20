@@ -214,7 +214,6 @@
         <hazelcast-version>5.3.7</hazelcast-version>
         <hdrhistrogram-version>2.2.1</hdrhistrogram-version>
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
-        <hibernate-version>6.3.2.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.2</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
@@ -381,7 +380,7 @@
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.3</ognl-version>
         <openapi-generator>7.5.0</openapi-generator>
-        <openjpa-version>3.2.2</openjpa-version>
+        <openjpa-version>4.0.0</openjpa-version>
         <opensearch-rest-client-version>2.13.0</opensearch-rest-client-version>
         <opensearch-java-client-version>2.10.2</opensearch-java-client-version>
         <opensearch-version>2.11.0</opensearch-version>
