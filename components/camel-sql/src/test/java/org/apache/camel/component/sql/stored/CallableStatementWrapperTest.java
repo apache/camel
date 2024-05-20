@@ -52,9 +52,8 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
         super.setUp();
     }
 
-    @Override
-    protected void startCamelContext() throws Exception {
-        super.startCamelContext();
+    @BeforeEach
+    void setupTest() {
         templateParser = new TemplateParser(context().getClassResolver());
         this.factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, false);
     }
