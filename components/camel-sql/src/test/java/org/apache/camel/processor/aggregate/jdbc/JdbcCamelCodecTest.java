@@ -20,6 +20,7 @@ import java.io.*;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.malicious.example.Employee;
 
@@ -27,9 +28,8 @@ public class JdbcCamelCodecTest extends CamelTestSupport {
 
     JdbcCamelCodec codec;
 
-    @Override
-    protected void startCamelContext() throws Exception {
-        super.startCamelContext();
+    @BeforeEach
+    void setupTest() {
         codec = new JdbcCamelCodec();
     }
 

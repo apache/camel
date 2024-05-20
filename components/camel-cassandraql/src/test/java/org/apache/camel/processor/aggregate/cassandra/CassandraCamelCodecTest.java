@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.malicious.example.Employee;
 
@@ -28,9 +29,8 @@ public class CassandraCamelCodecTest extends CamelTestSupport {
 
     CassandraCamelCodec codec;
 
-    @Override
-    protected void startCamelContext() throws Exception {
-        super.startCamelContext();
+    @BeforeEach
+    void setupTest() {
         codec = new CassandraCamelCodec();
     }
 
