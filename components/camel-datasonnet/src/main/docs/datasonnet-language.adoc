@@ -171,6 +171,8 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 |cml.header |the header name |String |Will return the message header.
 
 |cml.exchangeProperty |key for property |String |Will return the exchange property.
+
+|cml.variable |the variable name |String |Will return the exchange variable.
 |===
 
 Here's an example showing some of these functions in use:

@@ -86,6 +86,13 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
     }
 
     @Test
+    public void testVariable() throws Exception {
+        runCamelTest("World",
+                "{ \"test\":\"Hello, World\"}",
+                "direct:variable");
+    }
+
+    @Test
     public void testNullInput() throws Exception {
         runCamelTest("",
                 "{ \"test\":\"Hello, World\"}",

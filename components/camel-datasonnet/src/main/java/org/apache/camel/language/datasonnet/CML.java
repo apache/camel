@@ -66,6 +66,9 @@ public final class CML extends Library {
         answer.put("header", makeSimpleFunc(
                 Collections.singletonList("key"), //parameters list
                 params -> header(params.get(0), dataFormats)));
+        answer.put("variable", makeSimpleFunc(
+                Collections.singletonList("key"), //parameters list
+                params -> variable(params.get(0), dataFormats)));
         answer.put("exchangeProperty", makeSimpleFunc(
                 Collections.singletonList("key"), //parameters list
                 params -> exchangeProperty(params.get(0), dataFormats)));
@@ -87,6 +90,13 @@ public final class CML extends Library {
     private Val header(Val key, DataFormatService dataformats) {
         if (key instanceof Val.Str) {
             return valFrom(exchange.get().getMessage().getHeader(((Val.Str) key).value()), dataformats);
+        }
+        throw new IllegalArgumentException("Expected String got: " + key.prettyName());
+    }
+
+    private Val variable(Val key, DataFormatService dataformats) {
+        if (key instanceof Val.Str) {
+            return valFrom(exchange.get().getVariable(((Val.Str) key).value()), dataformats);
         }
         throw new IllegalArgumentException("Expected String got: " + key.prettyName());
     }

@@ -165,6 +165,32 @@
             <to uri="mock:direct:end"/>
         </route>
 
+        <route id="variable">
+            <from uri="direct:variable"/>
+
+            <setHeader name="CamelDatasonnetOutputMediaType">
+                <constant>text/plain</constant>
+            </setHeader>
+            <setVariable name="HelloVar">
+                <language language="datasonnet">"Hello, " + payload</language>
+            </setVariable>
+
+            <setHeader name="CamelDatasonnetOutputMediaType">
+                <constant>application/json</constant>
+            </setHeader>
+            <setBody>
+                <language language="datasonnet">
+                    <![CDATA[
+                    {
+                        test: cml.variable('HelloVar')
+                    }
+                    ]]>
+                </language>
+            </setBody>
+
+            <to uri="mock:direct:end"/>
+        </route>
+
         <route id="nullInput">
             <from uri="direct:nullInput"/>
             <setBody>
