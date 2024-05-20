@@ -115,8 +115,6 @@ public abstract class CamelTestSupport
                  .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
                  .withMockEndpoints(isMockEndpoints())
                  .withMockEndpointsAndSkip(isMockEndpointsAndSkip());
-
-        contextManager = new LegacyCamelContextManager(testConfigurationBuilder, camelContextConfiguration);
     }
 
     @Override
@@ -126,6 +124,7 @@ public abstract class CamelTestSupport
 
     @Override
     public void beforeTestExecution(ExtensionContext context) throws Exception {
+        LOG.trace("Before test execution {}", context.getDisplayName());
         watch.restart();
     }
 
@@ -136,6 +135,11 @@ public abstract class CamelTestSupport
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        if (contextManager == null) {
+            LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
+            contextManager = new TransientCamelContextManager(testConfigurationBuilder, camelContextConfiguration);
+        }
+
         currentTestName = context.getDisplayName();
         ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
         contextManager.setGlobalStore(globalStore);
@@ -149,7 +153,11 @@ public abstract class CamelTestSupport
     @Override
     public void beforeAll(ExtensionContext context) {
         final boolean perClassPresent = context.getTestInstanceLifecycle().filter(lc -> lc.equals(Lifecycle.PER_CLASS)).isPresent();
-        testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
+        if (perClassPresent) {
+            LOG.trace("Creating a legacy context manager for {}", context.getDisplayName());
+            testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
+            contextManager = new LegacyCamelContextManager(testConfigurationBuilder, camelContextConfiguration);
+        }
 
         ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
         contextManager.setGlobalStore(globalStore);
@@ -846,6 +854,4 @@ public abstract class CamelTestSupport
     public final CamelContextConfiguration camelContextConfiguration() {
         return camelContextConfiguration;
     }
-
-
 }

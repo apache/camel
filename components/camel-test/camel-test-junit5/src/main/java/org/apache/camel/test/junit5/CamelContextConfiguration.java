@@ -54,6 +54,7 @@ public final class CamelContextConfiguration {
         void postSetup() throws Exception;
     }
 
+
     private String routeFilterIncludePattern;
     private String routeFilterExcludePattern;
     private Registry registry;

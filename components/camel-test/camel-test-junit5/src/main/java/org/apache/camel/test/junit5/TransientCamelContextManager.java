@@ -19,7 +19,6 @@ package org.apache.camel.test.junit5;
 
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -27,7 +26,6 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.support.PluginHelper;
@@ -39,85 +37,44 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 
-/**
- * A {@link CamelContext} test lifecycle manager based on the behavior that was built in {@link CamelTestSupport} up to
- * Camel 4.7.0
- */
-public class LegacyCamelContextManager implements CamelContextManager {
-    private static final Logger LOG = LoggerFactory.getLogger(LegacyCamelContextManager.class);
-
-    private static final ThreadLocal<LegacyCamelContextManager> INSTANCE = new ThreadLocal<>();
-    private static final ThreadLocal<AtomicInteger> TESTS = new ThreadLocal<>();
-    private static final ThreadLocal<ModelCamelContext> THREAD_CAMEL_CONTEXT = new ThreadLocal<>();
-    private static final ThreadLocal<ProducerTemplate> THREAD_TEMPLATE = new ThreadLocal<>();
-    private static final ThreadLocal<FluentProducerTemplate> THREAD_FLUENT_TEMPLATE = new ThreadLocal<>();
-    private static final ThreadLocal<ConsumerTemplate> THREAD_CONSUMER = new ThreadLocal<>();
-    private static final ThreadLocal<Service> THREAD_SERVICE = new ThreadLocal<>();
+public class TransientCamelContextManager implements CamelContextManager {
+    private static final Logger LOG = LoggerFactory.getLogger(TransientCamelContextManager.class);
 
     private final TestExecutionConfiguration testConfigurationBuilder;
     private final CamelContextConfiguration camelContextConfiguration;
+    private final Service service;
     private ModelCamelContext context;
 
-    protected volatile ProducerTemplate template;
-    protected volatile FluentProducerTemplate fluentTemplate;
-    protected volatile ConsumerTemplate consumer;
+    protected ProducerTemplate template;
+    protected FluentProducerTemplate fluentTemplate;
+    protected ConsumerTemplate consumer;
     private Properties extra;
     private ExtensionContext.Store globalStore;
 
-    public LegacyCamelContextManager(TestExecutionConfiguration testConfigurationBuilder,
+    public TransientCamelContextManager(TestExecutionConfiguration testConfigurationBuilder,
             CamelContextConfiguration camelContextConfiguration) {
         this.testConfigurationBuilder = testConfigurationBuilder;
         this.camelContextConfiguration = camelContextConfiguration;
 
-        final Service service = camelContextConfiguration.camelContextService();
-        if (service != null) {
-            THREAD_SERVICE.set(service);
-        }
+        service = camelContextConfiguration.camelContextService();
     }
 
     @Override
     public void createCamelContext(Object test) throws Exception {
-        if (testConfigurationBuilder.isCreateCamelContextPerClass()) {
-            createCamelContextPerClass(test);
-        } else {
-            initialize(test);
-        }
+        initialize(test);
     }
+
 
     @Override
     public void beforeContextStart(Object test) throws Exception {
-        context = THREAD_CAMEL_CONTEXT.get();
-        template = THREAD_TEMPLATE.get();
-        fluentTemplate = THREAD_FLUENT_TEMPLATE.get();
-        consumer = THREAD_CONSUMER.get();
-
         applyCamelPostProcessor(test);
         camelContextConfiguration.postProcessor().postSetup();
-    }
-
-    private void createCamelContextPerClass(Object test) throws Exception {
-        INSTANCE.set(this);
-        AtomicInteger v = TESTS.get();
-        if (v == null) {
-            v = new AtomicInteger();
-            TESTS.set(v);
-        }
-        if (v.getAndIncrement() == 0) {
-            LOG.debug("Setup CamelContext before running first test");
-            // test is per class, so only setup once (the first time)
-            initialize(test);
-        } else {
-            LOG.debug("Reset between test methods");
-            // and in between tests we must do IoC and reset mocks
-            beforeContextStart(test);
-            MockEndpoint.resetMocks(context);
-        }
     }
 
     private void initialize(Object test) throws Exception {
         LOG.debug("Initializing a new CamelContext");
 
-        // jmx is enabled if we have configured to use it, if dump route coverage is enabled (it requires JMX) or if
+        // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX) or if
         // the component camel-debug is in the classpath
         if (testConfigurationBuilder.isJmxEnabled() || testConfigurationBuilder.isRouteCoverageEnabled() || isCamelDebugPresent()) {
             enableJMX();
@@ -127,8 +84,6 @@ public class LegacyCamelContextManager implements CamelContextManager {
 
         context = (ModelCamelContext) camelContextConfiguration.camelContextSupplier().createCamelContext();
         assert context != null : "No context found!";
-
-        THREAD_CAMEL_CONTEXT.set(context);
 
         // TODO: fixme (some tests try to access the context before it's set on the test)
         final Method setContextMethod = test.getClass().getMethod("setContext", ModelCamelContext.class);
@@ -178,10 +133,6 @@ public class LegacyCamelContextManager implements CamelContextManager {
         fluentTemplate.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
-
-        THREAD_TEMPLATE.set(template);
-        THREAD_FLUENT_TEMPLATE.set(fluentTemplate);
-        THREAD_CONSUMER.set(consumer);
     }
 
     private void configureIncludeExcludePatterns() {
@@ -256,7 +207,7 @@ public class LegacyCamelContextManager implements CamelContextManager {
 
     @Override
     public Service camelContextService() {
-        return THREAD_SERVICE.get();
+        return service;
     }
 
     @Override
@@ -271,63 +222,33 @@ public class LegacyCamelContextManager implements CamelContextManager {
 
     @Override
     public void stop() {
-        LegacyCamelContextManager support = INSTANCE.get();
-        if (support != null && testConfigurationBuilder.isCreateCamelContextPerClass()) {
-            try {
-                support.tearDownCreateCamelContextPerClass();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-
-        doStopCamelContext(THREAD_CAMEL_CONTEXT.get(), THREAD_SERVICE.get());
+        doStopTemplates(consumer, template, fluentTemplate);
+        doStopCamelContext(context, service);
     }
 
     @Override
     public void stopTemplates() {
-        doStopTemplates(THREAD_CONSUMER.get(), THREAD_TEMPLATE.get(), THREAD_FLUENT_TEMPLATE.get());
-    }
 
-    void tearDownCreateCamelContextPerClass() {
-        LOG.debug("tearDownCreateCamelContextPerClass()");
-        TESTS.remove();
-        stopTemplates();
-        doStopCamelContext(THREAD_CAMEL_CONTEXT.get(), THREAD_SERVICE.get());
     }
 
     private static void doStopTemplates(
             ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate) {
         if (consumer != null) {
-            if (consumer == THREAD_CONSUMER.get()) {
-                THREAD_CONSUMER.remove();
-            }
             consumer.stop();
         }
         if (template != null) {
-            if (template == THREAD_TEMPLATE.get()) {
-                THREAD_TEMPLATE.remove();
-            }
             template.stop();
         }
         if (fluentTemplate != null) {
-            if (fluentTemplate == THREAD_FLUENT_TEMPLATE.get()) {
-                THREAD_FLUENT_TEMPLATE.remove();
-            }
             fluentTemplate.stop();
         }
     }
 
     protected void doStopCamelContext(CamelContext context, Service camelContextService) {
         if (camelContextService != null) {
-            if (camelContextService == THREAD_SERVICE.get()) {
-                THREAD_SERVICE.remove();
-            }
             camelContextService.stop();
         } else {
             if (context != null) {
-                if (context == THREAD_CAMEL_CONTEXT.get()) {
-                    THREAD_CAMEL_CONTEXT.remove();
-                }
                 context.stop();
             }
         }
