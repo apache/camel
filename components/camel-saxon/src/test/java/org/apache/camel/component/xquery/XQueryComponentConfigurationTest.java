@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class XQueryComponentConfigurationTest extends CamelSpringTestSupport {
 
     @Test
-    public void testConfiguration() {
+    public void testComponentConfiguration() {
         XQueryComponent component = context.getComponent("xquery", XQueryComponent.class);
         XQueryEndpoint endpoint
                 = context.getEndpoint("xquery:org/apache/camel/component/xquery/transform.xquery", XQueryEndpoint.class);

@@ -22,16 +22,17 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class MyRouteDuplicateIdTest extends CamelTestSupport {
 
-    @Override
-    protected void startCamelContext() throws Exception {
-        // do not start context automatically
+    MyRouteDuplicateIdTest() {
+        testConfiguration().withAutoStartContext(false);
     }
 
     @Test
     void testFoo() {
+        assumeFalse(context.isStarted(), "This test cannot run with the context already started");
         assertThrows(FailedToStartRouteException.class, () -> context.start());
     }
 

@@ -72,7 +72,7 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
     // *****************************
 
     @Test
-    void testConfiguration() throws Exception {
+    void testComponentConfiguration() throws Exception {
         Cache<String, String> globalConfigCache
                 = globalConfig.getManager().getCache("globalConfig", String.class, String.class);
         Cache<String, String> customConfigCache

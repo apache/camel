@@ -60,7 +60,7 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
     }
 
     @Test
-    public void testConfiguration() {
+    public void testComponentConfiguration() {
         GoogleCalendarEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleCalendarEndpoint.class);
         GoogleCalendarConfiguration configuration = endpoint.getConfiguration();
         assertNotNull(configuration);

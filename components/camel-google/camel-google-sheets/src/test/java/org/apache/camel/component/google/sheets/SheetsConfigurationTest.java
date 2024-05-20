@@ -46,7 +46,7 @@ public class SheetsConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConfiguration() {
+    public void testComponentConfiguration() {
         GoogleSheetsEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleSheetsEndpoint.class);
         GoogleSheetsConfiguration configuration = endpoint.getConfiguration();
         assertNotNull(configuration);

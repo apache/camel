@@ -142,14 +142,14 @@ public abstract class CamelMainTestSupport extends CamelTestSupport {
         }
         configure(main.configure());
         main.setPropertyPlaceholderLocations(getPropertyPlaceholderLocations());
-        main.setOverrideProperties(useOverridePropertiesWithPropertiesComponent());
+        main.setOverrideProperties(camelContextConfiguration().useOverridePropertiesWithPropertiesComponent());
         main.init(context);
         return context;
     }
 
     @Override
-    protected void applyCamelPostProcessor() throws Exception {
-        super.applyCamelPostProcessor();
+    protected void postProcessTest() throws Exception {
+        super.postProcessTest();
         bindToRegistryAfterInjections(context.getRegistry());
     }
 

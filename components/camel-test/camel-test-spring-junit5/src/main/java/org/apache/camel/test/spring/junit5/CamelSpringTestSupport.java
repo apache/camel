@@ -38,6 +38,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -77,7 +78,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
     @Override
     public void postProcessTest() throws Exception {
-        if (isCreateCamelContextPerClass()) {
+        if (testConfiguration().isCreateCamelContextPerClass()) {
             applicationContext = THREAD_APP_CONTEXT.get();
         }
         super.postProcessTest();
@@ -85,12 +86,13 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
     @Override
     public void doPreSetup() throws Exception {
-        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+        boolean skip = CamelContextTestHelper.isSkipAutoStartContext(testConfiguration());
+        if (!skip) {
             // tell camel-spring it should not trigger starting CamelContext, since we do that later
             // after we are finished setting up the unit test
             synchronized (LOCK) {
                 SpringCamelContext.setNoStart(true);
-                if (isCreateCamelContextPerClass()) {
+                if (testConfiguration().isCreateCamelContextPerClass()) {
                     applicationContext = THREAD_APP_CONTEXT.get();
                     if (applicationContext == null) {
                         applicationContext = doCreateApplicationContext();
@@ -136,7 +138,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        if (!isCreateCamelContextPerClass()) {
+        if (!testConfiguration().isCreateCamelContextPerClass()) {
             IOHelper.close(applicationContext);
             applicationContext = null;
         }
@@ -144,12 +146,12 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
     @Override
     public void doPostTearDown() throws Exception {
-        super.doPostTearDown();
-
         if (THREAD_APP_CONTEXT.get() != null) {
             IOHelper.close(THREAD_APP_CONTEXT.get());
             THREAD_APP_CONTEXT.remove();
         }
+
+        super.doPostTearDown();
     }
 
     /**

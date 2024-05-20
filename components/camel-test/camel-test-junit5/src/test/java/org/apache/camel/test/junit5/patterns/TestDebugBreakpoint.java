@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 public class TestDebugBreakpoint extends DebugBreakpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TestDebugBreakpoint.class);
+    private boolean debugBeforeCalled = false;
+    private boolean debugAfterCalled = false;
 
     @Override
     protected void debugBefore(
@@ -35,6 +37,7 @@ public class TestDebugBreakpoint extends DebugBreakpoint {
         // from your Java editor you can add a breakpoint in the code line
         // below
         LOG.info("Before {} with body {}", definition, exchange.getIn().getBody());
+        debugBeforeCalled = true;
     }
 
     @Override
@@ -42,5 +45,14 @@ public class TestDebugBreakpoint extends DebugBreakpoint {
             Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
             long timeTaken) {
 
+        debugAfterCalled = true;
+    }
+
+    public boolean isDebugBeforeCalled() {
+        return debugBeforeCalled;
+    }
+
+    public boolean isDebugAfterCalled() {
+        return debugAfterCalled;
     }
 }

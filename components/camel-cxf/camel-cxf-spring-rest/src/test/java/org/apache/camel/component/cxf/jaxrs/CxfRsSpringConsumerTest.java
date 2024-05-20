@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.LegacyNoErrorHandlerBuilder;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomException;
@@ -55,7 +55,7 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
         };
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(new LegacyNoErrorHandlerBuilder());
+                errorHandler(new NoErrorHandlerBuilder());
                 from("cxfrs://bean://rsServer").process(testProcessor);
                 from("cxfrs://bean://rsServer2").process(testProcessor);
                 from("cxfrs://bean://rsServerInvoke?performInvocation=true").process(responseProcessor);

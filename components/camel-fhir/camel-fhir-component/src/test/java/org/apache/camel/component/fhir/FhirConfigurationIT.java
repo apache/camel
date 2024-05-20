@@ -87,7 +87,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
     }
 
     @Test
-    public void testConfiguration() {
+    public void testComponentConfiguration() {
         FhirEndpoint endpoint = getMandatoryEndpoint(TEST_URI, FhirEndpoint.class);
         GenericClient client = (GenericClient) endpoint.getClient();
         FhirConfiguration configuration = endpoint.getConfiguration();
