@@ -63,7 +63,7 @@ Add `camel-opentelemetry` component in your POM, and configure in `application.p
 [source,properties]
 ----
 camel.opentelemetry.enabled = true
-# you can confiure the other options
+# you can configure the other options
 # camel.opentelemetry.instrumentationName = myApp
 ----
 
