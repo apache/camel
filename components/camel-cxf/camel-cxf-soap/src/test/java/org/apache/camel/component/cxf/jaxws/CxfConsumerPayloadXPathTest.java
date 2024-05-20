@@ -206,7 +206,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
     }
 
     private void simpleTest(int repeat, BaseRouteBuilder builder) throws Exception {
-        setUseRouteBuilder(false);
+        testConfiguration().withUseRouteBuilder(false);
         context.addRoutes(builder);
         startCamelContext();
 

@@ -53,7 +53,7 @@ public class GmailConfigurationTest extends AbstractGoogleMailTestSupport {
     }
 
     @Test
-    public void testConfiguration() {
+    public void testComponentConfiguration() {
         GoogleMailEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleMailEndpoint.class);
         GoogleMailConfiguration configuration = endpoint.getConfiguration();
         assertNotNull(configuration);

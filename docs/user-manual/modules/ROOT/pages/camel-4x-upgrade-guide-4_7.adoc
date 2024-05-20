@@ -130,6 +130,12 @@ You can now use the following syntax:
 
 Where engine will be the Hashicorp Vault Engine to be used. This means you'll be able to use multiple engines at the same time. More details at CAMEL-20775 issue.
 
+=== camel-test
+
+As part of CAMEL-20785, we have started to rework the `CamelTestSupport` class. At this point, it should be highly compatible with
+previous versions, as we are laying down the foundations for greater cleanups in the future. However, several methods have been
+marked as deprecated. Users of this class are advised to look at the deprecation notices and adjust the code accordingly.
+
 === Camel Spring Boot
 
 ==== camel-debug-starter

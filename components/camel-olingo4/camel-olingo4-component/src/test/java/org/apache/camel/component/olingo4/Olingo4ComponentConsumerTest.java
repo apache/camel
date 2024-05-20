@@ -47,7 +47,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     private static final String AIRPORTS = "Airports";
 
     public Olingo4ComponentConsumerTest() {
-        setUseRouteBuilder(false);
+        testConfiguration().withUseRouteBuilder(false);
     }
 
     private void addRouteAndStartContext(RouteBuilder builder) throws Exception {
