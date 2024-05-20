@@ -63,7 +63,7 @@ pipeline {
                     }
                     axis {
                         name 'PLATFORM'
-                        values 'ppc64le', 's390x', 'ubuntu'
+                        values 'ppc64le', 's390x', 'ubuntu-avx'
                     }
                 }
                 excludes {
@@ -112,7 +112,7 @@ pipeline {
                     stage('Code Quality Review') {
                         steps {
                             script {
-                                if ("${PLATFORM}" == "ubuntu") {
+                                if ("${PLATFORM}" == "ubuntu-avx") {
                                     if ("${JDK_NAME}" == "jdk_17_latest") {
                                         withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                             echo "Code quality review ENABLED for ${PLATFORM}"
@@ -133,7 +133,7 @@ pipeline {
                             echo "Do Test for ${PLATFORM}-${JDK_NAME}"
                             timeout(unit: 'HOURS', time: 7) {
                                 script {
-                                    if ("${PLATFORM}" == "ubuntu") {
+                                    if ("${PLATFORM}" == "ubuntu-avx") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD}"
                                         } else {
