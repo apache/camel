@@ -41,7 +41,7 @@ public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createCamelRegistry());
+        final CamelContext context = new DefaultCamelContext();
 
         // add GoogleDriveComponent to Camel context but don't set up configuration
         final GoogleDriveComponent component = new GoogleDriveComponent(context);
