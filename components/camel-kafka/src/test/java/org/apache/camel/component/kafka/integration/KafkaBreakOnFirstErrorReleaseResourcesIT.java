@@ -51,8 +51,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
              disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
-    public static final String ROUTE_ID = "breakOnFirstError-20563";
-    public static final String TOPIC = "breakOnFirstError-20563";
+    public static final String ROUTE_ID = "breakOnFirstError-20563" + Thread.currentThread().hashCode(); //CAMEL-20722 - added for similar reason as CAMEL-20686:
+    public static final String TOPIC = "breakOnFirstError-20563" + Thread.currentThread().hashCode(); //CAMEL-20722 - added for similar reason as CAMEL-20686:
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBreakOnFirstErrorReleaseResourcesIT.class);
     private static final int CONSUMER_COUNT = 3;
@@ -106,7 +106,7 @@ class KafkaBreakOnFirstErrorReleaseResourcesIT extends BaseKafkaTestSupport {
 
         // let test run for awhile
         Awaitility.await()
-                .timeout(10, TimeUnit.SECONDS)
+                .timeout(30, TimeUnit.SECONDS)  // changed to 30 sec for CAMEL-20722
                 .pollDelay(8, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(true));
 
