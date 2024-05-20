@@ -25,8 +25,6 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
     private String token;
-    @Metadata(secret = true)
-    private String engine;
     @Metadata
     private String host;
     @Metadata
@@ -43,17 +41,6 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    /**
-     * Engine to look at hashicorp vault
-     */
-    public String getEngine() {
-        return engine;
-    }
-
-    public void setEngine(String engine) {
-        this.engine = engine;
     }
 
     /**

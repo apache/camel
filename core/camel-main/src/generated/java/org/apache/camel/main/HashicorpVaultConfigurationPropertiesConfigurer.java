@@ -27,7 +27,6 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
-        case "engine": target.setEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
@@ -47,7 +46,6 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
-        case "engine": return java.lang.String.class;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
@@ -68,7 +66,6 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
-        case "engine": return target.getEngine();
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":

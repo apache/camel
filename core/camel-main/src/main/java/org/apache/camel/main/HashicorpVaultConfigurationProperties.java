@@ -58,14 +58,6 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
     }
 
     /**
-     * The Hashicorp vault Engine to look at
-     */
-    public HashicorpVaultConfigurationProperties withEngine(String engine) {
-        setEngine(engine);
-        return this;
-    }
-
-    /**
      * The Hashicorp Vault host
      */
     public HashicorpVaultConfigurationProperties withHost(String host) {
