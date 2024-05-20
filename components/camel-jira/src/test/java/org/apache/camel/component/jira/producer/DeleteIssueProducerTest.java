@@ -86,11 +86,6 @@ public class DeleteIssueProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected void stopCamelContext() throws Exception {
-        super.stopCamelContext();
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         setMocks();
         CamelContext camelContext = super.createCamelContext();
