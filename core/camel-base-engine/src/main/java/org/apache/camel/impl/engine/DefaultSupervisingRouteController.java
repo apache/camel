@@ -88,8 +88,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private long backOffMaxElapsedTime;
     private long backOffMaxAttempts;
     private double backOffMultiplier = 1.0d;
-    private boolean unhealthyOnExhausted;
-    private boolean unhealthyOnRestarting;
+    private boolean unhealthyOnExhausted = true;
+    private boolean unhealthyOnRestarting = true;
 
     public DefaultSupervisingRouteController() {
         this.lock = new Object();
