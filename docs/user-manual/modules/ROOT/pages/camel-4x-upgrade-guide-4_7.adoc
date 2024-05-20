@@ -118,6 +118,18 @@ sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and htt
 
 Moved the `camel-cloudevents` api into `camel-api` and removed the `camel-cloudevents` dependency from all components that provide CloudEvent transformers.
 
+=== camel-hashicorp-vault
+
+The `HashicorpVaultPropertiesFunction` from the hashicorp vault has been changed to avoid declaring statically the Vault Engine.
+
+This means the `camel.vault.hashicorp.engine` property and the support for `CAMEL_HASHICORP_VAULT_ENGINE` environment variable have been removed.
+
+You can now use the following syntax:
+
+`hashicorp:engine:secret`
+
+Where engine will be the Hashicorp Vault Engine to be used. This means you'll be able to use multiple engines at the same time. More details at CAMEL-20775 issue.
+
 === Camel Spring Boot
 
 ==== camel-debug-starter

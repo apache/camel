@@ -241,7 +241,6 @@ public class MainVaultTest {
         Main main = new Main();
 
         main.addInitialProperty("camel.vault.hashicorp.token", "1111");
-        main.addInitialProperty("camel.vault.hashicorp.engine", "sec");
         main.addInitialProperty("camel.vault.hashicorp.host", "localhost");
         main.addInitialProperty("camel.vault.hashicorp.port", "8200");
         main.addInitialProperty("camel.vault.hashicorp.scheme", "https");
@@ -254,7 +253,6 @@ public class MainVaultTest {
         assertNotNull(cfg);
 
         Assertions.assertEquals("1111", cfg.getToken());
-        Assertions.assertEquals("sec", cfg.getEngine());
         Assertions.assertEquals("localhost", cfg.getHost());
         Assertions.assertEquals("8200", cfg.getPort());
         Assertions.assertEquals("https", cfg.getScheme());

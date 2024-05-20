@@ -50,7 +50,6 @@ To use this function, you'll need to provide credentials for Hashicorp vault as 
 [source,bash]
 ----
 export $CAMEL_VAULT_HASHICORP_TOKEN=token
-export $CAMEL_VAULT_HASHICORP_ENGINE=secretKey
 export $CAMEL_VAULT_HASHICORP_HOST=host
 export $CAMEL_VAULT_HASHICORP_PORT=port
 export $CAMEL_VAULT_HASHICORP_SCHEME=http/https
@@ -61,7 +60,6 @@ You can also configure the credentials in the `application.properties` file such
 [source,properties]
 ----
 camel.vault.hashicorp.token = token
-camel.vault.hashicorp.engine = engine
 camel.vault.hashicorp.host = host
 camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
@@ -74,12 +72,12 @@ At this point, you'll be able to reference a property in the following way:
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{hashicorp:route}}"/>
+        <to uri="{{hashicorp:secret:route}}"/>
     </route>
 </camelContext>
 ----
 
-Where route will be the name of the secret stored in the Hashicorp Vault instance.
+Where route will be the name of the secret stored in the Hashicorp Vault instance, in the 'secret' engine.
 
 You could specify a default value in case the secret is not present on Hashicorp Vault instance:
 
@@ -88,12 +86,12 @@ You could specify a default value in case the secret is not present on Hashicorp
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{hashicorp:route:default}}"/>
+        <to uri="{{hashicorp:secret:route:default}}"/>
     </route>
 </camelContext>
 ----
 
-In this case, if the secret doesn't exist, the property will fall back to "default" as value.
+In this case, if the secret doesn't exist in the 'secret' engine, the property will fall back to "default" as value.
 
 Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
@@ -109,33 +107,33 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 }
 ----
 
-You're able to do get single secret value in your route, like for example:
+You're able to do get single secret value in your route, in the 'secret' engine, like for example:
 
 [source,xml]
 ----
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:database/username}}"/>
+        <log message="Username is {{hashicorp:secret:database/username}}"/>
     </route>
 </camelContext>
 ----
 
 Or re-use the property as part of an endpoint.
 
-You could specify a default value in case the particular field of secret is not present on Hashicorp Vault instance:
+You could specify a default value in case the particular field of secret is not present on Hashicorp Vault instance, in the 'secret' engine:
 
 [source,xml]
 ----
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:database/username:admin}}"/>
+        <log message="Username is {{hashicorp:secret:database/username:admin}}"/>
     </route>
 </camelContext>
 ----
 
-In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fall back to "admin" as value.
+In this case, if the secret doesn't exist or the secret exists (in the 'secret' engine) but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approach, with field/default value specified or only with secret:
 
@@ -144,12 +142,12 @@ There is also the syntax to get a particular version of the secret for both the 
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{hashicorp:route@2}}"/>
+        <to uri="{{hashicorp:secret:route@2}}"/>
     </route>
 </camelContext>
 ----
 
-This approach will return the RAW route secret with version '2'.
+This approach will return the RAW route secret with version '2', in the 'secret' engine.
 
 [source,xml]
 ----
@@ -161,20 +159,18 @@ This approach will return the RAW route secret with version '2'.
 </camelContext>
 ----
 
-This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist.
+This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
 [source,xml]
 ----
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:database/username:admin@2}}"/>
+        <log message="Username is {{hashicorp:secret:database/username:admin@2}}"/>
     </route>
 </camelContext>
 ----
 
-This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist.
-
-For the moment we are not considering the rotation function if any are applied, but it is in the work to be done.
+This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.

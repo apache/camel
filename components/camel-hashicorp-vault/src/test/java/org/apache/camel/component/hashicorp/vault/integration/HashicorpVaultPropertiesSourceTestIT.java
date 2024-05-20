@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -37,7 +36,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{hashicorp:hello}}")).to("mock:bar");
+                from("direct:start").setBody(simple("{{hashicorp:secret:hello}}")).to("mock:bar");
             }
         });
         context.start();
@@ -50,7 +49,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -59,7 +57,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{hashicorp:hello/id}}")).to("mock:bar");
+                from("direct:start").setBody(simple("{{hashicorp:secret:hello/id}}")).to("mock:bar");
             }
         });
         context.start();
@@ -72,7 +70,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -81,8 +78,8 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:hello/username}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:hello/password}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:hello/username}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:secret:hello/password}}")).to("mock:bar");
             }
         });
         context.start();
@@ -95,31 +92,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
-    @Test
-    public void testSecretNotFoundFunction() {
-        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").setBody(simple("{{hashicorp:testExample}}")).to("mock:bar");
-                }
-            });
-            context.start();
-
-            getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
-
-            template.sendBody("direct:start", "Hello World");
-
-            MockEndpoint.assertIsSatisfied(context);
-        });
-    }
-
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -142,7 +114,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -151,8 +122,8 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:hello/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:hello/additional2:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:hello/additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:secret:hello/additional2:secret}}")).to("mock:bar");
             }
         });
         context.start();
@@ -165,7 +136,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -174,8 +144,8 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:test-3/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:test-3/additional2:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:test-3/additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:secret:test-3/additional2:secret}}")).to("mock:bar");
             }
         });
         context.start();
@@ -188,7 +158,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -198,8 +167,8 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{hashicorp:test-3/additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{hashicorp:test-3/additional2}}")).to("mock:bar");
+                    from("direct:username").setBody(simple("{{hashicorp:secret:test-3/additional1}}")).to("mock:bar");
+                    from("direct:password").setBody(simple("{{hashicorp:secret:test-3/additional2}}")).to("mock:bar");
                 }
             });
             context.start();
@@ -213,7 +182,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -222,13 +190,13 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:hello-2:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:hello-1:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:hello-2:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:secret:hello-1:pwd}}")).to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "pwd");
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
@@ -236,7 +204,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -246,7 +213,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{hashicorp:secretsuper}}")).to("mock:bar");
+                    from("direct:username").setBody(simple("{{hashicorp:secret:secretsuper}}")).to("mock:bar");
                 }
             });
             context.start();
@@ -259,7 +226,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -269,8 +235,8 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{hashicorp:postgresql/additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{hashicorp:postgresql/additional2}}")).to("mock:bar");
+                    from("direct:username").setBody(simple("{{hashicorp:secret:postgresql/additional1}}")).to("mock:bar");
+                    from("direct:password").setBody(simple("{{hashicorp:secret:postgresql/additional2}}")).to("mock:bar");
                 }
             });
             context.start();
@@ -284,7 +250,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -293,7 +258,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:newsecret/additional1:admin}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:newsecret/additional1:admin}}")).to("mock:bar");
             }
         });
         context.start();
@@ -305,7 +270,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -314,7 +278,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:newsecret/additional1:admin}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:newsecret/additional1:admin}}")).to("mock:bar");
             }
         });
         context.start();
@@ -326,7 +290,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -335,8 +298,8 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:postgresql/username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:postgresql/password:password}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:postgresql/username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:secret:postgresql/password:password}}")).to("mock:bar");
             }
         });
         context.start();
@@ -349,7 +312,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -358,8 +320,8 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:db_sample/username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:db_sample/password:password}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:secret:db_sample/username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:secret:db_sample/password:password}}")).to("mock:bar");
             }
         });
         context.start();
@@ -372,7 +334,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -381,7 +342,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:hello/id@1}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{hashicorp:secret:hello/id@1}}")).to("mock:bar");
             }
         });
         context.start();
@@ -393,7 +354,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -402,19 +362,18 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:hello@1}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{hashicorp:secret:hello@1}}")).to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21}");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21, password=password, username=admin}");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -423,20 +382,19 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:hello:pippo@1}}"))
+                from("direct:version").setBody(simple("{{hashicorp:secret:hello:pippo@1}}"))
                         .to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21}");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21, password=password, username=admin}");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -445,7 +403,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:hello-3:pippo@4}}"))
+                from("direct:version").setBody(simple("{{hashicorp:secret:hello-3:pippo@4}}"))
                         .to("mock:bar");
             }
         });
@@ -458,7 +416,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -467,7 +424,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:hello:pippo@4}}"))
+                from("direct:version").setBody(simple("{{hashicorp:secret:hello:pippo@4}}"))
                         .to("mock:bar");
             }
         });
@@ -480,7 +437,6 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
     @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
@@ -489,7 +445,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:hello/id:pippo@1}}"))
+                from("direct:version").setBody(simple("{{hashicorp:secret:hello/id:pippo@1}}"))
                         .to("mock:bar");
             }
         });

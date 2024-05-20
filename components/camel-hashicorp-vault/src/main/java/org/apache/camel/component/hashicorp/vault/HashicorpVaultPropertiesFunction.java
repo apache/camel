@@ -38,7 +38,6 @@ import org.springframework.vault.support.VaultResponse;
  * credentials and service location:
  * <ul>
  * <li><tt>CAMEL_HASHICORP_VAULT_TOKEN_ENV</tt></li>
- * <li><tt>CAMEL_HASHICORP_VAULT_ENGINE_ENV</tt></li>
  * <li><tt>CAMEL_HASHICORP_VAULT_HOST_ENV</tt></li>
  * <li><tt>CAMEL_HASHICORP_VAULT_PORT_ENV</tt></li>
  * <li><tt>CAMEL_HASHICORP_VAULT_SCHEME_ENV</tt></li>
@@ -49,7 +48,6 @@ import org.springframework.vault.support.VaultResponse;
  *
  * <ul>
  * <li><tt>camel.vault.hashicorp.token</tt></li>
- * <li><tt>camel.vault.hashicorp.engine</tt></li>
  * <li><tt>camel.vault.hashicorp.host</tt></li>
  * <li><tt>camel.vault.hashicorp.port</tt></li>
  * <li><tt>camel.vault.hashicorp.scheme</tt></li>
@@ -57,22 +55,22 @@ import org.springframework.vault.support.VaultResponse;
  * <p/>
  *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
- * Properties Function are all prefixed with <tt>hashicorp:</tt>. For example asking for <tt>hashicorp:token</tt>, will
- * return the secret value associated to the secret named token on Hashicorp Vault instance.
+ * Properties Function are all prefixed with <tt>hashicorp:</tt>. For example asking for
+ * <tt>hashicorp:engine:token</tt>, will return the secret value associated to the secret named token on Hashicorp Vault
+ * instance on the engine 'engine'.
  *
- * Another way of retrieving a secret value is using the following notation <tt>hashicorp:database/username</tt>: in
- * this case the field username of the secret database will be returned. As a fallback, the user could provide a default
- * value, which will be returned in case the secret doesn't exist, the secret has been marked for deletion or, for
- * example, if a particular field of the secret doesn't exist. For using this feature, the user could use the following
- * notation <tt>aws:database/username:admin</tt>. The admin value will be returned as default value, if the conditions
- * above were all met.
+ * Another way of retrieving a secret value is using the following notation <tt>hashicorp:engine:database/username</tt>:
+ * in this case the field username of the secret database will be returned. As a fallback, the user could provide a
+ * default value, which will be returned in case the secret doesn't exist, the secret has been marked for deletion or,
+ * for example, if a particular field of the secret doesn't exist. For using this feature, the user could use the
+ * following notation <tt>hashicorp:engine:database/username:admin</tt>. The admin value will be returned as default
+ * value, if the conditions above were all met.
  */
 
 @org.apache.camel.spi.annotations.PropertiesFunction("hashicorp")
 public class HashicorpVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
     private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
-    private static final String CAMEL_HASHICORP_VAULT_ENGINE_ENV = "CAMEL_HASHICORP_VAULT_ENGINE";
     private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
     private static final String CAMEL_HASHICORP_VAULT_PORT_ENV
             = "CAMEL_HASHICORP_VAULT_PORT";
@@ -87,22 +85,20 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     protected void doStart() throws Exception {
         super.doStart();
         String token = System.getenv(CAMEL_HASHICORP_VAULT_TOKEN_ENV);
-        engine = System.getenv(CAMEL_HASHICORP_VAULT_ENGINE_ENV);
         String host = System.getenv(CAMEL_HASHICORP_VAULT_HOST_ENV);
         String port = System.getenv(CAMEL_HASHICORP_VAULT_PORT_ENV);
         String scheme = System.getenv(CAMEL_HASHICORP_VAULT_SCHEME_ENV);
-        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(engine) && ObjectHelper.isEmpty(host)
+        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(host)
                 && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme)) {
             HashicorpVaultConfiguration hashicorpVaultConfiguration = getCamelContext().getVaultConfiguration().hashicorp();
             if (ObjectHelper.isNotEmpty(hashicorpVaultConfiguration)) {
                 token = hashicorpVaultConfiguration.getToken();
-                engine = hashicorpVaultConfiguration.getEngine();
                 host = hashicorpVaultConfiguration.getHost();
                 port = hashicorpVaultConfiguration.getPort();
                 scheme = hashicorpVaultConfiguration.getScheme();
             }
         }
-        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(engine) && ObjectHelper.isNotEmpty(host)
+        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(host)
                 && ObjectHelper.isNotEmpty(port) && ObjectHelper.isNotEmpty(scheme)) {
             VaultEndpoint vaultEndpoint = new VaultEndpoint();
             vaultEndpoint.setHost(host);
@@ -114,7 +110,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                     new TokenAuthentication(token));
         } else {
             throw new RuntimeCamelException(
-                    "Using the Hashicorp Properties Function requires setting Engine, Token, Host, port and scheme properties");
+                    "Using the Hashicorp Properties Function requires setting Token, Host, port and scheme properties");
         }
     }
 
@@ -131,7 +127,9 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         String defaultValue = null;
         String version = null;
         if (remainder.contains("/")) {
-            key = StringHelper.before(remainder, "/");
+            String keyRemainder = StringHelper.before(remainder, "/");
+            engine = StringHelper.before(keyRemainder, ":");
+            key = StringHelper.after(keyRemainder, ":");
             subkey = StringHelper.after(remainder, "/");
             defaultValue = StringHelper.after(subkey, ":");
             if (ObjectHelper.isNotEmpty(defaultValue)) {
@@ -148,16 +146,28 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                 subkey = StringHelper.before(subkey, "@");
             }
         } else if (remainder.contains(":")) {
-            key = StringHelper.before(remainder, ":");
-            defaultValue = StringHelper.after(remainder, ":");
-            if (remainder.contains("@")) {
-                version = StringHelper.after(remainder, "@");
-                defaultValue = StringHelper.before(defaultValue, "@");
-            }
-        } else {
-            if (remainder.contains("@")) {
-                key = StringHelper.before(remainder, "@");
-                version = StringHelper.after(remainder, "@");
+            engine = StringHelper.before(remainder, ":");
+            key = StringHelper.after(remainder, ":");
+            if (key.contains(":")) {
+                defaultValue = StringHelper.after(key, ":");
+                if (ObjectHelper.isNotEmpty(defaultValue)) {
+                    if (defaultValue.contains("@")) {
+                        version = StringHelper.after(defaultValue, "@");
+                        defaultValue = StringHelper.before(defaultValue, "@");
+                    }
+                }
+                if (key.contains(":")) {
+                    key = StringHelper.before(key, ":");
+                }
+                if (key.contains("@")) {
+                    version = StringHelper.after(key, "@");
+                    key = StringHelper.before(key, "@");
+                }
+            } else {
+                if (key.contains("@")) {
+                    version = StringHelper.after(key, "@");
+                    key = StringHelper.before(key, "@");
+                }
             }
         }
 
