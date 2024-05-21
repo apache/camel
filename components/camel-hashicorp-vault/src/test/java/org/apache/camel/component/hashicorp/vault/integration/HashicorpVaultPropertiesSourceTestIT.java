@@ -456,4 +456,29 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
+    @Test
+    public void testPropertiesWithDoubleEngines() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:engine1").setBody(simple("{{hashicorp:secretengine1:hello}}"))
+                        .to("mock:bar");
+
+                from("direct:engine2").setBody(simple("{{hashicorp:secretengine2:hello}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21}", "{id=22}");
+
+        template.sendBody("direct:engine1", "Hello World");
+        template.sendBody("direct:engine2", "Hello World");
+        MockEndpoint.assertIsSatisfied(context);
+    }
 }
