@@ -38,7 +38,7 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 public class Sqs2ConsumerHealthCheckStaticCredsIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createSQSService();
+    public static AWSService service = AWSServiceFactory.createSingletonSQSService();
 
     CamelContext context;
 

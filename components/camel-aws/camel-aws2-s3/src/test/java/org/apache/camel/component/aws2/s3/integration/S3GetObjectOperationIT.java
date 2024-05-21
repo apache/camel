@@ -59,7 +59,7 @@ public class S3GetObjectOperationIT extends Aws2S3Base {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel");
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, name.get());
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
             }
@@ -77,7 +77,7 @@ public class S3GetObjectOperationIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true";
+                String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
                 from("direct:putObject").to(awsEndpoint);
 

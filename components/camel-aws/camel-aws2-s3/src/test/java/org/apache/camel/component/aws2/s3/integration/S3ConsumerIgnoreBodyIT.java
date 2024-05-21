@@ -60,11 +60,12 @@ public class S3ConsumerIgnoreBodyIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true";
+                String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint);
 
-                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)&ignoreBody=true")
+                from("aws2-s3://" + name.get()
+                     + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)&ignoreBody=true")
                         .startupOrder(2).log("${body}").to("mock:result");
 
             }

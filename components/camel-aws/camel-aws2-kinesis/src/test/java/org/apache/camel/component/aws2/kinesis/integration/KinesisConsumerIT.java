@@ -66,7 +66,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
     }
 
     @RegisterExtension
-    public static AWSService awsService = AWSServiceFactory.createKinesisService();
+    public static AWSService awsService = AWSServiceFactory.createSingletonKinesisService();
 
     private static final Logger LOG = LoggerFactory.getLogger(KinesisProducerIT.class);
 

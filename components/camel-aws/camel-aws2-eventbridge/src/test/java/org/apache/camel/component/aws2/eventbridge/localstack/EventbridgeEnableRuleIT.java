@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
@@ -96,6 +97,25 @@ public class EventbridgeEnableRuleIT extends Aws2EventbridgeBase {
         assertEquals(RuleState.ENABLED, resp.rules().get(0).state());
         MockEndpoint.assertIsSatisfied(context);
 
+        // Clean up eventbridge
+        template.send("direct:evs-deleteTargets", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                Collection<String> targets = new ArrayList<>();
+                targets.add("sqs-queue");
+                exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
+            }
+        });
+
+        template.send("direct:evs-deleteRule", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+            }
+        });
     }
 
     @Override
@@ -106,14 +126,18 @@ public class EventbridgeEnableRuleIT extends Aws2EventbridgeBase {
                 String putRule
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String putTargets = "aws2-eventbridge://default?operation=putTargets";
+                String removeTargets = "aws2-eventbridge://default?operation=removeTargets";
                 String listRule = "aws2-eventbridge://default?operation=listRules";
                 String disableRule = "aws2-eventbridge://default?operation=disableRule";
                 String enableRule = "aws2-eventbridge://default?operation=enableRule";
+                String deleteRule = "aws2-eventbridge://default?operation=deleteRule";
 
                 from("direct:evs").to(putRule);
                 from("direct:evs-targets").to(putTargets);
                 from("direct:evs-listRules").to(listRule);
                 from("direct:evs-disableRule").to(disableRule);
+                from("direct:evs-deleteRule").to(deleteRule);
+                from("direct:evs-deleteTargets").to(removeTargets);
                 from("direct:evs-enableRule").to(enableRule).log("${body}").to("mock:result");
             }
         };

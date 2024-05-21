@@ -59,7 +59,7 @@ public class S3GzipOperationIT extends Aws2S3Base {
 
         // delete the content
         fluentTemplate()
-                .to("aws2-s3://mycamel?autoCreateBucket=true")
+                .to("aws2-s3://" + name.get() + "?autoCreateBucket=true")
                 .withHeader(AWS2S3Constants.KEY, "hello.txt.gz")
                 .withHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteObject)
                 .request();
@@ -72,11 +72,12 @@ public class S3GzipOperationIT extends Aws2S3Base {
             public void configure() {
                 from("direct:putObject")
                         .marshal().gzipDeflater()
-                        .to("aws2-s3://mycamel?autoCreateBucket=true");
+                        .to("aws2-s3://" + name.get() + "?autoCreateBucket=true");
                 from("direct:getObject")
-                        .to("aws2-s3://mycamel?autoCreateBucket=true&deleteAfterRead=false&includeBody=true")
+                        .to("aws2-s3://" + name.get() + "?autoCreateBucket=true&deleteAfterRead=false&includeBody=true")
                         .unmarshal().gzipDeflater();
-                from("aws2-s3://mycamel?autoCreateBucket=true&deleteAfterRead=false&includeBody=true&prefix=hello.txt.gz")
+                from("aws2-s3://" + name.get()
+                     + "?autoCreateBucket=true&deleteAfterRead=false&includeBody=true&prefix=hello.txt.gz")
                         .unmarshal().gzipDeflater()
                         .to("mock:poll");
             }

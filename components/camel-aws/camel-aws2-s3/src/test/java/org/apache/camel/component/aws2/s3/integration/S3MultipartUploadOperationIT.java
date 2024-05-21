@@ -75,7 +75,7 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
 
         S3Client s = AWSSDKClientUtils.newS3Client();
         ResponseInputStream<GetObjectResponse> response
-                = s.getObject(GetObjectRequest.builder().bucket("mycamel").key("camel-content-type.txt").build());
+                = s.getObject(GetObjectRequest.builder().bucket(name.get()).key("camel-content-type.txt").build());
         assertEquals("application/text", response.response().contentType());
     }
 
@@ -103,7 +103,7 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel?multiPartUpload=true&autoCreateBucket=true";
+                String awsEndpoint = "aws2-s3://" + name.get() + "?multiPartUpload=true&autoCreateBucket=true";
 
                 from("direct:putObject").to(awsEndpoint).to("mock:result");
 

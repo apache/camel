@@ -60,7 +60,7 @@ public class S3SimpleEncryptedUploadOperationIT extends Aws2S3Base {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel");
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, name.get());
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
             }
         });
@@ -89,13 +89,13 @@ public class S3SimpleEncryptedUploadOperationIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true&useAwsKMS=true&awsKMSKeyId=" + key;
+                String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true&useAwsKMS=true&awsKMSKeyId=" + key;
 
                 from("direct:putObject").to(awsEndpoint);
 
                 from("direct:listObjects").to(awsEndpoint).to("mock:result");
 
-                from("direct:getObject").to("aws2-s3://mycamel?autoCreateBucket=true").to("mock:resultGet");
+                from("direct:getObject").to("aws2-s3://" + name.get() + "?autoCreateBucket=true").to("mock:resultGet");
 
             }
         };

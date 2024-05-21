@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class KinesisConsumerResumeAfterRestartIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService awsService = AWSServiceFactory.createKinesisService();
+    public static AWSService awsService = AWSServiceFactory.createSingletonKinesisService();
     private KinesisClient client;
 
     String streamName = "my-stream";

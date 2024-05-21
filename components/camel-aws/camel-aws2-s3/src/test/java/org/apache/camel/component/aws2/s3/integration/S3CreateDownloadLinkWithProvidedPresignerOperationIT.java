@@ -72,7 +72,7 @@ public class S3CreateDownloadLinkWithProvidedPresignerOperationIT extends Aws2S3
         Exchange ex1 = template.request("direct:createDownloadLink", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "CamelUnitTest2");
-                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel2");
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, name.get());
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.createDownloadLink);
             }
         });
@@ -86,7 +86,7 @@ public class S3CreateDownloadLinkWithProvidedPresignerOperationIT extends Aws2S3
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel2?autoCreateBucket=true";
+                String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
                 from("direct:listBucket").to(awsEndpoint);
 

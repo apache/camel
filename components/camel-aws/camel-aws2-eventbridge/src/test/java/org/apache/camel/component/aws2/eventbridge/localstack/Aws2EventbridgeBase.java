@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class Aws2EventbridgeBase extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createEventBridgeService();
+    public static AWSService service = AWSServiceFactory.createSingletonEventBridgeService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
