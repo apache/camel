@@ -287,7 +287,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
      */
     @XmlTransient
     @SuppressWarnings("unchecked")
-    abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends UniVocityAbstractDataFormat>
+    protected abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends UniVocityAbstractDataFormat>
             implements DataFormatBuilder<F> {
 
         private String nullValue;

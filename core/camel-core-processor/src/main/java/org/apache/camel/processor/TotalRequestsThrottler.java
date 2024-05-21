@@ -214,7 +214,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         super.doShutdown();
     }
 
-    private class ThrottlingState {
+    protected class ThrottlingState {
         private final String key;
         private final DelayQueue<ThrottlePermit> delayQueue = new DelayQueue<>();
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();

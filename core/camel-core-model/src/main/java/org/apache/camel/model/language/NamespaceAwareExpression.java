@@ -99,7 +99,7 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
      */
     @XmlTransient
     @SuppressWarnings("unchecked")
-    abstract static class AbstractNamespaceAwareBuilder<
+    protected abstract static class AbstractNamespaceAwareBuilder<
             T extends AbstractNamespaceAwareBuilder<T, E>, E extends NamespaceAwareExpression>
             extends AbstractBuilder<T, E> {
 
