@@ -16,54 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
-
-import io.fabric8.kubernetes.api.model.ConfigMap;
-import org.apache.camel.spi.PropertiesFunction;
-
 /**
- * A {@link PropertiesFunction} that can lookup from Kubernetes configmaps.
+ * Resolves String type configmap keys .
  */
 @org.apache.camel.spi.annotations.PropertiesFunction("configmap")
-public class ConfigMapPropertiesFunction extends BasePropertiesFunction {
+public class ConfigMapPropertiesFunction extends BaseConfigMapPropertiesFunction {
 
     @Override
     public String getName() {
         return "configmap";
-    }
-
-    @Override
-    Path getMountPath() {
-        if (getMountPathConfigMaps() != null) {
-            return Paths.get(getMountPathConfigMaps());
-        }
-        return null;
-    }
-
-    @Override
-    String lookup(String name, String key, String defaultValue) {
-        String answer = null;
-        ConfigMap cm = getClient().configMaps().withName(name).get();
-        if (cm != null) {
-            answer = cm.getData() != null ? cm.getData().get(key) : null;
-            if (answer == null) {
-                // maybe a binary data
-                answer = cm.getBinaryData() != null ? cm.getBinaryData().get(key) : null;
-                if (answer != null) {
-                    // need to decode base64
-                    byte[] data = Base64.getDecoder().decode(answer);
-                    if (data != null) {
-                        answer = new String(data);
-                    }
-                }
-            }
-        }
-        if (answer == null) {
-            return defaultValue;
-        }
-
-        return answer;
     }
 }

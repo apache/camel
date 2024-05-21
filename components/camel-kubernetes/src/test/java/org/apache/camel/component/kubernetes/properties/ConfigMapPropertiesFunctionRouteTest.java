@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
@@ -53,6 +57,8 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
             public void configure() throws Exception {
                 from("direct:start")
                         .transform().simple("Hello ${body} we are at {{configmap:myconfig/bar.txt}}");
+                from("direct:binary")
+                        .transform().simple("File saved to {{configmap-binary:myconfig/binary.dat}}");
             }
         };
     }
@@ -67,8 +73,11 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
         client = new KubernetesClientBuilder().withConfig(builder.build()).build();
         context.getRegistry().bind("KubernetesClient", client);
 
-        Map<String, String> data = Map.of("foo", "123", "bar", "Moes Bar");
-        ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data).build();
+        Map<String, String> data = Map.of("bar.txt", "Moes Bar");
+        Map<String, String> binData = Map.of("binary.dat",
+                Base64.getEncoder().encodeToString(readExampleBinaryFile()));
+        ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data)
+                .withBinaryData(binData).build();
         this.cm = client.resource(cm).serverSideApply();
 
         return context;
@@ -94,4 +103,14 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
         Assertions.assertEquals("Hello Jack we are at Moes Bar", out);
     }
 
+    @Test
+    @Order(2)
+    public void binarySecretPropertiesFunction() throws IOException {
+        String out = template.requestBody("direct:binary", null, String.class);
+        Assertions.assertTrue(out.matches("File saved to .*binary.dat"));
+        Path filePath = Path.of(out.substring("File saved to ".length()));
+        Assertions.assertArrayEquals(readExampleBinaryFile(),
+                Files.readAllBytes(filePath));
+        Files.deleteIfExists(filePath);
+    }
 }

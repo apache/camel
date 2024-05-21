@@ -17,13 +17,13 @@
 package org.apache.camel.component.kubernetes.properties;
 
 /**
- * Resolves String type secret keys .
+ * Resolves binary type secret keys .
  */
-@org.apache.camel.spi.annotations.PropertiesFunction("secret")
-public class SecretPropertiesFunction extends BaseSecretPropertiesFunction {
+@org.apache.camel.spi.annotations.PropertiesFunction("secret-binary")
+public class SecretBinaryPropertiesFunction extends BaseSecretPropertiesFunction {
 
     @Override
     public String getName() {
-        return "secret";
+        return "secret-binary";
     }
 }
