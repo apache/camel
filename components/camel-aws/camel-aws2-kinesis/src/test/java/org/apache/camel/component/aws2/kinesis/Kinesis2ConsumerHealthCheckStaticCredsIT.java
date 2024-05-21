@@ -39,7 +39,7 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 public class Kinesis2ConsumerHealthCheckStaticCredsIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createS3Service();
+    public static AWSService service = AWSServiceFactory.createSingletonS3Service();
 
     CamelContext context;
 

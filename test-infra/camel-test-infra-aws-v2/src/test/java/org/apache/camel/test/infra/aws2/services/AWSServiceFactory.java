@@ -17,14 +17,29 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class AWSServiceFactory {
     private AWSServiceFactory() {
 
+    }
+
+    private static class SingletonAWSService extends SingletonService<AWSService> implements AWSService {
+        public SingletonAWSService(AWSService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public Properties getConnectionProperties() {
+            return getService().getConnectionProperties();
+        }
     }
 
     public static <T extends AWSService> SimpleTestServiceBuilder<T> builder() {
@@ -93,5 +108,42 @@ public final class AWSServiceFactory {
 
     public static AWSService createDynamodbService() {
         return createService(AWSDynamodbLocalContainerService::new);
+    }
+
+    public static AWSService createSingletonDynamoDBService() {
+        return SingletonServiceHolder.getInstance(new AWSDynamodbLocalContainerService(), "dynamoDB");
+    }
+
+    public static AWSService createSingletonS3Service() {
+        return SingletonServiceHolder.getInstance(new AWSS3LocalContainerService(), "s3");
+    }
+
+    public static AWSService createSingletonSQSService() {
+        return SingletonServiceHolder.getInstance(new AWSSQSLocalContainerService(), "sqs");
+    }
+
+    public static AWSService createSingletonEventBridgeService() {
+        return SingletonServiceHolder.getInstance(new AWSEventBridgeLocalContainerService(), "eventBridge");
+    }
+
+    public static AWSService createSingletonKinesisService() {
+        return SingletonServiceHolder.getInstance(new AWSKinesisLocalContainerService(), "kinesis");
+    }
+
+    private static class SingletonServiceHolder {
+        private static final Map<String, AWSService> INSTANCES_HOLDER = new ConcurrentHashMap<>();
+
+        public synchronized static AWSService getInstance(AWSService service, String name) {
+            if (INSTANCES_HOLDER.get(name) == null) {
+                SimpleTestServiceBuilder<AWSService> instance = builder();
+                instance.addLocalMapping(() -> new SingletonAWSService(service, name))
+                        .addRemoteMapping(AWSRemoteService::new)
+                        .build();
+
+                INSTANCES_HOLDER.put(name, instance.build());
+            }
+
+            return INSTANCES_HOLDER.get(name);
+        }
     }
 }

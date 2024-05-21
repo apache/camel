@@ -71,11 +71,14 @@ public class S3StreamUploadOperationAsyncIT extends Aws2S3Base {
             @Override
             public void configure() {
                 String awsEndpoint1
-                        = "aws2-s3://mycamel-1?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random&streamingUploadTimeout=10000";
+                        = String.format(
+                                "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=random&streamingUploadTimeout=10000",
+                                name.get());
 
                 from("direct:stream1").to(awsEndpoint1).to("mock:result");
 
-                String awsEndpoint = "aws2-s3://mycamel-1?autoCreateBucket=true";
+                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true",
+                        name.get());
 
                 from("direct:listObjects").to(awsEndpoint);
             }

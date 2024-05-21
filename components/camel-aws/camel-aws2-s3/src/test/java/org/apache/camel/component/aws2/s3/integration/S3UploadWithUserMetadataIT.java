@@ -53,7 +53,7 @@ public class S3UploadWithUserMetadataIT extends Aws2S3Base {
 
         S3Client s = AWSSDKClientUtils.newS3Client();
         ResponseInputStream<GetObjectResponse> response
-                = s.getObject(GetObjectRequest.builder().bucket("mycamel").key("camel-content-type.txt").build());
+                = s.getObject(GetObjectRequest.builder().bucket(name.get()).key("camel-content-type.txt").build());
         assertTrue(response.response().hasMetadata());
         assertEquals("MetadataFromCamel", response.response().metadata().get("user-metadata-example"));
     }
@@ -63,7 +63,7 @@ public class S3UploadWithUserMetadataIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=true";
+                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true", name.get());
 
                 from("direct:putObject").to(awsEndpoint);
 

@@ -62,7 +62,7 @@ public class S3CreateDownloadLinkOperationIT extends Aws2S3Base {
         Exchange ex1 = template.request("direct:createDownloadLink", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "CamelUnitTest2");
-                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel2");
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, name.get());
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.createDownloadLink);
             }
         });
@@ -70,18 +70,18 @@ public class S3CreateDownloadLinkOperationIT extends Aws2S3Base {
         Exchange ex3 = template.request("direct:createDownloadLinkWithUriOverride", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "CamelUnitTest2");
-                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel2");
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, name.get());
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.createDownloadLink);
             }
         });
 
         String downloadLink = ex1.getMessage().getBody(String.class);
         assertNotNull(downloadLink);
-        assertTrue(downloadLink.startsWith("https://mycamel2.s3.eu-west-1.amazonaws.com"));
+        assertTrue(downloadLink.startsWith("https://" + name.get() + ".s3.eu-west-1.amazonaws.com"));
 
         String downloadLinkWithUriOverride = ex3.getMessage().getBody(String.class);
         assertNotNull(downloadLinkWithUriOverride);
-        assertTrue(downloadLinkWithUriOverride.startsWith("http://mycamel2.localhost:8080"));
+        assertTrue(downloadLinkWithUriOverride.startsWith("http://" + name.get() + ".localhost:8080"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -91,7 +91,7 @@ public class S3CreateDownloadLinkOperationIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://mycamel2?autoCreateBucket=true";
+                String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
                 from("direct:listBucket").to(awsEndpoint + "&accessKey=xxx&secretKey=yyy&region=eu-west-1");
 

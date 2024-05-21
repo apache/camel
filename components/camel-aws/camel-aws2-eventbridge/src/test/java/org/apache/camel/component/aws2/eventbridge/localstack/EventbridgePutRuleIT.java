@@ -67,6 +67,16 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
         });
         MockEndpoint.assertIsSatisfied(context);
 
+        // cleanup rule
+        template.send("direct:evs-removeTargets", exchange -> {
+            exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+            List<String> targets = new ArrayList<>();
+            targets.add("sqs-queue");
+            exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
+        });
+
+        template.send("direct:evs-deleteRule",
+                exchange -> exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule"));
     }
 
     @Override
@@ -77,8 +87,12 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
                 String awsEndpoint
                         = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://default?operation=putTargets";
+                String removeTarget = "aws2-eventbridge://default?operation=removeTargets";
+                String deleteRule = "aws2-eventbridge://default?operation=deleteRule";
                 from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
                 from("direct:evs-targets").to(target).log("${body}").to("mock:result1");
+                from("direct:evs-removeTargets").to(removeTarget);
+                from("direct:evs-deleteRule").to(deleteRule);
             }
         };
     }

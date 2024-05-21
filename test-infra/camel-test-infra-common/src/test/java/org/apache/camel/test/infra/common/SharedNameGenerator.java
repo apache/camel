@@ -22,4 +22,8 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 
 public interface SharedNameGenerator extends BeforeAllCallback, BeforeEachCallback {
     String getName();
+
+    String getClazz();
+
+    String getMethod();
 }
