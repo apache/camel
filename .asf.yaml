@@ -21,6 +21,8 @@ github:
   labels:
     - camel
     - integration
+    - eip
+    - microservices
     - java
   dependabot_alerts:  true
   dependabot_updates: true
