@@ -18,10 +18,16 @@
 package org.apache.camel.test.junit5.util;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.debugger.DefaultDebugger;
+import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Registry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CamelContextTestHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextTestHelper.class);
 
     public static CamelContext createCamelContext(Registry registry) throws Exception {
         CamelContext retContext;
@@ -32,5 +38,22 @@ public final class CamelContextTestHelper {
         }
 
         return retContext;
+    }
+
+    public static void setupDebugger(CamelContext context, Breakpoint breakpoint) {
+        assert context != null : "You cannot set a debugger on a null context";
+        assert breakpoint != null : "You cannot set a debugger using a null debug breakpoint";
+
+        if (context.getStatus().equals(ServiceStatus.Started)) {
+            LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
+            // we need to stop the context first to setup the debugger
+            context.stop();
+        }
+        context.setDebugging(true);
+        final DefaultDebugger defaultDebugger = new DefaultDebugger();
+        context.setDebugger(defaultDebugger);
+
+        defaultDebugger.addBreakpoint(breakpoint);
+        // when stopping CamelContext it will automatically remove the breakpoint
     }
 }

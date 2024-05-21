@@ -16,12 +16,10 @@
  */
 package org.apache.camel.test.junit5.patterns;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.DebugBreakpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +34,11 @@ public class DebugJUnit5Test extends CamelTestSupport {
         // must enable debugger
         return true;
     }
-
-    @Override
-    protected void debugBefore(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String shortName) {
-        // this method is invoked before we are about to enter the given
-        // processor
-        // from your Java editor you can add a breakpoint in the code line
-        // below
-        LOG.info("Before {} with body {}", definition, exchange.getIn().getBody());
-    }
     // END SNIPPET: e1
+
+    protected DebugBreakpoint createBreakpoint() {
+        return new TestDebugBreakpoint();
+    }
 
     @Test
     public void testDebugger() throws Exception {

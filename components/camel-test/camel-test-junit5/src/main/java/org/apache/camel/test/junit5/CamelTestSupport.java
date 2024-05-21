@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
-import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -38,14 +37,12 @@ import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
@@ -53,7 +50,6 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.util.CamelContextTestHelper;
@@ -110,7 +106,6 @@ public abstract class CamelTestSupport
     @RegisterExtension
     protected CamelTestSupport camelTestSupportExtension = this;
     private boolean useRouteBuilder = true;
-    private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<>();
     private static final ThreadLocal<AtomicInteger> TESTS = new ThreadLocal<>();
@@ -119,6 +114,7 @@ public abstract class CamelTestSupport
     private boolean isCreateCamelContextPerClass = false;
 
     private ExtensionContext.Store globalStore;
+    private DebugBreakpoint breakpoint;
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
@@ -448,7 +444,7 @@ public abstract class CamelTestSupport
 
         // set debugger if enabled
         if (isUseDebugger()) {
-            setupDebugger();
+            CamelContextTestHelper.setupDebugger(context, createBreakpoint());
         }
 
         setupTemplates();
@@ -556,18 +552,6 @@ public abstract class CamelTestSupport
             context.getCamelContextExtension()
                     .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
-    }
-
-    private void setupDebugger() {
-        if (context.getStatus().equals(ServiceStatus.Started)) {
-            LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
-            // we need to stop the context first to setup the debugger
-            context.stop();
-        }
-        context.setDebugging(true);
-        context.setDebugger(new DefaultDebugger());
-        context.getDebugger().addBreakpoint(breakpoint);
-        // when stopping CamelContext it will automatically remove the breakpoint
     }
 
     private void replaceFromEndpoints() throws Exception {
@@ -1004,36 +988,32 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Single step debugs and Camel invokes this method before entering the given processor
+     * Single step debugs and Camel invokes this method before entering the given processor. This method is NOOP.
+     *
+     * @deprecated Use {@link #createBreakpoint} and return a new instance of {@link DebugBreakpoint}
      */
+    @Deprecated(since = "4.7.0")
     protected void debugBefore(
             Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
     }
 
     /**
-     * Single step debugs and Camel invokes this method after processing the given processor
+     * Single step debugs and Camel invokes this method after processing the given processor. This method is NOOP.
+     *
+     * @deprecated Use {@link #createBreakpoint} and return a new instance of {@link DebugBreakpoint}
      */
+    @Deprecated(since = "4.7.0")
     protected void debugAfter(
             Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
             long timeTaken) {
     }
 
     /**
-     * To easily debug by overriding the <tt>debugBefore</tt> and <tt>debugAfter</tt> methods.
+     * Provides a debug breakpoint to be executed before and/or after entering processors
+     *
+     * @return a new debug breakpoint
      */
-    private class DebugBreakpoint extends BreakpointSupport {
-
-        @Override
-        public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
-            CamelTestSupport.this.debugBefore(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
-                    definition.getLabel());
-        }
-
-        @Override
-        public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
-            CamelTestSupport.this.debugAfter(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
-                    definition.getLabel(), timeTaken);
-        }
+    protected DebugBreakpoint createBreakpoint() {
+        return null;
     }
-
 }
