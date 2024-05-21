@@ -21,7 +21,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 /**
  * A caching proxy
  */
-class CachingInjector<T> {
+public class CachingInjector<T> {
     private final TypeConverterRegistry repository;
     private final Class<T> type;
     private T instance;

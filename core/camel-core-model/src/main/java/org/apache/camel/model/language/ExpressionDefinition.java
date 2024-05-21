@@ -274,7 +274,7 @@ public class ExpressionDefinition
      */
     @XmlTransient
     @SuppressWarnings("unchecked")
-    abstract static class AbstractBuilder<T extends AbstractBuilder<T, E>, E extends ExpressionDefinition>
+    protected abstract static class AbstractBuilder<T extends AbstractBuilder<T, E>, E extends ExpressionDefinition>
             implements LanguageBuilder<E> {
 
         private String id;

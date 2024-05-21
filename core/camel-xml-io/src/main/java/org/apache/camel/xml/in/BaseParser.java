@@ -501,15 +501,15 @@ public class BaseParser {
         return factory;
     }
 
-    interface AttributeHandler<T> {
+    protected interface AttributeHandler<T> {
         boolean accept(T definition, String name, String value) throws IOException, XmlPullParserException;
     }
 
-    interface ElementHandler<T> {
+    protected interface ElementHandler<T> {
         boolean accept(T definition, String name) throws IOException, XmlPullParserException;
     }
 
-    interface ValueHandler<T> {
+    protected interface ValueHandler<T> {
         void accept(T definition, String value) throws IOException, XmlPullParserException;
     }
 

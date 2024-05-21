@@ -214,7 +214,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         super.doShutdown();
     }
 
-    private class ThrottlingState {
+    protected class ThrottlingState {
         private final String key;
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
         private volatile int throttleRate;

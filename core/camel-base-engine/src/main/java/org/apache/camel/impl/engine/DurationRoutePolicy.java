@@ -46,7 +46,7 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
 
     private static final Logger LOG = LoggerFactory.getLogger(DurationRoutePolicy.class);
 
-    enum Action {
+    public enum Action {
         STOP_CAMEL_CONTEXT,
         STOP_ROUTE,
         SUSPEND_ROUTE,

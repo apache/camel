@@ -20,11 +20,11 @@ import java.util.Objects;
 
 import org.apache.camel.util.ObjectHelper;
 
-final class PropertyOptionKey {
+public final class PropertyOptionKey {
     private final Object instance;
     private final String optionPrefix;
 
-    PropertyOptionKey(Object instance, String optionPrefix) {
+    public PropertyOptionKey(Object instance, String optionPrefix) {
         this.instance = ObjectHelper.notNull(instance, "instance");
         this.optionPrefix = ObjectHelper.notNull(optionPrefix, "optionPrefix");
     }

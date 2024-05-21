@@ -477,7 +477,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      */
     @XmlTransient
     @SuppressWarnings("unchecked")
-    abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends FhirDataformat>
+    protected abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends FhirDataformat>
             implements DataFormatBuilder<F> {
 
         private String fhirContext;
