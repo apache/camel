@@ -17,7 +17,7 @@
 The JPA component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA).
 JPA is a standard interface layer that wraps Object/Relational Mapping
-(ORM) products such as OpenJPA, Hibernate, and so on.
+(ORM) products such as OpenJPA, Hibernate, TopLink, and so on.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
