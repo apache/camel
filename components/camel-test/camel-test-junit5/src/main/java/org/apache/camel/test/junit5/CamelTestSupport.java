@@ -524,15 +524,15 @@ public abstract class CamelTestSupport
     }
 
     private void enableAutoMocking() {
-        String pattern = isMockEndpoints();
+        final String pattern = isMockEndpoints();
         if (pattern != null) {
             context.getCamelContextExtension()
                     .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
         }
-        pattern = isMockEndpointsAndSkip();
-        if (pattern != null) {
+        final String mockAndSkipPattern = isMockEndpointsAndSkip();
+        if (mockAndSkipPattern != null) {
             context.getCamelContextExtension()
-                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
+                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockAndSkipPattern, true));
         }
     }
 
