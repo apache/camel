@@ -22,11 +22,14 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.junit5.JunitPropertiesSource;
 import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,6 +119,24 @@ public final class CamelContextTestHelper {
             return TestSupport.resolveMandatoryEndpoint(context, uri, MockEndpoint.class);
         } else {
             throw new NoSuchEndpointException(String.format("MockEndpoint %s does not exist.", uri));
+        }
+    }
+
+    /**
+     * Enables auto mocking
+     *
+     * @param context
+     * @param pattern
+     * @param mockAndSkipPattern
+     */
+    public static void enableAutoMocking(CamelContext context, String pattern, String mockAndSkipPattern) {
+        if (pattern != null) {
+            context.getCamelContextExtension()
+                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+        }
+        if (mockAndSkipPattern != null) {
+            context.getCamelContextExtension()
+                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockAndSkipPattern, true));
         }
     }
 }
