@@ -488,21 +488,9 @@ public abstract class CamelTestSupport
 
     private void setupRoutes() throws Exception {
         RoutesBuilder[] builders = createRouteBuilders();
-        // add configuration before routes
-        for (RoutesBuilder builder : builders) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                LOG.debug("Using created route configuration: {}", builder);
-                context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
-            }
-        }
-        for (RoutesBuilder builder : builders) {
-            LOG.debug("Using created route builder to add routes: {}", builder);
-            context.addRoutes(builder);
-        }
-        for (RoutesBuilder builder : builders) {
-            LOG.debug("Using created route builder to add templated routes: {}", builder);
-            context.addTemplatedRoutes(builder);
-        }
+
+        CamelContextTestHelper.setupRoutes(context, builders);
+
         replaceFromEndpoints();
     }
 

@@ -18,6 +18,8 @@
 package org.apache.camel.test.junit5.util;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RouteConfigurationsBuilder;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
@@ -55,5 +57,23 @@ public final class CamelContextTestHelper {
 
         defaultDebugger.addBreakpoint(breakpoint);
         // when stopping CamelContext it will automatically remove the breakpoint
+    }
+
+    public static void setupRoutes(CamelContext context, RoutesBuilder[] builders) throws Exception {
+        // add configuration before routes
+        for (RoutesBuilder builder : builders) {
+            if (builder instanceof RouteConfigurationsBuilder) {
+                LOG.debug("Using created route configuration: {}", builder);
+                context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+            }
+        }
+        for (RoutesBuilder builder : builders) {
+            LOG.debug("Using created route builder to add routes: {}", builder);
+            context.addRoutes(builder);
+        }
+        for (RoutesBuilder builder : builders) {
+            LOG.debug("Using created route builder to add templated routes: {}", builder);
+            context.addTemplatedRoutes(builder);
+        }
     }
 }
