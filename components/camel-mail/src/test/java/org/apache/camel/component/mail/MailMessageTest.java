@@ -88,7 +88,7 @@ public class MailMessageTest extends CamelTestSupport {
         super.setUp();
         Mailbox.clearAll();
 
-        endpoint = resolveMandatoryEndpoint("pop3://someone@myhost:30/subject");
+        endpoint = checkEndpoint("pop3://someone@myhost:30/subject");
 
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "localhost");
@@ -98,8 +98,7 @@ public class MailMessageTest extends CamelTestSupport {
         mimeMessage.setText(body);
     }
 
-    @Override
-    protected MailEndpoint resolveMandatoryEndpoint(String uri) {
+    protected MailEndpoint checkEndpoint(String uri) {
         Endpoint endpoint = super.resolveMandatoryEndpoint(uri);
         return assertIsInstanceOf(MailEndpoint.class, endpoint);
     }

@@ -25,6 +25,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.function.Suppliers;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class InfinispanEmbeddedIdempotentRepositoryTest extends InfinispanEmbeddedTestSupport
         implements InfinispanIdempotentRepositoryTestSupport {
@@ -42,6 +43,13 @@ public class InfinispanEmbeddedIdempotentRepositoryTest extends InfinispanEmbedd
         getCache().clear();
     }
 
+    @Test
+    void producerQueryOperationWithoutQueryBuilder() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+
+        producerQueryOperationWithoutQueryBuilder(mock);
+    }
+
     @Override
     public IdempotentRepository getIdempotentRepository() {
         return repo.get();
@@ -50,11 +58,6 @@ public class InfinispanEmbeddedIdempotentRepositoryTest extends InfinispanEmbedd
     @Override
     public BasicCache<Object, Object> getCache() {
         return super.getCache();
-    }
-
-    @Override
-    public MockEndpoint getMockEndpoint(String id) {
-        return super.getMockEndpoint(id);
     }
 
     @Override

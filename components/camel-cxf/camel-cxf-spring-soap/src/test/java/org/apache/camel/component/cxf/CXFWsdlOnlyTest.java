@@ -24,7 +24,6 @@ import jakarta.xml.ws.Holder;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
@@ -38,7 +37,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -63,11 +61,6 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         // When the Application is closed, the camel-cxf endpoint will be shutdown,
         // this will cause the issue of the new http server doesn't send the response back.
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlOnlyBeans.xml");
-    }
-
-    @Override
-    protected void assertValidContext(CamelContext context) {
-        assertNotNull(context, "No context found!");
     }
 
     @BeforeAll
