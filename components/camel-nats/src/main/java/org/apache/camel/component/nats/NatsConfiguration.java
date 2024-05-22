@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
 import io.nats.client.Connection;
+import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -83,6 +84,8 @@ public class NatsConfiguration {
     private boolean secure;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security")
+    String credentialsFilePath;
     @UriParam(label = "advanced")
     private boolean traceConnection;
     @UriParam(label = "advanced")
@@ -365,6 +368,19 @@ public class NatsConfiguration {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    /**
+     * If we use useCredentialsFile to true we'll need to set the credentialsFilePath option. It can be loaded by
+     * default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different
+     * systems.
+     */
+    public String getCredentialsFilePath() {
+        return credentialsFilePath;
+    }
+
+    public void setCredentialsFilePath(String credentialsFilePath) {
+        this.credentialsFilePath = credentialsFilePath;
     }
 
     public Builder createOptions() throws NoSuchAlgorithmException, IllegalArgumentException {

@@ -28,6 +28,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connection": target.getConfiguration().setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "credentialsfilepath":
+        case "credentialsFilePath": target.getConfiguration().setCredentialsFilePath(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -87,6 +89,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connection": return io.nats.client.Connection.class;
         case "connectiontimeout":
         case "connectionTimeout": return int.class;
+        case "credentialsfilepath":
+        case "credentialsFilePath": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -147,6 +151,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connection": return target.getConfiguration().getConnection();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
+        case "credentialsfilepath":
+        case "credentialsFilePath": return target.getConfiguration().getCredentialsFilePath();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

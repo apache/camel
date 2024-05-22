@@ -550,6 +550,23 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * If we use useCredentialsFile to true we'll need to set the
+         * credentialsFilePath option. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param credentialsFilePath the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder credentialsFilePath(String credentialsFilePath) {
+            doSetProperty("credentialsFilePath", credentialsFilePath);
+            return this;
+        }
+        /**
          * Set secure option indicating TLS is required.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1302,6 +1319,23 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * If we use useCredentialsFile to true we'll need to set the
+         * credentialsFilePath option. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param credentialsFilePath the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointProducerBuilder credentialsFilePath(String credentialsFilePath) {
+            doSetProperty("credentialsFilePath", credentialsFilePath);
+            return this;
+        }
+        /**
          * Set secure option indicating TLS is required.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1936,6 +1970,23 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder verbose(String verbose) {
             doSetProperty("verbose", verbose);
+            return this;
+        }
+        /**
+         * If we use useCredentialsFile to true we'll need to set the
+         * credentialsFilePath option. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param credentialsFilePath the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointBuilder credentialsFilePath(String credentialsFilePath) {
+            doSetProperty("credentialsFilePath", credentialsFilePath);
             return this;
         }
         /**
