@@ -566,6 +566,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             this.logInflightExchangesOnTimeout = logInflightExchangesOnTimeout;
         }
 
+        // Disable BusyWait as we're only waiting on seconds increment, so any other
+        // strategy would not be much more efficient
+        @SuppressWarnings("BusyWait")
         @Override
         public void run() {
             // the strategy in this run method is to
