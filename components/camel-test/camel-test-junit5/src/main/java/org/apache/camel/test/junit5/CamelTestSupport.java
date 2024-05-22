@@ -37,7 +37,6 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.Model;
@@ -446,7 +445,7 @@ public abstract class CamelTestSupport
         setupTemplates();
 
         // enable auto mocking if enabled
-        enableAutoMocking();
+        CamelContextTestHelper.enableAutoMocking(context, isMockEndpoints(), isMockEndpointsAndSkip());
 
         // configure properties component (mandatory for testing)
         configurePropertiesComponent();
@@ -520,19 +519,6 @@ public abstract class CamelTestSupport
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         if (ignore != null) {
             pc.setIgnoreMissingLocation(ignore);
-        }
-    }
-
-    private void enableAutoMocking() {
-        final String pattern = isMockEndpoints();
-        if (pattern != null) {
-            context.getCamelContextExtension()
-                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
-        }
-        final String mockAndSkipPattern = isMockEndpointsAndSkip();
-        if (mockAndSkipPattern != null) {
-            context.getCamelContextExtension()
-                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockAndSkipPattern, true));
         }
     }
 
