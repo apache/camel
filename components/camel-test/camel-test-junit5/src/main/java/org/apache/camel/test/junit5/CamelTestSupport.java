@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.junit5;
 
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -33,9 +32,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
@@ -57,7 +54,6 @@ import org.apache.camel.test.junit5.util.ExtensionHelper;
 import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -73,6 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
+import static org.apache.camel.test.junit5.util.ExtensionHelper.normalizeUri;
 import static org.apache.camel.test.junit5.util.ExtensionHelper.testStartHeader;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -830,36 +827,12 @@ public abstract class CamelTestSupport
         // to
         // do that we need to normalize uri and strip out query parameters and
         // whatnot
-        String n;
-        try {
-            n = URISupport.normalizeUri(uri);
-        } catch (URISyntaxException e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
+        final String normalizedUri = normalizeUri(uri);
         // strip query
-        final String target = StringHelper.before(n, "?", n);
+        final String target = StringHelper.before(normalizedUri, "?", normalizedUri);
 
         // lookup endpoints in registry and try to find it
-        MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
-                .filter(e -> e instanceof MockEndpoint).filter(e -> {
-                    String t = e.getEndpointUri();
-                    // strip query
-                    int idx2 = t.indexOf('?');
-                    if (idx2 != -1) {
-                        t = t.substring(0, idx2);
-                    }
-                    return t.equals(target);
-                }).findFirst().orElse(null);
-
-        if (found != null) {
-            return found;
-        }
-
-        if (create) {
-            return resolveMandatoryEndpoint(uri, MockEndpoint.class);
-        } else {
-            throw new NoSuchEndpointException(String.format("MockEndpoint %s does not exist.", uri));
-        }
+        return CamelContextTestHelper.lookupEndpoint(context, uri, create, target);
     }
 
     /**
@@ -898,6 +871,7 @@ public abstract class CamelTestSupport
      * @param endpointUri the endpoint URI to send to
      * @param bodies      the bodies to send, one per message
      */
+    @Deprecated
     protected void sendBodies(String endpointUri, Object... bodies) {
         for (Object body : bodies) {
             sendBody(endpointUri, body);
