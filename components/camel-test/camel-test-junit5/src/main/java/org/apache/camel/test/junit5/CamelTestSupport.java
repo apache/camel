@@ -111,7 +111,6 @@ public abstract class CamelTestSupport
     private boolean isCreateCamelContextPerClass = false;
 
     private ExtensionContext.Store globalStore;
-    private DebugBreakpoint breakpoint;
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
