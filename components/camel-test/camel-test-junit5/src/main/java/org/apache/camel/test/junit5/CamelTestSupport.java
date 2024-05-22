@@ -787,7 +787,7 @@ public abstract class CamelTestSupport
      * @param  uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
      * @return     the endpoint
      */
-    protected Endpoint resolveMandatoryEndpoint(String uri) {
+    protected final Endpoint resolveMandatoryEndpoint(String uri) {
         return TestSupport.resolveMandatoryEndpoint(context, uri);
     }
 
@@ -797,7 +797,7 @@ public abstract class CamelTestSupport
      * @param  uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
      * @return     the endpoint
      */
-    protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
+    protected final <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
         return TestSupport.resolveMandatoryEndpoint(context, uri, endpointType);
     }
 
@@ -807,7 +807,7 @@ public abstract class CamelTestSupport
      * @param  uri the URI which typically starts with "mock:" and has some name
      * @return     the mandatory mock endpoint or an exception is thrown if it could not be resolved
      */
-    protected MockEndpoint getMockEndpoint(String uri) {
+    protected final MockEndpoint getMockEndpoint(String uri) {
         return getMockEndpoint(uri, true);
     }
 
@@ -822,7 +822,7 @@ public abstract class CamelTestSupport
      *                                 be resolved
      * @throws NoSuchEndpointException is the mock endpoint does not exist
      */
-    protected MockEndpoint getMockEndpoint(String uri, boolean create) throws NoSuchEndpointException {
+    protected final MockEndpoint getMockEndpoint(String uri, boolean create) throws NoSuchEndpointException {
         // look for existing mock endpoints that have the same queue name, and
         // to
         // do that we need to normalize uri and strip out query parameters and
@@ -841,7 +841,7 @@ public abstract class CamelTestSupport
      * @param endpointUri the URI of the endpoint to send to
      * @param body        the body for the message
      */
-    protected void sendBody(String endpointUri, final Object body) {
+    protected final void sendBody(String endpointUri, final Object body) {
         template.send(endpointUri, exchange -> {
             Message in = exchange.getIn();
             in.setBody(body);
@@ -855,7 +855,7 @@ public abstract class CamelTestSupport
      * @param body        the body for the message
      * @param headers     any headers to set on the message
      */
-    protected void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
+    protected final void sendBody(String endpointUri, final Object body, final Map<String, Object> headers) {
         template.send(endpointUri, exchange -> {
             Message in = exchange.getIn();
             in.setBody(body);
@@ -872,7 +872,7 @@ public abstract class CamelTestSupport
      * @param bodies      the bodies to send, one per message
      */
     @Deprecated
-    protected void sendBodies(String endpointUri, Object... bodies) {
+    protected final void sendBodies(String endpointUri, Object... bodies) {
         for (Object body : bodies) {
             sendBody(endpointUri, body);
         }
@@ -881,14 +881,14 @@ public abstract class CamelTestSupport
     /**
      * Creates an exchange with the given body
      */
-    protected Exchange createExchangeWithBody(Object body) {
+    protected final Exchange createExchangeWithBody(Object body) {
         return TestSupport.createExchangeWithBody(context, body);
     }
 
     /**
      * Asserts that the given language name and expression evaluates to the given value on a specific exchange
      */
-    protected void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
+    protected final void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
         Language language = assertResolveLanguage(languageName);
 
         Expression expression = language.createExpression(expressionText);
@@ -901,7 +901,7 @@ public abstract class CamelTestSupport
      * Asserts that the given language name and predicate expression evaluates to the expected value on the message
      * exchange
      */
-    protected void assertPredicate(String languageName, String expressionText, Exchange exchange, boolean expected) {
+    protected final void assertPredicate(String languageName, String expressionText, Exchange exchange, boolean expected) {
         Language language = assertResolveLanguage(languageName);
 
         Predicate predicate = language.createPredicate(expressionText);
@@ -913,23 +913,23 @@ public abstract class CamelTestSupport
     /**
      * Asserts that the language name can be resolved
      */
-    protected Language assertResolveLanguage(String languageName) {
+    protected final Language assertResolveLanguage(String languageName) {
         Language language = context.resolveLanguage(languageName);
         assertNotNull(language, "Nog language found for name: " + languageName);
         return language;
     }
 
-    protected void assertValidContext(CamelContext context) {
+    protected final void assertValidContext(CamelContext context) {
         assertNotNull(context, "No context found!");
     }
 
-    protected <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
+    protected final <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
         T endpoint = context.getEndpoint(uri, type);
         assertNotNull(endpoint, "No endpoint found for uri: " + uri);
         return endpoint;
     }
 
-    protected Endpoint getMandatoryEndpoint(String uri) {
+    protected final Endpoint getMandatoryEndpoint(String uri) {
         Endpoint endpoint = context.getEndpoint(uri);
         assertNotNull(endpoint, "No endpoint found for uri: " + uri);
         return endpoint;

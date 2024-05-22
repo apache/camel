@@ -33,8 +33,6 @@ public interface InfinispanIdempotentRepositoryTestSupport {
 
     BasicCache<Object, Object> getCache();
 
-    MockEndpoint getMockEndpoint(String id);
-
     ProducerTemplate template();
 
     @Test
@@ -89,9 +87,7 @@ public interface InfinispanIdempotentRepositoryTestSupport {
         assertFalse(getCache().containsKey("Two"));
     }
 
-    @Test
-    default void producerQueryOperationWithoutQueryBuilder() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+    default void producerQueryOperationWithoutQueryBuilder(MockEndpoint mock) throws Exception {
         mock.expectedMessageCount(1);
 
         final String messageId = UUID.randomUUID().toString();

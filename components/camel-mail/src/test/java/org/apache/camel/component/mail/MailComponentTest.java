@@ -34,7 +34,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testMailEndpointsAreConfiguredProperlyWhenUsingSmtp() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/subject");
+        MailEndpoint endpoint = checkEndpoint("smtp://james@myhost:25/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -48,7 +48,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testMailEndpointsAreConfiguredProperlyWhenUsingImap() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost:143/subject");
+        MailEndpoint endpoint = checkEndpoint("imap://james@myhost:143/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("imap", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -62,7 +62,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testMailEndpointsAreConfiguredProperlyWhenUsingPop() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost:110/subject");
+        MailEndpoint endpoint = checkEndpoint("pop3://james@myhost:110/subject");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("pop3", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -76,7 +76,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testDefaultSMTPConfiguration() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret");
+        MailEndpoint endpoint = checkEndpoint("smtp://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -100,7 +100,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testDefaultSMTPSConfiguration() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtps://james@myhost?password=secret");
+        MailEndpoint endpoint = checkEndpoint("smtps://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtps", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -124,21 +124,21 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testDebugMode() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&debugMode=true");
+        MailEndpoint endpoint = checkEndpoint("smtp://james@myhost?password=secret&debugMode=true");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals(true, config.isDebugMode());
     }
 
     @Test
     public void testConnectionTimeout() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&connectionTimeout=2500");
+        MailEndpoint endpoint = checkEndpoint("smtp://james@myhost?password=secret&connectionTimeout=2500");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals(2500, config.getConnectionTimeout());
     }
 
     @Test
     public void testDefaultPOP3Configuration() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?password=secret");
+        MailEndpoint endpoint = checkEndpoint("pop3://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("pop3", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -159,7 +159,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testDefaultIMAPConfiguration() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost?password=secret");
+        MailEndpoint endpoint = checkEndpoint("imap://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("imap", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -180,9 +180,9 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testManyConfigurations() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
-                                                         + "&from=me@camelriders.org&delete=true&folderName=riders"
-                                                         + "&contentType=text/html&unseen=false");
+        MailEndpoint endpoint = checkEndpoint("smtp://james@myhost:30/subject?password=secret"
+                                              + "&from=me@camelriders.org&delete=true&folderName=riders"
+                                              + "&contentType=text/html&unseen=false");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -204,7 +204,7 @@ public class MailComponentTest extends CamelTestSupport {
     @Test
     public void testTo() {
         MailEndpoint endpoint
-                = resolveMandatoryEndpoint("smtp://james@myhost:25/?password=secret&to=someone@outthere.com&folderName=XXX");
+                = checkEndpoint("smtp://james@myhost:25/?password=secret&to=someone@outthere.com&folderName=XXX");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -223,7 +223,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testNoUserInfoButUsername() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25/?password=secret&username=james");
+        MailEndpoint endpoint = checkEndpoint("smtp://myhost:25/?password=secret&username=james");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -244,7 +244,7 @@ public class MailComponentTest extends CamelTestSupport {
     public void testAuthenticator() {
         DefaultAuthenticator auth1 = new DefaultAuthenticator("u1", "p1");
         context.getRegistry().bind("auth1", auth1);
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25/?authenticator=#auth1&to=james%40myhost");
+        MailEndpoint endpoint = checkEndpoint("smtp://myhost:25/?authenticator=#auth1&to=james%40myhost");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -266,7 +266,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testMailEndpointsWithFetchSize() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?fetchSize=5");
+        MailEndpoint endpoint = checkEndpoint("pop3://james@myhost?fetchSize=5");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("pop3", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -281,7 +281,7 @@ public class MailComponentTest extends CamelTestSupport {
 
     @Test
     public void testSMTPEndpointWithSubjectOption() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25?subject=hello");
+        MailEndpoint endpoint = checkEndpoint("smtp://myhost:25?subject=hello");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("smtp", config.getProtocol(), "getProtocol()");
         assertEquals("myhost", config.getHost(), "getHost()");
@@ -290,8 +290,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertFalse(config.isDebugMode());
     }
 
-    @Override
-    protected MailEndpoint resolveMandatoryEndpoint(String uri) {
+    protected MailEndpoint checkEndpoint(String uri) {
         Endpoint endpoint = super.resolveMandatoryEndpoint(uri);
         return assertIsInstanceOf(MailEndpoint.class, endpoint);
     }
