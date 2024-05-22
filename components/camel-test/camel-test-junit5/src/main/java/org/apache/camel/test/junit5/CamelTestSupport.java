@@ -34,8 +34,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
-import org.apache.camel.builder.AdviceWith;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -459,7 +457,7 @@ public abstract class CamelTestSupport
 
             tryStartCamelContext();
         } else {
-            replaceFromEndpoints();
+            CamelContextTestHelper.replaceFromEndpoints(context, fromEndpoints);
             LOG.debug("Using route builder from the created context: {}", context);
         }
         LOG.debug("Routing Rules are: {}", context.getRoutes());
@@ -483,7 +481,7 @@ public abstract class CamelTestSupport
 
         CamelContextTestHelper.setupRoutes(context, builders);
 
-        replaceFromEndpoints();
+        CamelContextTestHelper.replaceFromEndpoints(context, fromEndpoints);
     }
 
     private void tryStartCamelContext() throws Exception {
@@ -511,17 +509,6 @@ public abstract class CamelTestSupport
 
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
         CamelContextTestHelper.configurePropertiesComponent(context, extra, new JunitPropertiesSource(globalStore), ignore);
-    }
-
-    private void replaceFromEndpoints() throws Exception {
-        for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
-            AdviceWith.adviceWith(context.getRouteDefinition(entry.getKey()), context, new AdviceWithRouteBuilder() {
-                @Override
-                public void configure() {
-                    replaceFromWith(entry.getValue());
-                }
-            });
-        }
     }
 
     private boolean isRouteCoverageEnabled() {

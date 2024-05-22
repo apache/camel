@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.junit5.util;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -25,11 +26,14 @@ import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.AdviceWith;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
@@ -206,6 +210,24 @@ public final class CamelContextTestHelper {
             camelContextService.start();
         } else {
             CamelContextTestHelper.startCamelContext(context);
+        }
+    }
+
+    /**
+     * Replaces the 'from' endpoints of the given context with the ones from the provided map
+     *
+     * @param  context       the context to have the 'from' endpoints replaced
+     * @param  fromEndpoints the map with the new endpoint Uris
+     * @throws Exception
+     */
+    public static void replaceFromEndpoints(ModelCamelContext context, Map<String, String> fromEndpoints) throws Exception {
+        for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
+            AdviceWith.adviceWith(context.getRouteDefinition(entry.getKey()), context, new AdviceWithRouteBuilder() {
+                @Override
+                public void configure() {
+                    replaceFromWith(entry.getValue());
+                }
+            });
         }
     }
 }
