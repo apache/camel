@@ -408,6 +408,15 @@ public class NatsUriDsl(
   }
 
   /**
+   * If we use useCredentialsFile to true we'll need to set the credentialsFilePath option. It can
+   * be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load
+   * the resource from different systems.
+   */
+  public fun credentialsFilePath(credentialsFilePath: String) {
+    it.property("credentialsFilePath", credentialsFilePath)
+  }
+
+  /**
    * Set secure option indicating TLS is required
    */
   public fun secure(secure: String) {

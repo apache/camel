@@ -36,6 +36,8 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Send and receive messages from <a href="http://nats.io/">NATS</a> messaging system.
@@ -84,6 +86,11 @@ public class NatsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         if (getConfiguration().getSslContextParameters() != null && getConfiguration().isSecure()) {
             SSLContext sslCtx = getConfiguration().getSslContextParameters().createSSLContext(getCamelContext());
             builder.sslContext(sslCtx);
+        }
+        if (ObjectHelper.isNotEmpty(getConfiguration().getCredentialsFilePath())) {
+            builder.authHandler(Nats.staticCredentials(
+                    ResourceHelper.resolveResource(getCamelContext(), getConfiguration().getCredentialsFilePath())
+                            .getInputStream().readAllBytes()));
         }
         Options options = builder.build();
         return Nats.connect(options);
