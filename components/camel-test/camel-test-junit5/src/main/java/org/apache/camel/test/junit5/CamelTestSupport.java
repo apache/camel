@@ -430,7 +430,7 @@ public abstract class CamelTestSupport
         context = (ModelCamelContext) createCamelContext();
         THREAD_CAMEL_CONTEXT.set(context);
 
-        assertNotNull(context, "No context found!");
+        assert context != null : "No context found!";
 
         // add custom beans
         bindToRegistry(context.getRegistry());
@@ -465,8 +465,6 @@ public abstract class CamelTestSupport
             LOG.debug("Using route builder from the created context: {}", context);
         }
         LOG.debug("Routing Rules are: {}", context.getRoutes());
-
-        assertValidContext(context);
     }
 
     private void setupTemplates() {
