@@ -39,7 +39,6 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -450,7 +449,7 @@ public abstract class CamelTestSupport
         // configure properties component (mandatory for testing)
         configurePropertiesComponent();
 
-        setupIncludeExcludePatterns();
+        configureIncludeExcludePatterns();
 
         // prepare for in-between tests
         postProcessTest();
@@ -498,13 +497,11 @@ public abstract class CamelTestSupport
         }
     }
 
-    private void setupIncludeExcludePatterns() {
+    private void configureIncludeExcludePatterns() {
         final String include = getRouteFilterIncludePattern();
         final String exclude = getRouteFilterExcludePattern();
-        if (include != null || exclude != null) {
-            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
-            context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(include, exclude);
-        }
+
+        CamelContextTestHelper.configureIncludeExcludePatterns(context, include, exclude);
     }
 
     private void configurePropertiesComponent() {
