@@ -162,6 +162,8 @@ pipeline {
                             body: '${DEFAULT_CONTENT}',
                             recipientProviders: [[$class: 'DevelopersRecipientProvider']]
                         )
+
+                        cleanWs()
                     }
                 }
             }
