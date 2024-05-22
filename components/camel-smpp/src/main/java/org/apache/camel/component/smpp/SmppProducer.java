@@ -76,7 +76,7 @@ public class SmppProducer extends DefaultProducer {
                         ? "Session to {} was unbound - trying to reconnect" : "Lost connection to: {} - trying to reconnect...",
                         getEndpoint().getConnectionString());
                 closeSession();
-                reconnect(configuration.getInitialReconnectDelay());
+                reconnect();
             }
         };
     }
@@ -205,9 +205,10 @@ public class SmppProducer extends DefaultProducer {
         }
     }
 
-    private void reconnect(final long initialReconnectDelay) {
+    private void reconnect() {
         if (connectLock.tryLock()) {
-            BlockingTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME, initialReconnectDelay,
+            BlockingTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
+                    configuration.getInitialReconnectDelay(),
                     configuration.getReconnectDelay(), configuration.getMaxReconnect());
 
             try {

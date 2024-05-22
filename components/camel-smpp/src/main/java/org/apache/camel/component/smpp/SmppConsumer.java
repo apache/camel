@@ -80,7 +80,7 @@ public class SmppConsumer extends DefaultConsumer {
                         ? "Session to {} was unbound - trying to reconnect" : "Lost connection to: {} - trying to reconnect...",
                         getEndpoint().getConnectionString());
                 closeSession();
-                reconnect(configuration.getInitialReconnectDelay());
+                reconnect();
             }
         };
         this.messageReceiverListener
@@ -185,9 +185,10 @@ public class SmppConsumer extends DefaultConsumer {
         }
     }
 
-    private void reconnect(final long initialReconnectDelay) {
+    private void reconnect() {
         if (reconnectLock.tryLock()) {
-            BlockingTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME, initialReconnectDelay,
+            BlockingTask task = newReconnectTask(reconnectService, RECONNECT_TASK_NAME,
+                    configuration.getInitialReconnectDelay(),
                     configuration.getReconnectDelay(),
                     configuration.getMaxReconnect());
 
