@@ -18,13 +18,16 @@
 package org.apache.camel.test.junit5.util;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +62,13 @@ public final class CamelContextTestHelper {
         // when stopping CamelContext it will automatically remove the breakpoint
     }
 
+    /**
+     * Configures routes on the given context
+     *
+     * @param  context   the context to add the routes to
+     * @param  builders  an array of route builders
+     * @throws Exception
+     */
     public static void setupRoutes(CamelContext context, RoutesBuilder[] builders) throws Exception {
         // add configuration before routes
         for (RoutesBuilder builder : builders) {
@@ -74,6 +84,38 @@ public final class CamelContextTestHelper {
         for (RoutesBuilder builder : builders) {
             LOG.debug("Using created route builder to add templated routes: {}", builder);
             context.addTemplatedRoutes(builder);
+        }
+    }
+
+    /**
+     * Lookup endpoint with the given URI on the context
+     *
+     * @param  context the context to lookup endpoints
+     * @param  uri     the endpoint URI
+     * @param  create  whether to create the endpoint if it does not exist
+     * @param  target  the query-stripped normalized URI
+     * @return         the MockEndpoint instance associated with the normalized URI (aka target)
+     */
+    public static MockEndpoint lookupEndpoint(CamelContext context, String uri, boolean create, String target) {
+        MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
+                .filter(e -> e instanceof MockEndpoint).filter(e -> {
+                    String t = e.getEndpointUri();
+                    // strip query
+                    int idx2 = t.indexOf('?');
+                    if (idx2 != -1) {
+                        t = t.substring(0, idx2);
+                    }
+                    return t.equals(target);
+                }).findFirst().orElse(null);
+
+        if (found != null) {
+            return found;
+        }
+
+        if (create) {
+            return TestSupport.resolveMandatoryEndpoint(context, uri, MockEndpoint.class);
+        } else {
+            throw new NoSuchEndpointException(String.format("MockEndpoint %s does not exist.", uri));
         }
     }
 }

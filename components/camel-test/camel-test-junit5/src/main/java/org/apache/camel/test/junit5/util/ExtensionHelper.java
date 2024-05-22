@@ -18,9 +18,12 @@
 package org.apache.camel.test.junit5.util;
 
 import java.lang.annotation.Annotation;
+import java.net.URISyntaxException;
 import java.util.function.Consumer;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,5 +107,15 @@ public final class ExtensionHelper {
         }
 
         LOG.info(SEPARATOR);
+    }
+
+    public static String normalizeUri(String uri) {
+        String n;
+        try {
+            n = URISupport.normalizeUri(uri);
+        } catch (URISyntaxException e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+        return n;
     }
 }
