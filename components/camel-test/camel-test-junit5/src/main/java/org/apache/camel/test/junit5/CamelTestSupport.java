@@ -698,18 +698,7 @@ public abstract class CamelTestSupport
     }
 
     protected void startCamelContext() throws Exception {
-        if (camelContextService != null) {
-            camelContextService.start();
-        } else {
-            if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
-                if (!defaultCamelContext.isStarted()) {
-                    defaultCamelContext.start();
-                }
-            } else {
-                context.start();
-            }
-        }
+        CamelContextTestHelper.startCamelContextOrService(context, camelContextService);
     }
 
     protected CamelContext createCamelContext() throws Exception {

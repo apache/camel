@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -174,6 +175,37 @@ public final class CamelContextTestHelper {
         if (include != null || exclude != null) {
             LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
             context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(include, exclude);
+        }
+    }
+
+    /**
+     * Start the given context
+     *
+     * @param  context   the context to start
+     * @throws Exception
+     */
+    public static void startCamelContext(CamelContext context) throws Exception {
+        if (context instanceof DefaultCamelContext defaultCamelContext) {
+            if (!defaultCamelContext.isStarted()) {
+                defaultCamelContext.start();
+            }
+        } else {
+            context.start();
+        }
+    }
+
+    /**
+     * Starts a CamelContext or a service managing the CamelContext. The service takes priority if provided.
+     *
+     * @param  context             the context to start
+     * @param  camelContextService the service managing the CamelContext
+     * @throws Exception
+     */
+    public static void startCamelContextOrService(CamelContext context, Service camelContextService) throws Exception {
+        if (camelContextService != null) {
+            camelContextService.start();
+        } else {
+            CamelContextTestHelper.startCamelContext(context);
         }
     }
 }
