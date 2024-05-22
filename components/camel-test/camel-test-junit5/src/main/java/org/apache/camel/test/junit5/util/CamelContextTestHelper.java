@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
+import org.apache.camel.model.Model;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
@@ -159,6 +160,20 @@ public final class CamelContextTestHelper {
         pc.addPropertiesSource(propertiesSource);
         if (ignore != null) {
             pc.setIgnoreMissingLocation(ignore);
+        }
+    }
+
+    /**
+     * Configure route filtering patterns
+     *
+     * @param context the context to configure the patterns
+     * @param include the inclusion pattern
+     * @param exclude the exclusion pattern
+     */
+    public static void configureIncludeExcludePatterns(CamelContext context, String include, String exclude) {
+        if (include != null || exclude != null) {
+            LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(include, exclude);
         }
     }
 }
