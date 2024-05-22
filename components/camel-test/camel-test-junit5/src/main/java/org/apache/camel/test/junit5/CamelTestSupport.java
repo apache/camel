@@ -508,18 +508,12 @@ public abstract class CamelTestSupport
     }
 
     private void configurePropertiesComponent() {
-        PropertiesComponent pc = context.getPropertiesComponent();
         if (extra == null) {
             extra = useOverridePropertiesWithPropertiesComponent();
         }
-        if (extra != null && !extra.isEmpty()) {
-            pc.setOverrideProperties(extra);
-        }
-        pc.addPropertiesSource(new JunitPropertiesSource(globalStore));
+
         Boolean ignore = ignoreMissingLocationWithPropertiesComponent();
-        if (ignore != null) {
-            pc.setIgnoreMissingLocation(ignore);
-        }
+        CamelContextTestHelper.configurePropertiesComponent(context, extra, new JunitPropertiesSource(globalStore), ignore);
     }
 
     private void replaceFromEndpoints() throws Exception {

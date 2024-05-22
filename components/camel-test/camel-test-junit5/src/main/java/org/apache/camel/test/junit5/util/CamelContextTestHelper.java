@@ -17,6 +17,8 @@
 
 package org.apache.camel.test.junit5.util;
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RouteConfigurationsBuilder;
@@ -28,8 +30,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.JunitPropertiesSource;
 import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,6 +139,26 @@ public final class CamelContextTestHelper {
         if (mockAndSkipPattern != null) {
             context.getCamelContextExtension()
                     .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockAndSkipPattern, true));
+        }
+    }
+
+    /**
+     * Configure the PropertiesComponent from the given context
+     *
+     * @param context          the context with the PropertiesComponent to configure
+     * @param extra            override properties to use (if any)
+     * @param propertiesSource custom properties source to use to load/lookup properties
+     * @param ignore           whether to ignore missing properties locations
+     */
+    public static void configurePropertiesComponent(
+            CamelContext context, Properties extra, PropertiesSource propertiesSource, Boolean ignore) {
+        PropertiesComponent pc = context.getPropertiesComponent();
+        if (extra != null && !extra.isEmpty()) {
+            pc.setOverrideProperties(extra);
+        }
+        pc.addPropertiesSource(propertiesSource);
+        if (ignore != null) {
+            pc.setIgnoreMissingLocation(ignore);
         }
     }
 }
