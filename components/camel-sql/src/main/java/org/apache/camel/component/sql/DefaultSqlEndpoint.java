@@ -28,16 +28,18 @@ import javax.sql.DataSource;
 
 import org.apache.camel.Component;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
+import org.springframework.jdbc.datasource.AbstractDriverBasedDataSource;
 
 /**
  * Base class for SQL endpoints.
  */
-public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
+public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implements RemoteAddressAware {
     private JdbcTemplate jdbcTemplate;
 
     @Metadata(autowired = true)
@@ -134,6 +136,25 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
 
     public DefaultSqlEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    @Override
+    public String getAddress() {
+        if (dataSource != null && dataSource instanceof AbstractDriverBasedDataSource ads) {
+            return ads.getUrl();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getAddressMetadata() {
+        if (dataSource != null && dataSource instanceof AbstractDriverBasedDataSource ads) {
+            String u = ads.getUsername();
+            if (u != null) {
+                return Map.of("username", u);
+            }
+        }
+        return null;
     }
 
     public JdbcTemplate getJdbcTemplate() {

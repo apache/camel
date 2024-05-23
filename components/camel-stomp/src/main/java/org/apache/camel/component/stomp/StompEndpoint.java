@@ -33,6 +33,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -59,7 +60,7 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination",
              category = { Category.MESSAGING })
-public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
+public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, RemoteAddressAware {
 
     private CallbackConnection connection;
     private Stomp stomp;
@@ -94,6 +95,19 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         StompConsumer consumer = new StompConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public String getAddress() {
+        return configuration.getBrokerURL();
+    }
+
+    @Override
+    public Map<String, String> getAddressMetadata() {
+        if (configuration.getLogin() != null) {
+            return Map.of("username", configuration.getLogin());
+        }
+        return null;
     }
 
     @Override

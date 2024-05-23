@@ -26,15 +26,16 @@ import org.apache.camel.spi.UriPath;
 public class IronMQConfiguration {
     // common properties
 
-    @UriParam
-    private String projectId;
-
-    @UriParam
-    private String token;
-
     @UriPath
     @Metadata(required = true)
     private String queueName;
+
+    @UriParam
+    private String projectId;
+
+    @UriParam(label = "security")
+    @Metadata(secret = true)
+    private String token;
 
     @UriParam(defaultValue = "https://mq-aws-us-east-1-1.iron.io")
     private String ironMQCloud = "https://mq-aws-us-east-1-1.iron.io";
@@ -42,7 +43,7 @@ public class IronMQConfiguration {
     @UriParam
     private boolean preserveHeaders;
 
-    @UriParam
+    @UriParam(label = "advanced")
     private Client client;
 
     // producer properties

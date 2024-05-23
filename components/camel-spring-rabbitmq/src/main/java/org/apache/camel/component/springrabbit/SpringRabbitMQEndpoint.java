@@ -27,6 +27,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -56,7 +57,7 @@ import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DI
 @UriEndpoint(firstVersion = "3.8.0", scheme = "spring-rabbitmq", title = "Spring RabbitMQ",
              syntax = "spring-rabbitmq:exchangeName",
              category = { Category.MESSAGING }, headersClass = SpringRabbitMQConstants.class)
-public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
+public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, RemoteAddressAware {
 
     public static final String ARG_PREFIX = "arg.";
     public static final String CONSUMER_ARG_PREFIX = "consumer.";
@@ -209,6 +210,32 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             // need to wrap message converter in allow null
             messageConverter = new AllowNullBodyMessageConverter(messageConverter);
         }
+    }
+
+    @Override
+    public String getAddress() {
+        int port = 0;
+        String host = null;
+        if (getConnectionFactory() != null) {
+            host = getConnectionFactory().getHost();
+            port = getConnectionFactory().getPort();
+        }
+        if (host != null) {
+            return host + ":" + port;
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getAddressMetadata() {
+        String un = null;
+        if (getConnectionFactory() != null) {
+            un = getConnectionFactory().getUsername();
+        }
+        if (un != null) {
+            return Map.of("username", un);
+        }
+        return null;
     }
 
     public String getExchangeName() {

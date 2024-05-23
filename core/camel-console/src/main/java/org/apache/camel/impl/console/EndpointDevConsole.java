@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -74,6 +75,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
@@ -96,6 +98,15 @@ public class EndpointDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
             jo.put("uri", e.getEndpointUri());
+            if (e instanceof RemoteAddressAware raa) {
+                JsonObject ro = new JsonObject();
+                ro.put("address", raa.getAddress());
+                var d = raa.getAddressMetadata();
+                if (d != null) {
+                    ro.putAll(d);
+                }
+                jo.put("remote", ro);
+            }
             jo.put("stub", stub);
             var stat = findStats(stats, e.getEndpointUri());
             if (stat.isPresent()) {

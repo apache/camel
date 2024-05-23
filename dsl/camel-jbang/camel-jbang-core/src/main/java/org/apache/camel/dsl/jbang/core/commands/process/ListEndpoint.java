@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -80,6 +81,10 @@ public class ListEndpoint extends ProcessWatchCommand {
                         description = "List endpoint URI in full details")
     boolean wideUri;
 
+    @CommandLine.Option(names = { "--address" },
+                        description = "List address specific information (only possible for some components)")
+    boolean address;
+
     public ListEndpoint(CamelJBangMain main) {
         super(main);
     }
@@ -112,6 +117,10 @@ public class ListEndpoint extends ProcessWatchCommand {
                                 }
                                 row.pid = Long.toString(ph.pid());
                                 row.endpoint = o.getString("uri");
+                                JsonObject ro = (JsonObject) o.get("remote");
+                                if (ro != null) {
+                                    row.address = ro;
+                                }
                                 row.stub = o.getBooleanOrDefault("stub", false);
                                 row.direction = o.getString("direction");
                                 row.total = o.getString("hits");
@@ -168,6 +177,9 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("DIR").with(r -> r.direction),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
+                new Column().header("ADDRESS").visible(address).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getAddress),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
@@ -185,6 +197,23 @@ public class ListEndpoint extends ProcessWatchCommand {
             }
         }
         return u;
+    }
+
+    private String getAddress(Row r) {
+        String a = "";
+        if (r.address != null) {
+            a = r.address.getString("address");
+            if (r.address.size() > 1) {
+                StringJoiner sj = new StringJoiner(" ");
+                r.address.forEach((k, v) -> {
+                    if (!"address".equals(k)) {
+                        sj.add(k + "=" + v);
+                    }
+                });
+                a = a + " (" + sj + ")";
+            }
+        }
+        return a;
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -217,6 +246,7 @@ public class ListEndpoint extends ProcessWatchCommand {
         String direction;
         String total;
         boolean stub;
+        JsonObject address;
     }
 
 }

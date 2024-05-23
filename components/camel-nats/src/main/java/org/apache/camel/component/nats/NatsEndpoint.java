@@ -33,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -44,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = { Category.MESSAGING },
              headersClass = NatsConstants.class)
-public class NatsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, HeaderFilterStrategyAware {
+public class NatsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, HeaderFilterStrategyAware, RemoteAddressAware {
 
     @UriParam
     private NatsConfiguration configuration;
@@ -69,6 +70,11 @@ public class NatsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
+    }
+
+    @Override
+    public String getAddress() {
+        return getConfiguration().getServers();
     }
 
     public ExecutorService createExecutor() {

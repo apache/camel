@@ -53,13 +53,6 @@ public class IronmqUriDsl(
   }
 
   /**
-   * Reference to a io.iron.ironmq.Client in the Registry.
-   */
-  public fun client(client: String) {
-    it.property("client", client)
-  }
-
-  /**
    * IronMq Cloud url. Urls for public clusters: https://mq-aws-us-east-1-1.iron.io (US) and
    * https://mq-aws-eu-west-1-1.iron.io (EU)
    */
@@ -90,13 +83,6 @@ public class IronmqUriDsl(
    */
   public fun projectId(projectId: String) {
     it.property("projectId", projectId)
-  }
-
-  /**
-   * IronMQ token
-   */
-  public fun token(token: String) {
-    it.property("token", token)
   }
 
   /**
@@ -287,6 +273,13 @@ public class IronmqUriDsl(
   }
 
   /**
+   * Reference to a io.iron.ironmq.Client in the Registry.
+   */
+  public fun client(client: String) {
+    it.property("client", client)
+  }
+
+  /**
    * The number of subsequent error polls (failed due some error) that should happen before the
    * backoffMultipler should kick-in.
    */
@@ -465,5 +458,12 @@ public class IronmqUriDsl(
    */
   public fun useFixedDelay(useFixedDelay: Boolean) {
     it.property("useFixedDelay", useFixedDelay.toString())
+  }
+
+  /**
+   * IronMQ token
+   */
+  public fun token(token: String) {
+    it.property("token", token)
   }
 }

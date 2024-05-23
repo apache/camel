@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
@@ -23,6 +25,7 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RemoteAddressAware;
 
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
@@ -75,6 +78,22 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
 
         // assume started if not a ServiceSupport instance
         return ServiceStatus.Started.name();
+    }
+
+    @Override
+    public String getRemoteAddress() {
+        if (endpoint instanceof RemoteAddressAware raa) {
+            return raa.getAddress();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getRemoteAddressMetadata() {
+        if (endpoint instanceof RemoteAddressAware raa) {
+            return raa.getAddressMetadata();
+        }
+        return null;
     }
 
     @Override

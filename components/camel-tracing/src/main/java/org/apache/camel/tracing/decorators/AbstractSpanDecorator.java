@@ -20,6 +20,7 @@ import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
@@ -109,6 +110,24 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         if (query != null) {
             span.setTag(TagConstants.URL_QUERY, query);
         }
+
+        if (endpoint instanceof RemoteAddressAware raa) {
+            String adr = raa.getAddress();
+            if (adr != null) {
+                span.setTag(TagConstants.SERVER_ADDRESS, adr);
+            }
+            Map map = raa.getAddressMetadata();
+            if (map != null) {
+                String un = (String) map.get("username");
+                if (un != null) {
+                    span.setTag(TagConstants.USER_NAME, un);
+                }
+                String id = (String) map.get("clientId");
+                if (id != null) {
+                    span.setTag(TagConstants.USER_ID, id);
+                }
+            }
+        }
     }
 
     @Override
@@ -146,4 +165,5 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         // no encoding supported per default
         return new CamelHeadersInjectAdapter(map);
     }
+
 }

@@ -1207,6 +1207,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
             ucfa.setPassword(cfPassword);
             ucfa.setUsername(cfUsername);
             endpoint.getConfiguration().setConnectionFactory(ucfa);
+            endpoint.getConfiguration().setUsername(cfUsername);
+            endpoint.getConfiguration().setPassword(cfPassword);
         } else {
             // if only username or password was provided then fail
             if (cfUsername != null || cfPassword != null) {
