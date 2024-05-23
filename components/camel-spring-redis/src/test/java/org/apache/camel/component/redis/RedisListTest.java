@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -44,12 +43,10 @@ public class RedisListTest extends RedisTestSupport {
     private ListOperations<String, String> listOperations;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected void bindToRegistry(Registry registry) throws Exception {
         when(redisTemplate.opsForList()).thenReturn(listOperations);
 
-        Registry registry = new SimpleRegistry();
         registry.bind("redisTemplate", redisTemplate);
-        return registry;
     }
 
     @Test

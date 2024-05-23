@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
@@ -31,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SpringMDCTransactedTest extends CamelTestSupport {
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry result = new SimpleRegistry();
-        result.bind("NOOP-TX", new NoopPlatformTransactionManager());
-        return result;
+    protected void bindToRegistry(Registry registry) throws Exception {
+        super.bindToRegistry(registry);
+
+        registry.bind("NOOP-TX", new NoopPlatformTransactionManager());
     }
 
     @Test

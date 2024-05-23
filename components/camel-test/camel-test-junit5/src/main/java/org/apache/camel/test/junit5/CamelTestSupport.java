@@ -706,6 +706,7 @@ public abstract class CamelTestSupport
      * However if you need to bind beans to the registry then this is possible already with the bind method on registry,
      * and there is no need to override this method.
      */
+    @Deprecated(since = "4.7.0")
     protected Registry createCamelRegistry() throws Exception {
         return null;
     }

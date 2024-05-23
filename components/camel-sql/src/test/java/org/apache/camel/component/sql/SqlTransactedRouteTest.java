@@ -23,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,24 +55,20 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() {
-        Registry reg = new SimpleRegistry();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2).build();
-        reg.bind("testdb", db);
+        registry.bind("testdb", db);
 
         DataSourceTransactionManager txMgr = new DataSourceTransactionManager();
         txMgr.setDataSource(db);
-        reg.bind("txManager", txMgr);
+        registry.bind("txManager", txMgr);
 
         SpringTransactionPolicy txPolicy = new SpringTransactionPolicy();
         txPolicy.setTransactionManager(txMgr);
         txPolicy.setPropagationBehaviorName("PROPAGATION_REQUIRED");
-        reg.bind("required", txPolicy);
-
-        return reg;
+        registry.bind("required", txPolicy);
     }
 
     @Override

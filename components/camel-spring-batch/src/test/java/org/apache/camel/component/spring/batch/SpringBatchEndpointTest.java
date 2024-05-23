@@ -94,14 +94,12 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    public Registry createCamelRegistry() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) {
         registry.bind("jobLauncher", jobLauncher);
         registry.bind("alternativeJobLauncher", alternativeJobLauncher);
         registry.bind("mockJob", job);
         registry.bind("dynamicMockjob", dynamicMockjob);
         registry.bind("jobRegistry", jobRegistry);
-        return registry;
     }
 
     // Tests

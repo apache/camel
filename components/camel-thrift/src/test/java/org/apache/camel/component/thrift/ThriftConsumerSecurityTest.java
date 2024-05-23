@@ -22,7 +22,6 @@ import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -84,8 +83,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() {
-        Registry reg = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) {
         SSLContextParameters sslParameters = new SSLContextParameters();
 
         KeyStoreParameters keyStoreParams = new KeyStoreParameters();
@@ -97,8 +95,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
 
         sslParameters.setKeyManagers(keyManagerParams);
 
-        reg.bind("sslParams", sslParameters);
-        return reg;
+        registry.bind("sslParams", sslParameters);
     }
 
     @Test

@@ -30,7 +30,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.txt.UniversalEncodingDetector;
@@ -193,9 +192,7 @@ public class TikaParseTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry reg = new SimpleRegistry();
-        reg.bind("testConfig", new TikaEmptyConfig());
-        return reg;
+    protected void bindToRegistry(Registry registry) throws Exception {
+        registry.bind("testConfig", new TikaEmptyConfig());
     }
 }
