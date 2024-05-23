@@ -413,7 +413,8 @@ public abstract class CamelTestSupport
         }
     }
 
-    protected void doSetUp() throws Exception {
+    @Deprecated(since = "4.7.0")
+    protected final void doSetUp() throws Exception {
         LOG.debug("setUp test");
         // jmx is enabled if we have configured to use it, if dump route coverage is enabled (it requires JMX) or if
         // the component camel-debug is in the classpath
