@@ -72,7 +72,6 @@ import org.apache.camel.component.xmlsecurity.util.ValidationFailedHandlerIgnore
 import org.apache.camel.component.xmlsecurity.util.XmlSignature2Message2MessageWithTimestampProperty;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,9 +108,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("accessor", getKeyAccessor(keyPair.getPrivate()));
         registry.bind("canonicalizationMethod1", getCanonicalizationMethod());
         registry.bind("selector", KeySelector.singletonKeySelector(keyPair.getPublic()));
@@ -132,8 +129,6 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
         registry.bind("xpathsToIdAttributes", xpaths);
 
         registry.bind("parentXpathBean", getParentXPathBean());
-
-        return registry;
     }
 
     @Override

@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +37,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    protected Registry createCamelRegistry() {
-        SimpleRegistry reg = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) throws Exception {
 
         // START SNIPPET: e2
         // this is the database we create with some initial data for our unit test
@@ -49,9 +47,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
                 .addScript("sql/createAndPopulateDatabase.sql").build();
         // END SNIPPET: e2
 
-        reg.bind("jdbc/myDataSource", db);
-
-        return reg;
+        registry.bind("jdbc/myDataSource", db);
     }
 
     @Test

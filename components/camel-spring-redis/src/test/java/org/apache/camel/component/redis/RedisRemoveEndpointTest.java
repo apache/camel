@@ -18,7 +18,6 @@ package org.apache.camel.component.redis;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,11 +27,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class RedisRemoveEndpointTest extends CamelTestSupport {
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) throws Exception {
         redisTemplate = new RedisTemplate<>();
         registry.bind("redisTemplate", redisTemplate);
-        return registry;
     }
 
     @Mock

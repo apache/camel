@@ -19,7 +19,6 @@ package org.apache.camel.component.redis.integration;
 import org.apache.camel.component.redis.RedisConstants;
 import org.apache.camel.component.redis.RedisTestSupport;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.redis.services.RedisService;
 import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,14 +47,12 @@ public class RedisProducerManualIT extends RedisTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) throws Exception {
         redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
 
         registry.bind("redisTemplate", redisTemplate);
-        return registry;
     }
 
     @Test

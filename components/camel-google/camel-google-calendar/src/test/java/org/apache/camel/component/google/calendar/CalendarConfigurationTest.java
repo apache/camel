@@ -49,8 +49,8 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createCamelRegistry());
+    protected CamelContext createCamelContext() {
+        final CamelContext context = new DefaultCamelContext();
 
         // add GoogleCalendarComponent to Camel context but don't set up configuration
         final GoogleCalendarComponent component = new GoogleCalendarComponent(context);
