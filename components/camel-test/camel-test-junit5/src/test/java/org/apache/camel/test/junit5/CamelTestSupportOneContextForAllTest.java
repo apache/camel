@@ -54,13 +54,6 @@ class CamelTestSupportOneContextForAllTest extends CamelTestSupport {
         //don't stop
     }
 
-    @Override
-    protected void doSetUp() throws Exception {
-        if (context == null) {
-            super.doSetUp();
-        }
-    }
-
     @Test
     @Order(1)
     void initContextTest() throws Exception {
