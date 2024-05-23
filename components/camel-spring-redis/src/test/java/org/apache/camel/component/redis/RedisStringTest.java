@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -45,12 +44,10 @@ public class RedisStringTest extends RedisTestSupport {
     private ValueOperations<String, String> valueOperations;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected void bindToRegistry(Registry registry) throws Exception {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
-        Registry registry = new SimpleRegistry();
         registry.bind("redisTemplate", redisTemplate);
-        return registry;
     }
 
     @Test

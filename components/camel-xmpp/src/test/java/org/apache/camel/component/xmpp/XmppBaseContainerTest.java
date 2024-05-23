@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.logging.LogManager;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.xmpp.services.XmppServerContainer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
@@ -44,10 +43,7 @@ public abstract class XmppBaseContainerTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         XmppTestUtil.bindSSLContextTo(registry, xmppServer.getHost(), xmppServer.getPortDefault());
-        return registry;
     }
 }

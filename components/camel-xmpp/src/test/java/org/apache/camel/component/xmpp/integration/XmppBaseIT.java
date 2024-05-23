@@ -22,7 +22,6 @@ import java.util.logging.LogManager;
 
 import org.apache.camel.component.xmpp.XmppTestUtil;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.xmpp.services.XmppService;
 import org.apache.camel.test.infra.xmpp.services.XmppServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -51,11 +50,8 @@ public class XmppBaseIT extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         XmppTestUtil.bindSSLContextTo(registry, service.host(), service.port());
-        return registry;
     }
 
     protected String getUrl() {

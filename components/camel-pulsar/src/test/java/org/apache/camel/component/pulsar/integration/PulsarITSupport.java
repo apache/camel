@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.pulsar.integration;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.pulsar.PulsarComponent;
+import org.apache.camel.component.pulsar.utils.AutoConfiguration;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.infra.pulsar.services.PulsarService;
 import org.apache.camel.test.infra.pulsar.services.PulsarServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.pulsar.client.api.PulsarClient;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class PulsarITSupport extends CamelTestSupport {
@@ -31,5 +36,15 @@ public class PulsarITSupport extends CamelTestSupport {
 
     public String getPulsarAdminUrl() {
         return service.getPulsarAdminUrl();
+    }
+
+    protected static void registerPulsarBeans(Registry registry, PulsarClient pulsarClient, CamelContext context) {
+        AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
+
+        registry.bind("pulsarClient", pulsarClient);
+        PulsarComponent comp = new PulsarComponent(context);
+        comp.setAutoConfiguration(autoConfiguration);
+        comp.setPulsarClient(pulsarClient);
+        registry.bind("pulsar", comp);
     }
 }
