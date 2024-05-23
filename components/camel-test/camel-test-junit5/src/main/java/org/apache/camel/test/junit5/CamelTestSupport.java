@@ -143,7 +143,7 @@ public abstract class CamelTestSupport
     @Override
     public void afterAll(ExtensionContext context) {
         CamelTestSupport support = INSTANCE.get();
-        if (support != null && support.isCreateCamelContextPerClass()) {
+        if (support != null && support.isCreateCamelContextPerClass) {
             try {
                 support.tearDownCreateCamelContextPerClass();
             } catch (Exception e) {
@@ -211,7 +211,7 @@ public abstract class CamelTestSupport
      *
      * @return <tt>true</tt> per class, <tt>false</tt> per test.
      */
-    public final boolean isCreateCamelContextPerClass() {
+    protected final boolean isCreateCamelContextPerClass() {
         return isCreateCamelContextPerClass;
     }
 
@@ -334,7 +334,7 @@ public abstract class CamelTestSupport
 
         ExtensionHelper.hasUnsupported(getClass());
 
-        if (isCreateCamelContextPerClass()) {
+        if (isCreateCamelContextPerClass) {
             createCamelContextPerClass();
         } else {
             // test is per test so always setup
@@ -526,7 +526,7 @@ public abstract class CamelTestSupport
             ExtensionHelper.testEndFooter(getClass(), currentTestName, time);
         }
 
-        if (isCreateCamelContextPerClass()) {
+        if (isCreateCamelContextPerClass) {
             // will tear down test specially in afterAll callback
             return;
         }
