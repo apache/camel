@@ -542,12 +542,15 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     public String summaryAsJson() {
         return cache(SUMMARY_AS_JSON, () -> {
             Map<String, Object> obj = new JsonObject();
-            obj.put("version", getCatalogVersion());
+            obj.put("version", getLoadedVersion());
             obj.put("models", findModelNames().size());
             obj.put("components", findComponentNames().size());
             obj.put("dataformats", findDataFormatNames().size());
             obj.put("languages", findLanguageNames().size());
             obj.put("others", findOtherNames().size());
+            obj.put("beans", findBeansNames().size());
+            obj.put("dev-consoles", findDevConsoleNames().size());
+            obj.put("transformers", findTransformerNames().size());
             return JsonMapper.serialize(obj);
         });
     }
