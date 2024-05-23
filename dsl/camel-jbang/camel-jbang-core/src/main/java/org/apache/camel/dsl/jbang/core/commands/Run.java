@@ -141,8 +141,8 @@ public class Run extends CamelCommand {
     String kameletsVersion;
 
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-            defaultValue = "3.10.1")
-    String quarkusVersion = "3.10.1";
+            defaultValue = "3.10.2")
+    String quarkusVersion = "3.10.2";
 
     @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
             defaultValue = "3.2.5")
