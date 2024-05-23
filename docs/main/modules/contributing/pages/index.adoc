@@ -6,7 +6,7 @@ Thank you for your interest in contributing to Apache Camel.
 
 Our community encourages and welcomes everyone to participate.
 
-The link:expectations.adoc[Contributing expectations document] describes how to contribute and what our expectations are.
+The xref:contributing:expectations.adoc[Contributing expectations document] describes how to contribute and what our expectations are.
 
 == Getting in touch
 
