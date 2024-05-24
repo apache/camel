@@ -78,7 +78,7 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
             messages[i].setText("Message " + i);
-            messages[i].setHeader("Message-ID", "" + i);
+            messages[i].setHeader("Message-ID", Integer.toString(i));
         }
         folder.appendMessages(messages);
         folder.close(true);
