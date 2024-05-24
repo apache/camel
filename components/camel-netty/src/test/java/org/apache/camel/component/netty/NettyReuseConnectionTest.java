@@ -31,7 +31,7 @@ public class NettyReuseConnectionTest extends BaseNettyTest {
     @Test
     public void testReuseConnection() {
         for (int i = 0; i < 20; i++) {
-            String out = template.requestBody(uri, "" + i, String.class);
+            String out = template.requestBody(uri, Integer.toString(i), String.class);
             assertEquals("Reply " + i, out);
         }
     }

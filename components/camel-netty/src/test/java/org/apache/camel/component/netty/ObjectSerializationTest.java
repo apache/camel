@@ -71,8 +71,8 @@ public class ObjectSerializationTest extends BaseNettyTest {
     public Properties loadProperties() {
 
         Properties prop = new Properties();
-        prop.setProperty("port", "" + getPort());
-        prop.setProperty("port2", "" + port2);
+        prop.setProperty("port", Integer.toString(getPort()));
+        prop.setProperty("port2", Integer.toString(port2));
 
         return prop;
     }
