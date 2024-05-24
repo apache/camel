@@ -36,7 +36,7 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
             sb.append(i);
             sb.append(",");
         }
-        template.sendBody("seda:start", "" + sb.toString());
+        template.sendBody("seda:start", sb.toString());
 
         assertMockEndpointsSatisfied();
 
