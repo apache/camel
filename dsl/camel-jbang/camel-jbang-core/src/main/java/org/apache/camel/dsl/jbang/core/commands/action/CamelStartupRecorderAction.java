@@ -125,7 +125,7 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
 
     private String getDuration(Row r) {
         if (r.duration > 0) {
-            return "" + r.duration;
+            return Long.toString(r.duration);
         }
         return "";
     }
