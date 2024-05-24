@@ -372,7 +372,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                         if (loc != null && loc.contains(":")) {
                             loc = StringHelper.after(loc, ":");
                         }
-                        String num = "" + definition.getLineNumber();
+                        String num = String.valueOf(definition.getLineNumber());
                         if (PatternHelper.matchPattern(loc, ploc) && pnum.equals(num)) {
                             match = true;
                         }
