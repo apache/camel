@@ -65,7 +65,7 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         com.google.api.services.drive.model.CommentList result1 = requestBody("direct://LIST_COMMENTS", fileId);
 
         assertNotNull(result1.get("items"));
-        LOG.debug("list: " + result1);
+        LOG.debug("list: {}", result1);
 
         Comment comment2 = result1.getComments().get(0);
         String commentId = comment2.getId();
