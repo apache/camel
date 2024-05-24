@@ -20,13 +20,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 
 public class Kinesis2Producer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Kinesis2Producer.class);
+
     private KinesisConnection connection;
+
+    private volatile Exception exceptionThrownByPutRecord;
 
     public Kinesis2Producer(Kinesis2Endpoint endpoint) {
         super(endpoint);
@@ -47,11 +53,28 @@ public class Kinesis2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        Exception exceptionThrownByPutRecord = this.exceptionThrownByPutRecord;
+        if (exceptionThrownByPutRecord != null) {
+            this.exceptionThrownByPutRecord = null;
+            throw exceptionThrownByPutRecord;
+        }
+
         PutRecordRequest request = createRequest(exchange);
-        PutRecordResponse putRecordResult = connection.getClient(getEndpoint()).putRecord(request);
-        Message message = getMessageForResponse(exchange);
-        message.setHeader(Kinesis2Constants.SEQUENCE_NUMBER, putRecordResult.sequenceNumber());
-        message.setHeader(Kinesis2Constants.SHARD_ID, putRecordResult.shardId());
+        if (getEndpoint().getConfiguration().isAsyncClient()) {
+            connection.getAsyncClient(getEndpoint()).putRecord(request)
+                    .whenComplete((putRecordResponse, ex) -> {
+                        if (ex != null) {
+                            LOG.error("Error occurred during putRecord operation", ex);
+                            this.exceptionThrownByPutRecord = (Exception) ex;
+                            exchange.setException(ex);
+                        } else {
+                            completeMessageFromResponse(exchange, putRecordResponse);
+                        }
+                    });
+        } else {
+            PutRecordResponse putRecordResult = connection.getClient(getEndpoint()).putRecord(request);
+            completeMessageFromResponse(exchange, putRecordResult);
+        }
     }
 
     private PutRecordRequest createRequest(Exchange exchange) {
@@ -69,8 +92,10 @@ public class Kinesis2Producer extends DefaultProducer {
         return putRecordRequest.build();
     }
 
-    public static Message getMessageForResponse(final Exchange exchange) {
-        return exchange.getMessage();
+    private void completeMessageFromResponse(Exchange exchange, PutRecordResponse putRecordResponse) {
+        Message message = exchange.getMessage();
+        message.setHeader(Kinesis2Constants.SEQUENCE_NUMBER, putRecordResponse.sequenceNumber());
+        message.setHeader(Kinesis2Constants.SHARD_ID, putRecordResponse.shardId());
     }
 
     @Override
