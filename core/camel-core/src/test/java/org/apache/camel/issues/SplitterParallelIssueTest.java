@@ -43,7 +43,7 @@ public class SplitterParallelIssueTest extends ContextTestSupport {
             final int num = i;
             new Thread(new Runnable() {
                 public void run() {
-                    template.sendBody("direct:start", "" + num);
+                    template.sendBody("direct:start", Integer.toString(num));
                 }
             }).start();
         }

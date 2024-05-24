@@ -44,7 +44,7 @@ public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport
             final int count = i;
             tasks.add(new Callable<Object>() {
                 public Object call() {
-                    template.sendBodyAndHeader(uri, "" + count, "id", id);
+                    template.sendBodyAndHeader(uri, Integer.toString(count), "id", id);
                     return null;
                 }
             });

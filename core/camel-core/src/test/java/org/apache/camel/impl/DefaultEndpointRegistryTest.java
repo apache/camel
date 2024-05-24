@@ -90,7 +90,7 @@ public class DefaultEndpointRegistryTest {
 
         FluentProducerTemplate template = ctx.createFluentProducerTemplate();
         for (int i = 0; i < 100; i++) {
-            template.withBody("Hello").withHeader("foo", "" + i).to("direct:start").send();
+            template.withBody("Hello").withHeader("foo", Integer.toString(i)).to("direct:start").send();
         }
 
         Awaitility.await().untilAsserted(() -> {

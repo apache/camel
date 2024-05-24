@@ -33,7 +33,7 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
     @Test
     public void testSameQueue() {
         for (int i = 0; i < 100; i++) {
-            template.sendBody("seda:foo", "" + i);
+            template.sendBody("seda:foo", Integer.toString(i));
         }
 
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
