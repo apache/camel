@@ -50,7 +50,7 @@ public class Queue2QueueExampleManualTest extends CamelTestSupport {
     public void testSendMessagesBetweenQueues() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(100);
         for (int i = 1; i <= 100; i++) {
-            String payloadToSend = PAYLOAD.replace("#", "" + i);
+            String payloadToSend = PAYLOAD.replace("#", Integer.toString(i));
             template.sendBody("direct:start", payloadToSend);
         }
         MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.MINUTES);
