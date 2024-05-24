@@ -20,8 +20,8 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointLocationAddress;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -41,7 +41,7 @@ import java.util.Map;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", category = { Category.MESSAGING, Category.IOT },
              syntax = "paho:topic", headersClass = PahoConstants.class)
-public class PahoEndpoint extends DefaultEndpoint implements RemoteAddressAware {
+public class PahoEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
 
     // Configuration members
     @UriPath(description = "Name of the topic")

@@ -30,10 +30,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointLocationAddress;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -60,7 +60,7 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination",
              category = { Category.MESSAGING })
-public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, RemoteAddressAware {
+public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointLocationAddress {
 
     private CallbackConnection connection;
     private Stomp stomp;

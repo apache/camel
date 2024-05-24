@@ -20,7 +20,7 @@ import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.RemoteAddressAware;
+import org.apache.camel.spi.EndpointLocationAddress;
 import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
@@ -88,10 +88,8 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         // OpenTracing aims to use low cardinality operation names. Ideally a
-        // specific
-        // span decorator should be defined for all relevant Camel components
-        // that
-        // identify a meaningful operation name
+        // specific span decorator should be defined for all relevant Camel
+        // components that identify a meaningful operation name
         return getComponentName(endpoint);
     }
 
@@ -111,12 +109,12 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
             span.setTag(TagConstants.URL_QUERY, query);
         }
 
-        if (endpoint instanceof RemoteAddressAware raa) {
-            String adr = raa.getAddress();
+        if (endpoint instanceof EndpointLocationAddress ela) {
+            String adr = ela.getAddress();
             if (adr != null) {
                 span.setTag(TagConstants.SERVER_ADDRESS, adr);
             }
-            Map map = raa.getAddressMetadata();
+            Map map = ela.getAddressMetadata();
             if (map != null) {
                 String un = (String) map.get("username");
                 if (un != null) {

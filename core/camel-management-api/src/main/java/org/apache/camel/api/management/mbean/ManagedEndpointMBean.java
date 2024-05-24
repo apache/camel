@@ -16,9 +16,9 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import java.util.Map;
-
 import org.apache.camel.api.management.ManagedAttribute;
+
+import java.util.Map;
 
 public interface ManagedEndpointMBean {
 
@@ -40,10 +40,13 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Endpoint State")
     String getState();
 
-    @ManagedAttribute(description = "Remote Address this endpoint is connecting (only available for some components)")
-    String getRemoteAddress();
+    @ManagedAttribute(description = "Whether the endpoint location address is hosted or external (only available for some components)")
+    boolean isEndpointLocationHosted();
 
-    @ManagedAttribute(description = "Remote Address metadata this endpoint is connecting (only available for some components)")
-    Map<String, String> getRemoteAddressMetadata();
+    @ManagedAttribute(description = "Address (such as URL or hostname) this endpoint is connecting (only available for some components)")
+    String getEndpointLocationAddress();
+
+    @ManagedAttribute(description = "Additional metadata this endpoint is used for connecting (only available for some components)")
+    Map<String, String> getEndpointLocationAddressMetadata();
 
 }

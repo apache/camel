@@ -25,7 +25,7 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.RemoteAddressAware;
+import org.apache.camel.spi.EndpointLocationAddress;
 
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
@@ -81,16 +81,24 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     }
 
     @Override
-    public String getRemoteAddress() {
-        if (endpoint instanceof RemoteAddressAware raa) {
+    public boolean isEndpointLocationHosted() {
+        if (endpoint instanceof EndpointLocationAddress raa) {
+            return raa.isHostedAddress();
+        }
+        return false;
+    }
+
+    @Override
+    public String getEndpointLocationAddress() {
+        if (endpoint instanceof EndpointLocationAddress raa) {
             return raa.getAddress();
         }
         return null;
     }
 
     @Override
-    public Map<String, String> getRemoteAddressMetadata() {
-        if (endpoint instanceof RemoteAddressAware raa) {
+    public Map<String, String> getEndpointLocationAddressMetadata() {
+        if (endpoint instanceof EndpointLocationAddress raa) {
             return raa.getAddressMetadata();
         }
         return null;

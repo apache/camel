@@ -27,8 +27,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
+import org.apache.camel.spi.EndpointLocationAddress;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RemoteAddressAware;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,7 +39,7 @@ import org.springframework.jdbc.datasource.AbstractDriverBasedDataSource;
 /**
  * Base class for SQL endpoints.
  */
-public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implements RemoteAddressAware {
+public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implements EndpointLocationAddress {
     private JdbcTemplate jdbcTemplate;
 
     @Metadata(autowired = true)

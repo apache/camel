@@ -117,7 +117,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                                 }
                                 row.pid = Long.toString(ph.pid());
                                 row.endpoint = o.getString("uri");
-                                JsonObject ro = (JsonObject) o.get("remote");
+                                JsonObject ro = (JsonObject) o.get("location");
                                 if (ro != null) {
                                     row.address = ro;
                                 }
@@ -206,7 +206,7 @@ public class ListEndpoint extends ProcessWatchCommand {
             if (r.address.size() > 1) {
                 StringJoiner sj = new StringJoiner(" ");
                 r.address.forEach((k, v) -> {
-                    if (!"address".equals(k)) {
+                    if (!"address".equals(k) && !"hosted".equals(k) && !"remote".equals(k)) {
                         sj.add(k + "=" + v);
                     }
                 });
