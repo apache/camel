@@ -43,7 +43,7 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < size; i++) {
-            Object out = template.requestBody("direct:a", "" + i);
+            Object out = template.requestBody("direct:a", Integer.toString(i));
             assertEquals("Bye " + i, out);
         }
 
@@ -55,7 +55,7 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < size; i++) {
-            Object out = template.requestBody("direct:b", "" + i);
+            Object out = template.requestBody("direct:b", Integer.toString(i));
             assertEquals("Bye " + i, out);
         }
 
