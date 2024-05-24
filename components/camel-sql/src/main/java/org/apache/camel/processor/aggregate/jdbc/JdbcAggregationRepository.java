@@ -624,7 +624,7 @@ public class JdbcAggregationRepository extends ServiceSupport
     }
 
     public String getPropagationBehaviorName() {
-        return PROPAGATION_CONSTANTS.asString("" + propagationBehavior);
+        return PROPAGATION_CONSTANTS.asString(Integer.toString(propagationBehavior));
     }
 
     /**
