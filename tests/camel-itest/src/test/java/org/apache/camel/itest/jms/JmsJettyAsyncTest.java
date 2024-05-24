@@ -43,7 +43,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq:queue:inbox", "" + i);
+            template.sendBody("activemq:queue:inbox", Integer.toString(i));
         }
 
         MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.MINUTES);
