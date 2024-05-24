@@ -847,7 +847,7 @@ public class Run extends CamelCommand {
 
     protected int runQuarkus() throws Exception {
         // create temp run dir
-        File runDir = new File(RUN_PLATFORM_DIR, "" + System.currentTimeMillis());
+        File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
             runDir.deleteOnExit();
         }
@@ -914,7 +914,7 @@ public class Run extends CamelCommand {
 
     protected int runSpringBoot() throws Exception {
         // create temp run dir
-        File runDir = new File(RUN_PLATFORM_DIR, "" + System.currentTimeMillis());
+        File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
             runDir.deleteOnExit();
         }
