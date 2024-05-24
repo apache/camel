@@ -270,13 +270,13 @@ public class CamelStubAction extends ActionWatchCommand {
         if (browse) {
             for (Row row : rows) {
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(row), Arrays.asList(
-                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.pid),
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.pid)),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.name),
                         new Column().header("QUEUE").dataAlign(HorizontalAlign.LEFT).with(r -> r.queue),
-                        new Column().header("MAX").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.max),
-                        new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.size))));
+                        new Column().header("MAX").dataAlign(HorizontalAlign.RIGHT).with(r -> Integer.toString(r.max)),
+                        new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> Integer.toString(r.size)))));
 
                 if (row.messages != null) {
                     List<JsonObject> list = row.messages;
@@ -332,12 +332,12 @@ public class CamelStubAction extends ActionWatchCommand {
             }
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.pid),
+                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.pid)),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("QUEUE").dataAlign(HorizontalAlign.LEFT).with(r -> r.queue),
-                    new Column().header("MAX").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.max),
-                    new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.size))));
+                    new Column().header("MAX").dataAlign(HorizontalAlign.RIGHT).with(r -> Integer.toString(r.max)),
+                    new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> Integer.toString(r.size)))));
         }
     }
 
