@@ -19,9 +19,9 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * Used for getting information about remote URL used for connecting to a remote system,
- * such as from an {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}
- * that connects to messaging brokers, cloud systems, databases etc.
+ * Used for getting information about remote URL used for connecting to a remote system, such as from an
+ * {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component} that connects to messaging brokers, cloud
+ * systems, databases etc.
  */
 public interface RemoteAddressAware {
 
