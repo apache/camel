@@ -42,7 +42,7 @@ public class ListConsumer extends ProcessWatchCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name, or age", defaultValue = "pid")
+                        description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
     @CommandLine.Option(names = { "--limit" },

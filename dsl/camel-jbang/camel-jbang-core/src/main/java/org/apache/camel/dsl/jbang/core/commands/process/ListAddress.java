@@ -18,69 +18,51 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "endpoint", description = "Get usage of Camel endpoints", sortOptions = false)
-public class ListEndpoint extends ProcessWatchCommand {
-
-    public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
-
-        public PidNameAgeTotalCompletionCandidates() {
-        }
-
-        @Override
-        public Iterator<String> iterator() {
-            return List.of("pid", "name", "age", "total").iterator();
-        }
-
-    }
+@Command(name = "address", description = "Get usage of Camel service addresses (hosted and external)", sortOptions = false)
+public class ListAddress extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeTotalCompletionCandidates.class,
-                        description = "Sort by pid, name, age or total", defaultValue = "pid")
+    @CommandLine.Option(names = {"--sort"}, completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or total", defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter endpoints by limiting to the given number of rows")
+    @CommandLine.Option(names = {"--limit"},
+            description = "Filter addresses by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter endpoints by URI")
+    @CommandLine.Option(names = {"--filter"},
+            description = "Filter addresses")
     String filter;
 
-    @CommandLine.Option(names = { "--filter-direction" },
-                        description = "Filter by direction (in or out)")
+    @CommandLine.Option(names = {"--filter-direction"},
+            description = "Filter by direction (in or out)")
     String filterDirection;
 
-    @CommandLine.Option(names = { "--filter-total" },
-                        description = "Filter endpoints that must be higher than the given usage")
-    long filterTotal;
-
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
-    boolean shortUri;
-
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @CommandLine.Option(names = {"--wide-uri"},
+            description = "List endpoint URI in full details")
     boolean wideUri;
 
-    public ListEndpoint(CamelJBangMain main) {
+    public ListAddress(CamelJBangMain main) {
         super(main);
     }
 
@@ -112,16 +94,19 @@ public class ListEndpoint extends ProcessWatchCommand {
                                 }
                                 row.pid = Long.toString(ph.pid());
                                 row.endpoint = o.getString("uri");
-                                row.stub = o.getBooleanOrDefault("stub", false);
+                                JsonObject ro = (JsonObject) o.get("location");
+                                if (ro != null) {
+                                    row.address = ro;
+                                }
                                 row.direction = o.getString("direction");
                                 row.total = o.getString("hits");
                                 row.uptime = extractSince(ph);
                                 row.age = TimeUtils.printSince(row.uptime);
                                 boolean add = true;
-                                if (filterTotal > 0 && (row.total == null || Long.parseLong(row.total) < filterTotal)) {
+                                if (filterDirection != null && !filterDirection.equals(row.direction)) {
                                     add = false;
                                 }
-                                if (filterDirection != null && !filterDirection.equals(row.direction)) {
+                                if (row.address == null) {
                                     add = false;
                                 }
                                 if (filter != null) {
@@ -165,26 +150,65 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("DIR").with(r -> r.direction),
+                new Column().header("DIR").with(this::getDirection),
                 new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
+                new Column().header("HOSTED").dataAlign(HorizontalAlign.CENTER).with(this::getHosted),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
                 new Column().header("URI").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(140, OverflowBehaviour.NEWLINE)
-                        .with(this::getUri))));
+                        .with(this::getUri),
+                new Column().header("ADDRESS").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getAddress))));
     }
 
     private String getUri(Row r) {
         String u = r.endpoint;
-        if (shortUri) {
+        if (!wideUri) {
             int pos = u.indexOf('?');
             if (pos > 0) {
                 u = u.substring(0, pos);
             }
         }
         return u;
+    }
+
+    private String getDirection(Row r) {
+        String dir = r.direction;
+        if (dir == null || dir.isEmpty()) {
+            // hosted is always in
+            dir = "x".equals(getHosted(r)) ? "in" : "out";
+        }
+        return dir;
+    }
+
+    private String getAddress(Row r) {
+        String a = "";
+        if (r.address != null) {
+            a = r.address.getString("address");
+            if (r.address.size() > 1) {
+                StringJoiner sj = new StringJoiner(" ");
+                r.address.forEach((k, v) -> {
+                    if (!"address".equals(k) && !"hosted".equals(k) && !"remote".equals(k)) {
+                        sj.add(k + "=" + v);
+                    }
+                });
+                if (sj.length() > 0) {
+                    a = a + " (" + sj + ")";
+                }
+            }
+        }
+        return a;
+    }
+
+    private String getHosted(Row r) {
+        boolean hosted = false;
+        if (r.address != null) {
+            hosted = r.address.getBooleanOrDefault("hosted", false);
+        }
+        return hosted ? "x" : "";
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -201,8 +225,6 @@ public class ListEndpoint extends ProcessWatchCommand {
                 return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "age":
                 return Long.compare(o1.uptime, o2.uptime) * negate;
-            case "total":
-                return Long.compare(Long.parseLong(o1.total), Long.parseLong(o2.total)) * negate;
             default:
                 return 0;
         }
@@ -216,7 +238,7 @@ public class ListEndpoint extends ProcessWatchCommand {
         String endpoint;
         String direction;
         String total;
-        boolean stub;
+        JsonObject address;
     }
 
 }

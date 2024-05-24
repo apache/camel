@@ -96,8 +96,16 @@ public class EndpointDevConsole extends AbstractDevConsole {
         Collection<Endpoint> col = reg.getReadOnlyValues();
         for (Endpoint e : col) {
             JsonObject jo = new JsonObject();
-            boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
             jo.put("uri", e.getEndpointUri());
+            boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
+            jo.put("stub", stub);
+            var stat = findStats(stats, e.getEndpointUri());
+            if (stat.isPresent()) {
+                var st = stat.get();
+                jo.put("direction", st.getDirection());
+                jo.put("hits", st.getHits());
+                jo.put("routeId", st.getRouteId());
+            }
             if (e instanceof EndpointLocationAddress raa) {
                 JsonObject ro = new JsonObject();
                 ro.put("hosted", raa.isHostedAddress());
@@ -108,14 +116,6 @@ public class EndpointDevConsole extends AbstractDevConsole {
                     ro.putAll(d);
                 }
                 jo.put("location", ro);
-            }
-            jo.put("stub", stub);
-            var stat = findStats(stats, e.getEndpointUri());
-            if (stat.isPresent()) {
-                var st = stat.get();
-                jo.put("direction", st.getDirection());
-                jo.put("hits", st.getHits());
-                jo.put("routeId", st.getRouteId());
             }
             list.add(jo);
         }
