@@ -56,7 +56,7 @@ public class JmsResequencerIT extends AbstractSpringJMSITSupport {
 
         for (int i = 100; i > 0; i--) {
             // send as text messages (not java objects - as they are not serializable and allowed by JMS brokers like ActiveMQ)
-            String text = "" + i;
+            String text = Integer.toString(i);
             template.sendBodyAndHeader(endpoint, text, "num", (long) i);
         }
 
