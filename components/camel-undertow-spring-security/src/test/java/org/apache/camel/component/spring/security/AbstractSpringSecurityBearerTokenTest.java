@@ -76,7 +76,7 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
     public Properties loadProperties() {
 
         Properties prop = new Properties();
-        prop.setProperty("port", "" + getPort());
+        prop.setProperty("port", Integer.toString(getPort()));
         return prop;
     }
 
