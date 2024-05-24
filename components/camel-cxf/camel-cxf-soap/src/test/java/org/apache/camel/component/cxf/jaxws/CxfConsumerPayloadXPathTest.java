@@ -201,7 +201,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             String msgOut = constructSoapMessage(content);
             exchange.getMessage().setBody(msgOut);
             exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
-            exchange.getMessage().setHeader(HEADER_SIZE, "" + content.length());
+            exchange.getMessage().setHeader(HEADER_SIZE, Integer.toString(content.length()));
         }
     }
 
