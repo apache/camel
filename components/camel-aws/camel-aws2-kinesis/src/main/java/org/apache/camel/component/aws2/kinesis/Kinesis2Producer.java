@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -25,6 +28,9 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
+import software.amazon.awssdk.services.kinesis.model.PutRecordsRequest;
+import software.amazon.awssdk.services.kinesis.model.PutRecordsRequestEntry;
+import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
 
 public class Kinesis2Producer extends DefaultProducer {
 
@@ -32,7 +38,7 @@ public class Kinesis2Producer extends DefaultProducer {
 
     private KinesisConnection connection;
 
-    private volatile Exception exceptionThrownByPutRecord;
+    private List<PutRecordsRequestEntry> requestBatch = new ArrayList<>();
 
     public Kinesis2Producer(Kinesis2Endpoint endpoint) {
         super(endpoint);
@@ -53,28 +59,26 @@ public class Kinesis2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Exception exceptionThrownByPutRecord = this.exceptionThrownByPutRecord;
-        if (exceptionThrownByPutRecord != null) {
-            this.exceptionThrownByPutRecord = null;
-            throw exceptionThrownByPutRecord;
+        Boolean batchComplete = exchange.getProperty(Exchange.BATCH_COMPLETE, Boolean.class);
+        if (batchComplete == null) {
+            flushRequestBatch();
+            sendSingleRecord(exchange);
+            return;
         }
 
-        PutRecordRequest request = createRequest(exchange);
-        if (getEndpoint().getConfiguration().isAsyncClient()) {
-            connection.getAsyncClient(getEndpoint()).putRecord(request)
-                    .whenComplete((putRecordResponse, ex) -> {
-                        if (ex != null) {
-                            LOG.error("Error occurred during putRecord operation", ex);
-                            this.exceptionThrownByPutRecord = (Exception) ex;
-                            exchange.setException(ex);
-                        } else {
-                            completeMessageFromResponse(exchange, putRecordResponse);
-                        }
-                    });
-        } else {
-            PutRecordResponse putRecordResult = connection.getClient(getEndpoint()).putRecord(request);
-            completeMessageFromResponse(exchange, putRecordResult);
+        this.requestBatch.add(createRequestEntry(exchange));
+        if (batchComplete) {
+            flushRequestBatch();
         }
+    }
+
+    private void sendSingleRecord(Exchange exchange) {
+        PutRecordRequest request = createRequest(exchange);
+        PutRecordResponse putRecordResult = connection.getClient(getEndpoint()).putRecord(request);
+        LOG.trace("Sent 1 record.");
+        Message message = exchange.getMessage();
+        message.setHeader(Kinesis2Constants.SEQUENCE_NUMBER, putRecordResult.sequenceNumber());
+        message.setHeader(Kinesis2Constants.SHARD_ID, putRecordResult.shardId());
     }
 
     private PutRecordRequest createRequest(Exchange exchange) {
@@ -92,10 +96,37 @@ public class Kinesis2Producer extends DefaultProducer {
         return putRecordRequest.build();
     }
 
-    private void completeMessageFromResponse(Exchange exchange, PutRecordResponse putRecordResponse) {
-        Message message = exchange.getMessage();
-        message.setHeader(Kinesis2Constants.SEQUENCE_NUMBER, putRecordResponse.sequenceNumber());
-        message.setHeader(Kinesis2Constants.SHARD_ID, putRecordResponse.shardId());
+    private PutRecordsRequestEntry createRequestEntry(Exchange exchange) {
+        byte[] body = exchange.getIn().getBody(byte[].class);
+        String partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY).toString();
+
+        PutRecordsRequestEntry.Builder putRecordsRequestEntry = PutRecordsRequestEntry.builder();
+        putRecordsRequestEntry.data(SdkBytes.fromByteArray(body));
+        putRecordsRequestEntry.partitionKey(partitionKey);
+
+        return putRecordsRequestEntry.build();
+    }
+
+    private void flushRequestBatch() {
+        if (this.requestBatch.isEmpty()) {
+            return;
+        }
+
+        List<PutRecordsRequestEntry> requestBatchToSend = new ArrayList<>(this.requestBatch);
+        this.requestBatch.clear();
+
+        PutRecordsRequest putRecordsRequest = PutRecordsRequest.builder()
+                .streamName(getEndpoint().getConfiguration().getStreamName())
+                .records(requestBatchToSend)
+                .build();
+
+        PutRecordsResponse putRecordsResponse = connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
+        int failedRecordCount = putRecordsResponse.failedRecordCount();
+        LOG.trace("Sent {} records, failed {}", requestBatchToSend.size(), failedRecordCount);
+        if (failedRecordCount > 0) {
+            throw new RuntimeException(
+                    "Failed to send records " + failedRecordCount + " of " + requestBatchToSend.size());
+        }
     }
 
     @Override
