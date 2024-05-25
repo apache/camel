@@ -454,8 +454,9 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many times a Rabbitmq consumer will retry the same message if
-         * Camel failed to process the message.
+         * How many times a Rabbitmq consumer will try the same message if Camel
+         * failed to process the message (The number of attempts includes the
+         * initial try).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -470,8 +471,9 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * How many times a Rabbitmq consumer will retry the same message if
-         * Camel failed to process the message.
+         * How many times a Rabbitmq consumer will try the same message if Camel
+         * failed to process the message (The number of attempts includes the
+         * initial try).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
