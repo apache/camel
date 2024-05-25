@@ -116,7 +116,7 @@ final class SnmpHelper {
         CommunityTarget communityTarget = new CommunityTarget();
 
         communityTarget.setCommunity(convertToOctetString(endpoint.getSnmpCommunity()));
-        communityTarget.setAddress(GenericAddress.parse(endpoint.getAddress()));
+        communityTarget.setAddress(GenericAddress.parse(endpoint.getServerAddress()));
         communityTarget.setRetries(endpoint.getRetries());
         communityTarget.setTimeout(endpoint.getTimeout());
         communityTarget.setVersion(endpoint.getSnmpVersion());
@@ -129,7 +129,7 @@ final class SnmpHelper {
 
         userTarget.setSecurityLevel(endpoint.getSecurityLevel());
         userTarget.setSecurityName(convertToOctetString(endpoint.getSecurityName()));
-        userTarget.setAddress(GenericAddress.parse(endpoint.getAddress()));
+        userTarget.setAddress(GenericAddress.parse(endpoint.getServerAddress()));
         userTarget.setRetries(endpoint.getRetries());
         userTarget.setTimeout(endpoint.getTimeout());
         userTarget.setVersion(endpoint.getSnmpVersion());

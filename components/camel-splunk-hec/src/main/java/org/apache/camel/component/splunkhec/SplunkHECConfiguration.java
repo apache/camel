@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 
 @UriParams
 public class SplunkHECConfiguration {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SplunkHECConfiguration.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkHECConfiguration.class);
 
     @UriParam(defaultValue = "camel")
     private String index = "camel";

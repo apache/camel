@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * The Splunk producer.
  */
 public class SplunkProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SplunkProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkProducer.class);
     private SplunkEndpoint endpoint;
     private DataWriter dataWriter;
 
