@@ -239,16 +239,16 @@ public class SpringRabbitmqUriDsl(
   }
 
   /**
-   * How many times a Rabbitmq consumer will retry the same message if Camel failed to process the
-   * message
+   * How many times a Rabbitmq consumer will try the same message if Camel failed to process the
+   * message (The number of attempts includes the initial try)
    */
   public fun maximumRetryAttempts(maximumRetryAttempts: String) {
     it.property("maximumRetryAttempts", maximumRetryAttempts)
   }
 
   /**
-   * How many times a Rabbitmq consumer will retry the same message if Camel failed to process the
-   * message
+   * How many times a Rabbitmq consumer will try the same message if Camel failed to process the
+   * message (The number of attempts includes the initial try)
    */
   public fun maximumRetryAttempts(maximumRetryAttempts: Int) {
     it.property("maximumRetryAttempts", maximumRetryAttempts.toString())

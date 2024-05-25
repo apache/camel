@@ -184,7 +184,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                                                          + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
     private RetryOperationsInterceptor retry;
     @UriParam(label = "consumer", defaultValue = "5",
-              description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message")
+              description = "How many times a Rabbitmq consumer will try the same message if Camel failed to process the message (The number of attempts includes the initial try)")
     private int maximumRetryAttempts = 5;
     @UriParam(label = "consumer", defaultValue = "1000",
               description = "Delay in millis a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
