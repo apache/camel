@@ -9254,10 +9254,10 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * Host of the server to connect to
      * 
-     * Path parameter: port
+     * Path parameter: port (required)
      * Port of the server to connect to
      * 
      * Path parameter: tableName
@@ -9280,10 +9280,10 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * Host of the server to connect to
      * 
-     * Path parameter: port
+     * Path parameter: port (required)
      * Port of the server to connect to
      * 
      * Path parameter: tableName

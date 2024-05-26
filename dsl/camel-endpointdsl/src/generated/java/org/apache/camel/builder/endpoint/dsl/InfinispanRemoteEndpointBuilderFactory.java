@@ -44,7 +44,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return (AdvancedInfinispanRemoteEndpointConsumerBuilder) this;
         }
         /**
-         * Specifies the host of the cache on Infinispan instance.
+         * Specifies the host of the cache on Infinispan instance. Multiple
+         * hosts can be separated by semicolon.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -85,36 +86,6 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          */
         default InfinispanRemoteEndpointConsumerBuilder queryBuilder(String queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
-            return this;
-        }
-        /**
-         * Define if we are connecting to a secured Infinispan instance.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param secure the value to set
-         * @return the dsl builder
-         */
-        default InfinispanRemoteEndpointConsumerBuilder secure(boolean secure) {
-            doSetProperty("secure", secure);
-            return this;
-        }
-        /**
-         * Define if we are connecting to a secured Infinispan instance.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param secure the value to set
-         * @return the dsl builder
-         */
-        default InfinispanRemoteEndpointConsumerBuilder secure(String secure) {
-            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -191,6 +162,36 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          */
         default InfinispanRemoteEndpointConsumerBuilder saslMechanism(String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanRemoteEndpointConsumerBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanRemoteEndpointConsumerBuilder secure(String secure) {
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -552,7 +553,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         }
 
         /**
-         * Specifies the host of the cache on Infinispan instance.
+         * Specifies the host of the cache on Infinispan instance. Multiple
+         * hosts can be separated by semicolon.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -593,36 +595,6 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          */
         default InfinispanRemoteEndpointProducerBuilder queryBuilder(String queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
-            return this;
-        }
-        /**
-         * Define if we are connecting to a secured Infinispan instance.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param secure the value to set
-         * @return the dsl builder
-         */
-        default InfinispanRemoteEndpointProducerBuilder secure(boolean secure) {
-            doSetProperty("secure", secure);
-            return this;
-        }
-        /**
-         * Define if we are connecting to a secured Infinispan instance.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param secure the value to set
-         * @return the dsl builder
-         */
-        default InfinispanRemoteEndpointProducerBuilder secure(String secure) {
-            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -795,6 +767,36 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          */
         default InfinispanRemoteEndpointProducerBuilder saslMechanism(String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanRemoteEndpointProducerBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanRemoteEndpointProducerBuilder secure(String secure) {
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -1085,7 +1087,8 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         }
 
         /**
-         * Specifies the host of the cache on Infinispan instance.
+         * Specifies the host of the cache on Infinispan instance. Multiple
+         * hosts can be separated by semicolon.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1129,36 +1132,6 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if we are connecting to a secured Infinispan instance.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param secure the value to set
-         * @return the dsl builder
-         */
-        default InfinispanRemoteEndpointBuilder secure(boolean secure) {
-            doSetProperty("secure", secure);
-            return this;
-        }
-        /**
-         * Define if we are connecting to a secured Infinispan instance.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param secure the value to set
-         * @return the dsl builder
-         */
-        default InfinispanRemoteEndpointBuilder secure(String secure) {
-            doSetProperty("secure", secure);
-            return this;
-        }
-        /**
          * Define the password to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1184,6 +1157,36 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          */
         default InfinispanRemoteEndpointBuilder saslMechanism(String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanRemoteEndpointBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanRemoteEndpointBuilder secure(String secure) {
+            doSetProperty("secure", secure);
             return this;
         }
         /**

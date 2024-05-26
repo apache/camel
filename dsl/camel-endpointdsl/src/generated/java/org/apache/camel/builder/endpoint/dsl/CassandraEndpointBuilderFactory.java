@@ -59,38 +59,6 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * Consistency level to use.
-         * 
-         * The option is a:
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param consistencyLevel the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder consistencyLevel(com.datastax.oss.driver.api.core.DefaultConsistencyLevel consistencyLevel) {
-            doSetProperty("consistencyLevel", consistencyLevel);
-            return this;
-        }
-        /**
-         * Consistency level to use.
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param consistencyLevel the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder consistencyLevel(String consistencyLevel) {
-            doSetProperty("consistencyLevel", consistencyLevel);
-            return this;
-        }
-        /**
          * CQL query to perform. Can be overridden with the message header with
          * key CamelCqlQuery.
          * 
@@ -121,55 +89,6 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a specific comma separated list of Extra Type codecs. Possible
-         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
-         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
-         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
-         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
-         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
-         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
-         * LOCAL_TIMESTAMP_UTC.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param extraTypeCodecs the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder extraTypeCodecs(String extraTypeCodecs) {
-            doSetProperty("extraTypeCodecs", extraTypeCodecs);
-            return this;
-        }
-        /**
-         * To use a specific LoadBalancingPolicyClass.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param loadBalancingPolicyClass the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder loadBalancingPolicyClass(String loadBalancingPolicyClass) {
-            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
-            return this;
-        }
-        /**
-         * Password for session authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Whether to use PreparedStatements or regular Statements.
          * 
          * The option is a: <code>boolean</code> type.
@@ -197,82 +116,6 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder prepareStatements(String prepareStatements) {
             doSetProperty("prepareStatements", prepareStatements);
-            return this;
-        }
-        /**
-         * To use a custom class that implements logic for converting ResultSet
-         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * 
-         * Group: common
-         * 
-         * @param resultSetConversionStrategy the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder resultSetConversionStrategy(org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
-            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
-            return this;
-        }
-        /**
-         * To use a custom class that implements logic for converting ResultSet
-         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * 
-         * Group: common
-         * 
-         * @param resultSetConversionStrategy the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder resultSetConversionStrategy(String resultSetConversionStrategy) {
-            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
-            return this;
-        }
-        /**
-         * To use the Session instance (you would normally not use this option).
-         * 
-         * The option is a:
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
-         * 
-         * Group: common
-         * 
-         * @param session the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder session(com.datastax.oss.driver.api.core.CqlSession session) {
-            doSetProperty("session", session);
-            return this;
-        }
-        /**
-         * To use the Session instance (you would normally not use this option).
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
-         * 
-         * Group: common
-         * 
-         * @param session the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder session(String session) {
-            doSetProperty("session", session);
-            return this;
-        }
-        /**
-         * Username for session authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointConsumerBuilder username(String username) {
-            doSetProperty("username", username);
             return this;
         }
         /**
@@ -762,6 +605,34 @@ public interface CassandraEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * Password for session authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default CassandraEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username for session authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default CassandraEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     /**
@@ -926,6 +797,103 @@ public interface CassandraEndpointBuilderFactory {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
+        /**
+         * To use a specific comma separated list of Extra Type codecs. Possible
+         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
+         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
+         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
+         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+         * LOCAL_TIMESTAMP_UTC.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param extraTypeCodecs the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder extraTypeCodecs(String extraTypeCodecs) {
+            doSetProperty("extraTypeCodecs", extraTypeCodecs);
+            return this;
+        }
+        /**
+         * To use a specific LoadBalancingPolicyClass.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param loadBalancingPolicyClass the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder loadBalancingPolicyClass(String loadBalancingPolicyClass) {
+            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
+            return this;
+        }
+        /**
+         * To use a custom class that implements logic for converting ResultSet
+         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder resultSetConversionStrategy(org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            return this;
+        }
+        /**
+         * To use a custom class that implements logic for converting ResultSet
+         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder resultSetConversionStrategy(String resultSetConversionStrategy) {
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            return this;
+        }
+        /**
+         * To use the Session instance (you would normally not use this option).
+         * 
+         * The option is a:
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder session(com.datastax.oss.driver.api.core.CqlSession session) {
+            doSetProperty("session", session);
+            return this;
+        }
+        /**
+         * To use the Session instance (you would normally not use this option).
+         * 
+         * The option will be converted to a
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder session(String session) {
+            doSetProperty("session", session);
+            return this;
+        }
     }
 
     /**
@@ -950,38 +918,6 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder clusterName(String clusterName) {
             doSetProperty("clusterName", clusterName);
-            return this;
-        }
-        /**
-         * Consistency level to use.
-         * 
-         * The option is a:
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param consistencyLevel the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder consistencyLevel(com.datastax.oss.driver.api.core.DefaultConsistencyLevel consistencyLevel) {
-            doSetProperty("consistencyLevel", consistencyLevel);
-            return this;
-        }
-        /**
-         * Consistency level to use.
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param consistencyLevel the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder consistencyLevel(String consistencyLevel) {
-            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -1015,55 +951,6 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a specific comma separated list of Extra Type codecs. Possible
-         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
-         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
-         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
-         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
-         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
-         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
-         * LOCAL_TIMESTAMP_UTC.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param extraTypeCodecs the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder extraTypeCodecs(String extraTypeCodecs) {
-            doSetProperty("extraTypeCodecs", extraTypeCodecs);
-            return this;
-        }
-        /**
-         * To use a specific LoadBalancingPolicyClass.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param loadBalancingPolicyClass the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder loadBalancingPolicyClass(String loadBalancingPolicyClass) {
-            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
-            return this;
-        }
-        /**
-         * Password for session authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Whether to use PreparedStatements or regular Statements.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1094,65 +981,17 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom class that implements logic for converting ResultSet
-         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * Password for session authentication.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          * 
-         * @param resultSetConversionStrategy the value to set
+         * @param password the value to set
          * @return the dsl builder
          */
-        default CassandraEndpointProducerBuilder resultSetConversionStrategy(org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
-            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
-            return this;
-        }
-        /**
-         * To use a custom class that implements logic for converting ResultSet
-         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * 
-         * Group: common
-         * 
-         * @param resultSetConversionStrategy the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder resultSetConversionStrategy(String resultSetConversionStrategy) {
-            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
-            return this;
-        }
-        /**
-         * To use the Session instance (you would normally not use this option).
-         * 
-         * The option is a:
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
-         * 
-         * Group: common
-         * 
-         * @param session the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder session(com.datastax.oss.driver.api.core.CqlSession session) {
-            doSetProperty("session", session);
-            return this;
-        }
-        /**
-         * To use the Session instance (you would normally not use this option).
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
-         * 
-         * Group: common
-         * 
-         * @param session the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointProducerBuilder session(String session) {
-            doSetProperty("session", session);
+        default CassandraEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1160,7 +999,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param username the value to set
          * @return the dsl builder
@@ -1225,6 +1064,103 @@ public interface CassandraEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To use a specific comma separated list of Extra Type codecs. Possible
+         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
+         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
+         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
+         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+         * LOCAL_TIMESTAMP_UTC.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param extraTypeCodecs the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder extraTypeCodecs(String extraTypeCodecs) {
+            doSetProperty("extraTypeCodecs", extraTypeCodecs);
+            return this;
+        }
+        /**
+         * To use a specific LoadBalancingPolicyClass.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param loadBalancingPolicyClass the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder loadBalancingPolicyClass(String loadBalancingPolicyClass) {
+            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
+            return this;
+        }
+        /**
+         * To use a custom class that implements logic for converting ResultSet
+         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder resultSetConversionStrategy(org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            return this;
+        }
+        /**
+         * To use a custom class that implements logic for converting ResultSet
+         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder resultSetConversionStrategy(String resultSetConversionStrategy) {
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            return this;
+        }
+        /**
+         * To use the Session instance (you would normally not use this option).
+         * 
+         * The option is a:
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder session(com.datastax.oss.driver.api.core.CqlSession session) {
+            doSetProperty("session", session);
+            return this;
+        }
+        /**
+         * To use the Session instance (you would normally not use this option).
+         * 
+         * The option will be converted to a
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder session(String session) {
+            doSetProperty("session", session);
+            return this;
+        }
     }
 
     /**
@@ -1250,38 +1186,6 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder clusterName(String clusterName) {
             doSetProperty("clusterName", clusterName);
-            return this;
-        }
-        /**
-         * Consistency level to use.
-         * 
-         * The option is a:
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param consistencyLevel the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder consistencyLevel(com.datastax.oss.driver.api.core.DefaultConsistencyLevel consistencyLevel) {
-            doSetProperty("consistencyLevel", consistencyLevel);
-            return this;
-        }
-        /**
-         * Consistency level to use.
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param consistencyLevel the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder consistencyLevel(String consistencyLevel) {
-            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -1315,55 +1219,6 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a specific comma separated list of Extra Type codecs. Possible
-         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
-         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
-         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
-         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
-         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
-         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
-         * LOCAL_TIMESTAMP_UTC.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param extraTypeCodecs the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder extraTypeCodecs(String extraTypeCodecs) {
-            doSetProperty("extraTypeCodecs", extraTypeCodecs);
-            return this;
-        }
-        /**
-         * To use a specific LoadBalancingPolicyClass.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param loadBalancingPolicyClass the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder loadBalancingPolicyClass(String loadBalancingPolicyClass) {
-            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
-            return this;
-        }
-        /**
-         * Password for session authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Whether to use PreparedStatements or regular Statements.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1394,65 +1249,17 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom class that implements logic for converting ResultSet
-         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * Password for session authentication.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          * 
-         * @param resultSetConversionStrategy the value to set
+         * @param password the value to set
          * @return the dsl builder
          */
-        default CassandraEndpointBuilder resultSetConversionStrategy(org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
-            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
-            return this;
-        }
-        /**
-         * To use a custom class that implements logic for converting ResultSet
-         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * 
-         * Group: common
-         * 
-         * @param resultSetConversionStrategy the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder resultSetConversionStrategy(String resultSetConversionStrategy) {
-            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
-            return this;
-        }
-        /**
-         * To use the Session instance (you would normally not use this option).
-         * 
-         * The option is a:
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
-         * 
-         * Group: common
-         * 
-         * @param session the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder session(com.datastax.oss.driver.api.core.CqlSession session) {
-            doSetProperty("session", session);
-            return this;
-        }
-        /**
-         * To use the Session instance (you would normally not use this option).
-         * 
-         * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
-         * 
-         * Group: common
-         * 
-         * @param session the value to set
-         * @return the dsl builder
-         */
-        default CassandraEndpointBuilder session(String session) {
-            doSetProperty("session", session);
+        default CassandraEndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1460,7 +1267,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param username the value to set
          * @return the dsl builder
@@ -1482,6 +1289,103 @@ public interface CassandraEndpointBuilderFactory {
             return (CassandraEndpointBuilder) this;
         }
 
+        /**
+         * To use a specific comma separated list of Extra Type codecs. Possible
+         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
+         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
+         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
+         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+         * LOCAL_TIMESTAMP_UTC.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param extraTypeCodecs the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder extraTypeCodecs(String extraTypeCodecs) {
+            doSetProperty("extraTypeCodecs", extraTypeCodecs);
+            return this;
+        }
+        /**
+         * To use a specific LoadBalancingPolicyClass.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param loadBalancingPolicyClass the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder loadBalancingPolicyClass(String loadBalancingPolicyClass) {
+            doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
+            return this;
+        }
+        /**
+         * To use a custom class that implements logic for converting ResultSet
+         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder resultSetConversionStrategy(org.apache.camel.component.cassandra.ResultSetConversionStrategy resultSetConversionStrategy) {
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            return this;
+        }
+        /**
+         * To use a custom class that implements logic for converting ResultSet
+         * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder resultSetConversionStrategy(String resultSetConversionStrategy) {
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            return this;
+        }
+        /**
+         * To use the Session instance (you would normally not use this option).
+         * 
+         * The option is a:
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder session(com.datastax.oss.driver.api.core.CqlSession session) {
+            doSetProperty("session", session);
+            return this;
+        }
+        /**
+         * To use the Session instance (you would normally not use this option).
+         * 
+         * The option will be converted to a
+         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder session(String session) {
+            doSetProperty("session", session);
+            return this;
+        }
     }
 
     public interface CassandraBuilders {

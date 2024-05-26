@@ -98,13 +98,6 @@ public class CqlUriDsl(
   }
 
   /**
-   * Consistency level to use
-   */
-  public fun consistencyLevel(consistencyLevel: String) {
-    it.property("consistencyLevel", consistencyLevel)
-  }
-
-  /**
    * CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
    */
   public fun cql(cql: String) {
@@ -119,31 +112,6 @@ public class CqlUriDsl(
   }
 
   /**
-   * To use a specific comma separated list of Extra Type codecs. Possible values are:
-   * BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY, SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY,
-   * LONG_LIST_TO_ARRAY, FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
-   * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC, ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
-   * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and LOCAL_TIMESTAMP_UTC
-   */
-  public fun extraTypeCodecs(extraTypeCodecs: String) {
-    it.property("extraTypeCodecs", extraTypeCodecs)
-  }
-
-  /**
-   * To use a specific LoadBalancingPolicyClass
-   */
-  public fun loadBalancingPolicyClass(loadBalancingPolicyClass: String) {
-    it.property("loadBalancingPolicyClass", loadBalancingPolicyClass)
-  }
-
-  /**
-   * Password for session authentication
-   */
-  public fun password(password: String) {
-    it.property("password", password)
-  }
-
-  /**
    * Whether to use PreparedStatements or regular Statements
    */
   public fun prepareStatements(prepareStatements: String) {
@@ -155,28 +123,6 @@ public class CqlUriDsl(
    */
   public fun prepareStatements(prepareStatements: Boolean) {
     it.property("prepareStatements", prepareStatements.toString())
-  }
-
-  /**
-   * To use a custom class that implements logic for converting ResultSet into message body ALL,
-   * ONE, LIMIT_10, LIMIT_100...
-   */
-  public fun resultSetConversionStrategy(resultSetConversionStrategy: String) {
-    it.property("resultSetConversionStrategy", resultSetConversionStrategy)
-  }
-
-  /**
-   * To use the Session instance (you would normally not use this option)
-   */
-  public fun session(session: String) {
-    it.property("session", session)
-  }
-
-  /**
-   * Username for session authentication
-   */
-  public fun username(username: String) {
-    it.property("username", username)
   }
 
   /**
@@ -272,6 +218,39 @@ public class CqlUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
+  /**
+   * To use a specific comma separated list of Extra Type codecs. Possible values are:
+   * BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY, SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY,
+   * LONG_LIST_TO_ARRAY, FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
+   * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC, ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
+   * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and LOCAL_TIMESTAMP_UTC
+   */
+  public fun extraTypeCodecs(extraTypeCodecs: String) {
+    it.property("extraTypeCodecs", extraTypeCodecs)
+  }
+
+  /**
+   * To use a specific LoadBalancingPolicyClass
+   */
+  public fun loadBalancingPolicyClass(loadBalancingPolicyClass: String) {
+    it.property("loadBalancingPolicyClass", loadBalancingPolicyClass)
+  }
+
+  /**
+   * To use a custom class that implements logic for converting ResultSet into message body ALL,
+   * ONE, LIMIT_10, LIMIT_100...
+   */
+  public fun resultSetConversionStrategy(resultSetConversionStrategy: String) {
+    it.property("resultSetConversionStrategy", resultSetConversionStrategy)
+  }
+
+  /**
+   * To use the Session instance (you would normally not use this option)
+   */
+  public fun session(session: String) {
+    it.property("session", session)
   }
 
   /**
@@ -453,5 +432,19 @@ public class CqlUriDsl(
    */
   public fun useFixedDelay(useFixedDelay: Boolean) {
     it.property("useFixedDelay", useFixedDelay.toString())
+  }
+
+  /**
+   * Password for session authentication
+   */
+  public fun password(password: String) {
+    it.property("password", password)
+  }
+
+  /**
+   * Username for session authentication
+   */
+  public fun username(username: String) {
+    it.property("username", username)
   }
 }
