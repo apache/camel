@@ -28,7 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mongodb.gridfs.GridFsConstants;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_FILENAME;
@@ -36,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class GridFsConsumerIT extends AbstractMongoDbITSupport {
 
     @Override

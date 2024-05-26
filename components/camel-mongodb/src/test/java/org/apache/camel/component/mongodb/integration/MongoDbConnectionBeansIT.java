@@ -21,13 +21,11 @@ import com.mongodb.client.MongoClients;
 import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.component.mongodb.MongoDbEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class MongoDbConnectionBeansIT extends AbstractMongoDbITSupport {
     @Test
     public void checkConnectionFromProperties() {
