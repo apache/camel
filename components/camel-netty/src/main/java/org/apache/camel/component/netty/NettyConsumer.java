@@ -40,6 +40,12 @@ public class NettyConsumer extends DefaultConsumer {
     }
 
     @Override
+    public boolean isHostedService() {
+        // we are hosted if not in client mode
+        return !configuration.isClientMode();
+    }
+
+    @Override
     public NettyEndpoint getEndpoint() {
         return (NettyEndpoint) super.getEndpoint();
     }

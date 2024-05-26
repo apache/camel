@@ -39,6 +39,11 @@ public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
         super(endpoint, processor);
     }
 
+    @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
     protected Server createServer() {
         CxfRsEndpoint endpoint = (CxfRsEndpoint) getEndpoint();
         CxfRsInvoker cxfRsInvoker = new CxfRsInvoker(endpoint, this);
