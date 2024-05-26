@@ -33,12 +33,12 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "elasticsearch-rest";
+        return "elasticsearch";
     }
 
     @Override
     public String getComponentClassName() {
-        return "org.apache.camel.component.elasticsearch.ElasticsearchComponent";
+        return "org.apache.camel.component.es.ElasticsearchComponent";
     }
 
     @Override

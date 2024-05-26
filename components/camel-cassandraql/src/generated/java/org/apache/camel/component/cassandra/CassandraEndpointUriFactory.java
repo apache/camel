@@ -23,14 +23,13 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(34);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("beanRef");
         props.add("bridgeErrorHandler");
         props.add("clusterName");
-        props.add("consistencyLevel");
         props.add("cql");
         props.add("datacenter");
         props.add("delay");
@@ -60,7 +59,10 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);
         prefixes.add("scheduler.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
