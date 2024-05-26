@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -105,14 +106,38 @@ public class KinesisProducerIT extends CamelTestSupport {
             exchange.getIn().setBody("Kinesis Event 2.");
         });
 
+        template.send("direct:start", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "partition-1");
+            exchange.getIn().setBody("Kinesis Batch Event 3.");
+            exchange.setProperty(Exchange.BATCH_COMPLETE, false);
+        });
+
+        template.send("direct:start", ExchangePattern.InOut, exchange -> {
+            exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "partition-1");
+            exchange.getIn().setBody("Kinesis Batch Event 4.");
+            exchange.setProperty(Exchange.BATCH_COMPLETE, true);
+        });
+
+        // make sure that previous batch was flushed and won't be sent again
+        template.send("direct:start", ExchangePattern.InOut, exchange -> {
+            exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "partition-1");
+            exchange.getIn().setBody("Kinesis Event 5.");
+        });
+
         List<Record> records;
         Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(2, consumeMessages()));
+                .untilAsserted(() -> assertEquals(5, consumeMessages()));
 
         assertEquals("Kinesis Event 1.", recordList.get(0).data().asString(StandardCharsets.UTF_8));
         assertEquals("partition-1", recordList.get(0).partitionKey());
         assertEquals("Kinesis Event 2.", recordList.get(1).data().asString(StandardCharsets.UTF_8));
         assertEquals("partition-1", recordList.get(1).partitionKey());
+        assertEquals("Kinesis Batch Event 3.", recordList.get(2).data().asString(StandardCharsets.UTF_8));
+        assertEquals("partition-1", recordList.get(2).partitionKey());
+        assertEquals("Kinesis Batch Event 4.", recordList.get(3).data().asString(StandardCharsets.UTF_8));
+        assertEquals("partition-1", recordList.get(3).partitionKey());
+        assertEquals("Kinesis Event 5.", recordList.get(4).data().asString(StandardCharsets.UTF_8));
+        assertEquals("partition-1", recordList.get(4).partitionKey());
     }
 
     @Override
