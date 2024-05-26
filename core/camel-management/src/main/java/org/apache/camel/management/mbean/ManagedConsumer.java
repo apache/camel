@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
+import org.apache.camel.spi.HostedService;
 
 @ManagedResource(description = "Managed Consumer")
 public class ManagedConsumer extends ManagedService implements ManagedConsumerMBean {
@@ -48,4 +49,11 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
         }
     }
 
+    @Override
+    public boolean isHostedService() {
+        if (consumer instanceof HostedService hs) {
+            return hs.isHostedService();
+        }
+        return false;
+    }
 }

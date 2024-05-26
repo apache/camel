@@ -108,8 +108,6 @@ public class EndpointDevConsole extends AbstractDevConsole {
             }
             if (e instanceof EndpointLocationAddress raa) {
                 JsonObject ro = new JsonObject();
-                ro.put("hosted", raa.isHostedAddress());
-                ro.put("remote", !raa.isHostedAddress());
                 ro.put("address", raa.getAddress());
                 var d = raa.getAddressMetadata();
                 if (d != null) {

@@ -40,9 +40,6 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Endpoint State")
     String getState();
 
-    @ManagedAttribute(description = "Whether the endpoint location address is hosted or external (only available for some components)")
-    boolean isEndpointLocationHosted();
-
     @ManagedAttribute(description = "Address (such as URL or hostname) this endpoint is connecting (only available for some components)")
     String getEndpointLocationAddress();
 

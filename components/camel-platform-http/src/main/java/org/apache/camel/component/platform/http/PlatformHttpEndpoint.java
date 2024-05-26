@@ -98,11 +98,6 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     @Override
-    public boolean isHostedAddress() {
-        return true;
-    }
-
-    @Override
     public String getAddress() {
         String server = "http://0.0.0.0";
         int port = getOrCreateEngine().getServerPort();

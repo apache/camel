@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.spi;
 
-import org.apache.camel.api.management.ManagedAttribute;
+/**
+ * To use for identifying {@link org.apache.camel.Consumer} which can host a service,
+ * such as a TCP network server, or an embedded HTTP server.
+ */
+public interface HostedService {
 
-public interface ManagedConsumerMBean extends ManagedServiceMBean {
-
-    @ManagedAttribute(description = "Endpoint URI", mask = true)
-    String getEndpointUri();
-
-    @ManagedAttribute(description = "Current number of inflight Exchanges")
-    Integer getInflightExchanges();
-
-    @ManagedAttribute(description = "Whether this consumer hosts a service such as acting as a HTTP server (only available for some components)")
+    /**
+     * Is this service hosted (in this Camel application).
+     */
     boolean isHostedService();
-
 }

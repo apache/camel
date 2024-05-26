@@ -36,6 +36,11 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     }
 
     @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
+    @Override
     public PlatformHttpEndpoint getEndpoint() {
         return (PlatformHttpEndpoint) super.getEndpoint();
     }

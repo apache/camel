@@ -28,13 +28,6 @@ import java.util.Map;
 public interface EndpointLocationAddress {
 
     /**
-     * Is this service address hosted (in this Camel application) or external such as on a remote network connection.
-     */
-    default boolean isHostedAddress() {
-        return false;
-    }
-
-    /**
      * Gets the remote address such as URL or hostname
      *
      * @return the address or null if no address can be determined.

@@ -81,14 +81,6 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     }
 
     @Override
-    public boolean isEndpointLocationHosted() {
-        if (endpoint instanceof EndpointLocationAddress raa) {
-            return raa.isHostedAddress();
-        }
-        return false;
-    }
-
-    @Override
     public String getEndpointLocationAddress() {
         if (endpoint instanceof EndpointLocationAddress raa) {
             return raa.getAddress();
