@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class AntPathMatcherFileFilter implements FileFilter {
     private static final Logger LOG = LoggerFactory.getLogger(AntPathMatcherFileFilter.class);
 
-    private AntPathMatcher matcher = new AntPathMatcher();
+    private final AntPathMatcher matcher = new AntPathMatcher();
     private String[] excludes;
     private String[] includes;
     private boolean caseSensitive = true;

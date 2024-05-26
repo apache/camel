@@ -49,7 +49,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
     private static final Logger LOG = LoggerFactory.getLogger(FileConsumer.class);
     private ResumeStrategy resumeStrategy;
-    private String endpointPath;
+    private final String endpointPath;
     private Set<String> extendedAttributes;
 
     public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations,

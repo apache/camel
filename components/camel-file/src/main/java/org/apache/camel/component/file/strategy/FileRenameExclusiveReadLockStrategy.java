@@ -35,7 +35,7 @@ import org.apache.camel.component.file.GenericFileOperations;
  */
 public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclusiveReadLockStrategy<File> {
 
-    private MarkerFileExclusiveReadLockStrategy marker = new MarkerFileExclusiveReadLockStrategy();
+    private final MarkerFileExclusiveReadLockStrategy marker = new MarkerFileExclusiveReadLockStrategy();
     private boolean markerFile = true;
 
     @Override
