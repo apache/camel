@@ -35,6 +35,9 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         disableConcurrentBuilds()
+
+        // This is required if you want to clean before build
+        skipDefaultCheckout(true)
     }
 
     parameters {
@@ -97,7 +100,8 @@ pipeline {
                             expression { params.CLEAN }
                         }
                         steps {
-                            sh 'git clean -fdx'
+                            cleanWs()
+                            checkout scm
                         }
                     }
 
@@ -162,8 +166,6 @@ pipeline {
                             body: '${DEFAULT_CONTENT}',
                             recipientProviders: [[$class: 'DevelopersRecipientProvider']]
                         )
-
-                        cleanWs()
                     }
                 }
             }
