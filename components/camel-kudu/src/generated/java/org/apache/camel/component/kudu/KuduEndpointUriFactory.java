@@ -46,8 +46,8 @@ public class KuduEndpointUriFactory extends org.apache.camel.support.component.E
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "host", null, false, copy);
-        uri = buildPathParameter(syntax, uri, "port", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "host", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "port", null, true, copy);
         uri = buildPathParameter(syntax, uri, "tableName", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;

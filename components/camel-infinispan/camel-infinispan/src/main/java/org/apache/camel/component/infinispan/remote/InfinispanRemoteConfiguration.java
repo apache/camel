@@ -32,7 +32,7 @@ import org.infinispan.client.hotrod.configuration.Configuration;
 public class InfinispanRemoteConfiguration extends InfinispanConfiguration implements Cloneable {
     @UriParam
     private String hosts;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common,security", defaultValue = "false")
     private boolean secure;
     @UriParam(label = "common,security")
     private String username;
@@ -82,7 +82,7 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
     }
 
     /**
-     * Specifies the host of the cache on Infinispan instance
+     * Specifies the host of the cache on Infinispan instance. Multiple hosts can be separated by semicolon.
      */
     public String getHosts() {
         return hosts;
