@@ -62,7 +62,6 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
         String cluster = stripSchemeAndOptions(endpoint);
         if (cluster != null) {
             span.setTag(ELASTICSEARCH_CLUSTER_TAG, cluster);
-            span.setTag(TagConstants.SERVER_ADDRESS, cluster);
         }
     }
 

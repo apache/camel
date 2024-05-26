@@ -20,6 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointLocationAddress;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -31,7 +32,7 @@ import org.elasticsearch.client.RestClient;
 @UriEndpoint(firstVersion = "3.19.0", scheme = "elasticsearch", title = "Elasticsearch",
              syntax = "elasticsearch:clusterName", producerOnly = true,
              category = { Category.SEARCH, Category.MONITORING }, headersClass = ElasticsearchConstants.class)
-public class ElasticsearchEndpoint extends DefaultEndpoint {
+public class ElasticsearchEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
 
     @UriParam
     private final ElasticsearchConfiguration configuration;
@@ -47,6 +48,11 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     public ElasticsearchConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public String getAddress() {
+        return getConfiguration().getHostAddresses();
     }
 
     @Override
