@@ -17,12 +17,19 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,17 +38,45 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * exception When the allowNullBody option is set to false it will throw an exception of "Cannot write null body to
  * file."
  */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
+    @Order(1)
     @Test
+    @DisplayName("Tests that an empty file named allowNullBody.txt will be created")
     public void testAllowNullBodyTrue() {
         template.sendBody(fileUri("?allowNullBody=true&fileName=allowNullBody.txt"), null);
-        assertFileExists(testFile("allowNullBody.txt"));
+
+        final Path path = testFile("allowNullBody.txt");
+        assertFileExists(path);
+
+        final long size = path.toFile().length();
+        assertEquals(0, size);
     }
 
+    @Order(2)
     @Test
-    public void testAllowNullBodyFalse() {
+    @DisplayName("Tests that a non-empty file named allowNullBody.txt will be created and then truncated")
+    public void testAllowNullBodyTrueTruncate() {
+        template.sendBody(fileUri("?allowNullBody=true&fileName=allowNullBody.txt"), "Hello");
 
+        final Path path = testFile("allowNullBody.txt");
+        assertFileExists(path);
+
+        final long sizeBeforeTruncate = path.toFile().length();
+        assertNotEquals(0, sizeBeforeTruncate);
+
+        template.sendBody(fileUri("?allowNullBody=true&fileName=allowNullBody.txt"), null);
+        assertFileExists(path);
+
+        final long sizeAfterTruncate = path.toFile().length();
+        assertEquals(0, sizeAfterTruncate);
+    }
+
+    @Order(3)
+    @Test
+    @DisplayName("Tests that an exception will be thrown if allowNullBody is absent and a null body is sent")
+    public void testAllowNullBodyFalse() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody(fileUri("?fileName=allowNullBody.txt"), null),
                 "Should have thrown a GenericFileOperationFailedException");
