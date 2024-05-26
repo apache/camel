@@ -29,7 +29,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -42,25 +41,27 @@ public class ListAddress extends ProcessWatchCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = {"--sort"}, completionCandidates = PidNameAgeCompletionCandidates.class,
-            description = "Sort by pid, name or total", defaultValue = "pid")
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
+                        description = "Sort by pid, name or total", defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = {"--limit"},
-            description = "Filter addresses by limiting to the given number of rows")
+    @CommandLine.Option(names = { "--limit" },
+                        description = "Filter addresses by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = {"--filter"},
-            description = "Filter addresses")
+    @CommandLine.Option(names = { "--filter" },
+                        description = "Filter addresses")
     String filter;
 
-    @CommandLine.Option(names = {"--filter-direction"},
-            description = "Filter by direction (in or out)")
+    @CommandLine.Option(names = { "--filter-direction" },
+                        description = "Filter by direction (in or out)")
     String filterDirection;
 
-    @CommandLine.Option(names = {"--wide-uri"},
-            description = "List endpoint URI in full details")
+    @CommandLine.Option(names = { "--wide-uri" },
+                        description = "List endpoint URI in full details")
     boolean wideUri;
+
+    // TODO: Hosted is on consumer
 
     public ListAddress(CamelJBangMain main) {
         super(main);
@@ -152,7 +153,7 @@ public class ListAddress extends ProcessWatchCommand {
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("DIR").with(this::getDirection),
                 new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("HOSTED").dataAlign(HorizontalAlign.CENTER).with(this::getHosted),
+                // new Column().header("HOSTED").dataAlign(HorizontalAlign.CENTER).with(this::getHosted),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),

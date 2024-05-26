@@ -100,6 +100,7 @@ public class ListConsumer extends ProcessWatchCommand {
                                 row.uri = o.getString("uri");
                                 row.state = o.getString("state");
                                 row.className = o.getString("class");
+                                row.hostedService = o.getBooleanOrDefault("hostedService", false);
                                 row.scheduled = o.getBoolean("scheduled");
                                 row.inflight = o.getInteger("inflight");
                                 row.polling = o.getBoolean("polling");
@@ -266,6 +267,7 @@ public class ListConsumer extends ProcessWatchCommand {
         String uri;
         String state;
         String className;
+        boolean hostedService;
         boolean scheduled;
         int inflight;
         Boolean polling;
