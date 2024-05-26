@@ -74,35 +74,6 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set custom HTTP client for authenticated access.
-         * 
-         * The option is a: <code>okhttp3.OkHttpClient</code> type.
-         * 
-         * Group: common
-         * 
-         * @param customHttpClient the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointConsumerBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
-            doSetProperty("customHttpClient", customHttpClient);
-            return this;
-        }
-        /**
-         * Set custom HTTP client for authenticated access.
-         * 
-         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param customHttpClient the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointConsumerBuilder customHttpClient(String customHttpClient) {
-            doSetProperty("customHttpClient", customHttpClient);
-            return this;
-        }
-        /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -265,65 +236,6 @@ public interface MinioEndpointBuilderFactory {
          */
         default MinioEndpointConsumerBuilder secure(String secure) {
             doSetProperty("secure", secure);
-            return this;
-        }
-        /**
-         * Server-side encryption.
-         * 
-         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryption the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointConsumerBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
-         * Server-side encryption.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryption</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryption the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointConsumerBuilder serverSideEncryption(String serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
-         * Server-side encryption for source object while copy/move objects.
-         * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryptionCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
-            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
-            return this;
-        }
-        /**
-         * Server-side encryption for source object while copy/move objects.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryptionCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(String serverSideEncryptionCustomerKey) {
-            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
         /**
@@ -1500,6 +1412,65 @@ public interface MinioEndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+        /**
+         * Server-side encryption.
+         * 
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointConsumerBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * Server-side encryption.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryption</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointConsumerBuilder serverSideEncryption(String serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * Server-side encryption for source object while copy/move objects.
+         * 
+         * The option is a:
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
+        /**
+         * Server-side encryption for source object while copy/move objects.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(String serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
     }
 
     /**
@@ -1664,6 +1635,35 @@ public interface MinioEndpointBuilderFactory {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
+        /**
+         * Set custom HTTP client for authenticated access.
+         * 
+         * The option is a: <code>okhttp3.OkHttpClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinioEndpointConsumerBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
+            doSetProperty("customHttpClient", customHttpClient);
+            return this;
+        }
+        /**
+         * Set custom HTTP client for authenticated access.
+         * 
+         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinioEndpointConsumerBuilder customHttpClient(String customHttpClient) {
+            doSetProperty("customHttpClient", customHttpClient);
+            return this;
+        }
     }
 
     /**
@@ -1704,35 +1704,6 @@ public interface MinioEndpointBuilderFactory {
          */
         default MinioEndpointProducerBuilder autoCreateBucket(String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * Set custom HTTP client for authenticated access.
-         * 
-         * The option is a: <code>okhttp3.OkHttpClient</code> type.
-         * 
-         * Group: common
-         * 
-         * @param customHttpClient the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointProducerBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
-            doSetProperty("customHttpClient", customHttpClient);
-            return this;
-        }
-        /**
-         * Set custom HTTP client for authenticated access.
-         * 
-         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param customHttpClient the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointProducerBuilder customHttpClient(String customHttpClient) {
-            doSetProperty("customHttpClient", customHttpClient);
             return this;
         }
         /**
@@ -1901,65 +1872,6 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Server-side encryption.
-         * 
-         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryption the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointProducerBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
-         * Server-side encryption.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryption</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryption the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointProducerBuilder serverSideEncryption(String serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
-         * Server-side encryption for source object while copy/move objects.
-         * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryptionCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
-            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
-            return this;
-        }
-        /**
-         * Server-side encryption for source object while copy/move objects.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryptionCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(String serverSideEncryptionCustomerKey) {
-            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
-            return this;
-        }
-        /**
          * Delete file object after the Minio file has been uploaded.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2108,6 +2020,65 @@ public interface MinioEndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+        /**
+         * Server-side encryption.
+         * 
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointProducerBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * Server-side encryption.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryption</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointProducerBuilder serverSideEncryption(String serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * Server-side encryption for source object while copy/move objects.
+         * 
+         * The option is a:
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
+        /**
+         * Server-side encryption for source object while copy/move objects.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(String serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
     }
 
     /**
@@ -2164,6 +2135,35 @@ public interface MinioEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Set custom HTTP client for authenticated access.
+         * 
+         * The option is a: <code>okhttp3.OkHttpClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinioEndpointProducerBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
+            doSetProperty("customHttpClient", customHttpClient);
+            return this;
+        }
+        /**
+         * Set custom HTTP client for authenticated access.
+         * 
+         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinioEndpointProducerBuilder customHttpClient(String customHttpClient) {
+            doSetProperty("customHttpClient", customHttpClient);
+            return this;
+        }
     }
 
     /**
@@ -2205,35 +2205,6 @@ public interface MinioEndpointBuilderFactory {
          */
         default MinioEndpointBuilder autoCreateBucket(String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * Set custom HTTP client for authenticated access.
-         * 
-         * The option is a: <code>okhttp3.OkHttpClient</code> type.
-         * 
-         * Group: common
-         * 
-         * @param customHttpClient the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
-            doSetProperty("customHttpClient", customHttpClient);
-            return this;
-        }
-        /**
-         * Set custom HTTP client for authenticated access.
-         * 
-         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param customHttpClient the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointBuilder customHttpClient(String customHttpClient) {
-            doSetProperty("customHttpClient", customHttpClient);
             return this;
         }
         /**
@@ -2402,65 +2373,6 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Server-side encryption.
-         * 
-         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryption the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
-         * Server-side encryption.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryption</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryption the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointBuilder serverSideEncryption(String serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
-         * Server-side encryption for source object while copy/move objects.
-         * 
-         * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryptionCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
-            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
-            return this;
-        }
-        /**
-         * Server-side encryption for source object while copy/move objects.
-         * 
-         * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryptionCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default MinioEndpointBuilder serverSideEncryptionCustomerKey(String serverSideEncryptionCustomerKey) {
-            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
-            return this;
-        }
-        /**
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
@@ -2490,6 +2402,65 @@ public interface MinioEndpointBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+        /**
+         * Server-side encryption.
+         * 
+         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * Server-side encryption.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryption</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointBuilder serverSideEncryption(String serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+        /**
+         * Server-side encryption for source object while copy/move objects.
+         * 
+         * The option is a:
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
+        /**
+         * Server-side encryption for source object while copy/move objects.
+         * 
+         * The option will be converted to a
+         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default MinioEndpointBuilder serverSideEncryptionCustomerKey(String serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
     }
 
     /**
@@ -2503,6 +2474,35 @@ public interface MinioEndpointBuilderFactory {
             return (MinioEndpointBuilder) this;
         }
 
+        /**
+         * Set custom HTTP client for authenticated access.
+         * 
+         * The option is a: <code>okhttp3.OkHttpClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinioEndpointBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
+            doSetProperty("customHttpClient", customHttpClient);
+            return this;
+        }
+        /**
+         * Set custom HTTP client for authenticated access.
+         * 
+         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMinioEndpointBuilder customHttpClient(String customHttpClient) {
+            doSetProperty("customHttpClient", customHttpClient);
+            return this;
+        }
     }
 
     public interface MinioBuilders {

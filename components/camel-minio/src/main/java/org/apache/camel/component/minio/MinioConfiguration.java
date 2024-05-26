@@ -43,7 +43,7 @@ public class MinioConfiguration implements Cloneable {
     private boolean secure;
     @UriParam(label = "common")
     private String region;
-    @UriParam(label = "common")
+    @UriParam(label = "advanced")
     private OkHttpClient customHttpClient;
 
     @UriParam(label = "security", secret = true)
@@ -57,9 +57,9 @@ public class MinioConfiguration implements Cloneable {
     private boolean objectLock;
     @UriParam(label = "common")
     private String policy;
-    @UriParam(label = "common")
+    @UriParam(label = "security")
     private ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey;
-    @UriParam(label = "common")
+    @UriParam(label = "security")
     private ServerSideEncryption serverSideEncryption;
     @UriParam(label = "common")
     @Metadata(autowired = true)
@@ -73,19 +73,19 @@ public class MinioConfiguration implements Cloneable {
     private String objectName;
     @UriParam(label = "consumer")
     private String delimiter;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean includeUserMetadata;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean includeVersions;
     @UriParam(label = "consumer")
     private String prefix;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean recursive;
     @UriParam(label = "consumer")
     private String startAfter;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean useVersion1;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean includeFolders;
     @UriParam(label = "consumer")
     private long offset;
@@ -125,7 +125,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "producer",
               enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink,createUploadLink")
     private MinioOperations operation;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     private boolean pojoRequest;
 
     public String getEndpoint() {

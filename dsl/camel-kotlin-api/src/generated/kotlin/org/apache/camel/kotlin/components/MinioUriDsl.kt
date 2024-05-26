@@ -66,13 +66,6 @@ public class MinioUriDsl(
   }
 
   /**
-   * Set custom HTTP client for authenticated access.
-   */
-  public fun customHttpClient(customHttpClient: String) {
-    it.property("customHttpClient", customHttpClient)
-  }
-
-  /**
    * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
    */
   public fun endpoint(endpoint: String) {
@@ -142,20 +135,6 @@ public class MinioUriDsl(
    */
   public fun secure(secure: Boolean) {
     it.property("secure", secure.toString())
-  }
-
-  /**
-   * Server-side encryption.
-   */
-  public fun serverSideEncryption(serverSideEncryption: String) {
-    it.property("serverSideEncryption", serverSideEncryption)
-  }
-
-  /**
-   * Server-side encryption for source object while copy/move objects.
-   */
-  public fun serverSideEncryptionCustomerKey(serverSideEncryptionCustomerKey: String) {
-    it.property("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey)
   }
 
   /**
@@ -611,6 +590,13 @@ public class MinioUriDsl(
   }
 
   /**
+   * Set custom HTTP client for authenticated access.
+   */
+  public fun customHttpClient(customHttpClient: String) {
+    it.property("customHttpClient", customHttpClient)
+  }
+
+  /**
    * The number of subsequent error polls (failed due some error) that should happen before the
    * backoffMultipler should kick-in.
    */
@@ -805,5 +791,19 @@ public class MinioUriDsl(
    */
   public fun secretKey(secretKey: String) {
     it.property("secretKey", secretKey)
+  }
+
+  /**
+   * Server-side encryption.
+   */
+  public fun serverSideEncryption(serverSideEncryption: String) {
+    it.property("serverSideEncryption", serverSideEncryption)
+  }
+
+  /**
+   * Server-side encryption for source object while copy/move objects.
+   */
+  public fun serverSideEncryptionCustomerKey(serverSideEncryptionCustomerKey: String) {
+    it.property("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey)
   }
 }

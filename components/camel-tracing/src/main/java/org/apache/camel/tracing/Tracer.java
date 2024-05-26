@@ -196,8 +196,8 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         }
         if (sd == null) {
             // okay there was no decorator found via component name (scheme), then try FQN
-            if (endpoint instanceof DefaultEndpoint) {
-                Component comp = ((DefaultEndpoint) endpoint).getComponent();
+            if (endpoint instanceof DefaultEndpoint de) {
+                Component comp = de.getComponent();
                 String fqn = comp.getClass().getName();
                 // lookup via FQN
                 sd = DECORATORS.values().stream().filter(d -> fqn.equals(d.getComponentClassName())).findFirst()
@@ -253,7 +253,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     inject(span, injectAdapter);
                     ActiveSpanManager.activate(ese.getExchange(), span);
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Tracing: start client span={}", span);
+                        LOG.trace("Tracing: start client span: {}", span);
                     }
                 } else if (event instanceof CamelEvent.ExchangeSentEvent) {
                     CamelEvent.ExchangeSentEvent ese = (CamelEvent.ExchangeSentEvent) event;
@@ -265,13 +265,13 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     SpanAdapter span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Tracing: stop client span={}", span);
+                            LOG.trace("Tracing: stop client span: {}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         ActiveSpanManager.deactivate(ese.getExchange());
                         finishSpan(span);
                     } else {
-                        LOG.warn("Tracing: could not find managed span for exchange={}", ese.getExchange());
+                        LOG.warn("Tracing: could not find managed span for exchange: {}", ese.getExchange());
                     }
                 } else if (event instanceof CamelEvent.ExchangeAsyncProcessingStartedEvent) {
                     CamelEvent.ExchangeAsyncProcessingStartedEvent eap = (CamelEvent.ExchangeAsyncProcessingStartedEvent) event;
@@ -283,7 +283,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 }
             } catch (Exception t) {
                 // This exception is ignored
-                LOG.warn("Tracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);
             }
         }
 
@@ -313,7 +313,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 }
             } catch (Exception t) {
                 // This exception is ignored
-                LOG.warn("Tracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);
             }
         }
 
@@ -333,11 +333,11 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     finishSpan(span);
                     ActiveSpanManager.deactivate(exchange);
                 } else {
-                    LOG.warn("Tracing: could not find managed span for exchange={}", exchange);
+                    LOG.warn("Tracing: could not find managed span for exchange: {}", exchange);
                 }
             } catch (Exception t) {
                 // This exception is ignored
-                LOG.warn("Tracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);
             }
         }
     }
@@ -355,7 +355,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 }
             } catch (Exception t) {
                 // This exception is ignored
-                LOG.warn("Tracing: Failed to capture tracing data", t);
+                LOG.warn("Tracing: Failed to capture tracing data. This exception is ignored.", t);
             }
             return message;
         }
