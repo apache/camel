@@ -40,6 +40,11 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         getComponent().connectConsumer(this);
         super.doStart();
