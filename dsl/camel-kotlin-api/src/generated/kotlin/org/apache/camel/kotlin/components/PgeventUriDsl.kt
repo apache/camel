@@ -92,13 +92,6 @@ public class PgeventUriDsl(
   }
 
   /**
-   * To connect using the given javax.sql.DataSource instead of using hostname and port.
-   */
-  public fun datasource(datasource: String) {
-    it.property("datasource", datasource)
-  }
-
-  /**
    * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
    * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
    * likes, will now be processed as a message and handled by the routing Error Handler. Important:
@@ -166,6 +159,13 @@ public class PgeventUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
+  /**
+   * To connect using the given javax.sql.DataSource instead of using hostname and port.
+   */
+  public fun datasource(datasource: String) {
+    it.property("datasource", datasource)
   }
 
   /**
