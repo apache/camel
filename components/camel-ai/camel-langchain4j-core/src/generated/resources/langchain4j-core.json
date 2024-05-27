@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "langchain4j-core",
+    "title": "LangChain4j Core",
+    "description": "LangChain4j Core",
+    "deprecated": false,
+    "firstVersion": "4.7.0",
+    "label": "ai",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-langchain4j-core",
+    "version": "4.7.0-SNAPSHOT"
+  }
+}
