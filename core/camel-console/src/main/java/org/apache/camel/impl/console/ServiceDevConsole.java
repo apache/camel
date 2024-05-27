@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,12 +30,13 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "protocol", displayName = "Protocols", description = "Protocols used for network communication with clients")
-public class ProtocolDevConsole extends AbstractDevConsole {
+@DevConsole(name = "service", displayName = "Services", description = "Services used for network communication with clients")
+public class ServiceDevConsole extends AbstractDevConsole {
 
-    public ProtocolDevConsole() {
-        super("camel", "protocol", "Protocols", "Protocols used for network communication with clients");
+    public ServiceDevConsole() {
+        super("camel", "service", "Services", "Services used for network communication with clients");
     }
 
     @Override
@@ -82,8 +84,9 @@ public class ProtocolDevConsole extends AbstractDevConsole {
                     boolean skip
                             = "platform-http".equals(component) || stat.isPresent() && "in".equals(stat.get().getDirection());
                     if (!skip) {
+                        stat = findStats(stats, endpoint.getEndpointUri(), "out");
                         var uri = endpoint.toString();
-                        printLine(sb, component, stat, "in", hosted, protocol, adr, uri);
+                        printLine(sb, component, stat, "out", hosted, protocol, adr, uri);
                     }
                 }
             }
@@ -109,17 +112,86 @@ public class ProtocolDevConsole extends AbstractDevConsole {
         }
         sb.append(String.format("\n    Component: %s", component));
         sb.append(String.format("\n    Direction: %s", dir));
-        sb.append(String.format("\n    Hosted Service: %b", hosted));
-        sb.append(String.format("\n    Usage: %d", total));
+        sb.append(String.format("\n    Hosted: %b", hosted));
         sb.append(String.format("\n    Protocol: %s", protocol));
-        sb.append(String.format("\n    Service: %s", adr));
+        sb.append(String.format("\n    Address: %s", adr));
         sb.append(String.format("\n    Endpoint Uri: %s", uri));
+        sb.append(String.format("\n    Total Messages: %d", total));
     }
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        // TODO:
-        return null;
+        JsonObject root = new JsonObject();
+
+        // runtime registry is optional but if enabled we have additional statistics to use in output
+        List<RuntimeEndpointRegistry.Statistic> stats = null;
+        RuntimeEndpointRegistry runtimeReg = getCamelContext().getRuntimeEndpointRegistry();
+        if (runtimeReg != null) {
+            stats = runtimeReg.getEndpointStatistics();
+        }
+        EndpointRegistry reg = getCamelContext().getEndpointRegistry();
+
+        final List<JsonObject> list = new ArrayList<>();
+        root.put("services", list);
+
+        // find all consumers (IN) direction
+        for (Route route : getCamelContext().getRoutes()) {
+            Consumer consumer = route.getConsumer();
+            Endpoint endpoint = consumer.getEndpoint();
+            if (endpoint instanceof EndpointServiceLocation raa) {
+                String component = endpoint.getComponent().getDefaultName();
+                boolean hosted = false;
+                if (consumer instanceof DefaultConsumer dc) {
+                    hosted = dc.isHostedService();
+                }
+                String adr = raa.getServiceUrl();
+                String protocol = raa.getServiceProtocol();
+                if (adr != null) {
+                    var stat = findStats(stats, endpoint.getEndpointUri(), "in");
+                    var uri = endpoint.toString();
+                    JsonObject jo = new JsonObject();
+                    jo.put("component", component);
+                    jo.put("direction", "in");
+                    jo.put("hosted", hosted);
+                    jo.put("protocol", protocol);
+                    jo.put("address", adr);
+                    jo.put("endpointUri", uri);
+                    stat.ifPresent(s -> jo.put("totalMessages", s.getHits()));
+                    list.add(jo);
+                }
+            }
+        }
+
+        // find all endpoint (OUT) direction
+        for (Endpoint endpoint : reg.getReadOnlyValues()) {
+            if (endpoint instanceof EndpointServiceLocation raa) {
+                String component = endpoint.getComponent().getDefaultName();
+                boolean hosted = false;
+                String adr = raa.getServiceUrl();
+                String protocol = raa.getServiceProtocol();
+                if (adr != null) {
+                    var stat = findStats(stats, endpoint.getEndpointUri(), "in");
+                    // skip IN as already found via consumer (platform-http is only IN)
+                    boolean skip
+                            = "platform-http".equals(component) || stat.isPresent() && "in".equals(stat.get().getDirection());
+                    if (!skip) {
+                        stat = findStats(stats, endpoint.getEndpointUri(), "out");
+                        var uri = endpoint.toString();
+                        JsonObject jo = new JsonObject();
+                        jo.put("component", component);
+                        jo.put("direction", "in");
+                        jo.put("hosted", hosted);
+                        jo.put("protocol", protocol);
+                        jo.put("address", adr);
+                        jo.put("endpointUri", uri);
+                        stat.ifPresent(s -> jo.put("totalMessages", s.getHits()));
+                        list.add(jo);
+                    }
+                }
+            }
+        }
+
+        return root;
     }
 
     private static Optional<RuntimeEndpointRegistry.Statistic> findStats(
