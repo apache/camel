@@ -79,12 +79,10 @@ public class ServiceDevConsole extends AbstractDevConsole {
                 String adr = raa.getServiceUrl();
                 String protocol = raa.getServiceProtocol();
                 if (adr != null) {
-                    var stat = findStats(stats, endpoint.getEndpointUri(), "in");
-                    // skip IN as already found via consumer (platform-http is only IN)
-                    boolean skip
-                            = "platform-http".equals(component) || stat.isPresent() && "in".equals(stat.get().getDirection());
+                    // (platform-http is only IN)
+                    boolean skip = "platform-http".equals(component);
                     if (!skip) {
-                        stat = findStats(stats, endpoint.getEndpointUri(), "out");
+                        var stat = findStats(stats, endpoint.getEndpointUri(), "out");
                         var uri = endpoint.toString();
                         printLine(sb, component, stat, "out", hosted, protocol, adr, uri);
                     }
@@ -174,16 +172,14 @@ public class ServiceDevConsole extends AbstractDevConsole {
                 String adr = raa.getServiceUrl();
                 String protocol = raa.getServiceProtocol();
                 if (adr != null) {
-                    var stat = findStats(stats, endpoint.getEndpointUri(), "in");
-                    // skip IN as already found via consumer (platform-http is only IN)
-                    boolean skip
-                            = "platform-http".equals(component) || stat.isPresent() && "in".equals(stat.get().getDirection());
+                    // (platform-http is only IN)
+                    boolean skip = "platform-http".equals(component);
                     if (!skip) {
-                        stat = findStats(stats, endpoint.getEndpointUri(), "out");
+                        var stat = findStats(stats, endpoint.getEndpointUri(), "out");
                         var uri = endpoint.toString();
                         JsonObject jo = new JsonObject();
                         jo.put("component", component);
-                        jo.put("direction", "in");
+                        jo.put("direction", "out");
                         jo.put("hosted", hosted);
                         jo.put("protocol", protocol);
                         jo.put("address", adr);
