@@ -36,6 +36,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "address", description = "Get usage of Camel service addresses (hosted and external)", sortOptions = false)
+@Deprecated // TODO: protocol
 public class ListAddress extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

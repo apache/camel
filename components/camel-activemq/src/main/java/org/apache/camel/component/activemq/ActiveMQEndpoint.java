@@ -73,6 +73,11 @@ public class ActiveMQEndpoint extends JmsEndpoint implements EndpointLocationAdd
     }
 
     @Override
+    public String getServiceProtocol() {
+        return "jms";
+    }
+
+    @Override
     public Map<String, String> getAddressMetadata() {
         String un = null;
         String cid = null;

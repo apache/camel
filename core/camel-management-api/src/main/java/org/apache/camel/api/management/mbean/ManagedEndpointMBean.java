@@ -40,10 +40,13 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Endpoint State")
     String getState();
 
-    @ManagedAttribute(description = "Address (such as URL or hostname) this endpoint is connecting (only available for some components)")
-    String getEndpointLocationAddress();
+    @ManagedAttribute(description = "Url used for network connecting to service (only available for some components)")
+    String getServiceLocationUrl();
+
+    @ManagedAttribute(description = "Protocol used for service connecting (only available for some components)")
+    String getServiceLocationProtocol();
 
     @ManagedAttribute(description = "Additional metadata this endpoint is used for connecting (only available for some components)")
-    Map<String, String> getEndpointLocationAddressMetadata();
+    Map<String, String> getServiceLocationMetadata();
 
 }

@@ -108,6 +108,11 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     @Override
+    public String getServiceProtocol() {
+        return "http";
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Producer is not supported");
     }

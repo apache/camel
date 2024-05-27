@@ -33,6 +33,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+
+// TODO: protocol
 @Command(name = "service",
          description = "Get services of Camel integrations", sortOptions = false)
 public class ListService extends ProcessWatchCommand {

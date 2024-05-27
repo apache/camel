@@ -24,7 +24,6 @@ import java.util.Optional;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.EndpointLocationAddress;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -105,15 +104,6 @@ public class EndpointDevConsole extends AbstractDevConsole {
                 jo.put("direction", st.getDirection());
                 jo.put("hits", st.getHits());
                 jo.put("routeId", st.getRouteId());
-            }
-            if (e instanceof EndpointLocationAddress raa) {
-                JsonObject ro = new JsonObject();
-                ro.put("address", raa.getAddress());
-                var d = raa.getAddressMetadata();
-                if (d != null) {
-                    ro.putAll(d);
-                }
-                jo.put("location", ro);
             }
             list.add(jo);
         }

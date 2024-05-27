@@ -19,29 +19,37 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * Used for getting information about (hosted or external) service addresses used for connecting to a remote system such
- * as message brokers, databases, or cloud services.
+ * Used for getting information about location to (hosted or external) network services.
+ *
+ * An external service such as message brokers, databases, or cloud services.
  *
  * Hosted services are running inside this Camel application such as with embedded HTTP server for Rest DSL, or TCP
  * networking with netty etc.
+ *
+ * @see org.apache.camel.Endpoint
  */
-public interface EndpointLocationAddress {
+public interface EndpointServiceLocation {
 
     /**
-     * Gets the remote address such as URL or hostname
+     * Gets the remote address such as URL, hostname, or connection-string that are component specific
      *
      * @return the address or null if no address can be determined.
      */
-    String getAddress();
+    String getServiceUrl();
 
     /**
-     * Optional additional metadata that is relevant to the address as key value pairs. Notice that the metadata is not
+     * Get the protocol the service is using such as http, amqp, tcp.
+     */
+    String getServiceProtocol();
+
+    /**
+     * Optional metadata that is relevant to the service as key value pairs. Notice that the metadata is not
      * supposed to contain sensitive security details such as access token, api keys, or passwords. Only share
      * information that can be safely accessed and written to logs.
      *
      * @return optional metadata or null if no data
      */
-    default Map<String, String> getAddressMetadata() {
+    default Map<String, String> getServiceMetadata() {
         return null;
     }
 }
