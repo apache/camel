@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "service",
+    "title": "Services",
+    "description": "Services used for network communication with clients",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ServiceDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.7.0-SNAPSHOT"
+  }
+}
+
