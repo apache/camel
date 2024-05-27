@@ -332,7 +332,7 @@ public abstract class CamelTestSupport
     public void setUp() throws Exception {
         testStartHeader(getClass(), currentTestName);
 
-        ExtensionHelper.hasUnsupported(getClass());
+        unsupportedCheck();
 
         if (isCreateCamelContextPerClass) {
             createCamelContextPerClass();
@@ -411,6 +411,14 @@ public abstract class CamelTestSupport
             throw new RuntimeException(
                     "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
         }
+    }
+
+    /**
+     * Temporary method for the child classes to modify the unsupported check.
+     */
+    @Deprecated(since = "4.7.0")
+    protected void unsupportedCheck() {
+        ExtensionHelper.hasUnsupported(getClass());
     }
 
     @Deprecated(since = "4.7.0")
