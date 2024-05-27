@@ -55,6 +55,11 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         this.configuration = this.endpoint.getConfiguration();
     }
 
+    @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
     /**
      * Invoked by Spring-WS when a {@link WebServiceMessage} is received
      */

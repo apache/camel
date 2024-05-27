@@ -28,6 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -41,7 +42,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio", syntax = "minio:bucketName",
              category = { Category.CLOUD, Category.FILE }, headersClass = MinioConstants.class)
-public class MinioEndpoint extends ScheduledPollEndpoint {
+public class MinioEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);
 
@@ -53,6 +54,16 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     public MinioEndpoint(String uri, Component component, MinioConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getEndpoint();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
     }
 
     @Override

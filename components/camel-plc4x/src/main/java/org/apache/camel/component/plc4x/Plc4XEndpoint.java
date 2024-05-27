@@ -24,11 +24,13 @@ import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.StringHelper;
 import org.apache.plc4x.java.DefaultPlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
@@ -43,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
              syntax = "plc4x:driver", category = Category.IOT)
-public class Plc4XEndpoint extends DefaultEndpoint {
+public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
 
     protected DefaultPlcDriverManager plcDriverManager;
@@ -72,6 +74,16 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
         this.plcDriverManager = new DefaultPlcDriverManager();
         this.uri = endpointUri.replaceFirst("plc4x:/?/?", "");
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return StringHelper.after(uri, ":", uri);
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return StringHelper.before(uri, ":", "plc4x");
     }
 
     public int getPeriod() {

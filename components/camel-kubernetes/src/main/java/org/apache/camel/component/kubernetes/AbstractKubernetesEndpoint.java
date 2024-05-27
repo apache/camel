@@ -19,13 +19,14 @@ package org.apache.camel.component.kubernetes;
 import java.util.concurrent.ExecutorService;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The base kubernetes endpoint allows to work with Kubernetes PaaS.
  */
-public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
+public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private KubernetesConfiguration configuration;
@@ -35,6 +36,20 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
     protected AbstractKubernetesEndpoint(String uri, AbstractKubernetesComponent component, KubernetesConfiguration config) {
         super(uri, component);
         this.configuration = config;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        String answer = configuration.getMasterUrl();
+        if (answer == null || answer.isEmpty() && client != null) {
+            answer = client.getMasterUrl().toString();
+        }
+        return answer;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
     }
 
     public KubernetesConfiguration getConfiguration() {

@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.0.0", scheme = "rss", extendsScheme = "atom", title = "RSS",
              syntax = "rss:feedUri", consumerOnly = true, category = { Category.DOCUMENT }, lenientProperties = true,
              headersClass = RssConstants.class)
-public class RssEndpoint extends FeedEndpoint {
+public class RssEndpoint extends FeedEndpoint implements EndpointServiceLocation {
     protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 
     public RssEndpoint() {
@@ -45,6 +46,16 @@ public class RssEndpoint extends FeedEndpoint {
 
     public RssEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component, feedUri);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return feedUri;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rss";
     }
 
     @Override

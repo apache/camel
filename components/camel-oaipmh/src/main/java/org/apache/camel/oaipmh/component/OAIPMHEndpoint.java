@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.oaipmh.component.model.OAIPMHConstants;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,7 +38,7 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
              category = { Category.SEARCH }, headersClass = OAIPMHConstants.class)
-public class OAIPMHEndpoint extends ScheduledPollEndpoint {
+public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private transient URI url;
 
@@ -79,6 +80,16 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint {
     public OAIPMHEndpoint(String uri, String remaining, OAIPMHComponent component) {
         super(uri, component);
         this.baseUrl = remaining;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return baseUrl;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "oai-phm";
     }
 
     @Override
