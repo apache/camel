@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(architectures = { "s390x" },
-        disabledReason = "This test does not run reliably on s390x")
+              disabledReason = "This test does not run reliably on s390x")
 public class PahoComponentTest extends PahoTestSupport {
 
     @Order(2)
