@@ -64,6 +64,11 @@ public class ThriftConsumer extends DefaultConsumer {
         this.configuration = configuration;
     }
 
+    @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
     public ThriftConfiguration getConfiguration() {
         return configuration;
     }
