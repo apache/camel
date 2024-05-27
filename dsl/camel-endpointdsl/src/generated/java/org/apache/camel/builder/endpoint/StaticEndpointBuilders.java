@@ -14085,7 +14085,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>thrift:host:port/service</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * The Thrift server host name. This is localhost or 0.0.0.0 (if not
      * defined) when being a consumer or remote server host name when using
      * producer.
@@ -14114,7 +14114,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>thrift:host:port/service</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * The Thrift server host name. This is localhost or 0.0.0.0 (if not
      * defined) when being a consumer or remote server host name when using
      * producer.
