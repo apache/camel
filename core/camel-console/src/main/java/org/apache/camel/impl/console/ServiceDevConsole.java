@@ -157,6 +157,10 @@ public class ServiceDevConsole extends AbstractDevConsole {
                     jo.put("address", adr);
                     jo.put("endpointUri", uri);
                     stat.ifPresent(s -> jo.put("totalMessages", s.getHits()));
+                    var map = raa.getServiceMetadata();
+                    if (map != null) {
+                        jo.put("metadata", map);
+                    }
                     list.add(jo);
                 }
             }
@@ -185,6 +189,10 @@ public class ServiceDevConsole extends AbstractDevConsole {
                         jo.put("address", adr);
                         jo.put("endpointUri", uri);
                         stat.ifPresent(s -> jo.put("totalMessages", s.getHits()));
+                        var map = raa.getServiceMetadata();
+                        if (map != null) {
+                            jo.put("metadata", map);
+                        }
                         list.add(jo);
                     }
                 }
