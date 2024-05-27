@@ -23,7 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName",
              category = { Category.NETWORKING, Category.MESSAGING }, headersClass = CometdBinding.class)
-public class CometdEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private CometdComponent component;
 
@@ -92,8 +92,13 @@ public class CometdEndpoint extends DefaultEndpoint implements EndpointLocationA
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return getProtocol() + ":" + host + ":" + getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return getProtocol();
     }
 
     @Override

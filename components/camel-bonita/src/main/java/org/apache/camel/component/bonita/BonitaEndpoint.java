@@ -25,7 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.bonita.exception.BonitaException;
 import org.apache.camel.component.bonita.producer.BonitaStartProducer;
 import org.apache.camel.component.bonita.util.BonitaOperation;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true,
              category = { Category.WORKFLOW })
-public class BonitaEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class BonitaEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private BonitaConfiguration configuration;
@@ -47,12 +47,17 @@ public class BonitaEndpoint extends DefaultEndpoint implements EndpointLocationA
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return configuration.getHostname() + ":" + configuration.getPort();
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        return "rest";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (configuration.getUsername() != null) {
             return Map.of("username", configuration.getUsername());
         }

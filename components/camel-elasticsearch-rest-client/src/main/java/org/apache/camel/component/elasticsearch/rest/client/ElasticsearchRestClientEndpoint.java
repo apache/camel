@@ -20,7 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +36,7 @@ import org.elasticsearch.client.RestClient;
              title = "Elasticsearch Low level Rest Client",
              syntax = "elasticsearch-rest-client:clusterName", producerOnly = true,
              category = { Category.SEARCH })
-public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -93,8 +93,13 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements 
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return getHostAddressesList();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "elasticsearch";
     }
 
     /**

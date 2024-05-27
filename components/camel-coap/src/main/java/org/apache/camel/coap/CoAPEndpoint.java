@@ -37,7 +37,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -76,7 +76,7 @@ import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDE
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri",
              category = { Category.IOT }, headersClass = CoAPConstants.class)
-public class CoAPEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     final static Logger LOGGER = LoggerFactory.getLogger(CoAPEndpoint.class);
     @UriPath
     private URI uri;
@@ -121,9 +121,17 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointLocationAdd
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         if (uri != null) {
             return uri.toString();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        if (uri != null) {
+            return uri.getScheme();
         }
         return null;
     }

@@ -24,7 +24,7 @@ import org.apache.camel.component.jms.JmsBinding;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "1.0.0", extendsScheme = "jms", scheme = "activemq", title = "ActiveMQ 5.x",
              syntax = "activemq:destinationType:destinationName",
              category = { Category.MESSAGING })
-public class ActiveMQEndpoint extends JmsEndpoint implements EndpointLocationAddress {
+public class ActiveMQEndpoint extends JmsEndpoint implements EndpointServiceLocation {
 
     @UriParam(multiValue = true, prefix = "destination.", label = "consumer,advanced")
     private Map<String, String> destinationOptions;

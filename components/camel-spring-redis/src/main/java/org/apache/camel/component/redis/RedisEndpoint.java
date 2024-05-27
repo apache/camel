@@ -20,7 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -31,7 +31,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port",
              category = { Category.CACHE }, headersClass = RedisConstants.class)
-public class RedisEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class RedisEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private final RedisConfiguration configuration;
@@ -62,8 +62,13 @@ public class RedisEndpoint extends DefaultEndpoint implements EndpointLocationAd
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "redis";
     }
 
     @Override

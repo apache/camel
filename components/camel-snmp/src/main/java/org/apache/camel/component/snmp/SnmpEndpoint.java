@@ -23,7 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,7 +40,7 @@ import org.snmp4j.security.SecurityLevel;
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port",
              category = { Category.MONITORING })
-public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointLocationAddress {
+public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     public static final String DEFAULT_COMMUNITY = "public";
     public static final int DEFAULT_SNMP_VERSION = SnmpConstants.version1;
@@ -105,12 +105,17 @@ public class SnmpEndpoint extends DefaultPollingEndpoint implements EndpointLoca
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         if (port != null) {
             return host + ":" + port;
         } else {
             return host;
         }
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "snmp";
     }
 
     @Override

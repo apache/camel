@@ -24,7 +24,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ",
              category = { Category.CLOUD, Category.MESSAGING }, headersClass = IronMQConstants.class)
-public class IronMQEndpoint extends ScheduledPollEndpoint implements EndpointLocationAddress {
+public class IronMQEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
 
@@ -77,8 +77,13 @@ public class IronMQEndpoint extends ScheduledPollEndpoint implements EndpointLoc
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return configuration.getIronMQCloud();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "ironmq";
     }
 
     public Client getClient() {

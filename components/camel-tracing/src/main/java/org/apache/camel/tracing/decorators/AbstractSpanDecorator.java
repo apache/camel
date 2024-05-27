@@ -20,7 +20,7 @@ import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
@@ -109,12 +109,12 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
             span.setTag(TagConstants.URL_QUERY, query);
         }
 
-        if (endpoint instanceof EndpointLocationAddress ela) {
-            String adr = ela.getAddress();
+        if (endpoint instanceof EndpointServiceLocation ela) {
+            String adr = ela.getServiceUrl();
             if (adr != null) {
                 span.setTag(TagConstants.SERVER_ADDRESS, adr);
             }
-            Map map = ela.getAddressMetadata();
+            Map map = ela.getServiceMetadata();
             if (map != null) {
                 String un = (String) map.get("username");
                 if (un != null) {

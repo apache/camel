@@ -21,7 +21,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +36,7 @@ import java.util.Map;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
              category = { Category.DATABASE }, producerOnly = true, headersClass = ArangoDbConstants.class)
-public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "database name")
     @Metadata(required = true)

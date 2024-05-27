@@ -23,7 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,7 +37,7 @@ import org.lightcouch.CouchDbClient;
  */
 @UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database",
              category = { Category.DATABASE }, headersClass = CouchDbConstants.class)
-public class CouchDbEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     public static final String DEFAULT_STYLE = "main_only";
     public static final long DEFAULT_HEARTBEAT = 30000;
@@ -99,12 +99,17 @@ public class CouchDbEndpoint extends DefaultEndpoint implements EndpointLocation
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return getProtocol() + ":" + getHostname() + ":" + getPort();
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        return getProtocol();
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (username != null) {
             return Map.of("username", username);
         }

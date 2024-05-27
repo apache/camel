@@ -23,7 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
              title = "Kudu", syntax = "kudu:host:port/tableName",
              category = { Category.DATABASE, Category.IOT, Category.CLOUD }, producerOnly = true,
              headersClass = KuduConstants.class)
-public class KuduEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class KuduEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);
     private KuduClient kuduClient;
@@ -77,8 +77,13 @@ public class KuduEndpoint extends DefaultEndpoint implements EndpointLocationAdd
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return host + ":" + port;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "kudu";
     }
 
     @Override

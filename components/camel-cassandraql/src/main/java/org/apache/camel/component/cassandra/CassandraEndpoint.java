@@ -35,7 +35,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
              category = { Category.DATABASE, Category.BIGDATA }, headersClass = CassandraConstants.class)
-public class CassandraEndpoint extends ScheduledPollEndpoint implements EndpointLocationAddress {
+public class CassandraEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEndpoint.class);
 
     private volatile CassandraSessionHolder sessionHolder;
@@ -99,7 +99,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         if (hosts != null && port != null) {
             return hosts + ":" + port;
         } else if (hosts != null) {
@@ -109,7 +109,12 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        return "cql";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (username != null) {
             return Map.of("username", username);
         }

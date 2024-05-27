@@ -28,7 +28,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name",
              category = { Category.IOT, Category.MONITORING })
-public class SplunkEndpoint extends ScheduledPollEndpoint implements EndpointLocationAddress {
+public class SplunkEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
@@ -60,12 +60,17 @@ public class SplunkEndpoint extends ScheduledPollEndpoint implements EndpointLoc
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return configuration.getHost() + ":" + configuration.getPort();
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        return "splunk";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (configuration.getUsername() != null) {
             return Map.of("username", configuration.getUsername());
         }

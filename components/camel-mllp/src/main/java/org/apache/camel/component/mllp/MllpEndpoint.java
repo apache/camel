@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 @UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port",
              category = { Category.HEALTH }, generateConfigurer = true,
              headersClass = MllpConstants.class)
-public class MllpEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -82,8 +82,13 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointLocationAdd
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return hostname + ":" + port;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "mllp";
     }
 
     @Override

@@ -20,7 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name",
              category = { Category.MOBILE }, headersClass = AsteriskConstants.class)
-public class AsteriskEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class AsteriskEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     @UriPath(description = "Name of component")
     @Metadata(required = true)
     private String name;

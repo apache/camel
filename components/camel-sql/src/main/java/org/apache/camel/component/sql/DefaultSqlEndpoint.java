@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
@@ -39,7 +39,7 @@ import org.springframework.jdbc.datasource.AbstractDriverBasedDataSource;
 /**
  * Base class for SQL endpoints.
  */
-public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implements EndpointLocationAddress {
+public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
     private JdbcTemplate jdbcTemplate;
 
     @Metadata(autowired = true)
@@ -139,7 +139,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         if (dataSource != null && dataSource instanceof AbstractDriverBasedDataSource ads) {
             return ads.getUrl();
         }
@@ -147,7 +147,12 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        return "jdbc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (dataSource != null && dataSource instanceof AbstractDriverBasedDataSource ads) {
             String u = ads.getUsername();
             if (u != null) {

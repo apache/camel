@@ -32,7 +32,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -44,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty", title = "Netty", syntax = "netty:protocol://host:port",
              category = { Category.NETWORKING }, headersClass = NettyConstants.class)
-public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointLocationAddress {
+public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
     @UriParam
     private NettyConfiguration configuration;
     @UriParam(defaultValue = "false", label = "advanced",
@@ -57,8 +57,13 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, End
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return configuration.getProtocol() + ":" + configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return configuration.getProtocol();
     }
 
     public boolean isSynchronous() {

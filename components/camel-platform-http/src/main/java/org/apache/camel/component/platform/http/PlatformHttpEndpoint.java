@@ -25,7 +25,7 @@ import org.apache.camel.component.platform.http.cookie.CookieConfiguration;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -43,7 +43,7 @@ import org.apache.camel.support.DefaultEndpoint;
         "protocol=http",
 })
 public class PlatformHttpEndpoint extends DefaultEndpoint
-        implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointLocationAddress {
+        implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final String PROXY_PATH = "proxy";
 
@@ -98,7 +98,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         String server = "http://0.0.0.0";
         int port = getOrCreateEngine().getServerPort();
         if (port > 0) {

@@ -23,7 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultMessage;
  */
 @UriEndpoint(firstVersion = "3.20.0", scheme = "rocketmq", syntax = "rocketmq:topicName", title = "RocketMQ",
              category = Category.MESSAGING, headersClass = RocketMQConstants.class)
-public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointLocationAddress {
+public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -74,8 +74,13 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return namesrvAddr;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rocketmq";
     }
 
     @Override

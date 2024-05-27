@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.vertx.common.VertxHelper;
 import org.apache.camel.http.base.HttpHelper;
-import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri",
              category = { Category.HTTP }, producerOnly = true, lenientProperties = true,
              headersClass = VertxHttpConstants.class)
-public class VertxHttpEndpoint extends DefaultEndpoint implements EndpointLocationAddress {
+public class VertxHttpEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private final VertxHttpConfiguration configuration;
@@ -54,11 +54,16 @@ public class VertxHttpEndpoint extends DefaultEndpoint implements EndpointLocati
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         if (configuration != null && configuration.getHttpUri() != null) {
             return configuration.getHttpUri().toString();
         }
         return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "http";
     }
 
     @Override
