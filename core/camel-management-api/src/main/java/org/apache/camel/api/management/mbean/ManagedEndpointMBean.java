@@ -16,9 +16,9 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.api.management.ManagedAttribute;
-
 import java.util.Map;
+
+import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedEndpointMBean {
 

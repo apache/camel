@@ -17,8 +17,8 @@
 package org.apache.camel.spi;
 
 /**
- * To use for identifying {@link org.apache.camel.Consumer} which can host a service,
- * such as a TCP network server, or an embedded HTTP server.
+ * To use for identifying {@link org.apache.camel.Consumer} which can host a service, such as a TCP network server, or
+ * an embedded HTTP server.
  */
 public interface HostedService {
 

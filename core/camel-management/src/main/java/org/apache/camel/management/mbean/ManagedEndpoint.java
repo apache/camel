@@ -24,8 +24,8 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.EndpointLocationAddress;
+import org.apache.camel.spi.ManagementStrategy;
 
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {

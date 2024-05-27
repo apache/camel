@@ -41,7 +41,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A default consumer useful for implementation inheritance.
  */
-public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, RouteIdAware, HealthCheckAware, HostedService {
+public class DefaultConsumer extends ServiceSupport
+        implements Consumer, RouteAware, RouteIdAware, HealthCheckAware, HostedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumer.class);
 

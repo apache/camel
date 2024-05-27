@@ -22,8 +22,8 @@ import java.util.Map;
  * Used for getting information about (hosted or external) service addresses used for connecting to a remote system such
  * as message brokers, databases, or cloud services.
  *
- * Hosted services are running inside this Camel application such as with embedded HTTP server for Rest DSL, or
- * TCP networking with netty etc.
+ * Hosted services are running inside this Camel application such as with embedded HTTP server for Rest DSL, or TCP
+ * networking with netty etc.
  */
 public interface EndpointLocationAddress {
 
@@ -35,10 +35,9 @@ public interface EndpointLocationAddress {
     String getAddress();
 
     /**
-     * Optional additional metadata that is relevant to the address as key value pairs.
-     * Notice that the metadata is not supposed to contain sensitive security details
-     * such as access token, api keys, or passwords. Only share information that can
-     * be safely accessed and written to logs.
+     * Optional additional metadata that is relevant to the address as key value pairs. Notice that the metadata is not
+     * supposed to contain sensitive security details such as access token, api keys, or passwords. Only share
+     * information that can be safely accessed and written to logs.
      *
      * @return optional metadata or null if no data
      */
