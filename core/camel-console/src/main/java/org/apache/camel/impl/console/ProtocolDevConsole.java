@@ -16,19 +16,19 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.console.AbstractDevConsole;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @DevConsole(name = "protocol", displayName = "Protocols", description = "Protocols used for network communication with clients")
 public class ProtocolDevConsole extends AbstractDevConsole {
@@ -79,7 +79,8 @@ public class ProtocolDevConsole extends AbstractDevConsole {
                 if (adr != null) {
                     var stat = findStats(stats, endpoint.getEndpointUri(), "in");
                     // skip IN as already found via consumer (platform-http is only IN)
-                    boolean skip = "platform-http".equals(component) || stat.isPresent() && "in".equals(stat.get().getDirection());
+                    boolean skip
+                            = "platform-http".equals(component) || stat.isPresent() && "in".equals(stat.get().getDirection());
                     if (!skip) {
                         var uri = endpoint.toString();
                         printLine(sb, component, stat, "in", hosted, protocol, adr, uri);
@@ -93,8 +94,9 @@ public class ProtocolDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    private static void printLine(StringBuilder sb, String component, Optional<RuntimeEndpointRegistry.Statistic> stat,
-                                  String dir, boolean hosted, String protocol, String adr, String uri) {
+    private static void printLine(
+            StringBuilder sb, String component, Optional<RuntimeEndpointRegistry.Statistic> stat,
+            String dir, boolean hosted, String protocol, String adr, String uri) {
 
         long total = 0;
         if (stat.isPresent()) {

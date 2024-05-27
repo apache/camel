@@ -43,9 +43,9 @@ public interface EndpointServiceLocation {
     String getServiceProtocol();
 
     /**
-     * Optional metadata that is relevant to the service as key value pairs. Notice that the metadata is not
-     * supposed to contain sensitive security details such as access token, api keys, or passwords. Only share
-     * information that can be safely accessed and written to logs.
+     * Optional metadata that is relevant to the service as key value pairs. Notice that the metadata is not supposed to
+     * contain sensitive security details such as access token, api keys, or passwords. Only share information that can
+     * be safely accessed and written to logs.
      *
      * @return optional metadata or null if no data
      */
