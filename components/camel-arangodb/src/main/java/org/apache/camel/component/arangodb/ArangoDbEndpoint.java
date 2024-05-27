@@ -55,12 +55,17 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return configuration.getHost() + ":" + configuration.getPort();
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        return "http";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (configuration.getUser() != null) {
             return Map.of("username", configuration.getUser());
         }

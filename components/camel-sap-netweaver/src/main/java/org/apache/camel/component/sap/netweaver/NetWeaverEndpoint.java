@@ -59,12 +59,17 @@ public class NetWeaverEndpoint extends DefaultEndpoint implements EndpointServic
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         return url;
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        return "http";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (username != null) {
             return Map.of("username", username);
         }

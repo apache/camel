@@ -91,7 +91,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         if (configuration != null) {
             return configuration.getProtocol() + ":" + configuration.getHost() + ":" + configuration.getPort();
         }
@@ -99,7 +99,15 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public String getServiceProtocol() {
+        if (configuration != null) {
+            return configuration.getProtocol();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
         if (configuration != null && configuration.getUsername() != null) {
             return Map.of("username", configuration.getUsername());
         }

@@ -195,9 +195,17 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         if (httpUri != null) {
             return httpUri.toString();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        if (httpUri != null) {
+            return httpUri.getScheme();
         }
         return null;
     }

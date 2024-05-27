@@ -61,7 +61,7 @@ public class ActiveMQEndpoint extends JmsEndpoint implements EndpointServiceLoca
     }
 
     @Override
-    public String getAddress() {
+    public String getServiceUrl() {
         String url = null;
         if (getConfiguration() instanceof ActiveMQConfiguration acc) {
             url = acc.getBrokerURL();
@@ -78,7 +78,7 @@ public class ActiveMQEndpoint extends JmsEndpoint implements EndpointServiceLoca
     }
 
     @Override
-    public Map<String, String> getAddressMetadata() {
+    public Map<String, String> getServiceMetadata() {
         String un = null;
         String cid = null;
         if (getConfiguration() instanceof ActiveMQConfiguration acc) {
