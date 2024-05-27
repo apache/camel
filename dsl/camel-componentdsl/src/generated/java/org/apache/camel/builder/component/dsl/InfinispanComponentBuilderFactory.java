@@ -68,7 +68,8 @@ public interface InfinispanComponentBuilderFactory {
         }
     
         /**
-         * Specifies the host of the cache on Infinispan instance.
+         * Specifies the host of the cache on Infinispan instance. Multiple
+         * hosts can be separated by semicolon.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -95,23 +96,6 @@ public interface InfinispanComponentBuilderFactory {
          */
         default InfinispanComponentBuilder queryBuilder(org.apache.camel.component.infinispan.InfinispanQueryBuilder queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
-            return this;
-        }
-    
-        
-        /**
-         * Define if we are connecting to a secured Infinispan instance.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param secure the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder secure(boolean secure) {
-            doSetProperty("secure", secure);
             return this;
         }
     
@@ -453,6 +437,23 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanComponentBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+    
         /**
          * Define the security realm to access the infinispan instance.
          * 
@@ -521,7 +522,6 @@ public interface InfinispanComponentBuilderFactory {
             case "configuration": ((InfinispanRemoteComponent) component).setConfiguration((org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration) value); return true;
             case "hosts": getOrCreateConfiguration((InfinispanRemoteComponent) component).setHosts((java.lang.String) value); return true;
             case "queryBuilder": getOrCreateConfiguration((InfinispanRemoteComponent) component).setQueryBuilder((org.apache.camel.component.infinispan.InfinispanQueryBuilder) value); return true;
-            case "secure": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecure((boolean) value); return true;
             case "bridgeErrorHandler": ((InfinispanRemoteComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "customListener": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCustomListener((org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener) value); return true;
             case "eventTypes": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEventTypes((java.lang.String) value); return true;
@@ -541,6 +541,7 @@ public interface InfinispanComponentBuilderFactory {
             case "resultHeader": getOrCreateConfiguration((InfinispanRemoteComponent) component).setResultHeader((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((InfinispanRemoteComponent) component).setPassword((java.lang.String) value); return true;
             case "saslMechanism": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSaslMechanism((java.lang.String) value); return true;
+            case "secure": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecure((boolean) value); return true;
             case "securityRealm": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityRealm((java.lang.String) value); return true;
             case "securityServerName": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityServerName((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((InfinispanRemoteComponent) component).setUsername((java.lang.String) value); return true;

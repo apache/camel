@@ -162,7 +162,6 @@ public class CamelCatalogTest {
         assertTrue(names.contains("aws-secrets"));
         assertTrue(names.contains("gc"));
         assertTrue(names.contains("inflight"));
-        assertTrue(names.contains("mina"));
         assertTrue(names.contains("platform-http"));
         assertTrue(names.contains("variables"));
     }

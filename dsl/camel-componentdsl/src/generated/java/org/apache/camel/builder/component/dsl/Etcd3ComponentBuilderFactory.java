@@ -72,7 +72,7 @@ public interface Etcd3ComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set

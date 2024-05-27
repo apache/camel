@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.docker;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,6 +27,7 @@ import org.apache.camel.component.docker.consumer.DockerStatsConsumer;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.producer.AsyncDockerProducer;
 import org.apache.camel.component.docker.producer.DockerProducer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -35,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "docker", title = "Docker", syntax = "docker:operation",
              category = { Category.CLOUD, Category.CONTAINER }, lenientProperties = true,
              headersClass = DockerConstants.class)
-public class DockerEndpoint extends DefaultEndpoint {
+public class DockerEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private DockerConfiguration configuration;
@@ -46,6 +49,24 @@ public class DockerEndpoint extends DefaultEndpoint {
     public DockerEndpoint(String uri, DockerComponent component, DockerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
     }
 
     @Override

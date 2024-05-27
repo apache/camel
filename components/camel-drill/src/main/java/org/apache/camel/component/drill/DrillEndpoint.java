@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.drill.util.StringUtils;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -39,7 +40,7 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true,
              category = { Category.DATABASE, Category.BIGDATA }, headersClass = DrillConstants.class)
-public class DrillEndpoint extends DefaultPollingEndpoint {
+public class DrillEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Host name or IP address")
     @Metadata(required = true)
@@ -62,6 +63,16 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
      */
     public DrillEndpoint(String uri, DrillComponent component) {
         super(uri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return host + ":" + port;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "jdbc";
     }
 
     @Override

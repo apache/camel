@@ -65,6 +65,11 @@ public class WebsocketEndpoint extends ServletEndpoint {
     }
 
     @Override
+    public String getServiceProtocol() {
+        return "ws";
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new WebsocketProducer(this);
     }
