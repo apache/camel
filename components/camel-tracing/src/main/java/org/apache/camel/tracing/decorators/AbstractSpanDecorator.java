@@ -72,12 +72,14 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     private static String getComponentName(Endpoint endpoint) {
-        String[] splitURI = StringHelper.splitOnCharacter(endpoint.getEndpointUri(), ":", 2);
-        if (splitURI.length > 0) {
-            return splitURI[0];
-        } else {
-            return null;
+        String answer = endpoint.getComponent() != null ? endpoint.getComponent().getDefaultName() : null;
+        if (answer == null) {
+            String[] splitURI = StringHelper.splitOnCharacter(endpoint.getEndpointUri(), ":", 2);
+            if (splitURI.length > 0) {
+                answer = splitURI[0];
+            }
         }
+        return answer;
     }
 
     @Override
@@ -109,10 +111,15 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
             span.setTag(TagConstants.URL_QUERY, query);
         }
 
+        // enrich with server location details
         if (endpoint instanceof EndpointServiceLocation ela) {
             String adr = ela.getServiceUrl();
             if (adr != null) {
                 span.setTag(TagConstants.SERVER_ADDRESS, adr);
+            }
+            String ap = ela.getServiceProtocol();
+            if (ap != null) {
+                span.setTag(TagConstants.SERVER_PROTOCOL, ap);
             }
             Map map = ela.getServiceMetadata();
             if (map != null) {

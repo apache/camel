@@ -22,7 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
-import org.apache.camel.tracing.TagConstants;
 
 public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 

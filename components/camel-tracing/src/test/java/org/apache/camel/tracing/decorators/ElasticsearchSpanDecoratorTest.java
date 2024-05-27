@@ -67,7 +67,7 @@ public class ElasticsearchSpanDecoratorTest {
         assertEquals(indexName, span.tags().get(Tag.DB_INSTANCE.name()));
         assertEquals(indexName, span.tags().get(TagConstants.DB_NAME));
         assertEquals(cluster, span.tags().get(ElasticsearchSpanDecorator.ELASTICSEARCH_CLUSTER_TAG));
-        assertEquals(cluster, span.tags().get(TagConstants.SERVER_ADDRESS));
+        assertEquals(null, span.tags().get(TagConstants.SERVER_ADDRESS));
     }
 
 }
