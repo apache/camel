@@ -84,11 +84,6 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
     protected void doStop() throws Exception {
         synchronized (SOLVERS) {
             for (Map.Entry<String, Solver<Object>> solver : SOLVERS.entrySet()) {

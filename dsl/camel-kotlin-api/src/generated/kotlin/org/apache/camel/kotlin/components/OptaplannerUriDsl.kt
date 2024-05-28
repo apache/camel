@@ -52,6 +52,14 @@ public class OptaplannerUriDsl(
   }
 
   /**
+   * If SolverManager is absent from the header OptaPlannerConstants.SOLVER_MANAGER then a
+   * SolverManager will be created using this Optaplanner config file.
+   */
+  public fun configFile(configFile: String) {
+    it.property("configFile", configFile)
+  }
+
+  /**
    * In case of using SolverManager : the problem id
    */
   public fun problemId(problemId: String) {
@@ -168,14 +176,6 @@ public class OptaplannerUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
-  }
-
-  /**
-   * If SolverManager is absent from the header {OptaPlannerConstants.SOLVER_MANAGER} : A
-   * SolverManager will be created using this Optaplanner config file.
-   */
-  public fun configFile(configFile: String) {
-    it.property("configFile", configFile)
   }
 
   /**

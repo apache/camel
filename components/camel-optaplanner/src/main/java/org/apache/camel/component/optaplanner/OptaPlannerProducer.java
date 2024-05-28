@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class OptaPlannerProducer extends DefaultAsyncProducer {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(OptaPlannerProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OptaPlannerProducer.class);
 
     private ExecutorService executor;
     private final OptaPlannerEndpoint endpoint;

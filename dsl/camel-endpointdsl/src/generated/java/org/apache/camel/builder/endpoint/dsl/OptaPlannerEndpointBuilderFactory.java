@@ -44,6 +44,22 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointConsumerBuilder) this;
         }
         /**
+         * If SolverManager is absent from the header
+         * OptaPlannerConstants.SOLVER_MANAGER then a SolverManager will be
+         * created using this Optaplanner config file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configFile the value to set
+         * @return the dsl builder
+         */
+        default OptaPlannerEndpointConsumerBuilder configFile(String configFile) {
+            doSetProperty("configFile", configFile);
+            return this;
+        }
+        /**
          * In case of using SolverManager : the problem id.
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -86,52 +102,6 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointConsumerBuilder solverId(String solverId) {
             doSetProperty("solverId", solverId);
-            return this;
-        }
-        /**
-         * If SolverManager is absent from the header
-         * {OptaPlannerConstants.SOLVER_MANAGER} : A SolverManager will be
-         * created using this Optaplanner config file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: configFile
-         * 
-         * @param configFile the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointConsumerBuilder configFile(String configFile) {
-            doSetProperty("configFile", configFile);
-            return this;
-        }
-        /**
-         * SolverManager.
-         * 
-         * The option is a:
-         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
-         * 
-         * Group: solverManager
-         * 
-         * @param solverManager the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointConsumerBuilder solverManager(org.optaplanner.core.api.solver.SolverManager solverManager) {
-            doSetProperty("solverManager", solverManager);
-            return this;
-        }
-        /**
-         * SolverManager.
-         * 
-         * The option will be converted to a
-         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
-         * 
-         * Group: solverManager
-         * 
-         * @param solverManager the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointConsumerBuilder solverManager(String solverManager) {
-            doSetProperty("solverManager", solverManager);
             return this;
         }
     }
@@ -262,6 +232,36 @@ public interface OptaPlannerEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * SolverManager.
+         * 
+         * The option is a:
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param solverManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOptaPlannerEndpointConsumerBuilder solverManager(org.optaplanner.core.api.solver.SolverManager solverManager) {
+            doSetProperty("solverManager", solverManager);
+            return this;
+        }
+        /**
+         * SolverManager.
+         * 
+         * The option will be converted to a
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param solverManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOptaPlannerEndpointConsumerBuilder solverManager(String solverManager) {
+            doSetProperty("solverManager", solverManager);
+            return this;
+        }
     }
 
     /**
@@ -274,6 +274,22 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointProducerBuilder) this;
         }
 
+        /**
+         * If SolverManager is absent from the header
+         * OptaPlannerConstants.SOLVER_MANAGER then a SolverManager will be
+         * created using this Optaplanner config file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configFile the value to set
+         * @return the dsl builder
+         */
+        default OptaPlannerEndpointProducerBuilder configFile(String configFile) {
+            doSetProperty("configFile", configFile);
+            return this;
+        }
         /**
          * In case of using SolverManager : the problem id.
          * 
@@ -379,52 +395,6 @@ public interface OptaPlannerEndpointBuilderFactory {
             doSetProperty("threadPoolSize", threadPoolSize);
             return this;
         }
-        /**
-         * If SolverManager is absent from the header
-         * {OptaPlannerConstants.SOLVER_MANAGER} : A SolverManager will be
-         * created using this Optaplanner config file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: configFile
-         * 
-         * @param configFile the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointProducerBuilder configFile(String configFile) {
-            doSetProperty("configFile", configFile);
-            return this;
-        }
-        /**
-         * SolverManager.
-         * 
-         * The option is a:
-         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
-         * 
-         * Group: solverManager
-         * 
-         * @param solverManager the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointProducerBuilder solverManager(org.optaplanner.core.api.solver.SolverManager solverManager) {
-            doSetProperty("solverManager", solverManager);
-            return this;
-        }
-        /**
-         * SolverManager.
-         * 
-         * The option will be converted to a
-         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
-         * 
-         * Group: solverManager
-         * 
-         * @param solverManager the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointProducerBuilder solverManager(String solverManager) {
-            doSetProperty("solverManager", solverManager);
-            return this;
-        }
     }
 
     /**
@@ -481,6 +451,36 @@ public interface OptaPlannerEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * SolverManager.
+         * 
+         * The option is a:
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param solverManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOptaPlannerEndpointProducerBuilder solverManager(org.optaplanner.core.api.solver.SolverManager solverManager) {
+            doSetProperty("solverManager", solverManager);
+            return this;
+        }
+        /**
+         * SolverManager.
+         * 
+         * The option will be converted to a
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param solverManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOptaPlannerEndpointProducerBuilder solverManager(String solverManager) {
+            doSetProperty("solverManager", solverManager);
+            return this;
+        }
     }
 
     /**
@@ -494,6 +494,22 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointBuilder) this;
         }
 
+        /**
+         * If SolverManager is absent from the header
+         * OptaPlannerConstants.SOLVER_MANAGER then a SolverManager will be
+         * created using this Optaplanner config file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configFile the value to set
+         * @return the dsl builder
+         */
+        default OptaPlannerEndpointBuilder configFile(String configFile) {
+            doSetProperty("configFile", configFile);
+            return this;
+        }
         /**
          * In case of using SolverManager : the problem id.
          * 
@@ -539,52 +555,6 @@ public interface OptaPlannerEndpointBuilderFactory {
             doSetProperty("solverId", solverId);
             return this;
         }
-        /**
-         * If SolverManager is absent from the header
-         * {OptaPlannerConstants.SOLVER_MANAGER} : A SolverManager will be
-         * created using this Optaplanner config file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: configFile
-         * 
-         * @param configFile the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointBuilder configFile(String configFile) {
-            doSetProperty("configFile", configFile);
-            return this;
-        }
-        /**
-         * SolverManager.
-         * 
-         * The option is a:
-         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
-         * 
-         * Group: solverManager
-         * 
-         * @param solverManager the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointBuilder solverManager(org.optaplanner.core.api.solver.SolverManager solverManager) {
-            doSetProperty("solverManager", solverManager);
-            return this;
-        }
-        /**
-         * SolverManager.
-         * 
-         * The option will be converted to a
-         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
-         * 
-         * Group: solverManager
-         * 
-         * @param solverManager the value to set
-         * @return the dsl builder
-         */
-        default OptaPlannerEndpointBuilder solverManager(String solverManager) {
-            doSetProperty("solverManager", solverManager);
-            return this;
-        }
     }
 
     /**
@@ -598,6 +568,36 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (OptaPlannerEndpointBuilder) this;
         }
 
+        /**
+         * SolverManager.
+         * 
+         * The option is a:
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param solverManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOptaPlannerEndpointBuilder solverManager(org.optaplanner.core.api.solver.SolverManager solverManager) {
+            doSetProperty("solverManager", solverManager);
+            return this;
+        }
+        /**
+         * SolverManager.
+         * 
+         * The option will be converted to a
+         * <code>org.optaplanner.core.api.solver.SolverManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param solverManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOptaPlannerEndpointBuilder solverManager(String solverManager) {
+            doSetProperty("solverManager", solverManager);
+            return this;
+        }
     }
 
     public interface OptaPlannerBuilders {
