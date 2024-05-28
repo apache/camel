@@ -188,6 +188,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "requesttimeoutcheckerinterval":
         case "requestTimeoutCheckerInterval": getOrCreateConfiguration(target).setRequestTimeoutCheckerInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "selector": getOrCreateConfiguration(target).setSelector(property(camelContext, java.lang.String.class, value)); return true;
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": target.setServiceLocationEnabled(property(camelContext, boolean.class, value)); return true;
         case "streammessagetypeenabled":
         case "streamMessageTypeEnabled": getOrCreateConfiguration(target).setStreamMessageTypeEnabled(property(camelContext, boolean.class, value)); return true;
         case "subscriptiondurable":
@@ -394,6 +396,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "requesttimeoutcheckerinterval":
         case "requestTimeoutCheckerInterval": return long.class;
         case "selector": return java.lang.String.class;
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": return boolean.class;
         case "streammessagetypeenabled":
         case "streamMessageTypeEnabled": return boolean.class;
         case "subscriptiondurable":
@@ -601,6 +605,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "requesttimeoutcheckerinterval":
         case "requestTimeoutCheckerInterval": return getOrCreateConfiguration(target).getRequestTimeoutCheckerInterval();
         case "selector": return getOrCreateConfiguration(target).getSelector();
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": return target.isServiceLocationEnabled();
         case "streammessagetypeenabled":
         case "streamMessageTypeEnabled": return getOrCreateConfiguration(target).isStreamMessageTypeEnabled();
         case "subscriptiondurable":
