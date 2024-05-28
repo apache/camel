@@ -29,6 +29,8 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": target.setServiceLocationEnabled(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -47,6 +49,8 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
         case "dataSource": return javax.sql.DataSource.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": return boolean.class;
         default: return null;
         }
     }
@@ -61,6 +65,8 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
         case "dataSource": return target.getDataSource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": return target.isServiceLocationEnabled();
         default: return null;
         }
     }

@@ -111,6 +111,26 @@ public interface SqlStoredComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        
+        /**
+         * Whether to detect the network address location of the JMS broker on
+         * startup. This information is gathered via reflection on the
+         * ConnectionFactory, and is vendor specific. This option can be used to
+         * turn this off.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param serviceLocationEnabled the value to set
+         * @return the dsl builder
+         */
+        default SqlStoredComponentBuilder serviceLocationEnabled(boolean serviceLocationEnabled) {
+            doSetProperty("serviceLocationEnabled", serviceLocationEnabled);
+            return this;
+        }
     }
 
     class SqlStoredComponentBuilderImpl
@@ -129,6 +149,7 @@ public interface SqlStoredComponentBuilderFactory {
             case "dataSource": ((SqlStoredComponent) component).setDataSource((javax.sql.DataSource) value); return true;
             case "lazyStartProducer": ((SqlStoredComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SqlStoredComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "serviceLocationEnabled": ((SqlStoredComponent) component).setServiceLocationEnabled((boolean) value); return true;
             default: return false;
             }
         }
