@@ -17,6 +17,7 @@
 package org.apache.camel.component.ignite;
 
 import org.apache.camel.Component;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.ignite.Ignite;
@@ -24,7 +25,7 @@ import org.apache.ignite.Ignite;
 /**
  * Base class for all Ignite endpoints.
  */
-public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
+public abstract class AbstractIgniteEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam(defaultValue = "true")
     private boolean propagateIncomingBodyIfNoReturnValue = true;
@@ -34,6 +35,20 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
 
     public AbstractIgniteEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        var a = ignite().cluster().localNode().addresses();
+        if (!a.isEmpty()) {
+            return a.iterator().next();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "ignite";
     }
 
     protected AbstractIgniteComponent igniteComponent() {
