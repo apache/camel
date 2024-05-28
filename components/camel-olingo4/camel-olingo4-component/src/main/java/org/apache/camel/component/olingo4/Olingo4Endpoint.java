@@ -48,7 +48,8 @@ import org.apache.camel.util.CaseInsensitiveMap;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.CLOUD }, headersClass = Olingo4Constants.class)
-public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration> implements EndpointServiceLocation {
+public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration>
+        implements EndpointServiceLocation {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
     protected static final String RESPONSE_HANDLER_PROPERTY = "responseHandler";

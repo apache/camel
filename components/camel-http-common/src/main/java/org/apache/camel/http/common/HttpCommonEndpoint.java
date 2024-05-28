@@ -31,7 +31,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.CollectionHelper;
 
-public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
+public abstract class HttpCommonEndpoint extends DefaultEndpoint
+        implements HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
 
     // Note: all options must be documented with description in annotations so extended components can access the documentation
 

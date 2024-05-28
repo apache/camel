@@ -45,7 +45,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:topic", category = { Category.MESSAGING },
              headersClass = NatsConstants.class)
-public class NatsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, HeaderFilterStrategyAware, EndpointServiceLocation {
+public class NatsEndpoint extends DefaultEndpoint
+        implements MultipleConsumersSupport, HeaderFilterStrategyAware, EndpointServiceLocation {
 
     @UriParam
     private NatsConfiguration configuration;

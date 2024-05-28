@@ -93,7 +93,6 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
         return null;
     }
 
-
     public Jt400Configuration getConfiguration() {
         return configuration;
     }

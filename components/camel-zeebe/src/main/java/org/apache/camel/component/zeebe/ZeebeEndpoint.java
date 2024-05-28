@@ -84,7 +84,6 @@ public class ZeebeEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         return null;
     }
 
-
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(operationName, "operationName");
 

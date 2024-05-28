@@ -30,7 +30,8 @@ import java.util.Map;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector",
              syntax = "debezium-sqlserver:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration> implements EndpointServiceLocation {
+public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private SqlServerConnectorEmbeddedDebeziumConfiguration configuration;

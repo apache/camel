@@ -32,7 +32,8 @@ import java.util.Map;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector",
              syntax = "debezium-mongodb:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration> implements EndpointServiceLocation {
+public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private MongoDbConnectorEmbeddedDebeziumConfiguration configuration;

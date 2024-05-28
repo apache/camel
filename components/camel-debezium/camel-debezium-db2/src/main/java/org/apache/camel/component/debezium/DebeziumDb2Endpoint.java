@@ -31,7 +31,8 @@ import java.util.Map;
 @UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-db2", title = "Debezium DB2 Connector",
              syntax = "debezium-db2:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumDb2Endpoint extends DebeziumEndpoint<Db2ConnectorEmbeddedDebeziumConfiguration> implements EndpointServiceLocation {
+public final class DebeziumDb2Endpoint extends DebeziumEndpoint<Db2ConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private Db2ConnectorEmbeddedDebeziumConfiguration configuration;

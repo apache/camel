@@ -30,7 +30,8 @@ import java.util.Map;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-postgres", title = "Debezium PostgresSQL Connector",
              syntax = "debezium-postgres:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresConnectorEmbeddedDebeziumConfiguration> implements EndpointServiceLocation {
+public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private PostgresConnectorEmbeddedDebeziumConfiguration configuration;

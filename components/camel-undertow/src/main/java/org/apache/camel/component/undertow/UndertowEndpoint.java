@@ -62,7 +62,8 @@ import org.xnio.Options;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
              category = { Category.HTTP, Category.NETWORKING }, lenientProperties = true,
              headersClass = UndertowConstants.class)
-public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
+public class UndertowEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 

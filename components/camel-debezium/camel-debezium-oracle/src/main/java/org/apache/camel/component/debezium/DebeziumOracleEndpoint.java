@@ -31,7 +31,8 @@ import java.util.Map;
 @UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-oracle", title = "Debezium Oracle Connector",
              syntax = "debezium-oracle:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumOracleEndpoint extends DebeziumEndpoint<OracleConnectorEmbeddedDebeziumConfiguration> implements EndpointServiceLocation {
+public final class DebeziumOracleEndpoint extends DebeziumEndpoint<OracleConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private OracleConnectorEmbeddedDebeziumConfiguration configuration;
