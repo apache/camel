@@ -25,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -35,7 +36,8 @@ import org.apache.camel.support.DefaultEndpoint;
 @ManagedResource(description = "ZooKeeper Endpoint")
 @UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path",
              category = { Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA }, headersClass = ZooKeeperMessage.class)
-public class ZooKeeperEndpoint extends DefaultEndpoint {
+public class ZooKeeperEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+
     @UriParam
     private ZooKeeperConfiguration configuration;
     private ZooKeeperConnectionManager connectionManager;
@@ -44,6 +46,16 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
         this.connectionManager = new ZooKeeperConnectionManager(this);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getConnectString();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "zookeeper";
     }
 
     @Override
