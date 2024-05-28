@@ -35,6 +35,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -60,7 +61,7 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
              category = { Category.DATABASE }, headersClass = MongoDbConstants.class)
-public class MongoDbEndpoint extends DefaultEndpoint {
+public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
 
@@ -187,7 +188,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private boolean loadBalanced;
     //additional properties
     @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.",
-              label = "additional", defaultValue = "null")
+              label = "common")
     private String connectionUriString;
 
     // tailable cursor consumer by default
@@ -203,6 +204,29 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public MongoDbEndpoint(String uri, MongoDbComponent component) {
         super(uri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (connectionUriString != null) {
+            return connectionUriString;
+        } else if (hosts != null) {
+            return hosts;
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "mongodb";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (username != null) {
+            return Map.of("username", username);
+        }
+        return null;
     }
 
     @Override
