@@ -1181,7 +1181,6 @@ public final class ExchangeHelper {
         final String id = getRepositoryId(name);
         if (id != null) {
             repo = getVariableRepository(exchange, id);
-
             name = resolveRepositoryName(exchange, name, id);
         }
         final VariableAware va = getVariableAware(exchange, repo);
