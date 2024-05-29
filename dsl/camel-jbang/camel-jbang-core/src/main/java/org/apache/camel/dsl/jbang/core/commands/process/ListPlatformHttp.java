@@ -34,9 +34,9 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "service",
-         description = "Get services of Camel integrations", sortOptions = false)
-public class ListService extends ProcessWatchCommand {
+@Command(name = "platform-http",
+         description = "Get embedded HTTP services of Camel integrations", sortOptions = false)
+public class ListPlatformHttp extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -45,19 +45,7 @@ public class ListService extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--metadata" },
-                        description = "Show service metadata (only available for some services)")
-    boolean metadata;
-
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
-    boolean shortUri;
-
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
-    boolean wideUri;
-
-    public ListService(CamelJBangMain main) {
+    public ListPlatformHttp(CamelJBangMain main) {
         super(main);
     }
 
@@ -85,21 +73,20 @@ public class ListService extends ProcessWatchCommand {
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("services");
+                        JsonObject jo = (JsonObject) root.get("platform-http");
                         if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("services");
+                            String server = jo.getString("server");
+                            JsonArray arr = (JsonArray) jo.get("endpoints");
                             if (arr != null) {
                                 for (int i = 0; i < arr.size(); i++) {
                                     row = row.copy();
                                     jo = (JsonObject) arr.get(i);
-                                    row.component = jo.getString("component");
-                                    row.direction = jo.getString("direction");
-                                    row.hosted = jo.getBooleanOrDefault("hosted", false);
-                                    row.protocol = jo.getString("protocol");
-                                    row.address = jo.getString("address");
-                                    row.endpoint = jo.getString("endpointUri");
-                                    row.hits = jo.getLongOrDefault("totalMessages", 0);
-                                    row.metadata = jo.getMap("metadata");
+                                    row.server = server;
+                                    row.url = jo.getString("url");
+                                    row.path = jo.getString("path");
+                                    row.verbs = jo.getString("verbs");
+                                    row.consumes = jo.getString("consumes");
+                                    row.produces = jo.getString("produces");
                                     rows.add(row);
                                 }
                             }
@@ -115,21 +102,28 @@ public class ListService extends ProcessWatchCommand {
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
-                    new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
-                    new Column().header("DIR").dataAlign(HorizontalAlign.LEFT).with(r -> r.direction),
-                    new Column().header("PROTOCOL").dataAlign(HorizontalAlign.LEFT).with(this::getProtocol),
-                    new Column().header("SERVICE").dataAlign(HorizontalAlign.LEFT).with(this::getService),
-                    new Column().header("METADATA").visible(metadata).dataAlign(HorizontalAlign.LEFT).with(this::getMetadata),
-                    new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.hits),
-                    new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getUri),
-                    new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
-                            .with(this::getUri))));
+                    new Column().header("URL").dataAlign(HorizontalAlign.LEFT).with(r -> r.url),
+                    new Column().header("VERB").dataAlign(HorizontalAlign.LEFT).with(r -> r.verbs),
+                    new Column().header("CONTENT").dataAlign(HorizontalAlign.LEFT).with(this::getContent))));
         }
 
         return 0;
+    }
+
+    private String getContent(Row r) {
+        StringJoiner sj = new StringJoiner("   ");
+        if (r.consumes != null || r.produces != null) {
+            if (r.consumes != null) {
+                sj.add("accept: " + r.consumes);
+            }
+            if (r.produces != null) {
+                sj.add("produces: " + r.produces);
+            }
+        }
+        if (sj.length() > 0) {
+            return sj.toString();
+        }
+        return "";
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -151,47 +145,17 @@ public class ListService extends ProcessWatchCommand {
         }
     }
 
-    private String getUri(Row r) {
-        String u = r.endpoint;
-        if (shortUri) {
-            int pos = u.indexOf('?');
-            if (pos > 0) {
-                u = u.substring(0, pos);
-            }
-        }
-        return u;
-    }
-
-    private String getProtocol(Row r) {
-        return r.protocol;
-    }
-
-    private String getService(Row r) {
-        return r.address;
-    }
-
-    private String getMetadata(Row r) {
-        if (r.metadata != null) {
-            StringJoiner sj = new StringJoiner(" ");
-            r.metadata.forEach((k, v) -> sj.add(k + "=" + v));
-            return sj.toString();
-        }
-        return "";
-    }
-
     private static class Row implements Cloneable {
         String pid;
         String name;
         String age;
         long uptime;
-        String component;
-        String direction;
-        boolean hosted;
-        String protocol;
-        String address;
-        String endpoint;
-        long hits;
-        JsonObject metadata;
+        String server;
+        String url;
+        String path;
+        String verbs;
+        String consumes;
+        String produces;
 
         Row copy() {
             try {

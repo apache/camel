@@ -92,6 +92,12 @@ public class PlatformHttpConsole extends AbstractDevConsole {
             if (model.getVerbs() != null) {
                 jo.put("verbs", model.getVerbs());
             }
+            if (model.getConsumes() != null) {
+                jo.put("consumes", model.getConsumes());
+            }
+            if (model.getProduces() != null) {
+                jo.put("produces", model.getProduces());
+            }
             list.add(jo);
         }
         return list;
