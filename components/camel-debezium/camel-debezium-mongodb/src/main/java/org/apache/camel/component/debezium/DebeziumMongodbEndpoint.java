@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.util.Map;
+
 import io.debezium.data.Envelope;
 import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
@@ -23,8 +25,6 @@ import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.kafka.connect.data.Schema;
-
-import java.util.Map;
 
 /**
  * Capture changes from a MongoDB database.

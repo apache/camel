@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.arangodb;
 
+import java.util.Map;
+
 import com.arangodb.ArangoDB;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -28,8 +30,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Map;
 
 /**
  * Perform operations on ArangoDb when used as a Document Database, or as a Graph Database

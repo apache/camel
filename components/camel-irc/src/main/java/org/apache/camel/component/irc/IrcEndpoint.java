@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.irc;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.EndpointServiceLocation;
@@ -28,8 +30,6 @@ import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Send and receive messages to/from and IRC chat.

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-
-import java.util.Map;
 
 /**
  * Capture changes from a PostgresSQL database.

@@ -23,7 +23,6 @@ import java.util.Map;
 
 import com.twilio.http.TwilioRestClient;
 import org.apache.camel.Category;
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

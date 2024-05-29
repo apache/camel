@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,8 +27,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
-
-import java.util.Map;
 
 /**
  * Execute commands on remote hosts using SSH.
