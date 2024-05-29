@@ -194,23 +194,27 @@
 
             <!-- gRPC and protobuf Java code generator plugin -->
             <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
+                <groupId>io.github.ascopes</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>${protobuf-maven-plugin-version}</version>
+                <version>${protobuf-maven-plugin.version}</version>
+
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}
-                    </protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc-version}:exe:${os.detected.classifier}
-                    </pluginArtifact>
-                    <checkStaleness>true</checkStaleness>
-                    <skip>${skipTests}</skip>
+                    <protocVersion>${protobuf-version}</protocVersion>
+                    <sourceDirectories>
+                        <sourceDirectory>src/test/proto</sourceDirectory>
+                    </sourceDirectories>
+                    <binaryMavenPlugins>
+                        <binaryMavenPlugin>
+                            <groupId>io.grpc</groupId>
+                            <artifactId>protoc-gen-grpc-java</artifactId>
+                            <version>${grpc.version}</version>
+                        </binaryMavenPlugin>
+                    </binaryMavenPlugins>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>test-compile</goal>
-                            <goal>test-compile-custom</goal>
+                            <goal>generate-test</goal>
                         </goals>
                     </execution>
                 </executions>

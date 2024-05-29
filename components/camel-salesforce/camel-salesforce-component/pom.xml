@@ -34,9 +34,6 @@
 
     <properties>
         <salesforce.component.root>..</salesforce.component.root>
-        <grpc.version>1.62.2</grpc.version>
-        <protobuf.version>3.21.5</protobuf.version>
-        <protobuf-maven-plugin.version>2.1.1</protobuf-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -264,7 +261,7 @@
                 <version>${protobuf-maven-plugin.version}</version>
 
                 <configuration>
-                    <protocVersion>${protobuf.version}</protocVersion>
+                    <protocVersion>${protobuf-version}</protocVersion>
                     <sourceDirectories>
                         <sourceDirectory>src/main/proto</sourceDirectory>
                     </sourceDirectories>
