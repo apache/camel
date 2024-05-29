@@ -444,6 +444,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     processRefExpression(originalClassType, classElement, elementRef, fieldElement, fieldName, eipOptions,
                             prefix);
 
+                    // special for setHeaders/setVariables
+                    processSetHeadersOrSetVariables(modelName, originalClassType, elementRef, fieldElement, fieldName,
+                            eipOptions, prefix);
                 }
             }
 
@@ -977,6 +980,56 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             EipOptionModel ep = createOption("rests", "Rests", "element", fieldTypeName, false, "", "",
                     "Contains the rest services defined using the rest-dsl", false, null, false,
                     null, oneOfTypes, false, false);
+            eipOptions.add(ep);
+        }
+    }
+
+    /**
+     * Special for processing an SetHeaders/SetVariables
+     */
+    private void processSetHeadersOrSetVariables(
+            String modelName,
+            Class<?> originalClassType,
+            XmlElementRef elementRef,
+            Field fieldElement, String fieldName,
+            Set<EipOptionModel> eipOptions,
+            String prefix) {
+
+        if (!"setHeaders".equals(modelName) && !"setVariables".equals(modelName)) {
+            // only for these two EIPs
+            return;
+        }
+
+        if ("headers".equals(fieldName) || "variables".equals(fieldName)) {
+            String name = fetchName(elementRef.name(), fieldName, prefix);
+            String typeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
+
+            Set<String> oneOfTypes;
+            if ("headers".equals(fieldName)) {
+                oneOfTypes = Set.of("setHeader");
+            } else {
+                oneOfTypes = Set.of("setVariable");
+            }
+            String displayName = null;
+            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            if (metadata != null) {
+                displayName = metadata.displayName();
+            }
+            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+            String deprecationNote = null;
+            if (metadata != null) {
+                deprecationNote = metadata.deprecationNote();
+            }
+            String label = null;
+            if (metadata != null) {
+                label = metadata.label();
+            }
+
+            String kind = "element";
+            EipOptionModel ep
+                    = createOption(name, displayName, kind, typeName, true, "", label,
+                            "Contains the " + fieldName + " to be set", deprecated, deprecationNote,
+                            false, null, oneOfTypes, false, false);
             eipOptions.add(ep);
         }
     }
