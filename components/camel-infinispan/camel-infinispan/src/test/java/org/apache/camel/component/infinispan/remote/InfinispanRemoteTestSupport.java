@@ -36,7 +36,7 @@ import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
     @RegisterExtension
-    public static InfinispanService service = InfinispanServiceFactory.createService();
+    public static InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
 
     protected RemoteCacheManager cacheContainer;
 
@@ -47,7 +47,7 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
         cacheContainer = new RemoteCacheManager(getConfiguration().build());
         cacheContainer.administration()
                 .getOrCreateCache(
-                        InfinispanTestSupport.TEST_CACHE,
+                        getCacheName(),
                         new org.infinispan.configuration.cache.ConfigurationBuilder()
                                 .clustering()
                                 .cacheMode(CacheMode.DIST_SYNC).build());

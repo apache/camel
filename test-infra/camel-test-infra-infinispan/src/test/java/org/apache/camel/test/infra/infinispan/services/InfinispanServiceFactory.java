@@ -17,8 +17,71 @@
 package org.apache.camel.test.infra.infinispan.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class InfinispanServiceFactory {
+    static class SingletonInfinispanceService extends SingletonService<InfinispanService> implements InfinispanService {
+
+        public SingletonInfinispanceService(InfinispanService service) {
+            this(service, "infinispan");
+        }
+
+        public SingletonInfinispanceService(InfinispanService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String username() {
+            return getService().username();
+        }
+
+        @Override
+        public String password() {
+            return getService().password();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public String getServiceAddress() {
+            return getService().getServiceAddress();
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+
+    }
+
+    private static class SingletonServiceHolder {
+        static final InfinispanService INSTANCE;
+
+        static {
+            SimpleTestServiceBuilder<InfinispanService> serviceSimpleTestServiceBuilder
+                    = new SimpleTestServiceBuilder<>("infinispan");
+
+            serviceSimpleTestServiceBuilder
+                    .addLocalMapping(() -> new SingletonInfinispanceService(new InfinispanLocalContainerService()));
+
+            INSTANCE = serviceSimpleTestServiceBuilder.build();
+        }
+    }
+
     private InfinispanServiceFactory() {
 
     }
@@ -32,5 +95,9 @@ public final class InfinispanServiceFactory {
                 .addLocalMapping(InfinispanLocalContainerService::new)
                 .addRemoteMapping(InfinispanRemoteService::new)
                 .build();
+    }
+
+    public static InfinispanService createSingletonInfinispanService() {
+        return SingletonServiceHolder.INSTANCE;
     }
 }
