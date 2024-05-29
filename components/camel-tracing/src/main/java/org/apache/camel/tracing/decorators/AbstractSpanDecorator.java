@@ -74,12 +74,13 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     private static String getComponentName(Endpoint endpoint) {
         String answer = endpoint.getComponent() != null ? endpoint.getComponent().getDefaultName() : null;
         if (answer == null) {
-            String[] splitURI = StringHelper.splitOnCharacter(endpoint.getEndpointUri(), ":", 2);
-            if (splitURI.length > 0) {
-                answer = splitURI[0];
-            }
+            return getSchemeName(endpoint);
         }
         return answer;
+    }
+
+    private static String getSchemeName(Endpoint endpoint) {
+        return StringHelper.before(endpoint.getEndpointUri(), ":");
     }
 
     @Override
@@ -97,13 +98,14 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
 
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
-        String scheme = getComponentName(endpoint);
-        span.setComponent(CAMEL_COMPONENT + scheme);
+        String name = getComponentName(endpoint);
+        span.setComponent(CAMEL_COMPONENT + name);
+        String scheme = getSchemeName(endpoint);
         span.setTag(TagConstants.URL_SCHEME, scheme);
 
         // Including the endpoint URI provides access to any options that may
         // have been provided, for subsequent analysis
-        String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
+        String uri = endpoint.toString(); // toString will sanitize
         span.setTag("camel.uri", uri);
         span.setTag(TagConstants.URL_PATH, stripSchemeAndOptions(endpoint));
         String query = URISupport.extractQuery(uri);
@@ -130,6 +132,10 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
                 String id = (String) map.get("clientId");
                 if (id != null) {
                     span.setTag(TagConstants.USER_ID, id);
+                }
+                String region = (String) map.get("region");
+                if (region != null) {
+                    span.setTag(TagConstants.SERVER_REGION, region);
                 }
             }
         }

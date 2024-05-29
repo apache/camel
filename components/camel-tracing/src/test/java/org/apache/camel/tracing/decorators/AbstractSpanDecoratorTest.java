@@ -59,6 +59,7 @@ public class AbstractSpanDecoratorTest {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
+        Mockito.when(endpoint.toString()).thenReturn(TEST_URI);
 
         SpanDecorator decorator = new AbstractSpanDecorator() {
             @Override
