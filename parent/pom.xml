@@ -231,7 +231,7 @@
         <impsort-maven-plugin-version>1.9.0</impsort-maven-plugin-version>
         <infinispan-version>15.0.4.Final</infinispan-version>
         <influx-java-driver-version>2.24</influx-java-driver-version>
-        <influx-client-java-driver-version>7.0.0</influx-client-java-driver-version>
+        <influx-client-java-driver-version>7.1.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.2</ivy-version>
