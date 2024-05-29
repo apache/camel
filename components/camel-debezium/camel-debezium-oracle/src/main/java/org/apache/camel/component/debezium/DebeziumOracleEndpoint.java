@@ -19,8 +19,11 @@ package org.apache.camel.component.debezium;
 
 import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+
+import java.util.Map;
 
 /**
  * Capture changes from a Oracle database.
@@ -28,7 +31,8 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-oracle", title = "Debezium Oracle Connector",
              syntax = "debezium-oracle:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumOracleEndpoint extends DebeziumEndpoint<OracleConnectorEmbeddedDebeziumConfiguration> {
+public final class DebeziumOracleEndpoint extends DebeziumEndpoint<OracleConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private OracleConnectorEmbeddedDebeziumConfiguration configuration;
@@ -40,6 +44,24 @@ public final class DebeziumOracleEndpoint extends DebeziumEndpoint<OracleConnect
     }
 
     public DebeziumOracleEndpoint() {
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getDatabaseHostname() + ":" + configuration.getDatabasePort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "jdbc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getDatabaseUser() != null) {
+            return Map.of("username", configuration.getDatabaseUser());
+        }
+        return null;
     }
 
     @Override

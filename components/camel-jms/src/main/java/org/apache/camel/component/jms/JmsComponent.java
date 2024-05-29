@@ -75,6 +75,12 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                             + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.",
               defaultValue = "true")
     private boolean allowAutoWiredDestinationResolver = true;
+    @Metadata(label = "advanced",
+              description = "Whether to detect the network address location of the JMS broker on startup."
+                            + " This information is gathered via reflection on the ConnectionFactory, and is vendor specific."
+                            + " This option can be used to turn this off.",
+              defaultValue = "true")
+    private boolean serviceLocationEnabled = true;
 
     public JmsComponent() {
         this.configuration = createConfiguration();
@@ -181,6 +187,18 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     public void setAllowAutoWiredDestinationResolver(boolean allowAutoWiredDestinationResolver) {
         this.allowAutoWiredDestinationResolver = allowAutoWiredDestinationResolver;
+    }
+
+    public boolean isServiceLocationEnabled() {
+        return serviceLocationEnabled;
+    }
+
+    /**
+     * Whether to detect the network address location of the JMS broker on startup. This information is gathered via
+     * reflection on the ConnectionFactory, and is vendor specific. This option can be used to turn this off.
+     */
+    public void setServiceLocationEnabled(boolean serviceLocationEnabled) {
+        this.serviceLocationEnabled = serviceLocationEnabled;
     }
 
     /**
@@ -1207,6 +1225,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
             ucfa.setPassword(cfPassword);
             ucfa.setUsername(cfUsername);
             endpoint.getConfiguration().setConnectionFactory(ucfa);
+            endpoint.getConfiguration().setUsername(cfUsername);
+            endpoint.getConfiguration().setPassword(cfPassword);
         } else {
             // if only username or password was provided then fail
             if (cfUsername != null || cfPassword != null) {

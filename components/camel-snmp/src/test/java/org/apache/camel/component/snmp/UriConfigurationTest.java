@@ -37,7 +37,7 @@ public class UriConfigurationTest {
 
         assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
         assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
-        assertEquals("udp:0.0.0.0/1662", snmpEndpoint.getAddress());
+        assertEquals("udp:0.0.0.0/1662", snmpEndpoint.getServerAddress());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class UriConfigurationTest {
 
         assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
         assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
-        assertEquals("udp:0.0.0.0/162", snmpEndpoint.getAddress());
+        assertEquals("udp:0.0.0.0/162", snmpEndpoint.getServerAddress());
     }
 
     @Test
@@ -63,6 +63,6 @@ public class UriConfigurationTest {
 
         assertEquals(SnmpActionType.POLL, snmpEndpoint.getType());
         assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
-        assertEquals("udp:127.0.0.1/1662", snmpEndpoint.getAddress());
+        assertEquals("udp:127.0.0.1/1662", snmpEndpoint.getServerAddress());
     }
 }

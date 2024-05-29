@@ -1812,6 +1812,26 @@ public interface ActivemqComponentBuilderFactory {
     
         
         /**
+         * Whether to detect the network address location of the JMS broker on
+         * startup. This information is gathered via reflection on the
+         * ConnectionFactory, and is vendor specific. This option can be used to
+         * turn this off.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param serviceLocationEnabled the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder serviceLocationEnabled(boolean serviceLocationEnabled) {
+            doSetProperty("serviceLocationEnabled", serviceLocationEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2327,6 +2347,7 @@ public interface ActivemqComponentBuilderFactory {
             case "receiveTimeout": getOrCreateConfiguration((ActiveMQComponent) component).setReceiveTimeout((long) value); return true;
             case "recoveryInterval": getOrCreateConfiguration((ActiveMQComponent) component).setRecoveryInterval((long) value); return true;
             case "requestTimeoutCheckerInterval": getOrCreateConfiguration((ActiveMQComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "serviceLocationEnabled": ((ActiveMQComponent) component).setServiceLocationEnabled((boolean) value); return true;
             case "synchronous": getOrCreateConfiguration((ActiveMQComponent) component).setSynchronous((boolean) value); return true;
             case "temporaryQueueResolver": getOrCreateConfiguration((ActiveMQComponent) component).setTemporaryQueueResolver((org.apache.camel.component.jms.TemporaryQueueResolver) value); return true;
             case "transferException": getOrCreateConfiguration((ActiveMQComponent) component).setTransferException((boolean) value); return true;

@@ -36,9 +36,9 @@ public class OptaPlannerConfiguration {
     private boolean async;
     @UriParam(label = "common", defaultValue = "1L")
     private Long problemId = 1L;
-    @UriParam(label = "configFile")
+    @UriParam(label = "common")
     private String configFile;
-    @UriParam(label = "solverManager")
+    @UriParam(label = "advanced")
     private SolverManager solverManager;
 
     public String getConfigFile() {
@@ -46,7 +46,7 @@ public class OptaPlannerConfiguration {
     }
 
     /**
-     * If SolverManager is absent from the header {OptaPlannerConstants.SOLVER_MANAGER} : A SolverManager will be
+     * If SolverManager is absent from the header OptaPlannerConstants.SOLVER_MANAGER then a SolverManager will be
      * created using this Optaplanner config file.
      */
     public void setConfigFile(String configFile) {
@@ -103,8 +103,6 @@ public class OptaPlannerConfiguration {
 
     /**
      * In case of using SolverManager : the problem id
-     *
-     * @param problemId
      */
     public void setProblemId(Long problemId) {
         this.problemId = problemId;
@@ -116,8 +114,6 @@ public class OptaPlannerConfiguration {
 
     /**
      * SolverManager
-     *
-     * @param solverManager
      */
     public void setSolverManager(SolverManager solverManager) {
         this.solverManager = solverManager;

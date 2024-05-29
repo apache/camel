@@ -32,6 +32,7 @@ import org.apache.camel.component.github.producer.GetCommitFileProducer;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.component.github.producer.PullRequestFilesProducer;
 import org.apache.camel.component.github.producer.PullRequestStateProducer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -62,7 +63,7 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
              category = { Category.FILE, Category.CLOUD, Category.API }, headersClass = GitHubConstants.class)
-public class GitHubEndpoint extends ScheduledPollEndpoint {
+public class GitHubEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -90,6 +91,16 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
 
     public GitHubEndpoint(String uri, GitHubComponent component) {
         super(uri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return "api.github.com";
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
     }
 
     @Override

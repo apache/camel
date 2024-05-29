@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.zeebe.internal.OperationName;
 import org.apache.camel.component.zeebe.internal.ZeebeService;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -30,13 +31,15 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
+import java.util.Map;
+
 /**
  * Zeebe component which integrates with Camunda Zeebe to interact with the API.
  */
 @UriEndpoint(firstVersion = "3.21.0", scheme = "zeebe", title = "Zeebe", syntax = "zeebe:operationName",
              category = { Category.WORKFLOW, Category.SAAS },
              headersClass = ZeebeConstants.class)
-public class ZeebeEndpoint extends DefaultEndpoint {
+public class ZeebeEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(label = "common", description = "The operation to use", enums = "startProcess," +
                                                                              "cancelProcess,publishMessage,completeJob,failJob,updateJobRetries,worker,throwError,deployResource")
@@ -60,8 +63,25 @@ public class ZeebeEndpoint extends DefaultEndpoint {
 
     public ZeebeEndpoint(String uri, ZeebeComponent component, OperationName operationName) {
         super(uri, component);
-
         this.operationName = operationName;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return getComponent().getGatewayHost() + ":" + getComponent().getGatewayPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rpc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (getComponent().getClientId() != null) {
+            return Map.of("clientId", getComponent().getClientId());
+        }
+        return null;
     }
 
     public Producer createProducer() throws Exception {

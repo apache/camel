@@ -33,7 +33,7 @@ import static org.apache.camel.component.etcd3.Etcd3Constants.ETCD_DEFAULT_ENDPO
 @UriParams
 public class Etcd3Configuration implements Cloneable {
 
-    @UriParam(label = "common", defaultValue = "Etcd3Constants.ETCD_DEFAULT_ENDPOINTS")
+    @UriParam(label = "common", defaultValue = "http://localhost:2379")
     private String[] endpoints = ETCD_DEFAULT_ENDPOINTS;
     @UriParam(label = "security", secret = true)
     private String userName;

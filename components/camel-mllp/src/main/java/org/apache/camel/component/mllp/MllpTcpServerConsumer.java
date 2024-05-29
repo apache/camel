@@ -87,6 +87,11 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 new SynchronousQueue<>());
     }
 
+    @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
     @ManagedAttribute(description = "Last activity time")
     public Map<String, Date> getLastActivityTimes() {
         Map<String, Date> answer = new HashMap<>();

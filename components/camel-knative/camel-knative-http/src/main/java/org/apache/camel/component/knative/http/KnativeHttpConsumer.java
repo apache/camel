@@ -84,6 +84,11 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         this.preallocateBodyBuffer = true;
     }
 
+    @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
     @ManagedAttribute(description = "Path for accessing the Knative service")
     public String getPath() {
         return path;

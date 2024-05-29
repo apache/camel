@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -30,11 +31,13 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "lucene", title = "Lucene", syntax = "lucene:host:operation", producerOnly = true,
              category = { Category.DATABASE, Category.SEARCH }, headersClass = LuceneConstants.class)
-public class LuceneEndpoint extends DefaultEndpoint {
+public class LuceneEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+
+    private LuceneIndexer indexer;
+    private boolean insertFlag;
+
     @UriParam
     LuceneConfiguration config;
-    LuceneIndexer indexer;
-    boolean insertFlag;
 
     public LuceneEndpoint() {
     }
@@ -50,6 +53,19 @@ public class LuceneEndpoint extends DefaultEndpoint {
             this.indexer = new LuceneIndexer(config.getSrcDir(), config.getIndexDir(), config.getAnalyzer());
             insertFlag = true;
         }
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (config != null) {
+            return config.getHost();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "lucene";
     }
 
     @Override

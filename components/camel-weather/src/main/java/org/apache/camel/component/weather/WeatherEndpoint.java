@@ -20,6 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
@@ -30,7 +31,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name",
              category = { Category.API }, headersClass = WeatherConstants.class)
-public class WeatherEndpoint extends DefaultPollingEndpoint {
+public class WeatherEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private final WeatherConfiguration configuration;
@@ -41,6 +42,16 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
         super(uri, component);
         this.configuration = properties;
         this.weatherQuery = new WeatherQuery(getConfiguration());
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return "http://api.openweathermap.org/data/2.5";
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "http";
     }
 
     @Override

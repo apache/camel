@@ -18,6 +18,7 @@ package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -29,6 +30,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -42,7 +44,7 @@ import org.apache.camel.util.URISupport;
 @UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400",
              syntax = "jt400:userID:password@systemName/QSYS.LIB/objectPath.type", category = { Category.MESSAGING },
              headersClass = Jt400Constants.class)
-public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {
+public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     public static final String KEY = Jt400Constants.KEY;
     public static final String SENDER_INFORMATION = Jt400Constants.SENDER_INFORMATION;
@@ -71,6 +73,24 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
         } catch (URISyntaxException e) {
             throw new CamelException("Unable to parse URI for " + URISupport.sanitizeUri(endpointUri), e);
         }
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getSystemName();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "tcp";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (getUserID() != null) {
+            return Map.of("username", getUserID());
+        }
+        return null;
     }
 
     public Jt400Configuration getConfiguration() {

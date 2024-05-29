@@ -31,6 +31,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type",
              category = { Category.CLOUD, Category.API, Category.CHAT }, headersClass = TelegramConstants.class)
-public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
+public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint, EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 
     @UriParam
@@ -65,6 +66,19 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
         super(endpointUri, component);
         this.configuration = configuration;
         this.client = client;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (configuration.getBaseUri() != null) {
+            return configuration.getBaseUri();
+        }
+        return "https://api.telegram.org";
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiName;
 import org.apache.camel.component.dhis2.internal.Dhis2Constants;
 import org.apache.camel.component.dhis2.internal.Dhis2PropertiesHelper;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
@@ -43,7 +44,7 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
  */
 @UriEndpoint(firstVersion = "4.0.0", scheme = "dhis2", title = "DHIS2", syntax = "dhis2:apiName/methodName",
              apiSyntax = "apiName/methodName", category = { Category.API })
-public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Configuration> {
+public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Configuration> implements EndpointServiceLocation {
 
     @UriParam
     private final Dhis2Configuration configuration;
@@ -75,6 +76,24 @@ public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Config
     @Override
     protected ApiMethodPropertiesHelper<Dhis2Configuration> getPropertiesHelper() {
         return Dhis2PropertiesHelper.getHelper(getCamelContext());
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getBaseApiUrl();
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "http";
     }
 
     protected String getThreadProfileName() {

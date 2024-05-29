@@ -20,11 +20,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -59,7 +61,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant",
              alternativeSyntax = "xmpp:user:password@host:port/participant",
              category = { Category.CHAT, Category.MESSAGING }, headersClass = XmppConstants.class)
-public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
@@ -110,6 +112,24 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public XmppEndpoint(String uri, XmppComponent component) {
         super(uri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return host + ":" + port;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "xmpp";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (user != null) {
+            return Map.of("username", user);
+        }
+        return null;
     }
 
     @Override

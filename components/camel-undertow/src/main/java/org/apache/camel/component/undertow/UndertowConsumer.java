@@ -73,6 +73,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         super(endpoint, processor);
     }
 
+    @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
     public boolean isRest() {
         return rest;
     }

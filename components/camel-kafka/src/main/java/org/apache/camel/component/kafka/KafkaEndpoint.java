@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
@@ -27,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic",
              category = { Category.MESSAGING }, headersClass = KafkaConstants.class)
-public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
 
@@ -69,6 +71,24 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @Override
     public KafkaComponent getComponent() {
         return (KafkaComponent) super.getComponent();
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getBrokers();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "kafka";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getClientId() != null) {
+            return Map.of("clientId", configuration.getClientId());
+        }
+        return null;
     }
 
     public KafkaConfiguration getConfiguration() {

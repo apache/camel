@@ -42,6 +42,7 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.component.fhir.internal.FhirConstants;
 import org.apache.camel.component.fhir.internal.FhirPropertiesHelper;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
@@ -54,7 +55,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.API })
-public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> {
+public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> implements EndpointServiceLocation {
 
     private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";
 
@@ -67,6 +68,24 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
                         FhirApiName apiName, String methodName, FhirConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, FhirApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
         this.configuration = endpointConfiguration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getServerUrl();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "fhir";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
     }
 
     @Override

@@ -57,7 +57,7 @@ public class ThriftEndpointUriFactory extends org.apache.camel.support.component
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "host", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, true, copy);
         uri = buildPathParameter(syntax, uri, "service", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);

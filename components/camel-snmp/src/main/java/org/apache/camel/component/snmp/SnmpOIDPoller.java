@@ -60,7 +60,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     protected void doStart() throws Exception {
         super.doStart();
 
-        this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
+        this.targetAddress = GenericAddress.parse(this.endpoint.getServerAddress());
 
         // either tcp or udp
         if ("tcp".equals(endpoint.getProtocol())) {
@@ -78,11 +78,11 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
         // listen to the transport
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
+            LOG.debug("Starting OID poller on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
         }
         this.transport.listen();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Started OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
+            LOG.info("Started OID poller on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
         }
     }
 
@@ -169,7 +169,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
      */
     public void processPDU(PDU pdu) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received response event for {} : {}", this.endpoint.getAddress(), pdu);
+            LOG.debug("Received response event for {} : {}", this.endpoint.getServerAddress(), pdu);
         }
         Exchange exchange = endpoint.createExchange(pdu);
         try {

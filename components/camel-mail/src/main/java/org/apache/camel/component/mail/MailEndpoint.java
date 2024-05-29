@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.IdempotentRepository;
@@ -31,6 +32,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.eclipse.angus.mail.imap.SortTerm;
+
+import java.util.Map;
 
 import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
 import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
@@ -41,7 +44,7 @@ import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICAT
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
              syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
              category = { Category.MAIL }, headersClass = MailConstants.class)
-public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
+public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",
               label = "consumer,scheduler",
@@ -85,6 +88,30 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
         // so we override with a new default value. End user can override this value by providing a delay parameter
         setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (configuration != null) {
+            return configuration.getProtocol() + ":" + configuration.getHost() + ":" + configuration.getPort();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        if (configuration != null) {
+            return configuration.getProtocol();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration != null && configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
     }
 
     @Override

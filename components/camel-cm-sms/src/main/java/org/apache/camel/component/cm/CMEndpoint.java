@@ -22,6 +22,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,7 +38,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "cm-sms", title = "CM SMS Gateway", syntax = "cm-sms:host",
              category = { Category.MOBILE }, producerOnly = true)
-public class CMEndpoint extends DefaultEndpoint {
+public class CMEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -80,6 +81,16 @@ public class CMEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return host;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "http";
     }
 
     public CMConfiguration getConfiguration() {

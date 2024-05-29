@@ -33,11 +33,17 @@ public class SqlStoredComponent extends DefaultComponent {
 
     @Metadata(autowired = true)
     private DataSource dataSource;
+    @Metadata(label = "advanced",
+              description = "Whether to detect the network address location of the JMS broker on startup."
+                            + " This information is gathered via reflection on the ConnectionFactory, and is vendor specific."
+                            + " This option can be used to turn this off.",
+              defaultValue = "true")
+    private boolean serviceLocationEnabled = true;
 
     @Override
     protected Endpoint createEndpoint(String uri, String template, Map<String, Object> parameters) throws Exception {
-
         SqlStoredEndpoint endpoint = new SqlStoredEndpoint(uri, this);
+        endpoint.setServiceLocationEnabled(serviceLocationEnabled);
         endpoint.setTemplate(template);
         setProperties(endpoint, parameters);
 
@@ -73,4 +79,17 @@ public class SqlStoredComponent extends DefaultComponent {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+    public boolean isServiceLocationEnabled() {
+        return serviceLocationEnabled;
+    }
+
+    /**
+     * Whether to detect the network address location of the JMS broker on startup. This information is gathered via
+     * reflection on the ConnectionFactory, and is vendor specific. This option can be used to turn this off.
+     */
+    public void setServiceLocationEnabled(boolean serviceLocationEnabled) {
+        this.serviceLocationEnabled = serviceLocationEnabled;
+    }
+
 }

@@ -21,6 +21,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -28,12 +29,14 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
+import java.util.Map;
+
 /**
  * Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
              category = { Category.DATABASE }, producerOnly = true, headersClass = ArangoDbConstants.class)
-public class ArangoDbEndpoint extends DefaultEndpoint {
+public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "database name")
     @Metadata(required = true)
@@ -49,6 +52,24 @@ public class ArangoDbEndpoint extends DefaultEndpoint {
     public ArangoDbEndpoint(String uri, ArangoDbComponent component, ArangoDbConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "http";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUser() != null) {
+            return Map.of("username", configuration.getUser());
+        }
+        return null;
     }
 
     public Producer createProducer() {

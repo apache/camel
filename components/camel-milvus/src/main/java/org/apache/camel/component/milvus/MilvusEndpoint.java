@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milvus;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.milvus.client.MilvusClient;
@@ -26,6 +27,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -46,7 +48,7 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.AI
              },
              headersClass = Milvus.Headers.class)
-public class MilvusEndpoint extends DefaultEndpoint {
+public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)
     @UriPath(description = "The collection Name")
@@ -72,6 +74,16 @@ public class MilvusEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
 
         this.lock = new Object();
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "grpc";
     }
 
     public MilvusConfiguration getConfiguration() {

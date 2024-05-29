@@ -19,6 +19,7 @@ package org.apache.camel.component.graphql;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -26,6 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -50,7 +52,7 @@ import org.apache.hc.core5.http.message.BasicHeader;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
              category = { Category.API }, producerOnly = true, lenientProperties = true)
-public class GraphqlEndpoint extends DefaultEndpoint {
+public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -82,6 +84,27 @@ public class GraphqlEndpoint extends DefaultEndpoint {
 
     public GraphqlEndpoint(String uri, Component component) {
         super(uri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (httpUri != null) {
+            return httpUri.toString();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (username != null) {
+            return Map.of("username", username);
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
     }
 
     @Override

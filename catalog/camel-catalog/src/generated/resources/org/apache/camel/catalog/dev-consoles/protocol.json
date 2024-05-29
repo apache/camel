@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "protocol",
+    "title": "Protocols",
+    "description": "Protocols used for network communication with clients",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ProtocolDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.7.0-SNAPSHOT"
+  }
+}
+

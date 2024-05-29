@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername",
              producerOnly = true, category = { Category.DOCUMENT }, headersClass = PrinterEndpoint.class)
-public class PrinterEndpoint extends DefaultEndpoint {
+public class PrinterEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(label = "producer", description = "The name of the job", javaType = "String")
     public static final String JOB_NAME = "PrinterJobName";
@@ -51,6 +52,16 @@ public class PrinterEndpoint extends DefaultEndpoint {
     public PrinterEndpoint(String endpointUri, Component component, PrinterConfiguration config) {
         super(endpointUri, component);
         this.config = config;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return config.getHostname() + ":" + config.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "printer";
     }
 
     @Override

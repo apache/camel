@@ -84,21 +84,6 @@ public interface MinioComponentBuilderFactory {
         }
     
         /**
-         * Set custom HTTP client for authenticated access.
-         * 
-         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param customHttpClient the value to set
-         * @return the dsl builder
-         */
-        default MinioComponentBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
-            doSetProperty("customHttpClient", customHttpClient);
-            return this;
-        }
-    
-        /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -208,39 +193,6 @@ public interface MinioComponentBuilderFactory {
          */
         default MinioComponentBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
-            return this;
-        }
-    
-        /**
-         * Server-side encryption.
-         * 
-         * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryption the value to set
-         * @return the dsl builder
-         */
-        default MinioComponentBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-    
-        /**
-         * Server-side encryption for source object while copy/move objects.
-         * 
-         * The option is a:
-         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param serverSideEncryptionCustomerKey the value to set
-         * @return the dsl builder
-         */
-        default MinioComponentBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
-            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
             return this;
         }
     
@@ -830,6 +782,21 @@ public interface MinioComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Set custom HTTP client for authenticated access.
+         * 
+         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
+         */
+        default MinioComponentBuilder customHttpClient(okhttp3.OkHttpClient customHttpClient) {
+            doSetProperty("customHttpClient", customHttpClient);
+            return this;
+        }
+    
         
         /**
          * Used for enabling or disabling all consumer based health checks from
@@ -899,6 +866,39 @@ public interface MinioComponentBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+    
+        /**
+         * Server-side encryption.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
+         */
+        default MinioComponentBuilder serverSideEncryption(io.minio.ServerSideEncryption serverSideEncryption) {
+            doSetProperty("serverSideEncryption", serverSideEncryption);
+            return this;
+        }
+    
+        /**
+         * Server-side encryption for source object while copy/move objects.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
+         */
+        default MinioComponentBuilder serverSideEncryptionCustomerKey(io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
+            doSetProperty("serverSideEncryptionCustomerKey", serverSideEncryptionCustomerKey);
+            return this;
+        }
     }
 
     class MinioComponentBuilderImpl
@@ -922,7 +922,6 @@ public interface MinioComponentBuilderFactory {
             switch (name) {
             case "autoCreateBucket": getOrCreateConfiguration((MinioComponent) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((MinioComponent) component).setConfiguration((org.apache.camel.component.minio.MinioConfiguration) value); return true;
-            case "customHttpClient": getOrCreateConfiguration((MinioComponent) component).setCustomHttpClient((okhttp3.OkHttpClient) value); return true;
             case "endpoint": getOrCreateConfiguration((MinioComponent) component).setEndpoint((java.lang.String) value); return true;
             case "minioClient": getOrCreateConfiguration((MinioComponent) component).setMinioClient((io.minio.MinioClient) value); return true;
             case "objectLock": getOrCreateConfiguration((MinioComponent) component).setObjectLock((boolean) value); return true;
@@ -930,8 +929,6 @@ public interface MinioComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((MinioComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "region": getOrCreateConfiguration((MinioComponent) component).setRegion((java.lang.String) value); return true;
             case "secure": getOrCreateConfiguration((MinioComponent) component).setSecure((boolean) value); return true;
-            case "serverSideEncryption": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryption((io.minio.ServerSideEncryption) value); return true;
-            case "serverSideEncryptionCustomerKey": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryptionCustomerKey((io.minio.ServerSideEncryptionCustomerKey) value); return true;
             case "autoCloseBody": getOrCreateConfiguration((MinioComponent) component).setAutoCloseBody((boolean) value); return true;
             case "bridgeErrorHandler": ((MinioComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "bypassGovernanceMode": getOrCreateConfiguration((MinioComponent) component).setBypassGovernanceMode((boolean) value); return true;
@@ -965,10 +962,13 @@ public interface MinioComponentBuilderFactory {
             case "pojoRequest": getOrCreateConfiguration((MinioComponent) component).setPojoRequest((boolean) value); return true;
             case "storageClass": getOrCreateConfiguration((MinioComponent) component).setStorageClass((java.lang.String) value); return true;
             case "autowiredEnabled": ((MinioComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "customHttpClient": getOrCreateConfiguration((MinioComponent) component).setCustomHttpClient((okhttp3.OkHttpClient) value); return true;
             case "healthCheckConsumerEnabled": ((MinioComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((MinioComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((MinioComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((MinioComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "serverSideEncryption": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryption((io.minio.ServerSideEncryption) value); return true;
+            case "serverSideEncryptionCustomerKey": getOrCreateConfiguration((MinioComponent) component).setServerSideEncryptionCustomerKey((io.minio.ServerSideEncryptionCustomerKey) value); return true;
             default: return false;
             }
         }

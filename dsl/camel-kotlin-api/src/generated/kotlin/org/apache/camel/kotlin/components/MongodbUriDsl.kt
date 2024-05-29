@@ -67,6 +67,13 @@ public class MongodbUriDsl(
   }
 
   /**
+   * Set the whole Connection String/Uri for mongodb endpoint.
+   */
+  public fun connectionUriString(connectionUriString: String) {
+    it.property("connectionUriString", connectionUriString)
+  }
+
+  /**
    * Create collection during initialisation if it doesn't exist. Default is true.
    */
   public fun createCollection(createCollection: String) {
@@ -194,13 +201,6 @@ public class MongodbUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
-  }
-
-  /**
-   * Set the whole Connection String/Uri for mongodb endpoint.
-   */
-  public fun connectionUriString(connectionUriString: String) {
-    it.property("connectionUriString", connectionUriString)
   }
 
   /**

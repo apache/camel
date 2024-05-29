@@ -33,8 +33,6 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clustername":
         case "clusterName": target.setClusterName(property(camelContext, java.lang.String.class, value)); return true;
-        case "consistencylevel":
-        case "consistencyLevel": target.setConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.DefaultConsistencyLevel.class, value)); return true;
         case "cql": target.setCql(property(camelContext, java.lang.String.class, value)); return true;
         case "datacenter": target.setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -94,8 +92,6 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return boolean.class;
         case "clustername":
         case "clusterName": return java.lang.String.class;
-        case "consistencylevel":
-        case "consistencyLevel": return com.datastax.oss.driver.api.core.DefaultConsistencyLevel.class;
         case "cql": return java.lang.String.class;
         case "datacenter": return java.lang.String.class;
         case "delay": return long.class;
@@ -156,8 +152,6 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clustername":
         case "clusterName": return target.getClusterName();
-        case "consistencylevel":
-        case "consistencyLevel": return target.getConsistencyLevel();
         case "cql": return target.getCql();
         case "datacenter": return target.getDatacenter();
         case "delay": return target.getDelay();

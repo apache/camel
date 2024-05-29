@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -34,7 +35,7 @@ import org.jsmpp.bean.DeliverSm;
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
              category = { Category.MOBILE }, lenientProperties = true, headersClass = SmppConstants.class)
-public class SmppEndpoint extends DefaultEndpoint {
+public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SmppBinding binding;
     @UriParam
@@ -43,6 +44,16 @@ public class SmppEndpoint extends DefaultEndpoint {
     public SmppEndpoint(String endpointUri, Component component, SmppConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "smpp";
     }
 
     @Override

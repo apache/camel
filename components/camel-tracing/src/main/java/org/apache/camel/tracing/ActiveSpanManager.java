@@ -109,7 +109,6 @@ public final class ActiveSpanManager {
      * Simple holder for the currently active span and an optional reference to the parent holder. This will be used to
      * maintain a stack for spans, built up during the execution of a series of chained camel exchanges, and then
      * unwound when the responses are processed.
-     *
      */
     public static class Holder {
         private Holder parent;
@@ -121,7 +120,7 @@ public final class ActiveSpanManager {
             this.span = span;
             this.scope = span.makeCurrent();
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Tracing: started scope={}", this.scope);
+                LOG.trace("Tracing: started scope: {}", this.scope);
             }
         }
 
@@ -136,11 +135,11 @@ public final class ActiveSpanManager {
         private void closeScope() {
             try {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Tracing: closing scope={}", this.scope);
+                    LOG.trace("Tracing: closing scope: {}", this.scope);
                 }
                 scope.close();
             } catch (Exception e) {
-                LOG.debug("Failed to close span scope", e);
+                LOG.debug("Failed to close span scope. This exception is ignored.", e);
             }
         }
     }

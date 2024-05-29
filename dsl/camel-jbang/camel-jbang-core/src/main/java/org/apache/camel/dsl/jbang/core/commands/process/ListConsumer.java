@@ -42,7 +42,7 @@ public class ListConsumer extends ProcessWatchCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name, or age", defaultValue = "pid")
+                        description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
     @CommandLine.Option(names = { "--limit" },
@@ -100,6 +100,7 @@ public class ListConsumer extends ProcessWatchCommand {
                                 row.uri = o.getString("uri");
                                 row.state = o.getString("state");
                                 row.className = o.getString("class");
+                                row.hostedService = o.getBooleanOrDefault("hostedService", false);
                                 row.scheduled = o.getBoolean("scheduled");
                                 row.inflight = o.getInteger("inflight");
                                 row.polling = o.getBoolean("polling");
@@ -266,6 +267,7 @@ public class ListConsumer extends ProcessWatchCommand {
         String uri;
         String state;
         String className;
+        boolean hostedService;
         boolean scheduled;
         int inflight;
         Boolean polling;

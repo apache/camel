@@ -65,7 +65,7 @@ public class SnmpProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
+        this.targetAddress = GenericAddress.parse(this.endpoint.getServerAddress());
         LOG.debug("targetAddress: {}", targetAddress);
 
         this.usm = SnmpHelper.createAndSetUSM(endpoint);
@@ -115,7 +115,7 @@ public class SnmpProducer extends DefaultProducer {
         TransportMapping<? extends Address> transport = null;
 
         try {
-            LOG.debug("Starting SNMP producer on {}", this.endpoint.getAddress());
+            LOG.debug("Starting SNMP producer on {}", this.endpoint.getServerAddress());
 
             // either tcp or udp
             if ("tcp".equals(this.endpoint.getProtocol())) {

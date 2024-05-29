@@ -158,6 +158,26 @@ public interface SqlComponentBuilderFactory {
     
         
         /**
+         * Whether to detect the network address location of the JMS broker on
+         * startup. This information is gathered via reflection on the
+         * ConnectionFactory, and is vendor specific. This option can be used to
+         * turn this off.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param serviceLocationEnabled the value to set
+         * @return the dsl builder
+         */
+        default SqlComponentBuilder serviceLocationEnabled(boolean serviceLocationEnabled) {
+            doSetProperty("serviceLocationEnabled", serviceLocationEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
          * 
@@ -231,6 +251,7 @@ public interface SqlComponentBuilderFactory {
             case "lazyStartProducer": ((SqlComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "rowMapperFactory": ((SqlComponent) component).setRowMapperFactory((org.apache.camel.component.sql.RowMapperFactory) value); return true;
+            case "serviceLocationEnabled": ((SqlComponent) component).setServiceLocationEnabled((boolean) value); return true;
             case "usePlaceholder": ((SqlComponent) component).setUsePlaceholder((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((SqlComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((SqlComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;

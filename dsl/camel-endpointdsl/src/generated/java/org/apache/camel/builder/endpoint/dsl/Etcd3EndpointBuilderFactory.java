@@ -48,7 +48,7 @@ public interface Etcd3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String[]</code> type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set
@@ -64,7 +64,7 @@ public interface Etcd3EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.String[]</code>
          * type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set
@@ -696,7 +696,7 @@ public interface Etcd3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String[]</code> type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set
@@ -712,7 +712,7 @@ public interface Etcd3EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.String[]</code>
          * type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set
@@ -1258,7 +1258,7 @@ public interface Etcd3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String[]</code> type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set
@@ -1274,7 +1274,7 @@ public interface Etcd3EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.String[]</code>
          * type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set

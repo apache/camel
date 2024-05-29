@@ -20,6 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -27,12 +28,14 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
+import java.util.Map;
+
 /**
  * Interact with Asterisk PBX Server (VoIP).
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name",
              category = { Category.MOBILE }, headersClass = AsteriskConstants.class)
-public class AsteriskEndpoint extends DefaultEndpoint {
+public class AsteriskEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     @UriPath(description = "Name of component")
     @Metadata(required = true)
     private String name;
@@ -73,6 +76,24 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new AsteriskConsumer(this, processor);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return hostname;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "voip";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (username != null) {
+            return Map.of("username", username);
+        }
+        return null;
     }
 
     public String getUsername() {

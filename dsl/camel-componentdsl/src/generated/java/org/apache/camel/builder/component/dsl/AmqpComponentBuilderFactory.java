@@ -1749,6 +1749,26 @@ public interface AmqpComponentBuilderFactory {
     
         
         /**
+         * Whether to detect the network address location of the JMS broker on
+         * startup. This information is gathered via reflection on the
+         * ConnectionFactory, and is vendor specific. This option can be used to
+         * turn this off.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param serviceLocationEnabled the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder serviceLocationEnabled(boolean serviceLocationEnabled) {
+            doSetProperty("serviceLocationEnabled", serviceLocationEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2241,6 +2261,7 @@ public interface AmqpComponentBuilderFactory {
             case "receiveTimeout": getOrCreateConfiguration((AMQPComponent) component).setReceiveTimeout((long) value); return true;
             case "recoveryInterval": getOrCreateConfiguration((AMQPComponent) component).setRecoveryInterval((long) value); return true;
             case "requestTimeoutCheckerInterval": getOrCreateConfiguration((AMQPComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "serviceLocationEnabled": ((AMQPComponent) component).setServiceLocationEnabled((boolean) value); return true;
             case "synchronous": getOrCreateConfiguration((AMQPComponent) component).setSynchronous((boolean) value); return true;
             case "temporaryQueueResolver": getOrCreateConfiguration((AMQPComponent) component).setTemporaryQueueResolver((org.apache.camel.component.jms.TemporaryQueueResolver) value); return true;
             case "transferException": getOrCreateConfiguration((AMQPComponent) component).setTransferException((boolean) value); return true;

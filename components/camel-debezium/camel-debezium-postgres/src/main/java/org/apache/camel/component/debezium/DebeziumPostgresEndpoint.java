@@ -18,8 +18,11 @@ package org.apache.camel.component.debezium;
 
 import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+
+import java.util.Map;
 
 /**
  * Capture changes from a PostgresSQL database.
@@ -27,7 +30,8 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-postgres", title = "Debezium PostgresSQL Connector",
              syntax = "debezium-postgres:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresConnectorEmbeddedDebeziumConfiguration> {
+public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private PostgresConnectorEmbeddedDebeziumConfiguration configuration;
@@ -39,6 +43,24 @@ public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresCon
     }
 
     public DebeziumPostgresEndpoint() {
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getDatabaseHostname() + ":" + configuration.getDatabasePort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "jdbc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getDatabaseUser() != null) {
+            return Map.of("username", configuration.getDatabaseUser());
+        }
+        return null;
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -45,7 +46,7 @@ import org.web3j.quorum.Quorum;
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
              category = { Category.BLOCKCHAIN }, headersClass = Web3jConstants.class)
-public class Web3jEndpoint extends DefaultEndpoint {
+public class Web3jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
     private Web3j web3j;
@@ -61,6 +62,16 @@ public class Web3jEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
         this.nodeAddress = remaining;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return nodeAddress;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "json-rpc";
     }
 
     @Override
