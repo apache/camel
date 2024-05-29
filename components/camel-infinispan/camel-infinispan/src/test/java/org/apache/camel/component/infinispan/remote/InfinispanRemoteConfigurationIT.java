@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InfinispanRemoteConfigurationIT {
     @RegisterExtension
-    static InfinispanService service = InfinispanServiceFactory.createService();
+    static InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
 
     @Test
     public void remoteCacheWithoutProperties() throws Exception {
