@@ -259,7 +259,7 @@
         <jakarta-inject-version>2.0.1</jakarta-inject-version>
         <jakarta-xml-bind-api-version>4.0.2</jakarta-xml-bind-api-version>
         <jakarta-xml-soap-api-version>3.0.1</jakarta-xml-soap-api-version>
-        <jakarta-xml-ws-api-version>4.0.1</jakarta-xml-ws-api-version>
+        <jakarta-xml-ws-api-version>4.0.2</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.1.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>4.0.5</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>3.2.0</jaxb2-maven-plugin-version>
