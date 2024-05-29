@@ -16,24 +16,42 @@
  */
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.eventbridge.EventbridgeComponent;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 
-public class EventbridgePutEventsIT extends Aws2EventbridgeBase {
+public class EventbridgePutEventsIT extends CamelTestSupport {
+
+    @RegisterExtension
+    public static AWSService service = AWSServiceFactory.createEventBridgeService();
 
     @EndpointInject
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        EventbridgeComponent eventbridgeComponent = context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
+        eventbridgeComponent.getConfiguration().setEventbridgeClient(AWSSDKClientUtils.newEventBridgeClient());
+        return context;
+    }
 
     @Test
     public void sendIn() throws Exception {
