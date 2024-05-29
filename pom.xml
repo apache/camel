@@ -134,6 +134,7 @@
         <maven-remote-resources-plugin-version>3.2.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.2.5</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.16.2</versions-maven-plugin-version>
+        <maven-artifact-plugin-version>3.5.1</maven-artifact-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
 
@@ -213,6 +214,24 @@
                 <configuration>
                     <outputDirectory>target</outputDirectory>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-artifact-plugin</artifactId>
+                <version>${maven-artifact-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>buildinfo</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>buildinfo</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
@@ -327,6 +346,8 @@
                                     <exclude>camel-sbom/*.xml</exclude>
                                     <exclude>doap.rdf</exclude>
                                     <exclude>mvnw*</exclude>
+                                    <exclude>Dockerfile</exclude>
+                                    <exclude>builder*</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
