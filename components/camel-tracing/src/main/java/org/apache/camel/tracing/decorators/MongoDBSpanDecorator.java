@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
-import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 
 public class MongoDBSpanDecorator extends AbstractSpanDecorator {
 
@@ -49,13 +49,13 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
-        span.setLowCardinalityTag(Tag.DB_TYPE, getComponent());
+        span.setTag(TagConstants.DB_SYSTEM, getComponent());
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         String database = queryParameters.get("database");
         if (database != null) {
-            span.setTag(Tag.DB_INSTANCE, database);
+            span.setTag(TagConstants.DB_NAME, database);
         }
-        span.setTag(Tag.DB_STATEMENT, queryParameters.toString());
+        span.setTag(TagConstants.DB_STATEMENT, queryParameters.toString());
     }
 
 }

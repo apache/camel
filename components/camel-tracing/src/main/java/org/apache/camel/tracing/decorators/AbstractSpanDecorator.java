@@ -123,17 +123,17 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
             if (ap != null) {
                 span.setTag(TagConstants.SERVER_PROTOCOL, ap);
             }
-            Map map = ela.getServiceMetadata();
+            Map<String, String> map = ela.getServiceMetadata();
             if (map != null) {
-                String un = (String) map.get("username");
+                String un = map.get("username");
                 if (un != null) {
                     span.setTag(TagConstants.USER_NAME, un);
                 }
-                String id = (String) map.get("clientId");
+                String id = map.get("clientId");
                 if (id != null) {
                     span.setTag(TagConstants.USER_ID, id);
                 }
-                String region = (String) map.get("region");
+                String region = map.get("region");
                 if (region != null) {
                     span.setTag(TagConstants.SERVER_REGION, region);
                 }
