@@ -24,9 +24,11 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Isolated("Seems to have problem running along with other tests")
 @DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
                           disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectConsumerTest extends JmsExclusiveTestSupport {
