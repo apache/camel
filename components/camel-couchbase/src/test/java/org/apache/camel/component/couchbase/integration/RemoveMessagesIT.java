@@ -22,19 +22,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 
-@DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
-                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions"),
-        @DisabledIfSystemProperty(named = "couchbase.enable.it", matches = "false",
-                                  disabledReason = "Too resource intensive for most systems to run reliably"),
-})
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Too resource intensive for most systems to run reliably")
 @Tags({ @Tag("couchbase-7") })
 public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
 
