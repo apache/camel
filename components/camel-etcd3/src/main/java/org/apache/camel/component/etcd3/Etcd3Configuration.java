@@ -34,7 +34,7 @@ import static org.apache.camel.component.etcd3.Etcd3Constants.ETCD_DEFAULT_ENDPO
 public class Etcd3Configuration implements Cloneable {
 
     @UriParam(label = "common", defaultValue = "http://localhost:2379")
-    private String[] endpoints = ETCD_DEFAULT_ENDPOINTS;
+    private String endpoints = ETCD_DEFAULT_ENDPOINTS;
     @UriParam(label = "security", secret = true)
     private String userName;
     @UriParam(label = "security", secret = true)
@@ -76,14 +76,18 @@ public class Etcd3Configuration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "UTF-8")
     private String valueCharset = "UTF-8";
 
-    public String[] getEndpoints() {
+    public String getEndpoints() {
         return endpoints;
     }
 
+    String[] getEndpointsAsArray() {
+        return endpoints.split(",");
+    }
+
     /**
-     * Configure etcd server endpoints using the IPNameResolver.
+     * Configure etcd server endpoints using the IPNameResolver. Multiple endpoints can be separated by comma.
      */
-    public void setEndpoints(String... endpoints) {
+    public void setEndpoints(String endpoints) {
         this.endpoints = endpoints;
     }
 
@@ -312,7 +316,7 @@ public class Etcd3Configuration implements Cloneable {
      */
     public Client createClient() {
         final ClientBuilder builder = Client.builder()
-                .endpoints(endpoints)
+                .endpoints(getEndpointsAsArray())
                 .sslContext(sslContext)
                 .authority(authority)
                 .maxInboundMessageSize(maxInboundMessageSize)

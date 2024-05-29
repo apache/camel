@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.etcd3;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,8 +27,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-
-import java.util.Map;
 
 /**
  * Get, set, delete or watch keys in etcd key-value store.
@@ -49,7 +49,7 @@ public class Etcd3Endpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     @Override
     public String getServiceUrl() {
-        return configuration.getEndpoints()[0];
+        return configuration.getEndpoints();
     }
 
     @Override

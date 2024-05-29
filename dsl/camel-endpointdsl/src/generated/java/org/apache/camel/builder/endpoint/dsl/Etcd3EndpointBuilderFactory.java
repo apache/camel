@@ -44,25 +44,10 @@ public interface Etcd3EndpointBuilderFactory {
             return (AdvancedEtcd3EndpointConsumerBuilder) this;
         }
         /**
-         * Configure etcd server endpoints using the IPNameResolver.
+         * Configure etcd server endpoints using the IPNameResolver. Multiple
+         * endpoints can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
-         * 
-         * Default: http://localhost:2379
-         * Group: common
-         * 
-         * @param endpoints the value to set
-         * @return the dsl builder
-         */
-        default Etcd3EndpointConsumerBuilder endpoints(String[] endpoints) {
-            doSetProperty("endpoints", endpoints);
-            return this;
-        }
-        /**
-         * Configure etcd server endpoints using the IPNameResolver.
-         * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: http://localhost:2379
          * Group: common
@@ -692,25 +677,10 @@ public interface Etcd3EndpointBuilderFactory {
         }
 
         /**
-         * Configure etcd server endpoints using the IPNameResolver.
+         * Configure etcd server endpoints using the IPNameResolver. Multiple
+         * endpoints can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
-         * 
-         * Default: http://localhost:2379
-         * Group: common
-         * 
-         * @param endpoints the value to set
-         * @return the dsl builder
-         */
-        default Etcd3EndpointProducerBuilder endpoints(String[] endpoints) {
-            doSetProperty("endpoints", endpoints);
-            return this;
-        }
-        /**
-         * Configure etcd server endpoints using the IPNameResolver.
-         * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: http://localhost:2379
          * Group: common
@@ -1254,25 +1224,10 @@ public interface Etcd3EndpointBuilderFactory {
         }
 
         /**
-         * Configure etcd server endpoints using the IPNameResolver.
+         * Configure etcd server endpoints using the IPNameResolver. Multiple
+         * endpoints can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
-         * 
-         * Default: http://localhost:2379
-         * Group: common
-         * 
-         * @param endpoints the value to set
-         * @return the dsl builder
-         */
-        default Etcd3EndpointBuilder endpoints(String[] endpoints) {
-            doSetProperty("endpoints", endpoints);
-            return this;
-        }
-        /**
-         * Configure etcd server endpoints using the IPNameResolver.
-         * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: http://localhost:2379
          * Group: common

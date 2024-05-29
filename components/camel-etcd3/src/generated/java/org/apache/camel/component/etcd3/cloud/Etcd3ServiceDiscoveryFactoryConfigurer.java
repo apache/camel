@@ -28,7 +28,7 @@ public class Etcd3ServiceDiscoveryFactoryConfigurer extends org.apache.camel.sup
         case "authority": target.setAuthority(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "endpoints": target.setEndpoints(property(camelContext, java.lang.String[].class, value)); return true;
+        case "endpoints": target.setEndpoints(property(camelContext, java.lang.String.class, value)); return true;
         case "headers": target.setHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "keepalivetime":
         case "keepAliveTime": target.setKeepAliveTime(property(camelContext, java.time.Duration.class, value)); return true;
@@ -69,7 +69,7 @@ public class Etcd3ServiceDiscoveryFactoryConfigurer extends org.apache.camel.sup
         case "authority": return java.lang.String.class;
         case "connectiontimeout":
         case "connectionTimeout": return java.time.Duration.class;
-        case "endpoints": return java.lang.String[].class;
+        case "endpoints": return java.lang.String.class;
         case "headers": return java.util.Map.class;
         case "keepalivetime":
         case "keepAliveTime": return java.time.Duration.class;

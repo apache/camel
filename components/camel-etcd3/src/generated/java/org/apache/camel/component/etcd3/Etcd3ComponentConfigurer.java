@@ -40,7 +40,7 @@ public class Etcd3ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.etcd3.Etcd3Configuration.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": getOrCreateConfiguration(target).setConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "endpoints": getOrCreateConfiguration(target).setEndpoints(property(camelContext, java.lang.String[].class, value)); return true;
+        case "endpoints": getOrCreateConfiguration(target).setEndpoints(property(camelContext, java.lang.String.class, value)); return true;
         case "fromindex":
         case "fromIndex": getOrCreateConfiguration(target).setFromIndex(property(camelContext, long.class, value)); return true;
         case "headers": getOrCreateConfiguration(target).setHeaders(property(camelContext, java.util.Map.class, value)); return true;
@@ -90,7 +90,7 @@ public class Etcd3ComponentConfigurer extends PropertyConfigurerSupport implemen
         case "configuration": return org.apache.camel.component.etcd3.Etcd3Configuration.class;
         case "connectiontimeout":
         case "connectionTimeout": return java.time.Duration.class;
-        case "endpoints": return java.lang.String[].class;
+        case "endpoints": return java.lang.String.class;
         case "fromindex":
         case "fromIndex": return long.class;
         case "headers": return java.util.Map.class;
