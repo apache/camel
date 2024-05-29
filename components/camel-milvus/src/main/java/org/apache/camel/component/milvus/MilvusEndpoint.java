@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.milvus;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.milvus.client.MilvusClient;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sap.netweaver;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -27,8 +29,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-
-import java.util.Map;
 
 /**
  * Send requests to SAP NetWeaver Gateway using HTTP.

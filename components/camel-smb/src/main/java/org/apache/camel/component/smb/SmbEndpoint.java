@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smb;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,8 +28,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
-
-import java.util.Map;
 
 /**
  * Receive files from SMB (Server Message Block) shares.

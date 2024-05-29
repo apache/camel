@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.workday;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,8 +29,6 @@ import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-
-import java.util.Map;
 
 /**
  * Detect and parse documents using Workday.

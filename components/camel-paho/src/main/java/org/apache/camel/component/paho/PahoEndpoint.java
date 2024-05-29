@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.paho;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -32,9 +35,6 @@ import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.

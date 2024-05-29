@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,9 +31,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.service.ServiceHelper;
-
-import java.util.Map;
-import java.util.StringJoiner;
 
 import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_INFINISPAN;
 
