@@ -230,14 +230,14 @@ public interface ManagementAgent extends Service {
     /**
      * Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
      * <p/>
-     * This option is default <tt>false</tt>.
+     * This option is default <tt>true</tt>.
      */
     Boolean getMask();
 
     /**
      * Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
      * <p/>
-     * This option is default <tt>false</tt>.
+     * This option is default <tt>true</tt>.
      */
     void setMask(Boolean sanitize);
 

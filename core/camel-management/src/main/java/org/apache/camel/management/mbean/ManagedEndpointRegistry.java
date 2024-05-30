@@ -47,7 +47,7 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
+        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
     }
 
     public EndpointRegistry getEndpointRegistry() {

@@ -29,7 +29,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;

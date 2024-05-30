@@ -16,20 +16,23 @@
  */
 package org.apache.camel.management.mbean;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
-import org.apache.camel.api.management.mbean.ManagedEndpointServiceRegistryMBean;
-import org.apache.camel.spi.EndpointServiceRegistry;
+import java.util.List;
+import java.util.StringJoiner;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
-import java.util.List;
-import java.util.StringJoiner;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
+import org.apache.camel.api.management.mbean.ManagedEndpointServiceRegistryMBean;
+import org.apache.camel.spi.EndpointServiceRegistry;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.URISupport;
 
 /**
  *
@@ -38,10 +41,17 @@ import java.util.StringJoiner;
 public class ManagedEndpointServiceRegistry extends ManagedService implements ManagedEndpointServiceRegistryMBean {
 
     private final EndpointServiceRegistry registry;
+    private boolean sanitize;
 
     public ManagedEndpointServiceRegistry(CamelContext context, EndpointServiceRegistry registry) {
         super(context, registry);
         this.registry = registry;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
     }
 
     public EndpointServiceRegistry getRegistry() {
@@ -66,6 +76,10 @@ public class ManagedEndpointServiceRegistry extends ManagedService implements Ma
                 String serviceUrl = entry.getServiceUrl();
                 String metadata = null;
                 String endpointUri = entry.getEndpointUri();
+                if (sanitize) {
+                    endpointUri = URISupport.sanitizeUri(endpointUri);
+                }
+
                 long hits = entry.getHits();
                 String routeId = entry.getRouteId();
                 var m = entry.getServiceMetadata();
