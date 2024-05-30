@@ -262,7 +262,7 @@
         <jakarta-xml-ws-api-version>4.0.1</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.1.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>4.0.5</glassfish-jaxb-runtime-version>
-        <grpc.version>1.62.2</grpc.version>
+        <grpc-version>1.62.2</grpc-version>
         <jaxb2-maven-plugin-version>3.2.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
@@ -405,7 +405,7 @@
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.25.3</protobuf-version>
-        <protobuf-maven-plugin.version>2.1.1</protobuf-maven-plugin.version>
+        <protobuf-maven-plugin-version>2.1.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.3.Final</protostream-version>
         <prowide-version>SRU2023-10.1.5</prowide-version>
