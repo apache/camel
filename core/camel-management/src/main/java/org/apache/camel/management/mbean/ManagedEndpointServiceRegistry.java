@@ -67,6 +67,7 @@ public class ManagedEndpointServiceRegistry extends ManagedService implements Ma
                 String metadata = null;
                 String endpointUri = entry.getEndpointUri();
                 long hits = entry.getHits();
+                String routeId = entry.getRouteId();
                 var m = entry.getServiceMetadata();
                 if (m != null) {
                     StringJoiner sj = new StringJoiner(" ");
@@ -77,9 +78,9 @@ public class ManagedEndpointServiceRegistry extends ManagedService implements Ma
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "component", "dir", "protocol", "serviceUrl", "metadata", "endpointUri", "hits" },
+                                "component", "dir", "protocol", "serviceUrl", "metadata", "endpointUri", "routeId", "hits" },
                         new Object[] {
-                                component, dir, protocol, serviceUrl, metadata, endpointUri, hits });
+                                component, dir, protocol, serviceUrl, metadata, endpointUri, routeId, hits });
                 answer.put(data);
             }
             return answer;

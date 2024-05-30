@@ -40,12 +40,12 @@ public final class CamelOpenMBeanTypes {
         return new CompositeType(
                 "endpoints", "Endpoint Services",
                 new String[] {
-                        "component", "dir", "protocol", "serviceUrl", "metadata", "endpointUri", "hits" },
+                        "component", "dir", "protocol", "serviceUrl", "metadata", "endpointUri", "routeId", "hits" },
                 new String[] {
-                        "Component", "Direction", "Protocol", "Service Url", "Metadata", "Endpoint Uri", "Hits" },
+                        "Component", "Direction", "Protocol", "Service Url", "Metadata", "Endpoint Uri", "Route Id", "Hits" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING, SimpleType.LONG });
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.LONG });
     }
 
     public static TabularType listRestServicesTabularType() throws OpenDataException {

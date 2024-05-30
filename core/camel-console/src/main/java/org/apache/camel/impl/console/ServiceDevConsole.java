@@ -48,6 +48,9 @@ public class ServiceDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Protocol: %s", es.getServiceProtocol()));
             sb.append(String.format("\n    Service: %s", es.getServiceUrl()));
             sb.append(String.format("\n    Endpoint: %s", URISupport.sanitizeUri(es.getServiceUrl())));
+            if (es.getRouteId() != null) {
+                sb.append(String.format("\n    Route Id: %s", es.getRouteId()));
+            }
             sb.append(String.format("\n    Total Messages: %d", es.getHits()));
         }
         sb.append("\n");
@@ -71,6 +74,9 @@ public class ServiceDevConsole extends AbstractDevConsole {
             jo.put("protocol", es.getServiceProtocol());
             jo.put("serviceUrl", es.getServiceUrl());
             jo.put("endpointUri", es.getEndpointUri());
+            if (es.getRouteId() != null) {
+                jo.put("routeId", es.getRouteId());
+            }
             jo.put("hits", es.getHits());
             var map = es.getServiceMetadata();
             if (map != null) {
