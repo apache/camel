@@ -96,9 +96,10 @@ public class ListService extends ProcessWatchCommand {
                                     row.direction = jo.getString("direction");
                                     row.hosted = jo.getBooleanOrDefault("hosted", false);
                                     row.protocol = jo.getString("protocol");
-                                    row.address = jo.getString("address");
-                                    row.endpoint = jo.getString("endpointUri");
-                                    row.hits = jo.getLongOrDefault("totalMessages", 0);
+                                    row.serviceUrl = jo.getString("serviceUrl");
+                                    row.endpointUri = jo.getString("endpointUri");
+                                    row.hits = jo.getLongOrDefault("hits", 0);
+                                    row.routeId = jo.getString("routeId");
                                     row.metadata = jo.getMap("metadata");
                                     rows.add(row);
                                 }
@@ -121,6 +122,7 @@ public class ListService extends ProcessWatchCommand {
                     new Column().header("SERVICE").dataAlign(HorizontalAlign.LEFT).with(this::getService),
                     new Column().header("METADATA").visible(metadata).dataAlign(HorizontalAlign.LEFT).with(this::getMetadata),
                     new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.hits),
+                    new Column().header("ID").dataAlign(HorizontalAlign.RIGHT).with(this::getRouteId),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getUri),
@@ -130,6 +132,13 @@ public class ListService extends ProcessWatchCommand {
         }
 
         return 0;
+    }
+
+    private String getRouteId(Row r) {
+        if (r.routeId != null) {
+            return r.routeId;
+        }
+        return "";
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -152,7 +161,7 @@ public class ListService extends ProcessWatchCommand {
     }
 
     private String getUri(Row r) {
-        String u = r.endpoint;
+        String u = r.endpointUri;
         if (shortUri) {
             int pos = u.indexOf('?');
             if (pos > 0) {
@@ -167,7 +176,7 @@ public class ListService extends ProcessWatchCommand {
     }
 
     private String getService(Row r) {
-        return r.address;
+        return r.serviceUrl;
     }
 
     private String getMetadata(Row r) {
@@ -188,9 +197,10 @@ public class ListService extends ProcessWatchCommand {
         String direction;
         boolean hosted;
         String protocol;
-        String address;
-        String endpoint;
+        String serviceUrl;
+        String endpointUri;
         long hits;
+        String routeId;
         JsonObject metadata;
 
         Row copy() {

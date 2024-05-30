@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExchangeFactory;
@@ -375,6 +376,16 @@ public interface ExtendedCamelContext {
      * Sets a custom {@link ReactiveExecutor} to be used.
      */
     void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
+
+    /**
+     * Gets the {@link EndpointServiceRegistry} to use.
+     */
+    EndpointServiceRegistry getEndpointServiceRegistry();
+
+    /**
+     * Sets a custom {@link EndpointServiceRegistry} to be used.
+     */
+    void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry);
 
     /**
      * Whether exchange event notification is applicable (possible). This API is used internally in Camel as

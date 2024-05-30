@@ -49,7 +49,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
+        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
         if (sanitize) {
             uri = URISupport.sanitizeUri(processor.getUri());
         } else {
