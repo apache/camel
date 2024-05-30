@@ -288,6 +288,11 @@
           } ]
         } ],
         "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
           "deadLetterChannel" : { },
           "defaultErrorHandler" : { },
           "jtaTransactionErrorHandler" : { },
