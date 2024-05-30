@@ -239,7 +239,7 @@ class ExportQuarkus extends Export {
         // quarkus controls the camel version
         String repos = getMavenRepos(settings, prop, quarkusVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion);
+        CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
         if (camelVersion == null) {
             camelVersion = catalog.getCatalogVersion();
         }
@@ -350,7 +350,7 @@ class ExportQuarkus extends Export {
         // quarkus controls the camel version
         String repos = getMavenRepos(settings, prop, quarkusVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion);
+        CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
         if (camelVersion == null) {
             camelVersion = catalog.getCatalogVersion();
         }

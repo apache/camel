@@ -138,6 +138,8 @@ public final class CatalogLoader {
                 answer.getVersionManager().setClassLoader(cl);
             }
             answer.enableCache();
+        } catch (Exception e) {
+            // ignore
         } finally {
             downloader.stop();
         }
@@ -145,7 +147,7 @@ public final class CatalogLoader {
         return answer;
     }
 
-    public static CamelCatalog loadQuarkusCatalog(String repos, String quarkusVersion) throws Exception {
+    public static CamelCatalog loadQuarkusCatalog(String repos, String quarkusVersion, String quarkusGroupId) throws Exception {
         String camelQuarkusVersion = null;
         CamelCatalog answer = new DefaultCamelCatalog();
 
@@ -167,7 +169,10 @@ public final class CatalogLoader {
 
             // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
             // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
-            MavenArtifact ma = downloader.downloadArtifact("io.quarkus.platform", "quarkus-camel-bom:pom", quarkusVersion);
+            if (quarkusGroupId == null) {
+                quarkusGroupId = "io.quarkus.platform";
+            }
+            MavenArtifact ma = downloader.downloadArtifact(quarkusGroupId, "quarkus-camel-bom:pom", quarkusVersion);
             if (ma != null && ma.getFile() != null) {
                 String name = ma.getFile().getAbsolutePath();
                 File file = new File(name);
@@ -208,6 +213,8 @@ public final class CatalogLoader {
                 }
             }
             answer.enableCache();
+        } catch (Exception e) {
+            // ignore
         } finally {
             downloader.stop();
         }
