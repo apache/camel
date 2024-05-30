@@ -167,6 +167,23 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testGlobalVariable() {
+        exchange.removeVariable("cheese");
+        assertFalse(exchange.hasVariables());
+
+        exchange.setVariable("fruit", "apple");
+        assertTrue(exchange.hasVariables());
+        assertEquals("apple", exchange.getVariable("fruit"));
+
+        exchange.setVariable("global:myGlob", "myGlobVar");
+        assertEquals("myGlobVar", exchange.getVariable("global:myGlob"));
+        assertNull(exchange.getVariable("myGlob"));
+
+        exchange.removeVariable("fruit");
+        assertFalse(exchange.hasVariables());
+    }
+
+    @Test
     public void testRemoveProperties() {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -201,6 +218,11 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("apple", exchange.getVariable("fruit"));
         assertEquals("banana", exchange.getVariable("fruit1"));
         assertEquals("Africa", exchange.getVariable("zone"));
+
+        exchange.setVariable("global:myGlob", "myGlobVar");
+        assertEquals("myGlobVar", exchange.getVariable("global:myGlob"));
+        exchange.removeVariable("global:myGlob");
+        assertNull(exchange.getVariable("global:myGlob"));
     }
 
     @Test

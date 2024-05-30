@@ -1088,16 +1088,22 @@ public final class ExchangeHelper {
      */
     public static void setVariable(Exchange exchange, String name, Object value) {
         VariableRepository repo = null;
-        final String id = getRepositoryId(name);
+        final String id = getVariableRepositoryId(name);
         if (id != null) {
             repo = getVariableRepository(exchange, id);
-            name = resolveRepositoryName(exchange, name, id);
+            name = resolveVariableRepositoryName(exchange, name, id);
         }
         final VariableAware va = getVariableAware(exchange, repo);
         va.setVariable(name, value);
     }
 
-    private static String getRepositoryId(String name) {
+    /**
+     * Gets the variable repository id
+     *
+     * @param  name the variable name
+     * @return      the repository id if any given, or null
+     */
+    public static String getVariableRepositoryId(String name) {
         String id = StringHelper.before(name, ":");
         // header and exchange is reserved
         if (isReserved(id)) {
@@ -1106,13 +1112,24 @@ public final class ExchangeHelper {
         return id;
     }
 
-    private static String resolveRepositoryName(Exchange exchange, String name, String id) {
+    /**
+     * Resolves the variable name
+     *
+     * @param  exchange the exchange
+     * @param  name     the variable name
+     * @param  id       the repository id
+     * @return          the resolved variable name
+     */
+    public static String resolveVariableRepositoryName(Exchange exchange, String name, String id) {
         name = StringHelper.after(name, ":");
         // special for route, where we need to enrich the name with current route id if none given
         if ("route".equals(id) && !name.contains(":")) {
             String prefix = getAtRouteId(exchange);
             if (prefix != null) {
                 name = prefix + ":" + name;
+            } else {
+                // we are not currently in a given route
+                return null;
             }
         }
         return name;
@@ -1128,10 +1145,10 @@ public final class ExchangeHelper {
      */
     public static void setVariableFromMessageBodyAndHeaders(Exchange exchange, String name, Message message) {
         VariableRepository repo = null;
-        final String id = getRepositoryId(name);
+        final String id = getVariableRepositoryId(name);
         if (id != null) {
             repo = getVariableRepository(exchange, id);
-            name = resolveRepositoryName(exchange, name, id);
+            name = resolveVariableRepositoryName(exchange, name, id);
         }
         final VariableAware va = getVariableAware(exchange, repo);
 
@@ -1178,16 +1195,24 @@ public final class ExchangeHelper {
      */
     public static Object getVariable(Exchange exchange, String name) {
         VariableRepository repo = null;
-        final String id = getRepositoryId(name);
+        final String id = getVariableRepositoryId(name);
         if (id != null) {
             repo = getVariableRepository(exchange, id);
-            name = resolveRepositoryName(exchange, name, id);
+            name = resolveVariableRepositoryName(exchange, name, id);
         }
         final VariableAware va = getVariableAware(exchange, repo);
         return va.getVariable(name);
     }
 
-    private static VariableRepository getVariableRepository(Exchange exchange, String id) {
+    /**
+     * Gets the variable repository by the given id
+     *
+     * @param  exchange                 the exchange
+     * @param  id                       the repository id
+     * @return                          the variable repository
+     * @throws IllegalArgumentException is thrown if the repository does not eists
+     */
+    public static VariableRepository getVariableRepository(Exchange exchange, String id) {
         VariableRepositoryFactory factory
                 = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
         VariableRepository repo = factory.getVariableRepository(id);
