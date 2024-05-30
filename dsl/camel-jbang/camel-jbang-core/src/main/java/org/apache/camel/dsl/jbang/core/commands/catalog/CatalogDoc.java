@@ -64,7 +64,7 @@ public class CatalogDoc extends CamelCommand {
     String runtime;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-            defaultValue = "3.10.2")
+            defaultValue = "3.11.0")
     String quarkusVersion;
 
     @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
