@@ -215,24 +215,6 @@
                     <outputDirectory>target</outputDirectory>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-artifact-plugin</artifactId>
-                <version>${maven-artifact-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <id>buildinfo</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>buildinfo</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
 
         <pluginManagement>
@@ -608,6 +590,23 @@
                         <showVersion>true</showVersion>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-artifact-plugin</artifactId>
+                    <version>${maven-artifact-plugin-version}</version>
+                    <executions>
+                        <execution>
+                            <id>buildinfo</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>buildinfo</goal>
+                            </goals>
+                            <configuration>
+                                <attach>true</attach>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
 
             </plugins>
         </pluginManagement>
@@ -804,6 +803,10 @@
                             <outputName>${project.artifactId}-${project.version}-sbom</outputName>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-artifact-plugin</artifactId>
+                    </plugin>
 
                 </plugins>
             </build>
@@ -924,6 +927,10 @@
                                 <phase>test</phase>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-artifact-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
