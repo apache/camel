@@ -84,6 +84,8 @@ public class RocketMQRouteIT extends RocketMQTestSupport {
     public void testSimpleRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint(RESULT_ENDPOINT_URI);
         resultEndpoint.expectedBodiesReceived(EXPECTED_MESSAGE);
+
+        // It is very slow, so we are lenient and OK if we receive just 1 message
         resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("START_TOPIC");
         resultEndpoint.message(0).header(RocketMQConstants.TAG).isEqualTo("startTag");
 
