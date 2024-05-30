@@ -291,6 +291,7 @@
 ** xref:sjms2-component.adoc[Simple JMS2]
 ** xref:slack-component.adoc[Slack]
 ** xref:smb-component.adoc[SMB]
+** xref:smooks-component.adoc[Smooks]
 ** xref:smpp-component.adoc[SMPP]
 ** xref:snmp-component.adoc[SNMP]
 ** xref:splunk-component.adoc[Splunk]
