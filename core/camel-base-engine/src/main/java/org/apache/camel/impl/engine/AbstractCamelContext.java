@@ -109,6 +109,7 @@ import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
@@ -269,6 +270,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Map<String, String> globalOptions = new HashMap<>();
     private EndpointRegistry endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
+    private EndpointServiceRegistry endpointServiceRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
@@ -1893,6 +1895,17 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
         this.runtimeEndpointRegistry = internalServiceManager.addService(this, runtimeEndpointRegistry);
+    }
+
+    @Override
+    public EndpointServiceRegistry getEndpointServiceRegistry() {
+        return endpointServiceRegistry;
+    }
+
+    @Override
+    public void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry) {
+        this.endpointServiceRegistry = internalServiceManager.addService(this, endpointServiceRegistry);
+        ;
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
@@ -1503,6 +1504,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
      */
     void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.EndpointServiceRegistry} to use
+     */
+    EndpointServiceRegistry getEndpointServiceRegistry();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.EndpointServiceRegistry} to use.
+     */
+    void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry);
 
     /**
      * Sets the global SSL context parameters.

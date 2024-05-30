@@ -26,6 +26,7 @@ import java.util.Map;
  * Hosted services are running inside this Camel application such as with embedded HTTP server for Rest DSL, or TCP
  * networking with netty etc.
  *
+ * @see EndpointServiceRegistry
  * @see org.apache.camel.Endpoint
  */
 public interface EndpointServiceLocation {
