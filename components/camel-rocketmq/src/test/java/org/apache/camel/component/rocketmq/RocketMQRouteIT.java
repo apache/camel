@@ -43,8 +43,6 @@ public class RocketMQRouteIT extends RocketMQTestSupport {
 
     private static final int MESSAGE_COUNT = 5;
 
-    private MockEndpoint resultEndpoint;
-
     private CountDownLatch latch = new CountDownLatch(MESSAGE_COUNT);
 
     @BeforeAll
@@ -84,7 +82,7 @@ public class RocketMQRouteIT extends RocketMQTestSupport {
 
     @Test
     public void testSimpleRoute() throws Exception {
-        resultEndpoint = (MockEndpoint) context.getEndpoint(RESULT_ENDPOINT_URI);
+        MockEndpoint resultEndpoint = getMockEndpoint(RESULT_ENDPOINT_URI);
         resultEndpoint.expectedBodiesReceived(EXPECTED_MESSAGE);
         resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("START_TOPIC");
         resultEndpoint.message(0).header(RocketMQConstants.TAG).isEqualTo("startTag");

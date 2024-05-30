@@ -56,8 +56,6 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
 
     private static final int MESSAGE_COUNT = 5;
 
-    private MockEndpoint resultEndpoint;
-
     private DefaultMQPushConsumer replierConsumer;
 
     private DefaultMQProducer replierProducer;
@@ -73,7 +71,6 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        resultEndpoint = (MockEndpoint) context.getEndpoint(RESULT_ENDPOINT_URI);
         replierProducer = new DefaultMQProducer("replierProducer");
         replierProducer.setNamesrvAddr(rocketMQService.nameserverAddress());
         replierProducer.start();
@@ -118,6 +115,7 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
 
     @Test
     public void testRouteMessageInRequestReplyMode() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint(RESULT_ENDPOINT_URI);
         resultEndpoint.expectedBodiesReceived(EXPECTED_MESSAGE);
         resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("REPLY_TO_TOPIC");
 
