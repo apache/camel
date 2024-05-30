@@ -49,6 +49,7 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -724,6 +725,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected VariableRepositoryFactory createVariableRepositoryFactory() {
         return new DefaultVariableRepositoryFactory(getCamelContextReference());
+    }
+
+    @Override
+    protected EndpointServiceRegistry createEndpointServiceRegistry() {
+        return new DefaultEndpointServiceRegistry(getCamelContextReference());
     }
 
     @Override

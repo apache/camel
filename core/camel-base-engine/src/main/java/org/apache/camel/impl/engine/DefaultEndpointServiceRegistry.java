@@ -22,37 +22,21 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceSupport;
 
-public class DefaultEndpointServiceRegistry extends ServiceSupport implements EndpointServiceRegistry, CamelContextAware {
+public class DefaultEndpointServiceRegistry extends ServiceSupport implements EndpointServiceRegistry {
 
-    private CamelContext camelContext;
-    private EndpointRegistry endpointRegistry;
-    private RuntimeEndpointRegistry runtimeEndpointRegistry;
+    private final CamelContext camelContext;
 
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
+    public DefaultEndpointServiceRegistry(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    @Override
-    protected void doBuild() throws Exception {
-        endpointRegistry = camelContext.getEndpointRegistry();
-        runtimeEndpointRegistry = camelContext.getRuntimeEndpointRegistry();
     }
 
     @Override
@@ -60,7 +44,7 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
         List<EndpointService> answer = new ArrayList<>();
 
         // find all consumers (IN) direction
-        for (Route route : getCamelContext().getRoutes()) {
+        for (Route route : camelContext.getRoutes()) {
             Consumer consumer = route.getConsumer();
             Endpoint endpoint = consumer.getEndpoint();
             if (endpoint instanceof EndpointServiceLocation esl) {
@@ -71,7 +55,7 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
             }
         }
         // find all endpoint (OUT) direction
-        for (Endpoint endpoint : endpointRegistry.getReadOnlyValues()) {
+        for (Endpoint endpoint : camelContext.getEndpointRegistry().getReadOnlyValues()) {
             if (endpoint instanceof EndpointServiceLocation esl) {
                 // (platform-http is only IN)
                 String component = endpoint.getComponent().getDefaultName();
@@ -125,10 +109,10 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
     }
 
     private Optional<RuntimeEndpointRegistry.Statistic> findStats(String uri, String direction) {
-        if (runtimeEndpointRegistry == null) {
+        if (camelContext.getRuntimeEndpointRegistry() == null) {
             return Optional.empty();
         }
-        return runtimeEndpointRegistry.getEndpointStatistics().stream()
+        return camelContext.getRuntimeEndpointRegistry().getEndpointStatistics().stream()
                 .filter(s -> uri.equals(s.getUri()) && (direction == null || s.getDirection().equals(direction)))
                 .findFirst();
     }

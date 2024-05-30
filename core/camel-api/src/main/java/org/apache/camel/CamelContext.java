@@ -1506,16 +1506,6 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
 
     /**
-     * Gets the {@link org.apache.camel.spi.EndpointServiceRegistry} to use
-     */
-    EndpointServiceRegistry getEndpointServiceRegistry();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.EndpointServiceRegistry} to use.
-     */
-    void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry);
-
-    /**
      * Sets the global SSL context parameters.
      */
     void setSSLContextParameters(SSLContextParameters sslContextParameters);

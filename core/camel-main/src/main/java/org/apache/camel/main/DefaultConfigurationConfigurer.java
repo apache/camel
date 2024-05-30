@@ -418,7 +418,7 @@ public final class DefaultConfigurationConfigurer {
         }
         EndpointServiceRegistry esr = getSingleBeanOfType(registry, EndpointServiceRegistry.class);
         if (esr != null) {
-            camelContext.setEndpointServiceRegistry(esr);
+            camelContext.getCamelContextExtension().addContextPlugin(EndpointServiceRegistry.class, esr);
         }
         ModelJAXBContextFactory mjcf = getSingleBeanOfType(registry, ModelJAXBContextFactory.class);
         if (mjcf != null) {

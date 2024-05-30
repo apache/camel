@@ -547,7 +547,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         EndpointServiceRegistry endpointServiceRegistry = getBeanForType(EndpointServiceRegistry.class);
         if (endpointServiceRegistry != null) {
             LOG.info("Using custom EndpointServiceRegistry: {}", endpointServiceRegistry);
-            getContext().setEndpointServiceRegistry(endpointServiceRegistry);
+            getContext().getCamelContextExtension().addContextPlugin(EndpointServiceRegistry.class, endpointServiceRegistry);
         }
         HeadersMapFactory headersMapFactory = getBeanForType(HeadersMapFactory.class);
         if (headersMapFactory != null) {

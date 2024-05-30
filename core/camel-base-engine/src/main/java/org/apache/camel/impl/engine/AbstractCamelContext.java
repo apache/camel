@@ -270,7 +270,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Map<String, String> globalOptions = new HashMap<>();
     private EndpointRegistry endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
-    private EndpointServiceRegistry endpointServiceRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
@@ -347,6 +346,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(PackageScanClassResolver.class, createPackageScanClassResolver());
         camelContextExtension.addContextPlugin(PackageScanResourceResolver.class, createPackageScanResourceResolver());
         camelContextExtension.addContextPlugin(VariableRepositoryFactory.class, createVariableRepositoryFactory());
+        camelContextExtension.addContextPlugin(EndpointServiceRegistry.class, createEndpointServiceRegistry());
         camelContextExtension.lazyAddContextPlugin(ModelineFactory.class, this::createModelineFactory);
         camelContextExtension.lazyAddContextPlugin(ModelJAXBContextFactory.class, this::createModelJAXBContextFactory);
         camelContextExtension.addContextPlugin(DataFormatResolver.class, createDataFormatResolver());
@@ -1895,17 +1895,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
         this.runtimeEndpointRegistry = internalServiceManager.addService(this, runtimeEndpointRegistry);
-    }
-
-    @Override
-    public EndpointServiceRegistry getEndpointServiceRegistry() {
-        return endpointServiceRegistry;
-    }
-
-    @Override
-    public void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry) {
-        this.endpointServiceRegistry = internalServiceManager.addService(this, endpointServiceRegistry);
-        ;
     }
 
     @Override
@@ -4081,6 +4070,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ValidatorRegistry<ValidatorKey> createValidatorRegistry();
 
     protected abstract VariableRepositoryFactory createVariableRepositoryFactory();
+
+    protected abstract EndpointServiceRegistry createEndpointServiceRegistry();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.
