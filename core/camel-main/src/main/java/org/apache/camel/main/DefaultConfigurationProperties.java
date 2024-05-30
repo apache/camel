@@ -34,7 +34,7 @@ public abstract class DefaultConfigurationProperties<T> {
 
     private String name;
     private String description;
-    @Metadata(defaultValue = "Default")
+    @Metadata(defaultValue = "Default", enums = "Verbose,Default,Brief,Oneline,Off")
     private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
@@ -93,9 +93,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean useDataType;
     private boolean useBreadcrumb;
     private boolean beanPostProcessorEnabled = true;
-    @Metadata(defaultValue = "Default")
+    @Metadata(defaultValue = "Default", enums = "ContextOnly,RoutesOnly,Default")
     private ManagementMBeansLevel jmxManagementMBeansLevel = ManagementMBeansLevel.Default;
-    @Metadata(defaultValue = "Default")
+    @Metadata(defaultValue = "Default", enums = "Extended,Default,RoutesOnly,Off")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxUpdateRouteEnabled;
