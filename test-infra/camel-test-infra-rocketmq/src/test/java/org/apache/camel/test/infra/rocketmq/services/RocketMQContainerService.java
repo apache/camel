@@ -60,16 +60,18 @@ public class RocketMQContainerService implements RocketMQService, ContainerServi
 
     @Override
     public void initialize() {
+        LOG.info("Starting nameserver");
         nameserverContainer.start();
-        LOG.info("Apache RocketMQ running at address {}", nameserverAddress());
 
+        LOG.info("Starting broker");
         brokerContainer1.start();
+        LOG.info("Apache RocketMQ running at address {}", nameserverAddress());
     }
 
     @Override
     public void shutdown() {
-        nameserverContainer.stop();
         brokerContainer1.stop();
+        nameserverContainer.stop();
     }
 
     public void createTopic(String topic) {
