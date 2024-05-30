@@ -129,6 +129,7 @@
         <maven-bundle-plugin-version>5.1.9</maven-bundle-plugin-version>
         <maven-enforcer-plugin-version>3.0.0</maven-enforcer-plugin-version>
         <maven-dependency-plugin-version>3.4.0</maven-dependency-plugin-version>
+        <maven-artifact-plugin-version>3.5.1</maven-artifact-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
@@ -803,6 +804,23 @@
                             <outputName>${project.artifactId}-${project.version}-sbom</outputName>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-artifact-plugin</artifactId>
+                        <version>${maven-artifact-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <id>buildinfo</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>buildinfo</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -843,6 +861,8 @@
                                 <exclude>.mvn/**</exclude>
                                 <exclude>mvnw*</exclude>
                                 <exclude>**/META-INF/persistence*.xsd</exclude>
+                                <exclude>Dockerfile</exclude>
+                                <exclude>builder*</exclude>
                             </excludes>
                             <mapping>
                                 <java>SLASHSTAR_STYLE</java>
