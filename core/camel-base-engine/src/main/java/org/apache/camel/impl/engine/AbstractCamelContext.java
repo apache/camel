@@ -346,7 +346,6 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(PackageScanClassResolver.class, createPackageScanClassResolver());
         camelContextExtension.addContextPlugin(PackageScanResourceResolver.class, createPackageScanResourceResolver());
         camelContextExtension.addContextPlugin(VariableRepositoryFactory.class, createVariableRepositoryFactory());
-        camelContextExtension.addContextPlugin(EndpointServiceRegistry.class, createEndpointServiceRegistry());
         camelContextExtension.lazyAddContextPlugin(ModelineFactory.class, this::createModelineFactory);
         camelContextExtension.lazyAddContextPlugin(ModelJAXBContextFactory.class, this::createModelJAXBContextFactory);
         camelContextExtension.addContextPlugin(DataFormatResolver.class, createDataFormatResolver());

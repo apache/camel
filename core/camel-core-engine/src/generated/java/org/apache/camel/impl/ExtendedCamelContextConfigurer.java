@@ -30,6 +30,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "defaultfactoryfinder":
         case "defaultFactoryFinder": target.setDefaultFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "endpointserviceregistry":
+        case "endpointServiceRegistry": target.setEndpointServiceRegistry(property(camelContext, org.apache.camel.spi.EndpointServiceRegistry.class, value)); return true;
         case "errorhandlerfactory":
         case "errorHandlerFactory": target.setErrorHandlerFactory(property(camelContext, org.apache.camel.ErrorHandlerFactory.class, value)); return true;
         case "eventnotificationapplicable":
@@ -65,6 +67,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "defaultfactoryfinder":
         case "defaultFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
         case "description": return java.lang.String.class;
+        case "endpointserviceregistry":
+        case "endpointServiceRegistry": return org.apache.camel.spi.EndpointServiceRegistry.class;
         case "errorhandlerfactory":
         case "errorHandlerFactory": return org.apache.camel.ErrorHandlerFactory.class;
         case "eventnotificationapplicable":
@@ -101,6 +105,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "defaultfactoryfinder":
         case "defaultFactoryFinder": return target.getDefaultFactoryFinder();
         case "description": return target.getDescription();
+        case "endpointserviceregistry":
+        case "endpointServiceRegistry": return target.getEndpointServiceRegistry();
         case "errorhandlerfactory":
         case "errorHandlerFactory": return target.getErrorHandlerFactory();
         case "eventnotificationapplicable":

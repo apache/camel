@@ -37,7 +37,7 @@ public class ServiceDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        EndpointServiceRegistry esr = getCamelContext().getCamelContextExtension().getContextPlugin(EndpointServiceRegistry.class);
+        EndpointServiceRegistry esr = getCamelContext().getCamelContextExtension().getEndpointServiceRegistry();
         for (EndpointServiceRegistry.EndpointService es : esr.listAllEndpointServices()) {
             if (!sb.isEmpty()) {
                 sb.append("\n");
@@ -62,7 +62,7 @@ public class ServiceDevConsole extends AbstractDevConsole {
         List<JsonObject> list = new ArrayList<>();
         root.put("services", list);
 
-        EndpointServiceRegistry esr = getCamelContext().getCamelContextExtension().getContextPlugin(EndpointServiceRegistry.class);
+        EndpointServiceRegistry esr = getCamelContext().getCamelContextExtension().getEndpointServiceRegistry();
         for (EndpointServiceRegistry.EndpointService es : esr.listAllEndpointServices()) {
             JsonObject jo = new JsonObject();
             jo.put("component", es.getComponent());
