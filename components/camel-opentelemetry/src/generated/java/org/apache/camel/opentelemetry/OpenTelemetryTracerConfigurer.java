@@ -32,6 +32,8 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "instrumentationname":
         case "instrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "traceprocessors":
+        case "traceProcessors": target.setTraceProcessors(property(camelContext, boolean.class, value)); return true;
         case "tracer": target.setTracer(property(camelContext, io.opentelemetry.api.trace.Tracer.class, value)); return true;
         case "tracingstrategy":
         case "tracingStrategy": target.setTracingStrategy(property(camelContext, org.apache.camel.spi.InterceptStrategy.class, value)); return true;
@@ -51,6 +53,8 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "excludePatterns": return java.lang.String.class;
         case "instrumentationname":
         case "instrumentationName": return java.lang.String.class;
+        case "traceprocessors":
+        case "traceProcessors": return boolean.class;
         case "tracer": return io.opentelemetry.api.trace.Tracer.class;
         case "tracingstrategy":
         case "tracingStrategy": return org.apache.camel.spi.InterceptStrategy.class;
@@ -71,6 +75,8 @@ public class OpenTelemetryTracerConfigurer extends org.apache.camel.support.comp
         case "excludePatterns": return target.getExcludePatterns();
         case "instrumentationname":
         case "instrumentationName": return target.getInstrumentationName();
+        case "traceprocessors":
+        case "traceProcessors": return target.isTraceProcessors();
         case "tracer": return target.getTracer();
         case "tracingstrategy":
         case "tracingStrategy": return target.getTracingStrategy();
