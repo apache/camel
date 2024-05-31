@@ -28,9 +28,10 @@ The configuration properties for the OpenTelemetry tracer are:
 |excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
 uses the rules from Intercept.
-|encoding |false| Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
+|encoding | false | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
 Dashes are required for instances to be encoded for JMS property keys.
-
+|traceProcessors | false | Setting this to true will create new OpenTelemetry Spans for each Camel Processors.
+Use the excludePattern property to filter out Processors
 |=======================================================================
 
 
