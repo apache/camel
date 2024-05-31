@@ -76,6 +76,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private final RouteManager routeManager;
     private volatile CamelContextStartupListener listener;
     private volatile boolean startingRoutes = true; // state during starting routes on bootstrap
+    private volatile boolean reloadingRoutes;
     private volatile BackOffTimer timer;
     private volatile ScheduledExecutorService executorService;
     private volatile BackOff backOff;
@@ -98,6 +99,17 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         this.routes = new TreeSet<>();
         this.nonSupervisedRoutes = new HashSet<>();
         this.routeManager = new RouteManager();
+    }
+
+    @Override
+    public void startRoutes(boolean reloaded) {
+        reloadingRoutes = reloaded;
+        try {
+            startNonSupervisedRoutes();
+            startSupervisedRoutes();
+        } finally {
+            reloadingRoutes = false;
+        }
     }
 
     // *********************************
@@ -520,7 +532,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             }
         }
 
-        if (getCamelContext().getStartupSummaryLevel() != StartupSummaryLevel.Off
+        // reloading routes has its own summary
+        if (!reloadingRoutes && getCamelContext().getStartupSummaryLevel() != StartupSummaryLevel.Off
                 && getCamelContext().getStartupSummaryLevel() != StartupSummaryLevel.Oneline) {
             // log after first round of attempts (some routes may be scheduled for restart)
             logRouteStartupSummary();

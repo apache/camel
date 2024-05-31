@@ -56,6 +56,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -700,6 +701,13 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // trigger update of the routes
         populateOrUpdateRoutes();
+
+        // trigger reloaded routes to be started if under supervising controller
+        // as this requires to be done manually via the controller
+        // the default route controller will auto-start routes when added to camel
+        if (getContext().getRouteController() instanceof SupervisingRouteController src) {
+            src.startRoutes(true);
+        }
 
         if (this instanceof OnCamelContextEvent) {
             context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
