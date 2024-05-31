@@ -28,8 +28,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 
@@ -41,10 +41,8 @@ public class SqsProducerAutoCreateQueueLocalstackIT extends Aws2SQSBaseTest {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        super.beforeEach(context);
-
+    @BeforeEach
+    void setup() {
         SqsClient client = AWSSDKClientUtils.newSQSClient();
         for (int i = 0; i < 2000; i++) {
             client.createQueue(CreateQueueRequest.builder().queueName("queue-" + String.valueOf(i)).build());
