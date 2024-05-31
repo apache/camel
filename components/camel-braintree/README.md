@@ -26,6 +26,12 @@ It's also possible to run a smaller set of tests by running them without the env
 mvn -DbraintreeAuthenticationType=PUBLIC_PRIVATE_KEYS clean verify
 ```
 
+Lastly, you can also use an external file outside the build location.
+
+```
+CAMEL_BRAINTREE_REPORT_DATE=$(date '+%Y-%m-%d') mvn -DbraintreeAuthenticationType=PUBLIC_PRIVATE_KEYS -Dbraintree.properties.location=/path/to/test-options.properties verify
+```
+
 # Authentication types
 
 The authentication type can be passed via `braintreeAuthenticationType` system property. 
