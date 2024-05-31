@@ -79,4 +79,7 @@ public interface ManagedSupervisingRouteControllerMBean extends ManagedRouteCont
     @ManagedOperation(description = "Lists detailed status about all the routes (incl failure details for routes failed to start)")
     TabularData routeStatus(boolean exhausted, boolean restarting, boolean includeStacktrace);
 
+    @ManagedOperation(description = "Starts all routes")
+    void startRoutes();
+
 }
