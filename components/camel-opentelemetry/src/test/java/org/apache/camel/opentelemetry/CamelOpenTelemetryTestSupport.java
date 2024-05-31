@@ -38,7 +38,6 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.tracing.SpanDecorator;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -51,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");
+    static final AttributeKey<String> CAMEL_SCHEME_KEY = AttributeKey.stringKey("url.scheme");
     static final AttributeKey<String> PRE_KEY = AttributeKey.stringKey("pre");
     static final AttributeKey<String> POST_KEY = AttributeKey.stringKey("post");
     static final AttributeKey<String> MESSAGE_KEY = AttributeKey.stringKey("message");
@@ -178,8 +178,10 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         String component = span.getAttributes().get(COMPONENT_KEY);
         assertNotNull(component);
 
+        String scheme = span.getAttributes().get(CAMEL_SCHEME_KEY);
+
         if (td.getUri() != null) {
-            assertEquals(SpanDecorator.CAMEL_COMPONENT + URI.create(td.getUri()).getScheme(), component, td.getLabel());
+            assertEquals(URI.create(td.getUri()).getScheme(), scheme);
         }
 
         if ("camel-seda".equals(component)) {
