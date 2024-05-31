@@ -50,6 +50,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     private Tracer tracer;
     private String instrumentationName = "camel";
     private ContextPropagators contextPropagators;
+    private boolean traceProcessors;
 
     public Tracer getTracer() {
         return tracer;
@@ -59,7 +60,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         this.tracer = tracer;
     }
 
-    @ManagedAttribute
+    @ManagedAttribute(description = "A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name")
     public String getInstrumentationName() {
         return instrumentationName;
     }
@@ -70,6 +71,19 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
      */
     public void setInstrumentationName(String instrumentationName) {
         this.instrumentationName = instrumentationName;
+    }
+
+    @ManagedAttribute(description = "Setting this to true will create new OpenTelemetry Spans for each Camel Processors")
+    public boolean isTraceProcessors() {
+        return traceProcessors;
+    }
+
+    /**
+     * Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern
+     * property to filter out Processors.
+     */
+    public void setTraceProcessors(boolean traceProcessors) {
+        this.traceProcessors = traceProcessors;
     }
 
     public ContextPropagators getContextPropagators() {
@@ -103,6 +117,12 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         if (tracer == null) {
             // GlobalOpenTelemetry.get() is always NotNull, falls back to OpenTelemetry.noop()
             tracer = GlobalOpenTelemetry.get().getTracer(instrumentationName);
+        }
+        if (traceProcessors && (getTracingStrategy() == null
+                || getTracingStrategy().getClass().isAssignableFrom(NoopTracingStrategy.class))) {
+            OpenTelemetryTracingStrategy tracingStrategy = new OpenTelemetryTracingStrategy(this);
+            tracingStrategy.setPropagateContext(true);
+            setTracingStrategy(tracingStrategy);
         }
     }
 

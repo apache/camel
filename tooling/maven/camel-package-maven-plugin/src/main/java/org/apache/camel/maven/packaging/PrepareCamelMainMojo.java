@@ -327,7 +327,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                             "org.apache.camel.vault.AzureVaultConfiguration"));
             // TODO: add more vault providers here
             model.getGroups().add(new MainGroupModel(
-                    "camel.opentelemetry", "Camel OpenTelemtry configurations",
+                    "camel.opentelemetry", "Camel OpenTelemetry configurations",
                     "org.apache.camel.main.OtelConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.metrics", "Camel Micrometer Metrics configurations",

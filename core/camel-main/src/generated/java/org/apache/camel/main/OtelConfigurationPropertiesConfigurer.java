@@ -29,6 +29,8 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExcludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "instrumentationname":
         case "InstrumentationName": target.setInstrumentationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "traceprocessors":
+        case "TraceProcessors": target.setTraceProcessors(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -44,6 +46,8 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExcludePatterns": return java.lang.String.class;
         case "instrumentationname":
         case "InstrumentationName": return java.lang.String.class;
+        case "traceprocessors":
+        case "TraceProcessors": return boolean.class;
         default: return null;
         }
     }
@@ -60,6 +64,8 @@ public class OtelConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ExcludePatterns": return target.getExcludePatterns();
         case "instrumentationname":
         case "InstrumentationName": return target.getInstrumentationName();
+        case "traceprocessors":
+        case "TraceProcessors": return target.isTraceProcessors();
         default: return null;
         }
     }

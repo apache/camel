@@ -350,7 +350,7 @@ The camel.vault.azure supports 12 options, which are listed below.
 
 
 === Camel OpenTelemtry configurations
-The camel.opentelemetry supports 4 options, which are listed below.
+The camel.opentelemetry supports 5 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -359,6 +359,7 @@ The camel.opentelemetry supports 4 options, which are listed below.
 | *camel.opentelemetry.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
 | *camel.opentelemetry.exclude{zwsp}Patterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
 | *{zwsp}camel.opentelemetry.instrumentation{zwsp}Name* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
+| *camel.opentelemetry.trace{zwsp}Processors* | Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===
 
 

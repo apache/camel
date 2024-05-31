@@ -57,11 +57,11 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelOpenTelemetryTestSupport.class);
 
-    private InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
-    private SpanTestData[] expected;
-    private Tracer tracer;
-    private OpenTelemetryTracer ottracer;
-    private SdkTracerProvider tracerFactory;
+    InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
+    SpanTestData[] expected;
+    Tracer tracer;
+    OpenTelemetryTracer ottracer;
+    SdkTracerProvider tracerFactory;
 
     CamelOpenTelemetryTestSupport(SpanTestData[] expected) {
         this.expected = expected;
@@ -72,9 +72,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         Assertions.assertSame(Context.root(), Context.current(), "There must be no leaking span after test");
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
+    protected void initTracer(CamelContext context) {
         ottracer = new OpenTelemetryTracer();
 
         tracerFactory = SdkTracerProvider.builder()
@@ -87,6 +85,12 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         ottracer.addDecorator(new TestSEDASpanDecorator());
         ottracer.setTracingStrategy(getTracingStrategy().apply(ottracer));
         ottracer.init(context);
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        initTracer(context);
         return context;
     }
 
@@ -219,7 +223,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         return ottracer -> new NoopTracingStrategy();
     }
 
-    private static class LoggingSpanProcessor implements SpanProcessor {
+    static class LoggingSpanProcessor implements SpanProcessor {
         private static final Logger LOG = LoggerFactory.getLogger(LoggingSpanProcessor.class);
 
         @Override
