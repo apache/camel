@@ -33,6 +33,7 @@ public class OtelConfigurationProperties implements BootstrapCloseable {
     private String instrumentationName = "camel";
     private boolean encoding;
     private String excludePatterns;
+    private boolean traceProcessors;
 
     public OtelConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -94,6 +95,18 @@ public class OtelConfigurationProperties implements BootstrapCloseable {
         this.excludePatterns = excludePatterns;
     }
 
+    public boolean isTraceProcessors() {
+        return traceProcessors;
+    }
+
+    /**
+     * Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern
+     * property to filter out Processors.
+     */
+    public void setTraceProcessors(boolean traceProcessors) {
+        this.traceProcessors = traceProcessors;
+    }
+
     /**
      * A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully
      * qualified class name. Must not be null.
@@ -126,6 +139,15 @@ public class OtelConfigurationProperties implements BootstrapCloseable {
      */
     public OtelConfigurationProperties withExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
+        return this;
+    }
+
+    /**
+     * Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern
+     * property to filter out Processors.
+     */
+    public OtelConfigurationProperties withTraceProcessors(boolean traceProcessors) {
+        this.traceProcessors = traceProcessors;
         return this;
     }
 
