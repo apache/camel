@@ -30,13 +30,16 @@ public interface ManagedResourceEndpointMBean {
     @ManagedAttribute(description = "Endpoint service state")
     String getState();
 
+    @ManagedAttribute(description = "Whether the context map is limited to only include the message body and headers")
+    boolean isAllowContextMapAll();
+
     @ManagedAttribute(description = "Whether the content is cached")
     boolean isContentCache();
 
     @ManagedAttribute(description = "Whether the content is cached")
     void setContentCache(boolean contentCache);
 
-    @ManagedOperation(description = "Clears the content cache")
+    @ManagedOperation(description = "Clears the cached resource, forcing to re-load the resource on next request")
     void clearContentCache();
 
 }

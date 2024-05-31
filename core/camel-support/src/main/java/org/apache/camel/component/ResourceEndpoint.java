@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Component;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedResourceEndpointMBean;
 import org.apache.camel.spi.Metadata;
@@ -112,13 +110,11 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     }
 
     @Override
-    @ManagedAttribute(description = "Whether the resource is cached")
     public boolean isContentCache() {
         return contentCache;
     }
 
     @Override
-    @ManagedOperation(description = "Clears the cached resource, forcing to re-load the resource on next request")
     public void clearContentCache() {
         log.debug("Clearing resource: {} from the content cache", resourceUri);
         buffer = null;
@@ -128,7 +124,9 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return buffer == null;
     }
 
-    @ManagedAttribute(description = "Whether the context map is limited to only include the message body and headers")
+    /**
+     * Whether the context map is limited to only include the message body and headers
+     */
     public boolean isAllowContextMapAll() {
         return allowContextMapAll;
     }
@@ -143,19 +141,16 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     }
 
     @Override
-    @ManagedAttribute(description = "Camel context ID")
     public String getCamelId() {
         return getCamelContext().getName();
     }
 
     @Override
-    @ManagedAttribute(description = "Camel ManagementName")
     public String getCamelManagementName() {
         return getCamelContext().getManagementName();
     }
 
     @Override
-    @ManagedAttribute(description = "Endpoint service state")
     public String getState() {
         return getStatus().name();
     }
