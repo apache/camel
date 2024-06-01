@@ -16,6 +16,8 @@
  */
 package org.apache.camel.openapi;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
@@ -60,6 +62,8 @@ import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.tags.Tag;
+import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.ApiKeyDefinition;
 import org.apache.camel.model.rest.BasicAuthDefinition;
@@ -79,9 +83,12 @@ import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,11 +134,27 @@ public class RestOpenApiReader {
      * @param  config                 the openApi configuration
      * @param  classResolver          class resolver to use @return the openApi model
      * @throws ClassNotFoundException is thrown if error loading class
+     * @throws IOException            is thrown if error loading openapi specification
      */
     public OpenAPI read(
             CamelContext camelContext, List<RestDefinition> rests, BeanConfig config,
             String camelContextId, ClassResolver classResolver)
-            throws ClassNotFoundException {
+            throws ClassNotFoundException, IOException {
+
+        // contract first, then load the specification as-is and use as response
+        for (RestDefinition rest : rests) {
+            if (rest.getOpenApi() != null) {
+                Resource res = PluginHelper.getResourceLoader(camelContext).resolveResource(rest.getOpenApi().getSpecification());
+                if (res != null && res.exists()) {
+                    InputStream is = res.getInputStream();
+                    String data = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                    OpenAPIV3Parser parser = new OpenAPIV3Parser();
+                    SwaggerParseResult out = parser.readContents(data);
+                    return out.getOpenAPI();
+                }
+            }
+        }
 
         OpenAPI openApi = config.isOpenApi31() ? new OpenAPI(SpecVersion.V31) : new OpenAPI();
         if (config.getVersion() != null) {
