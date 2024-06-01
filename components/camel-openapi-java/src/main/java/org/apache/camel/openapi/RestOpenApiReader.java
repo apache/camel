@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,10 +62,13 @@ import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.model.rest.ApiKeyDefinition;
 import org.apache.camel.model.rest.BasicAuthDefinition;
 import org.apache.camel.model.rest.BearerTokenDefinition;
@@ -76,6 +80,7 @@ import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.ResponseHeaderDefinition;
 import org.apache.camel.model.rest.ResponseMessageDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestHostNameResolver;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestSecurityDefinition;
@@ -84,10 +89,13 @@ import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
@@ -135,11 +143,12 @@ public class RestOpenApiReader {
      * @param  classResolver          class resolver to use @return the openApi model
      * @throws ClassNotFoundException is thrown if error loading class
      * @throws IOException            is thrown if error loading openapi specification
+     * @throws UnknownHostException   is thrown if error resolving local hostname
      */
     public OpenAPI read(
             CamelContext camelContext, List<RestDefinition> rests, BeanConfig config,
             String camelContextId, ClassResolver classResolver)
-            throws ClassNotFoundException, IOException {
+            throws ClassNotFoundException, IOException, UnknownHostException {
 
         // contract first, then load the specification as-is and use as response
         for (RestDefinition rest : rests) {
@@ -151,7 +160,42 @@ public class RestOpenApiReader {
                     IOHelper.close(is);
                     OpenAPIV3Parser parser = new OpenAPIV3Parser();
                     SwaggerParseResult out = parser.readContents(data);
-                    return out.getOpenAPI();
+                    OpenAPI answer = out.getOpenAPI();
+
+                    String host = null;
+                    RestConfiguration restConfig = camelContext.getRestConfiguration();
+                    if (restConfig.getHostNameResolver() != RestConfiguration.RestHostNameResolver.none) {
+                        host = camelContext.getRestConfiguration().getApiHost();
+                        if (host == null || host.isEmpty()) {
+                            String scheme = "http://";
+                            host = RestComponentHelper.resolveRestHostName(host, restConfig);
+                            PlatformHttpComponent http = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+                            if (http != null) {
+                                int port = http.getEngine().getServerPort();
+                                if (port > 0) {
+                                    host = host + ":" + port;
+                                    if (port == 443) {
+                                        scheme = "https://";
+                                    }
+                                }
+                            }
+                            host = scheme + host;
+                        }
+                    }
+                    if (host != null) {
+                        String basePath = RestOpenApiSupport.getBasePathFromOasDocument(answer);
+                        if (basePath == null) {
+                            basePath = "/";
+                        }
+                        if (!basePath.startsWith("/")) {
+                            basePath = "/" + basePath;
+                        }
+                        Server server = new Server();
+                        server.setUrl(host + basePath);
+                        answer.setServers(null);
+                        answer.addServersItem(server);
+                    }
+                    return answer;
                 }
             }
         }
