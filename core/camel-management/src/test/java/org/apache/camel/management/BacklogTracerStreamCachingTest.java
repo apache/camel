@@ -79,6 +79,9 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
         assertEquals("bar", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" position=\"0\">Bye World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());

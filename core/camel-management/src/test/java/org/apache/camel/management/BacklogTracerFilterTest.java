@@ -77,6 +77,9 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
         assertNull(event.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <headers>\n"
                      + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
                      + "      </headers>\n"
@@ -88,6 +91,9 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <headers>\n"
                      + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
                      + "      </headers>\n"
@@ -99,6 +105,9 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
         assertEquals("bar", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">mock://foo</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <headers>\n"
                      + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
                      + "      </headers>\n"
