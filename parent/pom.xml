@@ -335,8 +335,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.21</metrics-version>
-        <micrometer-version>1.11.11</micrometer-version>
-        <micrometer-tracing-version>1.1.12</micrometer-tracing-version>
+        <micrometer-version>1.11.12</micrometer-version>
+        <micrometer-tracing-version>1.1.13</micrometer-tracing-version>
         <microprofile-config-version>3.0.3</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <mina-version>2.2.3</mina-version>
@@ -398,7 +398,7 @@
         <quickfixj-version>2.3.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.5.16</reactor-version>
-        <reactor-netty-version>1.1.18</reactor-netty-version>
+        <reactor-netty-version>1.1.19</reactor-netty-version>
         <redisson-version>3.23.2</redisson-version>
         <resilience4j-version>2.1.0</resilience4j-version>
         <rest-assured-version>5.3.1</rest-assured-version>
@@ -424,11 +424,11 @@
         <snmp4j-version>3.7.7</snmp4j-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
-        <spring-batch-version>5.0.3</spring-batch-version>
+        <spring-batch-version>5.0.5</spring-batch-version>
         <spring-data-redis-version>3.1.2</spring-data-redis-version>
         <spring-ldap-version>3.1.5</spring-ldap-version>
         <spring-vault-core-version>3.0.4</spring-vault-core-version>
-        <spring-version>6.0.19</spring-version>
+        <spring-version>6.0.21</spring-version>
         <spring-rabbitmq-version>3.0.10</spring-rabbitmq-version>
         <spring-security-version>6.1.9</spring-security-version>
         <spring-ws-version>4.0.10</spring-ws-version>
