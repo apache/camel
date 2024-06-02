@@ -36,6 +36,10 @@ public class Jolokia extends ProcessBaseCommand {
                         description = "Stops the Jolokia JVM Agent in the running Camel integration")
     boolean stop;
 
+    @CommandLine.Option(names = { "--port" },
+                        description = "To use a specific port number when attaching Jolokia JVM Agent (default a free port is found in range 8778-9999)")
+    int port;
+
     private volatile long pid;
 
     public Jolokia(CamelJBangMain main) {
@@ -60,10 +64,13 @@ public class Jolokia extends ProcessBaseCommand {
             if (stop) {
                 options = new OptionsAndArgs(null, "stop", Long.toString(pid));
             } else {
-                // find a new free port to use when starting a new connection
-                long port = AvailablePortFinder.getNextAvailable(8778, 10000);
+                long p = port;
+                if (p <= 0) {
+                    // find a new free port to use when starting a new connection
+                    p = AvailablePortFinder.getNextAvailable(8778, 10000);
+                }
                 options = new OptionsAndArgs(
-                        null, "--port", Long.toString(port), "--discoveryEnabled", "true", "start", Long.toString(pid));
+                        null, "--port", Long.toString(p), "--discoveryEnabled", "true", "start", Long.toString(pid));
             }
             VirtualMachineHandlerOperations vmHandler = PlatformUtils.createVMAccess(options);
             CommandDispatcher dispatcher = new CommandDispatcher(options);
