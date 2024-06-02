@@ -20,6 +20,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
+import org.apache.camel.openapi.DummyHttpEngine;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +29,9 @@ public class RestOpenApiGetTest extends CamelTestSupport {
 
     @BindToRegistry("dummy")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
+
+    @BindToRegistry("platform-http-engine")
+    private PlatformHttpEngine engine = new DummyHttpEngine();
 
     @Test
     public void testOpenApiGet() throws Exception {

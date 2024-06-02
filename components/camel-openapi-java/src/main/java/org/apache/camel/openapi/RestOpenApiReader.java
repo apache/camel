@@ -167,7 +167,7 @@ public class RestOpenApiReader {
                         if (host == null || host.isEmpty()) {
                             String scheme = "http://";
                             host = RestComponentHelper.resolveRestHostName(host, restConfig);
-                            PlatformHttpComponent http = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+                            PlatformHttpComponent http = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
                             if (http != null) {
                                 int port = http.getEngine().getServerPort();
                                 if (port > 0) {
