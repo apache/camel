@@ -167,20 +167,9 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>prepare</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>validate</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>readme</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
 
             <!-- Generate plugin help -->
