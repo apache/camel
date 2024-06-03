@@ -18,22 +18,21 @@ package org.apache.camel.component.smooks;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
-import org.apache.camel.Service;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
-import org.smooks.api.SmooksException;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * Applies fragment-based processing in Smooks to perform a variety of operations like transformation.
+ * EDI, XML, CSV, etc. based data transformation using Smooks.
  */
-@UriEndpoint(firstVersion = "4.7.0", scheme = "smooks", title = "Smooks", syntax = "smooks://smooks-config-path", category = { Category.FILE })
-public class SmooksEndpoint extends ProcessorEndpoint implements Service {
+@UriEndpoint(firstVersion = "4.7.0", scheme = "smooks", title = "Smooks", syntax = "smooks:smooksConfig", category = { Category.TRANSFORMATION })
+public class SmooksEndpoint extends ProcessorEndpoint {
 
-    @UriPath(description = "database name")
-    @Metadata(required = true)
-    private String database;
+    @UriPath(description = "Smooks XML configuration file")
+    @Metadata(required = true, supportFileReference = true)
+    private String smooksConfig;
 
     private final SmooksProcessor smooksProcessor;
 
@@ -42,20 +41,24 @@ public class SmooksEndpoint extends ProcessorEndpoint implements Service {
         this.smooksProcessor = processor;
     }
 
-    public void start() {
-        try {
-            smooksProcessor.start();
-        } catch (Exception e) {
-            throw new SmooksException(e.getMessage(), e);
-        }
+    public String getSmooksConfig() {
+        return smooksConfig;
     }
 
-    public void stop() {
-        try {
-            smooksProcessor.stop();
-        } catch (Exception e) {
-            throw new SmooksException(e.getMessage(), e);
-        }
+    public void setSmooksConfig(String smooksConfig) {
+        this.smooksConfig = smooksConfig;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(smooksProcessor);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(smooksProcessor);
     }
 
 }

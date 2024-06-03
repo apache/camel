@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.smooks;
 
-/**
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- */
 public class Coordinate {
 
     private Integer x;

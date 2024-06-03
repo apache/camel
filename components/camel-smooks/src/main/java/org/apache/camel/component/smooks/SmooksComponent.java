@@ -22,25 +22,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Smook Camel Component.
- * <p/>
- * <p>
- * Example usage:
- *
- * <pre>
- * from(&quot;direct:a&quot;).to(&quot;smooks://edi-to-xml-smooks-config.xml&quot;)
- * </pre>
- *
- * @author Christian Mueller
- * @author Daniel Bevenius
- */
 @Component("smooks")
 public class SmooksComponent extends DefaultComponent {
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SmooksProcessor smooksProcessor = new SmooksProcessor(remaining, getCamelContext());
         configureSmooksProcessor(smooksProcessor, uri, remaining, parameters);
-        return new SmooksEndpoint(uri, this, smooksProcessor);
+
+        SmooksEndpoint endpoint = new SmooksEndpoint(uri, this, smooksProcessor);
+        endpoint.setSmooksConfig(remaining);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     protected void configureSmooksProcessor(SmooksProcessor smooksProcessor, String uri, String remaining,

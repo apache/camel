@@ -29,12 +29,8 @@ import org.smooks.io.payload.StringResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * Unit test for {@link ResultConverter}.
- *
- * @author Daniel Bevenius
- */
 public class ResultConverterTest {
+
     private TypeConverter typeConverter;
 
     @BeforeEach

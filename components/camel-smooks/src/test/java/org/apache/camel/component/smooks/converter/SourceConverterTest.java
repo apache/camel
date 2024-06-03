@@ -28,12 +28,8 @@ import org.smooks.io.payload.JavaSourceWithoutEventStream;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * Unit test for {@link SourceConverter}. </p>
- *
- * @author Daniel Bevenius
- */
 public class SourceConverterTest {
+
     private TypeConverter typeConverter;
 
     @BeforeEach

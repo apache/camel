@@ -37,11 +37,10 @@ import org.smooks.io.payload.StringResult;
 
 /**
  * ResultConverter converts from different {@link Result} types.
- *
- * @author Daniel Bevenius
  */
 @Converter(generateLoader = true)
 public class ResultConverter {
+
     public static final String SMOOKS_RESULT_KEY = "SmooksResultKeys";
 
     private ResultConverter() {

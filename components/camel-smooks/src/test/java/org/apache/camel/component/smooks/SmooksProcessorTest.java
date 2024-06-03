@@ -63,13 +63,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Unit test for {@link SmooksProcessor}.
- *
- * @author Christian Mueller
- * @author Daniel Bevenius
- */
 public class SmooksProcessorTest extends CamelTestSupport {
+
     @EndpointInject(value = "mock:result")
     private MockEndpoint result;
 

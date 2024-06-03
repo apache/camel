@@ -32,13 +32,8 @@ import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-/**
- * Unit test for {@link SmooksComponent}.
- *
- * @author Christian Mueller
- * @author Daniel Bevenius
- */
 public class SmooksComponentTest extends CamelTestSupport {
+
     @EndpointInject(value = "mock:result")
     private MockEndpoint mockEndpoint;
 

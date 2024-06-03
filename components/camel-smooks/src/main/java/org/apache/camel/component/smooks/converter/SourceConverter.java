@@ -31,8 +31,6 @@ import org.smooks.io.payload.JavaSourceWithoutEventStream;
 /**
  * SourceConverter is a Camel {@link Converter} that converts from different
  * formats to {@link Source} instances. </p>
- *
- * @author Daniel Bevenius
  */
 @Converter(generateLoader = true)
 public class SourceConverter {
@@ -61,7 +59,7 @@ public class SourceConverter {
 
     @Converter
     public static Source toStreamSource(GenericFile<File> genericFile) {
-        return new StreamSource((File) genericFile.getBody());
+        return new StreamSource(genericFile.getFile());
     }
 
 }

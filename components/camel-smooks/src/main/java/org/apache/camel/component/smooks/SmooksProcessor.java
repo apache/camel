@@ -38,10 +38,12 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.Service;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smooks.Smooks;
@@ -57,24 +59,22 @@ import org.smooks.io.payload.Exports;
 
 /**
  * Smooks {@link Processor} for Camel.
- *
- * @author Christian Mueller
- * @author Daniel Bevenius
  */
-public class SmooksProcessor implements Processor, Service, CamelContextAware {
+public class SmooksProcessor extends ServiceSupport implements Processor, CamelContextAware {
+
     public static final String SMOOKS_EXECUTION_CONTEXT = "CamelSmooksExecutionContext";
-    public static final String CAMEL_CHARACTER_ENCODING = "CamelCharsetName";
-    private static final Logger LOGGER = LoggerFactory.getLogger(SmooksProcessor.class);
-    public static final TypedKey<Exchange> EXCHANGE_TYPED_KEY = TypedKey.of();
+
+    private static final TypedKey<Exchange> EXCHANGE_TYPED_KEY = TypedKey.of();
+    private static final Logger LOG = LoggerFactory.getLogger(SmooksProcessor.class);
 
     private Smooks smooks;
     private String configUri;
     private String reportPath;
 
-    private Set<VisitorAppender> visitorAppenders = new HashSet<>();
-    private Map<String, Visitor> selectorVisitorMap = new HashMap<>();
+    private final Set<VisitorAppender> visitorAppender = new HashSet<>();
+    private final Map<String, Visitor> selectorVisitorMap = new HashMap<>();
     private CamelContext camelContext;
-    private boolean attachmentsSupported = false;
+    private boolean attachmentsSupported;
 
     public SmooksProcessor(final CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -88,6 +88,14 @@ public class SmooksProcessor implements Processor, Service, CamelContextAware {
     public SmooksProcessor(final String configUri, final CamelContext camelContext) throws IOException, SAXException {
         this(camelContext);
         this.configUri = configUri;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     public void process(final Exchange exchange) {
@@ -104,25 +112,27 @@ public class SmooksProcessor implements Processor, Service, CamelContextAware {
         }
 
         final ExecutionContext executionContext = smooks.createExecutionContext();
-        executionContext.put(EXCHANGE_TYPED_KEY, exchange);
-        String charsetName = (String) exchange.getProperty(CAMEL_CHARACTER_ENCODING);
-        if (charsetName != null) //if provided use the came character encoding
-        {
-            executionContext.setContentEncoding(charsetName);
-        }
-        exchange.getIn().setHeader(SMOOKS_EXECUTION_CONTEXT, executionContext);
-        setupSmooksReporting(executionContext);
+        try {
+            executionContext.put(EXCHANGE_TYPED_KEY, exchange);
+            String charsetName = (String) exchange.getProperty(Exchange.CHARSET_NAME);
+            if (charsetName != null) {
+                // if provided use the came character encoding
+                executionContext.setContentEncoding(charsetName);
+            }
+            exchange.getIn().setHeader(SMOOKS_EXECUTION_CONTEXT, executionContext);
+            setupSmooksReporting(executionContext);
 
-        final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
-        if (exports.hasExports()) {
-            final Result[] results = exports.createResults();
-            smooks.filterSource(executionContext, getSource(exchange), results);
-            setResultOnBody(exports, results, exchange);
-        } else {
-            smooks.filterSource(executionContext, getSource(exchange));
+            final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
+            if (exports.hasExports()) {
+                final Result[] results = exports.createResults();
+                smooks.filterSource(executionContext, getSource(exchange), results);
+                setResultOnBody(exports, results, exchange);
+            } else {
+                smooks.filterSource(executionContext, getSource(exchange));
+            }
+        } finally {
+            executionContext.remove(EXCHANGE_TYPED_KEY);
         }
-
-        executionContext.remove(EXCHANGE_TYPED_KEY);
     }
 
     protected void setResultOnBody(final Exports exports, final Result[] results, final Exchange exchange) {
@@ -141,7 +151,7 @@ public class SmooksProcessor implements Processor, Service, CamelContextAware {
             try {
                 executionContext.getContentDeliveryRuntime().addExecutionEventListener(new HtmlReportGenerator(reportPath, executionContext.getApplicationContext()));
             } catch (final IOException e) {
-                LOGGER.info("Could not generate Smooks Report. The reportPath specified was [" + reportPath + "].", e);
+                LOG.warn("Cannot generate Smooks Report. The reportPath specified was [" + reportPath + "]. This exception is ignored.", e);
             }
         }
     }
@@ -205,7 +215,7 @@ public class SmooksProcessor implements Processor, Service, CamelContextAware {
      * @return This instance.
      */
     public SmooksProcessor addVisitor(VisitorAppender appender) {
-        visitorAppenders.add(appender);
+        visitorAppender.add(appender);
         return this;
     }
 
@@ -213,19 +223,35 @@ public class SmooksProcessor implements Processor, Service, CamelContextAware {
         this.reportPath = reportPath;
     }
 
+    private Smooks createSmooks() {
+        final SmooksFactory smooksFactory = (SmooksFactory) camelContext.getRegistry().lookupByName(SmooksFactory.class.getName());
+        return smooksFactory != null ? smooksFactory.createInstance() : new Smooks();
+    }
+
+    private void addAppender(Smooks smooks, Set<VisitorAppender> visitorAppenders) {
+        for (VisitorAppender appender : visitorAppenders)
+            smooks.addVisitors(appender);
+    }
+
+    private void addVisitor(Smooks smooks, Map<String, Visitor> selectorVisitorMap) {
+        for (Entry<String, Visitor> entry : selectorVisitorMap.entrySet())
+            smooks.addVisitor(entry.getValue(), entry.getKey());
+    }
+
     @Override
-    public void start() {
+    protected void doStart() throws Exception {
         try {
             if (smooks == null) {
                 smooks = createSmooks();
                 if (configUri != null) {
-                    smooks.addResourceConfigs(configUri);
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, configUri);
+                    smooks.addResourceConfigs(is);
                 }
                 smooks.getApplicationContext().getRegistry().registerObject(CamelContext.class, camelContext);
             }
 
-            addAppenders(smooks, visitorAppenders);
-            addVisitors(smooks, selectorVisitorMap);
+            addAppender(smooks, visitorAppender);
+            addVisitor(smooks, selectorVisitorMap);
 
             InputStream inputStream = null;
             try {
@@ -239,53 +265,28 @@ public class SmooksProcessor implements Processor, Service, CamelContextAware {
                 }
             } finally {
                 if (!attachmentsSupported) {
-                    LOGGER.warn("Attachments module could not be found: attachments will not be propagated");
+                    LOG.warn("Attachments module could not be found: attachments will not be propagated");
                 }
                 if (inputStream != null) {
                     inputStream.close();
                 }
             }
-
-            LOGGER.info(this + " Started");
-        } catch (SAXException | IOException e) {
+        } catch (Exception e) {
             throw new SmooksException(e.getMessage(), e);
         }
     }
 
-    private Smooks createSmooks() {
-        final SmooksFactory smooksFactory = (SmooksFactory) camelContext.getRegistry().lookupByName(SmooksFactory.class.getName());
-        return smooksFactory != null ? smooksFactory.createInstance() : new Smooks();
-    }
-
-    private void addAppenders(Smooks smooks, Set<VisitorAppender> visitorAppenders) {
-        for (VisitorAppender appender : visitorAppenders)
-            smooks.addVisitors(appender);
-    }
-
-    private void addVisitors(Smooks smooks, Map<String, Visitor> selectorVisitorMap) {
-        for (Entry<String, Visitor> entry : selectorVisitorMap.entrySet())
-            smooks.addVisitor(entry.getValue(), entry.getKey());
-    }
-
-    public void stop() {
+    @Override
+    protected void doStop() throws Exception {
         if (smooks != null) {
-            smooks.close();
+            IOHelper.close(smooks);
             smooks = null;
         }
-        LOGGER.info(this + " Stopped");
     }
 
     @Override
     public String toString() {
-        return "SmooksProcessor [configUri=" + configUri + "]";
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
+        return "SmooksProcessor[configUri=" + configUri + "]";
     }
 
 }

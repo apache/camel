@@ -17,7 +17,7 @@ import org.apache.camel.spi.EndpointUriFactory;
 @Generated("org.apache.camel.maven.packaging.GenerateEndpointUriFactoryMojo")
 public class SmooksEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = "://smooks-config-path";
+    private static final String BASE = ":smooksConfig";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
@@ -28,7 +28,6 @@ public class SmooksEndpointUriFactory extends org.apache.camel.support.component
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("bridgeErrorHandler");
-        props.add("database");
         props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");
@@ -42,6 +41,7 @@ public class SmooksEndpointUriFactory extends org.apache.camel.support.component
         props.add("scheduler");
         props.add("schedulerProperties");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("smooksConfig");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("useFixedDelay");
@@ -64,7 +64,7 @@ public class SmooksEndpointUriFactory extends org.apache.camel.support.component
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "database", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "smooksConfig", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
