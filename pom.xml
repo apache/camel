@@ -127,7 +127,7 @@
         <maven-assembly-plugin-version>3.7.1</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.13.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.6.1</maven-dependency-plugin-version>
-        <maven-enforcer-plugin-version>3.4.1</maven-enforcer-plugin-version>
+        <maven-enforcer-plugin-version>3.5.0</maven-enforcer-plugin-version>
         <maven-invoker-plugin-version>3.6.1</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.6.3</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
