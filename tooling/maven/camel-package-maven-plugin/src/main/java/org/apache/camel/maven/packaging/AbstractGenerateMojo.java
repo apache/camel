@@ -56,9 +56,16 @@ public abstract class AbstractGenerateMojo extends AbstractMojo {
     private MavenSession session;
     @Parameter(defaultValue = "${showStaleFiles}")
     private boolean showStaleFiles;
+    @Parameter(defaultValue = "false")
+    private boolean skip;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            getLog().info("Skipping execution");
+            return;
+        }
+
         try {
             if (!isUpToDate(project)) {
                 doExecute();
