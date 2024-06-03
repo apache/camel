@@ -334,14 +334,6 @@ public class NettyUriDsl(
     it.property("useByteBuf", useByteBuf.toString())
   }
 
-  public fun hostnameVerification(hostnameVerification: String) {
-    it.property("hostnameVerification", hostnameVerification)
-  }
-
-  public fun hostnameVerification(hostnameVerification: Boolean) {
-    it.property("hostnameVerification", hostnameVerification.toString())
-  }
-
   public fun allowSerializedHeaders(allowSerializedHeaders: String) {
     it.property("allowSerializedHeaders", allowSerializedHeaders)
   }
@@ -480,6 +472,14 @@ public class NettyUriDsl(
 
   public fun enabledProtocols(enabledProtocols: String) {
     it.property("enabledProtocols", enabledProtocols)
+  }
+
+  public fun hostnameVerification(hostnameVerification: String) {
+    it.property("hostnameVerification", hostnameVerification)
+  }
+
+  public fun hostnameVerification(hostnameVerification: Boolean) {
+    it.property("hostnameVerification", hostnameVerification.toString())
   }
 
   public fun keyStoreFile(keyStoreFile: String) {
