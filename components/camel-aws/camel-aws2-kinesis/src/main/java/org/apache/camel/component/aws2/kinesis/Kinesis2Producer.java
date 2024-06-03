@@ -75,7 +75,6 @@ public class Kinesis2Producer extends DefaultProducer {
     private void sendSingleRecord(Exchange exchange) {
         PutRecordRequest request = createRequest(exchange);
         PutRecordResponse putRecordResult = connection.getClient(getEndpoint()).putRecord(request);
-        LOG.trace("Sent 1 record.");
         Message message = exchange.getMessage();
         message.setHeader(Kinesis2Constants.SEQUENCE_NUMBER, putRecordResult.sequenceNumber());
         message.setHeader(Kinesis2Constants.SHARD_ID, putRecordResult.shardId());
@@ -89,21 +88,30 @@ public class Kinesis2Producer extends DefaultProducer {
         PutRecordRequest.Builder putRecordRequest = PutRecordRequest.builder();
         putRecordRequest.data(SdkBytes.fromByteArray(body));
         putRecordRequest.streamName(getEndpoint().getConfiguration().getStreamName());
+        if (partitionKey == null) {
+            throw new IllegalArgumentException("Partition key must be specified");
+        }
+
         putRecordRequest.partitionKey(partitionKey.toString());
+
         if (sequenceNumber != null) {
             putRecordRequest.sequenceNumberForOrdering(sequenceNumber.toString());
         }
+
         return putRecordRequest.build();
     }
 
     private PutRecordsRequestEntry createRequestEntry(Exchange exchange) {
         byte[] body = exchange.getIn().getBody(byte[].class);
-        String partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY).toString();
+        Object partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY);
 
         PutRecordsRequestEntry.Builder putRecordsRequestEntry = PutRecordsRequestEntry.builder();
         putRecordsRequestEntry.data(SdkBytes.fromByteArray(body));
-        putRecordsRequestEntry.partitionKey(partitionKey);
+        if (partitionKey == null) {
+            throw new IllegalArgumentException("Partition key must be specified");
+        }
 
+        putRecordsRequestEntry.partitionKey(partitionKey.toString());
         return putRecordsRequestEntry.build();
     }
 
@@ -122,7 +130,6 @@ public class Kinesis2Producer extends DefaultProducer {
 
         PutRecordsResponse putRecordsResponse = connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
         int failedRecordCount = putRecordsResponse.failedRecordCount();
-        LOG.trace("Sent {} records, failed {}", requestBatchToSend.size(), failedRecordCount);
         if (failedRecordCount > 0) {
             throw new RuntimeException(
                     "Failed to send records " + failedRecordCount + " of " + requestBatchToSend.size());
