@@ -140,3 +140,44 @@ via `camel.debug.` options in `application.properties`.
 The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
 by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
 
+
+=== Camel AS2
+
+When the AS2 server is configured with a decryption key all received messages require encryption otherwise the server
+will return an 'insufficient-security' error disposition. Only messages with valid encryption will be successfully processed,
+for instance, 'encrypted', 'signed-encrypted', 'encrypted-compressed', 'encrypted-compressed-signed' and 
+'encrypted-signed-compressed' message types.
+
+Messages that cannot be successfully decrypted will return a 'decryption-failed' error disposition.
+This includes messages encrypted with a invalid key or if the server receives encrypted messages but is not 
+configured with a decryption key.
+
+When the AS2 server is configured with a message signature validation certificate chain all received messages
+require a signature otherwise the server will return an 'insufficient-security' error disposition.
+Only messages with a valid signature will be processed, for instance, 'signed', 'compressed-signed',
+and 'signed-compressed' message types.
+
+The server will return an 'authentication-failure' error when a message fails signature validation.
+
+When the AS2 server is configured with a message signature validation certificate chain and a decryption key all received messages 
+require encryption and a signature otherwise the server will return an 'insufficient-security' error disposition. 
+Only messages with a valid signature and encryption will be processed, for instance, 'signed-encrypted', 'encrypted-compressed-signed', 
+and 'encrypted-signed-compressed'.
+
+|===
+| *signing cert* | no | yes | no | yes
+| *decryption key* | no | no | yes | yes
+
+| *plain* | | insufficient-security | insufficient-security | insufficient-security
+| *signed* | | | insufficient-security | insufficient-security
+| *encrypted* | decryption-failure | decryption-failure | | insufficient-security
+| *signed-encrypted* | decryption-failure | decryption-failure | |
+| *plain-compressed* | | insufficient-security | insufficient-security  | insufficient-security
+| *compressed-signed* | |  | insufficient-security | insufficient-security
+| *signed-compressed* | |  | insufficient-security | insufficient-security
+| *encrypted-compressed* | decryption-failure | decryption-failure | | insufficient-security
+| *encrypted-compressed-signed* | decryption-failure | decryption-failure | |
+| *encrypted-signed-compressed* | decryption-failure | decryption-failure | |
+|===
+
+
