@@ -3856,6 +3856,19 @@ public interface ComponentsBuilderFactory {
         return SmbComponentBuilderFactory.smb();
     }
     /**
+     * Smooks (camel-smooks)
+     * EDI, XML, CSV, etc. based data transformation using Smooks.
+     * 
+     * Category: transformation
+     * Since: 4.7
+     * Maven coordinates: org.apache.camel:camel-smooks
+     * 
+     * @return the dsl builder
+     */
+    static SmooksComponentBuilderFactory.SmooksComponentBuilder smooks() {
+        return SmooksComponentBuilderFactory.smooks();
+    }
+    /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).

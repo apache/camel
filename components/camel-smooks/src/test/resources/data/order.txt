@@ -1,0 +1,4 @@
+HDR*1*0*59.97*64.92*4.95*Wed Nov 15 13:45:28 EST 2006
+CUS*user1*Harry^Fletcher*SD
+ORD*1*1*364*The 40-Year-Old Virgin*29.98
+ORD*2*1*299*Pulp Fiction*29.99

@@ -272,6 +272,7 @@
         <module>camel-sjms</module>
         <module>camel-slack</module>
         <module>camel-smb</module>
+        <module>camel-smooks</module>
         <module>camel-smpp</module>
         <module>camel-snakeyaml</module>
         <module>camel-snmp</module>

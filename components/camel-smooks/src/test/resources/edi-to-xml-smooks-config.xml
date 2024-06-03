@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<smooks-resource-list
+        xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+        xmlns:edi="https://www.smooks.org/xsd/smooks/edi-2.0.xsd"
+        xmlns:core="https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd">
+
+    <!--
+    Configure the EDI Reader to process the message stream into a stream of SAX events.
+    -->
+    <edi:parser schemaUri="/edi-mapping-model.dfdl.xsd" segmentTerminator="%NL;" dataElementSeparator="*"
+                compositeDataElementSeparator="^"/>
+
+    <core:exports>
+        <core:result type="javax.xml.transform.dom.DOMResult"/>
+    </core:exports>
+
+</smooks-resource-list>

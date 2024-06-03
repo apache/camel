@@ -1814,6 +1814,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-smooks</artifactId>
+        <version>4.7.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-smpp</artifactId>
         <version>4.7.0-SNAPSHOT</version>
       </dependency>
