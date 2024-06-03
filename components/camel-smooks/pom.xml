@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,16 +34,12 @@
     <name>Camel :: Smooks :: Parent</name>
     <description>Camel Smooks Component</description>
 
-    <properties>
-        <smooks.version>2.0.0-RC4</smooks.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.smooks</groupId>
                 <artifactId>smooks-bom</artifactId>
-                <version>${smooks.version}</version>
+                <version>${smooks-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -50,22 +47,20 @@
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
-            <groupId>org.smooks</groupId>
-            <artifactId>smooks-core</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-file</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-attachments</artifactId>
+            <groupId>org.smooks</groupId>
+            <artifactId>smooks-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.smooks.cartridges.edi</groupId>
             <artifactId>smooks-edi-cartridge</artifactId>
@@ -82,9 +77,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-attachments</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>2.9.1</version>
+            <version>${xmlunit-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

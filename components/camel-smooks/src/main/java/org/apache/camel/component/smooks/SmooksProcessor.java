@@ -39,8 +39,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.attachment.Attachment;
-import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -74,7 +72,6 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private final Set<VisitorAppender> visitorAppender = new HashSet<>();
     private final Map<String, Visitor> selectorVisitorMap = new HashMap<>();
     private CamelContext camelContext;
-    private boolean attachmentsSupported;
 
     public SmooksProcessor(final CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -99,18 +96,6 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     }
 
     public void process(final Exchange exchange) {
-        //forward headers
-        exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
-
-        if (attachmentsSupported) {
-            //forward attachments
-            if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
-                for (Entry<String, Attachment> attachmentObject : exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
-                    exchange.getMessage(AttachmentMessage.class).addAttachmentObject(attachmentObject.getKey(), attachmentObject.getValue());
-                }
-            }
-        }
-
         final ExecutionContext executionContext = smooks.createExecutionContext();
         try {
             executionContext.put(EXCHANGE_TYPED_KEY, exchange);
@@ -253,24 +238,6 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             addAppender(smooks, visitorAppender);
             addVisitor(smooks, selectorVisitorMap);
 
-            InputStream inputStream = null;
-            try {
-                inputStream = camelContext.getClassResolver().loadResourceAsStream("META-INF/services/org/apache/camel/other.properties");
-                if (inputStream != null) {
-                    final Properties properties = new Properties();
-                    properties.load(inputStream);
-                    if (properties.getProperty("name") != null && properties.getProperty("name").equals("attachments")) {
-                        attachmentsSupported = true;
-                    }
-                }
-            } finally {
-                if (!attachmentsSupported) {
-                    LOG.warn("Attachments module could not be found: attachments will not be propagated");
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            }
         } catch (Exception e) {
             throw new SmooksException(e.getMessage(), e);
         }

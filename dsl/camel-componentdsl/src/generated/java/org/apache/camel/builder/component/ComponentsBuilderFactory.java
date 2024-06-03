@@ -3857,10 +3857,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Smooks (camel-smooks)
-     * Applies fragment-based processing in Smooks to perform a variety of
-     * operations like transformation.
+     * EDI, XML, CSV, etc. based data transformation using Smooks.
      * 
-     * Category: file
+     * Category: transformation
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-smooks
      * 

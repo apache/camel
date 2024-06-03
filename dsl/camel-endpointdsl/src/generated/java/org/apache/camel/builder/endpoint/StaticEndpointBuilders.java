@@ -13037,19 +13037,20 @@ public class StaticEndpointBuilders {
     }
     /**
      * Smooks (camel-smooks)
-     * Applies fragment-based processing in Smooks to perform a variety of
-     * operations like transformation.
+     * EDI, XML, CSV, etc. based data transformation using Smooks.
      * 
-     * Category: file
+     * Category: transformation
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-smooks
      * 
-     * Syntax: <code>smooks://smooks-config-path</code>
+     * Syntax: <code>smooks:smooksConfig</code>
      * 
-     * Path parameter: database (required)
-     * database name
+     * Path parameter: smooksConfig (required)
+     * Smooks XML configuration file
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
-     * @param path smooks-config-path
+     * @param path smooksConfig
      * @return the dsl builder
      */
     public static SmooksEndpointBuilderFactory.SmooksEndpointBuilder smooks(String path) {
@@ -13057,21 +13058,22 @@ public class StaticEndpointBuilders {
     }
     /**
      * Smooks (camel-smooks)
-     * Applies fragment-based processing in Smooks to perform a variety of
-     * operations like transformation.
+     * EDI, XML, CSV, etc. based data transformation using Smooks.
      * 
-     * Category: file
+     * Category: transformation
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-smooks
      * 
-     * Syntax: <code>smooks://smooks-config-path</code>
+     * Syntax: <code>smooks:smooksConfig</code>
      * 
-     * Path parameter: database (required)
-     * database name
+     * Path parameter: smooksConfig (required)
+     * Smooks XML configuration file
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path smooks-config-path
+     * @param path smooksConfig
      * @return the dsl builder
      */
     public static SmooksEndpointBuilderFactory.SmooksEndpointBuilder smooks(String componentName, String path) {
