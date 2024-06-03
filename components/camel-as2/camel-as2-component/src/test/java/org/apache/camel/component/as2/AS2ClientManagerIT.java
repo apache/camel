@@ -575,7 +575,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
                 = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert },
-                        clientKeyPair.getPrivate());
+                        null);
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
@@ -684,8 +684,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert },
-                        clientKeyPair.getPrivate());
+                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert }, null);
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
@@ -791,8 +790,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, new Certificate[] { clientCert },
-                        clientKeyPair.getPrivate());
+                = MicUtils.createReceivedContentMic((ClassicHttpRequest) request, null,
+                        null);
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
@@ -841,7 +840,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 request,
                 response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary",
-                true, serverKP.getPrivate(), "Got your message!", new Certificate[] { clientCert });
+                true, null, "Got your message!", null);
 
         // Send MDN
         @SuppressWarnings("unused")
@@ -954,8 +953,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         serverConnection = new AS2ServerConnection(
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                new Certificate[] { serverCert }, serverKP.getPrivate(), serverKP.getPrivate(),
-                MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert }, null);
+                new Certificate[] { serverCert }, serverKP.getPrivate(), null,
+                MDN_MESSAGE_TEMPLATE, null, null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }

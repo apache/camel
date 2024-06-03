@@ -235,7 +235,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
         MicUtils.ReceivedContentMic computedContentMic
                 = MicUtils.createReceivedContentMic(
                         (ClassicHttpRequest) requestHandler.getRequest(), new Certificate[] { clientCert },
-                        clientKeyPair.getPrivate());
+                        null);
 
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
@@ -278,9 +278,9 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     // and a 'signedReceiptMicAlgorithms' header specifying the signing algorithms.
     private MultipartSignedEntity executeRequestWithSignedAsyncResponseHeader() throws Exception {
         Map<String, Object> headers = getAS2HeadersForAsyncReceipt();
-        // In order to receive sign MDN receipts the client must include both the 'signed-receipt-protocol' and
+        addSignedMessageHeaders(headers);
+        // In order to receive signed MDN receipts the client must include both the 'signed-receipt-protocol' and
         // the 'signed-receipt-micalg' option parameters.
-        headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
         executeRequestAsyncHeader(headers);
 
         return verifySignedAsyncResponse();
@@ -290,12 +290,20 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     // specifying the return url, and a 'signedReceiptMicAlgorithms' header specifying the signing algorithms.
     private MultipartSignedEntity executeRequestWithSignedAsyncResponsePath() throws Exception {
         Map<String, Object> headers = getAS2Headers();
-        // In order to receive sign MDN receipts the client must include both the 'signed-receipt-protocol' and
+        addSignedMessageHeaders(headers);
+        // In order to receive signed MDN receipts the client must include both the 'signed-receipt-protocol' and
         // the 'signed-receipt-micalg' option parameters.
-        headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
         executeRequestAsyncPath(headers);
 
         return verifySignedAsyncResponse();
+    }
+
+    private void addSignedMessageHeaders(Map<String, Object> headers) {
+        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.SIGNED);
+        headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        headers.put("CamelAS2.signingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAS2.signingPrivateKey", clientKeyPair.getPrivate());
+        headers.put("CamelAS2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
     }
 
     // Headers required for a client to call the AS2 'send' api.
@@ -398,7 +406,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
         serverConnection = new AS2ServerConnection(
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                new Certificate[] { serverCert }, serverKP.getPrivate(), serverKP.getPrivate(),
+                new Certificate[] { serverCert }, serverKP.getPrivate(), null,
                 MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert }, null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
