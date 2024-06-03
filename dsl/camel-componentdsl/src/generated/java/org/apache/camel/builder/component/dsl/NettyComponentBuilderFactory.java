@@ -816,23 +816,6 @@ public interface NettyComponentBuilderFactory {
     
         
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group:  security
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyComponentBuilder hostnameVerification(boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-    
-        
-        /**
          * Only used for TCP when transferExchange is true. When set to true,
          * serializable objects in headers and properties will be added to the
          * exchange. Otherwise Camel will exclude any non-serializable objects
@@ -1238,6 +1221,23 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+    
         /**
          * Client side certificate keystore to be used for encryption.
          * 
@@ -1518,7 +1518,6 @@ public interface NettyComponentBuilderFactory {
             case "producerPoolMinIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMinIdle((int) value); return true;
             case "udpConnectionlessSending": getOrCreateConfiguration((NettyComponent) component).setUdpConnectionlessSending((boolean) value); return true;
             case "useByteBuf": getOrCreateConfiguration((NettyComponent) component).setUseByteBuf((boolean) value); return true;
-            case "hostnameVerification": getOrCreateConfiguration((NettyComponent) component).setHostnameVerification((boolean) value); return true;
             case "allowSerializedHeaders": getOrCreateConfiguration((NettyComponent) component).setAllowSerializedHeaders((boolean) value); return true;
             case "autowiredEnabled": ((NettyComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "channelGroup": getOrCreateConfiguration((NettyComponent) component).setChannelGroup((io.netty.channel.group.ChannelGroup) value); return true;
@@ -1541,6 +1540,7 @@ public interface NettyComponentBuilderFactory {
             case "encoding": getOrCreateConfiguration((NettyComponent) component).setEncoding((java.lang.String) value); return true;
             case "textline": getOrCreateConfiguration((NettyComponent) component).setTextline((boolean) value); return true;
             case "enabledProtocols": getOrCreateConfiguration((NettyComponent) component).setEnabledProtocols((java.lang.String) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((NettyComponent) component).setHostnameVerification((boolean) value); return true;
             case "keyStoreFile": getOrCreateConfiguration((NettyComponent) component).setKeyStoreFile((java.io.File) value); return true;
             case "keyStoreFormat": getOrCreateConfiguration((NettyComponent) component).setKeyStoreFormat((java.lang.String) value); return true;
             case "keyStoreResource": getOrCreateConfiguration((NettyComponent) component).setKeyStoreResource((java.lang.String) value); return true;

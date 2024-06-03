@@ -382,36 +382,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  security
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  security
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -458,6 +428,36 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder enabledProtocols(String enabledProtocols) {
             doSetProperty("enabledProtocols", enabledProtocols);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
@@ -2637,36 +2637,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  security
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  security
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -2713,6 +2683,36 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder enabledProtocols(String enabledProtocols) {
             doSetProperty("enabledProtocols", enabledProtocols);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
@@ -4249,36 +4249,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  security
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointBuilder hostnameVerification(boolean hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
-         * To enable/disable hostname verification on SSLEngine.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  security
-         * 
-         * @param hostnameVerification the value to set
-         * @return the dsl builder
-         */
-        default NettyHttpEndpointBuilder hostnameVerification(String hostnameVerification) {
-            doSetProperty("hostnameVerification", hostnameVerification);
-            return this;
-        }
-        /**
          * A list of decoders to be used. You can use a String which have values
          * separated by comma, and have the values be looked up in the Registry.
          * Just remember to prefix the value with # so Camel knows it should
@@ -4325,6 +4295,36 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder enabledProtocols(String enabledProtocols) {
             doSetProperty("enabledProtocols", enabledProtocols);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * To enable/disable hostname verification on SSLEngine.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
