@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.chat;
 
+import java.util.Map;
 import java.util.UUID;
 
 import dev.langchain4j.agent.tool.JsonSchemaProperty;
@@ -50,19 +51,16 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
     private LangChain4jChatConfiguration configuration;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "simple Tool description")
+    @UriParam(description = "Tool description")
     private String description;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "simple Tool paramenter name")
-    private String parameterName;
-
-    @Metadata(label = "consumer")
-    @UriParam(description = "Simple Tool parameter type", enums = "string,integer,number,object,array,boolean,null")
-    private String parameterType;
+    @UriParam(description = "List of Tool parameters in the form of parameter.<name>=<type>", prefix = "parameter.",
+              multiValue = true, enums = "string,integer,number,object,array,boolean,null")
+    private Map<String, String> parameters;
 
     @Metadata(label = "consumer,advanced")
-    @UriParam(description = "Tool's Parameters, to be used in case of multiple arguments")
+    @UriParam(description = "Tool's Camel Parameters, programmatically define Tool description and parameters")
     private CamelSimpleToolParameter camelToolParameter;
 
     public LangChain4jChatEndpoint(String uri, LangChain4jChatComponent component, String chatId,
@@ -91,8 +89,8 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
         } else if (description != null) {
             toolSpecificationBuilder.description(description);
 
-            if (parameterName != null) {
-                toolSpecificationBuilder.addParameter(parameterName, JsonSchemaProperty.type(parameterType));
+            if (parameters != null) {
+                parameters.forEach((name, type) -> toolSpecificationBuilder.addParameter(name, JsonSchemaProperty.type(type)));
             }
         } else {
             // Consumer without toolParameter or description
@@ -129,20 +127,12 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
         this.description = description;
     }
 
-    public String getParameterName() {
-        return parameterName;
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
-    }
-
-    public String getParameterType() {
-        return parameterType;
-    }
-
-    public void setParameterType(String parameterType) {
-        this.parameterType = parameterType;
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 
     public CamelSimpleToolParameter getCamelToolParameter() {
