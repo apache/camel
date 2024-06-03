@@ -25,7 +25,7 @@ import com.azure.core.amqp.ProxyOptions;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.util.ClientOptions;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
-import com.azure.messaging.servicebus.ServiceBusSenderAsyncClient;
+import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import com.azure.messaging.servicebus.ServiceBusTransactionContext;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
@@ -80,7 +80,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private ServiceBusProducerOperationDefinition producerOperation = ServiceBusProducerOperationDefinition.sendMessages;
     @UriParam(label = "producer")
     @Metadata(autowired = true)
-    private ServiceBusSenderAsyncClient senderAsyncClient;
+    private ServiceBusSenderClient senderClient;
     @UriParam(label = "producer")
     private ServiceBusTransactionContext serviceBusTransactionContext;
     @UriParam(label = "producer")
@@ -151,7 +151,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the proxy configuration to use for ServiceBusSenderAsyncClient. When a proxy is configured, AMQP_WEB_SOCKETS
+     * Sets the proxy configuration to use for ServiceBusSenderClient. When a proxy is configured, AMQP_WEB_SOCKETS
      * must be used for the transport type.
      */
     public ProxyOptions getProxyOptions() {
@@ -280,14 +280,14 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets SenderAsyncClient to be used in the producer.
+     * Sets senderClient to be used in the producer.
      */
-    public ServiceBusSenderAsyncClient getSenderAsyncClient() {
-        return senderAsyncClient;
+    public ServiceBusSenderClient getSenderClient() {
+        return senderClient;
     }
 
-    public void setSenderAsyncClient(ServiceBusSenderAsyncClient senderAsyncClient) {
-        this.senderAsyncClient = senderAsyncClient;
+    public void setSenderClient(ServiceBusSenderClient senderClient) {
+        this.senderClient = senderClient;
     }
 
     /**

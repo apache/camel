@@ -44,7 +44,7 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
         props.add("producerOperation");
         props.add("proxyOptions");
         props.add("scheduledEnqueueTime");
-        props.add("senderAsyncClient");
+        props.add("senderClient");
         props.add("serviceBusReceiveMode");
         props.add("serviceBusTransactionContext");
         props.add("serviceBusType");
