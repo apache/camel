@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter;
 import org.apache.camel.component.langchain4j.chat.tool.NamedJsonSchemaProperty;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
@@ -88,6 +88,7 @@ public class LangChain4jConsumerIT extends CamelTestSupport {
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
-        Assertions.assertTrue(message.getMessage().getBody().toString().contains(nameFromDB));
+        Assertions.assertThat(message).isNotNull();
+        Assertions.assertThat(message.getMessage().getBody().toString()).contains(nameFromDB);
     }
 }
