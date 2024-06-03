@@ -46,8 +46,8 @@ public final class SourceConverterLoader implements TypeConverterLoader, CamelCo
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, javax.xml.transform.Source.class, java.io.InputStream.class, false,
             (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toStreamSource((java.io.InputStream) value));
-        addTypeConverter(registry, javax.xml.transform.Source.class, org.apache.camel.component.file.GenericFile.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toStreamSource((org.apache.camel.component.file.GenericFile) value));
+        addTypeConverter(registry, javax.xml.transform.Source.class, org.apache.camel.WrappedFile.class, true,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toStreamSource((org.apache.camel.WrappedFile) value, exchange));
         addTypeConverter(registry, org.smooks.io.payload.JavaSource.class, java.lang.Object.class, false,
             (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toJavaSource(value));
         addTypeConverter(registry, org.smooks.io.payload.JavaSource.class, org.smooks.io.payload.JavaResult.class, false,

@@ -23,7 +23,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Converter;
-import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.smooks.io.payload.JavaResult;
 import org.smooks.io.payload.JavaSource;
 import org.smooks.io.payload.JavaSourceWithoutEventStream;
@@ -57,9 +58,15 @@ public class SourceConverter {
         return new JavaSource(result.getResultMap().values());
     }
 
-    @Converter
-    public static Source toStreamSource(GenericFile<File> genericFile) {
-        return new StreamSource(genericFile.getFile());
+    @Converter(allowNull = true)
+    public static Source toStreamSource(WrappedFile<?> file, Exchange exchange) throws Exception {
+        Object obj = file.getFile();
+        if (obj instanceof File f) {
+            return new StreamSource(f);
+        } else {
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, file.getBody());
+            return new StreamSource(is);
+        }
     }
 
 }
