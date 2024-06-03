@@ -145,13 +145,12 @@ String response = template.requestBody("direct:send-multiple", messages, String.
 ----
 
 == Chat with Tool
-Camel langchain4j-chat used as a consumer can be used to implement a Tool,
-right now Tools are supported only via the OpenAiChatModel
-backed by OpenAI APIs.
+Camel langchain4j-chat component as a consumer can be used to implement a LangChain Tool,
+right now Tools are supported only via the OpenAiChatModel backed by OpenAI APIs.
 
-Tool Input parameter can be defined via parameterName and parameterType in case of only one parameter,
-or via the endpoint option camelToolParameter in case of multiple parameters.
-The parameters can be found as headers in the consumer route, in particular, if you define a `parameterName=userId`,
+Tool Input parameter can be defined as an Endpoint multiValue option in the form of `parameter.<name>=<type>`,
+or via the endpoint option camelToolParameter for a programmatic approach.
+The parameters can be found as headers in the consumer route, in particular, if you define `parameter.userId=5`,
 in the consumer route `${header.userId}` can be used.
 
 Example of a producer and a consumer:
@@ -160,7 +159,7 @@ Example of a producer and a consumer:
 from("direct:test")
     .to("langchain4j-chat:test1?chatOperation=CHAT_MULTIPLE_MESSAGES");
 
-from("langchain4j-chat:test1?description=Query user database by number&parameterName=number&parameterType=integer")
+from("langchain4j-chat:test1?description=Query user database by number&parameter.number=integer")
     .to("sql:SELECT name FROM users WHERE id = :#number");
 ----
 

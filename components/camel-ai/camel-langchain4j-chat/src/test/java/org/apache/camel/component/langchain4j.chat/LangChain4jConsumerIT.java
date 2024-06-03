@@ -67,7 +67,7 @@ public class LangChain4jConsumerIT extends CamelTestSupport {
                 from("direct:test")
                         .to("langchain4j-chat:test1?chatOperation=CHAT_MULTIPLE_MESSAGES");
 
-                from("langchain4j-chat:test1?description=Query user database by number&parameterName=number&parameterType=integer")
+                from("langchain4j-chat:test1?description=Query user database by number&parameter.number=integer")
                         .process(exchange -> exchange.getIn().setBody(nameFromDB));
 
                 from("langchain4j-chat:test1?camelToolParameter=#parameters")
