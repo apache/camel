@@ -90,6 +90,13 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
                 hits = s.getHits();
                 routeId = s.getRouteId();
             }
+            if ("out".equals(dir) && stat.isEmpty()) {
+                // no OUT stat, then the endpoint may be used only for IN
+                stat = findStats(endpoint.getEndpointUri(), "in");
+                if (stat.isPresent()) {
+                    return null;
+                }
+            }
             answer = new DefaultEndpointService(
                     component, endpoint.getEndpointUri(), adr, esl.getServiceProtocol(), esl.getServiceMetadata(),
                     hosted, dir, hits, routeId);
