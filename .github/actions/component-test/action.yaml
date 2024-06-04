@@ -30,6 +30,10 @@ inputs:
   comment-body:
     description: 'Body of the comment to process'
     required: true
+  artifact-upload-suffix:
+    description: 'Suffix for artifacts stored'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -48,7 +52,7 @@ runs:
       if: always()
       with:
         name: build.log
-        path: build.log
+        path: build-${{ artifact-upload-suffix }}.log
     - name: maven test
       shell: bash
       run: ${{ github.action_path }}/component-test.sh
@@ -61,7 +65,7 @@ runs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: tests.log
+        name: tests-${{ artifact-upload-suffix }}.log
         path: tests.log
     - name: Success comment
       if: success() 
