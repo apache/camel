@@ -68,6 +68,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String DISPOSITION_TYPE = "Disposition-Type";
 
+    public static final String DISPOSITION_MODIFIER = "Disposition-Modifier";
+
     private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n"
                                                                + " Message ID: $requestHeaders[\"Message-Id\"]\n"
                                                                + "  Subject: $requestHeaders[\"Subject\"]\n"
@@ -140,8 +142,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity;
-        if (AS2DispositionType.FAILED.getType()
-                .equals(coreContext.getAttribute(DISPOSITION_TYPE, String.class))) {
+        if (AS2DispositionType.FAILED
+                .equals(coreContext.getAttribute(DISPOSITION_TYPE, AS2DispositionType.class))) {
             // Return a failed Message Disposition Notification Receipt in response body
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
@@ -151,13 +153,16 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     AS2DispositionType.FAILED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary, true,
                     decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
         } else {
+            AS2DispositionModifier dispositionModifier
+                    = coreContext.getAttribute(DISPOSITION_MODIFIER, AS2DispositionModifier.class);
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null,
+                    AS2DispositionType.PROCESSED, dispositionModifier, null, null, null, null,
                     mdnMessageTemplate);
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                    AS2DispositionType.PROCESSED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary,
+                    AS2DispositionType.PROCESSED, dispositionModifier, null, null, null, null, StandardCharsets.US_ASCII.name(),
+                    boundary,
                     true,
                     decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
         }
