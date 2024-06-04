@@ -20,7 +20,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -38,9 +37,6 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
 
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
-
-    @BindToRegistry("platform-http-engine")
-    private PlatformHttpEngine engine = new DummyHttpEngine();
 
     @Override
     protected RouteBuilder createRouteBuilder() {

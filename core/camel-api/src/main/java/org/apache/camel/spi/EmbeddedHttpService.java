@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.openapi;
+package org.apache.camel.spi;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
-import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
-import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
+/**
+ * Information about embedded HTTP server such as when using the camel-platform-http component,
+ * that integrates with the Spring Boot or Quarkus HTTP server.
+ */
+public interface EmbeddedHttpService {
 
-public class DummyHttpEngine implements PlatformHttpEngine {
+    /**
+     * HTTP or HTTPS
+     */
+    String getScheme();
 
-    @Override
-    public PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor) {
-        return null; // just return null
-    }
+    /**
+     * Port number such as 8080, 443, or something else.
+     */
+    int getServerPort();
 
-    @Override
-    public int getServerPort() {
-        return 1234; // not in use
-    }
 }

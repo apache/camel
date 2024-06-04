@@ -22,7 +22,6 @@ import java.util.Properties;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
@@ -43,9 +42,6 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
 
     @BindToRegistry("dummy-rest")
     private DummyRestProducerFactory factory = new DummyRestProducerFactory();
-
-    @BindToRegistry("platform-http-engine")
-    private PlatformHttpEngine engine = new DummyHttpEngine();
 
     @BindToRegistry("dummy-rest-consumer")
     private DummyRestConsumerFactory consumerFactory = new DummyRestConsumerFactory();
