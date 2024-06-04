@@ -55,5 +55,5 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: incremental-${{ inputs.mode }}-${{ artifact-upload-suffix }}.log
-        path: incremental-${{ inputs.mode }}-${{ artifact-upload-suffix }}.log
+        name: incremental-${{ inputs.mode }}-${{ inputs.artifact-upload-suffix }}.log
+        path: incremental-${{ inputs.mode }}-${{ inputs.artifact-upload-suffix }}.log

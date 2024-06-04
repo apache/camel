@@ -52,7 +52,7 @@ runs:
       if: always()
       with:
         name: build.log
-        path: build-${{ artifact-upload-suffix }}.log
+        path: build-${{ inputs.artifact-upload-suffix }}.log
     - name: maven test
       shell: bash
       run: ${{ github.action_path }}/component-test.sh
@@ -65,7 +65,7 @@ runs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: tests-${{ artifact-upload-suffix }}.log
+        name: tests-${{ inputs.artifact-upload-suffix }}.log
         path: tests.log
     - name: Success comment
       if: success() 
