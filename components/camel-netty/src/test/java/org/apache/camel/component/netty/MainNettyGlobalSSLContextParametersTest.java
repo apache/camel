@@ -24,11 +24,11 @@ import javax.net.ssl.SSLSession;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class MainNettyGlobalSSLContextParametersTest extends BaseNettyTest {
 
     @Override
@@ -38,9 +38,6 @@ public class MainNettyGlobalSSLContextParametersTest extends BaseNettyTest {
 
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
-        // ibm jdks dont have sun security algorithms
-        assumeFalse(isJavaVendor("ibm"));
-
         Main main = new Main();
         main.configure().sslConfig().setEnabled(true);
         main.configure().sslConfig().setKeyStore(
