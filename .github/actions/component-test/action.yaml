@@ -51,8 +51,8 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: build.log
-        path: build-${{ inputs.artifact-upload-suffix }}.log
+        name: build-${{ inputs.artifact-upload-suffix }}.log
+        path: build.log
     - name: maven test
       shell: bash
       run: ${{ github.action_path }}/component-test.sh
