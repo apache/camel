@@ -212,7 +212,7 @@
         <hapi-base-version>2.5.1</hapi-base-version>
         <hapi-fhir-version>7.2.1</hapi-fhir-version>
         <hazelcast-version>5.3.7</hazelcast-version>
-        <hdrhistrogram-version>2.2.1</hdrhistrogram-version>
+        <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
