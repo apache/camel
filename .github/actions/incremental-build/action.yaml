@@ -48,7 +48,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
     - name: archive logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: incremental-${{ inputs.mode }}.log
