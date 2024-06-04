@@ -42,7 +42,7 @@ public interface KafkaService extends TestService, BeforeTestExecutionCallback, 
             initialize();
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(KafkaService.class);
-            log.error(" Unexpected error in {}: {} {} ", this.getClass().getSimpleName(), e.getMessage(), e.getCause());
+            log.error("Unexpected error in {}: {} {} ", this.getClass().getSimpleName(), e.getMessage(), e.getCause());
             if (extensionContext != null && extensionContext.getTestInstance() != null) {
                 Object o = extensionContext.getTestInstance().get();
                 log.error("Failed to initialize service {} for test {} on ({})", this.getClass().getSimpleName(),
