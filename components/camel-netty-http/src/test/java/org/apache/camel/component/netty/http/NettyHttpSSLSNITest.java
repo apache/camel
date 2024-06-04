@@ -31,10 +31,9 @@ import org.apache.camel.support.jsse.SSLContextClientParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettyHttpSSLSNITest extends BaseNettyTest {
 
     @Override
@@ -44,9 +43,6 @@ public class NettyHttpSSLSNITest extends BaseNettyTest {
 
     @Test
     public void testSSLAddsDefaultServerNameIndication() throws Exception {
-        // ibm jdks dont have sun security algorithms
-        assumeFalse(isJavaVendor("ibm"));
-
         getMockEndpoint("mock:output").expectedBodiesReceived("localhost");
 
         context.getRegistry().bind("customSSLContextParameters", createSSLContextParameters(null));
@@ -67,9 +63,6 @@ public class NettyHttpSSLSNITest extends BaseNettyTest {
 
     @Test
     public void testSSLAddsCustomServerNameIndication() throws Exception {
-        // ibm jdks dont have sun security algorithms
-        assumeFalse(isJavaVendor("ibm"));
-
         String customSNI = "custom.host.name";
 
         getMockEndpoint("mock:output").expectedBodiesReceived(customSNI);

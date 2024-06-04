@@ -18,6 +18,7 @@ package org.apache.camel.component.splunk;
 
 import java.net.ConnectException;
 import java.net.SocketException;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLException;
@@ -27,6 +28,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -38,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name",
              category = { Category.IOT, Category.MONITORING })
-public class SplunkEndpoint extends ScheduledPollEndpoint {
+public class SplunkEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
@@ -55,6 +57,24 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
     public SplunkEndpoint(String uri, SplunkComponent component, SplunkConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "splunk";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
     }
 
     @Override
@@ -112,7 +132,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
 
     public synchronized boolean reset(Exception e) {
         boolean answer = false;
-        if (e instanceof RuntimeException && ((RuntimeException) e).getCause() instanceof ConnectException
+        if (e instanceof RuntimeException && e.getCause() instanceof ConnectException
                 || e instanceof SocketException || e instanceof SSLException) {
             LOG.warn("Got exception from Splunk. Service will be reset.");
             this.service = null;

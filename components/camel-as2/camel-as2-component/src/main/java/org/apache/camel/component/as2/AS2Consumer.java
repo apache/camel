@@ -26,6 +26,8 @@ import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
+import org.apache.camel.component.as2.api.exception.AS2ErrorDispositionException;
+import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2Constants;
@@ -108,7 +110,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     @Override
     public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
             throws HttpException {
-        Exception exception;
+        Exception exception = null;
         try {
             if (request instanceof HttpEntityContainer) {
                 EntityParser.parseAS2MessageEntity(request);
@@ -135,6 +137,9 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
                 exception = exchange.getException();
                 releaseExchange(exchange, false);
             }
+        } catch (AS2ErrorDispositionException e) {
+            LOG.warn("Failed to process AS2 message", e);
+            context.setAttribute(ResponseMDN.DISPOSITION_MODIFIER, e.getDispositionModifier());
         } catch (Exception e) {
             LOG.warn("Failed to process AS2 message", e);
             exception = e;

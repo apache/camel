@@ -43,9 +43,9 @@ public class StreamDataWriter extends SplunkDataWriter {
 
     @Override
     protected Socket createSocket(Service service) throws IOException {
-        Index indexObject = null;
-        Receiver receiver = null;
-        Socket socket = null;
+        Index indexObject;
+        Receiver receiver;
+        Socket socket;
 
         if (index != null) {
             indexObject = service.getIndexes().get(index);

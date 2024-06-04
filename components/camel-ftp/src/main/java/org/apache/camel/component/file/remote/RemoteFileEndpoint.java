@@ -26,6 +26,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFilePollingConsumer;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.StringHelper;
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Remote file endpoint.
  */
-public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
+public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileEndpoint.class);
 
@@ -102,6 +103,24 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     @Override
     public RemoteFileConfiguration getConfiguration() {
         return (RemoteFileConfiguration) this.configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return getConfiguration().getProtocol() + ":" + getConfiguration().getHost() + ":" + getConfiguration().getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return getConfiguration().getProtocol();
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (getConfiguration().getUsername() != null) {
+            return Map.of("username", getConfiguration().getUsername());
+        }
+        return null;
     }
 
     @Override

@@ -16,9 +16,12 @@
  */
 package org.apache.camel.openapi;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -59,7 +62,10 @@ import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
+import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.ApiKeyDefinition;
 import org.apache.camel.model.rest.BasicAuthDefinition;
@@ -78,10 +84,16 @@ import org.apache.camel.model.rest.RestSecurityDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.EmbeddedHttpService;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,11 +139,62 @@ public class RestOpenApiReader {
      * @param  config                 the openApi configuration
      * @param  classResolver          class resolver to use @return the openApi model
      * @throws ClassNotFoundException is thrown if error loading class
+     * @throws IOException            is thrown if error loading openapi specification
+     * @throws UnknownHostException   is thrown if error resolving local hostname
      */
     public OpenAPI read(
             CamelContext camelContext, List<RestDefinition> rests, BeanConfig config,
             String camelContextId, ClassResolver classResolver)
-            throws ClassNotFoundException {
+            throws ClassNotFoundException, IOException, UnknownHostException {
+
+        // contract first, then load the specification as-is and use as response
+        for (RestDefinition rest : rests) {
+            if (rest.getOpenApi() != null) {
+                Resource res = PluginHelper.getResourceLoader(camelContext).resolveResource(rest.getOpenApi().getSpecification());
+                if (res != null && res.exists()) {
+                    InputStream is = res.getInputStream();
+                    String data = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                    OpenAPIV3Parser parser = new OpenAPIV3Parser();
+                    SwaggerParseResult out = parser.readContents(data);
+                    OpenAPI answer = out.getOpenAPI();
+
+                    String host = null;
+                    RestConfiguration restConfig = camelContext.getRestConfiguration();
+                    if (restConfig.getHostNameResolver() != RestConfiguration.RestHostNameResolver.none) {
+                        host = camelContext.getRestConfiguration().getApiHost();
+                        if (host == null || host.isEmpty()) {
+                            String scheme = "http";
+                            int port = 0;
+                            host = RestComponentHelper.resolveRestHostName(host, restConfig);
+                            EmbeddedHttpService server = CamelContextHelper.findSingleByType(camelContext, EmbeddedHttpService.class);
+                            if (server != null) {
+                                scheme = server.getScheme();
+                                port = server.getServerPort();
+                            }
+                            host = scheme + "://" + host;
+                            if (port > 0 && port != 80) {
+                                host = host + ":" + port;
+                            }
+                        }
+                    }
+                    if (host != null) {
+                        String basePath = RestOpenApiSupport.getBasePathFromOasDocument(answer);
+                        if (basePath == null) {
+                            basePath = "/";
+                        }
+                        if (!basePath.startsWith("/")) {
+                            basePath = "/" + basePath;
+                        }
+                        Server server = new Server();
+                        server.setUrl(host + basePath);
+                        answer.setServers(null);
+                        answer.addServersItem(server);
+                    }
+                    return answer;
+                }
+            }
+        }
 
         OpenAPI openApi = config.isOpenApi31() ? new OpenAPI(SpecVersion.V31) : new OpenAPI();
         if (config.getVersion() != null) {

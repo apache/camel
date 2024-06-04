@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class QuickfixjConfigurationTest {
 
     @Test
-    public void testConfiguration() throws Exception {
+    public void testComponentConfiguration() throws Exception {
         QuickfixjConfiguration factory = new QuickfixjConfiguration();
 
         Map<Object, Object> defaultSettings = new HashMap<>();

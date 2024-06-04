@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.util.Map;
+
 import io.debezium.data.Envelope;
 import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.kafka.connect.data.Schema;
@@ -29,7 +32,8 @@ import org.apache.kafka.connect.data.Schema;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector",
              syntax = "debezium-mongodb:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration> {
+public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private MongoDbConnectorEmbeddedDebeziumConfiguration configuration;
@@ -41,6 +45,24 @@ public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConne
     }
 
     public DebeziumMongodbEndpoint() {
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getMongodbConnectionString();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "mongodb";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getMongodbUser() != null) {
+            return Map.of("username", configuration.getMongodbUser());
+        }
+        return null;
     }
 
     @Override

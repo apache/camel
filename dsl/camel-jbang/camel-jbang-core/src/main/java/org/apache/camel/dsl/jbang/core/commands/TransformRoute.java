@@ -88,8 +88,8 @@ public class TransformRoute extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutes", format);
                 main.addInitialProperty("camel.main.dumpRoutesInclude", "routes,rests,routeConfigurations,beans");
                 main.addInitialProperty("camel.main.dumpRoutesLog", "false");
-                main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", "" + resolvePlaceholders);
-                main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", "" + uriAsParameters);
+                main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", Boolean.toString(resolvePlaceholders));
+                main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", Boolean.toString(uriAsParameters));
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
                 main.addInitialProperty("camel.jbang.transform", "true");
                 main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");

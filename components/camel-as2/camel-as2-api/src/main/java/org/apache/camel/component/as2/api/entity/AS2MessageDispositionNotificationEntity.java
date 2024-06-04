@@ -91,9 +91,12 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
         this.originalMessageId = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
 
-        this.receivedContentMic
-                = MicUtils.createReceivedContentMic(request, validateSigningCertificateChain, decryptingPrivateKey);
-
+        // don't include a mic if a error occured processing the message,
+        // for instance with decryption or signature validation.
+        if (dispositionModifier == null || !dispositionModifier.isError()) {
+            this.receivedContentMic
+                    = MicUtils.createReceivedContentMic(request, validateSigningCertificateChain, decryptingPrivateKey);
+        }
         this.reportingUA = HttpMessageUtils.getHeaderValue(response, AS2Header.SERVER);
 
         this.dispositionMode = ObjectHelper.notNull(dispositionMode, "Disposition Mode");

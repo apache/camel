@@ -145,7 +145,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     }
 
     private String getProxyPort() {
-        return "" + proxy.getLocalPort();
+        return Integer.toString(proxy.getLocalPort());
     }
 
 }

@@ -73,6 +73,20 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the whole Connection String/Uri for mongodb endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param connectionUriString the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder connectionUriString(String connectionUriString) {
+            doSetProperty("connectionUriString", connectionUriString);
+            return this;
+        }
+        /**
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
@@ -248,20 +262,6 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder consumerType(String consumerType) {
             doSetProperty("consumerType", consumerType);
-            return this;
-        }
-        /**
-         * Set the whole Connection String/Uri for mongodb endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: additional
-         * 
-         * @param connectionUriString the value to set
-         * @return the dsl builder
-         */
-        default MongoDbEndpointConsumerBuilder connectionUriString(String connectionUriString) {
-            doSetProperty("connectionUriString", connectionUriString);
             return this;
         }
         /**
@@ -1575,6 +1575,20 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the whole Connection String/Uri for mongodb endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param connectionUriString the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointProducerBuilder connectionUriString(String connectionUriString) {
+            doSetProperty("connectionUriString", connectionUriString);
+            return this;
+        }
+        /**
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
@@ -1736,20 +1750,6 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder outputType(String outputType) {
             doSetProperty("outputType", outputType);
-            return this;
-        }
-        /**
-         * Set the whole Connection String/Uri for mongodb endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: additional
-         * 
-         * @param connectionUriString the value to set
-         * @return the dsl builder
-         */
-        default MongoDbEndpointProducerBuilder connectionUriString(String connectionUriString) {
-            doSetProperty("connectionUriString", connectionUriString);
             return this;
         }
         /**
@@ -2822,6 +2822,20 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the whole Connection String/Uri for mongodb endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param connectionUriString the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointBuilder connectionUriString(String connectionUriString) {
+            doSetProperty("connectionUriString", connectionUriString);
+            return this;
+        }
+        /**
          * Create collection during initialisation if it doesn't exist. Default
          * is true.
          * 
@@ -2983,20 +2997,6 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder outputType(String outputType) {
             doSetProperty("outputType", outputType);
-            return this;
-        }
-        /**
-         * Set the whole Connection String/Uri for mongodb endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: additional
-         * 
-         * @param connectionUriString the value to set
-         * @return the dsl builder
-         */
-        default MongoDbEndpointBuilder connectionUriString(String connectionUriString) {
-            doSetProperty("connectionUriString", connectionUriString);
             return this;
         }
         /**

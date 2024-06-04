@@ -50,7 +50,7 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        this.sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : false;
+        this.sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
         if (sanitize) {
             uri = URISupport.sanitizeUri(processor.getUri());
         } else {

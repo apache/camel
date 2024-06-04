@@ -39,6 +39,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -124,6 +125,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile TransformerRegistry<TransformerKey> transformerRegistry;
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
+    private volatile EndpointServiceRegistry endpointServiceRegistry;
     private volatile TypeConverter typeConverter;
     private volatile RouteController routeController;
     private volatile ShutdownStrategy shutdownStrategy;
@@ -771,6 +773,23 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setTransformerRegistry(TransformerRegistry transformerRegistry) {
         this.transformerRegistry = camelContext.getInternalServiceManager().addService(camelContext, transformerRegistry);
+    }
+
+    @Override
+    public EndpointServiceRegistry getEndpointServiceRegistry() {
+        if (endpointServiceRegistry == null) {
+            synchronized (lock) {
+                if (endpointServiceRegistry == null) {
+                    setEndpointServiceRegistry(camelContext.createEndpointServiceRegistry());
+                }
+            }
+        }
+        return endpointServiceRegistry;
+    }
+
+    @Override
+    public void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry) {
+        this.endpointServiceRegistry = camelContext.getInternalServiceManager().addService(camelContext, endpointServiceRegistry);
     }
 
     ValidatorRegistry getValidatorRegistry() {

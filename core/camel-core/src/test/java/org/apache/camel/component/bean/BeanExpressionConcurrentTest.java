@@ -37,7 +37,7 @@ public class BeanExpressionConcurrentTest extends ContextTestSupport {
 
         // start from 1000 to be 4 digit always (easier to string compare)
         for (int i = 1000; i < 2000; i++) {
-            template.sendBody("seda:foo", "" + i);
+            template.sendBody("seda:foo", Integer.toString(i));
         }
 
         context.getRouteController().startRoute("foo");

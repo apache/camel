@@ -97,7 +97,9 @@ public class Etcd3WatchServiceDiscovery extends Etcd3ServiceDiscovery
     @Override
     protected void doStop() throws Exception {
         try {
-            client.close();
+            if (client != null) {
+                client.close();
+            }
         } finally {
             super.doStop();
         }

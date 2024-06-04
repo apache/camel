@@ -14,6 +14,7 @@
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
     "description": { "index": 1, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "disabled": { "index": 2, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." }
+    "disabled": { "index": 2, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime." },
+    "headers": { "index": 3, "kind": "element", "displayName": "Headers", "group": "common", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.SetHeaderDefinition>", "oneOf": [ "setHeader" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the headers to be set" }
   }
 }

@@ -32,6 +32,7 @@ import java.util.Objects;
 import org.apache.camel.CamelException;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
+import org.apache.camel.component.as2.api.exception.AS2DecryptionException;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
 import org.apache.camel.component.as2.api.util.ContentTypeUtils;
@@ -261,10 +262,10 @@ public final class EntityParser {
                 return recipientInfo.getContent(recipient);
             }
         } catch (CMSException e) {
-            throw new HttpException("Failed to decrypt data", e);
+            throw new AS2DecryptionException("Failed to decrypt data", e);
         }
 
-        throw new HttpException("Failed to decrypt data: bno recipeint information");
+        throw new AS2DecryptionException("Failed to decrypt data: bno recipient information");
     }
 
     private static void parseApplicationPkcs7MimeCompressedEntity(

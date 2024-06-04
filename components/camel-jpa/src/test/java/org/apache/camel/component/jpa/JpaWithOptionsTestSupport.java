@@ -38,9 +38,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport {
+public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport implements BeforeEachCallback {
 
     // should be less than 1000 as numbers in entries' names are formatted for sorting with %03d (or change format)
     static final int ENTRIES_COUNT = 30;

@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -43,12 +42,10 @@ public class RedisSetTest extends RedisTestSupport {
     private SetOperations<String, String> setOperations;
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
+    protected void bindToRegistry(Registry registry) throws Exception {
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
 
-        Registry registry = new SimpleRegistry();
         registry.bind("redisTemplate", redisTemplate);
-        return registry;
     }
 
     @Test

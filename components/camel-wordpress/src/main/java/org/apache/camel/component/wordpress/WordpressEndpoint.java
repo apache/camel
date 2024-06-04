@@ -33,6 +33,7 @@ import org.apache.camel.component.wordpress.consumer.WordpressUserConsumer;
 import org.apache.camel.component.wordpress.producer.WordpressPostProducer;
 import org.apache.camel.component.wordpress.producer.WordpressUserProducer;
 import org.apache.camel.component.wordpress.proxy.WordpressOperationType;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -47,9 +48,9 @@ import org.apache.camel.util.PropertiesHelper;
  */
 @UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "WordPress", syntax = "wordpress:operation",
              category = { Category.CLOUD, Category.API, Category.CMS })
-public class WordpressEndpoint extends DefaultEndpoint {
+public class WordpressEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    public static final String ENDPOINT_SERVICE_POST = "post, user";
+    public static final String ENDPOINT_SERVICE_POST = "post,user";
 
     @UriPath(description = "The endpoint operation.", enums = ENDPOINT_SERVICE_POST)
     @Metadata(required = true)
@@ -65,6 +66,24 @@ public class WordpressEndpoint extends DefaultEndpoint {
     public WordpressEndpoint(String uri, WordpressComponent component, WordpressConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getUrl();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "http";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUser() != null) {
+            return Map.of("username", configuration.getUser());
+        }
+        return null;
     }
 
     public WordpressConfiguration getConfiguration() {

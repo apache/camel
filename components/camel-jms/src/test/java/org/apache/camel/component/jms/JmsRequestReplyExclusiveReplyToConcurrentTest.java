@@ -85,7 +85,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
         for (int i = 0; i < size; i++) {
             final Integer num = i;
             executor.submit(() -> {
-                String reply = template.requestBody("direct:start", "" + num, String.class);
+                String reply = template.requestBody("direct:start", Integer.toString(num), String.class);
                 LOG.info("Sent {} expecting reply 'Hello {}' got --> {}", num, num, reply);
                 assertNotNull(reply);
                 assertEquals("Hello " + num, reply);

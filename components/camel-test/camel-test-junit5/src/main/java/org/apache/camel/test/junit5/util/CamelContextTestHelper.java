@@ -38,6 +38,7 @@ import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,5 +230,10 @@ public final class CamelContextTestHelper {
                 }
             });
         }
+    }
+
+
+    public static boolean isSkipAutoStartContext(TestExecutionConfiguration configuration) {
+        return Boolean.parseBoolean(System.getProperty("skipStartingCamelContext")) || !configuration.autoStartContext();
     }
 }

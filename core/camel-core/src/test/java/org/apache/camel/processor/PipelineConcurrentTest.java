@@ -55,7 +55,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        template.sendBody(uri, "" + (start + i));
+                        template.sendBody(uri, Integer.toString(start + i));
                     }
                 }
             });

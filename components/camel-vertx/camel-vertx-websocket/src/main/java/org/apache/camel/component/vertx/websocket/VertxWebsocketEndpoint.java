@@ -35,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.vertx.common.VertxHelper;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -51,7 +52,7 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
              syntax = "vertx-websocket:host:port/path", category = { Category.HTTP, Category.NETWORKING },
              headersClass = VertxWebsocketConstants.class, lenientProperties = true)
-public class VertxWebsocketEndpoint extends DefaultEndpoint {
+public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketEndpoint.class);
 
@@ -64,6 +65,16 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
     public VertxWebsocketEndpoint(String uri, VertxWebsocketComponent component, VertxWebsocketConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "websocket";
     }
 
     @Override

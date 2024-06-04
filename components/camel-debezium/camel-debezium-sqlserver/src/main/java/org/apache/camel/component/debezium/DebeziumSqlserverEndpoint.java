@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -27,7 +30,8 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-sqlserver", title = "Debezium SQL Server Connector",
              syntax = "debezium-sqlserver:name", category = { Category.DATABASE }, consumerOnly = true,
              headersClass = DebeziumConstants.class)
-public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration> {
+public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerConnectorEmbeddedDebeziumConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private SqlServerConnectorEmbeddedDebeziumConfiguration configuration;
@@ -39,6 +43,24 @@ public final class DebeziumSqlserverEndpoint extends DebeziumEndpoint<SqlServerC
     }
 
     public DebeziumSqlserverEndpoint() {
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getDatabaseHostname() + ":" + configuration.getDatabasePort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "jdbc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getDatabaseUser() != null) {
+            return Map.of("username", configuration.getDatabaseUser());
+        }
+        return null;
     }
 
     @Override

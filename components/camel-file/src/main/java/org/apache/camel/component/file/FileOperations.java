@@ -541,10 +541,7 @@ public class FileOperations implements GenericFileOperations<File> {
             FileUtil.createNewFile(target);
         } else if (endpoint.getFileExist() == GenericFileExist.Override) {
             LOG.debug("Truncating existing file: {}", target);
-            try (SeekableByteChannel out
-                    = Files.newByteChannel(target.toPath(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
-                // nothing to write
-            }
+            Files.write(target.toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         }
     }
 

@@ -19,7 +19,6 @@ package org.apache.camel.component.sql;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -42,15 +41,13 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() {
-        Registry reg = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) throws Exception {
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql").build();
-        reg.bind("jdbc/myDataSource", db);
-        return reg;
+        registry.bind("jdbc/myDataSource", db);
     }
 
     @Override

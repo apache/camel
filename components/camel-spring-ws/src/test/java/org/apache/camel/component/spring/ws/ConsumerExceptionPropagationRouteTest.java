@@ -25,7 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,10 +68,8 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("endpointMapping", this.endpointMapping);
-        return registry;
     }
 
     @Disabled("For now getEndpointUri does not return the initial uri. Info like the endpoint scheme is lost")

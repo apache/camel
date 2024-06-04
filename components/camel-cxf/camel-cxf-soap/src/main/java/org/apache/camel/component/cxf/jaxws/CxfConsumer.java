@@ -69,6 +69,11 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         cxfEndpoint = endpoint;
     }
 
+    @Override
+    public boolean isHostedService() {
+        return true;
+    }
+
     protected Server createServer() throws Exception {
         ServerFactoryBean svrBean = cxfEndpoint.createServerFactoryBean();
         svrBean.setInvoker(new CxfConsumerInvoker(cxfEndpoint));

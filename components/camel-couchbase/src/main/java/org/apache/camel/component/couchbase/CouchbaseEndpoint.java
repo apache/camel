@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -57,7 +59,7 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol://hostname:port",
              category = { Category.DATABASE }, headersClass = CouchbaseConstants.class)
-public class CouchbaseEndpoint extends ScheduledPollEndpoint {
+public class CouchbaseEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -163,6 +165,24 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     public CouchbaseEndpoint(String endpointUri, CouchbaseComponent component) {
         super(endpointUri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return protocol + ":" + hostname + ":" + port;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return protocol;
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (username != null) {
+            return Map.of("username", username);
+        }
+        return null;
     }
 
     @Override

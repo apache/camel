@@ -169,4 +169,18 @@ public interface SupervisingRouteController extends RouteController {
      */
     boolean isStartingRoutes();
 
+    /**
+     * Started routes
+     */
+    default void startRoutes() {
+        startRoutes(false);
+    }
+
+    /**
+     * Started routes
+     *
+     * @param reloaded whether the routes to be started is part of reloading routes
+     */
+    void startRoutes(boolean reloaded);
+
 }

@@ -30,6 +30,7 @@ import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.UriEndpoint;
@@ -47,7 +48,8 @@ import org.apache.camel.util.CaseInsensitiveMap;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.CLOUD }, headersClass = Olingo2Constants.class)
-public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
+public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration>
+        implements EndpointServiceLocation {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
     protected static final String RESPONSE_HANDLER_PROPERTY = "responseHandler";
@@ -78,6 +80,16 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         super(uri, component, apiName, methodName, Olingo2ApiCollection.getCollection().getHelper(apiName),
               endpointConfiguration);
         this.configuration = endpointConfiguration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getServiceUri();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "odata";
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
@@ -382,7 +383,15 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public Object getVariable(String name) {
-        if (variableRepository != null) {
+        VariableRepository repo = null;
+        final String id = ExchangeHelper.getVariableRepositoryId(name);
+        if (id != null) {
+            repo = ExchangeHelper.getVariableRepository(this, id);
+            name = ExchangeHelper.resolveVariableRepositoryName(this, name, id);
+        }
+        if (repo != null && name != null) {
+            return repo.getVariable(name);
+        } else if (variableRepository != null) {
             return variableRepository.getVariable(name);
         }
         return null;
@@ -402,15 +411,33 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public void setVariable(String name, Object value) {
-        if (variableRepository == null) {
-            variableRepository = new ExchangeVariableRepository(getContext());
+        VariableRepository repo = null;
+        final String id = ExchangeHelper.getVariableRepositoryId(name);
+        if (id != null) {
+            repo = ExchangeHelper.getVariableRepository(this, id);
+            name = ExchangeHelper.resolveVariableRepositoryName(this, name, id);
         }
-        variableRepository.setVariable(name, value);
+        if (repo != null) {
+            repo.setVariable(name, value);
+        } else {
+            if (variableRepository == null) {
+                variableRepository = new ExchangeVariableRepository(getContext());
+            }
+            variableRepository.setVariable(name, value);
+        }
     }
 
     @Override
     public Object removeVariable(String name) {
-        if (variableRepository != null) {
+        VariableRepository repo = null;
+        final String id = ExchangeHelper.getVariableRepositoryId(name);
+        if (id != null) {
+            repo = ExchangeHelper.getVariableRepository(this, id);
+            name = ExchangeHelper.resolveVariableRepositoryName(this, name, id);
+        }
+        if (repo != null) {
+            return repo.removeVariable(name);
+        } else if (variableRepository != null) {
             if ("*".equals(name)) {
                 variableRepository.clear();
                 return null;

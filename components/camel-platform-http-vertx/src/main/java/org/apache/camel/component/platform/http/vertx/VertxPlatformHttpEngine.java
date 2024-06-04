@@ -68,6 +68,14 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // register this so we can find it
+        camelContext.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class, this);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         // no-op
     }

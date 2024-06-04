@@ -61,7 +61,7 @@ public class AsyncJmsInOutTest extends AbstractJMSTest {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < 100; i++) {
-            template.sendBody("seda:start", "" + i);
+            template.sendBody("seda:start", Integer.toString(i));
         }
 
         // just in case we run on slow boxes

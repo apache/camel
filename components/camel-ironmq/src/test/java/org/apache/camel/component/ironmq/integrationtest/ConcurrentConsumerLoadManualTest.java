@@ -59,7 +59,7 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
         int noOfBlocks = 0;
         ArrayList<String> list = new ArrayList<>();
         for (int i = 1; i <= NO_OF_MESSAGES; i++) {
-            String payloadToSend = PAYLOAD.replace("#", "" + i);
+            String payloadToSend = PAYLOAD.replace("#", Integer.toString(i));
             list.add(payloadToSend);
             if (i % 100 == 0) {
                 noOfBlocks++;

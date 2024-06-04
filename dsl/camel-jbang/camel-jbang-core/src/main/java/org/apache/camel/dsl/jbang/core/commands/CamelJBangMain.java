@@ -98,6 +98,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(main)))
                         .addSubcommand("metric", new CommandLine(new ListMetric(main)))
                         .addSubcommand("service", new CommandLine(new ListService(main)))
+                        .addSubcommand("platform-http", new CommandLine(new ListPlatformHttp(main)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(main)))
                         .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(main)))

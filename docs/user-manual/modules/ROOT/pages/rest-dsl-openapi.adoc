@@ -289,10 +289,41 @@ Here Camel will detect the `schema` part:
 }
 ----
 
-And compute the class name as `Pet` and attempt to disover this class from classpath scanning specified via the `bindingPackageScan` option.
+And compute the class name as `Pet` and attempt to discover this class from classpath scanning specified via the `bindingPackageScan` option.
 
 You can source code generate Java POJO classes from an OpenAPI specification via tooling such as the `swagger-codegen-maven-plugin` Maven plugin.
 For more details see this https://github.com/apache/camel-spring-boot-examples/tree/main/openapi-contract-first[Spring Boot example].
+
+=== Expose API specification
+
+The OpenAPI specification is by default not exposed on the HTTP endpoint. You can make this happen by setting the rest-configuration as follows:
+
+[source,yaml]
+----
+- restConfiguration:
+    apiContextPath: /api-doc
+----
+
+Then the specification is accessible on `/api-doc` on the embedded HTTP server, so typically that would be `http://localhost:8080/api-doc`.
+
+In the returned API specification the `server` section has been modified to return the IP of the current server. This can be controlled via:
+
+
+[source,yaml]
+----
+- restConfiguration:
+    apiContextPath: /api-doc
+    hostNameResolver: localIp
+----
+
+And you can turn this off by setting the value to `none` so the server part is taken verbatim from the specification file.
+
+[source,yaml]
+----
+- restConfiguration:
+    apiContextPath: /api-doc
+    hostNameResolver: none
+----
 
 == Examples
 

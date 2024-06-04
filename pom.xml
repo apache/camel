@@ -127,13 +127,14 @@
         <maven-assembly-plugin-version>3.7.1</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.13.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.6.1</maven-dependency-plugin-version>
-        <maven-enforcer-plugin-version>3.4.1</maven-enforcer-plugin-version>
-        <maven-invoker-plugin-version>3.6.1</maven-invoker-plugin-version>
+        <maven-enforcer-plugin-version>3.5.0</maven-enforcer-plugin-version>
+        <maven-invoker-plugin-version>3.7.0</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.6.3</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.2.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.2.5</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.16.2</versions-maven-plugin-version>
+        <maven-artifact-plugin-version>3.5.1</maven-artifact-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
 
@@ -327,6 +328,8 @@
                                     <exclude>camel-sbom/*.xml</exclude>
                                     <exclude>doap.rdf</exclude>
                                     <exclude>mvnw*</exclude>
+                                    <exclude>Dockerfile</exclude>
+                                    <exclude>builder*</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
@@ -587,6 +590,23 @@
                         <showVersion>true</showVersion>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-artifact-plugin</artifactId>
+                    <version>${maven-artifact-plugin-version}</version>
+                    <executions>
+                        <execution>
+                            <id>buildinfo</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>buildinfo</goal>
+                            </goals>
+                            <configuration>
+                                <attach>true</attach>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
 
             </plugins>
         </pluginManagement>
@@ -782,6 +802,10 @@
                         <configuration>
                             <outputName>${project.artifactId}-${project.version}-sbom</outputName>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-artifact-plugin</artifactId>
                     </plugin>
 
                 </plugins>

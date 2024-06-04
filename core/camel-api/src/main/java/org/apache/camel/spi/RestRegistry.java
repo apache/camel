@@ -19,13 +19,13 @@ package org.apache.camel.spi;
 import java.util.List;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * A registry of all REST services running within the {@link org.apache.camel.CamelContext} which have been defined and
  * created using the <a href="http://camel.apache.org/rest-dsl">Rest DSL</a>.
  */
-public interface RestRegistry extends Service {
+public interface RestRegistry extends StaticService {
 
     /**
      * Details about the REST service

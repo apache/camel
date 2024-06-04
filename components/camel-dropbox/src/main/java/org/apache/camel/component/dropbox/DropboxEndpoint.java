@@ -31,6 +31,7 @@ import org.apache.camel.component.dropbox.integration.producer.DropboxSearchProd
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation",
              category = { Category.CLOUD, Category.FILE, Category.API }, headersClass = DropboxConstants.class)
-public class DropboxEndpoint extends DefaultEndpoint {
+public class DropboxEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
 
@@ -55,6 +56,16 @@ public class DropboxEndpoint extends DefaultEndpoint {
     public DropboxEndpoint(String uri, DropboxComponent component, DropboxConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return "api.dropboxapi.com";
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
     }
 
     public DropboxConfiguration getConfiguration() {

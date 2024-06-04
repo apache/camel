@@ -1,0 +1,48 @@
+= Smooks Component
+:doctitle: Smooks
+:shortname: smooks
+:artifactid: camel-smooks
+:description: EDI, XML, CSV, etc. based data transformation using Smooks.
+:since: 4.7
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Camel Smooks component uses https://www.smooks.org/[Smooks] to break up the structured data (EDI, CSV, POJO, etc...) of a Camel message body into fragments. These fragments can be processed independently of one another from within Smooks.
+
+Common applications of Smooks include transformation (e.g., EDI to CSV, POJO to EDI, POJO to XML), routing (e.g., split, transform, and route fragments to destinations such as JMS queues, file systems, and databases), and enrichment (e.g., enriching a fragment with data from a database).
+
+Maven users will need to add the following dependency to their `+pom.xml+`.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-smooks</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI Format
+
+....
+smooks://smooks-config-path[?options]
+....
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END

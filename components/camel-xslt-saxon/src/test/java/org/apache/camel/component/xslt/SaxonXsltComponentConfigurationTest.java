@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SaxonXsltComponentConfigurationTest extends CamelSpringTestSupport {
     @Test
-    public void testConfiguration() {
+    public void testComponentConfiguration() {
         XsltSaxonComponent component = context.getComponent("xslt-saxon", XsltSaxonComponent.class);
         XsltSaxonEndpoint endpoint
                 = context.getEndpoint("xslt-saxon:org/apache/camel/component/xslt/transform.xsl", XsltSaxonEndpoint.class);

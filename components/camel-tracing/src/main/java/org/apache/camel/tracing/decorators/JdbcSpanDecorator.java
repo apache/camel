@@ -19,7 +19,7 @@ package org.apache.camel.tracing.decorators;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
-import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 
 public class JdbcSpanDecorator extends AbstractSpanDecorator {
 
@@ -37,11 +37,11 @@ public class JdbcSpanDecorator extends AbstractSpanDecorator {
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
-        span.setLowCardinalityTag(Tag.DB_TYPE, "sql");
+        span.setTag(TagConstants.DB_SYSTEM, "sql");
 
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
-            span.setTag(Tag.DB_STATEMENT, (String) body);
+            span.setTag(TagConstants.DB_STATEMENT, (String) body);
         }
     }
 

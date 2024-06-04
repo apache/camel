@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.Map;
+
 import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedEndpointMBean {
@@ -37,5 +39,14 @@ public interface ManagedEndpointMBean {
 
     @ManagedAttribute(description = "Endpoint State")
     String getState();
+
+    @ManagedAttribute(description = "Url used for network connecting to service (only available for some components)")
+    String getServiceLocationUrl();
+
+    @ManagedAttribute(description = "Protocol used for service connecting (only available for some components)")
+    String getServiceLocationProtocol();
+
+    @ManagedAttribute(description = "Additional metadata this endpoint is used for connecting (only available for some components)")
+    Map<String, String> getServiceLocationMetadata();
 
 }

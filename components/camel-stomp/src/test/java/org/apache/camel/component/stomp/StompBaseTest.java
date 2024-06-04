@@ -21,7 +21,6 @@ import javax.net.ssl.SSLContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -75,13 +74,10 @@ public abstract class StompBaseTest extends CamelTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() {
-        SimpleRegistry registry = new SimpleRegistry();
+    protected void bindToRegistry(Registry registry) {
         if (isUseSsl()) {
             registry.bind("sslContextParameters", getClientSSLContextParameters());
         }
-
-        return registry;
     }
 
     protected Stomp createStompClient() throws Exception {

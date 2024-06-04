@@ -659,20 +659,6 @@ public class NettyUriDsl(
   }
 
   /**
-   * To enable/disable hostname verification on SSLEngine
-   */
-  public fun hostnameVerification(hostnameVerification: String) {
-    it.property("hostnameVerification", hostnameVerification)
-  }
-
-  /**
-   * To enable/disable hostname verification on SSLEngine
-   */
-  public fun hostnameVerification(hostnameVerification: Boolean) {
-    it.property("hostnameVerification", hostnameVerification.toString())
-  }
-
-  /**
    * Only used for TCP when transferExchange is true. When set to true, serializable objects in
    * headers and properties will be added to the exchange. Otherwise Camel will exclude any
    * non-serializable objects and log it at WARN level.
@@ -952,6 +938,20 @@ public class NettyUriDsl(
    */
   public fun enabledProtocols(enabledProtocols: String) {
     it.property("enabledProtocols", enabledProtocols)
+  }
+
+  /**
+   * To enable/disable hostname verification on SSLEngine
+   */
+  public fun hostnameVerification(hostnameVerification: String) {
+    it.property("hostnameVerification", hostnameVerification)
+  }
+
+  /**
+   * To enable/disable hostname verification on SSLEngine
+   */
+  public fun hostnameVerification(hostnameVerification: Boolean) {
+    it.property("hostnameVerification", hostnameVerification.toString())
   }
 
   /**

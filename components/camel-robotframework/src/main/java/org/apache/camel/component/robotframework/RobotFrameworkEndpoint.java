@@ -33,7 +33,7 @@ import org.robotframework.RobotFramework;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework",
              syntax = "robotframework:resourceUri", category = { Category.TESTING },
-             headersClass = RobotFrameworkCamelConstants.class)
+             remote = false, headersClass = RobotFrameworkCamelConstants.class)
 public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
     @UriParam

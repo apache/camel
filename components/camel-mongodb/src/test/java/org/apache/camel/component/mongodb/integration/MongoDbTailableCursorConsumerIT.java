@@ -39,7 +39,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +46,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private MongoCollection<Document> cappedTestCollection;

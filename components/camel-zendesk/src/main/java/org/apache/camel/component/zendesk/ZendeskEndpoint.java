@@ -27,6 +27,7 @@ import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskConstants;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
 import org.apache.camel.component.zendesk.internal.ZendeskPropertiesHelper;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
@@ -41,7 +42,8 @@ import org.zendesk.client.v2.Zendesk;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
              apiSyntax = "methodName",
              consumerPrefix = "consumer", category = { Category.CLOUD, Category.API, Category.SAAS })
-public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration> {
+public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private ZendeskConfiguration configuration;
@@ -53,6 +55,24 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
         super(uri, component, apiName, methodName, ZendeskApiCollection.getCollection().getHelper(apiName),
               endpointConfiguration);
         this.configuration = endpointConfiguration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getServerUrl();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
     }
 
     @Override

@@ -39,8 +39,7 @@ public final class CamelMessagingHeadersInjectAdapter implements InjectAdapter {
 
     @Override
     public void put(String key, String value) {
-        // Assume any header property that begins with 'Camel' is for internal
-        // use
+        // Assume any header property that begins with 'Camel' is for internal use
         if (!key.startsWith("Camel")) {
             this.map.put(encodeDash(key), value);
         }

@@ -35,12 +35,14 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         disableConcurrentBuilds()
+
+        // This is required if you want to clean before build
+        skipDefaultCheckout(true)
     }
 
     parameters {
-        booleanParam(name: 'CLEAN', defaultValue: true, description: 'Perform the build in clean workspace')
         booleanParam(name: 'VIRTUAL_THREAD', defaultValue: false, description: 'Perform the build using virtual threads')
-        choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu'], description: 'Run on specific platform')
+        choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu-avx'], description: 'Run on specific platform')
         choice(name: 'JDK_FILTER', choices: ['all', 'jdk_17_latest', 'jdk_21_latest'], description: 'Run on specific jdk')
     }
     agent none
@@ -63,7 +65,7 @@ pipeline {
                     }
                     axis {
                         name 'PLATFORM'
-                        values 'ppc64le', 's390x', 'ubuntu'
+                        values 'ppc64le', 's390x', 'ubuntu-avx'
                     }
                 }
                 excludes {
@@ -93,11 +95,9 @@ pipeline {
                 }
                 stages {
                     stage('Clean workspace') {
-                        when {
-                            expression { params.CLEAN }
-                        }
                         steps {
-                            sh 'git clean -fdx'
+                            cleanWs()
+                            checkout scm
                         }
                     }
 
@@ -112,7 +112,7 @@ pipeline {
                     stage('Code Quality Review') {
                         steps {
                             script {
-                                if ("${PLATFORM}" == "ubuntu") {
+                                if ("${PLATFORM}" == "ubuntu-avx") {
                                     if ("${JDK_NAME}" == "jdk_17_latest") {
                                         withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                             echo "Code quality review ENABLED for ${PLATFORM}"
@@ -133,7 +133,7 @@ pipeline {
                             echo "Do Test for ${PLATFORM}-${JDK_NAME}"
                             timeout(unit: 'HOURS', time: 7) {
                                 script {
-                                    if ("${PLATFORM}" == "ubuntu") {
+                                    if ("${PLATFORM}" == "ubuntu-avx") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD}"
                                         } else {
@@ -162,8 +162,6 @@ pipeline {
                             body: '${DEFAULT_CONTENT}',
                             recipientProviders: [[$class: 'DevelopersRecipientProvider']]
                         )
-
-                        cleanWs()
                     }
                 }
             }

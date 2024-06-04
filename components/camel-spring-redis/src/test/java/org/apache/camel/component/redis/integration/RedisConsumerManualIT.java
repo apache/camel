@@ -21,7 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.redis.RedisConstants;
 import org.apache.camel.component.redis.RedisTestSupport;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.infra.redis.services.RedisService;
 import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,16 +53,13 @@ public class RedisConsumerManualIT extends RedisTestSupport {
     }
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
+    protected void bindToRegistry(Registry registry) throws Exception {
         redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnectionFactory);
         redisTemplate.afterPropertiesSet();
 
         registry.bind("redisTemplate", redisTemplate);
         registry.bind("listenerContainer", LISTENER_CONTAINER);
-        return registry;
     }
 
     @Override

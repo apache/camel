@@ -542,7 +542,7 @@ public final class MessageHelper {
             sb.append("  </exchangeVariables>\n");
         }
         // exchange properties
-        if (includeExchangeProperties && message.getExchange().hasProperties()) {
+        if (includeExchangeProperties) {
             sb.append(prefix);
             sb.append("  <exchangeProperties>\n");
             // sort the exchange properties so they are listed A..Z
@@ -992,7 +992,7 @@ public final class MessageHelper {
             }
         }
         // exchange properties
-        if (includeExchangeProperties && message.getExchange().hasProperties()) {
+        if (includeExchangeProperties) {
             JsonArray arr = new JsonArray();
             // sort the exchange properties so they are listed A..Z
             Map<String, Object> properties = new TreeMap<>(message.getExchange().getAllProperties());

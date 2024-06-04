@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XQueryEndpointConfigurationTest extends CamelSpringTestSupport {
     @Test
-    public void testConfiguration() {
+    public void testComponentConfiguration() {
         Configuration configuration = context.getRegistry().lookupByNameAndType("saxon-configuration", Configuration.class);
         Map<String, Object> properties = context.getRegistry().lookupByNameAndType("saxon-properties", Map.class);
         XQueryComponent component = context.getComponent("xquery", XQueryComponent.class);

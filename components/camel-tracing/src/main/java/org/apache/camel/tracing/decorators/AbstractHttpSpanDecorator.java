@@ -20,7 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.tracing.SpanAdapter;
-import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 
 public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
 
@@ -69,9 +69,9 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
 
         String httpUrl = getHttpURL(exchange, endpoint);
         if (httpUrl != null) {
-            span.setTag(Tag.HTTP_URL, httpUrl);
+            span.setTag(TagConstants.HTTP_URL, httpUrl);
         }
-        span.setLowCardinalityTag(Tag.HTTP_METHOD, getHttpMethod(exchange, endpoint));
+        span.setTag(TagConstants.HTTP_METHOD, getHttpMethod(exchange, endpoint));
     }
 
     protected String getHttpURL(Exchange exchange, Endpoint endpoint) {
@@ -101,7 +101,7 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
         if (message != null) {
             Integer responseCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
             if (responseCode != null) {
-                span.setLowCardinalityTag(Tag.HTTP_STATUS, responseCode);
+                span.setTag(TagConstants.HTTP_STATUS, responseCode);
             }
         }
     }

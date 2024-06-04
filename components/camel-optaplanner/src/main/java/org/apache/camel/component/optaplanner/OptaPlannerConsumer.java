@@ -20,9 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 
-/**
- * OptaPlanner component for Camel
- */
 public class OptaPlannerConsumer extends DefaultConsumer {
     private final OptaPlannerEndpoint endpoint;
     private final OptaPlannerConfiguration configuration;
@@ -32,8 +29,7 @@ public class OptaPlannerConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = configuration;
-
-        solverJobListener = this::processSolverJobEvent;
+        this.solverJobListener = this::processSolverJobEvent;
     }
 
     public void processSolverJobEvent(OptaplannerSolutionEvent event) {
@@ -42,13 +38,15 @@ public class OptaPlannerConsumer extends DefaultConsumer {
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            getExceptionHandler().handleException(e);
+            exchange.setException(e);
+        }
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException(exchange.getException());
         }
     }
 
     @Override
     protected void doStart() throws Exception {
-
         final Long problemId = configuration.getProblemId();
         endpoint.addSolutionEventListener(problemId, solverJobListener);
 

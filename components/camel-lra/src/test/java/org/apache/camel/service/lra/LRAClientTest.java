@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 public class LRAClientTest extends CamelTestSupport {
 
     public LRAClientTest() {
-        setUseRouteBuilder(false);
+        testConfiguration().withUseRouteBuilder(false);
     }
 
     @DisplayName("Tests whether LRAClient is using a default HttpClient")

@@ -194,7 +194,7 @@ public class OrderedComparatorTest {
 
         @Override
         public String toString() {
-            return "" + order;
+            return Integer.toString(order);
         }
     }
 }

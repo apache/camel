@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
-import org.apache.camel.tracing.Tag;
 import org.apache.camel.tracing.TagConstants;
 
 public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
@@ -33,12 +32,12 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "elasticsearch-rest";
+        return "elasticsearch";
     }
 
     @Override
     public String getComponentClassName() {
-        return "org.apache.camel.component.elasticsearch.ElasticsearchComponent";
+        return "org.apache.camel.component.es.ElasticsearchComponent";
     }
 
     @Override
@@ -52,18 +51,15 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setLowCardinalityTag(Tag.DB_TYPE, ELASTICSEARCH_DB_TYPE);
+        span.setTag(TagConstants.DB_SYSTEM, ELASTICSEARCH_DB_TYPE);
 
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         if (queryParameters.containsKey("indexName")) {
-            span.setTag(Tag.DB_INSTANCE, queryParameters.get("indexName"));
+            span.setTag(TagConstants.DB_NAME, queryParameters.get("indexName"));
         }
 
         String cluster = stripSchemeAndOptions(endpoint);
-        if (cluster != null) {
-            span.setTag(ELASTICSEARCH_CLUSTER_TAG, cluster);
-            span.setTag(TagConstants.SERVER_ADDRESS, cluster);
-        }
+        span.setTag(ELASTICSEARCH_CLUSTER_TAG, cluster);
     }
 
 }

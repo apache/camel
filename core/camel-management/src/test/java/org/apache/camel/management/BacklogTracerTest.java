@@ -78,6 +78,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
@@ -86,6 +89,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("foo", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event2.getMessageAsXml());
@@ -165,6 +171,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertNull(event0.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event0.getMessageAsXml());
@@ -174,6 +183,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
@@ -183,6 +195,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("bar", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + barExchanges.get(0).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">mock://foo</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event2.getMessageAsXml());
@@ -192,6 +207,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertNull(event3.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event3.getMessageAsXml());
@@ -201,6 +219,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("foo", event4.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event3.getMessageAsXml());
@@ -210,6 +231,9 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("bar", event5.getToNode());
         assertEquals("    <message exchangeId=\"" + barExchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
+                     + "      <exchangeProperties>\n"
+                     + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
+                     + "      </exchangeProperties>\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event4.getMessageAsXml());

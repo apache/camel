@@ -66,7 +66,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
             Future<List<?>> out = executor.submit(new Callable<List<?>>() {
                 public List<?> call() {
                     int id = (index % 3) + 1;
-                    return template.requestBody("direct:simple", "" + id, List.class);
+                    return template.requestBody("direct:simple", Integer.toString(id), List.class);
                 }
             });
             responses.put(index, out);

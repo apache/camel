@@ -24,9 +24,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.kie.api.KieServices;
 
-/**
- * OptaPlanner component for Camel
- */
 @Component("optaplanner")
 public class OptaPlannerComponent extends DefaultComponent {
 

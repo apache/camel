@@ -146,7 +146,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
         if (javaType != null) {
             String json = loadComponentJSonSchema(classLoader, scheme, logger);
             if (json != null) {
-                logger.info("Adding component: " + scheme);
+                logger.info("Adding component: {}", scheme);
                 camelCatalog.addComponent(scheme, javaType, json);
                 names.add(scheme);
             }

@@ -23,6 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,7 +38,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 @UriEndpoint(firstVersion = "3.3.0", scheme = "splunk-hec", title = "Splunk HEC", producerOnly = true,
              syntax = "splunk-hec:splunkURL", category = { Category.MONITORING },
              headersClass = SplunkHECConstants.class)
-public class SplunkHECEndpoint extends DefaultEndpoint {
+public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Pattern SPLUNK_URL_PATTERN = Pattern.compile("^(.*?):(\\d+)$");
     private static final Pattern SPLUNK_TOKEN_PATTERN = Pattern.compile("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$");
@@ -96,6 +97,16 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return splunkURL;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "splunk";
     }
 
     public SplunkHECConfiguration getConfiguration() {

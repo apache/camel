@@ -40,9 +40,8 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j</artifactId>
-            <version>${langchain4j-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-langchain4j-core</artifactId>
         </dependency>
 
         <!-- for testing -->

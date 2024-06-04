@@ -71,7 +71,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private String encoders;
     @UriParam(label = "codec")
     private String decoders;
-    @UriParam(label = "common, security", defaultValue = "false")
+    @UriParam(label = "common,security", defaultValue = "false")
     private boolean hostnameVerification;
     @UriParam
     private boolean disconnect;

@@ -34,7 +34,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
     @Test
     void testSameQueue() {
         for (int i = 0; i < 128; i++) {
-            template.sendBody("disruptor-vm:foo?blockWhenFull=false", "" + i);
+            template.sendBody("disruptor-vm:foo?blockWhenFull=false", Integer.toString(i));
         }
 
         try {

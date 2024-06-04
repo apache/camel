@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.paho;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,7 +41,7 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", category = { Category.MESSAGING, Category.IOT },
              syntax = "paho:topic", headersClass = PahoConstants.class)
-public class PahoEndpoint extends DefaultEndpoint {
+public class PahoEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // Configuration members
     @UriPath(description = "Name of the topic")
@@ -67,6 +71,28 @@ public class PahoEndpoint extends DefaultEndpoint {
         consumer.setClient(client);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getBrokerUrl();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "mqtt";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        Map<String, String> map = new HashMap<>();
+        if (configuration.getClientId() != null) {
+            map.put("clientId", configuration.getClientId());
+        }
+        if (configuration.getUserName() != null) {
+            map.put("username", configuration.getUserName());
+        }
+        return map.isEmpty() ? null : map;
     }
 
     @Override

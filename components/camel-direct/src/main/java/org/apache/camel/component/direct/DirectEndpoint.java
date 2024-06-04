@@ -55,11 +55,8 @@ public class DirectEndpoint extends DefaultEndpoint {
     public DirectEndpoint(String uri, DirectComponent component) {
         super(uri, component);
         this.component = component;
-        if (uri.indexOf('?') != -1) {
-            this.key = StringHelper.before(uri, "?");
-        } else {
-            this.key = uri;
-        }
+
+        this.key = StringHelper.before(uri, "?", uri);
     }
 
     @Override

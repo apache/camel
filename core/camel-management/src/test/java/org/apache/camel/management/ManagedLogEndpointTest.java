@@ -38,7 +38,7 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(10);
 
         for (int i = 0; i < 10; i++) {
-            template.sendBody("direct:start", "" + i);
+            template.sendBody("direct:start", Integer.toString(i));
             Thread.sleep(100);
         }
 

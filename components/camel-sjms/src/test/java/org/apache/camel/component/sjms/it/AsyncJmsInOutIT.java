@@ -41,7 +41,7 @@ public class AsyncJmsInOutIT extends JmsTestSupport {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < 100; i++) {
-            template.sendBody("seda:start.queue.AsyncJmsInOutIT", "" + i);
+            template.sendBody("seda:start.queue.AsyncJmsInOutIT", Integer.toString(i));
         }
 
         // just in case we run on slow boxes

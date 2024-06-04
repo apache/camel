@@ -18,6 +18,7 @@ package org.apache.camel.processor.jpa;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.persistence.OptimisticLockException;
 
@@ -62,7 +63,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
         template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Test

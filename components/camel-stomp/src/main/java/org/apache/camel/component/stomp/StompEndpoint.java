@@ -30,6 +30,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -59,7 +60,8 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination",
              category = { Category.MESSAGING })
-public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
+public class StompEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private CallbackConnection connection;
     private Stomp stomp;
@@ -94,6 +96,24 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         StompConsumer consumer = new StompConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getBrokerURL();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "stomp";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getLogin() != null) {
+            return Map.of("username", configuration.getLogin());
+        }
+        return null;
     }
 
     @Override

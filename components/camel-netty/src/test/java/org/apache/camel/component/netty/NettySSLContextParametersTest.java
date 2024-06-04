@@ -27,11 +27,11 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettySSLContextParametersTest extends BaseNettyTest {
 
     @BindToRegistry("sslContextParameters")
@@ -70,9 +70,6 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
 
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
-        // ibm jdks dont have sun security algorithms
-        assumeFalse(isJavaVendor("ibm"));
-
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters")

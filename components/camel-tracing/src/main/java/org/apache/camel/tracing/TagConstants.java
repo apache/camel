@@ -23,6 +23,12 @@ public class TagConstants {
 
     // General attributes
     public static final String SERVER_ADDRESS = "server.address";
+    public static final String SERVER_PROTOCOL = "server.protocol";
+    public static final String SERVER_REGION = "server.region";
+
+    // User attributes
+    public static final String USER_NAME = "user.name";
+    public static final String USER_ID = "user.id";
 
     // HTTP attributes
     public static final String HTTP_STATUS = "http.status_code";

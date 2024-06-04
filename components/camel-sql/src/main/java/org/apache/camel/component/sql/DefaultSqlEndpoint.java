@@ -21,15 +21,19 @@ import java.sql.ResultSet;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
@@ -37,8 +41,12 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 /**
  * Base class for SQL endpoints.
  */
-public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
+public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
     private JdbcTemplate jdbcTemplate;
+
+    private boolean serviceLocationEnabled;
+    private String serviceUrl;
+    private Map<String, String> serviceMetadata;
 
     @Metadata(autowired = true)
     @UriParam(description = "Sets the DataSource to use to communicate with the database at endpoint level.")
@@ -134,6 +142,18 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
 
     public DefaultSqlEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    public boolean isServiceLocationEnabled() {
+        return serviceLocationEnabled;
+    }
+
+    /**
+     * Whether to detect the network address location of the JMS broker on startup. This information is gathered via
+     * reflection on the ConnectionFactory, and is vendor specific. This option can be used to turn this off.
+     */
+    public void setServiceLocationEnabled(boolean serviceLocationEnabled) {
+        this.serviceLocationEnabled = serviceLocationEnabled;
     }
 
     public JdbcTemplate getJdbcTemplate() {
@@ -530,4 +550,39 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             rowMapperFactory = new DefaultRowMapperFactory();
         }
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (isServiceLocationEnabled()) {
+            // we need to use reflection to find the URL to the database, so do this once on startup
+            BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
+            DataSource ds = getDataSource();
+            serviceUrl = SqlServiceLocationHelper.getJDBCURLFromDataSource(bi, ds);
+
+            serviceMetadata = new HashMap<>();
+            String user = SqlServiceLocationHelper.getUsernameFromConnectionFactory(bi, ds);
+            if (user != null) {
+                serviceMetadata.put("username", user);
+            }
+        }
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "jdbc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (serviceMetadata != null && !serviceMetadata.isEmpty()) {
+            return serviceMetadata;
+        }
+        return null;
+    }
+
 }

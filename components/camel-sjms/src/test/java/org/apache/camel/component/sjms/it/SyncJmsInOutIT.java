@@ -41,7 +41,7 @@ public class SyncJmsInOutIT extends JmsTestSupport {
         StopWatch watch = new StopWatch();
 
         for (int i = 0; i < 100; i++) {
-            template.sendBody("seda:start.SyncJmsInOutIT", "" + i);
+            template.sendBody("seda:start.SyncJmsInOutIT", Integer.toString(i));
         }
 
         // just in case we run on slow boxes

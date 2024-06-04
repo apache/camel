@@ -54,6 +54,7 @@ import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DumpRoutesStrategy;
+import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -414,6 +415,10 @@ public final class DefaultConfigurationConfigurer {
         RuntimeEndpointRegistry rer = getSingleBeanOfType(registry, RuntimeEndpointRegistry.class);
         if (rer != null) {
             camelContext.setRuntimeEndpointRegistry(rer);
+        }
+        EndpointServiceRegistry esr = getSingleBeanOfType(registry, EndpointServiceRegistry.class);
+        if (esr != null) {
+            camelContext.getCamelContextExtension().addContextPlugin(EndpointServiceRegistry.class, esr);
         }
         ModelJAXBContextFactory mjcf = getSingleBeanOfType(registry, ModelJAXBContextFactory.class);
         if (mjcf != null) {

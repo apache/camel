@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,9 +36,10 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -44,6 +47,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -69,10 +73,13 @@ import org.springframework.util.ErrorHandler;
              category = { Category.MESSAGING }, headersClass = JmsConstants.class)
 @Metadata(excludeProperties = "bridgeErrorHandler")
 public class JmsEndpoint extends DefaultEndpoint
-        implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
+        implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsEndpoint.class);
 
+    private String serviceUrl;
+    private String serviceProtocol;
+    private Map<String, String> serviceMetadata;
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -133,6 +140,44 @@ public class JmsEndpoint extends DefaultEndpoint
      */
     public JmsEndpoint(String endpointUri, String destinationName) {
         this(UnsafeUriCharactersEncoder.encode(endpointUri), destinationName, true);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (getComponent().isServiceLocationEnabled()) {
+            // we need to use reflection to find the URL to the brokers, so do this once on startup
+            BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
+            ConnectionFactory cf = getConnectionFactory();
+            serviceUrl = JmsServiceLocationHelper.getBrokerURLFromConnectionFactory(bi, cf);
+            serviceProtocol = getComponent().getDefaultName();
+
+            serviceMetadata = new HashMap<>();
+            String user = JmsServiceLocationHelper.getUsernameFromConnectionFactory(bi, cf);
+            if (user != null) {
+                serviceMetadata.put("username", user);
+                if (getConfiguration().getClientId() != null) {
+                    serviceMetadata.put("clientId", getConfiguration().getClientId());
+                }
+            }
+        }
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return serviceProtocol;
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (serviceMetadata != null && !serviceMetadata.isEmpty()) {
+            return serviceMetadata;
+        }
+        return null;
     }
 
     @Override

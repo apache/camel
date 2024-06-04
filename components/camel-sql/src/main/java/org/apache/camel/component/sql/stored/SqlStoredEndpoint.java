@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sql.stored;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -24,12 +25,15 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.sql.SqlServiceLocationHelper;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -42,6 +46,10 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
 
     private CallableStatementWrapperFactory wrapperFactory;
     private JdbcTemplate jdbcTemplate;
+
+    private boolean serviceLocationEnabled;
+    private String serviceUrl;
+    private Map<String, String> serviceMetadata;
 
     @UriPath(description = "Sets the stored procedure template to perform. You can externalize the template by using file: or classpath: as prefix and specify the location of the file.")
     @Metadata(required = true, supportFileReference = true, largeInput = true, inputLanguage = "sql")
@@ -73,6 +81,18 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         setJdbcTemplate(jdbcTemplate);
     }
 
+    public boolean isServiceLocationEnabled() {
+        return serviceLocationEnabled;
+    }
+
+    /**
+     * Whether to detect the network address location of the JMS broker on startup. This information is gathered via
+     * reflection on the ConnectionFactory, and is vendor specific. This option can be used to turn this off.
+     */
+    public void setServiceLocationEnabled(boolean serviceLocationEnabled) {
+        this.serviceLocationEnabled = serviceLocationEnabled;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         return new SqlStoredProducer(this);
@@ -98,6 +118,22 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         super.doInit();
         this.wrapperFactory = new CallableStatementWrapperFactory(
                 jdbcTemplate, new TemplateParser(getCamelContext().getClassResolver()), isFunction());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (isServiceLocationEnabled()) {
+            // we need to use reflection to find the URL to the database, so do this once on startup
+            BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
+            DataSource ds = getDataSource();
+            serviceUrl = SqlServiceLocationHelper.getJDBCURLFromDataSource(bi, ds);
+
+            serviceMetadata = new HashMap<>();
+            String user = SqlServiceLocationHelper.getUsernameFromConnectionFactory(bi, ds);
+            if (user != null) {
+                serviceMetadata.put("username", user);
+            }
+        }
     }
 
     @Override

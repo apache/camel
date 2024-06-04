@@ -20,13 +20,11 @@ import com.mongodb.ReadPreference;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mongodb.MongoDbEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class MongoDbReadPreferenceOptionIT extends AbstractMongoDbITSupport {
 
     private MongoDbEndpoint endpoint;

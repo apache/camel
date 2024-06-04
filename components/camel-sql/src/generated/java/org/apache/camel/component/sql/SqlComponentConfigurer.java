@@ -37,6 +37,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "rowmapperfactory":
         case "rowMapperFactory": target.setRowMapperFactory(property(camelContext, org.apache.camel.component.sql.RowMapperFactory.class, value)); return true;
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": target.setServiceLocationEnabled(property(camelContext, boolean.class, value)); return true;
         case "useplaceholder":
         case "usePlaceholder": target.setUsePlaceholder(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -65,6 +67,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "rowmapperfactory":
         case "rowMapperFactory": return org.apache.camel.component.sql.RowMapperFactory.class;
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": return boolean.class;
         case "useplaceholder":
         case "usePlaceholder": return boolean.class;
         default: return null;
@@ -89,6 +93,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "rowmapperfactory":
         case "rowMapperFactory": return target.getRowMapperFactory();
+        case "servicelocationenabled":
+        case "serviceLocationEnabled": return target.isServiceLocationEnabled();
         case "useplaceholder":
         case "usePlaceholder": return target.isUsePlaceholder();
         default: return null;

@@ -187,6 +187,8 @@ REST services which has been defined.
 
 == Inline Rest DSL as a single route
 
+IMPORTANT: Camel 4.4 or older has inline-routes disabled by default. Camel 4.5 or newer has inline-routes enabled by default.
+
 Each of the rest services becomes a Camel route, and this means, that if the rest
 service is calling another Camel route via `direct`, which is a very common practice.
 This means that each rest service then becomes 2 routes. This can become harder to manage

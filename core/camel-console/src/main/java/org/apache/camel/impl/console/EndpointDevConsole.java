@@ -74,6 +74,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
@@ -94,8 +95,8 @@ public class EndpointDevConsole extends AbstractDevConsole {
         Collection<Endpoint> col = reg.getReadOnlyValues();
         for (Endpoint e : col) {
             JsonObject jo = new JsonObject();
-            boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
             jo.put("uri", e.getEndpointUri());
+            boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
             jo.put("stub", stub);
             var stat = findStats(stats, e.getEndpointUri());
             if (stat.isPresent()) {

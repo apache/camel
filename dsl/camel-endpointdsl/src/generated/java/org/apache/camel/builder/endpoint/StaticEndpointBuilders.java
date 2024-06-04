@@ -9254,10 +9254,10 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * Host of the server to connect to
      * 
-     * Path parameter: port
+     * Path parameter: port (required)
      * Port of the server to connect to
      * 
      * Path parameter: tableName
@@ -9280,10 +9280,10 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * Host of the server to connect to
      * 
-     * Path parameter: port
+     * Path parameter: port (required)
      * Port of the server to connect to
      * 
      * Path parameter: tableName
@@ -13036,6 +13036,50 @@ public class StaticEndpointBuilders {
         return SmbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Smooks (camel-smooks)
+     * EDI, XML, CSV, etc. based data transformation using Smooks.
+     * 
+     * Category: transformation
+     * Since: 4.7
+     * Maven coordinates: org.apache.camel:camel-smooks
+     * 
+     * Syntax: <code>smooks:smooksConfig</code>
+     * 
+     * Path parameter: smooksConfig (required)
+     * Smooks XML configuration file
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param path smooksConfig
+     * @return the dsl builder
+     */
+    public static SmooksEndpointBuilderFactory.SmooksEndpointBuilder smooks(String path) {
+        return smooks("smooks", path);
+    }
+    /**
+     * Smooks (camel-smooks)
+     * EDI, XML, CSV, etc. based data transformation using Smooks.
+     * 
+     * Category: transformation
+     * Since: 4.7
+     * Maven coordinates: org.apache.camel:camel-smooks
+     * 
+     * Syntax: <code>smooks:smooksConfig</code>
+     * 
+     * Path parameter: smooksConfig (required)
+     * Smooks XML configuration file
+     * This option can also be loaded from an existing file, by prefixing with
+     * file: or classpath: followed by the location of the file.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path smooksConfig
+     * @return the dsl builder
+     */
+    public static SmooksEndpointBuilderFactory.SmooksEndpointBuilder smooks(String componentName, String path) {
+        return SmooksEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).
@@ -14085,7 +14129,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>thrift:host:port/service</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * The Thrift server host name. This is localhost or 0.0.0.0 (if not
      * defined) when being a consumer or remote server host name when using
      * producer.
@@ -14114,7 +14158,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>thrift:host:port/service</code>
      * 
-     * Path parameter: host
+     * Path parameter: host (required)
      * The Thrift server host name. This is localhost or 0.0.0.0 (if not
      * defined) when being a consumer or remote server host name when using
      * producer.

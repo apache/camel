@@ -32,6 +32,7 @@ import org.apache.camel.component.twilio.internal.TwilioApiName;
 import org.apache.camel.component.twilio.internal.TwilioConstants;
 import org.apache.camel.component.twilio.internal.TwilioPropertiesHelper;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.PluginHelper;
@@ -45,7 +46,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.20.0", scheme = "twilio", title = "Twilio", syntax = "twilio:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.API, Category.MESSAGING, Category.CLOUD })
-public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration> {
+public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration> implements EndpointServiceLocation {
 
     protected static final Map<String, String> EXECUTOR_METHOD_MAP;
 
@@ -70,7 +71,29 @@ public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioCon
               endpointConfiguration);
         this.component = component;
         this.configuration = endpointConfiguration;
+    }
 
+    @Override
+    public TwilioComponent getComponent() {
+        return (TwilioComponent) super.getComponent();
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return "https://twilio.com";
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "rest";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (getComponent().getUsername() != null) {
+            return Map.of("username", getComponent().getUsername());
+        }
+        return null;
     }
 
     @Override

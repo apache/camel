@@ -95,6 +95,12 @@ public class MinaConsumer extends DefaultConsumer {
     }
 
     @Override
+    public boolean isHostedService() {
+        // we are hosted if not in client mode
+        return !configuration.isClientMode();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {

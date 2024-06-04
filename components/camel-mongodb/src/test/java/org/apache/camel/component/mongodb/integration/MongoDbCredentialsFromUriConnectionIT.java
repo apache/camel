@@ -23,13 +23,11 @@ import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Test class performs the same tests as DBOperationsIT but with modified URIs
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class MongoDbCredentialsFromUriConnectionIT extends MongoDbOperationsIT {
 
     protected static final String AUTH_SOURCE_USER = "auth-source-user";

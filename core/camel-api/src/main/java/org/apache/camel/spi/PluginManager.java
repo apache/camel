@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spi;
 
 import java.util.function.Supplier;
@@ -22,8 +21,8 @@ import java.util.function.Supplier;
 /**
  * A manager for internal plugins. This is part of the internal Camel API and not meant for public usage.
  */
-
 public interface PluginManager {
+
     /**
      * Gets a plugin of the given type.
      *

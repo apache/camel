@@ -182,7 +182,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // use a queue for the exchanges
-        Deque<Exchange> q = exchanges;
 
         // we are not eager limiting, but we have configured a limit, so cut the
         // list of files
@@ -192,7 +191,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                         maxMessagesPerPoll);
                 // must first remove excessive files from the in progress
                 // repository
-                removeExcessiveInProgressFiles(q, maxMessagesPerPoll);
+                removeExcessiveInProgressFiles(exchanges, maxMessagesPerPoll);
             }
         }
 
@@ -202,7 +201,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             LOG.debug("Total {} files to consume", total);
         }
 
-        int polledMessages = processBatch(CastUtils.cast(q));
+        int polledMessages = processBatch(CastUtils.cast((Deque<Exchange>) exchanges));
 
         postPollCheck(polledMessages);
 

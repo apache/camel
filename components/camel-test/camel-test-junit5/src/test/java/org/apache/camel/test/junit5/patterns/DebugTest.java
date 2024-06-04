@@ -20,25 +20,25 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.DebugBreakpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DebugTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DebugTest.class);
+    private TestDebugBreakpoint testDebugBreakpoint;
 
-    // START SNIPPET: e1
     @Override
-    public boolean isUseDebugger() {
-        // must enable debugger
-        return true;
+    public void doPreSetup() throws Exception {
+        super.doPreSetup();
+
+        camelContextConfiguration()
+                .withBreakpoint(createBreakpoint());
     }
 
     protected DebugBreakpoint createBreakpoint() {
-        return new TestDebugBreakpoint();
+        testDebugBreakpoint = new TestDebugBreakpoint();
+        return testDebugBreakpoint;
     }
-    // END SNIPPET: e1
 
     @Test
     public void testDebugger() throws Exception {
@@ -51,6 +51,9 @@ public class DebugTest extends CamelTestSupport {
 
         // assert mocks
         MockEndpoint.assertIsSatisfied(context);
+
+        Assertions.assertTrue(testDebugBreakpoint.isDebugAfterCalled());
+        Assertions.assertTrue(testDebugBreakpoint.isDebugBeforeCalled());
     }
 
     @Test
@@ -65,6 +68,9 @@ public class DebugTest extends CamelTestSupport {
 
         // assert mocks
         MockEndpoint.assertIsSatisfied(context);
+
+        Assertions.assertTrue(testDebugBreakpoint.isDebugAfterCalled());
+        Assertions.assertTrue(testDebugBreakpoint.isDebugBeforeCalled());
     }
 
     // START SNIPPET: e2

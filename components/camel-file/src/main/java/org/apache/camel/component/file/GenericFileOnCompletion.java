@@ -34,12 +34,12 @@ import org.slf4j.LoggerFactory;
 public class GenericFileOnCompletion<T> implements Synchronization {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileOnCompletion.class);
-    private GenericFileEndpoint<T> endpoint;
-    private GenericFileOperations<T> operations;
-    private GenericFileProcessStrategy<T> processStrategy;
+    private final GenericFileEndpoint<T> endpoint;
+    private final GenericFileOperations<T> operations;
+    private final GenericFileProcessStrategy<T> processStrategy;
     private ExceptionHandler exceptionHandler;
-    private GenericFile<T> file;
-    private String absoluteFileName;
+    private final GenericFile<T> file;
+    private final String absoluteFileName;
 
     public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
                                    GenericFileProcessStrategy processStrategy, GenericFile<T> file,

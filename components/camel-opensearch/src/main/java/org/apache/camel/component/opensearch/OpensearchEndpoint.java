@@ -20,6 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -31,7 +32,7 @@ import org.opensearch.client.RestClient;
 @UriEndpoint(firstVersion = "4.0.0", scheme = "opensearch", title = "OpenSearch",
              syntax = "opensearch:clusterName", producerOnly = true,
              category = { Category.SEARCH, Category.MONITORING }, headersClass = OpensearchConstants.class)
-public class OpensearchEndpoint extends DefaultEndpoint {
+public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private final OpensearchConfiguration configuration;
@@ -61,5 +62,15 @@ public class OpensearchEndpoint extends DefaultEndpoint {
 
     public RestClient getClient() {
         return client;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHostAddresses();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "opensearch";
     }
 }

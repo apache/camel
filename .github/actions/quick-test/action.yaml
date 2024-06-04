@@ -27,6 +27,10 @@ inputs:
   github-token: # id of input
     description: 'Github hub token'
     required: true
+  artifact-upload-suffix:
+    description: 'Suffix for artifacts stored'
+    required: false
+    default: ''
 outputs:
   result:
     description: "Quick test result"
@@ -50,8 +54,8 @@ runs:
       shell: bash
       run: echo $PR_NUMBER > ./automated-build-log/pr_number
     - name: archive logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-logs
+        name: test-logs-${{ inputs.artifact-upload-suffix }}
         path: automated-build-log/**/*

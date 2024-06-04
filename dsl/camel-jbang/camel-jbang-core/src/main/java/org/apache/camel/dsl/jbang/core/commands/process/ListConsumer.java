@@ -42,7 +42,7 @@ public class ListConsumer extends ProcessWatchCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name, or age", defaultValue = "pid")
+                        description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
     @CommandLine.Option(names = { "--limit" },
@@ -100,6 +100,7 @@ public class ListConsumer extends ProcessWatchCommand {
                                 row.uri = o.getString("uri");
                                 row.state = o.getString("state");
                                 row.className = o.getString("class");
+                                row.hostedService = o.getBooleanOrDefault("hostedService", false);
                                 row.scheduled = o.getBoolean("scheduled");
                                 row.inflight = o.getInteger("inflight");
                                 row.polling = o.getBoolean("polling");
@@ -176,7 +177,7 @@ public class ListConsumer extends ProcessWatchCommand {
                 new Column().header("STATE").headerAlign(HorizontalAlign.CENTER).with(this::getState),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getType),
-                new Column().header("INFLIGHT").with(r -> "" + r.inflight),
+                new Column().header("INFLIGHT").with(r -> Integer.toString(r.inflight)),
                 new Column().header("POLL").with(this::getTotal),
                 new Column().header("PERIOD").visible(scheduled).with(this::getPeriod),
                 new Column().header("SINCE-LAST").with(this::getSinceLast),
@@ -266,6 +267,7 @@ public class ListConsumer extends ProcessWatchCommand {
         String uri;
         String state;
         String className;
+        boolean hostedService;
         boolean scheduled;
         int inflight;
         Boolean polling;

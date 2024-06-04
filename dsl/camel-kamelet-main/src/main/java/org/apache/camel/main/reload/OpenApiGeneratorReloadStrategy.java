@@ -73,7 +73,7 @@ public class OpenApiGeneratorReloadStrategy extends FileWatcherResourceReloadStr
                 String out = RestDslGenerator.toYaml(document).generate(getCamelContext(), false);
                 Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
             } catch (Exception e) {
-                LOG.warn("Error generating open-api rest-dsl due: " + e.getMessage(), e);
+                LOG.warn("Error generating open-api rest-dsl due: {}", e.getMessage(), e);
             }
         });
     }

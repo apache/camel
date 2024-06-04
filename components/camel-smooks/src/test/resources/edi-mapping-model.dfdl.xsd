@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/" xmlns:ibmEdiFmt="http://www.ibm.com/dfdl/EDI/Format">
+
+    <xsd:import namespace="http://www.ibm.com/dfdl/EDI/Format"
+                schemaLocation="/EDIFACT-Common/IBM_EDI_Format.dfdl.xsd"/>
+
+    <xsd:annotation>
+        <xsd:appinfo source="http://www.ogf.org/dfdl/">
+            <dfdl:format ref="ibmEdiFmt:EDIFormat"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:element name="Order">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:sequence dfdl:initiatedContent="yes">
+                    <xsd:element dfdl:initiator="HDR" dfdl:ref="ibmEdiFmt:EDISegmentFormat" name="header">
+                        <xsd:complexType>
+                            <xsd:sequence dfdl:ref="ibmEdiFmt:EDISegmentSequenceFormat">
+                                <xsd:element name="order-id" type="xsd:string"/>
+                                <xsd:element name="status-code" type="xsd:string"/>
+                                <xsd:element name="net-amount" type="xsd:string"/>
+                                <xsd:element name="total-amount" type="xsd:string"/>
+                                <xsd:element name="tax" type="xsd:string"/>
+                                <xsd:element name="date" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element dfdl:initiator="CUS" dfdl:ref="ibmEdiFmt:EDISegmentFormat" name="customer-details">
+                        <xsd:complexType>
+                            <xsd:sequence dfdl:ref="ibmEdiFmt:EDISegmentSequenceFormat">
+                                <xsd:element name="username" type="xsd:string"/>
+                                <xsd:element name="name">
+                                    <xsd:complexType>
+                                        <xsd:sequence dfdl:ref="ibmEdiFmt:EDICompositeSequenceFormat">
+                                            <xsd:element name="firstname" type="xsd:string"/>
+                                            <xsd:element name="lastname" type="xsd:string"/>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                                <xsd:element name="state" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element dfdl:initiator="ORD" dfdl:ref="ibmEdiFmt:EDISegmentFormat" name="order-item" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence dfdl:ref="ibmEdiFmt:EDISegmentSequenceFormat">
+                                <xsd:element name="position" type="xsd:string"/>
+                                <xsd:element name="quantity" type="xsd:string"/>
+                                <xsd:element name="product-id" type="xsd:string"/>
+                                <xsd:element name="title" type="xsd:string"/>
+                                <xsd:element name="price" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

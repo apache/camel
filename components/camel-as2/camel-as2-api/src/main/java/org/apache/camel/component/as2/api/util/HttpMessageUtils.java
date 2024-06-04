@@ -28,6 +28,9 @@ import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDa
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.exception.AS2AuthenticationException;
+import org.apache.camel.component.as2.api.exception.AS2DecryptionException;
+import org.apache.camel.component.as2.api.exception.AS2InsufficientSecurityException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
@@ -111,16 +114,30 @@ public final class HttpMessageUtils {
             case AS2MimeType.APPLICATION_EDIFACT:
             case AS2MimeType.APPLICATION_EDI_X12:
             case AS2MimeType.APPLICATION_EDI_CONSENT: {
+                // expect a signed entity when certificate chain is held to validate signatures
+                if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null) {
+                    throw new AS2InsufficientSecurityException("Failed to validate the signature");
+                }
+                // expect an encrypted entity when a decryption key is held
+                if (decrpytingAndSigningInfo.getDecryptingPrivateKey() != null) {
+                    throw new AS2InsufficientSecurityException("Expected to be encrypted");
+                }
                 ediEntity = getEntity(message, ApplicationEntity.class);
                 break;
             }
             case AS2MimeType.MULTIPART_SIGNED: {
+                if (decrpytingAndSigningInfo.getDecryptingPrivateKey() != null) {
+                    throw new AS2InsufficientSecurityException("Expected to be encrypted");
+                }
                 ediEntity = extractMultipartSigned(message, decrpytingAndSigningInfo);
                 break;
             }
             case AS2MimeType.APPLICATION_PKCS7_MIME: {
                 switch (contentType.getParameter("smime-type")) {
                     case "compressed-data": {
+                        if (decrpytingAndSigningInfo.getDecryptingPrivateKey() != null) {
+                            throw new AS2InsufficientSecurityException("Expected to be encrypted");
+                        }
                         ediEntity = extractCompressedData(message, decrpytingAndSigningInfo);
                         break;
                     }
@@ -150,7 +167,7 @@ public final class HttpMessageUtils {
             throws HttpException {
         ApplicationEntity ediEntity;
         if (decrpytingAndSigningInfo.getDecryptingPrivateKey() == null) {
-            throw new HttpException(
+            throw new AS2DecryptionException(
                     "Failed to extract EDI payload: private key can not be null for AS2 enveloped message");
         }
         ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity
@@ -172,7 +189,7 @@ public final class HttpMessageUtils {
         Objects.requireNonNull(compressedDataEntity,
                 "Failed to extract the EDI payload: the compressed data entity is null");
 
-        ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
+        ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo, false);
         return ediEntity;
     }
 
@@ -188,14 +205,14 @@ public final class HttpMessageUtils {
 
         if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null && !SigningUtils
                 .isValid(multipartSignedEntity, decrpytingAndSigningInfo.getValidateSigningCertificateChain())) {
-            throw new HttpException("Failed to validate the signature");
+            throw new AS2AuthenticationException("Failed to validate the signature");
         }
 
         MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
         if (mimeEntity instanceof ApplicationEntity) {
             ediEntity = (ApplicationEntity) mimeEntity;
         } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity) {
-            ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
+            ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo, true);
         } else {
             throw new HttpException(
                     "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentType()
@@ -220,6 +237,9 @@ public final class HttpMessageUtils {
             case AS2MimeType.APPLICATION_EDIFACT:
             case AS2MimeType.APPLICATION_EDI_X12:
             case AS2MimeType.APPLICATION_EDI_CONSENT: {
+                if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null) {
+                    throw new AS2InsufficientSecurityException("Failed to validate the signature");
+                }
                 ediEntity = (ApplicationEntity) entity;
                 break;
             }
@@ -227,14 +247,14 @@ public final class HttpMessageUtils {
                 MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
                 if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null && !SigningUtils
                         .isValid(multipartSignedEntity, decrpytingAndSigningInfo.getValidateSigningCertificateChain())) {
-                    throw new HttpException("Failed to validate the signature");
+                    throw new AS2AuthenticationException("Failed to validate the signature");
                 }
 
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
                 if (mimeEntity instanceof ApplicationEntity) {
                     ediEntity = (ApplicationEntity) mimeEntity;
                 } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity) {
-                    ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
+                    ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo, true);
                 } else {
 
                     throw new HttpException(
@@ -251,7 +271,7 @@ public final class HttpMessageUtils {
                 }
                 ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
                         = (ApplicationPkcs7MimeCompressedDataEntity) entity;
-                ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
+                ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo, false);
                 break;
             }
             default:
@@ -264,7 +284,8 @@ public final class HttpMessageUtils {
     }
 
     public static ApplicationEntity extractEdiPayloadFromCompressedEntity(
-            ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
+            ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo,
+            boolean hasValidSignature)
             throws HttpException {
         ApplicationEntity ediEntity;
 
@@ -279,6 +300,10 @@ public final class HttpMessageUtils {
             case AS2MimeType.APPLICATION_EDIFACT:
             case AS2MimeType.APPLICATION_EDI_X12:
             case AS2MimeType.APPLICATION_EDI_CONSENT: {
+                if (!hasValidSignature && decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null) {
+                    // fail auth if signature not already verified, e.g. for compressed-signed
+                    throw new AS2InsufficientSecurityException("Failed to validate the signature");
+                }
                 ediEntity = (ApplicationEntity) entity;
                 break;
             }
@@ -286,7 +311,7 @@ public final class HttpMessageUtils {
                 MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
                 if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null && !SigningUtils
                         .isValid(multipartSignedEntity, decrpytingAndSigningInfo.getValidateSigningCertificateChain())) {
-                    throw new HttpException("Failed to validate the signature");
+                    throw new AS2AuthenticationException("Failed to validate the signature");
                 }
 
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();

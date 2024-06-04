@@ -37,7 +37,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.LegacyNoErrorHandlerBuilder;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -92,7 +92,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         final Processor testProcessor3 = new TestProcessor3();
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(new LegacyNoErrorHandlerBuilder());
+                errorHandler(new NoErrorHandlerBuilder());
                 from(CXF_RS_ENDPOINT_URI).process(testProcessor);
                 from(CXF_RS_ENDPOINT_URI2).process(testProcessor);
                 from(CXF_RS_ENDPOINT_URI3).process(testProcessor);

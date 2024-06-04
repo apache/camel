@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.sap.netweaver;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -33,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url",
              producerOnly = true, category = { Category.SAAS },
              headersClass = NetWeaverConstants.class)
-public class NetWeaverEndpoint extends DefaultEndpoint {
+public class NetWeaverEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -53,6 +56,24 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
 
     public NetWeaverEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return url;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "http";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (username != null) {
+            return Map.of("username", username);
+        }
+        return null;
     }
 
     @Override

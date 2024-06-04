@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -56,7 +57,7 @@ import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DI
 @UriEndpoint(firstVersion = "3.8.0", scheme = "spring-rabbitmq", title = "Spring RabbitMQ",
              syntax = "spring-rabbitmq:exchangeName",
              category = { Category.MESSAGING }, headersClass = SpringRabbitMQConstants.class)
-public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
+public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
 
     public static final String ARG_PREFIX = "arg.";
     public static final String CONSUMER_ARG_PREFIX = "consumer.";
@@ -184,7 +185,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                                                          + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
     private RetryOperationsInterceptor retry;
     @UriParam(label = "consumer", defaultValue = "5",
-              description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message")
+              description = "How many times a Rabbitmq consumer will try the same message if Camel failed to process the message (The number of attempts includes the initial try)")
     private int maximumRetryAttempts = 5;
     @UriParam(label = "consumer", defaultValue = "1000",
               description = "Delay in millis a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
@@ -209,6 +210,37 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             // need to wrap message converter in allow null
             messageConverter = new AllowNullBodyMessageConverter(messageConverter);
         }
+    }
+
+    @Override
+    public String getServiceUrl() {
+        int port = 0;
+        String host = null;
+        if (getConnectionFactory() != null) {
+            host = getConnectionFactory().getHost();
+            port = getConnectionFactory().getPort();
+        }
+        if (host != null) {
+            return host + ":" + port;
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "amqp";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        String un = null;
+        if (getConnectionFactory() != null) {
+            un = getConnectionFactory().getUsername();
+        }
+        if (un != null) {
+            return Map.of("username", un);
+        }
+        return null;
     }
 
     public String getExchangeName() {

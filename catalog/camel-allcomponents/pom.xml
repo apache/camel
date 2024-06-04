@@ -1109,6 +1109,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-langchain4j-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-langchain4j-embeddings</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1585,6 +1590,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-smb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-smooks</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

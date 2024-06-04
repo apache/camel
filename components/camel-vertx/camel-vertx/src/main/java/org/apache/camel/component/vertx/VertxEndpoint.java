@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "vertx", title = "Vert.x", syntax = "vertx:address",
              category = { Category.MESSAGING })
-public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
+public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport, EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
@@ -51,6 +52,19 @@ public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mul
     @Override
     public VertxComponent getComponent() {
         return (VertxComponent) super.getComponent();
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (getComponent().getHost() != null) {
+            return getComponent().getHost() + ":" + getComponent().getPort();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "vertx";
     }
 
     @Override

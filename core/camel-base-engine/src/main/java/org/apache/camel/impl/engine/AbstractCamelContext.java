@@ -109,6 +109,7 @@ import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
@@ -4068,6 +4069,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ValidatorRegistry<ValidatorKey> createValidatorRegistry();
 
     protected abstract VariableRepositoryFactory createVariableRepositoryFactory();
+
+    protected abstract EndpointServiceRegistry createEndpointServiceRegistry();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.

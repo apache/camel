@@ -59,7 +59,7 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() {
-                    return template.requestBody("http://localhost:{{port}}/echo", "" + index, String.class);
+                    return template.requestBody("http://localhost:{{port}}/echo", Integer.toString(index), String.class);
                 }
             });
             responses.put(index, out);

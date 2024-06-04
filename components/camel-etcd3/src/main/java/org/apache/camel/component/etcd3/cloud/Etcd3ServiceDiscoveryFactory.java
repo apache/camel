@@ -52,14 +52,14 @@ public class Etcd3ServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     // Properties
     // *************************************************************************
 
-    public String[] getEndpoints() {
+    public String getEndpoints() {
         return configuration.getEndpoints();
     }
 
     /**
-     * Configure etcd server endpoints using the IPNameResolver.
+     * Configure etcd server endpoints using the IPNameResolver. Multiple endpoints can be separated by comma.
      */
-    public void setEndpoints(String... endpoints) {
+    public void setEndpoints(String endpoints) {
         configuration.setEndpoints(endpoints);
     }
 

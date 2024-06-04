@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 public class LRASagaServiceTest extends CamelTestSupport {
 
     public LRASagaServiceTest() {
-        setUseRouteBuilder(false);
+        testConfiguration().withUseRouteBuilder(false);
     }
 
     @DisplayName("Tests whether doStart() is creating a LRAClient")

@@ -52,7 +52,8 @@ public class Etcd3UriDsl(
   }
 
   /**
-   * Configure etcd server endpoints using the IPNameResolver.
+   * Configure etcd server endpoints using the IPNameResolver. Multiple endpoints can be separated
+   * by comma.
    */
   public fun endpoints(endpoints: String) {
     it.property("endpoints", endpoints)

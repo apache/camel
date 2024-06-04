@@ -130,9 +130,9 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
 
     private Object sendTask(int choice, int count, int id) {
         if (choice == 0) {
-            template.sendBodyAndHeader("direct:everysecondone", "" + count, "id", id);
+            template.sendBodyAndHeader("direct:everysecondone", Integer.toString(count), "id", id);
         } else {
-            template2.sendBodyAndHeader("direct:everysecondone", "" + count, "id", id);
+            template2.sendBodyAndHeader("direct:everysecondone", Integer.toString(count), "id", id);
         }
         return null;
     }

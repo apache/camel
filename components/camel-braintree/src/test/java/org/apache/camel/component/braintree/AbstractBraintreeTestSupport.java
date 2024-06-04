@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.braintree;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,7 +81,13 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
 
         final Properties properties = new Properties();
         try {
-            properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
+            final String propertiesLocation = System.getProperty("braintree.properties.location");
+
+            if (propertiesLocation != null) {
+                properties.load(new FileInputStream(propertiesLocation));
+            } else {
+                properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
+            }
         } catch (Exception e) {
             throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
         }

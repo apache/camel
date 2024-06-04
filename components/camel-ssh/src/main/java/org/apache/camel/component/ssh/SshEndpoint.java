@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -31,7 +34,7 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 @UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port",
              alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE },
              headersClass = SshConstants.class)
-public class SshEndpoint extends ScheduledPollEndpoint {
+public class SshEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private SshConfiguration configuration;
@@ -65,6 +68,24 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         // this producer is stateful because the ssh client is not
         // thread safe
         return false;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "ssh";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
     }
 
     public SshConfiguration getConfiguration() {

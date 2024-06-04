@@ -73,6 +73,7 @@ public class FaultToleranceTimeoutTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
+                        .routeId("start")
                         .circuitBreaker()
                         // enable and use 2 second timeout
                         .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
@@ -83,11 +84,13 @@ public class FaultToleranceTimeoutTest extends CamelTestSupport {
                         .log("After FaultTolerance ${body}");
 
                 from("direct:fast")
+                        .routeId("fast")
                         // this is a fast route and takes 1 second to respond
                         .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
                         .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
+                        .routeId("slow")
                         // this is a slow route and takes 3 second to respond
                         .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response")
                         .log("Slow processing end: ${threadName}");

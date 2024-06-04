@@ -49,7 +49,7 @@ public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTest
                 public Object call() throws Exception {
                     char id = KEYS[key];
                     LOG.debug("Sending {} with id {}", value, id);
-                    template.sendBodyAndHeader("direct:start", value, "id", "" + id);
+                    template.sendBodyAndHeader("direct:start", value, "id", Character.toString(id));
                     // simulate a little delay
                     Thread.sleep(3);
                     return null;

@@ -247,4 +247,9 @@ public class ManagedSupervisingRouteController extends ManagedService implements
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
+
+    @Override
+    public void startRoutes() {
+        controller.startRoutes();
+    }
 }

@@ -69,9 +69,9 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
     private Object sendTask(int choice, int count, int id) {
         String uri = "direct:start";
         if (choice == 0) {
-            template.sendBodyAndHeader(uri, "" + count, "id", id);
+            template.sendBodyAndHeader(uri, Integer.toString(count), "id", id);
         } else {
-            template2.sendBodyAndHeader(uri, "" + count, "id", id);
+            template2.sendBodyAndHeader(uri, Integer.toString(count), "id", id);
         }
         return null;
     }

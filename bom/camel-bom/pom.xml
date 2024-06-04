@@ -1299,6 +1299,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-langchain4j-core</artifactId>
+        <version>4.7.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-embeddings</artifactId>
         <version>4.7.0-SNAPSHOT</version>
       </dependency>
@@ -1805,6 +1810,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-smb</artifactId>
+        <version>4.7.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-smooks</artifactId>
         <version>4.7.0-SNAPSHOT</version>
       </dependency>
       <dependency>

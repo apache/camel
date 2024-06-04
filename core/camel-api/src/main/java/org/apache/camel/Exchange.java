@@ -477,7 +477,8 @@ public interface Exchange extends VariableAware {
     /**
      * Returns a variable by name
      *
-     * @param  name the name of the variable
+     * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *              repository. If no repo-id is provided, then variables will be from the current exchange.
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
      */
     Object getVariable(String name);
@@ -485,7 +486,8 @@ public interface Exchange extends VariableAware {
     /**
      * Returns a variable by name and specifying the type required
      *
-     * @param  name the name of the variable
+     * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *              repository. If no repo-id is provided, then variables will be from the current exchange.
      * @param  type the type of the variable
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name or
      *              <tt>null</tt> if it cannot be converted to the given type
@@ -495,7 +497,8 @@ public interface Exchange extends VariableAware {
     /**
      * Returns a variable by name and specifying the type required
      *
-     * @param  name         the name of the variable
+     * @param  name         the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *                      repository. If no repo-id is provided, then variables will be from the current exchange.
      * @param  defaultValue the default value to return if variable was absent
      * @param  type         the type of the variable
      * @return              the value of the given variable or <tt>defaultValue</tt> if there is no variable for the
@@ -506,7 +509,8 @@ public interface Exchange extends VariableAware {
     /**
      * Sets a variable on the exchange
      *
-     * @param name  of the variable
+     * @param name  the variable name. Can be prefixed with repo-id:name to store the variable in a specific repository.
+     *              If no repo-id is provided, then variables will be stored in the current exchange.
      * @param value the value of the variable
      */
     void setVariable(String name, Object value);
@@ -514,22 +518,25 @@ public interface Exchange extends VariableAware {
     /**
      * Removes the given variable
      *
-     * @param  name of the variable, or use * to remove all variables
+     * If the name is <tt>*</tt> then all variables from the current exchange is removed, and null is returned.
+     *
+     * @param  name the variable name. Can be prefixed with repo-id:name to remove the variable in a specific
+     *              repository. If no repo-id is provided, then the variable from the current exchange will be removed
      * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
      */
     Object removeVariable(String name);
 
     /**
-     * Returns the variables
+     * Returns the variables from the current exchange
      *
-     * @return the variables in a Map.
+     * @return the variables from the current exchange in a Map.
      */
     Map<String, Object> getVariables();
 
     /**
-     * Returns whether any variables have been set
+     * Returns whether any variables have been set on the current exchange
      *
-     * @return <tt>true</tt> if any variables has been set
+     * @return <tt>true</tt> if any variables has been set on the current exchange
      */
     boolean hasVariables();
 

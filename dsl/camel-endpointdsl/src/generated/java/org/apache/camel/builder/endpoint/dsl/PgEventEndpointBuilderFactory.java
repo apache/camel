@@ -44,37 +44,6 @@ public interface PgEventEndpointBuilderFactory {
             return (AdvancedPgEventEndpointConsumerBuilder) this;
         }
         /**
-         * To connect using the given javax.sql.DataSource instead of using
-         * hostname and port.
-         * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
-         * 
-         * Group: common
-         * 
-         * @param datasource the value to set
-         * @return the dsl builder
-         */
-        default PgEventEndpointConsumerBuilder datasource(javax.sql.DataSource datasource) {
-            doSetProperty("datasource", datasource);
-            return this;
-        }
-        /**
-         * To connect using the given javax.sql.DataSource instead of using
-         * hostname and port.
-         * 
-         * The option will be converted to a <code>javax.sql.DataSource</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param datasource the value to set
-         * @return the dsl builder
-         */
-        default PgEventEndpointConsumerBuilder datasource(String datasource) {
-            doSetProperty("datasource", datasource);
-            return this;
-        }
-        /**
          * Password for login.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -231,6 +200,37 @@ public interface PgEventEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * To connect using the given javax.sql.DataSource instead of using
+         * hostname and port.
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder datasource(javax.sql.DataSource datasource) {
+            doSetProperty("datasource", datasource);
+            return this;
+        }
+        /**
+         * To connect using the given javax.sql.DataSource instead of using
+         * hostname and port.
+         * 
+         * The option will be converted to a <code>javax.sql.DataSource</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder datasource(String datasource) {
+            doSetProperty("datasource", datasource);
+            return this;
+        }
     }
 
     /**
@@ -243,37 +243,6 @@ public interface PgEventEndpointBuilderFactory {
             return (AdvancedPgEventEndpointProducerBuilder) this;
         }
 
-        /**
-         * To connect using the given javax.sql.DataSource instead of using
-         * hostname and port.
-         * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
-         * 
-         * Group: common
-         * 
-         * @param datasource the value to set
-         * @return the dsl builder
-         */
-        default PgEventEndpointProducerBuilder datasource(javax.sql.DataSource datasource) {
-            doSetProperty("datasource", datasource);
-            return this;
-        }
-        /**
-         * To connect using the given javax.sql.DataSource instead of using
-         * hostname and port.
-         * 
-         * The option will be converted to a <code>javax.sql.DataSource</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param datasource the value to set
-         * @return the dsl builder
-         */
-        default PgEventEndpointProducerBuilder datasource(String datasource) {
-            doSetProperty("datasource", datasource);
-            return this;
-        }
         /**
          * Password for login.
          * 
@@ -359,6 +328,37 @@ public interface PgEventEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To connect using the given javax.sql.DataSource instead of using
+         * hostname and port.
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointProducerBuilder datasource(javax.sql.DataSource datasource) {
+            doSetProperty("datasource", datasource);
+            return this;
+        }
+        /**
+         * To connect using the given javax.sql.DataSource instead of using
+         * hostname and port.
+         * 
+         * The option will be converted to a <code>javax.sql.DataSource</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointProducerBuilder datasource(String datasource) {
+            doSetProperty("datasource", datasource);
+            return this;
+        }
     }
 
     /**
@@ -372,37 +372,6 @@ public interface PgEventEndpointBuilderFactory {
             return (AdvancedPgEventEndpointBuilder) this;
         }
 
-        /**
-         * To connect using the given javax.sql.DataSource instead of using
-         * hostname and port.
-         * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
-         * 
-         * Group: common
-         * 
-         * @param datasource the value to set
-         * @return the dsl builder
-         */
-        default PgEventEndpointBuilder datasource(javax.sql.DataSource datasource) {
-            doSetProperty("datasource", datasource);
-            return this;
-        }
-        /**
-         * To connect using the given javax.sql.DataSource instead of using
-         * hostname and port.
-         * 
-         * The option will be converted to a <code>javax.sql.DataSource</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param datasource the value to set
-         * @return the dsl builder
-         */
-        default PgEventEndpointBuilder datasource(String datasource) {
-            doSetProperty("datasource", datasource);
-            return this;
-        }
         /**
          * Password for login.
          * 
@@ -445,6 +414,37 @@ public interface PgEventEndpointBuilderFactory {
             return (PgEventEndpointBuilder) this;
         }
 
+        /**
+         * To connect using the given javax.sql.DataSource instead of using
+         * hostname and port.
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointBuilder datasource(javax.sql.DataSource datasource) {
+            doSetProperty("datasource", datasource);
+            return this;
+        }
+        /**
+         * To connect using the given javax.sql.DataSource instead of using
+         * hostname and port.
+         * 
+         * The option will be converted to a <code>javax.sql.DataSource</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointBuilder datasource(String datasource) {
+            doSetProperty("datasource", datasource);
+            return this;
+        }
     }
 
     public interface PgEventBuilders {

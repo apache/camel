@@ -23,6 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -38,20 +39,20 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName",
              category = { Category.NETWORKING, Category.MESSAGING }, headersClass = CometdBinding.class)
-public class CometdEndpoint extends DefaultEndpoint {
+public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private CometdComponent component;
 
     private URI uri;
     @UriPath(description = "Hostname")
     @Metadata(required = true)
-    private String host; // TODO field is reported unread
+    private String host;
     @UriPath(description = "Host port number")
     @Metadata(required = true)
-    private int port; // TODO field is reported unread
+    private int port;
     @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.")
     @Metadata(required = true)
-    private String channelName; // TODO field is reported unread
+    private String channelName;
     @UriParam
     private String baseResource;
     @UriParam(defaultValue = "240000")
@@ -88,6 +89,16 @@ public class CometdEndpoint extends DefaultEndpoint {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return getProtocol() + ":" + host + ":" + getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return getProtocol();
     }
 
     @Override

@@ -59,8 +59,8 @@ public abstract class BaseUndertowTest extends CamelTestSupport {
     public Properties loadProperties() {
 
         Properties prop = new Properties();
-        prop.setProperty("port", "" + getPort());
-        prop.setProperty("port2", "" + getPort2());
+        prop.setProperty("port", Integer.toString(getPort()));
+        prop.setProperty("port2", Integer.toString(getPort2()));
         return prop;
     }
 

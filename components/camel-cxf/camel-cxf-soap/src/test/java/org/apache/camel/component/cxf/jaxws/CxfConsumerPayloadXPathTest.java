@@ -201,12 +201,12 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             String msgOut = constructSoapMessage(content);
             exchange.getMessage().setBody(msgOut);
             exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
-            exchange.getMessage().setHeader(HEADER_SIZE, "" + content.length());
+            exchange.getMessage().setHeader(HEADER_SIZE, Integer.toString(content.length()));
         }
     }
 
     private void simpleTest(int repeat, BaseRouteBuilder builder) throws Exception {
-        setUseRouteBuilder(false);
+        testConfiguration().withUseRouteBuilder(false);
         context.addRoutes(builder);
         startCamelContext();
 

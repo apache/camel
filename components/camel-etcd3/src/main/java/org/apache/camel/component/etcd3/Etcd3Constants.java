@@ -43,7 +43,7 @@ public abstract class Etcd3Constants {
     public static final String ETCD_KEYS_ACTION_DELETE = "delete";
     public static final String ETCD_KEYS_ACTION_GET = "get";
 
-    public static final String[] ETCD_DEFAULT_ENDPOINTS = new String[] { "http://localhost:2379" };
+    public static final String ETCD_DEFAULT_ENDPOINTS = "http://localhost:2379";
 
     private Etcd3Constants() {
     }

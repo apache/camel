@@ -30,7 +30,7 @@ public class Etcd3EndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "endpoints": target.getConfiguration().setEndpoints(property(camelContext, java.lang.String[].class, value)); return true;
+        case "endpoints": target.getConfiguration().setEndpoints(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -81,7 +81,7 @@ public class Etcd3EndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return boolean.class;
         case "connectiontimeout":
         case "connectionTimeout": return java.time.Duration.class;
-        case "endpoints": return java.lang.String[].class;
+        case "endpoints": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":

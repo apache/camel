@@ -31,6 +31,7 @@ public enum RestHostNameResolver {
 
     allLocalIp,
     localIp,
-    localHostName
+    localHostName,
+    none
 
 }

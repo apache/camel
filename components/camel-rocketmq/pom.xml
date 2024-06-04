@@ -34,10 +34,14 @@
     <description>Camel RocketMQ Component</description>
 
     <properties>
+        <camel.failsafe.reuseForks>false</camel.failsafe.reuseForks>
         <!-- RocketMQ container is only available on x86 -->
         <skipTests.ppc64le>true</skipTests.ppc64le>
         <skipTests.s390x>true</skipTests.s390x>
         <skipTests.aarch64>true</skipTests.aarch64>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.aarch64>true</skipITs.aarch64>
     </properties>
 
 
@@ -77,17 +81,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <skipITs>${skipITs}</skipITs>
-                    <reuseForks>false</reuseForks>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

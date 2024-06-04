@@ -29,6 +29,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ExchangeFactory;
+import org.apache.camel.spi.HostedService;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceHelper;
@@ -40,7 +41,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A default consumer useful for implementation inheritance.
  */
-public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, RouteIdAware, HealthCheckAware {
+public class DefaultConsumer extends ServiceSupport
+        implements Consumer, RouteAware, RouteIdAware, HealthCheckAware, HostedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumer.class);
 
@@ -62,6 +64,11 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         // create a per consumer exchange factory
         this.exchangeFactory = endpoint.getCamelContext().getCamelContextExtension()
                 .getExchangeFactory().newExchangeFactory(this);
+    }
+
+    @Override
+    public boolean isHostedService() {
+        return false;
     }
 
     @Override

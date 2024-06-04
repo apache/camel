@@ -53,7 +53,7 @@ public class LRASagaCoordinatorTest extends CamelTestSupport {
     }
 
     public LRASagaCoordinatorTest() {
-        setUseRouteBuilder(false);
+        testConfiguration().withUseRouteBuilder(false);
     }
 
     @DisplayName("Tests whether no sagaService is causing exception")

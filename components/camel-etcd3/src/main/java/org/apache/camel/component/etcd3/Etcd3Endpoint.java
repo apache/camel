@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.etcd3;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -31,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "3.19.0", scheme = "etcd3", title = "Etcd v3",
              syntax = "etcd3:path", category = { Category.CLUSTERING, Category.DATABASE },
              headersClass = Etcd3Constants.class)
-public class Etcd3Endpoint extends DefaultEndpoint {
+public class Etcd3Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(label = "common", description = "The path the endpoint refers to")
     private final String path;
@@ -42,6 +45,24 @@ public class Etcd3Endpoint extends DefaultEndpoint {
         super(uri, component);
         this.path = path;
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getEndpoints();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "etcd";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUserName() != null) {
+            return Map.of("username", configuration.getUserName());
+        }
+        return null;
     }
 
     public Etcd3Configuration getConfiguration() {

@@ -45,7 +45,8 @@ public class RestConfiguration {
     public enum RestHostNameResolver {
         allLocalIp,
         localIp,
-        localHostName
+        localHostName,
+        none;
     }
 
     private String component;

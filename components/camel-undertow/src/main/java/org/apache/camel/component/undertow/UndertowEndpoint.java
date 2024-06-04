@@ -40,6 +40,7 @@ import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -61,7 +62,8 @@ import org.xnio.Options;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
              category = { Category.HTTP, Category.NETWORKING }, lenientProperties = true,
              headersClass = UndertowConstants.class)
-public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
+public class UndertowEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
@@ -142,6 +144,22 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
         this.component = component;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (httpURI != null) {
+            return httpURI.toString();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        if (httpURI != null) {
+            return httpURI.getScheme();
+        }
+        return null;
     }
 
     @Override

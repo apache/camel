@@ -68,17 +68,18 @@ public interface Etcd3ComponentBuilderFactory {
     
         
         /**
-         * Configure etcd server endpoints using the IPNameResolver.
+         * Configure etcd server endpoints using the IPNameResolver. Multiple
+         * endpoints can be separated by comma.
          * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: Etcd3Constants.ETCD_DEFAULT_ENDPOINTS
+         * Default: http://localhost:2379
          * Group: common
          * 
          * @param endpoints the value to set
          * @return the dsl builder
          */
-        default Etcd3ComponentBuilder endpoints(java.lang.String[] endpoints) {
+        default Etcd3ComponentBuilder endpoints(java.lang.String endpoints) {
             doSetProperty("endpoints", endpoints);
             return this;
         }
@@ -501,7 +502,7 @@ public interface Etcd3ComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((Etcd3Component) component).setConfiguration((org.apache.camel.component.etcd3.Etcd3Configuration) value); return true;
-            case "endpoints": getOrCreateConfiguration((Etcd3Component) component).setEndpoints((java.lang.String[]) value); return true;
+            case "endpoints": getOrCreateConfiguration((Etcd3Component) component).setEndpoints((java.lang.String) value); return true;
             case "keyCharset": getOrCreateConfiguration((Etcd3Component) component).setKeyCharset((java.lang.String) value); return true;
             case "namespace": getOrCreateConfiguration((Etcd3Component) component).setNamespace((java.lang.String) value); return true;
             case "prefix": getOrCreateConfiguration((Etcd3Component) component).setPrefix((boolean) value); return true;

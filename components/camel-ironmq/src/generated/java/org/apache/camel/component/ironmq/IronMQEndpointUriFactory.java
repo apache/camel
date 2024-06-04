@@ -57,7 +57,9 @@ public class IronMQEndpointUriFactory extends org.apache.camel.support.component
         props.add("visibilityDelay");
         props.add("wait");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("token");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);
         prefixes.add("scheduler.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);

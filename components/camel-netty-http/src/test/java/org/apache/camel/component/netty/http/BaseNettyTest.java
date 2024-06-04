@@ -77,7 +77,7 @@ public class BaseNettyTest extends CamelTestSupport {
     public Properties loadProp() {
 
         Properties prop = new Properties();
-        prop.setProperty("port", "" + getPort());
+        prop.setProperty("port", Integer.toString(getPort()));
 
         return prop;
     }

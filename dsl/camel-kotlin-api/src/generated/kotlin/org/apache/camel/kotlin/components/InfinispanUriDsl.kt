@@ -52,7 +52,8 @@ public class InfinispanUriDsl(
   }
 
   /**
-   * Specifies the host of the cache on Infinispan instance
+   * Specifies the host of the cache on Infinispan instance. Multiple hosts can be separated by
+   * semicolon.
    */
   public fun hosts(hosts: String) {
     it.property("hosts", hosts)
@@ -63,20 +64,6 @@ public class InfinispanUriDsl(
    */
   public fun queryBuilder(queryBuilder: String) {
     it.property("queryBuilder", queryBuilder)
-  }
-
-  /**
-   * Define if we are connecting to a secured Infinispan instance
-   */
-  public fun secure(secure: String) {
-    it.property("secure", secure)
-  }
-
-  /**
-   * Define if we are connecting to a secured Infinispan instance
-   */
-  public fun secure(secure: Boolean) {
-    it.property("secure", secure.toString())
   }
 
   /**
@@ -266,6 +253,20 @@ public class InfinispanUriDsl(
    */
   public fun saslMechanism(saslMechanism: String) {
     it.property("saslMechanism", saslMechanism)
+  }
+
+  /**
+   * Define if we are connecting to a secured Infinispan instance
+   */
+  public fun secure(secure: String) {
+    it.property("secure", secure)
+  }
+
+  /**
+   * Define if we are connecting to a secured Infinispan instance
+   */
+  public fun secure(secure: Boolean) {
+    it.property("secure", secure.toString())
   }
 
   /**

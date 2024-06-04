@@ -93,7 +93,7 @@ public class MailFetchSizeTest extends CamelTestSupport {
         Message[] messages = new Message[5];
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
-            messages[i].setHeader("Message-ID", "" + i);
+            messages[i].setHeader("Message-ID", Integer.toString(i));
             messages[i].setText("Message " + i);
         }
         folder.appendMessages(messages);

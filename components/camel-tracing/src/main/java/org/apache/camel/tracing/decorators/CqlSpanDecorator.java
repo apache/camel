@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
-import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
 
 public class CqlSpanDecorator extends AbstractSpanDecorator {
 
@@ -43,20 +43,20 @@ public class CqlSpanDecorator extends AbstractSpanDecorator {
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setLowCardinalityTag(Tag.DB_TYPE, CASSANDRA_DB_TYPE);
+        span.setTag(TagConstants.DB_SYSTEM, CASSANDRA_DB_TYPE);
         URI uri = URI.create(endpoint.getEndpointUri());
-        if (uri.getPath() != null && uri.getPath().length() > 0) {
+        if (uri.getPath() != null && !uri.getPath().isEmpty()) {
             // Strip leading '/' from path
-            span.setTag(Tag.DB_INSTANCE, uri.getPath().substring(1));
+            span.setTag(TagConstants.DB_NAME, uri.getPath().substring(1));
         }
 
         String cql = exchange.getIn().getHeader(CAMEL_CQL_QUERY, String.class);
         if (cql != null) {
-            span.setTag(Tag.DB_STATEMENT, cql);
+            span.setTag(TagConstants.DB_STATEMENT, cql);
         } else {
             Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
             if (queryParameters.containsKey("cql")) {
-                span.setTag(Tag.DB_STATEMENT, queryParameters.get("cql"));
+                span.setTag(TagConstants.DB_STATEMENT, queryParameters.get("cql"));
             }
         }
     }

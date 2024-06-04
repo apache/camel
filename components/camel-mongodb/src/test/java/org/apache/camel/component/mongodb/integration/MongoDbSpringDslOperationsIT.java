@@ -19,12 +19,10 @@ package org.apache.camel.component.mongodb.integration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.infra.core.annotations.ContextProvider;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Disabled due to CAMEL-20782")
 public class MongoDbSpringDslOperationsIT extends MongoDbOperationsIT {
 
     @ContextProvider

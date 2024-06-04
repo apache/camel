@@ -134,6 +134,10 @@ public class Agent extends CamelCommand {
                         description = "Comma separated list of additional maven repositories")
     String repos;
 
+    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
+    String quarkusGroupId = "io.quarkus.platform";
+
     public Agent(CamelJBangMain main) {
         super(main);
     }
@@ -372,7 +376,7 @@ public class Agent extends CamelCommand {
             case springBoot:
                 return CatalogLoader.loadSpringBootCatalog(repos, runtimeVersion);
             case quarkus:
-                return CatalogLoader.loadQuarkusCatalog(repos, runtimeVersion);
+                return CatalogLoader.loadQuarkusCatalog(repos, runtimeVersion, quarkusGroupId);
             case camelMain:
                 return CatalogLoader.loadCatalog(repos, runtimeVersion);
             default:

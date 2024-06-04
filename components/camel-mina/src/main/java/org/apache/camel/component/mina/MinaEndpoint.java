@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -32,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port",
              category = { Category.NETWORKING }, headersClass = MinaConstants.class)
-public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     @UriParam
     private MinaConfiguration configuration;
@@ -43,6 +44,16 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public MinaEndpoint(String endpointUri, Component component, MinaConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getProtocol() + ":" + configuration.getHost() + ":" + configuration.getPort();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return configuration.getProtocol();
     }
 
     @Override

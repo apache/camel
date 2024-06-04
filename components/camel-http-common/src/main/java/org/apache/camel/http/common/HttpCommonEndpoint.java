@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -30,7 +31,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.CollectionHelper;
 
-public abstract class HttpCommonEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, DiscoverableService {
+public abstract class HttpCommonEndpoint extends DefaultEndpoint
+        implements HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
 
     // Note: all options must be documented with description in annotations so extended components can access the documentation
 
@@ -191,6 +193,22 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (httpUri != null) {
+            return httpUri.toString();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        if (httpUri != null) {
+            return httpUri.getScheme();
+        }
+        return null;
     }
 
     public void connect(HttpConsumer consumer) throws Exception {

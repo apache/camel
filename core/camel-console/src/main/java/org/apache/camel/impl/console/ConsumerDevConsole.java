@@ -210,7 +210,6 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                             // ignore
                         }
                     }
-
                     final JsonObject stats = toJsonObject(mr);
                     jo.put("statistics", stats);
 

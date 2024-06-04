@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.irc;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,7 +40,7 @@ import org.slf4j.LoggerFactory;
              syntax = "irc:hostname:port",
              alternativeSyntax = "irc:username:password@hostname:port",
              category = { Category.CHAT }, headersClass = IrcConstants.class)
-public class IrcEndpoint extends DefaultEndpoint {
+public class IrcEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
 
@@ -50,6 +53,24 @@ public class IrcEndpoint extends DefaultEndpoint {
         super(UnsafeUriCharactersEncoder.encode(endpointUri), component);
         this.component = component;
         this.configuration = configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return configuration.getHostname();
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "irc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getUsername() != null) {
+            return Map.of("username", configuration.getUsername());
+        }
+        return null;
     }
 
     @Override

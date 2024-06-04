@@ -33,11 +33,11 @@ public class AggregateMultipleSourceTest extends ContextTestSupport {
 
         for (int i = 0; i < 40; i++) {
             if (i % 2 == 0) {
-                template.sendBodyAndHeader("seda:foo", "" + i, "type", "A");
+                template.sendBodyAndHeader("seda:foo", Integer.toString(i), "type", "A");
             } else if (i % 5 == 0) {
-                template.sendBodyAndHeader("seda:bar", "" + i, "type", "A");
+                template.sendBodyAndHeader("seda:bar", Integer.toString(i), "type", "A");
             } else {
-                template.sendBodyAndHeader("seda:baz", "" + i, "type", "A");
+                template.sendBodyAndHeader("seda:baz", Integer.toString(i), "type", "A");
             }
         }
 
