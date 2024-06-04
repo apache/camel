@@ -46,6 +46,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "path": target.getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -105,6 +106,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "path": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "recursive": return boolean.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "runlogginglevel":
@@ -160,6 +162,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "path": return target.getConfiguration().getPath();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
+        case "recursive": return target.getConfiguration().isRecursive();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
