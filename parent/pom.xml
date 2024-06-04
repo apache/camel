@@ -99,7 +99,7 @@
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.172</classgraph-version>
         <cometd-java-client-version>8.0.2</cometd-java-client-version>
-        <cometd-java-server-version>8.0.0</cometd-java-server-version>
+        <cometd-java-server-version>8.0.2</cometd-java-server-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
         <commons-codec-version>1.17.0</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
