@@ -57,5 +57,5 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-logs-${{ artifact-upload-suffix }}
+        name: test-logs-${{ inputs.artifact-upload-suffix }}
         path: automated-build-log/**/*
