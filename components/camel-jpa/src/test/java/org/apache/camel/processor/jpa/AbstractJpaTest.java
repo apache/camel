@@ -21,13 +21,11 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -36,8 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public abstract class AbstractJpaTest extends CamelTestSupport {
-    protected ApplicationContext applicationContext;
+public abstract class AbstractJpaTest extends CamelSpringTestSupport {
     protected TransactionTemplate transactionTemplate;
     protected EntityManager entityManager;
 
@@ -58,9 +55,8 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext(routeXml());
-        return SpringCamelContext.springCamelContext(applicationContext, true);
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(routeXml());
     }
 
     protected void cleanupRepository() {
