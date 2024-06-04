@@ -68,6 +68,8 @@ public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTest
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 from("direct:start")
                         .to("log:input?groupSize=500")
                         .aggregate(header("id"), new MyAggregationStrategy())

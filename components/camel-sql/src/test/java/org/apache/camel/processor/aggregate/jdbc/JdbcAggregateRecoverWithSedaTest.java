@@ -31,6 +31,8 @@ public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTes
 
     @Override
     void configureJdbcAggregationRepository() {
+        super.configureJdbcAggregationRepository();
+
         // enable recovery
         repo.setUseRecovery(true);
         // check faster
@@ -61,6 +63,8 @@ public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTes
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)

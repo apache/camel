@@ -26,17 +26,7 @@ public abstract class AbstractClusteredJdbcAggregationTestSupport extends CamelS
     ClusteredJdbcAggregationRepository repo;
     ClusteredJdbcAggregationRepository repobis;
 
-    @Override
-    public void postProcessTest() throws Exception {
-        super.postProcessTest();
-
-        repo = applicationContext.getBean("repo5", ClusteredJdbcAggregationRepository.class);
-        repobis = applicationContext.getBean("repo6", ClusteredJdbcAggregationRepository.class);
-        configureJdbcAggregationRepository();
-    }
-
-    void configureJdbcAggregationRepository() {
-    }
+    abstract void configureJdbcAggregationRepository();
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

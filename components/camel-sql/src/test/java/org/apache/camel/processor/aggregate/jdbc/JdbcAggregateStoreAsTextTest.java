@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -47,10 +48,8 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
                 "JdbcSpringDataSource.xml", "JdbcSpringAggregateStoreAsText.xml");
     }
 
-    @Override
-    public void postProcessTest() throws Exception {
-        super.postProcessTest();
-
+    @BeforeEach
+    public void configureJdbcAggregationRepository() throws Exception {
         repo = applicationContext.getBean("repo3", JdbcAggregationRepository.class);
         dataSource = context.getRegistry().lookupByNameAndType(getClass().getSimpleName() + "-dataSource3", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);

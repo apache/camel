@@ -31,6 +31,9 @@ public class ClusteredJdbcAggregateRecoverTest extends AbstractClusteredJdbcAggr
 
     @Override
     void configureJdbcAggregationRepository() {
+        repo = applicationContext.getBean("repo5", ClusteredJdbcAggregationRepository.class);
+        repobis = applicationContext.getBean("repo6", ClusteredJdbcAggregationRepository.class);
+
         // enable recovery
         repo.setUseRecovery(true);
         // check faster
@@ -68,6 +71,8 @@ public class ClusteredJdbcAggregateRecoverTest extends AbstractClusteredJdbcAggr
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(5)
                         .aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}").to("mock:aggregated").delay(1000)

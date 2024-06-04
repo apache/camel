@@ -46,6 +46,13 @@ class ReplaceBeanWithMockTest extends CamelMainTestSupport {
     }
 
     @Override
+    protected void postProcessTest() throws Exception {
+        super.postProcessTest();
+
+        bindToRegistryAfterInjections(context.getRegistry());
+    }
+
+    @Override
     protected void bindToRegistryAfterInjections(Registry registry) throws Exception {
         when(greetings.sayHello()).thenReturn("Hola Will!");
         registry.bind("myGreetings", Greetings.class, greetings);

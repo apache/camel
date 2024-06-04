@@ -21,16 +21,16 @@ import java.util.UUID;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class KameletRouteDumpTest extends CamelTestSupport {
 
-    @Override
-    protected void postProcessTest() throws Exception {
-        context().setDumpRoutes("xml");
-        super.postProcessTest();
+    @AfterEach
+    protected void setupDumpRouters() {
+        context.setDumpRoutes("xml");
     }
 
     @Test

@@ -44,20 +44,17 @@ public class CamelAwsXRayTestSupport extends CamelTestSupport {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUpSocket() {
         socketListener.before();
-        super.setUp();
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void cleanupSocket() {
         socketListener.after();
     }
 
-    @Override
-    protected void postProcessTest() throws Exception {
-        super.postProcessTest();
+    @AfterEach
+    protected void cleanupData() {
         socketListener.getReceivedData().clear();
     }
 
