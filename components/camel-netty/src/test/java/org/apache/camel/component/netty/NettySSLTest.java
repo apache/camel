@@ -27,11 +27,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettySSLTest extends BaseNettyTest {
 
     @BindToRegistry("ksf")
@@ -51,9 +51,6 @@ public class NettySSLTest extends BaseNettyTest {
 
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
-        // ibm jdks dont have sun security algorithms
-        assumeFalse(isJavaVendor("ibm"));
-
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // needClientAuth=true so we can get the client certificate

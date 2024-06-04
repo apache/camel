@@ -29,11 +29,11 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettyHttpSSLTest extends BaseNettyTest {
 
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
@@ -83,9 +83,6 @@ public class NettyHttpSSLTest extends BaseNettyTest {
 
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
-        // ibm jdks dont have sun security algorithms
-        assumeFalse(isJavaVendor("ibm"));
-
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
         context.addRoutes(new RouteBuilder() {

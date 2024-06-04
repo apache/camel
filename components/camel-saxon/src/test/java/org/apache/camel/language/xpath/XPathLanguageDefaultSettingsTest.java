@@ -21,37 +21,28 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Tests that verify the usage of default settings in the XPath language by declaring a bean called xpath in the
  * registry
  */
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     private static final String KEY = XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://java.sun.com/jaxp/xpath/dom";
-    private boolean jvmAdequate = true;
     private String oldPropertyValue;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        if (!isJavaVendor("ibm")) {
-            // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make JAXP use it
-            // because of Service Provider discovery (this does not happen in OSGi because the META-INF/services package is not exported
-            oldPropertyValue = System.setProperty(KEY, "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl");
-        } else {
-            jvmAdequate = false;
-        }
-        super.setUp();
+    public void setupResources() {
+        // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make JAXP use it
+        // because of Service Provider discovery (this does not happen in OSGi because the META-INF/services package is not exported
+        oldPropertyValue = System.setProperty(KEY, "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl");
     }
 
     @Override
@@ -72,8 +63,6 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathLanguageDefaultSettings() throws Exception {
-        assumeTrue(jvmAdequate, "JVM is not adequate");
-
         MockEndpoint mockEndpointResult = getMockEndpoint("mock:testDefaultXPathSettingsResult");
         MockEndpoint mockEndpointException = getMockEndpoint("mock:testDefaultXPathSettingsResultException");
 

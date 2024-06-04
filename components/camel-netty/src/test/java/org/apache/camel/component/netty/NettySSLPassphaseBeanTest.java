@@ -21,11 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettySSLPassphaseBeanTest extends BaseNettyTest {
 
     @BindToRegistry("myBean")
@@ -38,9 +38,6 @@ public class NettySSLPassphaseBeanTest extends BaseNettyTest {
 
     @Test
     public void testPassphaseBean() throws Exception {
-        // ibm jdks dont have sun security algorithms
-        assumeFalse(isJavaVendor("ibm"));
-
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks")

@@ -32,29 +32,23 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class ECDSASignatureTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ECDSASignatureTest.class);
 
     private String payload = "Dear Alice, Rest assured it's me, signed Bob";
-    private boolean ibmJDK;
     private PrivateKey privateKey;
     private X509Certificate x509;
     private boolean canRun = true;
 
     public ECDSASignatureTest() {
-
-        // This test fails with the IBM JDK
-        if (isJavaVendor("IBM")) {
-            ibmJDK = true;
-        }
-
         // see if we can load the keystore et all
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -70,7 +64,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        if (ibmJDK || !canRun) {
+        if (!canRun) {
             return new RouteBuilder[] {};
         }
 
@@ -95,7 +89,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     void testECDSASHA1() throws Exception {
-        assumeFalse(ibmJDK || !canRun, "Test preconditions failed: ibmJDK=" + ibmJDK + ", canRun=" + canRun);
+        assumeFalse(!canRun, "Test preconditions failed: canRun=" + canRun);
 
         setupMock();
         sendBody("direct:ecdsa-sha1", payload);
