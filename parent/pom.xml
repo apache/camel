@@ -216,7 +216,7 @@
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
-        <hsqldb-version>2.7.2</hsqldb-version>
+        <hsqldb-version>2.7.3</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore-version>5.2.4</httpcore-version>
         <httpclient-version>5.2.1</httpclient-version>
