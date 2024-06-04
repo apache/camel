@@ -88,10 +88,7 @@ public class Kinesis2Producer extends DefaultProducer {
         PutRecordRequest.Builder putRecordRequest = PutRecordRequest.builder();
         putRecordRequest.data(SdkBytes.fromByteArray(body));
         putRecordRequest.streamName(getEndpoint().getConfiguration().getStreamName());
-        if (partitionKey == null) {
-            throw new IllegalArgumentException("Partition key must be specified");
-        }
-
+        ensurePartitionKeyNotNull(partitionKey);
         putRecordRequest.partitionKey(partitionKey.toString());
 
         if (sequenceNumber != null) {
@@ -107,10 +104,7 @@ public class Kinesis2Producer extends DefaultProducer {
 
         PutRecordsRequestEntry.Builder putRecordsRequestEntry = PutRecordsRequestEntry.builder();
         putRecordsRequestEntry.data(SdkBytes.fromByteArray(body));
-        if (partitionKey == null) {
-            throw new IllegalArgumentException("Partition key must be specified");
-        }
-
+        ensurePartitionKeyNotNull(partitionKey);
         putRecordsRequestEntry.partitionKey(partitionKey.toString());
         return putRecordsRequestEntry.build();
     }
@@ -141,5 +135,11 @@ public class Kinesis2Producer extends DefaultProducer {
         super.doStart();
 
         ObjectHelper.notNull(connection, "connection", this);
+    }
+
+    private void ensurePartitionKeyNotNull(Object partitionKey) {
+        if (partitionKey == null) {
+            throw new IllegalArgumentException("Partition key must be specified");
+        }
     }
 }

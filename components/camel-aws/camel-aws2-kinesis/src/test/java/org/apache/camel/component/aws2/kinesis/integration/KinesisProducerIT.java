@@ -49,6 +49,7 @@ import software.amazon.awssdk.services.kinesis.model.Record;
 
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KinesisProducerIT extends CamelTestSupport {
@@ -61,9 +62,6 @@ public class KinesisProducerIT extends CamelTestSupport {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
-
-    @EndpointInject("mock:result")
-    private MockEndpoint result;
 
     private String streamName = AWSCommon.KINESIS_STREAM_BASE_NAME + "-" + TestUtils.randomWithRange(0, 100);
     private List<Record> recordList;
@@ -94,8 +92,6 @@ public class KinesisProducerIT extends CamelTestSupport {
     @DisplayName("Tests that can produce data to a Kinesis instance")
     @Test
     public void send() {
-        result.expectedMessageCount(2);
-
         template.send("direct:start", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "partition-1");
             exchange.getIn().setBody("Kinesis Event 1.");
@@ -124,6 +120,10 @@ public class KinesisProducerIT extends CamelTestSupport {
             exchange.getIn().setBody("Kinesis Event 5.");
         });
 
+        Exchange exchange6 = template.send("direct:start", ExchangePattern.InOut, exchange -> {
+            exchange.getIn().setBody("Kinesis Event 6 without partition key.");
+        });
+
         List<Record> records;
         Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(5, consumeMessages()));
@@ -138,6 +138,7 @@ public class KinesisProducerIT extends CamelTestSupport {
         assertEquals("partition-1", recordList.get(3).partitionKey());
         assertEquals("Kinesis Event 5.", recordList.get(4).data().asString(StandardCharsets.UTF_8));
         assertEquals("partition-1", recordList.get(4).partitionKey());
+        assertNotNull(exchange6.getException());
     }
 
     @Override
