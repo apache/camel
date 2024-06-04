@@ -56,4 +56,4 @@ runs:
       if: always()
       with:
         name: incremental-${{ inputs.mode }}-${{ inputs.artifact-upload-suffix }}.log
-        path: incremental-${{ inputs.mode }}-${{ inputs.artifact-upload-suffix }}.log
+        path: incremental-${{ inputs.mode }}.log
