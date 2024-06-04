@@ -78,14 +78,14 @@
         <awaitility-version>4.2.1</awaitility-version>
         <aws-java-sdk2-version>2.25.65</aws-java-sdk2-version>
         <aws-xray-version>2.16.0</aws-xray-version>
-        <azure-sdk-bom-version>1.2.23</azure-sdk-bom-version>
+        <azure-sdk-bom-version>1.2.24</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.21</azure-storage-blob-changefeed-version>
-        <beanio-version>3.0.0</beanio-version>
+        <beanio-version>3.0.1</beanio-version>
         <bouncycastle-version>1.78</bouncycastle-version>
         <box-java-sdk-version>4.9.0</box-java-sdk-version>
         <braintree-gateway-version>3.34.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.0</build-helper-maven-plugin-version>
-        <bytebuddy-version>1.14.16</bytebuddy-version>
+        <bytebuddy-version>1.14.17</bytebuddy-version>
         <c3p0-version>0.10.1</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
         <californium-version>3.11.0</californium-version>
@@ -183,7 +183,7 @@
         <jaxb-jxc-version>4.0.5</jaxb-jxc-version>
         <gmavenplus-plugin-version>3.0.2</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.23.0</google-auth-library-oauth2-http-version>
-        <google-api-client-version>2.5.1</google-api-client-version>
+        <google-api-client-version>2.6.0</google-api-client-version>
         <google-api-services-drive-version>v3-rev20240509-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20240517-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20240514-2.0.0</google-api-services-sheets-version>
@@ -210,7 +210,7 @@
         <hamcrest-version>2.2</hamcrest-version>
         <hapi-version>2.5.1</hapi-version>
         <hapi-base-version>2.5.1</hapi-base-version>
-        <hapi-fhir-version>7.2.0</hapi-fhir-version>
+        <hapi-fhir-version>7.2.1</hapi-fhir-version>
         <hazelcast-version>5.3.7</hazelcast-version>
         <hdrhistrogram-version>2.2.1</hdrhistrogram-version>
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
