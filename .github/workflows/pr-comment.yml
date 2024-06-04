@@ -68,3 +68,4 @@ jobs:
           pr-id: ${{ github.event.issue.number }}
           comment-id: ${{ github.event.comment.id }}
           comment-body: ${{ github.event.comment.body }}
+          artifact-upload-suffix: java-${{ matrix.java }}

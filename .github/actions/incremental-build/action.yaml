@@ -35,6 +35,10 @@ inputs:
     description: 'The GitHub repository name (example, apache/camel)'
     required: false
     default: 'apache/camel'
+  artifact-upload-suffix:
+    description: 'Suffix for artifacts stored'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -51,5 +55,5 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: incremental-${{ inputs.mode }}.log
-        path: incremental-${{ inputs.mode }}.log
+        name: incremental-${{ inputs.mode }}-${{ artifact-upload-suffix }}.log
+        path: incremental-${{ inputs.mode }}-${{ artifact-upload-suffix }}.log

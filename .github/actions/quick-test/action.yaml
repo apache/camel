@@ -27,6 +27,10 @@ inputs:
   github-token: # id of input
     description: 'Github hub token'
     required: true
+  artifact-upload-suffix:
+    description: 'Suffix for artifacts stored'
+    required: false
+    default: ''
 outputs:
   result:
     description: "Quick test result"
@@ -53,5 +57,5 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-logs
+        name: test-logs-${{ artifact-upload-suffix }}
         path: automated-build-log/**/*
