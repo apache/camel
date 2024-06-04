@@ -384,6 +384,13 @@ public abstract class CamelTestSupport
         camelContextConfiguration.withCamelContextService(service);
     }
 
+    /**
+     * Common test setup. For internal use.
+     *
+     * @deprecated Use {@link #setupResources()} instead
+     * @throws Exception if unable to setup the test
+     */
+    @Deprecated(since = "4.7.0")
     @BeforeEach
     public void setUp() throws Exception {
         testStartHeader(getClass(), currentTestName);
@@ -403,15 +410,21 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Strategy to perform any pre setup, before {@link CamelContext} is created
+     * Strategy to perform any pre-setup, before the {@link CamelContext} is created. This is for internal Camel usage.
+     *
+     * @deprecated Use {@link #setupResources()} instead
      */
+    @Deprecated(since = "4.7.0")
     protected void doPreSetup() throws Exception {
         // noop
     }
 
     /**
-     * Strategy to perform any post setup after {@link CamelContext} is created
+     * Strategy to perform any post setup after {@link CamelContext} is created. This is for internal Camel usage.
+     *
+     * @deprecated Use {@link #setupResources()} instead
      */
+    @Deprecated(since = "4.7.0")
     protected void doPostSetup() throws Exception {
         // noop
     }
@@ -462,6 +475,13 @@ public abstract class CamelTestSupport
         return Boolean.parseBoolean(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || isDumpRouteCoverage();
     }
 
+    /**
+     * Common test tear down. For internal use.
+     *
+     * @deprecated Use {@link #cleanupResources()} instead
+     * @throws Exception if unable to setup the test
+     */
+    @Deprecated(since = "4.7.0")
     @AfterEach
     public void tearDown() throws Exception {
         long time = watch.taken();
@@ -487,20 +507,25 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Strategy to perform any post action, after {@link CamelContext} is stopped
+     * Strategy to perform any post-action, after {@link CamelContext} is stopped.
+     * This is meant for internal Camel usage and should not be used by user classes.
+     * @deprecated use {@link #cleanupResources()} instead.
      */
+    @Deprecated(since = "4.7.0")
     protected void doPostTearDown() throws Exception {
         // noop
     }
 
     /**
-     * Strategy to perform resources setup, before {@link CamelContext} is created
+     * Strategy to set up resources, before {@link CamelContext} is created.
+     * This is meant to be used by resources that must be available before the context is created.
+     * Do not use this as a replacement for tasks that can be handled using JUnit's annotations.
      */
     protected void setupResources() throws Exception {
     }
 
     /**
-     * Strategy to perform resources cleanup, after {@link CamelContext} is stopped
+     * Strategy to cleanup resources, after {@link CamelContext} is stopped
      */
     protected void cleanupResources() throws Exception {
         // noop
@@ -511,8 +536,10 @@ public abstract class CamelTestSupport
      * <p/>
      * Will default use 10 seconds.
      *
+     * @deprecated use the accessors from {@link #camelContextConfiguration()}
      * @return the timeout to use
      */
+    @Deprecated(since = "4.7.0")
     protected int getShutdownTimeout() {
         return camelContextConfiguration.shutdownTimeout();
     }
@@ -552,6 +579,12 @@ public abstract class CamelTestSupport
         return camelContextConfiguration.ignoreMissingLocationWithPropertiesComponent();
     }
 
+    /**
+     * Internal method. Do not use.
+     *
+     * @deprecated use {@link #setupResources()} or the JUnit's annotation instead of this method
+     * @throws Exception
+     */
     @Deprecated(since = "4.7.0")
     protected void postProcessTest() throws Exception {
         context = contextManager.context();
