@@ -29,6 +29,8 @@ public class JdbcAggregationRepositoryRecoverExistingTest extends AbstractJdbcAg
 
     @Override
     void configureJdbcAggregationRepository() {
+        super.configureJdbcAggregationRepository();
+
         repo.setReturnOldExchange(true);
         repo.setUseRecovery(true);
     }
@@ -37,6 +39,8 @@ public class JdbcAggregationRepositoryRecoverExistingTest extends AbstractJdbcAg
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 // no routes added by default
             }
         };

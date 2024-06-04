@@ -27,6 +27,8 @@ public class JdbcAggregateRecoverDeadLetterChannelTest extends AbstractJdbcAggre
 
     @Override
     void configureJdbcAggregationRepository() {
+        super.configureJdbcAggregationRepository();
+
         // enable recovery
         repo.setUseRecovery(true);
         // exhaust after at most 3 attempts
@@ -60,6 +62,8 @@ public class JdbcAggregateRecoverDeadLetterChannelTest extends AbstractJdbcAggre
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)

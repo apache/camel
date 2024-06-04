@@ -27,6 +27,8 @@ public class JdbcAggregationRepositoryTest extends AbstractJdbcAggregationTestSu
 
     @Override
     void configureJdbcAggregationRepository() {
+        super.configureJdbcAggregationRepository();
+
         repo.setReturnOldExchange(true);
     }
 

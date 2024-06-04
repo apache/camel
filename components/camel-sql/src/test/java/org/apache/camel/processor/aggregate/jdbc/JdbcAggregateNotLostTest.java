@@ -62,6 +62,8 @@ public class JdbcAggregateNotLostTest extends AbstractJdbcAggregationTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)
