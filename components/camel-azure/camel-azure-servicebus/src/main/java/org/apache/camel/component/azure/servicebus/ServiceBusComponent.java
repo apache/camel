@@ -88,7 +88,7 @@ public class ServiceBusComponent extends DefaultComponent {
     }
 
     private void validateConfigurations(final ServiceBusConfiguration configuration) {
-        if (configuration.getProcessorClient() == null || configuration.getSenderAsyncClient() == null) {
+        if (configuration.getProcessorClient() == null || configuration.getSenderClient() == null) {
             if (ObjectHelper.isEmpty(configuration.getConnectionString()) &&
                     ObjectHelper.isEmpty(configuration.getFullyQualifiedNamespace())) {
                 throw new IllegalArgumentException(

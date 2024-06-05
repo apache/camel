@@ -79,9 +79,9 @@ public final class ServiceBusClientFactory {
         return processorClientBuilder;
     }
 
-    public ServiceBusSenderAsyncClient createServiceBusSenderAsyncClient(final ServiceBusConfiguration configuration) {
+    public ServiceBusSenderClient createServiceBusSenderClient(final ServiceBusConfiguration configuration) {
         return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
-                .buildAsyncClient();
+                .buildClient();
     }
 
     public ServiceBusProcessorClient createServiceBusProcessorClient(

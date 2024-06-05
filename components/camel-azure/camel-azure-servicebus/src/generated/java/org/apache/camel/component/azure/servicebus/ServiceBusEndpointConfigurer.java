@@ -62,8 +62,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": target.getConfiguration().setProxyOptions(property(camelContext, com.azure.core.amqp.ProxyOptions.class, value)); return true;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": target.getConfiguration().setScheduledEnqueueTime(property(camelContext, java.time.OffsetDateTime.class, value)); return true;
-        case "senderasyncclient":
-        case "senderAsyncClient": target.getConfiguration().setSenderAsyncClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusSenderAsyncClient.class, value)); return true;
+        case "senderclient":
+        case "senderClient": target.getConfiguration().setSenderClient(property(camelContext, com.azure.messaging.servicebus.ServiceBusSenderClient.class, value)); return true;
         case "servicebusreceivemode":
         case "serviceBusReceiveMode": target.getConfiguration().setServiceBusReceiveMode(property(camelContext, com.azure.messaging.servicebus.models.ServiceBusReceiveMode.class, value)); return true;
         case "servicebustransactioncontext":
@@ -82,7 +82,7 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"processorClient", "senderAsyncClient"};
+        return new String[]{"processorClient", "senderClient"};
     }
 
     @Override
@@ -127,8 +127,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": return com.azure.core.amqp.ProxyOptions.class;
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return java.time.OffsetDateTime.class;
-        case "senderasyncclient":
-        case "senderAsyncClient": return com.azure.messaging.servicebus.ServiceBusSenderAsyncClient.class;
+        case "senderclient":
+        case "senderClient": return com.azure.messaging.servicebus.ServiceBusSenderClient.class;
         case "servicebusreceivemode":
         case "serviceBusReceiveMode": return com.azure.messaging.servicebus.models.ServiceBusReceiveMode.class;
         case "servicebustransactioncontext":
@@ -188,8 +188,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "proxyOptions": return target.getConfiguration().getProxyOptions();
         case "scheduledenqueuetime":
         case "scheduledEnqueueTime": return target.getConfiguration().getScheduledEnqueueTime();
-        case "senderasyncclient":
-        case "senderAsyncClient": return target.getConfiguration().getSenderAsyncClient();
+        case "senderclient":
+        case "senderClient": return target.getConfiguration().getSenderClient();
         case "servicebusreceivemode":
         case "serviceBusReceiveMode": return target.getConfiguration().getServiceBusReceiveMode();
         case "servicebustransactioncontext":
