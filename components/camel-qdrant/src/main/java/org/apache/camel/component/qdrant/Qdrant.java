@@ -25,7 +25,7 @@ public class Qdrant {
     }
 
     public static class Headers {
-        @Metadata(description = "The action to be performed.", javaType = "String", enums = "UPSERT,RETRIEVE,DELETE")
+        @Metadata(description = "The action to be performed.", javaType = "String", enums = "CREATE_COLLECTION,DELETE_COLLECTION,UPSERT,RETRIEVE,DELETE,COLLECTION_INFO")
         public static final String ACTION = "CamelQdrantAction";
 
         @Metadata(description = "Payload Selector.", javaType = "io.qdrant.client.grpc.Points$WithPayloadSelector")
