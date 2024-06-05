@@ -84,11 +84,13 @@ public class DefaultRequestValidator implements RequestValidator {
             Object body = message.getBody();
             if (body != null) {
                 String text = MessageHelper.extractBodyAsString(message);
-                JsonMapper om = new JsonMapper();
-                try {
-                    om.readTree(text);
-                } catch (Exception e) {
-                    validationErrors.add("Unable to parse JSON");
+                if (text != null) {
+                    JsonMapper om = new JsonMapper();
+                    try {
+                        om.readTree(text);
+                    } catch (Exception e) {
+                        validationErrors.add("Unable to parse JSON");
+                    }
                 }
             }
         }

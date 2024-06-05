@@ -18,15 +18,18 @@ package org.apache.camel.support.processor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.ResolverHelper;
 
 /**
  * Factory to create {@link RestBindingAdvice} from the given configuration.
@@ -117,8 +120,7 @@ public class RestBindingAdviceFactory {
 
         RestClientRequestValidator validator = null;
         if (bc.isClientRequestValidation()) {
-            // TODO: lookup custom validator and fallback to default
-            validator = new DefaultRestClientRequestValidator();
+            validator = lookupRestClientRequestValidator(camelContext);
         }
 
         return new RestBindingAdvice(
@@ -176,6 +178,21 @@ public class RestBindingAdviceFactory {
         }
 
         setAdditionalConfiguration(camelContext, config, outJson, "json.out.");
+    }
+
+    protected static RestClientRequestValidator lookupRestClientRequestValidator(CamelContext camelContext) {
+        RestClientRequestValidator answer = CamelContextHelper.findSingleByType(camelContext, RestClientRequestValidator.class);
+        if (answer == null) {
+            // lookup via classpath to find custom factory
+            Optional<RestClientRequestValidator> result = ResolverHelper.resolveService(
+                    camelContext,
+                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                    RestClientRequestValidator.FACTORY,
+                    RestClientRequestValidator.class);
+            // else use a default implementation
+            answer = result.orElseGet(DefaultRestClientRequestValidator::new);
+        }
+        return answer;
     }
 
     private static void setAdditionalConfiguration(
