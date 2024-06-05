@@ -133,21 +133,19 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             }
         }
 
-        // the mapper is pre initialized
-        Mapper mapper = language.lookup(expression)
-                .orElse(language.computeIfMiss(expression, () -> {
-                MapperBuilder builder = new MapperBuilder(expression)
-                        .withInputNames("body")
-                        .withImports(resolveImports(language))
-                        .withLibrary(CML.getInstance())
-                        .withDefaultOutput(MediaTypes.APPLICATION_JAVA);
+        Mapper mapper = language.computeIfMiss(expression, () -> {
+            MapperBuilder builder = new MapperBuilder(expression)
+                    .withInputNames("body")
+                    .withImports(resolveImports(language))
+                    .withLibrary(CML.getInstance())
+                    .withDefaultOutput(MediaTypes.APPLICATION_JAVA);
 
-                Set<Library> additionalLibraries = exchange.getContext().getRegistry().findByType(com.datasonnet.spi.Library.class);
-                for (Library lib : additionalLibraries) {
-                    builder = builder.withLibrary(lib);
-                }
-                return builder.build();
-            }));
+            Set<Library> additionalLibraries = exchange.getContext().getRegistry().findByType(com.datasonnet.spi.Library.class);
+            for (Library lib : additionalLibraries) {
+                builder = builder.withLibrary(lib);
+            }
+            return builder.build();
+        });
 
         MediaType outMT = outputMediaType;
         if (outMT == null) {
