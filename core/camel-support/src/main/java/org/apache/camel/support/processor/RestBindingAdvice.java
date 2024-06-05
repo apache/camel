@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support.processor;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,6 +30,7 @@ import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
+import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -39,8 +39,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 /**
  * Used for Rest DSL with binding to json/xml for incoming requests and outgoing responses.
@@ -60,6 +58,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     private static final String STATE_JSON = "json";
     private static final String STATE_XML = "xml";
 
+    private final RestClientRequestValidator clientRequestValidator;
     private final AsyncProcessor jsonUnmarshal;
     private final AsyncProcessor xmlUnmarshal;
     private final AsyncProcessor jsonMarshal;
@@ -90,7 +89,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                              Map<String, String> queryDefaultValues,
                              Map<String, String> queryAllowedValues,
                              boolean requiredBody, Set<String> requiredQueryParameters,
-                             Set<String> requiredHeaders) throws Exception {
+                             Set<String> requiredHeaders,
+                             RestClientRequestValidator clientRequestValidator) throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -144,6 +144,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         this.requiredQueryParameters = requiredQueryParameters;
         this.requiredHeaders = requiredHeaders;
         this.enableNoContentResponse = enableNoContentResponse;
+        this.clientRequestValidator = clientRequestValidator;
     }
 
     @Override
@@ -212,28 +213,22 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         String accept = exchange.getMessage().getHeader("Accept", String.class);
         state.put(STATE_KEY_ACCEPT, accept);
 
+        // add missing default values which are mapped as headers
+        if (queryDefaultValues != null) {
+            for (Map.Entry<String, String> entry : queryDefaultValues.entrySet()) {
+                if (exchange.getIn().getHeader(entry.getKey()) == null) {
+                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
         // perform client request validation
         if (clientRequestValidation) {
-            // check if the content-type is accepted according to consumes
-            if (!isValidOrAcceptedContentType(consumes, contentType)) {
-                LOG.trace("Consuming content type does not match contentType header {}. Stopping routing.", contentType);
-                // the content-type is not something we can process so its a HTTP_ERROR 415
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
-                // set empty response body as http error code indicate the problem
-                exchange.getMessage().setBody(null);
-                // stop routing and return
-                exchange.setRouteStop(true);
-                return;
-            }
-
-            // check if what is produces is accepted by the client
-            if (!isValidOrAcceptedContentType(produces, accept)) {
-                LOG.trace("Produced content type does not match accept header {}. Stopping routing.", contentType);
-                // the response type is not accepted by the client so its a HTTP_ERROR 406
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
-                // set empty response body as http error code indicate the problem
-                exchange.getMessage().setBody(null);
-                // stop routing and return
+            RestClientRequestValidator.ValidationContext vc = new RestClientRequestValidator.ValidationContext(consumes, produces, requiredBody, queryDefaultValues, queryAllowedValues, requiredQueryParameters, requiredHeaders);
+            RestClientRequestValidator.ValidationError error = clientRequestValidator.validate(exchange, vc);
+            if (error != null) {
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
+                exchange.getMessage().setBody(error.body());
                 exchange.setRouteStop(true);
                 return;
             }
@@ -253,85 +248,10 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                     } else {
                         exchange.getIn().setBody(body);
                     }
-
                     if (isXml && isJson) {
                         // we have still not determined between xml or json, so check the body if its xml based or not
                         isXml = body.startsWith("<");
                         isJson = !isXml;
-                    }
-                }
-            }
-        }
-
-        // add missing default values which are mapped as headers
-        if (queryDefaultValues != null) {
-            for (Map.Entry<String, String> entry : queryDefaultValues.entrySet()) {
-                if (exchange.getIn().getHeader(entry.getKey()) == null) {
-                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-
-        // check for required
-        if (clientRequestValidation) {
-            if (requiredBody) {
-                // the body is required so we need to know if we have a body or not
-                // so force reading the body as a String which we can work with
-                if (body == null) {
-                    body = MessageHelper.extractBodyAsString(exchange.getIn());
-                    if (ObjectHelper.isNotEmpty(body)) {
-                        exchange.getIn().setBody(body);
-                    }
-                }
-                if (ObjectHelper.isEmpty(body)) {
-                    // this is a bad request, the client did not include a message body
-                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                    exchange.getMessage().setBody("The request body is missing.");
-                    // stop routing and return
-                    exchange.setRouteStop(true);
-                    return;
-                }
-                // special check if binding mode is off and then incoming body is json based
-                // then we still want to ensure the body can be parsed as json
-                if (bindingMode.equals("off") && !isXml) {
-                    if (isValidOrAcceptedContentType("application/json", contentType)) {
-                        isJson = true;
-                    }
-                }
-            }
-            if (requiredQueryParameters != null
-                    && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
-                // this is a bad request, the client did not include some required query parameters
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                exchange.getMessage().setBody("Some of the required query parameters are missing.");
-                // stop routing and return
-                exchange.setRouteStop(true);
-                return;
-            }
-            if (requiredHeaders != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredHeaders)) {
-                // this is a bad request, the client did not include some required http headers
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                exchange.getMessage().setBody("Some of the required HTTP headers are missing.");
-                // stop routing and return
-                exchange.setRouteStop(true);
-                return;
-            }
-            // allowed values for query/header parameters
-            if (queryAllowedValues != null) {
-                for (var e : queryAllowedValues.entrySet()) {
-                    String k = e.getKey();
-                    Object v = exchange.getMessage().getHeader(k);
-                    if (v != null) {
-                        String[] parts = e.getValue().split(",");
-                        if (Arrays.stream(parts).noneMatch(v::equals)) {
-                            // this is a bad request, the client did not include some required query parameters
-                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                            exchange.getMessage()
-                                    .setBody("Some of the query parameters or HTTP headers has a not-allowed value.");
-                            // stop routing and return
-                            exchange.setRouteStop(true);
-                            return;
-                        }
                     }
                 }
             }

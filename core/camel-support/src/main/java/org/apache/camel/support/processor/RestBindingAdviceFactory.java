@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
@@ -114,13 +115,19 @@ public class RestBindingAdviceFactory {
             }
         }
 
+        RestClientRequestValidator validator = null;
+        if (bc.isClientRequestValidation()) {
+            // TODO: lookup custom validator and fallback to default
+            validator = new DefaultRestClientRequestValidator();
+        }
+
         return new RestBindingAdvice(
                 camelContext, json, jaxb, outJson, outJaxb,
                 bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
                 bc.isEnableCORS(),
                 bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
                 bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
-                bc.getRequiredHeaders());
+                bc.getRequiredHeaders(), validator);
     }
 
     protected static void setupJson(
