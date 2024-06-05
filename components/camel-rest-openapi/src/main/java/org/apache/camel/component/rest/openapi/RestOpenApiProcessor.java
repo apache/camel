@@ -118,7 +118,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
             // binding mode
             RestConfiguration config = camelContext.getRestConfiguration();
-            RestConfiguration.RestBindingMode bindingMode = config.getBindingMode();
 
             // map path-parameters from operation to camel headers
             HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), uri, rcp.getConsumerPath());
@@ -178,7 +177,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         bc.setBindingMode(mode.name());
         bc.setEnableCORS(config.isEnableCORS());
         bc.setCorsHeaders(config.getCorsHeaders());
-        bc.setClientRequestValidation(config.isClientRequestValidation());
+        bc.setClientRequestValidation(config.isClientRequestValidation() || endpoint.isClientRequestValidation());
         bc.setEnableNoContentResponse(config.isEnableNoContentResponse());
         bc.setSkipBindingOnErrorCode(config.isSkipBindingOnErrorCode());
 
