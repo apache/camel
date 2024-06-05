@@ -265,7 +265,7 @@ log sensitive data from the message itself.
 |uuid(type) |String |Returns an UUID using the Camel `UuidGenerator`.
 You can choose between `default`, `classic`, `short` and `simple` as the type.
 If no type is given the default is used. It is also possible to use a custom `UuidGenerator`
-and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator}`
+and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}`
 where the ID is _myGenerator_.
 
 |hash(exp,algorithm) |String |Returns a hashed value (string in hex decimal) using JDK MessageDigest.
