@@ -291,6 +291,13 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                     exchange.setRouteStop(true);
                     return;
                 }
+                // special check if binding mode is off and then incoming body is json based
+                // then we still want to ensure the body can be parsed as json
+                if (bindingMode.equals("off") && !isXml) {
+                    if (isValidOrAcceptedContentType("application/json", contentType)) {
+                        isJson = true;
+                    }
+                }
             }
             if (requiredQueryParameters != null
                     && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {

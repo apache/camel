@@ -42,23 +42,12 @@ public class RestBindingAdviceFactory {
     public static RestBindingAdvice build(CamelContext camelContext, RestBindingConfiguration bc) throws Exception {
         String mode = bc.getBindingMode();
 
-        if ("off".equals(mode)) {
-            // binding mode is off, so create off mode binding processor
-            return new RestBindingAdvice(
-                    camelContext, null, null, null, null,
-                    bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
-                    bc.isEnableCORS(),
-                    bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
-                    bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(),
-                    bc.getRequiredQueryParameters(),
-                    bc.getRequiredHeaders());
-        }
-
         // setup json data format
         RestConfiguration config = camelContext.getRestConfiguration();
         DataFormat json = null;
         DataFormat outJson = null;
-        if (mode.contains("json") || "auto".equals(mode)) {
+        // include json if we have client request validator as we need a json parser
+        if (mode.contains("json") || "auto".equals(mode) || bc.isClientRequestValidation()) {
             String name = config.getJsonDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
@@ -70,10 +59,18 @@ public class RestBindingAdviceFactory {
             } else {
                 name = "jackson";
             }
-            // this will create a new instance as the name was not already
-            // pre-created
-            json = camelContext.createDataFormat(name);
-            outJson = camelContext.createDataFormat(name);
+            boolean optional = "off".equals(mode) && bc.isClientRequestValidation();
+            // this will create a new instance as the name was not already pre-created
+            if (optional) {
+                try {
+                    json = camelContext.createDataFormat(name);
+                } catch (IllegalArgumentException e) {
+                    // ignore
+                }
+            } else {
+                json = camelContext.createDataFormat(name);
+                outJson = camelContext.createDataFormat(name);
+            }
 
             if (json != null) {
                 setupJson(camelContext, config,
