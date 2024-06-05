@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.spi.TransformerResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;

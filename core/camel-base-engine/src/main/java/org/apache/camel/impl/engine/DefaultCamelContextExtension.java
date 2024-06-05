@@ -122,8 +122,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile InflightRepository inflightRepository;
     private volatile UuidGenerator uuidGenerator;
     private volatile Tracer tracer;
-    private volatile TransformerRegistry<TransformerKey> transformerRegistry;
-    private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
+    private volatile TransformerRegistry transformerRegistry;
+    private volatile ValidatorRegistry validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile EndpointServiceRegistry endpointServiceRegistry;
     private volatile TypeConverter typeConverter;

@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.spi.TransformerLoader;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TransformerResolver;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Default implementation of {@link org.apache.camel.spi.TransformerRegistry}.
  */
 public class DefaultTransformerRegistry extends AbstractDynamicRegistry<TransformerKey, Transformer>
-        implements TransformerRegistry<TransformerKey> {
+        implements TransformerRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTransformerRegistry.class);
 

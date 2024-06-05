@@ -22,9 +22,9 @@ import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultTransformerResolver;
-import org.apache.camel.impl.engine.TransformerKey;
 import org.apache.camel.main.stub.StubTransformer;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 
 public final class StubTransformerResolver extends DefaultTransformerResolver {
     private final Set<String> names;

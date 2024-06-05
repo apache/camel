@@ -162,12 +162,14 @@ import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorKey;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
@@ -4064,9 +4066,9 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract EndpointRegistry createEndpointRegistry(
             Map<NormalizedEndpointUri, Endpoint> endpoints);
 
-    protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry();
+    protected abstract TransformerRegistry createTransformerRegistry();
 
-    protected abstract ValidatorRegistry<ValidatorKey> createValidatorRegistry();
+    protected abstract ValidatorRegistry createValidatorRegistry();
 
     protected abstract VariableRepositoryFactory createVariableRepositoryFactory();
 

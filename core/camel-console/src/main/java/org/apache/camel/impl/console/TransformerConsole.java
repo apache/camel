@@ -36,7 +36,7 @@ public class TransformerConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        TransformerRegistry<?> reg = getCamelContext().getTransformerRegistry();
+        TransformerRegistry reg = getCamelContext().getTransformerRegistry();
         sb.append(String.format("\n    Size: %s", reg.size()));
         sb.append(String.format("\n    Dynamic Size: %s", reg.dynamicSize()));
         sb.append(String.format("\n    Static Size: %s", reg.staticSize()));
@@ -59,7 +59,7 @@ public class TransformerConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        TransformerRegistry<?> reg = getCamelContext().getTransformerRegistry();
+        TransformerRegistry reg = getCamelContext().getTransformerRegistry();
         root.put("size", reg.size());
         root.put("dynamicSize", reg.dynamicSize());
         root.put("staticSize", reg.staticSize());
@@ -71,7 +71,7 @@ public class TransformerConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static JsonArray toJsonArray(TransformerRegistry<?> reg) {
+    private static JsonArray toJsonArray(TransformerRegistry reg) {
         JsonArray arr = new JsonArray();
         for (Map.Entry<?, Transformer> entry : reg.entrySet()) {
             Transformer t = entry.getValue();
