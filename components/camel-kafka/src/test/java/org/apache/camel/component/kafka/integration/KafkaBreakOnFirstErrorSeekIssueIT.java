@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
              architectures = { "amd64", "aarch64" },
              disabledReason = "This test does not run reliably on some platforms")
 
-class KafkaBreakOnFirstErrorSeekIssueIT extends BaseExclusiveKafkaTestSupport {
+class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-19894";
     public static final String TOPIC = "breakOnFirstError-19894";
