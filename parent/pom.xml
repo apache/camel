@@ -156,7 +156,7 @@
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.19.0</flink-version>
         <fop-version>2.9</fop-version>
-        <formatter-maven-plugin-version>2.24.0</formatter-maven-plugin-version>
+        <formatter-maven-plugin-version>2.24.1</formatter-maven-plugin-version>
         <ftpserver-version>1.2.0</ftpserver-version>
         <freemarker-version>2.3.33</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
