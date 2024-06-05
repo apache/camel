@@ -94,8 +94,11 @@ public abstract class CamelTestSupport
     private final CamelContextConfiguration camelContextConfiguration;
 
     private CamelContextManager contextManager;
+    private final ContextManagerFactory contextManagerFactory;
 
-    protected CamelTestSupport() {
+    protected CamelTestSupport(ContextManagerFactory contextManagerFactory) {
+        this.contextManagerFactory = contextManagerFactory;
+
         testConfigurationBuilder = new TestExecutionConfiguration();
         testConfigurationBuilder.withJMX(useJmx())
                 .withUseRouteBuilder(isUseRouteBuilder())
@@ -114,6 +117,10 @@ public abstract class CamelTestSupport
                 .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
                 .withMockEndpoints(isMockEndpoints())
                 .withMockEndpointsAndSkip(isMockEndpointsAndSkip());
+    }
+
+    protected CamelTestSupport() {
+        this(new ContextManagerFactory());
     }
 
     @Override
@@ -136,7 +143,8 @@ public abstract class CamelTestSupport
     public void beforeEach(ExtensionContext context) throws Exception {
         if (contextManager == null) {
             LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
-            contextManager = new TransientCamelContextManager(testConfigurationBuilder, camelContextConfiguration);
+            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_EACH,
+                    testConfigurationBuilder, camelContextConfiguration);
         }
 
         currentTestName = context.getDisplayName();
@@ -156,7 +164,8 @@ public abstract class CamelTestSupport
         if (perClassPresent) {
             LOG.trace("Creating a legacy context manager for {}", context.getDisplayName());
             testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
-            contextManager = new LegacyCamelContextManager(testConfigurationBuilder, camelContextConfiguration);
+            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_ALL,
+                    testConfigurationBuilder, camelContextConfiguration);
         }
 
         ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
