@@ -1,0 +1,19 @@
+= Openapi Validator Component
+:doctitle: Openapi Validator
+:shortname: openapi-validator
+:artifactid: camel-openapi-validator
+:description: OpenAPI validator for Camel Rest DSL
+:since: 4.7
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The OpenAPI Validator component is used for plugin a OpenAPI specific client request validator
+for the Camel Rest DSL.
+
+This validator uses the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator].
+
+== Auto-detection from classpath
+
+To use this implementation all you need to do is to add the `camel-openapi-validator` dependency to the classpath.

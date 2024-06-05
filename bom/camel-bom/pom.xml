@@ -1534,6 +1534,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-openapi-validator</artifactId>
+        <version>4.7.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-opensearch</artifactId>
         <version>4.7.0-SNAPSHOT</version>
       </dependency>

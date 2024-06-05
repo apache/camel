@@ -462,6 +462,7 @@
         <swagger-openapi3-version>2.2.22</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>
         <swagger-openapi3-java-parser-version>2.1.22</swagger-openapi3-java-parser-version>
+        <swagger-request-validator-version>2.24.0</swagger-request-validator-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <testcontainers-version>1.19.8</testcontainers-version>
@@ -1938,6 +1939,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-openapi-java</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-openapi-validator</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -1,0 +1,1 @@
+../../../../../components/camel-openapi-validator/src/main/docs/openapi-validator.adoc
