@@ -285,7 +285,7 @@
         <jira-rest-client-api-version>5.2.7</jira-rest-client-api-version>
         <libthrift-version>0.20.0</libthrift-version>
         <jodatime2-version>2.12.7</jodatime2-version>
-        <jolokia-version>2.0.2</jolokia-version>
+        <jolokia-version>2.0.3</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
         <jooq-version>3.19.9</jooq-version>

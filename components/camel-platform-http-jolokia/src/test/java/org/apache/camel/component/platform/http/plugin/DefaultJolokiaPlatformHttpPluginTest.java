@@ -54,7 +54,7 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
         String type = (String) request.get("type");
 
         assertEquals("version", type);
-        assertEquals("2.0.2", agentVersion);
+        assertEquals("2.0.3", agentVersion);
     }
 
     private PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
