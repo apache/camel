@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntConsumer;
 
@@ -32,19 +33,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
+import org.apache.camel.test.junit5.util.CamelContextTestHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.test.junit5.util.ExtensionHelper.normalizeUri;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -244,6 +252,19 @@ public final class TestSupport {
     }
 
     /**
+     * Asserts that the given language name and expression evaluates to the given value on a specific exchange
+     */
+    public static void assertExpression(
+            CamelContext context, Exchange exchange, String languageName, String expressionText, Object expectedValue) {
+        Language language = assertResolveLanguage(context, languageName);
+
+        Expression expression = language.createExpression(expressionText);
+        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
+
+        assertExpression(expression, exchange, expectedValue);
+    }
+
+    /**
      * Asserts that a given list has a single element.
      */
     public static <T> T assertOneElement(List<T> list) {
@@ -377,6 +398,30 @@ public final class TestSupport {
     public static void assertFileNotExists(String filename) {
         File file = new File(filename);
         assertFalse(file.exists(), "File " + filename + " should not exist");
+    }
+
+    /**
+     * Asserts that the language name can be resolved
+     */
+    @Deprecated(since = "4.7.0")
+    public static Language assertResolveLanguage(CamelContext context, String languageName) {
+        Language language = context.resolveLanguage(languageName);
+        assertNotNull(language, "No language found for name: " + languageName);
+        return language;
+    }
+
+    /**
+     * Asserts that the given language name and predicate expression evaluates to the expected value on the message
+     * exchange
+     */
+    public static void assertPredicate(
+            CamelContext context, String languageName, String expressionText, Exchange exchange, boolean expected) {
+        Language language = assertResolveLanguage(context, languageName);
+
+        Predicate predicate = language.createPredicate(expressionText);
+        assertNotNull(predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
+
+        assertPredicate(predicate, exchange, expected);
     }
 
     // -----------------------------------------------------------------------
@@ -596,5 +641,79 @@ public final class TestSupport {
             task.accept(i);
             Thread.sleep(timeUnit.toMillis(interval));
         }
+    }
+
+    public static <T extends Endpoint> T getMandatoryEndpoint(CamelContext context, String uri, Class<T> type) {
+        T endpoint = context.getEndpoint(uri, type);
+        assertNotNull(endpoint, "No endpoint found for uri: " + uri);
+        return endpoint;
+    }
+
+    public static Endpoint getMandatoryEndpoint(CamelContext context, String uri) {
+        Endpoint endpoint = context.getEndpoint(uri);
+        assertNotNull(endpoint, "No endpoint found for uri: " + uri);
+        return endpoint;
+    }
+
+    public static void sendBody(
+            ProducerTemplate template, String endpointUri, final Object body, final Map<String, Object> headers) {
+        template.send(endpointUri, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody(body);
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                in.setHeader(entry.getKey(), entry.getValue());
+            }
+        });
+    }
+
+    /**
+     * Sends a message to the given endpoint URI with the body value
+     *
+     * @param endpointUri the URI of the endpoint to send to
+     * @param body        the body for the message
+     */
+    public static void sendBody(ProducerTemplate template, String endpointUri, final Object body) {
+        template.send(endpointUri, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody(body);
+        });
+    }
+
+    /**
+     * Sends a message to the given endpoint URI with the body value
+     *
+     * @param template    the producer template to use to send the messages
+     * @param endpointUri the URI of the endpoint to send to
+     * @param bodies      the bodies for the message
+     */
+    public static void sendBodies(ProducerTemplate template, String endpointUri, Object... bodies) {
+        for (Object body : bodies) {
+            sendBody(template, endpointUri, body);
+        }
+    }
+
+    /**
+     * Resolves the {@link MockEndpoint} using a URI of the form <code>mock:someName</code>, optionally creating it if
+     * it does not exist. This implementation will lookup existing mock endpoints and match on the mock queue name, eg
+     * mock:foo and mock:foo?retainFirst=5 would match as the queue name is foo.
+     *
+     * @param  uri                     the URI which typically starts with "mock:" and has some name
+     * @param  create                  whether to allow the endpoint to be created if it doesn't exist
+     * @return                         the mock endpoint or an {@link NoSuchEndpointException} is thrown if it could not
+     *                                 be resolved
+     * @throws NoSuchEndpointException is the mock endpoint does not exist
+     */
+    public static MockEndpoint getMockEndpoint(CamelContext context, String uri, boolean create)
+            throws NoSuchEndpointException {
+        // look for existing mock endpoints that have the same queue name, and
+        // to
+        // do that we need to normalize uri and strip out query parameters and
+        // whatnot
+        final String normalizedUri = normalizeUri(uri);
+        // strip query
+        final String target = StringHelper.before(normalizedUri, "?", normalizedUri);
+
+        // lookup endpoints in registry and try to find it
+        return CamelContextTestHelper.lookupEndpoint(context, uri, create, target);
     }
 }

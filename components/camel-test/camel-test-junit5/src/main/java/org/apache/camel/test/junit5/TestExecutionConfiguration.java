@@ -18,6 +18,7 @@
 package org.apache.camel.test.junit5;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 
 /**
  * This configuration class allows tweaking how the test itself configured and enable/disable features that affect its
@@ -75,11 +76,20 @@ public class TestExecutionConfiguration {
         return this;
     }
 
+    /**
+     * Whether route coverage is enabled
+     *
+     * @return true if enabled or false otherwise
+     */
     public boolean isRouteCoverageEnabled() {
-        return Boolean.parseBoolean(
-                System.getProperty(CamelTestSupport.ROUTE_COVERAGE_ENABLED, "false")) || isDumpRouteCoverage();
+        return CamelContextTestHelper.isRouteCoverageEnabled(isDumpRouteCoverage());
     }
 
+    /**
+     * Whether to use advice with
+     *
+     * @return
+     */
     public boolean isUseAdviceWith() {
         return useAdviceWith;
     }
