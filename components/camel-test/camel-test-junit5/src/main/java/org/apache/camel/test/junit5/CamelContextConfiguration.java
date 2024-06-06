@@ -54,7 +54,6 @@ public final class CamelContextConfiguration {
         void postSetup() throws Exception;
     }
 
-
     private String routeFilterIncludePattern;
     private String routeFilterExcludePattern;
     private Registry registry;
@@ -129,8 +128,8 @@ public final class CamelContextConfiguration {
     /**
      * Sets a custom {@link Registry}.
      * <p>
-     * However, if you need to bind beans to the registry, then this is possible already with the bind method on registry,
-     * and there is no need to use this method.
+     * However, if you need to bind beans to the registry, then this is possible already with the bind method on
+     * registry, and there is no need to use this method.
      */
     public CamelContextConfiguration withRegistry(Registry registry) {
         this.registry = registry;
@@ -210,9 +209,9 @@ public final class CamelContextConfiguration {
      * Whether to ignore missing locations with the {@link PropertiesComponent}. For example, when unit testing, you may
      * want to ignore locations that are not available in the environment used for testing.
      *
-     * @param ignoreMissingLocationWithPropertiesComponent Use <tt>true</tt> to ignore, <tt>false</tt> to not ignore, and
-     *                                                    <tt>null</tt> to leave it
-     *                                                    as configured on the {@link PropertiesComponent}
+     * @param ignoreMissingLocationWithPropertiesComponent Use <tt>true</tt> to ignore, <tt>false</tt> to not ignore,
+     *                                                     and <tt>null</tt> to leave it as configured on the
+     *                                                     {@link PropertiesComponent}
      */
     public CamelContextConfiguration withIgnoreMissingLocationWithPropertiesComponent(
             Boolean ignoreMissingLocationWithPropertiesComponent) {
@@ -226,6 +225,7 @@ public final class CamelContextConfiguration {
 
     /**
      * To set a supplier for the CamelContext
+     *
      * @param camelContextSupplier A supplier for the Camel context
      */
     CamelContextConfiguration withCamelContextSupplier(
@@ -237,7 +237,6 @@ public final class CamelContextConfiguration {
     public RegistryBinder registryBinder() {
         return registryBinder;
     }
-
 
     /**
      * A supplier to create a custom {@link Registry}.
@@ -298,6 +297,7 @@ public final class CamelContextConfiguration {
 
     /**
      * To replace from routes with a different one
+     *
      * @param routeId
      * @param fromEndpoint
      */
@@ -311,6 +311,7 @@ public final class CamelContextConfiguration {
 
     /**
      * Set set a custom post-test processor
+     *
      * @param postProcessor the post-test processor to use
      */
     CamelContextConfiguration withPostProcessor(

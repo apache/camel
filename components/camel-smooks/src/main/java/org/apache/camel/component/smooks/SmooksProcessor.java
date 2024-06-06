@@ -134,16 +134,18 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private void setupSmooksReporting(final ExecutionContext executionContext) {
         if (reportPath != null) {
             try {
-                executionContext.getContentDeliveryRuntime().addExecutionEventListener(new HtmlReportGenerator(reportPath, executionContext.getApplicationContext()));
+                executionContext.getContentDeliveryRuntime().addExecutionEventListener(
+                        new HtmlReportGenerator(reportPath, executionContext.getApplicationContext()));
             } catch (final IOException e) {
-                LOG.warn("Cannot generate Smooks Report. The reportPath specified was [" + reportPath + "]. This exception is ignored.", e);
+                LOG.warn("Cannot generate Smooks Report. The reportPath specified was [" + reportPath
+                         + "]. This exception is ignored.",
+                        e);
             }
         }
     }
 
     private Source getSource(final Exchange exchange) {
         Object payload = exchange.getIn().getBody();
-
 
         if (payload instanceof SAXSource) {
             return new StreamSource((Reader) ((SAXSource) payload).getXMLReader());
@@ -183,9 +185,9 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     /**
      * Add a visitor instance.
      *
-     * @param visitor        The visitor implementation.
-     * @param targetSelector The message fragment target selector.
-     * @return This instance.
+     * @param  visitor        The visitor implementation.
+     * @param  targetSelector The message fragment target selector.
+     * @return                This instance.
      */
     public SmooksProcessor addVisitor(Visitor visitor, String targetSelector) {
         selectorVisitorMap.put(targetSelector, visitor);
@@ -193,11 +195,10 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     }
 
     /**
-     * Add a visitor instance to <code>this</code> Smooks instance via a
-     * {@link VisitorAppender}.
+     * Add a visitor instance to <code>this</code> Smooks instance via a {@link VisitorAppender}.
      *
-     * @param appender The visitor appender.
-     * @return This instance.
+     * @param  appender The visitor appender.
+     * @return          This instance.
      */
     public SmooksProcessor addVisitor(VisitorAppender appender) {
         visitorAppender.add(appender);
@@ -209,7 +210,8 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     }
 
     private Smooks createSmooks() {
-        final SmooksFactory smooksFactory = (SmooksFactory) camelContext.getRegistry().lookupByName(SmooksFactory.class.getName());
+        final SmooksFactory smooksFactory
+                = (SmooksFactory) camelContext.getRegistry().lookupByName(SmooksFactory.class.getName());
         return smooksFactory != null ? smooksFactory.createInstance() : new Smooks();
     }
 

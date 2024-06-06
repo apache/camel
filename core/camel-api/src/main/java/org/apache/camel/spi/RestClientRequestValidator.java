@@ -51,19 +51,19 @@ public interface RestClientRequestValidator {
      * @param requiredHeaders         names of HTTP headers parameters that are required
      */
     record ValidationContext(String consumes, String produces,
-                             boolean requiredBody,
-                             Map<String, String> queryDefaultValues,
-                             Map<String, String> queryAllowedValues,
-                             Set<String> requiredQueryParameters,
-                             Set<String> requiredHeaders) {
+            boolean requiredBody,
+            Map<String, String> queryDefaultValues,
+            Map<String, String> queryAllowedValues,
+            Set<String> requiredQueryParameters,
+            Set<String> requiredHeaders) {
     }
 
     /**
      * Validates the incoming client request
      *
-     * @param exchange          the current exchange
-     * @param validationContent validation context
-     * @return the validation error, or <tt>null</tt> if success
+     * @param  exchange          the current exchange
+     * @param  validationContent validation context
+     * @return                   the validation error, or <tt>null</tt> if success
      */
     ValidationError validate(Exchange exchange, ValidationContext validationContent);
 

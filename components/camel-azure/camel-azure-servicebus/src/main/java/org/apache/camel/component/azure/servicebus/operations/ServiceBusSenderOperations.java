@@ -123,6 +123,7 @@ public class ServiceBusSenderOperations {
             return StreamSupport.stream(client.scheduleMessages(messages, scheduledEnqueueTime).spliterator(), false).toList();
         }
 
-        return StreamSupport.stream(client.scheduleMessages(messages, scheduledEnqueueTime, context).spliterator(), false).toList();
+        return StreamSupport.stream(client.scheduleMessages(messages, scheduledEnqueueTime, context).spliterator(), false)
+                .toList();
     }
 }

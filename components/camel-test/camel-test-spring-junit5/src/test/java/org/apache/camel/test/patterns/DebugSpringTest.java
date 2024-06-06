@@ -36,7 +36,6 @@ public class DebugSpringTest extends CamelSpringTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DebugSpringTest.class);
     private boolean debugged;
 
-
     @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();

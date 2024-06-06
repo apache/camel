@@ -224,7 +224,9 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
 
         // perform client request validation
         if (clientRequestValidation) {
-            RestClientRequestValidator.ValidationContext vc = new RestClientRequestValidator.ValidationContext(consumes, produces, requiredBody, queryDefaultValues, queryAllowedValues, requiredQueryParameters, requiredHeaders);
+            RestClientRequestValidator.ValidationContext vc = new RestClientRequestValidator.ValidationContext(
+                    consumes, produces, requiredBody, queryDefaultValues, queryAllowedValues, requiredQueryParameters,
+                    requiredHeaders);
             RestClientRequestValidator.ValidationError error = clientRequestValidator.validate(exchange, vc);
             if (error != null) {
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());

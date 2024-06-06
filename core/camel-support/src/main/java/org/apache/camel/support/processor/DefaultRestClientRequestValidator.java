@@ -45,13 +45,13 @@ public class DefaultRestClientRequestValidator implements RestClientRequestValid
         }
         // check for required query parameters
         if (validationContext.requiredQueryParameters() != null
-            && !exchange.getIn().getHeaders().keySet().containsAll(validationContext.requiredQueryParameters())) {
+                && !exchange.getIn().getHeaders().keySet().containsAll(validationContext.requiredQueryParameters())) {
             // this is a bad request, the client did not include some required query parameters
             return new ValidationError(400, "Some of the required query parameters are missing.");
         }
         // check for required http headers
         if (validationContext.requiredHeaders() != null
-            && !exchange.getIn().getHeaders().keySet().containsAll(validationContext.requiredHeaders())) {
+                && !exchange.getIn().getHeaders().keySet().containsAll(validationContext.requiredHeaders())) {
             // this is a bad request, the client did not include some required query parameters
             return new ValidationError(400, "Some of the required HTTP headers are missing.");
         }
@@ -64,7 +64,8 @@ public class DefaultRestClientRequestValidator implements RestClientRequestValid
                     String[] parts = e.getValue().split(",");
                     if (Arrays.stream(parts).noneMatch(v::equals)) {
                         // this is a bad request, the client did not include some required query parameters
-                        return new ValidationError(400, "Some of the query parameters or HTTP headers has a not-allowed value.");
+                        return new ValidationError(
+                                400, "Some of the query parameters or HTTP headers has a not-allowed value.");
                     }
                 }
             }

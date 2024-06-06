@@ -56,7 +56,7 @@ public class Dhis2ResourceTablesTestCase {
 
             @Override
             public InputStream read() {
-                return new ByteArrayInputStream(new byte[]{});
+                return new ByteArrayInputStream(new byte[] {});
             }
 
             @Override

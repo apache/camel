@@ -35,8 +35,10 @@ public class SmooksComponent extends DefaultComponent {
         return endpoint;
     }
 
-    protected void configureSmooksProcessor(SmooksProcessor smooksProcessor, String uri, String remaining,
-                                            Map<String, Object> parameters) throws Exception {
+    protected void configureSmooksProcessor(
+            SmooksProcessor smooksProcessor, String uri, String remaining,
+            Map<String, Object> parameters)
+            throws Exception {
         setProperties(smooksProcessor, parameters);
     }
 

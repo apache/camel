@@ -30,8 +30,8 @@ import org.smooks.io.payload.JavaSource;
 import org.smooks.io.payload.JavaSourceWithoutEventStream;
 
 /**
- * SourceConverter is a Camel {@link Converter} that converts from different
- * formats to {@link Source} instances. </p>
+ * SourceConverter is a Camel {@link Converter} that converts from different formats to {@link Source} instances.
+ * </p>
  */
 @Converter(generateLoader = true)
 public class SourceConverter {

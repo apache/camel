@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class QdrantDeleteCollectionIT extends QdrantTestSupport {
     @EndpointInject("qdrant:collectionForDeletion")
     QdrantEndpoint qdrantEndpoint;
-    
+
     @Test
     @Order(1)
     public void createCollection() {

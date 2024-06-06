@@ -151,8 +151,8 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the proxy configuration to use for ServiceBusSenderClient. When a proxy is configured, AMQP_WEB_SOCKETS
-     * must be used for the transport type.
+     * Sets the proxy configuration to use for ServiceBusSenderClient. When a proxy is configured, AMQP_WEB_SOCKETS must
+     * be used for the transport type.
      */
     public ProxyOptions getProxyOptions() {
         return proxyOptions;

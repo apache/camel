@@ -74,5 +74,4 @@ public class Coordinate {
         return "Coordinate [x=" + x + ", y=" + y + "]";
     }
 
-
 }

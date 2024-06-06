@@ -77,17 +77,17 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
         // create the topic w/ more than 1 partitions
         final NewTopic mytopic = new NewTopic(TOPIC, PARTITION_COUNT, (short) 1);
-	    CreateTopicsResult r = kafkaAdminClient.createTopics(Collections.singleton(mytopic));
-	    
-	    // This wait is necessary to ensure that required number of partitions are actually created
-	    Awaitility.await()
-	        .timeout(20, TimeUnit.SECONDS)
-	        .pollDelay(5, TimeUnit.SECONDS)
-	        .untilAsserted(() -> assertTrue(r.numPartitions(TOPIC).isDone())); 	    
+        CreateTopicsResult r = kafkaAdminClient.createTopics(Collections.singleton(mytopic));
+
+        // This wait is necessary to ensure that required number of partitions are actually created
+        Awaitility.await()
+                .timeout(20, TimeUnit.SECONDS)
+                .pollDelay(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(r.numPartitions(TOPIC).isDone()));
 
     }
 
-   @BeforeEach
+    @BeforeEach
     public void init() {
 
         // setup the producer
@@ -105,23 +105,21 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
         kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC)).all();
     }
 
-  
-   
     @Test
     void testCamel19894TestFix() throws Exception {
         to.reset();
         // will consume the payloads from partition 0
         // and will continually retry the payload with "6"
-        // Changed from 4 to 5 to ensure that at least something gets read from partition 1 
-        to.expectedMessageCount(5); 
-        
-        to.expectedBodiesReceived("1", "2", "3", "4", "5"); // message 6 onwards will not be received because of exception + breakOnFirstError=true       													
-        								
-        contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);     
+        // Changed from 4 to 5 to ensure that at least something gets read from partition 1
+        to.expectedMessageCount(5);
 
-        assertEquals(PARTITION_COUNT,  producer.partitionsFor(TOPIC).size());  
+        to.expectedBodiesReceived("1", "2", "3", "4", "5"); // message 6 onwards will not be received because of exception + breakOnFirstError=true
+
+        contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
+
+        assertEquals(PARTITION_COUNT, producer.partitionsFor(TOPIC).size());
         //Test relies on multiple partitions but expects the poller to stop reading after the errored message
-        // Increase the delay in setupTopic if this assert fails too frequently 
+        // Increase the delay in setupTopic if this assert fails too frequently
 
         this.publishMessagesToKafka();
 
@@ -141,7 +139,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-    	
+
         return new RouteBuilder() {
 
             @Override
@@ -183,19 +181,18 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
     private void publishMessagesToKafka() {
         final List<String> producedRecordsPartition1 = List.of("5", "6", "7", "8", "9", "10", "11");
         final List<String> producedRecordsPartition0 = List.of("1", "2", "3", "4");
-       
 
         producedRecordsPartition0.forEach(v -> {
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 0, "k0", v); //CAMEL-20680: kept explicit partition 0, added key.
             producer.send(data);
         });
-            
+
         producedRecordsPartition1.forEach(v -> {
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, 1, "k1", v);
-            producer.send(data); 
+            producer.send(data);
         });  //CAMEL-20680: restored loop that publishes to partition1, but with reduced execution time
-		// See changes in setupTopic() and testCamel19894TestFix just before publishMessagesToKafka().
-		// This loop is required by the original fix for CAMEL-19894    
+        // See changes in setupTopic() and testCamel19894TestFix just before publishMessagesToKafka().
+        // This loop is required by the original fix for CAMEL-19894
 
     }
 

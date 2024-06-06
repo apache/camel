@@ -150,7 +150,8 @@ public class RestOpenApiReader {
         // contract first, then load the specification as-is and use as response
         for (RestDefinition rest : rests) {
             if (rest.getOpenApi() != null) {
-                Resource res = PluginHelper.getResourceLoader(camelContext).resolveResource(rest.getOpenApi().getSpecification());
+                Resource res
+                        = PluginHelper.getResourceLoader(camelContext).resolveResource(rest.getOpenApi().getSpecification());
                 if (res != null && res.exists()) {
                     InputStream is = res.getInputStream();
                     String data = IOHelper.loadText(is);
@@ -167,7 +168,8 @@ public class RestOpenApiReader {
                             String scheme = "http";
                             int port = 0;
                             host = RestComponentHelper.resolveRestHostName(host, restConfig);
-                            EmbeddedHttpService server = CamelContextHelper.findSingleByType(camelContext, EmbeddedHttpService.class);
+                            EmbeddedHttpService server
+                                    = CamelContextHelper.findSingleByType(camelContext, EmbeddedHttpService.class);
                             if (server != null) {
                                 scheme = server.getScheme();
                                 port = server.getServerPort();

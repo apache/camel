@@ -31,44 +31,51 @@ public interface CamelContextManager {
 
     /**
      * Creates a new CamelContext
-     * @param test the test instance requesting the next context
+     *
+     * @param  test      the test instance requesting the next context
      * @throws Exception if unable to create the context
      */
     void createCamelContext(Object test) throws Exception;
 
     /**
      * A callback method to be executed before starting the context
-     * @param test
+     *
+     * @param  test
      * @throws Exception
      */
     void beforeContextStart(Object test) throws Exception;
 
     /**
      * Gets the reference to the CamelContext instance
+     *
      * @return the CamelContext instance
      */
     ModelCamelContext context();
 
     /**
      * Gets the reference to the producer template created during initialization
+     *
      * @return the producer template instance
      */
     ProducerTemplate template();
 
     /**
      * Gets the reference to the fluent producer template created during initialization
+     *
      * @return the fluent producer template instance
      */
     FluentProducerTemplate fluentTemplate();
 
     /**
      * Gets the reference to the consumer template created during initialization
+     *
      * @return the consumer template instance
      */
     ConsumerTemplate consumer();
 
     /**
      * When a separate service is used to manage the context lifecycle, this returns the reference to that service
+     *
      * @return the reference to the context lifecycle service
      */
     @Deprecated(since = "4.7.0")
@@ -76,6 +83,7 @@ public interface CamelContextManager {
 
     /**
      * Starts the context
+     *
      * @throws Exception if unable to start the context for any reason
      */
     void startCamelContext() throws Exception;
@@ -97,6 +105,7 @@ public interface CamelContextManager {
 
     /**
      * Sets the JUnit's data context that may be used to provide additional information for some tests
+     *
      * @param globalStore JUnit's data context instance
      */
     void setGlobalStore(ExtensionContext.Store globalStore);

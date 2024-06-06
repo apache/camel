@@ -52,7 +52,7 @@ public class TransientCamelContextManager implements CamelContextManager {
     private ExtensionContext.Store globalStore;
 
     public TransientCamelContextManager(TestExecutionConfiguration testConfigurationBuilder,
-            CamelContextConfiguration camelContextConfiguration) {
+                                        CamelContextConfiguration camelContextConfiguration) {
         this.testConfigurationBuilder = testConfigurationBuilder;
         this.camelContextConfiguration = camelContextConfiguration;
 
@@ -63,7 +63,6 @@ public class TransientCamelContextManager implements CamelContextManager {
     public void createCamelContext(Object test) throws Exception {
         initialize(test);
     }
-
 
     @Override
     public void beforeContextStart(Object test) throws Exception {
@@ -76,7 +75,8 @@ public class TransientCamelContextManager implements CamelContextManager {
 
         // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX) or if
         // the component camel-debug is in the classpath
-        if (testConfigurationBuilder.isJmxEnabled() || testConfigurationBuilder.isRouteCoverageEnabled() || isCamelDebugPresent()) {
+        if (testConfigurationBuilder.isJmxEnabled() || testConfigurationBuilder.isRouteCoverageEnabled()
+                || isCamelDebugPresent()) {
             enableJMX();
         } else {
             disableJMX();
@@ -151,7 +151,6 @@ public class TransientCamelContextManager implements CamelContextManager {
         CamelContextTestHelper.configurePropertiesComponent(context, extra, new JunitPropertiesSource(globalStore), ignore);
     }
 
-
     private void setupRoutes() throws Exception {
         RoutesBuilder[] builders = camelContextConfiguration.routesSupplier().createRouteBuilders();
 
@@ -163,7 +162,8 @@ public class TransientCamelContextManager implements CamelContextManager {
     private void tryStartCamelContext() throws Exception {
         boolean skip = CamelContextTestHelper.isSkipAutoStartContext(testConfigurationBuilder);
         if (skip) {
-            LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true or auto start context is false.");
+            LOG.info(
+                    "Skipping starting CamelContext as system property skipStartingCamelContext is set to be true or auto start context is false.");
         } else if (testConfigurationBuilder.isUseAdviceWith()) {
             LOG.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
         } else {
@@ -257,7 +257,8 @@ public class TransientCamelContextManager implements CamelContextManager {
     protected void applyCamelPostProcessor(Object test) throws Exception {
         // use the bean post processor if the test class is not dependency
         // injected already by Spring Framework
-        boolean spring = ExtensionHelper.hasClassAnnotation(test.getClass(), "org.springframework.context.annotation.ComponentScan");
+        boolean spring
+                = ExtensionHelper.hasClassAnnotation(test.getClass(), "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
             PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(test,
                     test.getClass().getName());

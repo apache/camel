@@ -27,7 +27,8 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * EDI, XML, CSV, etc. based data transformation using Smooks.
  */
-@UriEndpoint(firstVersion = "4.7.0", scheme = "smooks", title = "Smooks", syntax = "smooks:smooksConfig", category = { Category.TRANSFORMATION })
+@UriEndpoint(firstVersion = "4.7.0", scheme = "smooks", title = "Smooks", syntax = "smooks:smooksConfig",
+             category = { Category.TRANSFORMATION })
 public class SmooksEndpoint extends ProcessorEndpoint {
 
     @UriPath(description = "Smooks XML configuration file")

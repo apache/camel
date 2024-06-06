@@ -67,8 +67,8 @@ public class TestExecutionConfiguration {
      * You can also turn on route coverage globally via setting JVM system property
      * <tt>CamelTestRouteCoverage=true</tt>.
      *
-     * @param dumpRouteCoverage <tt>true</tt> to write route coverage status in an xml file in the <tt>target/camel-route-coverage</tt>
-     *                          directory after the test has finished.
+     * @param dumpRouteCoverage <tt>true</tt> to write route coverage status in an xml file in the
+     *                          <tt>target/camel-route-coverage</tt> directory after the test has finished.
      */
     public TestExecutionConfiguration withDumpRouteCoverage(boolean dumpRouteCoverage) {
         this.dumpRouteCoverage = dumpRouteCoverage;
@@ -85,8 +85,8 @@ public class TestExecutionConfiguration {
     }
 
     /**
-     * Set when using <a href="http://camel.apache.org/advicewith.html">advice with</a> and return <tt>true</tt>.
-     * This helps to know that advice with is to be used, and {@link CamelContext} will not be started before the advice with
+     * Set when using <a href="http://camel.apache.org/advicewith.html">advice with</a> and return <tt>true</tt>. This
+     * helps to know that advice with is to be used, and {@link CamelContext} will not be started before the advice with
      * takes place. This helps by ensuring the advice with has been property setup before the {@link CamelContext} is
      * started
      * <p/>
@@ -116,7 +116,7 @@ public class TestExecutionConfiguration {
      * <p/>
      *
      * @deprecated Do not use
-     * @return <tt>true</tt> per class, <tt>false</tt> per test.
+     * @return     <tt>true</tt> per class, <tt>false</tt> per test.
      */
     @Deprecated(since = "4.7.0")
     TestExecutionConfiguration withCreateCamelContextPerClass(boolean createCamelContextPerClass) {
@@ -145,8 +145,9 @@ public class TestExecutionConfiguration {
 
     /**
      * Sets to auto-start the context of not.
-     * @param autoStartContext
-     * @deprecated Do not use
+     *
+     * @param      autoStartContext
+     * @deprecated                  Do not use
      */
     @Deprecated(since = "4.7.0")
     public TestExecutionConfiguration withAutoStartContext(boolean autoStartContext) {

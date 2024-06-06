@@ -45,12 +45,9 @@ public class SmooksComponentTest extends CamelTestSupport {
         Exchange exchange = mockEndpoint.assertExchangeReceived(0);
 
         assertIsInstanceOf(Document.class, exchange.getIn().getBody());
-        assertFalse(DiffBuilder.compare(StreamUtils.readStreamAsString(getClass().getResourceAsStream("/xml/expected-order.xml"), "UTF-8")).
-                withTest(exchange.getIn().getBody(String.class)).
-                ignoreComments().
-                ignoreWhitespace().
-                build().
-                hasDifferences());
+        assertFalse(DiffBuilder
+                .compare(StreamUtils.readStreamAsString(getClass().getResourceAsStream("/xml/expected-order.xml"), "UTF-8"))
+                .withTest(exchange.getIn().getBody(String.class)).ignoreComments().ignoreWhitespace().build().hasDifferences());
     }
 
     @Override
@@ -64,4 +61,3 @@ public class SmooksComponentTest extends CamelTestSupport {
         };
     }
 }
-

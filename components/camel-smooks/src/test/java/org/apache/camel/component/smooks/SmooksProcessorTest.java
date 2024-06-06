@@ -86,11 +86,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
         Exchange exchange = result.assertExchangeReceived(0);
         assertIsInstanceOf(Document.class, exchange.getIn().getBody());
-        assertFalse(DiffBuilder.compare(getExpectedOrderXml()).withTest(exchange.getIn().getBody(String.class)).
-                ignoreComments().
-                ignoreWhitespace().
-                build().
-                hasDifferences());
+        assertFalse(DiffBuilder.compare(getExpectedOrderXml()).withTest(exchange.getIn().getBody(String.class)).ignoreComments()
+                .ignoreWhitespace().build().hasDifferences());
     }
 
     @Test
@@ -112,7 +109,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
         template.send("direct://input", exchange);
 
-        final DataHandler datahandler = result.assertExchangeReceived(0).getIn(AttachmentMessage.class).getAttachment(attachmentId);
+        final DataHandler datahandler
+                = result.assertExchangeReceived(0).getIn(AttachmentMessage.class).getAttachment(attachmentId);
         assertThat(datahandler, is(notNullValue()));
         assertThat(datahandler.getContent(), is(instanceOf(ByteArrayInputStream.class)));
 
@@ -139,7 +137,9 @@ public class SmooksProcessorTest extends CamelTestSupport {
                 Smooks smooks = new Smooks().setExports(new Exports(JavaResult.class));
                 from("direct:a")
                         .process(new SmooksProcessor(smooks, context)
-                                .addVisitor(new Value("customer", "/order/header/customer", String.class, smooks.getApplicationContext().getRegistry())));
+                                .addVisitor(new Value(
+                                        "customer", "/order/header/customer", String.class,
+                                        smooks.getApplicationContext().getRegistry())));
             }
 
         });
@@ -160,9 +160,9 @@ public class SmooksProcessorTest extends CamelTestSupport {
         deleteDirectory("target/smooks");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("file://target/smooks").
-                        process(new SmooksProcessor(new Smooks().setExports(new Exports(StringResult.class)), context)).
-                        to("mock:a");
+                from("file://target/smooks")
+                        .process(new SmooksProcessor(new Smooks().setExports(new Exports(StringResult.class)), context))
+                        .to("mock:a");
             }
         });
         context.start();
@@ -184,12 +184,14 @@ public class SmooksProcessorTest extends CamelTestSupport {
             public void configure() {
                 from("direct:a")
                         .process(new SmooksProcessor(smooks, context)
-                                .addVisitor(new Value("x", "/coord/@x", Integer.class, smooks.getApplicationContext().getRegistry())));
+                                .addVisitor(new Value(
+                                        "x", "/coord/@x", Integer.class, smooks.getApplicationContext().getRegistry())));
             }
         });
         enableJMX();
         context.start();
-        Exchange response = template.request("direct:a", exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' />")));
+        Exchange response
+                = template.request("direct:a", exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' />")));
         assertEquals(1234, response.getMessage().getBody(Integer.class));
     }
 
@@ -199,13 +201,14 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:b").process(new SmooksProcessor(smooks, context).
-                        addVisitor(new Value("x", "/coord/@x", Integer.class, smooks.getApplicationContext().getRegistry())).
-                        addVisitor(new Value("y", "/coord/@y", Double.class, smooks.getApplicationContext().getRegistry())));
+                from("direct:b").process(new SmooksProcessor(smooks, context)
+                        .addVisitor(new Value("x", "/coord/@x", Integer.class, smooks.getApplicationContext().getRegistry()))
+                        .addVisitor(new Value("y", "/coord/@y", Double.class, smooks.getApplicationContext().getRegistry())));
             }
         });
         context.start();
-        Exchange response = template.request("direct:b", exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' y='98765.76' />")));
+        Exchange response = template.request("direct:b",
+                exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' y='98765.76' />")));
         Map javaResult = response.getOut().getBody(Map.class);
         Integer x = (Integer) javaResult.get("x");
         assertEquals(1234, (int) x);
@@ -219,14 +222,14 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:c").process(new SmooksProcessor(smooks, context).
-                        addVisitor(new Bean(Coordinate.class, "coordinate", smooks.getApplicationContext().getRegistry()).
-                                bindTo("x", "/coord/@x").
-                                bindTo("y", "/coord/@y")));
+                from("direct:c").process(new SmooksProcessor(smooks, context)
+                        .addVisitor(new Bean(Coordinate.class, "coordinate", smooks.getApplicationContext().getRegistry())
+                                .bindTo("x", "/coord/@x").bindTo("y", "/coord/@y")));
             }
         });
         context.start();
-        Exchange response = template.request("direct:c", exchange -> exchange.getIn().setBody(new StringSource("<coord x='111' y='222' />")));
+        Exchange response = template.request("direct:c",
+                exchange -> exchange.getIn().setBody(new StringSource("<coord x='111' y='222' />")));
 
         Coordinate coord = response.getMessage().getBody(Coordinate.class);
 
