@@ -789,7 +789,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setEndpointServiceRegistry(EndpointServiceRegistry endpointServiceRegistry) {
-        this.endpointServiceRegistry = camelContext.getInternalServiceManager().addService(camelContext, endpointServiceRegistry);
+        this.endpointServiceRegistry
+                = camelContext.getInternalServiceManager().addService(camelContext, endpointServiceRegistry);
     }
 
     ValidatorRegistry getValidatorRegistry() {

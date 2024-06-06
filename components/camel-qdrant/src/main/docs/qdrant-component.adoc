@@ -39,10 +39,15 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Collection Samples
 
 In the route below, we use the qdrant component to create a collection named _myCollection_ with the given parameters:
+
+=== Create Collection
 
 [tabs]
 ====
@@ -61,6 +66,47 @@ from("direct:in")
     .to("qdrant:myCollection");
 ----
 ====
+
+=== Delete Collection
+
+In the route below, we use the qdrant component to delete a collection named _myCollection_:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(Qdrant.Headers.ACTION)
+        .constant(QdrantAction.DELETE_COLLECTION)
+    .to("qdrant:myCollection");
+----
+====
+
+
+=== Collection Info
+
+In the route below, we use the qdrant component to get information about the collection named `myCollection`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(Qdrant.Headers.ACTION)
+        .constant(QdrantAction.COLLECTION_INFO)
+    .to("qdrant:myCollection")
+    .process(this::process);
+----
+====
+
+If there is a collection, you will receive a reply of type `Collections.CollectionInfo`.
+If there is not, the exchange will contain an exception of type `QdrantActionException` with a cause of type
+`StatusRuntimeException statusRuntimeException` and status `Status.NOT_FOUND`.
+
 
 == Points Samples
 
@@ -131,27 +177,7 @@ from("direct:in")
 ----
 ====
 
-=== INFO
 
-In the route below, we use the qdrant component to get information about the collection named `myCollection`:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:in")
-    .setHeader(Qdrant.Headers.ACTION)
-        .constant(QdrantAction.COLLECTION_INFO)
-    .to("qdrant:myCollection")
-    .process(this::process);
-----
-
-If there is a collection, you will receive a reply of type `Collections.CollectionInfo`.
-If there is not, the exchange will contain an exception of type `QdrantActionException` with a cause of type
-`StatusRuntimeException statusRuntimeException` and status `Status.NOT_FOUND`.
-====
 
 
 

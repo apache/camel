@@ -86,8 +86,8 @@ public class AzureServicebusUriDsl(
   }
 
   /**
-   * Sets the proxy configuration to use for ServiceBusSenderAsyncClient. When a proxy is
-   * configured, AMQP_WEB_SOCKETS must be used for the transport type.
+   * Sets the proxy configuration to use for ServiceBusSenderClient. When a proxy is configured,
+   * AMQP_WEB_SOCKETS must be used for the transport type.
    */
   public fun proxyOptions(proxyOptions: String) {
     it.property("proxyOptions", proxyOptions)
@@ -266,10 +266,10 @@ public class AzureServicebusUriDsl(
   }
 
   /**
-   * Sets SenderAsyncClient to be used in the producer.
+   * Sets senderClient to be used in the producer.
    */
-  public fun senderAsyncClient(senderAsyncClient: String) {
-    it.property("senderAsyncClient", senderAsyncClient)
+  public fun senderClient(senderClient: String) {
+    it.property("senderClient", senderClient)
   }
 
   /**

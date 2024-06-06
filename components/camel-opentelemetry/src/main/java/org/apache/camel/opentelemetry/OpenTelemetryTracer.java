@@ -118,7 +118,8 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             // GlobalOpenTelemetry.get() is always NotNull, falls back to OpenTelemetry.noop()
             tracer = GlobalOpenTelemetry.get().getTracer(instrumentationName);
         }
-        if (traceProcessors && (getTracingStrategy() == null || getTracingStrategy().getClass().isAssignableFrom(NoopTracingStrategy.class))) {
+        if (traceProcessors && (getTracingStrategy() == null
+                || getTracingStrategy().getClass().isAssignableFrom(NoopTracingStrategy.class))) {
             OpenTelemetryTracingStrategy tracingStrategy = new OpenTelemetryTracingStrategy(this);
             tracingStrategy.setPropagateContext(true);
             setTracingStrategy(tracingStrategy);

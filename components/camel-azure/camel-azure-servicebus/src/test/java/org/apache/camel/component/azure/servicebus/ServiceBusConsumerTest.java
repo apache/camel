@@ -97,11 +97,13 @@ public class ServiceBusConsumerTest {
         when(context.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
-        when(ef.create(any(Endpoint.class), anyBoolean())).thenAnswer(invocationOnMock -> DefaultExchange.newFromEndpoint(invocationOnMock.getArgument(0)));
+        when(ef.create(any(Endpoint.class), anyBoolean()))
+                .thenAnswer(invocationOnMock -> DefaultExchange.newFromEndpoint(invocationOnMock.getArgument(0)));
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getServiceBusClientFactory()).thenReturn(clientFactory);
-        when(clientFactory.createServiceBusProcessorClient(any(), processMessageCaptor.capture(), processErrorCaptor.capture())).thenReturn(client);
+        when(clientFactory.createServiceBusProcessorClient(any(), processMessageCaptor.capture(), processErrorCaptor.capture()))
+                .thenReturn(client);
         when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
         when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
     }

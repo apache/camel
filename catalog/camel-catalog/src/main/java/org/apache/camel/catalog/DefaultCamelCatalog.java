@@ -617,6 +617,16 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         } catch (Throwable e) {
             // ignore as catalog can be dynamic changed and older releases may not have newer apis
         }
+        try {
+            for (String name : findBeansNames()) {
+                ArtifactModel<?> am = pojoBeanModel(name);
+                if (matchArtifact(am, groupId, artifactId, version)) {
+                    return am;
+                }
+            }
+        } catch (Throwable e) {
+            // ignore as catalog can be dynamic changed and older releases may not have newer apis
+        }
         return null;
     }
 

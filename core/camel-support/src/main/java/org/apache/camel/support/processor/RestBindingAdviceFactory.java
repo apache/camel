@@ -18,14 +18,18 @@ package org.apache.camel.support.processor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.ResolverHelper;
 
 /**
  * Factory to create {@link RestBindingAdvice} from the given configuration.
@@ -42,23 +46,12 @@ public class RestBindingAdviceFactory {
     public static RestBindingAdvice build(CamelContext camelContext, RestBindingConfiguration bc) throws Exception {
         String mode = bc.getBindingMode();
 
-        if ("off".equals(mode)) {
-            // binding mode is off, so create off mode binding processor
-            return new RestBindingAdvice(
-                    camelContext, null, null, null, null,
-                    bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
-                    bc.isEnableCORS(),
-                    bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
-                    bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(),
-                    bc.getRequiredQueryParameters(),
-                    bc.getRequiredHeaders());
-        }
-
         // setup json data format
         RestConfiguration config = camelContext.getRestConfiguration();
         DataFormat json = null;
         DataFormat outJson = null;
-        if (mode.contains("json") || "auto".equals(mode)) {
+        // include json if we have client request validator as we need a json parser
+        if (mode.contains("json") || "auto".equals(mode) || bc.isClientRequestValidation()) {
             String name = config.getJsonDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
@@ -70,10 +63,18 @@ public class RestBindingAdviceFactory {
             } else {
                 name = "jackson";
             }
-            // this will create a new instance as the name was not already
-            // pre-created
-            json = camelContext.createDataFormat(name);
-            outJson = camelContext.createDataFormat(name);
+            boolean optional = "off".equals(mode) && bc.isClientRequestValidation();
+            // this will create a new instance as the name was not already pre-created
+            if (optional) {
+                try {
+                    json = camelContext.createDataFormat(name);
+                } catch (IllegalArgumentException e) {
+                    // ignore
+                }
+            } else {
+                json = camelContext.createDataFormat(name);
+                outJson = camelContext.createDataFormat(name);
+            }
 
             if (json != null) {
                 setupJson(camelContext, config,
@@ -117,13 +118,18 @@ public class RestBindingAdviceFactory {
             }
         }
 
+        RestClientRequestValidator validator = null;
+        if (bc.isClientRequestValidation()) {
+            validator = lookupRestClientRequestValidator(camelContext);
+        }
+
         return new RestBindingAdvice(
                 camelContext, json, jaxb, outJson, outJaxb,
                 bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
                 bc.isEnableCORS(),
                 bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
                 bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
-                bc.getRequiredHeaders());
+                bc.getRequiredHeaders(), validator);
     }
 
     protected static void setupJson(
@@ -172,6 +178,21 @@ public class RestBindingAdviceFactory {
         }
 
         setAdditionalConfiguration(camelContext, config, outJson, "json.out.");
+    }
+
+    protected static RestClientRequestValidator lookupRestClientRequestValidator(CamelContext camelContext) {
+        RestClientRequestValidator answer = CamelContextHelper.findSingleByType(camelContext, RestClientRequestValidator.class);
+        if (answer == null) {
+            // lookup via classpath to find custom factory
+            Optional<RestClientRequestValidator> result = ResolverHelper.resolveService(
+                    camelContext,
+                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                    RestClientRequestValidator.FACTORY,
+                    RestClientRequestValidator.class);
+            // else use a default implementation
+            answer = result.orElseGet(DefaultRestClientRequestValidator::new);
+        }
+        return answer;
     }
 
     private static void setAdditionalConfiguration(

@@ -1,0 +1,1 @@
+../../../../../components/camel-platform-http-jolokia/src/main/docs/platform-http-jolokia.adoc

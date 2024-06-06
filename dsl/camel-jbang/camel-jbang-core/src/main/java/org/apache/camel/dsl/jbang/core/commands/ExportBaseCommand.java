@@ -148,8 +148,8 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "3.2.5")
-    protected String springBootVersion = "3.2.5";
+                        defaultValue = "3.3.0")
+    protected String springBootVersion = "3.3.0";
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     protected String camelSpringBootVersion;
@@ -163,8 +163,8 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId = "quarkus-bom";
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.11.0")
-    protected String quarkusVersion = "3.11.0";
+                        defaultValue = "3.11.1")
+    protected String quarkusVersion = "3.11.1";
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
@@ -704,11 +704,23 @@ abstract class ExportBaseCommand extends CamelCommand {
         try {
             List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
-                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.0");
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.3");
         } catch (Exception e) {
             // ignore
         }
-        return "3.4.0";
+        return "3.4.3";
+    }
+
+    protected static String jkubeMavenPluginVersion(File settings) {
+        try {
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+            return lines.stream()
+                    .filter(l -> l.startsWith("camel.jbang.jkube-maven-plugin-version=") || l.startsWith("jkube.version="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("1.16.2");
+        } catch (Exception e) {
+            // ignore
+        }
+        return "1.16.2";
     }
 
     protected void safeCopy(File source, File target, boolean override) throws Exception {

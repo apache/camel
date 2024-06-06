@@ -31,6 +31,8 @@ public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAg
 
     @Override
     void configureJdbcAggregationRepository() {
+        super.configureJdbcAggregationRepository();
+
         // enable recovery
         repo.setUseRecovery(true);
         // check faster
@@ -64,6 +66,8 @@ public class JdbcAggregateRecoverWithRedeliveryPolicyTest extends AbstractJdbcAg
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(5).aggregationRepository(repo)

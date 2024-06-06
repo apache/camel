@@ -232,7 +232,6 @@ public final class CamelContextTestHelper {
         }
     }
 
-
     public static boolean isSkipAutoStartContext(TestExecutionConfiguration configuration) {
         return Boolean.parseBoolean(System.getProperty("skipStartingCamelContext")) || !configuration.autoStartContext();
     }

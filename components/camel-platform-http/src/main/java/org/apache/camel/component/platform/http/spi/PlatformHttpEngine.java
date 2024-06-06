@@ -18,11 +18,12 @@ package org.apache.camel.component.platform.http.spi;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
+import org.apache.camel.spi.EmbeddedHttpService;
 
 /**
  * An abstraction of an HTTP Server engine on which HTTP endpoints can be deployed.
  */
-public interface PlatformHttpEngine {
+public interface PlatformHttpEngine extends EmbeddedHttpService {
 
     /**
      * Creates a new {@link PlatformHttpConsumer} for the given {@link PlatformHttpEndpoint}.
@@ -33,11 +34,20 @@ public interface PlatformHttpEngine {
      */
     PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor);
 
-    /**
-     * The port number the HTTP server is using, if possible to determine.
-     */
+    @Override
     default int getServerPort() {
         return 0;
+    }
+
+    @Override
+    default String getScheme() {
+        String scheme = "http";
+        int port = getServerPort();
+        if (port == 443 || port == 8443) {
+            // it's common to use 8443 for SSL on spring-boot
+            scheme = "https";
+        }
+        return scheme;
     }
 
 }

@@ -139,8 +139,8 @@ public interface AzureServicebusComponentBuilderFactory {
         }
     
         /**
-         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * Sets the proxy configuration to use for ServiceBusSenderClient. When
+         * a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
          * The option is a:
@@ -426,18 +426,18 @@ public interface AzureServicebusComponentBuilderFactory {
         }
     
         /**
-         * Sets SenderAsyncClient to be used in the producer.
+         * Sets senderClient to be used in the producer.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderAsyncClient&lt;/code&gt; type.
+         * &lt;code&gt;com.azure.messaging.servicebus.ServiceBusSenderClient&lt;/code&gt; type.
          * 
          * Group: producer
          * 
-         * @param senderAsyncClient the value to set
+         * @param senderClient the value to set
          * @return the dsl builder
          */
-        default AzureServicebusComponentBuilder senderAsyncClient(com.azure.messaging.servicebus.ServiceBusSenderAsyncClient senderAsyncClient) {
-            doSetProperty("senderAsyncClient", senderAsyncClient);
+        default AzureServicebusComponentBuilder senderClient(com.azure.messaging.servicebus.ServiceBusSenderClient senderClient) {
+            doSetProperty("senderClient", senderClient);
             return this;
         }
     
@@ -586,7 +586,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "lazyStartProducer": ((ServiceBusComponent) component).setLazyStartProducer((boolean) value); return true;
             case "producerOperation": getOrCreateConfiguration((ServiceBusComponent) component).setProducerOperation((org.apache.camel.component.azure.servicebus.ServiceBusProducerOperationDefinition) value); return true;
             case "scheduledEnqueueTime": getOrCreateConfiguration((ServiceBusComponent) component).setScheduledEnqueueTime((java.time.OffsetDateTime) value); return true;
-            case "senderAsyncClient": getOrCreateConfiguration((ServiceBusComponent) component).setSenderAsyncClient((com.azure.messaging.servicebus.ServiceBusSenderAsyncClient) value); return true;
+            case "senderClient": getOrCreateConfiguration((ServiceBusComponent) component).setSenderClient((com.azure.messaging.servicebus.ServiceBusSenderClient) value); return true;
             case "serviceBusTransactionContext": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusTransactionContext((com.azure.messaging.servicebus.ServiceBusTransactionContext) value); return true;
             case "autowiredEnabled": ((ServiceBusComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((ServiceBusComponent) component).setConnectionString((java.lang.String) value); return true;

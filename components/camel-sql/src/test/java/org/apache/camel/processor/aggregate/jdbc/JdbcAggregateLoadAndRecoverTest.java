@@ -75,6 +75,8 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 onException(IllegalStateException.class)
                         .maximumRedeliveries(3)
                         .redeliveryDelay(100L);

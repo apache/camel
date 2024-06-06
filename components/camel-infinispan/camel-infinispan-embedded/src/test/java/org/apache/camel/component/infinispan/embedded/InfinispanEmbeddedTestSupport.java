@@ -42,7 +42,7 @@ public class InfinispanEmbeddedTestSupport extends InfinispanTestSupport {
         cacheContainer.administration()
                 .withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
                 .getOrCreateCache(
-                        InfinispanTestSupport.TEST_CACHE,
+                        getCacheName(),
                         getConfiguration().build());
 
         super.setupResources();

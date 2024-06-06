@@ -94,29 +94,33 @@ public abstract class CamelTestSupport
     private final CamelContextConfiguration camelContextConfiguration;
 
     private CamelContextManager contextManager;
+    private final ContextManagerFactory contextManagerFactory;
+
+    protected CamelTestSupport(ContextManagerFactory contextManagerFactory) {
+        this.contextManagerFactory = contextManagerFactory;
+
+        testConfigurationBuilder = new TestExecutionConfiguration();
+        testConfigurationBuilder.withJMX(useJmx())
+                .withUseRouteBuilder(isUseRouteBuilder())
+                .withUseAdviceWith(isUseAdviceWith())
+                .withDumpRouteCoverage(isDumpRouteCoverage());
+
+        camelContextConfiguration = new CamelContextConfiguration();
+
+        camelContextConfiguration
+                .withCamelContextSupplier(this::createCamelContext)
+                .withRegistryBinder(this::bindToRegistry)
+                .withPostProcessor(this::postProcessTest)
+                .withRoutesSupplier(this::createRouteBuilders)
+                .withUseOverridePropertiesWithPropertiesComponent(useOverridePropertiesWithPropertiesComponent())
+                .withRouteFilterExcludePattern(getRouteFilterExcludePattern())
+                .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
+                .withMockEndpoints(isMockEndpoints())
+                .withMockEndpointsAndSkip(isMockEndpointsAndSkip());
+    }
 
     protected CamelTestSupport() {
-         testConfigurationBuilder = new TestExecutionConfiguration();
-         testConfigurationBuilder.withJMX(useJmx())
-                 .withUseRouteBuilder(isUseRouteBuilder())
-                 .withUseAdviceWith(isUseAdviceWith())
-                 .withDumpRouteCoverage(isDumpRouteCoverage());
-
-
-         camelContextConfiguration = new CamelContextConfiguration();
-
-         camelContextConfiguration
-                 .withCamelContextSupplier(this::createCamelContext)
-                 .withRegistryBinder(this::bindToRegistry)
-                 .withPostProcessor(this::postProcessTest)
-                 .withRoutesSupplier(this::createRouteBuilders)
-                 .withUseOverridePropertiesWithPropertiesComponent(useOverridePropertiesWithPropertiesComponent())
-                 .withRouteFilterExcludePattern(getRouteFilterExcludePattern())
-                 .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
-                 .withMockEndpoints(isMockEndpoints())
-                 .withMockEndpointsAndSkip(isMockEndpointsAndSkip());
-
-        contextManager = new LegacyCamelContextManager(testConfigurationBuilder, camelContextConfiguration);
+        this(new ContextManagerFactory());
     }
 
     @Override
@@ -126,6 +130,7 @@ public abstract class CamelTestSupport
 
     @Override
     public void beforeTestExecution(ExtensionContext context) throws Exception {
+        LOG.trace("Before test execution {}", context.getDisplayName());
         watch.restart();
     }
 
@@ -136,6 +141,12 @@ public abstract class CamelTestSupport
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        if (contextManager == null) {
+            LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
+            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_EACH,
+                    testConfigurationBuilder, camelContextConfiguration);
+        }
+
         currentTestName = context.getDisplayName();
         ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
         contextManager.setGlobalStore(globalStore);
@@ -148,8 +159,14 @@ public abstract class CamelTestSupport
 
     @Override
     public void beforeAll(ExtensionContext context) {
-        final boolean perClassPresent = context.getTestInstanceLifecycle().filter(lc -> lc.equals(Lifecycle.PER_CLASS)).isPresent();
-        testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
+        final boolean perClassPresent
+                = context.getTestInstanceLifecycle().filter(lc -> lc.equals(Lifecycle.PER_CLASS)).isPresent();
+        if (perClassPresent) {
+            LOG.trace("Creating a legacy context manager for {}", context.getDisplayName());
+            testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
+            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_ALL,
+                    testConfigurationBuilder, camelContextConfiguration);
+        }
 
         ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
         contextManager.setGlobalStore(globalStore);
@@ -164,8 +181,8 @@ public abstract class CamelTestSupport
      * Use the RouteBuilder or not
      *
      * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return <tt>true</tt> then {@link CamelContext} will be auto started, <tt>false</tt> then {@link CamelContext}
-     *         will <b>not</b> be auto started (you will have to start it manually)
+     * @return     <tt>true</tt> then {@link CamelContext} will be auto started, <tt>false</tt> then
+     *             {@link CamelContext} will <b>not</b> be auto started (you will have to start it manually)
      */
     @Deprecated(since = "4.7.0")
     public boolean isUseRouteBuilder() {
@@ -187,8 +204,8 @@ public abstract class CamelTestSupport
      * <tt>CamelTestRouteCoverage=true</tt>.
      *
      * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return <tt>true</tt> to write route coverage status in an xml file in the <tt>target/camel-route-coverage</tt>
-     *         directory after the test has finished.
+     * @return     <tt>true</tt> to write route coverage status in an xml file in the
+     *             <tt>target/camel-route-coverage</tt> directory after the test has finished.
      */
     @Deprecated(since = "4.7.0")
     public boolean isDumpRouteCoverage() {
@@ -205,7 +222,7 @@ public abstract class CamelTestSupport
      * doing all the advice with.
      *
      * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return <tt>true</tt> if you use advice with in your unit tests.
+     * @return     <tt>true</tt> if you use advice with in your unit tests.
      */
     @Deprecated(since = "4.7.0")
     public boolean isUseAdviceWith() {
@@ -225,7 +242,7 @@ public abstract class CamelTestSupport
      * methods in that given order.
      *
      * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return <tt>true</tt> per class, <tt>false</tt> per test.
+     * @return     <tt>true</tt> per class, <tt>false</tt> per test.
      */
     @Deprecated(since = "4.7.0")
     protected final boolean isCreateCamelContextPerClass() {
@@ -237,7 +254,7 @@ public abstract class CamelTestSupport
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
      *
-     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
      * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
      */
     @Deprecated(since = "4.7.0")
@@ -250,7 +267,7 @@ public abstract class CamelTestSupport
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
      *
-     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
      * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
      */
     @Deprecated(since = "4.7.0")
@@ -260,9 +277,10 @@ public abstract class CamelTestSupport
 
     /**
      * To replace from routes
-     * @param routeId
-     * @param fromEndpoint
-     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
+     *
+     * @param      routeId
+     * @param      fromEndpoint
+     * @deprecated              Use the accessors from {@link #camelContextConfiguration()} method
      */
     @Deprecated(since = "4.7.0")
     public void replaceRouteFromWith(String routeId, String fromEndpoint) {
@@ -320,6 +338,7 @@ public abstract class CamelTestSupport
      * Override to enable debugger
      * <p/>
      * Is default <tt>false</tt>
+     *
      * @deprecated Use the accessors from {@link #testConfiguration()} method
      */
     @Deprecated(since = "4.7.0")
@@ -347,8 +366,9 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Sets the CamelContext. Used by the manager to override tests that try to access the context
-     * during setup. DO NOT USE.
+     * Sets the CamelContext. Used by the manager to override tests that try to access the context during setup. DO NOT
+     * USE.
+     *
      * @param context
      */
     @Deprecated(since = "4.7.0")
@@ -376,6 +396,13 @@ public abstract class CamelTestSupport
         camelContextConfiguration.withCamelContextService(service);
     }
 
+    /**
+     * Common test setup. For internal use.
+     *
+     * @deprecated           Use {@link #setupResources()} instead
+     * @throws     Exception if unable to setup the test
+     */
+    @Deprecated(since = "4.7.0")
     @BeforeEach
     public void setUp() throws Exception {
         testStartHeader(getClass(), currentTestName);
@@ -395,15 +422,21 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Strategy to perform any pre setup, before {@link CamelContext} is created
+     * Strategy to perform any pre-setup, before the {@link CamelContext} is created. This is for internal Camel usage.
+     *
+     * @deprecated Use {@link #setupResources()} instead
      */
+    @Deprecated(since = "4.7.0")
     protected void doPreSetup() throws Exception {
         // noop
     }
 
     /**
-     * Strategy to perform any post setup after {@link CamelContext} is created
+     * Strategy to perform any post setup after {@link CamelContext} is created. This is for internal Camel usage.
+     *
+     * @deprecated Use {@link #setupResources()} instead
      */
+    @Deprecated(since = "4.7.0")
     protected void doPostSetup() throws Exception {
         // noop
     }
@@ -449,11 +482,17 @@ public abstract class CamelTestSupport
         throw new UnsupportedOperationException("Do not use the doSetUp method");
     }
 
-
     private boolean isRouteCoverageEnabled() {
         return Boolean.parseBoolean(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || isDumpRouteCoverage();
     }
 
+    /**
+     * Common test tear down. For internal use.
+     *
+     * @deprecated           Use {@link #cleanupResources()} instead
+     * @throws     Exception if unable to setup the test
+     */
+    @Deprecated(since = "4.7.0")
     @AfterEach
     public void tearDown() throws Exception {
         long time = watch.taken();
@@ -479,20 +518,26 @@ public abstract class CamelTestSupport
     }
 
     /**
-     * Strategy to perform any post action, after {@link CamelContext} is stopped
+     * Strategy to perform any post-action, after {@link CamelContext} is stopped. This is meant for internal Camel
+     * usage and should not be used by user classes.
+     *
+     * @deprecated use {@link #cleanupResources()} instead.
      */
+    @Deprecated(since = "4.7.0")
     protected void doPostTearDown() throws Exception {
         // noop
     }
 
     /**
-     * Strategy to perform resources setup, before {@link CamelContext} is created
+     * Strategy to set up resources, before {@link CamelContext} is created. This is meant to be used by resources that
+     * must be available before the context is created. Do not use this as a replacement for tasks that can be handled
+     * using JUnit's annotations.
      */
     protected void setupResources() throws Exception {
     }
 
     /**
-     * Strategy to perform resources cleanup, after {@link CamelContext} is stopped
+     * Strategy to cleanup resources, after {@link CamelContext} is stopped
      */
     protected void cleanupResources() throws Exception {
         // noop
@@ -503,8 +548,10 @@ public abstract class CamelTestSupport
      * <p/>
      * Will default use 10 seconds.
      *
-     * @return the timeout to use
+     * @deprecated use the accessors from {@link #camelContextConfiguration()}
+     * @return     the timeout to use
      */
+    @Deprecated(since = "4.7.0")
     protected int getShutdownTimeout() {
         return camelContextConfiguration.shutdownTimeout();
     }
@@ -513,7 +560,7 @@ public abstract class CamelTestSupport
      * Whether JMX should be used during testing.
      *
      * @deprecated Use the methods {@link #testConfiguration()} to enable, disable or check JMX state.
-     * @return <tt>false</tt> by default.
+     * @return     <tt>false</tt> by default.
      */
     @Deprecated(since = "4.7.0")
     protected boolean useJmx() {
@@ -524,7 +571,7 @@ public abstract class CamelTestSupport
      * Override this method to include and override properties with the Camel {@link PropertiesComponent}.
      *
      * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
-     * @return additional properties to add/override.
+     * @return     additional properties to add/override.
      */
     @Deprecated(since = "4.7.0")
     protected Properties useOverridePropertiesWithPropertiesComponent() {
@@ -536,14 +583,20 @@ public abstract class CamelTestSupport
      * want to ignore locations that are not available in the environment used for testing.
      *
      * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
-     * @return <tt>true</tt> to ignore, <tt>false</tt> to not ignore, and <tt>null</tt> to leave as configured on the
-     *         {@link PropertiesComponent}
+     * @return     <tt>true</tt> to ignore, <tt>false</tt> to not ignore, and <tt>null</tt> to leave as configured on
+     *             the {@link PropertiesComponent}
      */
     @Deprecated(since = "4.7.0")
     protected Boolean ignoreMissingLocationWithPropertiesComponent() {
         return camelContextConfiguration.ignoreMissingLocationWithPropertiesComponent();
     }
 
+    /**
+     * Internal method. Do not use.
+     *
+     * @deprecated           use {@link #setupResources()} or the JUnit's annotation instead of this method
+     * @throws     Exception
+     */
     @Deprecated(since = "4.7.0")
     protected void postProcessTest() throws Exception {
         context = contextManager.context();
@@ -618,7 +671,7 @@ public abstract class CamelTestSupport
      * Factory method which derived classes can use to create an array of {@link org.apache.camel.builder.RouteBuilder}s
      * to define the routes for testing
      *
-     * @see #createRouteBuilder()
+     * @see        #createRouteBuilder()
      * @deprecated This method will be made private. Do not use
      */
     @Deprecated(since = "4.7.0")
@@ -629,9 +682,9 @@ public abstract class CamelTestSupport
     /**
      * Resolves a mandatory endpoint for the given URI or an exception is thrown
      *
-     * @param  uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
-     * @return     the endpoint
-     * @deprecated Use the methods from {@link TestSupport}
+     * @param      uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @return         the endpoint
+     * @deprecated     Use the methods from {@link TestSupport}
      */
     @Deprecated(since = "4.7.0")
     protected final Endpoint resolveMandatoryEndpoint(String uri) {
@@ -641,9 +694,9 @@ public abstract class CamelTestSupport
     /**
      * Resolves a mandatory endpoint for the given URI and expected type or an exception is thrown
      *
-     * @param  uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
-     * @return     the endpoint
-     * @deprecated Use the methods from {@link TestSupport}
+     * @param      uri the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @return         the endpoint
+     * @deprecated     Use the methods from {@link TestSupport}
      */
     @Deprecated(since = "4.7.0")
     protected final <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
@@ -771,8 +824,9 @@ public abstract class CamelTestSupport
 
     /**
      * Asserts the validity of the context
-     * @deprecated Use JUnit's assertions if needed
-     * @param context
+     *
+     * @deprecated         Use JUnit's assertions if needed
+     * @param      context
      */
     @Deprecated(since = "4.7.0")
     protected final void assertValidContext(CamelContext context) {
@@ -793,6 +847,7 @@ public abstract class CamelTestSupport
 
     /**
      * Disables the JMX agent. Must be called before the {@link #setUp()} method.
+     *
      * @deprecated Use the methods {@link #testConfiguration()} to enable, disable or check JMX state.
      */
     @Deprecated(since = "4.7.0")
@@ -833,6 +888,7 @@ public abstract class CamelTestSupport
 
     /**
      * Gets the {@link TestExecutionConfiguration} test execution configuration instance for the test
+     *
      * @return the configuration instance for the test
      */
     public final TestExecutionConfiguration testConfiguration() {
@@ -841,11 +897,10 @@ public abstract class CamelTestSupport
 
     /**
      * Gets the {@link CamelContextConfiguration} for the test
+     *
      * @return the camel context configuration
      */
     public final CamelContextConfiguration camelContextConfiguration() {
         return camelContextConfiguration;
     }
-
-
 }

@@ -79,7 +79,6 @@ public class ResultConverter {
         return result.getResult();
     }
 
-
     @SuppressWarnings("rawtypes")
     public static Map toMap(JavaResult.ResultMap resultBeans, Exchange exchange) {
         Message outMessage = exchange.getOut();

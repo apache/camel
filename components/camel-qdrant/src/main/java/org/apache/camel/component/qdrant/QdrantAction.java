@@ -18,6 +18,7 @@ package org.apache.camel.component.qdrant;
 
 public enum QdrantAction {
     CREATE_COLLECTION,
+    DELETE_COLLECTION,
     UPSERT,
     RETRIEVE,
     DELETE,

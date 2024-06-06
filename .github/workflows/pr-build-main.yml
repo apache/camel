@@ -79,3 +79,4 @@ jobs:
           pr-id: ${{ github.event.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
+          artifact-upload-suffix: java-${{ matrix.java }}

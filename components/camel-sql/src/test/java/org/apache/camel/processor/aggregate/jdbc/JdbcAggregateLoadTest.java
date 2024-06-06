@@ -52,6 +52,8 @@ public class JdbcAggregateLoadTest extends AbstractJdbcAggregationTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 from("seda:start?size=" + SIZE)
                         .to("log:input?groupSize=500")
                         .aggregate(header("id"), new MyAggregationStrategy())

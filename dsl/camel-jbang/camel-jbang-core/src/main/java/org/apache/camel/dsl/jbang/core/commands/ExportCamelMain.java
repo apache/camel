@@ -243,8 +243,10 @@ class ExportCamelMain extends Export {
         if (profile.exists()) {
             RuntimeUtil.loadProperties(prop, profile);
         }
+        boolean jib = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib."));
         boolean jkube = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jkube."));
-        if (jkube) {
+        // jib is used for docker and kubernetes, jkube is only used for kubernetes
+        if (jib || jkube) {
             // include all jib/jkube/label properties
             String fromImage = null;
             for (String key : prop.stringPropertyNames()) {
@@ -263,7 +265,7 @@ class ExportCamelMain extends Export {
                 sb1.append(String.format("        <%s>%s</%s>%n", "jib.from.image", fromImage, "jib.from.image"));
             }
 
-            InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
+            InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-pom.tmpl");
             String context2 = IOHelper.loadText(is);
             IOHelper.close(is);
 
@@ -272,14 +274,14 @@ class ExportCamelMain extends Export {
             // image from/to auth
             String auth = "";
             if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth."))) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-from-auth-pom.tmpl");
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-from-auth-pom.tmpl");
                 auth = IOHelper.loadText(is);
                 IOHelper.close(is);
             }
             context2 = context2.replace("{{ .JibFromImageAuth }}", auth);
             auth = "";
             if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.to.auth."))) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-to-auth-pom.tmpl");
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-to-auth-pom.tmpl");
                 auth = IOHelper.loadText(is);
                 IOHelper.close(is);
             }
@@ -291,6 +293,14 @@ class ExportCamelMain extends Export {
             }
             context2 = context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port));
             sb2.append(context2);
+            // jkube is only used for kubernetes
+            if (jkube) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
+                String context3 = IOHelper.loadText(is);
+                IOHelper.close(is);
+                context3 = context3.replaceFirst("\\{\\{ \\.JkubeMavenPluginVersion }}", jkubeMavenPluginVersion(settings));
+                sb2.append(context3);
+            }
         }
 
         context = context.replace("{{ .CamelKubernetesProperties }}", sb1.toString());

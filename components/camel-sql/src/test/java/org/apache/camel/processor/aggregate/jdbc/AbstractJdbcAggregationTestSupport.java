@@ -28,15 +28,8 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
 
     JdbcAggregationRepository repo;
 
-    @Override
-    public void postProcessTest() throws Exception {
-        super.postProcessTest();
-
-        repo = applicationContext.getBean("repo1", JdbcAggregationRepository.class);
-        configureJdbcAggregationRepository();
-    }
-
     void configureJdbcAggregationRepository() {
+        repo = applicationContext.getBean("repo1", JdbcAggregationRepository.class);
     }
 
     @Override
@@ -45,6 +38,8 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
             @Override
             // START SNIPPET: e1
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 // here is the Camel route where we aggregate
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())

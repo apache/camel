@@ -48,9 +48,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.spi.Method;
+import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.spi.EmbeddedHttpService;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -170,6 +172,12 @@ public class VertxPlatformHttpEngineTest {
             assertEquals("/get", it.next().getUri());
             assertEquals("/post", it.next().getUri());
 
+            // should find engine in registry
+            assertNotNull(context.getRegistry().findSingleByType(PlatformHttpEngine.class));
+            EmbeddedHttpService server = context.getRegistry().findSingleByType(EmbeddedHttpService.class);
+            assertNotNull(server);
+            assertEquals("http", server.getScheme());
+            assertEquals(RestAssured.port, server.getServerPort());
         } finally {
             context.stop();
         }

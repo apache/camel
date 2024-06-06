@@ -37,13 +37,13 @@
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
         <maven-project-version>2.2.1</maven-project-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
-        <maven-plugin-annotations-version>3.13.0</maven-plugin-annotations-version>
+        <maven-plugin-annotations-version>3.13.1</maven-plugin-annotations-version>
         <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
         <maven-reporting-impl-version>3.2.0</maven-reporting-impl-version>
         <plexus-build-api-version>1.2.0</plexus-build-api-version>
         <plexus-container-default-version>2.1.1</plexus-container-default-version>
         <plexus-utils-version>4.0.1</plexus-utils-version>
-        <plexus-xml-version>4.0.3</plexus-xml-version>
+        <plexus-xml-version>4.0.4</plexus-xml-version>
         <maven-archiver-version>3.6.2</maven-archiver-version>
         <plexus-archiver-version>4.9.2</plexus-archiver-version>
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>

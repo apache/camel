@@ -175,8 +175,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * Sets the proxy configuration to use for ServiceBusSenderClient. When
+         * a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
          * The option is a: <code>com.azure.core.amqp.ProxyOptions</code> type.
@@ -191,8 +191,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * Sets the proxy configuration to use for ServiceBusSenderClient. When
+         * a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
          * The option will be converted to a
@@ -856,8 +856,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * Sets the proxy configuration to use for ServiceBusSenderClient. When
+         * a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
          * The option is a: <code>com.azure.core.amqp.ProxyOptions</code> type.
@@ -872,8 +872,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * Sets the proxy configuration to use for ServiceBusSenderClient. When
+         * a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
          * The option will be converted to a
@@ -1020,33 +1020,35 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets SenderAsyncClient to be used in the producer.
+         * Sets senderClient to be used in the producer.
          * 
          * The option is a:
-         * <code>com.azure.messaging.servicebus.ServiceBusSenderAsyncClient</code> type.
+         * <code>com.azure.messaging.servicebus.ServiceBusSenderClient</code>
+         * type.
          * 
          * Group: producer
          * 
-         * @param senderAsyncClient the value to set
+         * @param senderClient the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointProducerBuilder senderAsyncClient(com.azure.messaging.servicebus.ServiceBusSenderAsyncClient senderAsyncClient) {
-            doSetProperty("senderAsyncClient", senderAsyncClient);
+        default ServiceBusEndpointProducerBuilder senderClient(com.azure.messaging.servicebus.ServiceBusSenderClient senderClient) {
+            doSetProperty("senderClient", senderClient);
             return this;
         }
         /**
-         * Sets SenderAsyncClient to be used in the producer.
+         * Sets senderClient to be used in the producer.
          * 
          * The option will be converted to a
-         * <code>com.azure.messaging.servicebus.ServiceBusSenderAsyncClient</code> type.
+         * <code>com.azure.messaging.servicebus.ServiceBusSenderClient</code>
+         * type.
          * 
          * Group: producer
          * 
-         * @param senderAsyncClient the value to set
+         * @param senderClient the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointProducerBuilder senderAsyncClient(String senderAsyncClient) {
-            doSetProperty("senderAsyncClient", senderAsyncClient);
+        default ServiceBusEndpointProducerBuilder senderClient(String senderClient) {
+            doSetProperty("senderClient", senderClient);
             return this;
         }
         /**
@@ -1373,8 +1375,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * Sets the proxy configuration to use for ServiceBusSenderClient. When
+         * a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
          * The option is a: <code>com.azure.core.amqp.ProxyOptions</code> type.
@@ -1389,8 +1391,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
-         * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
+         * Sets the proxy configuration to use for ServiceBusSenderClient. When
+         * a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
          * 
          * The option will be converted to a

@@ -141,12 +141,12 @@ public class Run extends CamelCommand {
     String kameletsVersion;
 
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-            defaultValue = "3.11.0")
-    String quarkusVersion = "3.11.0";
+            defaultValue = "3.11.1")
+    String quarkusVersion = "3.11.1";
 
     @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-            defaultValue = "3.2.5")
-    String springBootVersion = "3.2.5";
+            defaultValue = "3.3.0")
+    String springBootVersion = "3.3.0";
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
             description = "Profile to run (dev, test, or prod).")
@@ -1494,7 +1494,7 @@ public class Run extends CamelCommand {
         String content = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        String onlyName = FileUtil.stripPath(file.getName());
+        String onlyName = file.getPath();
         content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
 
         Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);

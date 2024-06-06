@@ -53,6 +53,8 @@ public class JdbcAggregateSerializedHeadersTest extends AbstractJdbcAggregationT
         return new RouteBuilder() {
             @Override
             public void configure() {
+                configureJdbcAggregationRepository();
+
                 repo.setAllowSerializedHeaders(true);
                 from("seda:start?size=" + SIZE)
                         .to("log:input?groupSize=500")

@@ -14,22 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.openapi;
+package org.apache.camel.component.langchain4j.chat.tool;
 
-import org.apache.camel.Processor;
-import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
-import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
-import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
+import java.util.List;
 
-public class DummyHttpEngine implements PlatformHttpEngine {
+/**
+ * langchain4j Simple Tool parameter implementation, this class can be used to provide multiple properties/input
+ * parameters to the tool itself, the NamedJsonSchemaProperty can be then found as headers into the consumer route
+ */
+public class CamelSimpleToolParameter {
 
-    @Override
-    public PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor) {
-        return null; // just return null
+    private final String description;
+    private final List<NamedJsonSchemaProperty> properties;
+
+    public CamelSimpleToolParameter(String description, List<NamedJsonSchemaProperty> properties) {
+        this.description = description;
+        this.properties = properties;
     }
 
-    @Override
-    public int getServerPort() {
-        return 1234; // not in use
+    public List<NamedJsonSchemaProperty> getProperties() {
+        return properties;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -39,8 +39,8 @@ public final class QdrantCommonTest extends CamelTestSupport {
 
         assertThat(result).isNotNull();
 
-        if (action == QdrantAction.COLLECTION_INFO) {
-            // null body is OK for collection info, but it throws an specific exception
+        if (action == QdrantAction.COLLECTION_INFO || action == QdrantAction.DELETE_COLLECTION) {
+            // null body is OK for collection info and delete collection, but it throws an specific exception
             // if the collection doesn't exist
             assertThat(result.getException()).isInstanceOf(QdrantActionException.class);
         } else {

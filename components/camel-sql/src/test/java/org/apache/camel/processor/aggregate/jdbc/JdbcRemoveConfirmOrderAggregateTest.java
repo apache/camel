@@ -122,6 +122,8 @@ public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregation
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                configureJdbcAggregationRepository();
+
                 from("direct:start").
                 threads(2).
                 transacted("required").aggregate(header("id"), new MyAggregationStrategyWithDelay()).completionSize(2).aggregationRepository(repo)

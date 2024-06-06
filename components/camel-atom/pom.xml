@@ -56,12 +56,6 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io-version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- test infra -->
         <dependency>

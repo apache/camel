@@ -16,10 +16,19 @@
  */
 package org.apache.camel.component.langchain4j.chat;
 
+import java.util.Map;
+import java.util.UUID;
+
+import dev.langchain4j.agent.tool.JsonSchemaProperty;
+import dev.langchain4j.agent.tool.ToolSpecification;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter;
+import org.apache.camel.component.langchain4j.chat.tool.CamelToolExecutorCache;
+import org.apache.camel.component.langchain4j.chat.tool.CamelToolSpecification;
+import org.apache.camel.component.langchain4j.chat.tool.NamedJsonSchemaProperty;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +50,19 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
     @UriParam
     private LangChain4jChatConfiguration configuration;
 
+    @Metadata(label = "consumer")
+    @UriParam(description = "Tool description")
+    private String description;
+
+    @Metadata(label = "consumer")
+    @UriParam(description = "List of Tool parameters in the form of parameter.<name>=<type>", prefix = "parameter.",
+              multiValue = true, enums = "string,integer,number,object,array,boolean,null")
+    private Map<String, String> parameters;
+
+    @Metadata(label = "consumer,advanced")
+    @UriParam(description = "Tool's Camel Parameters, programmatically define Tool description and parameters")
+    private CamelSimpleToolParameter camelToolParameter;
+
     public LangChain4jChatEndpoint(String uri, LangChain4jChatComponent component, String chatId,
                                    LangChain4jChatConfiguration configuration) {
         super(uri, component);
@@ -55,7 +77,33 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Cannot consume from an LangChain4j chat Endpoint: " + getEndpointUri());
+        ToolSpecification.Builder toolSpecificationBuilder = ToolSpecification.builder();
+        toolSpecificationBuilder.name(UUID.randomUUID().toString());
+        if (camelToolParameter != null) {
+            toolSpecificationBuilder.description(camelToolParameter.getDescription());
+
+            for (NamedJsonSchemaProperty namedJsonSchemaProperty : camelToolParameter.getProperties()) {
+                toolSpecificationBuilder.addParameter(namedJsonSchemaProperty.getName(),
+                        namedJsonSchemaProperty.getProperties());
+            }
+        } else if (description != null) {
+            toolSpecificationBuilder.description(description);
+
+            if (parameters != null) {
+                parameters.forEach((name, type) -> toolSpecificationBuilder.addParameter(name, JsonSchemaProperty.type(type)));
+            }
+        } else {
+            // Consumer without toolParameter or description
+            throw new IllegalArgumentException(
+                    "In order to use the langchain4j component as a consumer, you need to specify at least description, or a camelToolParameter");
+        }
+        ToolSpecification toolSpecification = toolSpecificationBuilder.build();
+
+        CamelToolSpecification camelToolSpecification
+                = new CamelToolSpecification(toolSpecification, new LangChain4jChatConsumer(this, processor));
+        CamelToolExecutorCache.getInstance().put(chatId, camelToolSpecification);
+
+        return camelToolSpecification.getConsumer();
     }
 
     /**
@@ -71,4 +119,27 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
         return configuration;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
+
+    public CamelSimpleToolParameter getCamelToolParameter() {
+        return camelToolParameter;
+    }
+
+    public void setCamelToolParameter(CamelSimpleToolParameter camelToolParameter) {
+        this.camelToolParameter = camelToolParameter;
+    }
 }

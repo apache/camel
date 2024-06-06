@@ -83,6 +83,8 @@ public class QdrantProducer extends DefaultAsyncProducer {
             switch (action) {
                 case CREATE_COLLECTION:
                     return createCollection(exchange, callback);
+                case DELETE_COLLECTION:
+                    return deleteCollection(exchange, callback);
                 case UPSERT:
                     return upsert(exchange, callback);
                 case RETRIEVE:
@@ -231,6 +233,22 @@ public class QdrantProducer extends DefaultAsyncProducer {
                 (r, t) -> {
                     if (t != null) {
                         exchange.setException(new QdrantActionException(QdrantAction.CREATE_COLLECTION, t));
+                    }
+
+                    callback.done(false);
+                });
+
+        return false;
+    }
+
+    private boolean deleteCollection(Exchange exchange, AsyncCallback callback) {
+        final String collection = getEndpoint().getCollection();
+
+        call(
+                this.client.deleteCollectionAsync(collection),
+                (r, t) -> {
+                    if (t != null) {
+                        exchange.setException(new QdrantActionException(QdrantAction.DELETE_COLLECTION, t));
                     }
 
                     callback.done(false);

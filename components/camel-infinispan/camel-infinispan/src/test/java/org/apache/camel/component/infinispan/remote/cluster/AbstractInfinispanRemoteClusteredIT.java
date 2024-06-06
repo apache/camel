@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AbstractInfinispanRemoteClusteredIT {
     @RegisterExtension
-    public static InfinispanService service = InfinispanServiceFactory.createService();
+    public static InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
 
     private RemoteCacheManager cacheContainer;
 

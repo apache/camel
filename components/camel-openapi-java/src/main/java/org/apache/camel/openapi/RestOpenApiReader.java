@@ -67,7 +67,6 @@ import io.swagger.v3.oas.models.tags.Tag;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.model.rest.ApiKeyDefinition;
 import org.apache.camel.model.rest.BasicAuthDefinition;
 import org.apache.camel.model.rest.BearerTokenDefinition;
@@ -79,13 +78,13 @@ import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.ResponseHeaderDefinition;
 import org.apache.camel.model.rest.ResponseMessageDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestHostNameResolver;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestSecurityDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.EmbeddedHttpService;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
@@ -151,7 +150,8 @@ public class RestOpenApiReader {
         // contract first, then load the specification as-is and use as response
         for (RestDefinition rest : rests) {
             if (rest.getOpenApi() != null) {
-                Resource res = PluginHelper.getResourceLoader(camelContext).resolveResource(rest.getOpenApi().getSpecification());
+                Resource res
+                        = PluginHelper.getResourceLoader(camelContext).resolveResource(rest.getOpenApi().getSpecification());
                 if (res != null && res.exists()) {
                     InputStream is = res.getInputStream();
                     String data = IOHelper.loadText(is);
@@ -165,19 +165,19 @@ public class RestOpenApiReader {
                     if (restConfig.getHostNameResolver() != RestConfiguration.RestHostNameResolver.none) {
                         host = camelContext.getRestConfiguration().getApiHost();
                         if (host == null || host.isEmpty()) {
-                            String scheme = "http://";
+                            String scheme = "http";
+                            int port = 0;
                             host = RestComponentHelper.resolveRestHostName(host, restConfig);
-                            PlatformHttpComponent http = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
-                            if (http != null) {
-                                int port = http.getEngine().getServerPort();
-                                if (port > 0) {
-                                    host = host + ":" + port;
-                                    if (port == 443) {
-                                        scheme = "https://";
-                                    }
-                                }
+                            EmbeddedHttpService server
+                                    = CamelContextHelper.findSingleByType(camelContext, EmbeddedHttpService.class);
+                            if (server != null) {
+                                scheme = server.getScheme();
+                                port = server.getServerPort();
                             }
-                            host = scheme + host;
+                            host = scheme + "://" + host;
+                            if (port > 0 && port != 80) {
+                                host = host + ":" + port;
+                            }
                         }
                     }
                     if (host != null) {
