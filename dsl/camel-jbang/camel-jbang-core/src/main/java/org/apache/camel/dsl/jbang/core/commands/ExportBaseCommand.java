@@ -704,11 +704,23 @@ abstract class ExportBaseCommand extends CamelCommand {
         try {
             List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
-                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.0");
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.3");
         } catch (Exception e) {
             // ignore
         }
-        return "3.4.0";
+        return "3.4.3";
+    }
+
+    protected static String jkubeMavenPluginVersion(File settings) {
+        try {
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+            return lines.stream()
+                    .filter(l -> l.startsWith("camel.jbang.jkube-maven-plugin-version=") || l.startsWith("jkube.version="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("1.16.2");
+        } catch (Exception e) {
+            // ignore
+        }
+        return "1.16.2";
     }
 
     protected void safeCopy(File source, File target, boolean override) throws Exception {

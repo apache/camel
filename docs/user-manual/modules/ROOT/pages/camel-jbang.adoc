@@ -3480,7 +3480,7 @@ For example, the following can be used for a general Camel based application to 
 ----
 label.runtime=app.kubernetes.io/runtime
 jib.to.image=demo/myapp:1.0
-jkube.version=1.16.0
+jkube.version=1.16.2
 jkube.build.strategy=jib
 jkube.skip.build=true
 jkube.namespace=my-namespace
