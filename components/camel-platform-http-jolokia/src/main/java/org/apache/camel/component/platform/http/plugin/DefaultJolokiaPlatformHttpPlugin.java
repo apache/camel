@@ -161,9 +161,8 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
     }
 
     /**
-     * This method uses reflection to invoke the Jolokia HttpRequestHandler because its shading
-     * JSon library which at runtime causes NoSuchMethodError due to JSONObject has been shaded
-     * into a different package.
+     * This method uses reflection to invoke the Jolokia HttpRequestHandler because its shading JSon library which at
+     * runtime causes NoSuchMethodError due to JSONObject has been shaded into a different package.
      */
     private Handler<RoutingContext> createVertxHandler() {
         return routingContext -> {

@@ -39,6 +39,7 @@
 ** xref:microprofile-health.adoc[Microprofile Health]
 ** xref:openapi-java.adoc[Openapi Java]
 ** xref:opentelemetry.adoc[OpenTelemetry]
+** xref:platform-http-jolokia.adoc[Platform HTTP Jolokia]
 ** xref:platform-http-main.adoc[Platform Http Main]
 ** xref:platform-http-vertx.adoc[Platform Http Vertx]
 ** xref:reactive-executor-tomcat.adoc[Reactive Executor Tomcat]

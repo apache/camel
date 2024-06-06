@@ -1,0 +1,21 @@
+= Platform HTTP Jolokia Component
+:doctitle: Platform HTTP Jolokia
+:shortname: platform-http-jolokia
+:artifactid: camel-platform-http-jolokia
+:description: Jolokia plugin for standalone Camel HTTP Platform
+:since: 4.5
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Platform HTTP Jolokia component is used for Camel standalone to expose Jolokia over HTTP
+using the embedded HTTP server.
+
+Jolokia can be enabled as follows in `application.properties`:
+
+[source,properties]
+----
+camel.server.enabled = true
+camel.server.jolokiaEnabled = true
+----
