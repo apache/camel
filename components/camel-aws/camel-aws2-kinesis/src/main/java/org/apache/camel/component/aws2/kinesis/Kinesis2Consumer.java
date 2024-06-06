@@ -17,10 +17,14 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
@@ -52,6 +56,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private ResumeStrategy resumeStrategy;
 
     private Map<String, String> currentShardIterators = new java.util.HashMap<>();
+
+    private List<Shard> currentShardList = new ArrayList<>();
+    private final ScheduledExecutorService shardMonitorExecutor = Executors.newSingleThreadScheduledExecutor();
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint,
                             Processor processor) {
@@ -109,11 +116,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
 
         } else {
-            getShardList(connection)
+            getCurrentShardList()
                     .parallelStream()
-                    .forEach(shard -> {
-                        fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount);
-                    });
+                    .forEach(shard -> fetchAndPrepareRecordsForCamel(shard, connection, processedExchangeCount));
         }
 
         // okay we have some response from aws so lets mark the consumer as ready
@@ -336,44 +341,79 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         super.doStart();
 
         ObjectHelper.notNull(connection, "connection", this);
-
+        this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(), 0, getConfiguration().getShardMonitorIntervalInSeconds(), TimeUnit.SECONDS);
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();
         }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        try {
+            this.shardMonitorExecutor.shutdown();
+            if (!this.shardMonitorExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
+                this.shardMonitorExecutor.shutdownNow();
+            }
+        } catch (Exception ex) {
+            LOG.warn("Exception when shutting down executor", ex);
+        }
+
+        super.doStop();
     }
 
     protected Kinesis2Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
 
-    private List<Shard> getShardList(final KinesisConnection kinesisConnection) {
-        var request = ListShardsRequest
-                .builder()
-                .streamName(getEndpoint().getConfiguration().getStreamName())
-                .build();
-
-        List<Shard> shardList;
-        if (getEndpoint().getConfiguration().isAsyncClient()) {
-            try {
-                shardList = kinesisConnection
-                        .getAsyncClient(getEndpoint())
-                        .listShards(request)
-                        .get()
-                        .shards();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            shardList = kinesisConnection
-                    .getClient(getEndpoint())
-                    .listShards(request)
-                    .shards();
-        }
-
-        return shardList;
+    private synchronized List<Shard> getCurrentShardList() {
+        return this.currentShardList;
     }
 
+    private synchronized void setCurrentShardList(List<Shard> latestShardList) {
+        this.currentShardList = latestShardList;
+    }
+
+    private class ShardMonitor implements Runnable {
+        @Override
+        public void run() {
+            try {
+                List<Shard> latestShardList = getShardList(connection);
+                if (latestShardList != null) {
+                    setCurrentShardList(latestShardList);
+                }
+            } catch (Exception e) {
+                LOG.warn("Exception getting latest shard list", e);
+            }
+        }
+
+        private List<Shard> getShardList(final KinesisConnection kinesisConnection) {
+            var request = ListShardsRequest
+                    .builder()
+                    .streamName(getEndpoint().getConfiguration().getStreamName())
+                    .build();
+
+            List<Shard> shardList;
+            if (getEndpoint().getConfiguration().isAsyncClient()) {
+                try {
+                    shardList = kinesisConnection
+                            .getAsyncClient(getEndpoint())
+                            .listShards(request)
+                            .get()
+                            .shards();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                shardList = kinesisConnection
+                        .getClient(getEndpoint())
+                        .listShards(request)
+                        .shards();
+            }
+
+            return shardList;
+        }
+    }
 }

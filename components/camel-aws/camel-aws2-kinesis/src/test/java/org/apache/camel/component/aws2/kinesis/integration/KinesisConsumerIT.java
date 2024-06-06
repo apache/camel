@@ -17,8 +17,8 @@
 
 package org.apache.camel.component.aws2.kinesis.integration;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
@@ -76,7 +76,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
     private KinesisClient client;
     private String streamName = AWSCommon.KINESIS_STREAM_BASE_NAME + "-cons-" + TestUtils.randomWithRange(0, 100);
     private final int messageCount = 20;
-    private List<KinesisData> receivedMessages = new ArrayList<>();
+    private List<KinesisData> receivedMessages = new CopyOnWriteArrayList<>();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
