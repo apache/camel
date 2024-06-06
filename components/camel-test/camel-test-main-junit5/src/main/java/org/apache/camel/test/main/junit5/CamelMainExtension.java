@@ -21,6 +21,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.CamelRouteCoverageDumper;
+import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -33,7 +34,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.CamelTestSupport.ROUTE_COVERAGE_ENABLED;
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
@@ -162,14 +162,14 @@ final class CamelMainExtension
 
     /**
      * Indicates whether the route coverage is enabled according to the given extension context and the value of the
-     * system property {@link org.apache.camel.test.junit5.CamelTestSupport#ROUTE_COVERAGE_ENABLED}.
+     * system property {@link org.apache.camel.test.junit5.util.CamelContextTestHelper#ROUTE_COVERAGE_ENABLED}.
      * <p/>
      * In case of {@code @Nested} test classes, the value is always extracted from the annotation of the outer class.
      *
      * @return {@code true} if the route coverage is enabled, {@code false} otherwise.
      */
     private boolean isRouteCoverageEnabled(ExtensionContext context) {
-        return "true".equalsIgnoreCase(System.getProperty(ROUTE_COVERAGE_ENABLED, "false"))
+        return CamelContextTestHelper.isRouteCoverageEnabled(false)
                 || context.getRequiredTestInstances().getAllInstances().get(0).getClass()
                         .getAnnotation(CamelMainTest.class).dumpRouteCoverage();
     }

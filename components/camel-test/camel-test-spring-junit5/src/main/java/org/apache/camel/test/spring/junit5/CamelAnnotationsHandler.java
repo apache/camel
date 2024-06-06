@@ -36,7 +36,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -122,7 +122,7 @@ public final class CamelAnnotationsHandler {
     public static void handleRouteCoverage(ConfigurableApplicationContext context, Class<?> testClass, Function testMethod)
             throws Exception {
         if (testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
-            System.setProperty(CamelTestSupport.ROUTE_COVERAGE_ENABLED, "true");
+            System.setProperty(CamelContextTestHelper.ROUTE_COVERAGE_ENABLED, "true");
 
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
 
