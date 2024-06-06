@@ -67,14 +67,14 @@ So running a simple route will be as easy as doing the following:
 
 [source,bash]
 ----
-docker run apache/camel-jbang:4.4.0 run example.yaml
+docker run -v .:/integrations apache/camel-jbang:4.4.0 run /integrations/example.yaml
 ----
 
 or
 
 [source,bash]
 ----
-podman run apache/camel-jbang:4.4.0 run example.yaml
+podman run -v .:/integrations apache/camel-jbang:4.4.0 run /integrations/example.yaml
 ----
 
 == Using Camel JBang
