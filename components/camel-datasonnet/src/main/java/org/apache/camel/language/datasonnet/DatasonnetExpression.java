@@ -133,6 +133,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             }
         }
 
+        // the mapper is pre initialized but can become empty
         Mapper mapper = language.computeIfMiss(expression, () -> {
             MapperBuilder builder = new MapperBuilder(expression)
                     .withInputNames("body")
