@@ -260,6 +260,7 @@ public interface Exchange extends VariableAware {
     String REDELIVERY_DELAY = "CamelRedeliveryDelay";
     String REST_HTTP_URI = "CamelRestHttpUri";
     String REST_HTTP_QUERY = "CamelRestHttpQuery";
+    String REST_OPENAPI = "CamelRestOpenAPI";
     @Deprecated(since = "3.1.0")
     String ROLLBACK_ONLY = "CamelRollbackOnly";
     @Deprecated(since = "3.1.0")
