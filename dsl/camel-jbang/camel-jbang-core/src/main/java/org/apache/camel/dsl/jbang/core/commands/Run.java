@@ -1494,7 +1494,7 @@ public class Run extends CamelCommand {
         String content = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        String onlyName = FileUtil.stripPath(file.getName());
+        String onlyName = file.getPath();
         content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
 
         Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
