@@ -37,7 +37,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -224,7 +223,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 try {
                     accepted.addAll(resolver.findResources(include));
                 } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
+                    // ignore as folder may not exist
                 }
             }
 
