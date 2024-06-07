@@ -343,7 +343,8 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         ObjectHelper.notNull(connection, "connection", this);
         this.shardMonitorExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, SHARD_MONITOR_EXECUTOR_NAME);
-        this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(), 0, getConfiguration().getShardMonitorInterval(), TimeUnit.MILLISECONDS);
+        this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(),
+                0, getConfiguration().getShardMonitorInterval(), TimeUnit.MILLISECONDS);
 
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();

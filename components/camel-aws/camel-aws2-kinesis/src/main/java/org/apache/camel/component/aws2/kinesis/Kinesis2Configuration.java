@@ -291,6 +291,7 @@ public class Kinesis2Configuration implements Cloneable {
     public long getShardMonitorInterval() {
         return shardMonitorInterval;
     }
+
     public void setShardMonitorInterval(long shardMonitorInterval) {
         this.shardMonitorInterval = shardMonitorInterval;
     }
