@@ -29,7 +29,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     private HttpServer localServer;
 
     @Override
-    public void doPreSetup() throws Exception {
+    public final void doPreSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
@@ -38,8 +38,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
-
+    public void cleanupResources() {
         if (localServer != null) {
             localServer.stop();
         }

@@ -26,7 +26,6 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +35,8 @@ public class HttpSendDynamicAwareMultiValueTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @BeforeEach
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy())
@@ -50,8 +48,7 @@ public class HttpSendDynamicAwareMultiValueTest extends BaseHttpTest {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
-
+    public void cleanupResources() {
         if (localServer != null) {
             localServer.stop();
         }

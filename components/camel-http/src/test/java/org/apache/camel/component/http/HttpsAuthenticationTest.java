@@ -60,7 +60,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     private HttpContext basicAuthContexts = basicAuthContext();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public final void doPreSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
@@ -71,7 +71,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

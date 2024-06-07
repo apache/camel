@@ -47,7 +47,7 @@ public class HttpsGetTest extends BaseHttpsTest {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    public void cleanupResources() {
 
         if (localServer != null) {
             localServer.stop();

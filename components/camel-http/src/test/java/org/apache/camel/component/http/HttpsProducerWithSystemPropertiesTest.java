@@ -33,7 +33,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
@@ -79,9 +78,8 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
         System.clearProperty("javax.net.ssl.keyStore");
     }
 
-    @BeforeEach
     @Override
-    public void doPostSetup() throws Exception {
+    public void setupResources() throws Exception {
         URL serverKeystoreUurl = HttpsServerTestSupport.class.getResource("/localhost.p12");
         URL serverTrustStoreUrl = HttpsServerTestSupport.class.getResource("/localhost.p12");
         SSLContext sslcontext = SSLContexts.custom()
@@ -105,7 +103,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();
