@@ -100,7 +100,7 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "security",
               description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
-    @UriParam(label = "consumer", description = "The interval in milliseconds to wait between shard polling",
+    @UriParam(label = "consumer,advanced", description = "The interval in milliseconds to wait between shard polling",
               defaultValue = "10000")
     private long shardMonitorInterval = 10000;
 

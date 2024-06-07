@@ -259,7 +259,7 @@ public interface Aws2KinesisComponentBuilderFactory {
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
-         * Group: consumer
+         * Group: consumer (advanced)
          * 
          * @param shardMonitorInterval the value to set
          * @return the dsl builder

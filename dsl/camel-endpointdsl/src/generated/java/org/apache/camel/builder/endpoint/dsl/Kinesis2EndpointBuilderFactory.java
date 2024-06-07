@@ -303,36 +303,6 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The interval in milliseconds to wait between shard polling.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: consumer
-         * 
-         * @param shardMonitorInterval the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder shardMonitorInterval(long shardMonitorInterval) {
-            doSetProperty("shardMonitorInterval", shardMonitorInterval);
-            return this;
-        }
-        /**
-         * The interval in milliseconds to wait between shard polling.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 10000
-         * Group: consumer
-         * 
-         * @param shardMonitorInterval the value to set
-         * @return the dsl builder
-         */
-        default Kinesis2EndpointConsumerBuilder shardMonitorInterval(String shardMonitorInterval) {
-            doSetProperty("shardMonitorInterval", shardMonitorInterval);
-            return this;
-        }
-        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1214,6 +1184,36 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default AdvancedKinesis2EndpointConsumerBuilder pollStrategy(String pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * The interval in milliseconds to wait between shard polling.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: consumer (advanced)
+         * 
+         * @param shardMonitorInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder shardMonitorInterval(long shardMonitorInterval) {
+            doSetProperty("shardMonitorInterval", shardMonitorInterval);
+            return this;
+        }
+        /**
+         * The interval in milliseconds to wait between shard polling.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: consumer (advanced)
+         * 
+         * @param shardMonitorInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder shardMonitorInterval(String shardMonitorInterval) {
+            doSetProperty("shardMonitorInterval", shardMonitorInterval);
             return this;
         }
         /**

@@ -161,20 +161,6 @@ public class Aws2KinesisUriDsl(
   }
 
   /**
-   * The interval in milliseconds to wait between shard polling
-   */
-  public fun shardMonitorInterval(shardMonitorInterval: String) {
-    it.property("shardMonitorInterval", shardMonitorInterval)
-  }
-
-  /**
-   * The interval in milliseconds to wait between shard polling
-   */
-  public fun shardMonitorInterval(shardMonitorInterval: Int) {
-    it.property("shardMonitorInterval", shardMonitorInterval.toString())
-  }
-
-  /**
    * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
    * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
    * likes, will now be processed as a message and handled by the routing Error Handler. Important:
@@ -227,6 +213,20 @@ public class Aws2KinesisUriDsl(
    */
   public fun pollStrategy(pollStrategy: String) {
     it.property("pollStrategy", pollStrategy)
+  }
+
+  /**
+   * The interval in milliseconds to wait between shard polling
+   */
+  public fun shardMonitorInterval(shardMonitorInterval: String) {
+    it.property("shardMonitorInterval", shardMonitorInterval)
+  }
+
+  /**
+   * The interval in milliseconds to wait between shard polling
+   */
+  public fun shardMonitorInterval(shardMonitorInterval: Int) {
+    it.property("shardMonitorInterval", shardMonitorInterval.toString())
   }
 
   /**

@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.kinesis;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -52,6 +53,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -68,6 +70,29 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     @BeforeEach
     public void setup() {
+        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
+        Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
+        ArrayList<Shard> shardList = new ArrayList<>();
+        shardList.add(shard);
+
+        when(kinesisClient
+                .getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
+                .nextShardIterator("nextShardIterator")
+                .records(
+                        Record.builder().sequenceNumber("1")
+                                .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
+                                .build(),
+                        Record.builder().sequenceNumber("2")
+                                .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
+                                .build())
+                .build());
+        when(kinesisClient
+                .getShardIterator(any(GetShardIteratorRequest.class)))
+                .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
+        when(kinesisClient
+                .listShards(any(ListShardsRequest.class)))
+                .thenReturn(ListShardsResponse.builder().shards(shardList).build());
+
         component.start();
 
         Kinesis2Configuration configuration = new Kinesis2Configuration();
@@ -81,34 +106,8 @@ public class KinesisConsumerClosedShardWithSilentTest {
         underTest = new Kinesis2Consumer(endpoint, processor);
         underTest.setConnection(component.getConnection());
         underTest.start();
-
-        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
-        Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
-        ArrayList<Shard> shardList = new ArrayList<>();
-        shardList.add(shard);
-
-        when(kinesisClient
-                .getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
-                        .nextShardIterator("nextShardIterator")
-                        .records(
-                                Record.builder().sequenceNumber("1")
-                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                        .build(),
-                                Record.builder().sequenceNumber("2")
-                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                        .build())
-                        .build());
-
-        when(kinesisClient
-                .getShardIterator(any(GetShardIteratorRequest.class)))
-                .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
-        when(kinesisClient
-                .listShards(any(ListShardsRequest.class)))
-                .thenReturn(ListShardsResponse.builder().shards(shardList).build());
-
-        context.start();
-        underTest.start();
-
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> !(underTest.getCurrentShardList().isEmpty()));
     }
 
     @Test

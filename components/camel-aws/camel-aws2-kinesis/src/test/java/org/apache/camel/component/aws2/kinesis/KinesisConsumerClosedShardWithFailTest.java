@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -43,9 +44,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @ExtendWith(MockitoExtension.class)
 public class KinesisConsumerClosedShardWithFailTest {
@@ -62,20 +64,6 @@ public class KinesisConsumerClosedShardWithFailTest {
 
     @BeforeEach
     public void setup() {
-        component.start();
-
-        Kinesis2Configuration configuration = new Kinesis2Configuration();
-        configuration.setAmazonKinesisClient(kinesisClient);
-        configuration.setIteratorType(ShardIteratorType.LATEST);
-        configuration.setShardClosed(Kinesis2ShardClosedStrategyEnum.fail);
-        configuration.setStreamName("streamName");
-
-        Kinesis2Endpoint endpoint = new Kinesis2Endpoint("aws2-kinesis:foo", configuration, component);
-        endpoint.start();
-        underTest = new Kinesis2Consumer(endpoint, processor);
-        underTest.setConnection(component.getConnection());
-        underTest.start();
-
         SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
         Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
@@ -90,6 +78,22 @@ public class KinesisConsumerClosedShardWithFailTest {
         when(kinesisClient
                 .listShards(any(ListShardsRequest.class)))
                 .thenReturn(ListShardsResponse.builder().shards(shardList).build());
+
+        component.start();
+
+        Kinesis2Configuration configuration = new Kinesis2Configuration();
+        configuration.setAmazonKinesisClient(kinesisClient);
+        configuration.setIteratorType(ShardIteratorType.LATEST);
+        configuration.setShardClosed(Kinesis2ShardClosedStrategyEnum.fail);
+        configuration.setStreamName("streamName");
+
+        Kinesis2Endpoint endpoint = new Kinesis2Endpoint("aws2-kinesis:foo", configuration, component);
+        endpoint.start();
+        underTest = new Kinesis2Consumer(endpoint, processor);
+        underTest.setConnection(component.getConnection());
+        underTest.start();
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> !(underTest.getCurrentShardList().isEmpty()));
     }
 
     @Test
@@ -113,7 +117,7 @@ public class KinesisConsumerClosedShardWithFailTest {
         assertThat(getShardIteratorReqCap.getValue().shardId(), is("shardId"));
         assertThat(getShardIteratorReqCap.getValue().shardIteratorType(), is(ShardIteratorType.LATEST));
 
-        verify(kinesisClient, times(2)).listShards(getListShardsCap.capture());
+        verify(kinesisClient, atLeastOnce()).listShards(getListShardsCap.capture());
         assertThat(getListShardsCap.getValue().streamName(), is("streamName"));
     }
 }

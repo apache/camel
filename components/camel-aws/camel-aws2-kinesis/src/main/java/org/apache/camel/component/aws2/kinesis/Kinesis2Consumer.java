@@ -365,7 +365,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         return getEndpoint().getConfiguration();
     }
 
-    private synchronized List<Shard> getCurrentShardList() {
+    protected synchronized List<Shard> getCurrentShardList() {
         return this.currentShardList;
     }
 
