@@ -208,6 +208,33 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Replaces string values from the expression
+     */
+    public static Expression replaceExpression(final String expression, final String from, final String to) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                exp = ExpressionBuilder.replaceAll(exp, from, to);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "replace(" + expression + "," + from + "," + to + ")";
+            }
+        };
+    }
+
+    /**
      * Hashes the value using the given algorithm
      */
     public static Expression hashExpression(final String expression, final String algorithm) {

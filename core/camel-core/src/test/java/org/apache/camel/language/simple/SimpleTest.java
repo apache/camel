@@ -2046,6 +2046,22 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testReplaceAllExpression() {
+        exchange.getMessage().setBody("Hello a how are you");
+        assertExpression("${replace(a,b)}", "Hello b how bre you");
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot;,&apos;)}", "{'foo': 'cheese'}");
+        exchange.getMessage().setBody("{'foo': 'cheese'}");
+        assertExpression("${replace(&apos;,&quot;)}", "{\"foo\": \"cheese\"}");
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot;,&empty;)}", "{foo: cheese}");
+
+        exchange.getMessage().setBody("Hello");
+        exchange.getMessage().setHeader("foo", "{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot;,&apos;,${header.foo})}", "{'foo': 'cheese'}");
+    }
+
+    @Test
     public void testListRemoveByInstance() {
         List<Object> data = new ArrayList<>();
         data.add("A");

@@ -660,6 +660,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private Expression createSimpleExpressionMisc(String function) {
         String remainder;
 
+        // replace function
+        remainder = ifStartsWithReturnRemainder("replace(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${replace(from,to,expression)} was: " + function, token.getIndex());
+            }
+            String from = StringHelper.xmlDecode(tokens[0]);
+            String to = StringHelper.xmlDecode(tokens[1]);
+            // special to make it easy to replace to an empty value (ie remove)
+            if ("&empty;".equals(to)) {
+                to = "";
+            }
+            String exp = "${body}";
+            if (tokens.length == 3) {
+                exp = tokens[2];
+            }
+            return SimpleExpressionBuilder.replaceExpression(exp, from, to);
+        }
+
         // random function
         remainder = ifStartsWithReturnRemainder("random(", function);
         if (remainder != null) {
