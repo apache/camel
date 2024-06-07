@@ -77,15 +77,15 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
         when(kinesisClient
                 .getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
-                .nextShardIterator("nextShardIterator")
-                .records(
-                        Record.builder().sequenceNumber("1")
-                                .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                .build(),
-                        Record.builder().sequenceNumber("2")
-                                .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                .build())
-                .build());
+                        .nextShardIterator("nextShardIterator")
+                        .records(
+                                Record.builder().sequenceNumber("1")
+                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
+                                        .build(),
+                                Record.builder().sequenceNumber("2")
+                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
+                                        .build())
+                        .build());
         when(kinesisClient
                 .getShardIterator(any(GetShardIteratorRequest.class)))
                 .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
