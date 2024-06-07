@@ -41,7 +41,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Read and write to PLC devices
+ * Read and write to Programmable Logic Controllers (PLC) devices. It supports various protocols by adding the driver
+ * dependencies: Allen Bradley ETH, Automation Device Specification (ADS), CANopen, EtherNet/IP, Firmata, KNXnet/IP,
+ * Modbus (TCP/UDP/Serial), Open Platform Communications Unified Architecture (OPC UA), Step7 (S7).
+ *
+ * The list is growing in PLC4X, you can check here https://plc4x.apache.org/users/protocols/index.html
  */
 @UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
              syntax = "plc4x:driver", category = Category.IOT)

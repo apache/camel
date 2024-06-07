@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "plc4x",
     "title": "PLC4X",
-    "description": "Read and write to PLC devices",
+    "description": "Read and write to Programmable Logic Controllers (PLC) devices. It supports various protocols by adding the driver dependencies: Allen Bradley ETH, Automation Device Specification (ADS), CANopen, EtherNet\/IP, Firmata, KNXnet\/IP, Modbus (TCP\/UDP\/Serial), Open Platform Communications Unified Architecture (OPC UA), Step7 (S7).",
     "deprecated": false,
     "firstVersion": "3.20.0",
     "label": "iot",
