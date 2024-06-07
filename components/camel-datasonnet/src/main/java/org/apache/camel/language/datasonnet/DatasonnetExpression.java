@@ -133,9 +133,20 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             }
         }
 
-        // the mapper is pre initialized
-        Mapper mapper = language.lookup(expression)
-                .orElseThrow(() -> new IllegalStateException("Datasonnet expression not initialized"));
+        // the mapper is pre initialized but can become empty
+        Mapper mapper = language.computeIfMiss(expression, () -> {
+            MapperBuilder builder = new MapperBuilder(expression)
+                    .withInputNames("body")
+                    .withImports(resolveImports(language))
+                    .withLibrary(CML.getInstance())
+                    .withDefaultOutput(MediaTypes.APPLICATION_JAVA);
+
+            Set<Library> additionalLibraries = exchange.getContext().getRegistry().findByType(com.datasonnet.spi.Library.class);
+            for (Library lib : additionalLibraries) {
+                builder = builder.withLibrary(lib);
+            }
+            return builder.build();
+        });
 
         MediaType outMT = outputMediaType;
         if (outMT == null) {
