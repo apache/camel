@@ -28,6 +28,7 @@ import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
@@ -52,8 +53,8 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
     private final String xmlBody = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
     private String requestInputAction;
 
-    @Override
-    public void doPostSetup() throws Exception {
+    @BeforeEach
+    public void setupCommonBeans() {
         // initialize beans for catching results
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
         newReply = getMandatoryBean(OutputChannelReceiver.class, "replyReceiver");
