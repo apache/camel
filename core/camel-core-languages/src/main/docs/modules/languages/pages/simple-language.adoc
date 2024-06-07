@@ -854,14 +854,17 @@ You can nest functions, such as shown below:
 
 === Replacing double and single quotes
 
-You can use the `replace` function to more easily replace all single or double quotes in the message body.
+You can use the `replace` function to more easily replace all single or double quotes in the message body,
+using the XML escape syntax. This avoids to fiddle with enclosing a double quote or single quotes with outer quotes,
+that can get confusing to be correct as you may need to escape the quotes as well. So instead you can use the XML escape
+syntax where double quote is `\&quot;` and single quote is `\&apos;` (yeah that is the name).
 
 For example to replace all double quotes with single quotes:
 
 [source,java]
 ----
 from("direct:order")
-  .transform().simple("${replace(&quot;,&apos;)}")
+  .transform().simple("${replace(&quot; , &apos;)}")
   .to("mock:reply");
 ----
 
@@ -870,7 +873,7 @@ And to replace all single quotes with double quotes:
 [source,xml]
 ----
 <setBody>
-  <simple>${replace(&apos;,&quot;)}</simple>
+  <simple>${replace(&apos; , &quot;)}</simple>
 </setBody>
 ----
 
@@ -879,7 +882,7 @@ Or to remove all double quotes:
 [source,xml]
 ----
 <setBody>
-  <simple>${replace(&quot;&empty;)}</simple>
+  <simple>${replace(&quot; , &empty;)}</simple>
 </setBody>
 ----
 
