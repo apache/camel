@@ -51,6 +51,8 @@ public class SmbConsumer extends ScheduledPollConsumer {
         String searchPattern = configuration.getSearchPattern();
         IdempotentRepository repository = configuration.getIdempotentRepository();
 
+        path = (path == null) ? "" : path;
+
         for (FileIdBothDirectoryInformation f : share.list(path, searchPattern)) {
             if (f.getFileName().equals(".") || f.getFileName().equals("..")) {
                 continue;

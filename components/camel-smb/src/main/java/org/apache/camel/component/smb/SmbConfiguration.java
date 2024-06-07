@@ -29,7 +29,7 @@ public class SmbConfiguration {
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
 
     @Metadata(required = true)
-    @UriParam(defaultValue="", description = "The path, within the share, to consume the files from")
+    @UriParam(description = "The path, within the share, to consume the files from")
     private String path;
     @UriParam(defaultValue = "*.txt", description = "The search pattern used to list the files")
     private String searchPattern;
