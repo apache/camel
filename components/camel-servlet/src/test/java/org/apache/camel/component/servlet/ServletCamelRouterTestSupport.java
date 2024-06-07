@@ -45,13 +45,12 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
     public static final String CONTEXT = "/mycontext";
     protected String contextUrl;
-    protected boolean startCamelContext = true;
     protected int port;
     protected DeploymentManager manager;
     protected Undertow server;
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         DeploymentInfo servletBuilder = getDeploymentInfo();
         manager = Servlets.newContainer().addDeployment(servletBuilder);
@@ -63,11 +62,11 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         server.start();
         contextUrl = "http://localhost:" + port + CONTEXT;
 
-        testConfiguration().withAutoStartContext(startCamelContext);
+        testConfiguration().withAutoStartContext(true);
     }
 
     @Override
-    public void doPostTearDown() throws ServletException {
+    public void cleanupResources() throws ServletException {
         server.stop();
         manager.stop();
         manager.undeploy();
