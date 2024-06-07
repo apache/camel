@@ -238,6 +238,12 @@ constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
 |random(min,max) |Integer |returns a random Integer between _min_ (included) and
 _max_ (excluded)
 
+|replace(from,to) |String |replace all the string values in the message body.
+To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
+
+|replace(from,to,exp) |String |replace all the string values in the given expression.
+To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
+
 |collate(group) |List |The collate function iterates the message body and groups
 the data into sub lists of specified size. This can be used with the
 Splitter EIP to split a message body and group/batch
@@ -844,6 +850,37 @@ You can nest functions, such as shown below:
 <setHeader name="myHeader">
   <simple>${properties:${header.someKey}}</simple>
 </setHeader>
+----
+
+=== Replacing double and single quotes
+
+You can use the `replace` function to more easily replace all single or double quotes in the message body.
+
+For example to replace all double quotes with single quotes:
+
+[source,java]
+----
+from("direct:order")
+  .transform().simple("${replace(&quot;,&apos;)}")
+  .to("mock:reply");
+----
+
+And to replace all single quotes with double quotes:
+
+[source,xml]
+----
+<setBody>
+  <simple>${replace(&apos;,&quot;)}</simple>
+</setBody>
+----
+
+Or to remove all double quotes:
+
+[source,xml]
+----
+<setBody>
+  <simple>${replace(&quot;&empty;)}</simple>
+</setBody>
 ----
 
 == Setting result type

@@ -218,8 +218,27 @@ public final class StringHelper {
         // must replace amp first, so we dont replace &lt; to amp later
         return text.replace("&", "&amp;")
                 .replace("\"", "&quot;")
+                .replace("'", "&apos;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;");
+    }
+
+    /**
+     * Decodes the text into safe XML by replacing XML tokens with character values
+     *
+     * @param  text the text
+     * @return      the encoded text
+     */
+    public static String xmlDecode(final String text) {
+        if (text == null) {
+            return "";
+        }
+        // must replace amp first, so we dont replace &lt; to amp later
+        return text.replace("&amp;", "&")
+                .replace("&quot;", "\"")
+                .replace("&apos;", "'")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">");
     }
 
     /**
