@@ -6,6 +6,12 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.6 to 4.7
 
+=== API changes
+
+The class `org.apache.camel.impl.engine.ValidatorKey` moved to `org.apache.camel.spi.ValidatorKey`.
+The class `org.apache.camel.impl.engine.TransformerKey` moved to `org.apache.camel.spi.TransformerKey`.
+
+
 === camel-core
 
 Add default values to `ThrottlingExceptionRoutePolicy` route policy.

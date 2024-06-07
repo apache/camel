@@ -567,9 +567,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedStreamCachingStrategy(context, (StreamCachingStrategy) service);
         } else if (service instanceof EventNotifier) {
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
-        } else if (service instanceof TransformerRegistry<?> transformerRegistry) {
+        } else if (service instanceof TransformerRegistry transformerRegistry) {
             answer = new ManagedTransformerRegistry(context, transformerRegistry);
-        } else if (service instanceof ValidatorRegistry<?> validatorRegistry) {
+        } else if (service instanceof ValidatorRegistry validatorRegistry) {
             answer = new ManagedValidatorRegistry(context, validatorRegistry);
         } else if (service instanceof BrowsableVariableRepository variableRepository) {
             answer = new ManagedVariableRepository(context, variableRepository);

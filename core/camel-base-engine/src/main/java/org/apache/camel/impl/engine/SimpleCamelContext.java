@@ -718,7 +718,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() {
+    protected ValidatorRegistry createValidatorRegistry() {
         return new DefaultValidatorRegistry(getCamelContextReference());
     }
 
@@ -733,7 +733,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    protected TransformerRegistry<TransformerKey> createTransformerRegistry() {
+    protected TransformerRegistry createTransformerRegistry() {
         return new DefaultTransformerRegistry(getCamelContextReference());
     }
 

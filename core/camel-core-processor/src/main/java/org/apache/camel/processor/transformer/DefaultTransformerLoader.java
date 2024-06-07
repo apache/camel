@@ -18,9 +18,9 @@
 package org.apache.camel.processor.transformer;
 
 import org.apache.camel.Message;
-import org.apache.camel.impl.engine.TransformerKey;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.spi.TransformerLoader;
 import org.apache.camel.spi.TransformerRegistry;
 
@@ -29,6 +29,7 @@ import org.apache.camel.spi.TransformerRegistry;
  */
 public class DefaultTransformerLoader extends Transformer implements TransformerLoader {
 
+    @SuppressWarnings("resource")
     @Override
     public void load(TransformerRegistry registry) {
         Transformer[] defaultTransformers = new Transformer[] {

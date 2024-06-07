@@ -35,13 +35,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.StartupStep;
-import org.apache.camel.ValueHolder;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.engine.DefaultExecutorServiceManager;
 import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
-import org.apache.camel.impl.engine.TransformerKey;
-import org.apache.camel.impl.engine.ValidatorKey;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.model.BeanFactoryDefinition;
@@ -75,8 +72,10 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorKey;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
@@ -779,7 +778,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         getValidatorRegistry().put(createValidatorKey(def), validator);
     }
 
-    private static ValueHolder<String> createValidatorKey(ValidatorDefinition def) {
+    private static ValidatorKey createValidatorKey(ValidatorDefinition def) {
         return new ValidatorKey(new DataType(def.getType()));
     }
 
@@ -826,7 +825,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         return PreconditionHelper.included(definition, this);
     }
 
-    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
+    private static TransformerKey createTransformerKey(TransformerDefinition def) {
         if (ObjectHelper.isNotEmpty(def.getScheme())) {
             return ObjectHelper.isNotEmpty(def.getName())
                     ? new TransformerKey(def.getScheme() + ":" + def.getName()) : new TransformerKey(def.getScheme());

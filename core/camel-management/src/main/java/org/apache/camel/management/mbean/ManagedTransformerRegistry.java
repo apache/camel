@@ -35,14 +35,14 @@ import org.apache.camel.spi.TransformerRegistry;
 
 @ManagedResource(description = "Managed TransformerRegistry")
 public class ManagedTransformerRegistry extends ManagedService implements ManagedTransformerRegistryMBean {
-    private final TransformerRegistry<?> transformerRegistry;
+    private final TransformerRegistry transformerRegistry;
 
-    public ManagedTransformerRegistry(CamelContext context, TransformerRegistry<?> transformerRegistry) {
+    public ManagedTransformerRegistry(CamelContext context, TransformerRegistry transformerRegistry) {
         super(context, transformerRegistry);
         this.transformerRegistry = transformerRegistry;
     }
 
-    public TransformerRegistry<?> getTransformerRegistry() {
+    public TransformerRegistry getTransformerRegistry() {
         return transformerRegistry;
     }
 
