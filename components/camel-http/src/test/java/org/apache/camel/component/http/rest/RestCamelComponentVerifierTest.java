@@ -45,9 +45,8 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     private Map<String, Object> parameters;
     private ComponentVerifierExtension verifier;
 
-    @BeforeEach
     @Override
-    public void doPostSetup() throws Exception {
+    public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getHttpProcessor())
                 .register("/verify", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
@@ -55,17 +54,20 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         localServer.start();
 
-        RestComponent component = context().getComponent("rest", RestComponent.class);
-        verifier = component.getVerifier();
-
         parameters = new HashMap<>();
         parameters.put("producerComponentName", "http");
         parameters.put("host", "http://localhost:" + localServer.getLocalPort());
         parameters.put("path", "verify");
     }
 
+    @BeforeEach
+    public void setupVerifier() {
+        RestComponent component = context().getComponent("rest", RestComponent.class);
+        verifier = component.getVerifier();
+    }
+
     @Override
-    public void doPostTearDown() throws Exception {
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

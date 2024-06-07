@@ -44,7 +44,7 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
     private SSLContextParameters sslContextParameters2 = new SSLContextParameters();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext()).create();
@@ -52,8 +52,7 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
-
+    public void cleanupResources() {
         if (localServer != null) {
             localServer.stop();
         }

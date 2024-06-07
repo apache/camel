@@ -24,7 +24,6 @@ import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class HttpProducerCustomHeaderTest extends BaseHttpTest {
@@ -33,9 +32,8 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @BeforeEach
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put(HttpHeaders.HOST, CUSTOM_HOST);
 
@@ -62,7 +60,7 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

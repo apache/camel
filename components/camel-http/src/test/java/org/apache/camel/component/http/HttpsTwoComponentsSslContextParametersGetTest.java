@@ -48,7 +48,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     private HttpComponent httpComponent1 = new HttpComponent();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext()).create();
@@ -56,8 +56,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
-
+    public void cleanupResources() {
         if (localServer != null) {
             localServer.stop();
         }

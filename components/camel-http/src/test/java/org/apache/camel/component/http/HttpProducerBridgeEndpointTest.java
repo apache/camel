@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
@@ -40,9 +39,8 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @BeforeEach
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         String[] absentHeaders = new String[] { "qp1", "qp2", "qp3", "qp4", "qp5" };
         Map<String, String> noBridgeExpectedHeaders = new HashMap<>();
         noBridgeExpectedHeaders.put("qp1", INSTANT.toString());
@@ -75,7 +73,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

@@ -48,9 +48,8 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     private HttpServer localServer;
     private ComponentVerifierExtension verifier;
 
-    @BeforeEach
     @Override
-    public void doPostSetup() throws Exception {
+    public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getHttpProcessor())
                 .register("/basic", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
@@ -62,17 +61,19 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
                 .create();
 
         localServer.start();
-
-        Component component = context().getComponent("http");
-        verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
-
+    public void cleanupResources() throws Exception {
         if (localServer != null) {
             localServer.stop();
         }
+    }
+
+    @BeforeEach
+    void setupVerifier() {
+        Component component = context().getComponent("http");
+        verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
     }
 
     @Override
