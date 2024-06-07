@@ -87,6 +87,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "shardClosed": target.getConfiguration().setShardClosed(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class, value)); return true;
         case "shardid":
         case "shardId": target.getConfiguration().setShardId(property(camelContext, java.lang.String.class, value)); return true;
+        case "shardmonitorinterval":
+        case "shardMonitorInterval": target.getConfiguration().setShardMonitorInterval(property(camelContext, long.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -179,6 +181,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "shardClosed": return org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class;
         case "shardid":
         case "shardId": return java.lang.String.class;
+        case "shardmonitorinterval":
+        case "shardMonitorInterval": return long.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -267,6 +271,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "shardClosed": return target.getConfiguration().getShardClosed();
         case "shardid":
         case "shardId": return target.getConfiguration().getShardId();
+        case "shardmonitorinterval":
+        case "shardMonitorInterval": return target.getConfiguration().getShardMonitorInterval();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":
