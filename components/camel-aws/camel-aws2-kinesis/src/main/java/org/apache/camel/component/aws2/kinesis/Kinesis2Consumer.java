@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,7 +57,8 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private Map<String, String> currentShardIterators = new java.util.HashMap<>();
 
     private List<Shard> currentShardList = new ArrayList<>();
-    private final ScheduledExecutorService shardMonitorExecutor = Executors.newSingleThreadScheduledExecutor();
+    private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
+    private ScheduledExecutorService shardMonitorExecutor;
 
     public Kinesis2Consumer(Kinesis2Endpoint endpoint,
                             Processor processor) {
@@ -341,7 +341,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         super.doStart();
 
         ObjectHelper.notNull(connection, "connection", this);
-        this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(), 0, getConfiguration().getShardMonitorIntervalInSeconds(), TimeUnit.SECONDS);
+        this.shardMonitorExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, SHARD_MONITOR_EXECUTOR_NAME);
+        this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(), 0, getConfiguration().getShardMonitorInterval(), TimeUnit.MILLISECONDS);
+
         if (resumeStrategy != null) {
             resumeStrategy.loadCache();
         }
@@ -349,13 +352,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
     @Override
     protected void doStop() throws Exception {
-        try {
-            this.shardMonitorExecutor.shutdown();
-            if (!this.shardMonitorExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
-                this.shardMonitorExecutor.shutdownNow();
-            }
-        } catch (Exception ex) {
-            LOG.warn("Exception when shutting down executor", ex);
+        if (this.shardMonitorExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(this.shardMonitorExecutor);
+            this.shardMonitorExecutor = null;
         }
 
         super.doStop();

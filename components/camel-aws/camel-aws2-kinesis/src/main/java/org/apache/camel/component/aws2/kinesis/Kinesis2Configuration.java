@@ -100,9 +100,9 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "security",
               description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
-    @UriParam(label = "consumer", description = "The interval in seconds to wait between shard polling",
-              defaultValue = "10")
-    private int shardMonitorIntervalInSeconds = 10;
+    @UriParam(label = "consumer", description = "The interval in milliseconds to wait between shard polling",
+              defaultValue = "10000")
+    private long shardMonitorInterval = 10000;
 
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -288,11 +288,11 @@ public class Kinesis2Configuration implements Cloneable {
         this.asyncClient = asyncClient;
     }
 
-    public int getShardMonitorIntervalInSeconds() {
-        return shardMonitorIntervalInSeconds;
+    public long getShardMonitorInterval() {
+        return shardMonitorInterval;
     }
-    public void setShardMonitorIntervalInSeconds(int shardMonitorIntervalInSeconds) {
-        this.shardMonitorIntervalInSeconds = shardMonitorIntervalInSeconds;
+    public void setShardMonitorInterval(long shardMonitorInterval) {
+        this.shardMonitorInterval = shardMonitorInterval;
     }
 
     // *************************************************
