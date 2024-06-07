@@ -485,7 +485,7 @@
         <woodstox-core-version>6.6.2</woodstox-core-version>
         <xbean-spring-version>4.25</xbean-spring-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
-        <xchange-version>5.1.1</xchange-version>
+        <xchange-version>5.2.0</xchange-version>
         <xerces-version>2.12.2</xerces-version>
         <!-- needed to manage the xml-apis version in camel-xmljson -->
         <xml-apis-version>1.4.01</xml-apis-version>
