@@ -25,6 +25,7 @@ import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.fest.assertions.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -45,8 +46,8 @@ public class CamelDirectSenderTest extends AbstractWSATests {
     @EndpointInject("mock:camelDirect")
     private MockEndpoint endpointCamelDirect;
 
-    @Override
-    public void doPostSetup() throws Exception {
+    @BeforeEach
+    public void setupBeans() {
         // initialize beans for catching results
         customChannel = getMandatoryBean(OutputChannelReceiver.class, "customReceiver");
         customChannel.clear();
