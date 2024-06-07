@@ -40,9 +40,10 @@ public class HttpClientRouteExampleSpringTest extends ServletCamelRouterTestSupp
     }
 
     @Override
-    public void doPreSetup() {
-        startCamelContext = false;
-        testConfiguration().withAutoStartContext(startCamelContext);
+    public void setupResources() throws Exception {
+        super.setupResources();
+
+        testConfiguration().withAutoStartContext(false);
     }
 
     @Override

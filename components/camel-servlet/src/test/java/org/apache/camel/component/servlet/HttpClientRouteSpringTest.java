@@ -23,8 +23,9 @@ import org.springframework.web.context.ContextLoaderListener;
 public class HttpClientRouteSpringTest extends HttpClientRouteTest {
 
     @Override
-    public void doPreSetup() {
-        startCamelContext = false;
+    public void setupResources() throws Exception {
+        super.setupResources();
+        testConfiguration().withAutoStartContext(false);
     }
 
     @Override
