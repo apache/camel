@@ -33,7 +33,7 @@ import org.apache.camel.support.EndpointHelper;
 /**
  * Configures a context for test execution
  */
-public final class CamelContextConfiguration {
+public class CamelContextConfiguration {
     @FunctionalInterface
     public interface CamelContextSupplier {
         CamelContext createCamelContext() throws Exception;
@@ -228,7 +228,7 @@ public final class CamelContextConfiguration {
      *
      * @param camelContextSupplier A supplier for the Camel context
      */
-    CamelContextConfiguration withCamelContextSupplier(
+    protected CamelContextConfiguration withCamelContextSupplier(
             CamelContextSupplier camelContextSupplier) {
         this.camelContextSupplier = camelContextSupplier;
         return this;
@@ -285,7 +285,7 @@ public final class CamelContextConfiguration {
     /**
      * A supplier that classes can use to create a {@link RouteBuilder} to define the routes for testing
      */
-    CamelContextConfiguration withRoutesSupplier(
+    protected CamelContextConfiguration withRoutesSupplier(
             RoutesSupplier routesSupplier) {
         this.routesSupplier = routesSupplier;
         return this;
@@ -314,7 +314,7 @@ public final class CamelContextConfiguration {
      *
      * @param postProcessor the post-test processor to use
      */
-    CamelContextConfiguration withPostProcessor(
+    protected CamelContextConfiguration withPostProcessor(
             PostProcessor postProcessor) {
         this.postProcessor = postProcessor;
         return this;

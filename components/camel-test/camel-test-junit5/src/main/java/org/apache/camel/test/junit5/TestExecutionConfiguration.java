@@ -106,7 +106,7 @@ public class TestExecutionConfiguration {
      * @return <tt>true</tt> if you use advice with in your unit tests.
      */
     @Deprecated(since = "4.7.0")
-    TestExecutionConfiguration withUseAdviceWith(boolean useAdviceWith) {
+    protected TestExecutionConfiguration withUseAdviceWith(boolean useAdviceWith) {
         this.useAdviceWith = useAdviceWith;
         return this;
     }
@@ -129,7 +129,7 @@ public class TestExecutionConfiguration {
      * @return     <tt>true</tt> per class, <tt>false</tt> per test.
      */
     @Deprecated(since = "4.7.0")
-    TestExecutionConfiguration withCreateCamelContextPerClass(boolean createCamelContextPerClass) {
+    protected TestExecutionConfiguration withCreateCamelContextPerClass(boolean createCamelContextPerClass) {
         this.createCamelContextPerClass = createCamelContextPerClass;
         return this;
     }
