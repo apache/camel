@@ -23,6 +23,8 @@ public class ZipAggregationStrategyConfigurer extends org.apache.camel.support.c
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy target = (org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowemptyfiles":
+        case "allowEmptyFiles": target.setAllowEmptyFiles(property(camelContext, boolean.class, value)); return true;
         case "fileprefix":
         case "filePrefix": target.setFilePrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "filesuffix":
@@ -42,6 +44,8 @@ public class ZipAggregationStrategyConfigurer extends org.apache.camel.support.c
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowemptyfiles":
+        case "allowEmptyFiles": return boolean.class;
         case "fileprefix":
         case "filePrefix": return java.lang.String.class;
         case "filesuffix":
@@ -62,6 +66,8 @@ public class ZipAggregationStrategyConfigurer extends org.apache.camel.support.c
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy target = (org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowemptyfiles":
+        case "allowEmptyFiles": return target.isAllowEmptyFiles();
         case "fileprefix":
         case "filePrefix": return target.getFilePrefix();
         case "filesuffix":
