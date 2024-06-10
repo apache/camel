@@ -70,6 +70,45 @@ i.e. `org.apache.camel.component.cxf` is now `org.apache.camel.component.cxf.jaw
 This means, for example, the `CxfComponent` class is now located
 in `org.apache.camel.component.cxf.jaxws`.
 
+Some classes in the following packages were refactored, and the package was updated, 
+if you were using one of those packages and, after the migration, a ClassNotFoundException is thrown, 
+an update should be considered
+
+|===
+|Old Package | New Package
+
+| `org.apache.camel.component.cxf`
+| `org.apache.camel.component.cxf.common`
+
+| `org.apache.camel.component.cxf.interceptors`
+| `org.apache.camel.component.cxf.util`
+
+| `org.apache.camel.component.cxf.converter`
+| `org.apache.camel.component.cxf.jaxrs`
+
+| `org.apache.camel.component.cxf`
+| `org.apache.camel.component.cxf.jaxws`
+
+| `org.apache.camel.component.cxf.spring`
+| `org.apache.camel.component.cxf.spring.jaxrs`
+
+| `org.apache.camel.component.cxf.spring`
+| `org.apache.camel.component.cxf.spring.jaxws`
+
+| `org.apache.camel.component.cxf`
+| `org.apache.camel.component.cxf.spring.jaxws`
+
+| `org.apache.camel.component.cxf.transport.spring`
+| `org.apache.camel.component.cxf.spring.transport`
+
+| `org.apache.camel.component.cxf.common.header`
+| `org.apache.camel.component.cxf.transport.header`
+
+| `org.apache.camel.component.cxf.common.message`
+| `org.apache.camel.component.cxf.transport.message`
+
+|===
+
 === camel-endpointdsl
 
 The options for `lazyStartProducer` and `bridgeErrorHandler` has moved into the _advanced_ group.
