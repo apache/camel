@@ -14,7 +14,20 @@
 
 *{component-header}*
 
-The Camel Component for PLC4X allows you to create routes using the PLC4X API to read from a PLC device or write to it.
+The Camel Component for PLC4X allows you to create routes using the PLC4X API to read from a Programmable Logic Controllers (PLC) device or write to it.
+
+It supports various protocols by adding the driver dependencies:
+* Allen Bradley ETH
+* Automation Device Specification (ADS)
+* CANopen
+* EtherNet/IP
+* Firmata
+* KNXnet/IP
+* Modbus (TCP/UDP/Serial)
+* Open Platform Communications Unified Architecture (OPC UA)
+* Step7 (S7)
+
+The list of supported protocols is growing in https://plc4x.apache.org[PLC4X]. There are good chance that they will work out of the box just by adding the driver dependency. You can check https://plc4x.apache.org/users/protocols/index.html[here].
 
 == URI Format
 
