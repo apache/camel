@@ -295,6 +295,7 @@
         <module>camel-stitch</module>
         <module>camel-swift</module>
         <module>camel-openapi-java</module>
+        <module>camel-openapi-validator</module>
         <module>camel-opensearch</module>
         <module>camel-optaplanner</module>
         <module>camel-syslog</module>
