@@ -168,7 +168,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     }
 
     @Override
-    public boolean process(OpenAPI openAPI,
+    public boolean process(
+            OpenAPI openAPI,
             Operation operation, String verb, String path,
             RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback) {
