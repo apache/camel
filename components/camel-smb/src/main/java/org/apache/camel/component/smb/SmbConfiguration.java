@@ -51,7 +51,8 @@ public class SmbConfiguration {
               description = "An optional SMB client configuration, can be used to configure client specific "
                             + " configurations, like timeouts")
     private SmbConfig smbConfig;
-    @UriParam(label = "consumer", defaultValue="false", description = "If a directory, will look for files in all the sub-directories as well.")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "If a directory, will look for files in all the sub-directories as well.")
     protected boolean recursive;
 
     public String getUsername() {

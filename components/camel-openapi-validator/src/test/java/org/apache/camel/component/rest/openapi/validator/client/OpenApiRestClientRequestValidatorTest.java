@@ -44,8 +44,9 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
         OpenApiRestClientRequestValidator validator = new OpenApiRestClientRequestValidator();
 
-        RestClientRequestValidator.ValidationError error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-                "application/json", "application/json", true, null, null, null, null));
+        RestClientRequestValidator.ValidationError error
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
 
         Assertions.assertNotNull(error);
         Assertions.assertTrue(error.body().contains("A request body is required but none found"));

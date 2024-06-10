@@ -78,7 +78,8 @@ public interface RestOpenapiProcessorStrategy {
      * @return           (doneSync) true to continue execute synchronously, false to continue being executed
      *                   asynchronously
      */
-    boolean process(OpenAPI openAPI,
+    boolean process(
+            OpenAPI openAPI,
             Operation operation, String verb, String path,
             RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback);
