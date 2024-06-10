@@ -128,10 +128,12 @@ public class MessageTableHelper {
                 String data = "(" + sj + ")";
                 eRow2 = new TableRow(null, null, null, data);
             }
-            tab0b = AsciiTable.getTable(AsciiTable.NO_BORDERS, eRow2 != null ? List.of(eRow, eRow2) : List.of(eRow), Arrays.asList(
-                    new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
-                    new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::valueAsString)));
+            tab0b = AsciiTable.getTable(AsciiTable.NO_BORDERS, eRow2 != null ? List.of(eRow, eRow2) : List.of(eRow),
+                    Arrays.asList(
+                            new Column().dataAlign(HorizontalAlign.LEFT)
+                                    .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                    .with(TableRow::kindAsString),
+                            new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::valueAsString)));
         }
 
         if (root != null) {

@@ -744,7 +744,8 @@ public class Debug extends Run {
     }
 
     private String getDataAsTable(SuspendedRow r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.endpointService, r.message, r.exception);
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.endpointService, r.message,
+                r.exception);
     }
 
     private String getStatus(SuspendedRow r) {
