@@ -195,6 +195,8 @@ class ExportSpringBoot extends Export {
                     .map(property -> property + System.lineSeparator())
                     .collect(Collectors.joining());
             context = context.replaceFirst("\\{\\{ \\.AdditionalProperties }}", properties);
+        } else {
+            context = context.replaceFirst("\\{\\{ \\.AdditionalProperties }}", "");
         }
 
         // Convert jkube properties to maven properties
