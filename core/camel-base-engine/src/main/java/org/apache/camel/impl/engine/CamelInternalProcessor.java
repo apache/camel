@@ -45,6 +45,7 @@ import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InternalProcessor;
@@ -646,6 +647,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
                             rest, template, messageAsXml, messageAsJSon);
+                    if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
+                        pseudoFirst.setEndpointServiceUrl(esl.getServiceUrl());
+                        pseudoFirst.setEndpointServiceProtocol(esl.getServiceProtocol());
+                        pseudoFirst.setEndpointServiceMetadata(esl.getServiceMetadata());
+                    }
                     backlogTracer.traceEvent(pseudoFirst);
                     exchange.getExchangeExtension().addOnCompletion(createOnCompletion(source, pseudoFirst));
                 }
@@ -719,6 +725,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
             if (uri != null) {
                 data.setEndpointUri(uri);
+            }
+            if (endpoint instanceof EndpointServiceLocation esl) {
+                data.setEndpointServiceUrl(esl.getServiceUrl());
+                data.setEndpointServiceProtocol(esl.getServiceProtocol());
+                data.setEndpointServiceMetadata(esl.getServiceMetadata());
             }
 
             if (!data.isFirst() && backlogTracer.isIncludeException()) {
