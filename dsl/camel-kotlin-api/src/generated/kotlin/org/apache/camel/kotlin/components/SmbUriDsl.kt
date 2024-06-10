@@ -87,6 +87,20 @@ public class SmbUriDsl(
   }
 
   /**
+   * If a directory, will look for files in all the sub-directories as well.
+   */
+  public fun recursive(recursive: String) {
+    it.property("recursive", recursive)
+  }
+
+  /**
+   * If a directory, will look for files in all the sub-directories as well.
+   */
+  public fun recursive(recursive: Boolean) {
+    it.property("recursive", recursive.toString())
+  }
+
+  /**
    * The search pattern used to list the files
    */
   public fun searchPattern(searchPattern: String) {

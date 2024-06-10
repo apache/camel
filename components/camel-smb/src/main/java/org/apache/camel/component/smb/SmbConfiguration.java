@@ -51,6 +51,8 @@ public class SmbConfiguration {
               description = "An optional SMB client configuration, can be used to configure client specific "
                             + " configurations, like timeouts")
     private SmbConfig smbConfig;
+    @UriParam(label = "consumer", defaultValue="false", description = "If a directory, will look for files in all the sub-directories as well.")
+    protected boolean recursive;
 
     public String getUsername() {
         return username;
@@ -70,6 +72,18 @@ public class SmbConfiguration {
 
     public String getDomain() {
         return domain;
+    }
+
+    public boolean isRecursive() {
+        return recursive;
+    }
+
+    public void setRecursive(boolean recursive) {
+        this.recursive = recursive;
+    }
+
+    public void setRecursive(String recursiveString) {
+        this.recursive = Boolean.valueOf(recursiveString);
     }
 
     public void setDomain(String domain) {
