@@ -18,6 +18,7 @@ package org.apache.camel.component.rest.openapi.validator.client;
 
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
+import com.atlassian.oai.validator.report.JsonValidationReportFormat;
 import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -54,11 +55,15 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
             builder.withBody(body);
         }
 
-        Thread.currentThread().setContextClassLoader(exchange.getContext().getApplicationContextClassLoader());
         OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI).build();
         ValidationReport report = validator.validateRequest(builder.build());
         if (report.hasErrors()) {
-            String msg = SimpleValidationReportFormat.getInstance().apply(report);
+            String msg;
+            if (accept != null && accept.contains("application/json")) {
+                msg = JsonValidationReportFormat.getInstance().apply(report);
+            } else {
+                msg = SimpleValidationReportFormat.getInstance().apply(report);
+            }
             return new ValidationError(400, msg);
         }
         return null;
