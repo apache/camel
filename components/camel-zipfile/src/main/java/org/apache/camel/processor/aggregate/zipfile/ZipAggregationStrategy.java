@@ -55,6 +55,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     private String filePrefix;
     private String fileSuffix = ".zip";
+    private boolean allowEmptyFiles;
     private boolean preserveFolderStructure;
     private boolean useFilenameHeader;
     private boolean useTempFile;
@@ -91,9 +92,25 @@ public class ZipAggregationStrategy implements AggregationStrategy {
      *                                of memory.
      */
     public ZipAggregationStrategy(boolean preserveFolderStructure, boolean useFilenameHeader, boolean useTempFile) {
+        this(preserveFolderStructure, useFilenameHeader, useTempFile, false);
+    }
+
+    /**
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is a type of
+     *                                {@link GenericFileMessage}. If used with a file, use recursive=true.
+     * @param useFilenameHeader       if true, the filename header will be used to name aggregated byte arrays within
+     *                                the ZIP file.
+     * @param useTempFile             if true, the ZipFileSystem will use temporary files for zip manipulations instead
+     *                                of memory.
+     * @param allowEmptyFiles         if true, the Aggregation will also add empty files to the zip.
+     *
+     */
+    public ZipAggregationStrategy(boolean preserveFolderStructure, boolean useFilenameHeader, boolean useTempFile,
+                                  boolean allowEmptyFiles) {
         this.preserveFolderStructure = preserveFolderStructure;
         this.useFilenameHeader = useFilenameHeader;
         this.useTempFile = useTempFile;
+        this.allowEmptyFiles = allowEmptyFiles;
     }
 
     /**
@@ -130,6 +147,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
      */
     public void setFileSuffix(String fileSuffix) {
         this.fileSuffix = fileSuffix;
+    }
+
+    public boolean isAllowEmptyFiles() {
+        return allowEmptyFiles;
+    }
+
+    public void setAllowEmptyFiles(boolean allowEmptyFiles) {
+        this.allowEmptyFiles = allowEmptyFiles;
     }
 
     public File getParentDir() {
@@ -183,8 +208,8 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         if (body instanceof File) {
             try {
                 File appendFile = (File) body;
-                // do not try to append empty files
-                if (appendFile.length() > 0) {
+                // try to append empty data only when explicit set
+                if (this.allowEmptyFiles || appendFile.length() > 0) {
                     String entryName = preserveFolderStructure
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
@@ -197,8 +222,8 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             // Handle all other messages
             try {
                 byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
-                // do not try to append empty data
-                if (buffer.length > 0) {
+                // try to append empty data only when explicit set
+                if (this.allowEmptyFiles || buffer.length > 0) {
                     String entryName = useFilenameHeader
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
