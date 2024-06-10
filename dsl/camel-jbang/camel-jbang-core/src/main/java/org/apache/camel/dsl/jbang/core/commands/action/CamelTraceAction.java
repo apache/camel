@@ -440,6 +440,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                         }
                         row.endpoint.put("endpoint", uri);
                     }
+                    JsonObject es = jo.getMap("endpointService");
+                    if (es != null) {
+                        row.endpointService = es;
+                    }
                     Long ts = jo.getLong("timestamp");
                     if (ts != null) {
                         row.timestamp = ts;
@@ -720,7 +724,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     }
 
     private String getDataAsTable(Row r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.message, r.exception);
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.endpointService, r.message, r.exception);
     }
 
     private String getElapsed(Row r) {
@@ -805,6 +809,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         boolean done;
         boolean failed;
         JsonObject endpoint;
+        JsonObject endpointService;
         JsonObject message;
         JsonObject exception;
 

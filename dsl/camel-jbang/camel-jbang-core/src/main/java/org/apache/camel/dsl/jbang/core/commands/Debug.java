@@ -369,6 +369,10 @@ public class Debug extends Run {
                             }
                             row.endpoint.put("endpoint", uri);
                         }
+                        JsonObject es = jo.getMap("endpointService");
+                        if (es != null) {
+                            row.endpointService = es;
+                        }
                         Long ts = jo.getLong("timestamp");
                         if (ts != null) {
                             row.timestamp = ts;
@@ -740,7 +744,7 @@ public class Debug extends Run {
     }
 
     private String getDataAsTable(SuspendedRow r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.message, r.exception);
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.endpointService, r.message, r.exception);
     }
 
     private String getStatus(SuspendedRow r) {
@@ -815,6 +819,7 @@ public class Debug extends Run {
         boolean done;
         boolean failed;
         JsonObject endpoint;
+        JsonObject endpointService;
         JsonObject message;
         JsonObject exception;
         List<Code> code = new ArrayList<>();
