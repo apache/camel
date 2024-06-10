@@ -254,6 +254,23 @@ public interface Aws2KinesisComponentBuilderFactory {
     
         
         /**
+         * The interval in milliseconds to wait between shard polling.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: consumer (advanced)
+         * 
+         * @param shardMonitorInterval the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder shardMonitorInterval(long shardMonitorInterval) {
+            doSetProperty("shardMonitorInterval", shardMonitorInterval);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -585,6 +602,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "sequenceNumber": getOrCreateConfiguration((Kinesis2Component) component).setSequenceNumber((java.lang.String) value); return true;
             case "shardClosed": getOrCreateConfiguration((Kinesis2Component) component).setShardClosed((org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum) value); return true;
             case "shardId": getOrCreateConfiguration((Kinesis2Component) component).setShardId((java.lang.String) value); return true;
+            case "shardMonitorInterval": getOrCreateConfiguration((Kinesis2Component) component).setShardMonitorInterval((long) value); return true;
             case "lazyStartProducer": ((Kinesis2Component) component).setLazyStartProducer((boolean) value); return true;
             case "amazonKinesisClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisClient((software.amazon.awssdk.services.kinesis.KinesisClient) value); return true;
             case "asyncClient": getOrCreateConfiguration((Kinesis2Component) component).setAsyncClient((boolean) value); return true;

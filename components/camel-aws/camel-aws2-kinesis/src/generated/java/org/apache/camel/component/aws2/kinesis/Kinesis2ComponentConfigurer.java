@@ -74,6 +74,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "shardClosed": getOrCreateConfiguration(target).setShardClosed(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class, value)); return true;
         case "shardid":
         case "shardId": getOrCreateConfiguration(target).setShardId(property(camelContext, java.lang.String.class, value)); return true;
+        case "shardmonitorinterval":
+        case "shardMonitorInterval": getOrCreateConfiguration(target).setShardMonitorInterval(property(camelContext, long.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -140,6 +142,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "shardClosed": return org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class;
         case "shardid":
         case "shardId": return java.lang.String.class;
+        case "shardmonitorinterval":
+        case "shardMonitorInterval": return long.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -202,6 +206,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "shardClosed": return getOrCreateConfiguration(target).getShardClosed();
         case "shardid":
         case "shardId": return getOrCreateConfiguration(target).getShardId();
+        case "shardmonitorinterval":
+        case "shardMonitorInterval": return getOrCreateConfiguration(target).getShardMonitorInterval();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":

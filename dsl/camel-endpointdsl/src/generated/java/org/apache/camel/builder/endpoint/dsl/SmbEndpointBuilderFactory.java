@@ -60,6 +60,38 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * If a directory, will look for files in all the sub-directories as
+         * well.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder recursive(boolean recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
+        /**
+         * If a directory, will look for files in all the sub-directories as
+         * well.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder recursive(String recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
+        /**
          * The search pattern used to list the files.
          * 
          * The option is a: <code>java.lang.String</code> type.
