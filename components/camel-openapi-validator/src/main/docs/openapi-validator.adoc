@@ -9,10 +9,14 @@
 
 *Since Camel {since}*
 
-The OpenAPI Validator component is used for plugin a OpenAPI specific client request validator
-for the Camel Rest DSL.
+Camel comes with a default client request validator for the Camel Rest DSL.
 
-This validator uses the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator].
+The `camel-openapi-validator` uses the 3rd-party
+the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator]
+library instead for client request validator. This library is a more extensive validator than
+the default validator from `camel-core`.
+
+NOTE: This library does not work with running in `camel-jbang`.
 
 == Auto-detection from classpath
 

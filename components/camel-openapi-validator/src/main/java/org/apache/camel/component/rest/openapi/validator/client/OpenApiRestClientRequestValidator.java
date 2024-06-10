@@ -18,6 +18,7 @@ package org.apache.camel.component.rest.openapi.validator.client;
 
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
+import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.Exchange;
@@ -28,8 +29,6 @@ import org.apache.camel.support.MessageHelper;
 
 @JdkService(RestClientRequestValidator.FACTORY)
 public class OpenApiRestClientRequestValidator implements RestClientRequestValidator {
-
-    // TODO: use default validator if no OpenAPI
 
     @Override
     public ValidationError validate(Exchange exchange, ValidationContext validationContent) {
@@ -59,9 +58,8 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI).build();
         ValidationReport report = validator.validateRequest(builder.build());
         if (report.hasErrors()) {
-            for (var m : report.getMessages()) {
-                System.out.println(m);
-            }
+            String msg = SimpleValidationReportFormat.getInstance().apply(report);
+            return new ValidationError(400, msg);
         }
         return null;
     }
