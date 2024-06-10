@@ -66,6 +66,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     private ElasticsearchRestClientEndpoint endpoint;
     private RestClient restClient;
     private boolean createdRestClient;
+    private Sniffer sniffer;
 
     public ElasticsearchRestClientProducer(ElasticsearchRestClientEndpoint endpoint) {
         super(endpoint);
@@ -114,6 +115,11 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         super.doStop();
 
         if (createdRestClient && restClient != null) {
+            if (sniffer != null) {
+                IOHelper.close(sniffer);
+                sniffer = null;
+            }
+
             IOHelper.close(restClient);
             restClient = null;
         }
@@ -385,7 +391,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
         // initiate Sniffer
         if (this.endpoint.isEnableSniffer()) {
-            Sniffer.builder(restClient)
+            sniffer = Sniffer.builder(restClient)
                     .setSniffIntervalMillis(this.endpoint.getSnifferInterval())
                     .setSniffAfterFailureDelayMillis(this.endpoint.getSniffAfterFailureDelay())
                     .build();
