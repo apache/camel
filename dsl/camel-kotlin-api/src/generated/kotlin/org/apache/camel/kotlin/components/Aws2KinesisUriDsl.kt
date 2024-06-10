@@ -216,6 +216,20 @@ public class Aws2KinesisUriDsl(
   }
 
   /**
+   * The interval in milliseconds to wait between shard polling
+   */
+  public fun shardMonitorInterval(shardMonitorInterval: String) {
+    it.property("shardMonitorInterval", shardMonitorInterval)
+  }
+
+  /**
+   * The interval in milliseconds to wait between shard polling
+   */
+  public fun shardMonitorInterval(shardMonitorInterval: Int) {
+    it.property("shardMonitorInterval", shardMonitorInterval.toString())
+  }
+
+  /**
    * Whether the producer should be started lazy (on the first message). By starting lazy you can
    * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
    * fail during starting and cause the route to fail being started. By deferring this startup to be

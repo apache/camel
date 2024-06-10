@@ -23,7 +23,7 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(43);
+        Set<String> props = new HashSet<>(44);
         props.add("accessKey");
         props.add("amazonKinesisClient");
         props.add("asyncClient");
@@ -58,6 +58,7 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
         props.add("sessionToken");
         props.add("shardClosed");
         props.add("shardId");
+        props.add("shardMonitorInterval");
         props.add("startScheduler");
         props.add("streamName");
         props.add("timeUnit");

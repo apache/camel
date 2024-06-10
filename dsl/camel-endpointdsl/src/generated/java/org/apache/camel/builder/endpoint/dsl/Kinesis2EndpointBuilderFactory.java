@@ -1187,6 +1187,36 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The interval in milliseconds to wait between shard polling.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: consumer (advanced)
+         * 
+         * @param shardMonitorInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder shardMonitorInterval(long shardMonitorInterval) {
+            doSetProperty("shardMonitorInterval", shardMonitorInterval);
+            return this;
+        }
+        /**
+         * The interval in milliseconds to wait between shard polling.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: consumer (advanced)
+         * 
+         * @param shardMonitorInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder shardMonitorInterval(String shardMonitorInterval) {
+            doSetProperty("shardMonitorInterval", shardMonitorInterval);
+            return this;
+        }
+        /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:

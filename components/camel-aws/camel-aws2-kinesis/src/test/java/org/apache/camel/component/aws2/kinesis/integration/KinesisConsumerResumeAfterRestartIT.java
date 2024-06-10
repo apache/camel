@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.aws2.kinesis.integration;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kinesis.consumer.KinesisConsumerOffsetProcessor;
@@ -47,7 +47,7 @@ public class KinesisConsumerResumeAfterRestartIT extends CamelTestSupport {
 
     String streamName = "my-stream";
 
-    List<String> receivedMessages = new ArrayList<>();
+    List<String> receivedMessages = new CopyOnWriteArrayList<>();
 
     ResumeCache resumeCache = TransientResumeStrategy.createSimpleCache();
 
