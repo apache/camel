@@ -29,8 +29,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.ses.SesClient;
 
-import java.util.Map;
-
 /**
  * Send e-mails through AWS SES service.
  */
