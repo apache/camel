@@ -98,7 +98,6 @@ public class SmbConsumer extends ScheduledPollConsumer {
         return polledCount;
     }
 
-
     @Override
     protected int poll() throws Exception {
         int polledCount = 0;
