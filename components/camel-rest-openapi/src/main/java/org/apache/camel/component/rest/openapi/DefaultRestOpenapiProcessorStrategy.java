@@ -168,7 +168,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     }
 
     @Override
-    public boolean process(
+    public boolean process(OpenAPI openAPI,
             Operation operation, String verb, String path,
             RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback) {
@@ -189,6 +189,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         // there is a route so process
         Map<String, Object> state;
         try {
+            exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
             state = binding.before(exchange);
         } catch (Exception e) {
             exchange.setException(e);

@@ -95,7 +95,8 @@ public class RestOpenapiUriDsl(
   /**
    * What payload type this component capable of consuming. Could be one type, like application/json
    * or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This
-   * equates to the value of Accept HTTP header. If set overrides any value found in the OpenApi
+   * equates or multiple types as application/json, application/xml; q=0.5 according to the RFC7231.
+   * This equates to the value of Accept HTTP header. If set overrides any value found in the OpenApi
    * specification and. in the component configuration
    */
   public fun consumes(consumes: String) {

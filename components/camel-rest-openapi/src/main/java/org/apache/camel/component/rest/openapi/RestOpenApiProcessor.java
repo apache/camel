@@ -123,7 +123,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), uri, rcp.getConsumerPath());
 
             // process the incoming request
-            return restOpenapiProcessorStrategy.process(o, verb, uri, rcp.getBinding(), exchange, callback);
+            return restOpenapiProcessorStrategy.process(openAPI, o, verb, uri, rcp.getBinding(), exchange, callback);
         }
 
         // is it the api-context path
