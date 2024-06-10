@@ -118,8 +118,8 @@ public final class ParserCommon {
     public static boolean isNumericOperator(JavaClassSource clazz, Block block, Expression expression) {
         if (expression instanceof NumberLiteral) {
             return true;
-        } else if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
+        } else if (expression instanceof SimpleName simpleName) {
+            FieldSource<JavaClassSource> field = getField(clazz, block, simpleName);
             if (field != null) {
                 return field.getType().isType("int") || field.getType().isType("long")
                         || field.getType().isType("Integer") || field.getType().isType("Long");
