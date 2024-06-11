@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.aws2.cw;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.cw.client.Cw2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -33,7 +36,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS CloudWatch", syntax = "aws2-cw:namespace",
              producerOnly = true, category = { Category.CLOUD, Category.MONITORING }, headersClass = Cw2Constants.class)
-public class Cw2Endpoint extends DefaultEndpoint {
+public class Cw2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private Cw2Configuration configuration;
@@ -91,5 +94,30 @@ public class Cw2Endpoint extends DefaultEndpoint {
 
     public CloudWatchClient getCloudWatchClient() {
         return cloudWatchClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "cloudwatch";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getNamespace() != null) {
+            return Map.of("namespace", configuration.getNamespace());
+        }
+        return null;
     }
 }
