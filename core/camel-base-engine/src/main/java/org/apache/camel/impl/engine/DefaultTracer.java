@@ -16,13 +16,17 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.CamelContextHelper;
@@ -31,6 +35,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +111,52 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     @Override
     public void traceAfterNode(NamedNode node, Exchange exchange) {
         // noop
+    }
+
+    @Override
+    public void traceSentNode(NamedNode node, Exchange exchange, Endpoint endpoint, long elapsed) {
+        if (!traceBeforeAndAfterRoute) {
+            return;
+        }
+
+        if (shouldTrace(node)) {
+            String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
+
+            // we need to avoid leak the sensible information here
+            // the sanitizeUri takes a very long time for very long string and the format cuts this to
+            // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
+            // characters in the sanitizeUri method and will be reasonably fast
+            String label = URISupport.sanitizeUri(StringHelper.limitLength(node.getLabel(), 50));
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format(tracingFormat, "   ", routeId, label));
+            sb.append(" ");
+
+            StringJoiner sj = new StringJoiner(", ");
+            sj.add("url=" + endpoint.toString());
+            if (endpoint instanceof EndpointServiceLocation esl) {
+                // enrich with service location
+                String url = esl.getServiceUrl();
+                if (url != null) {
+                    sj.add("service=" + url);
+                }
+                String protocol = esl.getServiceProtocol();
+                if (protocol != null) {
+                    sj.add("protocol=" + protocol);
+                }
+                Map<String, String> map = esl.getServiceMetadata();
+                if (map != null) {
+                    map.forEach((k, v) -> sj.add(k + "=" + v));
+                }
+            }
+
+            boolean failed = exchange.isFailed();
+            String data = "Sent " + (failed ? "failed" : "success") + " took " + TimeUtils.printDuration(elapsed, true);
+            data += " (" + sj + ")";
+            sb.append(data);
+            String out = sb.toString();
+            dumpTrace(out, node);
+        }
     }
 
     @Override

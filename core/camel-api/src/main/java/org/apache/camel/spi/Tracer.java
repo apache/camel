@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -57,6 +58,16 @@ public interface Tracer extends StaticService {
      * @param exchange the exchange
      */
     void traceAfterNode(NamedNode node, Exchange exchange);
+
+    /**
+     * Trace when an Exchange was sent to a given endpoint
+     *
+     * @param node     the node EIP
+     * @param exchange the exchange
+     * @param endpoint the endpoint the exchange was sent to
+     * @param elapsed  time in millis for sending the exchange
+     */
+    void traceSentNode(NamedNode node, Exchange exchange, Endpoint endpoint, long elapsed);
 
     /**
      * Trace after the route (eg output from route)
