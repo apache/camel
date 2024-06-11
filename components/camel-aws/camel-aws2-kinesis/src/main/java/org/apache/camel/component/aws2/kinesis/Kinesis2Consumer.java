@@ -29,7 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAction;
+import org.apache.camel.resume.ResumeAction;
+import org.apache.camel.resume.ResumeActionAware;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -287,14 +289,31 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             return;
         }
 
-        KinesisResumeAdapter adapter = resumeStrategy.getAdapter(KinesisResumeAdapter.class);
+        ResumeActionAware adapter = resumeStrategy.getAdapter(ResumeActionAware.class);
         if (adapter == null) {
             LOG.warn("There is a resume strategy setup, but no adapter configured or the type is incorrect");
 
             return;
         }
 
-        adapter.configureGetShardIteratorRequest(req, getEndpoint().getConfiguration().getStreamName(), shardId);
+        final ResumeAction action = resolveResumeAction(shardId, req);
+        adapter.setResumeAction(action);
+        adapter.resume();
+    }
+
+    private KinesisResumeAction resolveResumeAction(String shardId, GetShardIteratorRequest.Builder req) {
+        KinesisResumeAction action
+                = getEndpoint().getCamelContext().getRegistry().lookupByNameAndType(Kinesis2Constants.RESUME_ACTION,
+                        KinesisResumeAction.class);
+        if (action == null) {
+            action = new KinesisResumeAction(req);
+        } else {
+            action.setBuilder(req);
+        }
+
+        action.setShardId(shardId);
+        action.setStreamName(getEndpoint().getConfiguration().getStreamName());
+        return action;
     }
 
     private Queue<Exchange> createExchanges(Shard shard, List<Record> records) {
