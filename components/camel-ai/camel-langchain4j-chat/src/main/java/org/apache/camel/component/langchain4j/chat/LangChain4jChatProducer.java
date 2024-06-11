@@ -139,12 +139,17 @@ public class LangChain4jChatProducer extends DefaultProducer {
     private String sendListChatMessage(List<ChatMessage> chatMessages, Exchange exchange) {
         LangChain4jChatEndpoint langChain4jChatEndpoint = (LangChain4jChatEndpoint) getEndpoint();
 
-        List<ToolSpecification> toolSpecifications = CamelToolExecutorCache.getInstance().getTools()
-                .get(langChain4jChatEndpoint.getChatId()).stream()
-                .map(camelToolSpecification -> camelToolSpecification.getToolSpecification())
-                .collect(Collectors.toList());
+        Response<AiMessage> response;
+        if (CamelToolExecutorCache.getInstance().getTools().containsKey(langChain4jChatEndpoint.getChatId())) {
+            List<ToolSpecification> toolSpecifications = CamelToolExecutorCache.getInstance().getTools()
+                    .get(langChain4jChatEndpoint.getChatId()).stream()
+                    .map(camelToolSpecification -> camelToolSpecification.getToolSpecification())
+                    .collect(Collectors.toList());
 
-        Response<AiMessage> response = this.chatLanguageModel.generate(chatMessages, toolSpecifications);
+            response = this.chatLanguageModel.generate(chatMessages, toolSpecifications);
+        } else {
+            response = this.chatLanguageModel.generate(chatMessages);
+        }
 
         if (response.content().hasToolExecutionRequests()) {
             chatMessages.add(response.content());
