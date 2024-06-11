@@ -72,7 +72,7 @@ import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_CLIENT_AUT
 import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDED_CIPHER_SUITES_ONLY;
 
 /**
- * Send and receive messages to/from COAP capable devices.
+ * Send and receive messages to/from CoAP (Constrained Application Protocol) capable devices.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri",
              category = { Category.IOT }, headersClass = CoAPConstants.class)

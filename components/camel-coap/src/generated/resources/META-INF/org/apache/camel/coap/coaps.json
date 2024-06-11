@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "coaps",
     "title": "CoAP (Secure)",
-    "description": "Send and receive messages to\/from COAP capable devices.",
+    "description": "Send and receive messages to\/from CoAP (Constrained Application Protocol) capable devices.",
     "deprecated": false,
     "firstVersion": "2.16.0",
     "label": "iot",
