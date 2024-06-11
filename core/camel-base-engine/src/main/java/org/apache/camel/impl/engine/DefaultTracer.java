@@ -129,7 +129,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
             String label = URISupport.sanitizeUri(StringHelper.limitLength(node.getLabel(), 50));
 
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format(tracingFormat, "   ", routeId, label));
+            sb.append(String.format(tracingFormat, "   ", routeId, ""));
             sb.append(" ");
 
             StringJoiner sj = new StringJoiner(", ");
@@ -180,9 +180,38 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         sb.append(String.format(tracingFormat, arrow, route.getRouteId(), label));
         sb.append(" ");
         String data = exchangeFormatter.format(exchange);
-        sb.append(data);
-        String out = sb.toString();
+        String out = sb + data;
         dumpTrace(out, route);
+
+        // enrich with endpoint service location on incoming request
+        if (original) {
+            Endpoint endpoint = exchange.getFromEndpoint();
+            if (endpoint instanceof EndpointServiceLocation esl) {
+                StringJoiner sj = new StringJoiner(", ");
+                sj.add("url=" + endpoint);
+                // enrich with service location
+                String url = esl.getServiceUrl();
+                if (url != null) {
+                    sj.add("service=" + url);
+                }
+                String protocol = esl.getServiceProtocol();
+                if (protocol != null) {
+                    sj.add("protocol=" + protocol);
+                }
+                Map<String, String> map = esl.getServiceMetadata();
+                if (map != null) {
+                    map.forEach((k, v) -> sj.add(k + "=" + v));
+                }
+                data = "Received (" + sj + ")";
+
+                sb = new StringBuilder();
+                sb.append(String.format(tracingFormat, "", route.getRouteId(), ""));
+                sb.append(" ");
+
+                out = sb + data;
+                dumpTrace(out, route);
+            }
+        }
     }
 
     @Override
