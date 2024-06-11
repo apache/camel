@@ -2333,6 +2333,18 @@ public interface Kinesis2EndpointBuilderFactory {
             return "CamelMessageTimestamp";
         }
         /**
+         * The resume action to execute when resuming.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KinesisDbResumeAction}.
+         */
+        public String kinesisDbResumeAction() {
+            return "CamelKinesisDbResumeAction";
+        }
+        /**
          * The shard ID of the shard where the data record was placed.
          * 
          * The option is a: {@code String} type.

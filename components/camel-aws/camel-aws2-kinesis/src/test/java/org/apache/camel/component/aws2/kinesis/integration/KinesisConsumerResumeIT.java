@@ -25,9 +25,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
-import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAdapter;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeAction;
+import org.apache.camel.component.aws2.kinesis.consumer.KinesisResumeStrategyConfiguration;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
+import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.test.infra.aws.common.AWSCommon;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
@@ -76,29 +78,26 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
         }
     }
 
-    private static final class TestKinesisResumeAdapter implements KinesisResumeAdapter {
+    private static final class TestResumeAction extends KinesisResumeAction {
         private List<PutRecordsResponse> previousRecords;
         private final int expectedCount;
-        private GetShardIteratorRequest.Builder builder;
 
-        private TestKinesisResumeAdapter(int expectedCount) {
+        private TestResumeAction(int expectedCount) {
             this.expectedCount = expectedCount;
-        }
-
-        @Override
-        public void resume() {
         }
 
         public void setPreviousRecords(List<PutRecordsResponse> previousRecords) {
             this.previousRecords = previousRecords;
         }
 
+        public int getExpectedCount() {
+            return expectedCount;
+        }
+
         @Override
-        public void configureGetShardIteratorRequest(
-                GetShardIteratorRequest.Builder builder, String streamName, String shardId) {
+        public boolean evalEntry(Object shardId, Object sequenceNumber) {
+            final GetShardIteratorRequest.Builder builder = super.getBuilder();
             ObjectHelper.notNull(builder, "builder");
-            ObjectHelper.notNull(streamName, "streamName");
-            ObjectHelper.notNull(shardId, "shardId");
 
             LOG.debug("Waiting for data");
             Awaitility.await().atMost(1, TimeUnit.MINUTES).until(() -> !previousRecords.isEmpty());
@@ -109,6 +108,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
 
             builder.startingSequenceNumber(putRecordsResultEntry.sequenceNumber());
             builder.shardIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER);
+            return false;
         }
     }
 
@@ -126,7 +126,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     private final int expectedCount = messageCount / 2;
     private List<KinesisData> receivedMessages = new CopyOnWriteArrayList<>();
     private List<PutRecordsResponse> previousRecords;
-    private TestKinesisResumeAdapter adapter = new TestKinesisResumeAdapter(expectedCount);
+    private TestResumeAction action = new TestResumeAction(expectedCount);
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -137,11 +137,17 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                bindToRegistry("testResumeStrategy", new TransientResumeStrategy(adapter));
+                final ResumeCache<Object> simpleCache = TransientResumeStrategy.createSimpleCache();
+                final KinesisResumeStrategyConfiguration.KinesisResumeStrategyConfigurationBuilder resumeConfigurationBuilder
+                        = KinesisResumeStrategyConfiguration.builder()
+                                .withResumeCache(simpleCache);
+
+                bindToRegistry(Kinesis2Constants.RESUME_ACTION, action);
 
                 String kinesisEndpointUri = "aws2-kinesis://%s?amazonKinesisClient=#amazonKinesisClient";
 
                 fromF(kinesisEndpointUri, streamName)
+                        .resumable().configuration(resumeConfigurationBuilder)
                         .process(exchange -> {
                             KinesisData data = new KinesisData();
                             final Message message = exchange.getMessage();
@@ -153,7 +159,6 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
 
                             receivedMessages.add(data);
                         })
-                        .resumable("testResumeStrategy")
                         .to("mock:result");
             }
         };
@@ -172,7 +177,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
             }
         }
 
-        adapter.setPreviousRecords(previousRecords);
+        action.setPreviousRecords(previousRecords);
     }
 
     @AfterEach
