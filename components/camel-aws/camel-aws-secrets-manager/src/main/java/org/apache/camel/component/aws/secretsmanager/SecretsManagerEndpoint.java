@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -38,7 +39,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 @Metadata(annotations = {
         "vault=aws-secrets-manager",
 })
-public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
+public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private SecretsManagerClient secretsManagerClient;
 
@@ -90,5 +91,22 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
 
     public SecretsManagerClient getSecretsManagerClient() {
         return secretsManagerClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "secrets-manager";
     }
 }
