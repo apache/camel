@@ -215,7 +215,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (route.isTracing() || camelContext.isTracingStandby()) {
             // add logger tracer
             Tracer tracer = camelContext.getTracer();
-            addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
+            addAdvice(new TracingAdvice(camelContext, tracer, targetOutputDef, routeDefinition, first));
         }
 
         // debugger will automatically include message history
