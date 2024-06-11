@@ -25,10 +25,33 @@ public class ElasticsearchRestClientComponentConfigurer extends PropertyConfigur
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "certificatepath":
+        case "certificatePath": target.setCertificatePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "enablesniffer":
+        case "enableSniffer": target.setEnableSniffer(property(camelContext, boolean.class, value)); return true;
+        case "hostaddresseslist":
+        case "hostAddressesList": target.setHostAddressesList(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "restclient":
+        case "restClient": target.setRestClient(property(camelContext, org.elasticsearch.client.RestClient.class, value)); return true;
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": target.setSniffAfterFailureDelay(property(camelContext, int.class, value)); return true;
+        case "snifferinterval":
+        case "snifferInterval": target.setSnifferInterval(property(camelContext, int.class, value)); return true;
+        case "sockettimeout":
+        case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"restClient"};
     }
 
     @Override
@@ -36,8 +59,26 @@ public class ElasticsearchRestClientComponentConfigurer extends PropertyConfigur
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "certificatepath":
+        case "certificatePath": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "enablesniffer":
+        case "enableSniffer": return boolean.class;
+        case "hostaddresseslist":
+        case "hostAddressesList": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "restclient":
+        case "restClient": return org.elasticsearch.client.RestClient.class;
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": return int.class;
+        case "snifferinterval":
+        case "snifferInterval": return int.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "user": return java.lang.String.class;
         default: return null;
         }
     }
@@ -48,8 +89,26 @@ public class ElasticsearchRestClientComponentConfigurer extends PropertyConfigur
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "certificatepath":
+        case "certificatePath": return target.getCertificatePath();
+        case "connectiontimeout":
+        case "connectionTimeout": return target.getConnectionTimeout();
+        case "enablesniffer":
+        case "enableSniffer": return target.isEnableSniffer();
+        case "hostaddresseslist":
+        case "hostAddressesList": return target.getHostAddressesList();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getPassword();
+        case "restclient":
+        case "restClient": return target.getRestClient();
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": return target.getSniffAfterFailureDelay();
+        case "snifferinterval":
+        case "snifferInterval": return target.getSnifferInterval();
+        case "sockettimeout":
+        case "socketTimeout": return target.getSocketTimeout();
+        case "user": return target.getUser();
         default: return null;
         }
     }

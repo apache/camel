@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ses.client.Ses2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -33,7 +34,7 @@ import software.amazon.awssdk.services.ses.SesClient;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS Simple Email Service (SES)", syntax = "aws2-ses:from",
              producerOnly = true, category = { Category.CLOUD, Category.MAIL }, headersClass = Ses2Constants.class)
-public class Ses2Endpoint extends DefaultEndpoint {
+public class Ses2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SesClient sesClient;
 
@@ -84,5 +85,22 @@ public class Ses2Endpoint extends DefaultEndpoint {
 
     public SesClient getSESClient() {
         return sesClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "ses";
     }
 }

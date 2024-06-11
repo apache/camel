@@ -32,7 +32,7 @@ import java.util.Map;
 public interface EndpointServiceLocation {
 
     /**
-     * Gets the remote address such as URL, hostname, or connection-string that are component specific
+     * Gets the remote address such as URL, hostname, connection-string, or cloud region, that are component specific.
      *
      * @return the address or null if no address can be determined.
      */

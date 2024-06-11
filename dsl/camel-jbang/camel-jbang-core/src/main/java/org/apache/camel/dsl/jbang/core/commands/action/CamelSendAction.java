@@ -173,7 +173,7 @@ public class CamelSendAction extends ActionBaseCommand {
                     tableHelper.setPretty(pretty);
                     tableHelper.setLoggingColor(loggingColor);
                     tableHelper.setShowExchangeProperties(showExchangeProperties);
-                    String table = tableHelper.getDataAsTable(exchangeId, mep, jo, message, cause);
+                    String table = tableHelper.getDataAsTable(exchangeId, mep, jo, null, message, cause);
                     printer().println(table);
                 }
             }

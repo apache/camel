@@ -357,6 +357,18 @@ from("direct:query")
     .to("mock:query");
 ----
 
+If the dynamic list of values is stored in the message body, you can use `(:#in:$+{body}+)` to
+refer to the message body, such as:
+
+[source,sql]
+----
+-- this is a comment
+select *
+from projects
+where project in (:#in:${body})
+order by id
+----
+
 == Using the JDBC-based idempotent repository
 
 In this section, we will use the JDBC-based idempotent repository.

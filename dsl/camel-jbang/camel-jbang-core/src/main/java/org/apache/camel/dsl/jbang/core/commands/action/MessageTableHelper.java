@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -88,11 +90,13 @@ public class MessageTableHelper {
 
     public String getDataAsTable(
             String exchangeId, String exchangePattern,
-            JsonObject endpoint, JsonObject root, JsonObject cause) {
+            JsonObject endpoint, JsonObject endpointService,
+            JsonObject root, JsonObject cause) {
 
         List<TableRow> rows = new ArrayList<>();
         TableRow eRow;
         String tab0 = null;
+        String tab0b = null;
         String tab1 = null;
         String tab1b = null;
         String tab2 = null;
@@ -107,6 +111,29 @@ public class MessageTableHelper {
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::valueAsString)));
+        }
+        if (endpointService != null) {
+            eRow = new TableRow("Service", null, null, endpointService.getString("serviceUrl"));
+            TableRow eRow2 = null;
+            StringJoiner sj = new StringJoiner(", ");
+            String protocol = endpointService.getString("serviceProtocol");
+            if (protocol != null) {
+                sj.add("protocol=" + protocol);
+            }
+            Map arr = endpointService.getMap("serviceMetadata");
+            if (arr != null) {
+                arr.forEach((k, v) -> sj.add(k + "=" + v));
+            }
+            if (sj.length() > 0) {
+                String data = "(" + sj + ")";
+                eRow2 = new TableRow(null, null, null, data);
+            }
+            tab0b = AsciiTable.getTable(AsciiTable.NO_BORDERS, eRow2 != null ? List.of(eRow, eRow2) : List.of(eRow),
+                    Arrays.asList(
+                            new Column().dataAlign(HorizontalAlign.LEFT)
+                                    .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                    .with(TableRow::kindAsString),
+                            new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::valueAsString)));
         }
 
         if (root != null) {
@@ -223,6 +250,9 @@ public class MessageTableHelper {
         String answer = "";
         if (tab0 != null && !tab0.isEmpty()) {
             answer = answer + tab0 + System.lineSeparator();
+        }
+        if (tab0b != null && !tab0b.isEmpty()) {
+            answer = answer + tab0b + System.lineSeparator();
         }
         if (tab1 != null && tab1b != null && !tab1.isEmpty()) {
             answer = answer + tab1 + tab1b + System.lineSeparator();

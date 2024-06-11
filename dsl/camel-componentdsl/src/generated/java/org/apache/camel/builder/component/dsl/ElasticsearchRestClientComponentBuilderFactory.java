@@ -54,6 +54,38 @@ public interface ElasticsearchRestClientComponentBuilderFactory {
     
         
         /**
+         * Connection timeout.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder connectionTimeout(int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+    
+        /**
+         * List of host Addresses, multiple hosts can be separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param hostAddressesList the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder hostAddressesList(java.lang.String hostAddressesList) {
+            doSetProperty("hostAddressesList", hostAddressesList);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -79,6 +111,23 @@ public interface ElasticsearchRestClientComponentBuilderFactory {
     
         
         /**
+         * Socket timeout.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: producer
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder socketTimeout(int socketTimeout) {
+            doSetProperty("socketTimeout", socketTimeout);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -98,6 +147,122 @@ public interface ElasticsearchRestClientComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        
+        /**
+         * Enabling Sniffer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param enableSniffer the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder enableSniffer(boolean enableSniffer) {
+            doSetProperty("enableSniffer", enableSniffer);
+            return this;
+        }
+    
+        /**
+         * Rest Client of type org.elasticsearch.client.RestClient. This is only
+         * for advanced usage.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.elasticsearch.client.RestClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param restClient the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder restClient(org.elasticsearch.client.RestClient restClient) {
+            doSetProperty("restClient", restClient);
+            return this;
+        }
+    
+        
+        /**
+         * Sniffer after failure delay (in millis).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param sniffAfterFailureDelay the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder sniffAfterFailureDelay(int sniffAfterFailureDelay) {
+            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
+            return this;
+        }
+    
+        
+        /**
+         * Sniffer interval (in millis).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param snifferInterval the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder snifferInterval(int snifferInterval) {
+            doSetProperty("snifferInterval", snifferInterval);
+            return this;
+        }
+    
+        /**
+         * Certificate Path.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param certificatePath the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder certificatePath(java.lang.String certificatePath) {
+            doSetProperty("certificatePath", certificatePath);
+            return this;
+        }
+    
+        /**
+         * Password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+    
+        /**
+         * Username.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default ElasticsearchRestClientComponentBuilder user(java.lang.String user) {
+            doSetProperty("user", user);
+            return this;
+        }
     }
 
     class ElasticsearchRestClientComponentBuilderImpl
@@ -113,8 +278,18 @@ public interface ElasticsearchRestClientComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "connectionTimeout": ((ElasticsearchRestClientComponent) component).setConnectionTimeout((int) value); return true;
+            case "hostAddressesList": ((ElasticsearchRestClientComponent) component).setHostAddressesList((java.lang.String) value); return true;
             case "lazyStartProducer": ((ElasticsearchRestClientComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "socketTimeout": ((ElasticsearchRestClientComponent) component).setSocketTimeout((int) value); return true;
             case "autowiredEnabled": ((ElasticsearchRestClientComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "enableSniffer": ((ElasticsearchRestClientComponent) component).setEnableSniffer((boolean) value); return true;
+            case "restClient": ((ElasticsearchRestClientComponent) component).setRestClient((org.elasticsearch.client.RestClient) value); return true;
+            case "sniffAfterFailureDelay": ((ElasticsearchRestClientComponent) component).setSniffAfterFailureDelay((int) value); return true;
+            case "snifferInterval": ((ElasticsearchRestClientComponent) component).setSnifferInterval((int) value); return true;
+            case "certificatePath": ((ElasticsearchRestClientComponent) component).setCertificatePath((java.lang.String) value); return true;
+            case "password": ((ElasticsearchRestClientComponent) component).setPassword((java.lang.String) value); return true;
+            case "user": ((ElasticsearchRestClientComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
             }
         }
