@@ -22,18 +22,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.athena.AthenaClient;
 
+import java.util.Map;
+
 /**
  * Access AWS Athena.
  */
 @UriEndpoint(firstVersion = "3.4.0", scheme = "aws2-athena", title = "AWS Athena", syntax = "aws2-athena:label",
              producerOnly = true, category = { Category.CLOUD, Category.DATABASE }, headersClass = Athena2Constants.class)
-public class Athena2Endpoint extends DefaultEndpoint {
+public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private AthenaClient athenaClient;
 
@@ -94,5 +97,26 @@ public class Athena2Endpoint extends DefaultEndpoint {
 
     public void setAthenaClient(AthenaClient athenaClient) {
         this.athenaClient = athenaClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            return configuration.getRegion();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "athena";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getDatabase() != null) {
+            return Map.of("database", configuration.getDatabase());
+        }
+        return null;
     }
 }
