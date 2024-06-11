@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.config.client.AWSConfigClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -34,7 +35,7 @@ import software.amazon.awssdk.services.config.ConfigClient;
 @UriEndpoint(firstVersion = "4.3.0", scheme = "aws-config", title = "AWS Config Service",
              syntax = "aws-config:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = AWSConfigConstants.class)
-public class AWSConfigEndpoint extends DefaultEndpoint {
+public class AWSConfigEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private ConfigClient configClient;
 
@@ -85,5 +86,22 @@ public class AWSConfigEndpoint extends DefaultEndpoint {
 
     public ConfigClient getConfigClient() {
         return configClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "config";
     }
 }
