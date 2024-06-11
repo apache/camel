@@ -24,6 +24,6 @@ git clean -fdx
 rm -Rf **/src/generated/
 
 # Regenerate everything
-./mvnw --batch-mode -Pregen -DskipTests install
+./mvnw --batch-mode -Pregen -DskipTests install >> build.log 2>&1
 # One additional pass to get the info for the 'others' jars
-./mvnw --batch-mode install -f catalog/camel-catalog
+./mvnw --batch-mode install -f catalog/camel-catalog >> build.log 2>&1
