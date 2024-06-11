@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.Uuid;
 import org.awaitility.Awaitility;
@@ -42,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * this will test basic breakOnFirstError functionality uses allowManualCommit and set Sync Commit Manager this allows
@@ -78,7 +80,14 @@ class KafkaBreakOnFirstErrorWithBatchUsingAsyncCommitManagerIT extends BaseKafka
             producer.close();
         }
         // clean all test topics
-        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC)).all();
+        DeleteTopicsResult r = kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
+
+        // wait added to ensure the topic is actually deleted, and avoid chance of clash in unrelated tests
+        Awaitility.await()
+                .timeout(180, TimeUnit.SECONDS)
+                .pollDelay(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(r.all().isDone()));
+
     }
 
     /**
@@ -100,7 +109,7 @@ class KafkaBreakOnFirstErrorWithBatchUsingAsyncCommitManagerIT extends BaseKafka
         contextExtension.getContext().getRouteController().startRoute(ROUTE_ID);
 
         Awaitility.await()
-                .atMost(20, TimeUnit.SECONDS) // changed to 20 sec for CAMEL-20722
+                .atMost(180, TimeUnit.SECONDS) // increased to 180 sec for CAMEL-20722 due to failure on ppc64le
                 .pollDelay(5, TimeUnit.SECONDS)
                 .until(() -> errorPayloads.size() > 3);
 
