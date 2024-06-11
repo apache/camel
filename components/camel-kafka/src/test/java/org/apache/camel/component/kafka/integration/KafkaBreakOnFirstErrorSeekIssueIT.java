@@ -81,7 +81,7 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
         // This wait is necessary to ensure that required number of partitions are actually created
         Awaitility.await()
-                .timeout(20, TimeUnit.SECONDS)
+                .timeout(180, TimeUnit.SECONDS)
                 .pollDelay(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(r.numPartitions(TOPIC).isDone()));
 
@@ -127,8 +127,8 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
         // let test run for awhile
         Awaitility.await()
-                .timeout(30, TimeUnit.SECONDS)
-                .pollDelay(8, TimeUnit.SECONDS)
+                .timeout(180, TimeUnit.SECONDS)
+                .pollDelay(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(true));
 
         // the replaying of the message with an error
