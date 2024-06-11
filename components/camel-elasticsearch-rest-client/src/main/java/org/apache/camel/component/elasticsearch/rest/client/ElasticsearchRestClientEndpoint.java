@@ -35,7 +35,7 @@ import org.elasticsearch.client.RestClient;
 @UriEndpoint(firstVersion = "4.3.0", scheme = "elasticsearch-rest-client",
              title = "Elasticsearch Low level Rest Client",
              syntax = "elasticsearch-rest-client:clusterName", producerOnly = true,
-             category = { Category.SEARCH })
+             category = { Category.SEARCH }, headersClass = ElasticSearchRestClientConstant.class)
 public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
