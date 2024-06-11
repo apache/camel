@@ -1632,7 +1632,7 @@ public class CamelCatalogTest {
         assertEquals(Kind.bean, model.getKind());
         assertEquals("ZipAggregationStrategy", model.getName());
         assertEquals("org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy", model.getJavaType());
-        assertEquals(6, model.getOptions().size());
+        assertEquals(7, model.getOptions().size());
     }
 
 }
