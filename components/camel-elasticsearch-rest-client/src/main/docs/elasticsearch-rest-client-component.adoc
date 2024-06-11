@@ -58,3 +58,5 @@ include::partial$component-endpoint-headers.adoc[]
 This component implements the async producer.
 
 This allows Camel route to produce events asynchronously without blocking any threads.
+
+include::spring-boot:partial$starter.adoc[]
