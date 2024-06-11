@@ -134,12 +134,9 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
             StringJoiner sj = new StringJoiner(", ");
             sj.add("url=" + endpoint.toString());
-            if (endpoint instanceof EndpointServiceLocation esl) {
+            if (endpoint instanceof EndpointServiceLocation esl && esl.getServiceUrl() != null) {
                 // enrich with service location
-                String url = esl.getServiceUrl();
-                if (url != null) {
-                    sj.add("service=" + url);
-                }
+                sj.add("service=" + esl.getServiceUrl());
                 String protocol = esl.getServiceProtocol();
                 if (protocol != null) {
                     sj.add("protocol=" + protocol);
@@ -186,14 +183,11 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         // enrich with endpoint service location on incoming request
         if (original) {
             Endpoint endpoint = exchange.getFromEndpoint();
-            if (endpoint instanceof EndpointServiceLocation esl) {
+            if (endpoint instanceof EndpointServiceLocation esl && esl.getServiceUrl() != null) {
+                // enrich with service location
                 StringJoiner sj = new StringJoiner(", ");
                 sj.add("url=" + endpoint);
-                // enrich with service location
-                String url = esl.getServiceUrl();
-                if (url != null) {
-                    sj.add("service=" + url);
-                }
+                sj.add("service=" + esl.getServiceUrl());
                 String protocol = esl.getServiceProtocol();
                 if (protocol != null) {
                     sj.add("protocol=" + protocol);
