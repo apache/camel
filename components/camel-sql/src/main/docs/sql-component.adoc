@@ -357,7 +357,7 @@ from("direct:query")
     .to("mock:query");
 ----
 
-If the dynamic list of values is stored in the message body, you can use `(:#in:$+{body}+)` to
+If the dynamic list of values is stored in the message body, you can use `(:#in:$\{body\})` to
 refer to the message body, such as:
 
 [source,sql]
@@ -444,18 +444,18 @@ the second one is the message id (`String`).
 The option `tableName` can be used to use the default SQL queries but with a different table name.
 However, if you want to customize the SQL queries, then you can configure each of them individually.
 
-=== Orphan Lock aware Jdbc IdempotentRepository 
+=== Orphan Lock aware Jdbc IdempotentRepository
 
 One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` is that it does not handle orphan locks resulting from JVM crash or non-graceful shutdown. This can result in unprocessed files/messages if this is implementation is used with camel-file, camel-ftp etc. if you need to address orphan locks processing then use
 `org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentRepository`.  This repository keeps track of the locks held by an instance of the application. For each lock held, the application will send keep-alive signals to the lock repository resulting in updating the createdAt column with the current Timestamp. When an application instance tries to acquire a lock, then there are three possibilities:
 
-* lock entry does not exist then the lock is provided using the base implementation of `JdbcMessageIdRepository`. 
+* lock entry does not exist then the lock is provided using the base implementation of `JdbcMessageIdRepository`.
 
 * lock already exists and the `createdAt` < `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that an active instance has the lock and the lock is not provided to the new instance requesting the lock
 
 * lock already exists and the `createdAt` > = `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that there is no active instance which has the lock and the lock is provided to the requesting instance. The reason behind is that if the original instance which had the lock, if it was still running, it would have updated the Timestamp on createdAt using its keepAlive mechanism
 
-This repository has two additional configuration parameters 
+This repository has two additional configuration parameters
 
 [cols="1,1"]
 |===
@@ -464,13 +464,13 @@ This repository has two additional configuration parameters
 |lockKeepAliveIntervalMillis | The frequency at which keep-alive updates are done to createdAt Timestamp column.
 |===
 
-=== Caching Jdbc IdempotentRepository 
+=== Caching Jdbc IdempotentRepository
 
 Some SQL implementations are not fast on a per-query basis.  The
 `JdbcMessageIdRepository` implementation does its idempotent checks
-individually within SQL transactions.  Checking a mere 100 keys can 
-take minutes.  The `JdbcCachedMessageIdRepository` preloads an in-memory 
-cache on start with the entire list of keys.  This cache is then 
+individually within SQL transactions.  Checking a mere 100 keys can
+take minutes.  The `JdbcCachedMessageIdRepository` preloads an in-memory
+cache on start with the entire list of keys.  This cache is then
 checked first before passing through to the original implementation.
 
 As with all cache implementations, there are considerations that should
