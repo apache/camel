@@ -2604,7 +2604,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -2623,7 +2624,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -2644,7 +2646,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -2663,7 +2666,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CoAP (Secure) (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
      * 
      * Category: iot
      * Since: 2.16
@@ -2682,7 +2686,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * CoAP (camel-coap)
-     * Send and receive messages to/from COAP capable devices.
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
      * 
      * Category: iot
      * Since: 2.16

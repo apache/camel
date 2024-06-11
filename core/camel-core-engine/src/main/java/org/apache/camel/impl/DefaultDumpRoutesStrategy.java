@@ -648,7 +648,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         if (name.contains(":")) {
             name = StringHelper.after(name, ":");
         }
-        return FileUtil.onlyName(name) + "." + ext;
+        return FileUtil.onlyName(name, true) + "." + ext;
     }
 
 }

@@ -61,13 +61,13 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ./etc/scripts/regen.sh > build-${{ matrix.java }}.log 2>&1
+        run: ./etc/scripts/regen.sh
       - name: archive logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: build.log
-          path: build-${{ matrix.java }}.log
+          name: build-${{ matrix.java }}.log
+          path: build.log
       - name: Fail if there are uncommitted changes
         shell: bash
         run: |

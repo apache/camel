@@ -23,7 +23,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Send and receive messages to/from COAP capable devices.
+ * Send and receive messages to/from CoAP (Constrained Application Protocol) capable devices.
  */
 public fun UriDsl.coap(i: CoapUriDsl.() -> Unit) {
   CoapUriDsl(this).apply(i)
