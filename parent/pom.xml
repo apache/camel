@@ -88,7 +88,7 @@
         <bytebuddy-version>1.14.17</bytebuddy-version>
         <c3p0-version>0.10.1</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
-        <californium-version>3.11.0</californium-version>
+        <californium-version>3.12.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camunda-version>7.21.0</camunda-version>
         <camel-k-version>2.3.2</camel-k-version>
