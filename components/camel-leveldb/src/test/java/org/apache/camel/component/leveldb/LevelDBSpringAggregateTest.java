@@ -34,8 +34,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 public class LevelDBSpringAggregateTest extends CamelSpringTestSupport {
 
     @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
+    public void setupResources() {
         deleteDirectory("target/data");
     }
 

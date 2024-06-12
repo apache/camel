@@ -50,9 +50,7 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
     // *************************************************************************
 
     @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-
+    public void setupResources() {
         this.client = Consul.builder().withUrl(service.getConsulUrl()).build().agentClient();
 
         this.registrations = Arrays.asList(

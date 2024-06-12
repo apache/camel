@@ -35,7 +35,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.RestEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,13 +54,11 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
+public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
 
     public static WireMockServer petstore = new WireMockServer(wireMockConfig().dynamicPort());
 
     static final Object NO_BODY = null;
-
-    public String componentName;
 
     @BeforeAll
     public static void startWireMockServer() {
@@ -72,24 +70,16 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
         petstore.stop();
     }
 
-    @Override
-    public void setUp() {
-    }
-
     @BeforeEach
     public void resetWireMock() {
         petstore.resetRequests();
-    }
 
-    public void doSetUp(String componentName) throws Exception {
-        this.componentName = componentName;
-        super.setUp();
     }
 
     @ParameterizedTest
     @MethodSource("knownProducers")
     public void shouldBeAddingPets(String componentName) throws Exception {
-        doSetUp(componentName);
+        initializeContextForComponent(componentName);
 
         final Pet pet = new Pet();
         pet.setName("Jean-Luc Picard");
@@ -108,7 +98,7 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("knownProducers")
     public void shouldBeGettingPetsById(String componentName) throws Exception {
-        doSetUp(componentName);
+        initializeContextForComponent(componentName);
 
         final Pet pet = template.requestBodyAndHeader("direct:getPetById", NO_BODY, "petId", 14, Pet.class);
 
@@ -124,7 +114,7 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("knownProducers")
     public void shouldBeGettingPetsByIdSpecifiedInEndpointParameters(String componentName) throws Exception {
-        doSetUp(componentName);
+        initializeContextForComponent(componentName);
 
         final Pet pet = template.requestBody("direct:getPetByIdWithEndpointParams", NO_BODY, Pet.class);
 
@@ -140,7 +130,7 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("knownProducers")
     public void shouldBeGettingPetsByIdWithApiKeysInHeader(String componentName) throws Exception {
-        doSetUp(componentName);
+        initializeContextForComponent(componentName);
 
         final Map<String, Object> headers = new HashMap<>();
         headers.put("petId", 14);
@@ -160,7 +150,7 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("knownProducers")
     public void shouldBeGettingPetsByIdWithApiKeysInQueryParameter(String componentName) throws Exception {
-        doSetUp(componentName);
+        initializeContextForComponent(componentName);
 
         final Map<String, Object> headers = new HashMap<>();
         headers.put("petId", 14);
@@ -179,7 +169,7 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("knownProducers")
     public void shouldBeGettingPetsByStatus(String componentName) throws Exception {
-        doSetUp(componentName);
+        initializeContextForComponent(componentName);
 
         final Pets pets = template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available",
                 Pets.class);
@@ -194,8 +184,8 @@ public class RestOpenApiComponentV3YamlTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        final CamelContext camelContext = super.createCamelContext();
+    protected CamelContext createCamelContext(String componentName) {
+        final CamelContext camelContext = new DefaultCamelContext();
 
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName(componentName);

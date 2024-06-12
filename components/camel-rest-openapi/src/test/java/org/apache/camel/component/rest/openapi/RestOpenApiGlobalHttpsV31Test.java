@@ -43,9 +43,13 @@ public class RestOpenApiGlobalHttpsV31Test extends HttpsV3Test {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.setSSLContextParameters(createHttpsParameters(camelContext));
+    protected CamelContext createCamelContext(String componentName) {
+        CamelContext camelContext = super.createCamelContext(componentName);
+        try {
+            camelContext.setSSLContextParameters(createHttpsParameters(camelContext));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         RestOpenApiComponent component = camelContext.getComponent("petStore", RestOpenApiComponent.class);
         component.setUseGlobalSslContextParameters(true);

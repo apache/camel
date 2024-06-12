@@ -37,7 +37,7 @@ public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport exte
     public static InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
 
     @Override
-    public void doPreSetup() throws Exception {
+    public void setupResources() throws Exception {
         ConfigurationBuilder clientBuilder = new ConfigurationBuilder();
 
         // for default tests, we force return value for all the
@@ -65,7 +65,6 @@ public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport exte
         MarshallerRegistration.init(MarshallerUtil.getSerializationContext(manager));
         RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("idempotent", (String) null);
         assertNotNull(cache);
-        super.doPreSetup();
     }
 
     @Test
