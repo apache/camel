@@ -40,6 +40,10 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultServiceCallProcessor.class);

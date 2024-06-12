@@ -26,6 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 public class BlacklistServiceFilter implements ServiceFilter {
     private final List<ServiceDefinition> services;
 

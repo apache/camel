@@ -31,6 +31,10 @@ The `SupervisingRouteController` has now been pre-configured to report `DOWN` du
 giving up starting a route. It is the `UnhealthyOnExhausted` and `UnhealthyOnRestarting` options that have been changed to be default `true`.
 To have previous behavior you can set these options to `false`.
 
+== camel-cloud
+
+The camel-cloud component has been deprecated.
+
 === DSL
 
 The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:

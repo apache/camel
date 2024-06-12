@@ -21,6 +21,10 @@ import java.util.Map;
 import org.apache.camel.cloud.ServiceHealth;
 import org.apache.camel.util.CollectionHelper;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 public class DefaultServiceHealth implements ServiceHealth {
     private final boolean healthy;
     private final Map<String, String> meta;

@@ -25,6 +25,10 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 @CloudServiceFactory("combined-service-discovery")
 @Configurer
 public class CombinedServiceDiscoveryFactory implements ServiceDiscoveryFactory {

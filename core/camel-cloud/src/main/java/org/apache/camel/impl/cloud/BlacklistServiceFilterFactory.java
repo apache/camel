@@ -24,6 +24,10 @@ import org.apache.camel.cloud.ServiceFilterFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 @CloudServiceFactory("blacklist-service-filter")
 @Configurer
 public class BlacklistServiceFilterFactory implements ServiceFilterFactory {
