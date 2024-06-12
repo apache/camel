@@ -142,6 +142,16 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>yarn install</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <configuration>
+                                     <!-- need to specify the normal install as there is another goal specified too and no cache is checked in codebase -->
+                                    <arguments>install</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>yarn-gulp</id>
                                 <goals>
                                     <goal>yarn</goal>
