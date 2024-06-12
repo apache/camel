@@ -47,10 +47,15 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     private volatile Cache<?, ?> cache;
 
-    CaffeineCacheEndpoint(String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
+    public CaffeineCacheEndpoint(String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     @Override

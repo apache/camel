@@ -48,7 +48,6 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
      */
     default String getEndpointBaseUri() {
         String value = getEndpointUri();
-
         return StringHelper.before(value, "?", value);
     }
 
@@ -187,4 +186,13 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
      * @return whether properties is lenient or not
      */
     boolean isLenientProperties();
+
+    /**
+     * Whether this endpoint can connect to remote system, such as cloud providers, messaging brokers, databases. A
+     * local endpoint operates locally only, such as an internal message transformer, logger, or such as direct/seda
+     * components.
+     */
+    default boolean isRemote() {
+        return true;
+    }
 }

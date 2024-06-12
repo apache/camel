@@ -52,19 +52,14 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
     private boolean allowTemplateFromHeader;
-
     @UriParam(description = "Define the encoding of the body")
     private String encoding;
-
     @UriParam(description = "Define the themes folder to scan")
     private String themeFolder;
-
     @UriParam(description = "Define the themes subfolder to scan")
     private String themeSubfolder;
-
     @UriParam(description = "Define the theme layer to elaborate")
     private String themeLayer;
-
     @UriParam(description = "Define the file extension of the template")
     private String extension;
 
@@ -73,6 +68,11 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     public ChunkEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
+    }
+
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     @Override

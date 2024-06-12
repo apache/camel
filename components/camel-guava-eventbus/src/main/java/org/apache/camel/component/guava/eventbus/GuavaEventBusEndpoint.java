@@ -52,6 +52,11 @@ public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleCo
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new GuavaEventBusProducer(this, eventBus);
     }

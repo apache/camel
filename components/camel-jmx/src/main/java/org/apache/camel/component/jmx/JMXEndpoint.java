@@ -256,6 +256,11 @@ public class JMXEndpoint extends DefaultEndpoint implements EndpointServiceLocat
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public String getServiceUrl() {
         return serverURL;
     }

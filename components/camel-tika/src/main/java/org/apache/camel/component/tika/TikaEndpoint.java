@@ -41,6 +41,11 @@ public class TikaEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new TikaProducer(this);
     }

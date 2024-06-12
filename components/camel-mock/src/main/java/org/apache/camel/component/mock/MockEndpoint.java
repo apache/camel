@@ -155,6 +155,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         reset();
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     /**
      * A helper method to resolve the mock endpoint of the given URI on the given context
      *

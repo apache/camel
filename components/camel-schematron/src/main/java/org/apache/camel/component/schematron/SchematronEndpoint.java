@@ -75,6 +75,11 @@ public class SchematronEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new SchematronProducer(this);
     }

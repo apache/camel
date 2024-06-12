@@ -70,6 +70,11 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("Consumer not supported");
     }

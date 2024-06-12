@@ -68,6 +68,11 @@ public class DataSetTestEndpoint extends MockEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public void setExpectedMessageEndpoint(Endpoint expectedMessageEndpoint) {
         this.expectedMessageEndpoint = expectedMessageEndpoint;
     }

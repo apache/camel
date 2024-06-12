@@ -64,6 +64,11 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         this.logger = new CamelLogger(ControlBusProducer.class.getName(), loggingLevel);
     }

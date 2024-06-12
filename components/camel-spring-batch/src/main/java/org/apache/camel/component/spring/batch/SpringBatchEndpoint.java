@@ -76,6 +76,11 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new SpringBatchProducer(this, jobLauncher, job, jobRegistry);
     }

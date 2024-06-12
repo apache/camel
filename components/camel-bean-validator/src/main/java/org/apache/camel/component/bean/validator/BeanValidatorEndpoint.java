@@ -67,6 +67,11 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         BeanValidatorProducer producer = new BeanValidatorProducer(this);
         if (group != null) {

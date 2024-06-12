@@ -46,6 +46,11 @@ public class XJEndpoint extends XsltSaxonEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     @ManagedAttribute(description = "Transform direction")
     public TransformDirection getTransformDirection() {
         return transformDirection;

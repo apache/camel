@@ -54,6 +54,11 @@ public class StubEndpoint extends SedaEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     protected StubConsumer createNewConsumer(Processor processor) {
         return new StubConsumer(this, processor);
     }

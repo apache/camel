@@ -75,6 +75,11 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         setCopyOnExchange(false);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
         if (!ObjectHelper.equal(expected, actual)) {
             throw new AssertionError(

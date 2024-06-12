@@ -65,6 +65,11 @@ public class RestApiEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public RestApiComponent getComponent() {
         return (RestApiComponent) super.getComponent();
     }

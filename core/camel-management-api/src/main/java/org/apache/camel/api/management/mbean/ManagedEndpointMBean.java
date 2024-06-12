@@ -37,6 +37,9 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Singleton")
     boolean isSingleton();
 
+    @ManagedAttribute(description = "Remote")
+    boolean isRemote();
+
     @ManagedAttribute(description = "Endpoint State")
     String getState();
 

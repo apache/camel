@@ -39,27 +39,26 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
     @UriPath
     private String stream;
-
     @UriParam(label = "consumer", defaultValue = "128")
     private Integer maxInflightExchanges = 128;
-
     @UriParam(label = "consumer", defaultValue = "0.25")
     private double exchangesRefillLowWatermark = 0.25;
-
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnComplete;
-
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnError;
-
     @UriParam(label = "producer")
     private ReactiveStreamsBackpressureStrategy backpressureStrategy;
 
     public ReactiveStreamsEndpoint(String endpointUri, ReactiveStreamsComponent component) {
         super(endpointUri, component);
+    }
+
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     @Override

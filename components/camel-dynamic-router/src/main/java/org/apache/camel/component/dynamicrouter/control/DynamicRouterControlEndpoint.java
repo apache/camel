@@ -133,6 +133,11 @@ public class DynamicRouterControlEndpoint extends DefaultEndpoint {
         this.controlServiceFactorySupplier = CONTROL_SERVICE_FACTORY_SUPPLIER;
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     /**
      * Starts the component, and creates the {@link DynamicRouterControlService} and adds it to the
      * {@link CamelContext}.

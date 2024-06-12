@@ -148,6 +148,11 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         super.doInit();
 

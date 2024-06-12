@@ -26,6 +26,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
@@ -37,9 +38,13 @@ public class ManagedEndpointTest extends ManagementTestSupport {
 
         ObjectName on = getCamelObjectName(TYPE_ENDPOINT, "seda://test");
         assertTrue(mbeanServer.isRegistered(on));
+        Boolean remote = (Boolean) mbeanServer.getAttribute(on, "Remote");
+        assertFalse(remote);
 
         on = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
         assertTrue(mbeanServer.isRegistered(on));
+        remote = (Boolean) mbeanServer.getAttribute(on, "Remote");
+        assertFalse(remote);
     }
 
     @Override

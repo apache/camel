@@ -133,6 +133,11 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public SedaComponent getComponent() {
         return (SedaComponent) super.getComponent();
     }

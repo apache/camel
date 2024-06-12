@@ -31,37 +31,27 @@ import org.apache.camel.wasm.Wasm;
 /**
  * Invoke Wasm functions.
  */
-@UriEndpoint(
-             firstVersion = "4.4.0",
-             scheme = Wasm.SCHEME,
-             title = "Wasm",
-             syntax = "wasm:functionName",
-             producerOnly = true,
-             remote = false,
-             category = {
-                     Category.CORE,
-                     Category.SCRIPT
-             },
+@UriEndpoint(firstVersion = "4.4.0", scheme = Wasm.SCHEME, title = "Wasm", syntax = "wasm:functionName",
+             producerOnly = true, remote = false, category = { Category.CORE, Category.SCRIPT },
              headersClass = Wasm.Headers.class)
 public class WasmEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
     @UriPath(description = "The Function Name")
     private final String functionName;
-
     @UriParam
     private WasmConfiguration configuration;
 
-    public WasmEndpoint(
-                        String endpointUri,
-                        Component component,
-                        String functionName,
+    public WasmEndpoint(String endpointUri, Component component, String functionName,
                         WasmConfiguration configuration) {
-
         super(endpointUri, component);
-
         this.functionName = functionName;
         this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     public WasmConfiguration getConfiguration() {

@@ -74,6 +74,11 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new BeanProducer(this, processor);
     }

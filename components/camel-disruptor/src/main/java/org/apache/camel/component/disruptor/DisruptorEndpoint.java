@@ -87,6 +87,11 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         this.name = disruptorReference.getName();
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     @ManagedAttribute(description = "Queue name")
     public String getName() {
         return name;

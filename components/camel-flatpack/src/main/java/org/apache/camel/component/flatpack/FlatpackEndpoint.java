@@ -86,6 +86,11 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new FlatpackProducer(this);
     }

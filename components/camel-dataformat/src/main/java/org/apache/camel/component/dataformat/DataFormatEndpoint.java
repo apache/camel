@@ -60,6 +60,11 @@ public class DataFormatEndpoint extends DefaultEndpoint {
         this.dataFormat = dataFormat;
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public String getName() {
         return name;
     }

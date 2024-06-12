@@ -86,6 +86,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public TimerComponent getComponent() {
         return (TimerComponent) super.getComponent();
     }

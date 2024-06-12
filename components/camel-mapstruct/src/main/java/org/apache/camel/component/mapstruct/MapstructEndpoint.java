@@ -45,6 +45,11 @@ public class MapstructEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new MapstructProducer(this, clazz, mandatory);
     }
