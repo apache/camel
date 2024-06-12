@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.CouchbaseContainer;
 
 public class CouchbaseLocalContainerService implements CouchbaseService, ContainerService<CouchbaseContainer> {
-    // Please check CAMEL-19228 before upgrading
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
