@@ -45,15 +45,13 @@ public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSup
 
     private Repository repository;
 
-    @Override
     @BeforeEach
-    public void doPreSetup() {
+    public void cleanupDirectory() {
         deleteDirectory(REPO_PATH);
-
     }
 
-    @Override
-    protected void doPostSetup() throws Exception {
+    @BeforeEach
+    protected void setupBeans() throws Exception {
         Session session = getRepository().login(new SimpleCredentials("user", "pass".toCharArray()));
         Workspace workspace = session.getWorkspace();
         workspace.createWorkspace(CUSTOM_WORKSPACE_NAME);

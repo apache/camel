@@ -23,6 +23,7 @@ import javax.jcr.ValueFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -34,8 +35,8 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
 
     private Value[] multiValued;
 
-    @Override
-    public void doPreSetup() throws Exception {
+    @BeforeEach
+    public void setupCredentials() throws Exception {
         Session session = openSession();
 
         ValueFactory valFact = session.getValueFactory();
