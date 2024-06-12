@@ -57,7 +57,6 @@ public class CxfSpringCustomizedExceptionTest extends CamelSpringTestSupport {
     @Override
     public void setupResources() {
         CXFTestSupport.getPort1();
-
     }
 
     @Override

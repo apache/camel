@@ -41,10 +41,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.RestEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.CipherSuitesParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.CertificateUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -62,7 +62,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public abstract class HttpsV3Test extends CamelTestSupport {
+public abstract class HttpsV3Test extends ManagedCamelTestSupport {
 
     public static WireMockServer petstore = new WireMockServer(
             wireMockConfig().httpServerFactory(new WireMockJettyServerFactory()).containerThreads(13).dynamicPort()
@@ -83,24 +83,15 @@ public abstract class HttpsV3Test extends CamelTestSupport {
         petstore.stop();
     }
 
-    @Override
-    public void setUp() {
-    }
-
     @BeforeEach
     public void resetWireMock() {
         petstore.resetRequests();
     }
 
-    public void doSetUp(String componentName) throws Exception {
-        this.componentName = componentName;
-        super.setUp();
-    }
-
     @ParameterizedTest
     @MethodSource("knownProducers")
     public void shouldBeConfiguredForHttps(String componentName) throws Exception {
-        doSetUp(componentName);
+        initializeContextForComponent(componentName);
 
         final Pet pet = template.requestBodyAndHeader("direct:getPetById", NO_BODY, "petId", 14, Pet.class);
 
@@ -114,8 +105,8 @@ public abstract class HttpsV3Test extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        final CamelContext camelContext = super.createCamelContext();
+    protected CamelContext createCamelContext(String componentName) {
+        final CamelContext camelContext = new DefaultCamelContext();
 
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName(componentName);

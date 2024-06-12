@@ -14,24 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
+import org.junit.jupiter.api.AfterEach;
 
-public class RestOpenApiGlobalHttpsV3Test extends HttpsV3Test {
+abstract class ManagedCamelTestSupport {
+    protected CamelContext context;
+    protected ProducerTemplate template;
 
-    @Override
-    protected CamelContext createCamelContext(String componentName) {
-        CamelContext camelContext = super.createCamelContext(componentName);
-        try {
-            camelContext.setSSLContextParameters(createHttpsParameters(camelContext));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    protected abstract RoutesBuilder createRouteBuilder();
+
+    protected abstract CamelContext createCamelContext(String componentName);
+
+    protected void initializeContextForComponent(String componentName) throws Exception {
+        context = createCamelContext(componentName);
+
+        context.addRoutes(createRouteBuilder());
+
+        context.start();
+        template = context.createProducerTemplate();
+        template.start();
+    }
+
+    @AfterEach
+    final void shutdownEverything() {
+        if (template != null) {
+            template.stop();
         }
 
-        RestOpenApiComponent component = camelContext.getComponent("petStore", RestOpenApiComponent.class);
-        component.setUseGlobalSslContextParameters(true);
+        if (context != null) {
+            context.stop();
+        }
 
-        return camelContext;
     }
 }

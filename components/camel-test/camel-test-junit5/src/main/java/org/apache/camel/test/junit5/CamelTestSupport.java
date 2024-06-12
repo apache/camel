@@ -174,7 +174,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      */
     @Deprecated(since = "4.7.0")
     @BeforeEach
-    public void setUp() throws Exception {
+    public final void setUp() throws Exception {
         unsupportedCheck();
 
         setupResources();
@@ -258,7 +258,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      */
     @Deprecated(since = "4.7.0")
     @AfterEach
-    public void tearDown() throws Exception {
+    public final void tearDown() throws Exception {
         long time = watch.taken();
 
         contextManager.dumpRouteCoverage(getClass(), currentTestName, time);

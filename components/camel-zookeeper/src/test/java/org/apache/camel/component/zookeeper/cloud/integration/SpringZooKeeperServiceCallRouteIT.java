@@ -63,9 +63,7 @@ public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
     }
 
     @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-
+    public void setupResources() throws Exception {
         function = new AvailablePortFinderPropertiesFunction();
 
         curator = CuratorFrameworkFactory.builder()

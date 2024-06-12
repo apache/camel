@@ -21,7 +21,6 @@ import org.apache.camel.main.MainConfigurationProperties;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,10 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ReplaceRouteFromTest extends CamelMainTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         replaceRouteFromWith("foo", "direct:foo");
-        super.setUp();
     }
 
     @Override

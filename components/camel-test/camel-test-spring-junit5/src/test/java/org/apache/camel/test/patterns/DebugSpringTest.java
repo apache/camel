@@ -37,9 +37,7 @@ public class DebugSpringTest extends CamelSpringTestSupport {
     private boolean debugged;
 
     @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-
+    public void setupResources() throws Exception {
         camelContextConfiguration()
                 .withBreakpoint(createBreakpoint());
     }
