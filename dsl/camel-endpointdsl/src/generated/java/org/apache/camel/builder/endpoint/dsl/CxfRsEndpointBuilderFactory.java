@@ -76,73 +76,6 @@ public interface CxfRsEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound REST messages to log.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param loggingFeatureEnabled the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
-                boolean loggingFeatureEnabled) {
-            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
-            return this;
-        }
-        /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound REST messages to log.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param loggingFeatureEnabled the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
-                String loggingFeatureEnabled) {
-            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
-            return this;
-        }
-        /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param loggingSizeLimit the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointConsumerBuilder loggingSizeLimit(
-                int loggingSizeLimit) {
-            doSetProperty("loggingSizeLimit", loggingSizeLimit);
-            return this;
-        }
-        /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param loggingSizeLimit the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointConsumerBuilder loggingSizeLimit(
-                String loggingSizeLimit) {
-            doSetProperty("loggingSizeLimit", loggingSizeLimit);
-            return this;
-        }
-        /**
          * This option is used to specify the model file which is useful for the
          * resource class without annotation. When using this option, then the
          * service class can be omitted, to emulate document-only endpoints.
@@ -352,6 +285,75 @@ public interface CxfRsEndpointBuilderFactory {
         default CxfRsEndpointConsumerBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
             doSetProperty("publishedEndpointUrl", publishedEndpointUrl);
+            return this;
+        }
+        /**
+         * This option enables CXF Logging Feature which writes inbound and
+         * outbound REST messages to log.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: logging
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
+                boolean loggingFeatureEnabled) {
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            return this;
+        }
+        /**
+         * This option enables CXF Logging Feature which writes inbound and
+         * outbound REST messages to log.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: logging
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
+                String loggingFeatureEnabled) {
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            return this;
+        }
+        /**
+         * To limit the total size of number of bytes the logger will output
+         * when logging feature has been enabled and -1 for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 49152
+         * Group: logging
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointConsumerBuilder loggingSizeLimit(
+                int loggingSizeLimit) {
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
+            return this;
+        }
+        /**
+         * To limit the total size of number of bytes the logger will output
+         * when logging feature has been enabled and -1 for no limit.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 49152
+         * Group: logging
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointConsumerBuilder loggingSizeLimit(
+                String loggingSizeLimit) {
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
     }
@@ -833,73 +835,6 @@ public interface CxfRsEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound REST messages to log.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param loggingFeatureEnabled the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
-                boolean loggingFeatureEnabled) {
-            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
-            return this;
-        }
-        /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound REST messages to log.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param loggingFeatureEnabled the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
-                String loggingFeatureEnabled) {
-            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
-            return this;
-        }
-        /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param loggingSizeLimit the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointProducerBuilder loggingSizeLimit(
-                int loggingSizeLimit) {
-            doSetProperty("loggingSizeLimit", loggingSizeLimit);
-            return this;
-        }
-        /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param loggingSizeLimit the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointProducerBuilder loggingSizeLimit(
-                String loggingSizeLimit) {
-            doSetProperty("loggingSizeLimit", loggingSizeLimit);
-            return this;
-        }
-        /**
          * This option is used to specify the model file which is useful for the
          * resource class without annotation. When using this option, then the
          * service class can be omitted, to emulate document-only endpoints.
@@ -1166,6 +1101,75 @@ public interface CxfRsEndpointBuilderFactory {
         default CxfRsEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            return this;
+        }
+        /**
+         * This option enables CXF Logging Feature which writes inbound and
+         * outbound REST messages to log.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: logging
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
+                boolean loggingFeatureEnabled) {
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            return this;
+        }
+        /**
+         * This option enables CXF Logging Feature which writes inbound and
+         * outbound REST messages to log.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: logging
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
+                String loggingFeatureEnabled) {
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            return this;
+        }
+        /**
+         * To limit the total size of number of bytes the logger will output
+         * when logging feature has been enabled and -1 for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 49152
+         * Group: logging
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointProducerBuilder loggingSizeLimit(
+                int loggingSizeLimit) {
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
+            return this;
+        }
+        /**
+         * To limit the total size of number of bytes the logger will output
+         * when logging feature has been enabled and -1 for no limit.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 49152
+         * Group: logging
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointProducerBuilder loggingSizeLimit(
+                String loggingSizeLimit) {
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
     }
@@ -1696,71 +1700,6 @@ public interface CxfRsEndpointBuilderFactory {
             return this;
         }
         /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound REST messages to log.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param loggingFeatureEnabled the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointBuilder loggingFeatureEnabled(
-                boolean loggingFeatureEnabled) {
-            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
-            return this;
-        }
-        /**
-         * This option enables CXF Logging Feature which writes inbound and
-         * outbound REST messages to log.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param loggingFeatureEnabled the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointBuilder loggingFeatureEnabled(
-                String loggingFeatureEnabled) {
-            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
-            return this;
-        }
-        /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param loggingSizeLimit the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
-            doSetProperty("loggingSizeLimit", loggingSizeLimit);
-            return this;
-        }
-        /**
-         * To limit the total size of number of bytes the logger will output
-         * when logging feature has been enabled.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param loggingSizeLimit the value to set
-         * @return the dsl builder
-         */
-        default CxfRsEndpointBuilder loggingSizeLimit(String loggingSizeLimit) {
-            doSetProperty("loggingSizeLimit", loggingSizeLimit);
-            return this;
-        }
-        /**
          * This option is used to specify the model file which is useful for the
          * resource class without annotation. When using this option, then the
          * service class can be omitted, to emulate document-only endpoints.
@@ -1889,6 +1828,73 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointBuilder skipFaultLogging(String skipFaultLogging) {
             doSetProperty("skipFaultLogging", skipFaultLogging);
+            return this;
+        }
+        /**
+         * This option enables CXF Logging Feature which writes inbound and
+         * outbound REST messages to log.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: logging
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointBuilder loggingFeatureEnabled(
+                boolean loggingFeatureEnabled) {
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            return this;
+        }
+        /**
+         * This option enables CXF Logging Feature which writes inbound and
+         * outbound REST messages to log.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: logging
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointBuilder loggingFeatureEnabled(
+                String loggingFeatureEnabled) {
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            return this;
+        }
+        /**
+         * To limit the total size of number of bytes the logger will output
+         * when logging feature has been enabled and -1 for no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 49152
+         * Group: logging
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
+            return this;
+        }
+        /**
+         * To limit the total size of number of bytes the logger will output
+         * when logging feature has been enabled and -1 for no limit.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 49152
+         * Group: logging
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
+         */
+        default CxfRsEndpointBuilder loggingSizeLimit(String loggingSizeLimit) {
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
     }

@@ -120,6 +120,24 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom HeaderFilterStrategy to filter Service Bus
+         * application properties to and from Camel message headers.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
          * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
@@ -577,6 +595,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "amqpTransportType": getOrCreateConfiguration((ServiceBusComponent) component).setAmqpTransportType((com.azure.core.amqp.AmqpTransportType) value); return true;
             case "clientOptions": getOrCreateConfiguration((ServiceBusComponent) component).setClientOptions((com.azure.core.util.ClientOptions) value); return true;
             case "configuration": ((ServiceBusComponent) component).setConfiguration((org.apache.camel.component.azure.servicebus.ServiceBusConfiguration) value); return true;
+            case "headerFilterStrategy": getOrCreateConfiguration((ServiceBusComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "proxyOptions": getOrCreateConfiguration((ServiceBusComponent) component).setProxyOptions((com.azure.core.amqp.ProxyOptions) value); return true;
             case "serviceBusType": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusType((org.apache.camel.component.azure.servicebus.ServiceBusType) value); return true;
             case "bridgeErrorHandler": ((ServiceBusComponent) component).setBridgeErrorHandler((boolean) value); return true;

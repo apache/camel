@@ -150,6 +150,42 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom HeaderFilterStrategy to filter Service Bus
+         * application properties to and from Camel message headers.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter Service Bus
+         * application properties to and from Camel message headers.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
          * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
@@ -911,6 +947,42 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom HeaderFilterStrategy to filter Service Bus
+         * application properties to and from Camel message headers.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter Service Bus
+         * application properties to and from Camel message headers.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Sets the proxy configuration to use for ServiceBusSenderAsyncClient.
          * When a proxy is configured, AMQP_WEB_SOCKETS must be used for the
          * transport type.
@@ -1426,6 +1498,42 @@ public interface ServiceBusEndpointBuilderFactory {
          */
         default ServiceBusEndpointBuilder clientOptions(String clientOptions) {
             doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter Service Bus
+         * application properties to and from Camel message headers.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter Service Bus
+         * application properties to and from Camel message headers.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
