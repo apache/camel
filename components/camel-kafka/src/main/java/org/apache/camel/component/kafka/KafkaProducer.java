@@ -391,7 +391,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             startKafkaTransaction(exchange);
         }
 
-        if (isIterable(message.getBody())) {
+        if (endpoint.getConfiguration().isUseIterator() && isIterable(message.getBody())) {
             processIterableSync(exchange, message);
         } else {
             processSingleMessageSync(exchange, message);
@@ -470,11 +470,10 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         try {
             // is the message body a list or something that contains multiple values
-            if (isIterable(body)) {
+            if (endpoint.getConfiguration().isUseIterator() && isIterable(body)) {
                 processIterableAsync(exchange, producerCallBack, message);
             } else {
                 final ProducerRecord<Object, Object> record = createRecord(exchange, message);
-
                 doSend(exchange, record, producerCallBack);
             }
 
