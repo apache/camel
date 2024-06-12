@@ -180,6 +180,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private String key;
     @UriParam(label = "producer")
     private Integer partitionKey;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean useIterator = true;
     @UriParam(label = "producer", enums = "all,-1,0,1", defaultValue = "all")
     private String requestRequiredAcks = "all";
     // buffer.memory
@@ -1352,6 +1354,18 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setPartitionKey(Integer partitionKey) {
         this.partitionKey = partitionKey;
+    }
+
+    public boolean isUseIterator() {
+        return useIterator;
+    }
+
+    /**
+     * Sets whether sending to kafka should send the message body as a single record, or use a java.util.Iterator to
+     * send multiple records to kafka (if the message body can be iterated).
+     */
+    public void setUseIterator(boolean useIterator) {
+        this.useIterator = useIterator;
     }
 
     public String getRequestRequiredAcks() {

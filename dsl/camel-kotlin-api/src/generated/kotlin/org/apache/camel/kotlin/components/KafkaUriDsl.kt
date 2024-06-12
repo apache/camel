@@ -510,6 +510,14 @@ public class KafkaUriDsl(
     it.property("sendBufferBytes", sendBufferBytes.toString())
   }
 
+  public fun useIterator(useIterator: String) {
+    it.property("useIterator", useIterator)
+  }
+
+  public fun useIterator(useIterator: Boolean) {
+    it.property("useIterator", useIterator.toString())
+  }
+
   public fun valueSerializer(valueSerializer: String) {
     it.property("valueSerializer", valueSerializer)
   }

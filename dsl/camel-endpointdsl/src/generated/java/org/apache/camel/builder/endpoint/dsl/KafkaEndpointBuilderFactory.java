@@ -3464,6 +3464,41 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether sending to kafka should send the message body as a
+         * single record, or use a java.util.Iterator to send multiple records
+         * to kafka (if the message body can be iterated).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useIterator the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder useIterator(boolean useIterator) {
+            doSetProperty("useIterator", useIterator);
+            return this;
+        }
+        /**
+         * Sets whether sending to kafka should send the message body as a
+         * single record, or use a java.util.Iterator to send multiple records
+         * to kafka (if the message body can be iterated).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useIterator the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder useIterator(String useIterator) {
+            doSetProperty("useIterator", useIterator);
+            return this;
+        }
+        /**
          * The serializer class for messages.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
