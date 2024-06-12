@@ -48,6 +48,11 @@ public class DJLEndpoint extends DefaultEndpoint {
         this.application = application;
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public Producer createProducer() throws Exception {
         return new DJLProducer(this);
     }

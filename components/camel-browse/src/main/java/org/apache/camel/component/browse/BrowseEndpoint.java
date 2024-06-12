@@ -58,6 +58,11 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public List<Exchange> getExchanges() {
         if (exchanges == null) {
             exchanges = createExchangeList();

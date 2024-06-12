@@ -42,6 +42,11 @@ public class PdfEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new PdfProducer(this);
     }

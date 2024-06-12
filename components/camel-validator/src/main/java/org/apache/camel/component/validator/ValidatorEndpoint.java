@@ -92,6 +92,11 @@ public class ValidatorEndpoint extends DefaultEndpoint {
         schemaReader = new SchemaReader(getCamelContext(), resourceUri);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     @ManagedOperation(description = "Clears the cached schema, forcing to re-load the schema on next request")
     public void clearCachedSchema() {
         // will cause to reload the schema

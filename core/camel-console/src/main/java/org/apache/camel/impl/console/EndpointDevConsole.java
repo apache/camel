@@ -96,6 +96,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
         for (Endpoint e : col) {
             JsonObject jo = new JsonObject();
             jo.put("uri", e.getEndpointUri());
+            jo.put("remote", e.isRemote());
             boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
             jo.put("stub", stub);
             var stat = findStats(stats, e.getEndpointUri());

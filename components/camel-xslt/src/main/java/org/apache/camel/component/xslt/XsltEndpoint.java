@@ -100,6 +100,11 @@ public class XsltEndpoint extends ProcessorEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     @ManagedOperation(description = "Clears the cached XSLT stylesheet, forcing to re-load the stylesheet on next request")
     public void clearCachedStylesheet() {
         this.cacheCleared = true;

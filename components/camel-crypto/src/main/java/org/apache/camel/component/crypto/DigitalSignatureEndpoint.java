@@ -49,6 +49,11 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         if (CryptoOperation.sign == configuration.getCryptoOperation()) {
             return new DigitalSignatureProducer(this, new SigningProcessor(configuration));

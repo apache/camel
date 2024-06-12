@@ -144,6 +144,11 @@ public class DynamicRouterEndpoint extends DefaultEndpoint {
         LOG.debug("Created Dynamic Router Control Channel endpoint URI: {}", uri);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     /**
      * Initialize the endpoint by creating (and adding) the {@link DynamicRouterProcessor} instance.
      *

@@ -90,6 +90,11 @@ public class LanguageEndpoint extends ResourceEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         if (language == null && languageName != null) {
             language = getCamelContext().resolveLanguage(languageName);

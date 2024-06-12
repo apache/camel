@@ -42,6 +42,11 @@ public class StAXEndpoint extends ProcessorEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public String getContentHandlerClass() {
         return contentHandlerClass;
     }

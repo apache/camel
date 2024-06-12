@@ -112,6 +112,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
         super(uri, quartzComponent);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public String getGroupName() {
         return triggerKey.getGroup();
     }

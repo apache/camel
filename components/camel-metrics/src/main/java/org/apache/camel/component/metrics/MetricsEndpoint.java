@@ -66,6 +66,11 @@ public class MetricsEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("Cannot consume from " + getClass().getSimpleName() + ": " + getEndpointUri());
     }

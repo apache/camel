@@ -56,6 +56,11 @@ public class SchedulerEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public SchedulerComponent getComponent() {
         return (SchedulerComponent) super.getComponent();
     }

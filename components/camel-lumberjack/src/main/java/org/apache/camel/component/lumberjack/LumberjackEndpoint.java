@@ -46,10 +46,15 @@ public class LumberjackEndpoint extends DefaultEndpoint {
     @UriParam(description = "SSL configuration")
     private SSLContextParameters sslContextParameters;
 
-    LumberjackEndpoint(String endpointUri, LumberjackComponent component, String host, int port) {
+    public LumberjackEndpoint(String endpointUri, LumberjackComponent component, String host, int port) {
         super(endpointUri, component);
         this.host = host;
         this.port = port;
+    }
+
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     @Override

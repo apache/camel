@@ -93,6 +93,11 @@ public class JsltEndpoint extends ResourceEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.InOut;
     }

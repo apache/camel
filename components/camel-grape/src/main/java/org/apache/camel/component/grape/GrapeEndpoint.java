@@ -71,6 +71,11 @@ public class GrapeEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public Producer createProducer() {
         return new GrapeProducer(this);
     }

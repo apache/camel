@@ -80,6 +80,11 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public String getResourceUri() {
         return resourceUri;
     }

@@ -46,6 +46,11 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public String getName() {
         return name;
     }

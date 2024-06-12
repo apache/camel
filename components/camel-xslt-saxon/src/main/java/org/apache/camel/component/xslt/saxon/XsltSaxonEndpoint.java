@@ -82,6 +82,11 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public List<Object> getSaxonExtensionFunctions() {
         return saxonExtensionFunctions;
     }

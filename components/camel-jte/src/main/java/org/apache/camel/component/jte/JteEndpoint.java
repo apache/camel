@@ -46,6 +46,11 @@ public class JteEndpoint extends ResourceEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public JteComponent getComponent() {
         return (JteComponent) super.getComponent();
     }

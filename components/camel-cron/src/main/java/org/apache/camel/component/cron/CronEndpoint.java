@@ -46,6 +46,11 @@ public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public void setDelegate(Endpoint delegate) {
         this.delegate = delegate;
     }

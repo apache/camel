@@ -50,6 +50,11 @@ public class XmlSignerEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     public String getName() {
         return name;
     }

@@ -72,6 +72,11 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public void clearContentCache() {
         this.schema = null;
         super.clearContentCache();

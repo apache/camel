@@ -53,6 +53,11 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     }
 
     @Override
+    public boolean isRemote() {
+        return false;
+    }
+
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
