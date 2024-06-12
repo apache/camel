@@ -53,10 +53,138 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Async Producer
+== Elasticsearch Low level Rest Client Operations
 
-This component implements the async producer.
+The following operations are currently supported.
 
-This allows Camel route to produce events asynchronously without blocking any threads.
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|operation |message body |description
+
+|`INDEX_OR_UPDATE` |`String`, `byte[]`, `Reader` or `InputStream` content to index or update |Adds or updates content to an index and returns the resulting `id` in the message body.
+You can set the name of the target index from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
+When updating indexed content, you must provide its id via a message header with the key `ID` .
+
+|`GET_BY_ID` |`String` id of content to retrieve |Retrieves a JSON String representation of the indexed document, corresponding to the given index id and sets it as the message exchange body.
+You can set the name of the target index from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
+You must provide the index id of the content to retrieve either in the message body, or via a message header with the key `ID` .
+
+|`DELETE` |`String` id of content to delete |Deletes the specified `indexName` and returns a `boolean` value as the message exchange body, indicating whether the operation was successful.
+You can set the name of the target index from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
+You must provide the index id of the content to delete either in the message body, or via a message header with the key `ID` .
+
+|`CREATE_INDEX` | |Creates the specified `indexName` and returns a `boolean` value as the message exchange body, indicating whether the operation was successful.
+You can set the name of the target index to create from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
+You may also provide a header with the key `INDEX_SETTINGS` where the value is a JSON String representation of the index settings.
+
+|`DELETE_INDEX` | |Deletes the specified `indexName` and returns a `boolean` value as the message exchange body, indicating whether the operation was successful.
+You can set the name of the target index to create from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
+
+|`SEARCH` |`Map (optional) |Search for content with either a `Map` of `String` keys & values of query criteria. Or a JSON string representation of the query. Matching documents are returned as a JSON string set on the message exchange body.
+You can set the JSON query String by providing a message header with the key `SEARCH_QUERY`.
+You can set the message exchange body to a `Map` of `String` keys & values for the query criteria.
+
+|===
+
+== Index Content Example
+
+To index some content.
+
+[source,java]
+----
+from("direct:index")
+    .setBody().constant("{\"content\": \"ElasticSearch With Camel\"}")
+    .to("elasticsearch-rest-client://myCluster?operation=INDEX_OR_UPDATE&indexName=myIndex");
+----
+
+To update existing indexed content, provide the `ID` message header and the message body with the updated content.
+
+[source,java]
+----
+from("direct:index")
+    .setHeader("ID").constant("1")
+    .setBody().constant("{\"content\": \"ElasticSearch REST Client With Camel\"}")
+    .to("elasticsearch-rest-client://myCluster?operation=INDEX_OR_UPDATE&indexName=myIndex");
+----
+
+== Get By ID Example
+
+[source,java]
+----
+from("direct:getById")
+    .setHeader("ID").constant("1")
+    .to("elasticsearch-rest-client://myCluster?operation=GET_BY_ID&indexName=myIndex");
+----
+
+== Delete Example
+
+To delete indexed content, provide the `ID` message header.
+
+[source,java]
+----
+from("direct:getById")
+    .setHeader("ID").constant("1")
+    .to("elasticsearch-rest-client://myCluster?operation=DELETE&indexName=myIndex");
+----
+
+== Create Index Example
+
+To create a new index.
+
+[source,java]
+----
+from("direct:createIndex")
+    .to("elasticsearch-rest-client://myCluster?operation=CREATE_INDEX&indexName=myIndex");
+----
+
+To create a new index with some custom settings.
+
+[source,java]
+----
+String indexSettings = "{\"settings\":{\"number_of_replicas\": 1,\"number_of_shards\": 3,\"analysis\": {},\"refresh_interval\": \"1s\"},\"mappings\":{\"dynamic\": false,\"properties\": {\"title\": {\"type\": \"text\", \"analyzer\": \"english\"}}}}";
+----
+
+[source,java]
+----
+from("direct:createIndex")
+    .setHeader("INDEX_SETTINGS").constant(indexSettings)
+    .to("elasticsearch-rest-client://myCluster?operation=CREATE_INDEX&indexName=myIndex");
+----
+
+== Delete Index Example
+
+To delete an index.
+
+[source,java]
+----
+from("direct:deleteIndex")
+    .to("elasticsearch-rest-client://myCluster?operation=DELETE_INDEX&indexName=myIndex");
+----
+
+== Search Example
+
+Search with a JSON query.
+
+[source,java]
+----
+from("direct:search")
+    .setHeader("SEARCH_QUERY").constant("{\"query\":{\"match\":{\"content\":\"ElasticSearch With Camel\"}}}")
+    .to("elasticsearch-rest-client://myCluster?operation=SEARCH&indexName=myIndex");
+----
+
+Search on specific field(s) using `Map`.
+
+[source,java]
+----
+Map<String, String> criteria = new HashMap<>();
+criteria.put("content", "Camel");
+----
+
+[source,java]
+----
+from("direct:search")
+    .setBody().constant(criteria)
+    .to("elasticsearch-rest-client://myCluster?operation=SEARCH&indexName=myIndex");
+----
 
 include::spring-boot:partial$starter.adoc[]
