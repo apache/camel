@@ -35,28 +35,42 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface SmbEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint for the SMB component.
+     * Builder for endpoint consumers for the SMB component.
      */
-    public interface SmbEndpointBuilder
+    public interface SmbEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        default AdvancedSmbEndpointBuilder advanced() {
-            return (AdvancedSmbEndpointBuilder) this;
+        default AdvancedSmbEndpointConsumerBuilder advanced() {
+            return (AdvancedSmbEndpointConsumerBuilder) this;
         }
-
         /**
          * The path, within the share, to consume the files from.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Group: consumer
+         * Group: common
          * 
          * @param path the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder path(String path) {
+        default SmbEndpointConsumerBuilder path(String path) {
             doSetProperty("path", path);
+            return this;
+        }
+        /**
+         * The search pattern used to list the files.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: *.txt
+         * Group: common
+         * 
+         * @param searchPattern the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder searchPattern(String searchPattern) {
+            doSetProperty("searchPattern", searchPattern);
             return this;
         }
         /**
@@ -71,7 +85,7 @@ public interface SmbEndpointBuilderFactory {
          * @param recursive the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder recursive(boolean recursive) {
+        default SmbEndpointConsumerBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
             return this;
         }
@@ -87,23 +101,8 @@ public interface SmbEndpointBuilderFactory {
          * @param recursive the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder recursive(String recursive) {
+        default SmbEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
-            return this;
-        }
-        /**
-         * The search pattern used to list the files.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: *.txt
-         * Group: consumer
-         * 
-         * @param searchPattern the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointBuilder searchPattern(String searchPattern) {
-            doSetProperty("searchPattern", searchPattern);
             return this;
         }
         /**
@@ -118,7 +117,7 @@ public interface SmbEndpointBuilderFactory {
          * @param sendEmptyMessageWhenIdle the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder sendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle) {
+        default SmbEndpointConsumerBuilder sendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
@@ -134,7 +133,7 @@ public interface SmbEndpointBuilderFactory {
          * @param sendEmptyMessageWhenIdle the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder sendEmptyMessageWhenIdle(String sendEmptyMessageWhenIdle) {
+        default SmbEndpointConsumerBuilder sendEmptyMessageWhenIdle(String sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
@@ -149,7 +148,7 @@ public interface SmbEndpointBuilderFactory {
          * @param backoffErrorThreshold the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder backoffErrorThreshold(int backoffErrorThreshold) {
+        default SmbEndpointConsumerBuilder backoffErrorThreshold(int backoffErrorThreshold) {
             doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
@@ -164,7 +163,7 @@ public interface SmbEndpointBuilderFactory {
          * @param backoffErrorThreshold the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder backoffErrorThreshold(String backoffErrorThreshold) {
+        default SmbEndpointConsumerBuilder backoffErrorThreshold(String backoffErrorThreshold) {
             doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
@@ -179,7 +178,7 @@ public interface SmbEndpointBuilderFactory {
          * @param backoffIdleThreshold the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder backoffIdleThreshold(int backoffIdleThreshold) {
+        default SmbEndpointConsumerBuilder backoffIdleThreshold(int backoffIdleThreshold) {
             doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
@@ -194,7 +193,7 @@ public interface SmbEndpointBuilderFactory {
          * @param backoffIdleThreshold the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder backoffIdleThreshold(String backoffIdleThreshold) {
+        default SmbEndpointConsumerBuilder backoffIdleThreshold(String backoffIdleThreshold) {
             doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
@@ -213,7 +212,7 @@ public interface SmbEndpointBuilderFactory {
          * @param backoffMultiplier the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder backoffMultiplier(int backoffMultiplier) {
+        default SmbEndpointConsumerBuilder backoffMultiplier(int backoffMultiplier) {
             doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
@@ -232,7 +231,7 @@ public interface SmbEndpointBuilderFactory {
          * @param backoffMultiplier the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder backoffMultiplier(String backoffMultiplier) {
+        default SmbEndpointConsumerBuilder backoffMultiplier(String backoffMultiplier) {
             doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
@@ -247,7 +246,7 @@ public interface SmbEndpointBuilderFactory {
          * @param delay the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder delay(long delay) {
+        default SmbEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
             return this;
         }
@@ -262,7 +261,7 @@ public interface SmbEndpointBuilderFactory {
          * @param delay the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder delay(String delay) {
+        default SmbEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
             return this;
         }
@@ -278,7 +277,7 @@ public interface SmbEndpointBuilderFactory {
          * @param greedy the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder greedy(boolean greedy) {
+        default SmbEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
             return this;
         }
@@ -294,7 +293,7 @@ public interface SmbEndpointBuilderFactory {
          * @param greedy the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder greedy(String greedy) {
+        default SmbEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
             return this;
         }
@@ -309,7 +308,7 @@ public interface SmbEndpointBuilderFactory {
          * @param initialDelay the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder initialDelay(long initialDelay) {
+        default SmbEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
             return this;
         }
@@ -324,7 +323,7 @@ public interface SmbEndpointBuilderFactory {
          * @param initialDelay the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder initialDelay(String initialDelay) {
+        default SmbEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
             return this;
         }
@@ -341,7 +340,7 @@ public interface SmbEndpointBuilderFactory {
          * @param repeatCount the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder repeatCount(long repeatCount) {
+        default SmbEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
             return this;
         }
@@ -358,7 +357,7 @@ public interface SmbEndpointBuilderFactory {
          * @param repeatCount the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder repeatCount(String repeatCount) {
+        default SmbEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
             return this;
         }
@@ -374,7 +373,7 @@ public interface SmbEndpointBuilderFactory {
          * @param runLoggingLevel the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder runLoggingLevel(org.apache.camel.LoggingLevel runLoggingLevel) {
+        default SmbEndpointConsumerBuilder runLoggingLevel(org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -391,7 +390,7 @@ public interface SmbEndpointBuilderFactory {
          * @param runLoggingLevel the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder runLoggingLevel(String runLoggingLevel) {
+        default SmbEndpointConsumerBuilder runLoggingLevel(String runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -408,7 +407,7 @@ public interface SmbEndpointBuilderFactory {
          * @param scheduledExecutorService the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder scheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+        default SmbEndpointConsumerBuilder scheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
             doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
@@ -425,7 +424,7 @@ public interface SmbEndpointBuilderFactory {
          * @param scheduledExecutorService the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder scheduledExecutorService(String scheduledExecutorService) {
+        default SmbEndpointConsumerBuilder scheduledExecutorService(String scheduledExecutorService) {
             doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
@@ -441,7 +440,7 @@ public interface SmbEndpointBuilderFactory {
          * @param scheduler the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder scheduler(Object scheduler) {
+        default SmbEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
             return this;
         }
@@ -457,7 +456,7 @@ public interface SmbEndpointBuilderFactory {
          * @param scheduler the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder scheduler(String scheduler) {
+        default SmbEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
             return this;
         }
@@ -477,7 +476,7 @@ public interface SmbEndpointBuilderFactory {
          * @param value the option value
          * @return the dsl builder
          */
-        default SmbEndpointBuilder schedulerProperties(String key, Object value) {
+        default SmbEndpointConsumerBuilder schedulerProperties(String key, Object value) {
             doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
             return this;
         }
@@ -496,7 +495,7 @@ public interface SmbEndpointBuilderFactory {
          * @param values the values
          * @return the dsl builder
          */
-        default SmbEndpointBuilder schedulerProperties(Map values) {
+        default SmbEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
             return this;
         }
@@ -511,7 +510,7 @@ public interface SmbEndpointBuilderFactory {
          * @param startScheduler the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder startScheduler(boolean startScheduler) {
+        default SmbEndpointConsumerBuilder startScheduler(boolean startScheduler) {
             doSetProperty("startScheduler", startScheduler);
             return this;
         }
@@ -526,7 +525,7 @@ public interface SmbEndpointBuilderFactory {
          * @param startScheduler the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder startScheduler(String startScheduler) {
+        default SmbEndpointConsumerBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
             return this;
         }
@@ -541,7 +540,7 @@ public interface SmbEndpointBuilderFactory {
          * @param timeUnit the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder timeUnit(TimeUnit timeUnit) {
+        default SmbEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
             return this;
         }
@@ -557,7 +556,7 @@ public interface SmbEndpointBuilderFactory {
          * @param timeUnit the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder timeUnit(String timeUnit) {
+        default SmbEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
             return this;
         }
@@ -573,7 +572,7 @@ public interface SmbEndpointBuilderFactory {
          * @param useFixedDelay the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder useFixedDelay(boolean useFixedDelay) {
+        default SmbEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -589,8 +588,649 @@ public interface SmbEndpointBuilderFactory {
          * @param useFixedDelay the value to set
          * @return the dsl builder
          */
-        default SmbEndpointBuilder useFixedDelay(String useFixedDelay) {
+        default SmbEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * The user domain.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param domain the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder domain(String domain) {
+            doSetProperty("domain", domain);
+            return this;
+        }
+        /**
+         * The password to access the share.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The username required to access the share.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the SMB component.
+     */
+    public interface AdvancedSmbEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default SmbEndpointConsumerBuilder basic() {
+            return (SmbEndpointConsumerBuilder) this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder exchangePattern(String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder pollStrategy(org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder pollStrategy(String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder idempotentRepository(org.apache.camel.spi.IdempotentRepository idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder idempotentRepository(String idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * An optional SMB client configuration, can be used to configure client
+         * specific configurations, like timeouts.
+         * 
+         * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder smbConfig(com.hierynomus.smbj.SmbConfig smbConfig) {
+            doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * An optional SMB client configuration, can be used to configure client
+         * specific configurations, like timeouts.
+         * 
+         * The option will be converted to a
+         * <code>com.hierynomus.smbj.SmbConfig</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder smbConfig(String smbConfig) {
+            doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * An optional SMB I/O bean to use to setup the file access attributes
+         * when reading/writing a file.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.smb.SmbIOBean</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbIoBean the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder smbIoBean(org.apache.camel.component.smb.SmbIOBean smbIoBean) {
+            doSetProperty("smbIoBean", smbIoBean);
+            return this;
+        }
+        /**
+         * An optional SMB I/O bean to use to setup the file access attributes
+         * when reading/writing a file.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.smb.SmbIOBean</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbIoBean the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder smbIoBean(String smbIoBean) {
+            doSetProperty("smbIoBean", smbIoBean);
+            return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint producers for the SMB component.
+     */
+    public interface SmbEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AdvancedSmbEndpointProducerBuilder advanced() {
+            return (AdvancedSmbEndpointProducerBuilder) this;
+        }
+
+        /**
+         * The path, within the share, to consume the files from.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param path the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder path(String path) {
+            doSetProperty("path", path);
+            return this;
+        }
+        /**
+         * The search pattern used to list the files.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: *.txt
+         * Group: common
+         * 
+         * @param searchPattern the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder searchPattern(String searchPattern) {
+            doSetProperty("searchPattern", searchPattern);
+            return this;
+        }
+        /**
+         * Whether to create parent directory if it does not exist.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder autoCreate(boolean autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Whether to create parent directory if it does not exist.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder autoCreate(String autoCreate) {
+            doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * What action to take if the SMB file already exists.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
+         * 
+         * Default: Ignore
+         * Group: producer
+         * 
+         * @param fileExist the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder fileExist(org.apache.camel.component.file.GenericFileExist fileExist) {
+            doSetProperty("fileExist", fileExist);
+            return this;
+        }
+        /**
+         * What action to take if the SMB file already exists.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
+         * 
+         * Default: Ignore
+         * Group: producer
+         * 
+         * @param fileExist the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder fileExist(String fileExist) {
+            doSetProperty("fileExist", fileExist);
+            return this;
+        }
+        /**
+         * The user domain.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param domain the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder domain(String domain) {
+            doSetProperty("domain", domain);
+            return this;
+        }
+        /**
+         * The password to access the share.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The username required to access the share.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the SMB component.
+     */
+    public interface AdvancedSmbEndpointProducerBuilder extends EndpointProducerBuilder {
+        default SmbEndpointProducerBuilder basic() {
+            return (SmbEndpointProducerBuilder) this;
+        }
+
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder idempotentRepository(org.apache.camel.spi.IdempotentRepository idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder idempotentRepository(String idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * An optional SMB client configuration, can be used to configure client
+         * specific configurations, like timeouts.
+         * 
+         * The option is a: <code>com.hierynomus.smbj.SmbConfig</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder smbConfig(com.hierynomus.smbj.SmbConfig smbConfig) {
+            doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * An optional SMB client configuration, can be used to configure client
+         * specific configurations, like timeouts.
+         * 
+         * The option will be converted to a
+         * <code>com.hierynomus.smbj.SmbConfig</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbConfig the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder smbConfig(String smbConfig) {
+            doSetProperty("smbConfig", smbConfig);
+            return this;
+        }
+        /**
+         * An optional SMB I/O bean to use to setup the file access attributes
+         * when reading/writing a file.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.smb.SmbIOBean</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbIoBean the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder smbIoBean(org.apache.camel.component.smb.SmbIOBean smbIoBean) {
+            doSetProperty("smbIoBean", smbIoBean);
+            return this;
+        }
+        /**
+         * An optional SMB I/O bean to use to setup the file access attributes
+         * when reading/writing a file.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.smb.SmbIOBean</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param smbIoBean the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder smbIoBean(String smbIoBean) {
+            doSetProperty("smbIoBean", smbIoBean);
+            return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint for the SMB component.
+     */
+    public interface SmbEndpointBuilder
+            extends
+                SmbEndpointConsumerBuilder,
+                SmbEndpointProducerBuilder {
+        default AdvancedSmbEndpointBuilder advanced() {
+            return (AdvancedSmbEndpointBuilder) this;
+        }
+
+        /**
+         * The path, within the share, to consume the files from.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
+         * 
+         * @param path the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder path(String path) {
+            doSetProperty("path", path);
+            return this;
+        }
+        /**
+         * The search pattern used to list the files.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: *.txt
+         * Group: common
+         * 
+         * @param searchPattern the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder searchPattern(String searchPattern) {
+            doSetProperty("searchPattern", searchPattern);
             return this;
         }
         /**
@@ -642,164 +1282,12 @@ public interface SmbEndpointBuilderFactory {
      */
     public interface AdvancedSmbEndpointBuilder
             extends
-                EndpointConsumerBuilder {
+                AdvancedSmbEndpointConsumerBuilder,
+                AdvancedSmbEndpointProducerBuilder {
         default SmbEndpointBuilder basic() {
             return (SmbEndpointBuilder) this;
         }
 
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder exceptionHandler(String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder exchangePattern(String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param pollStrategy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder pollStrategy(org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param pollStrategy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSmbEndpointBuilder pollStrategy(String pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
         /**
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryIdempotentRepository if none is specified.

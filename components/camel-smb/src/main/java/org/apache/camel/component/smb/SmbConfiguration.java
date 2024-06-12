@@ -17,6 +17,7 @@
 package org.apache.camel.component.smb;
 
 import com.hierynomus.smbj.SmbConfig;
+import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -27,6 +28,16 @@ import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 public class SmbConfiguration {
 
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
+
+    @Metadata(required = false)
+    @UriParam(label = "producer", description = "What action to take if the SMB file already exists",
+              defaultValue = "Ignore", enums = "Override,Append,Fail,Ignore,Move,TryRename")
+    private GenericFileExist fileExist;
+
+    @Metadata(required = false, defaultValue = "false")
+    @UriParam(label = "producer", description = "Whether to create parent directory if it does not exist",
+              defaultValue = "false")
+    private boolean autoCreate;
 
     @Metadata(required = true)
     @UriParam(description = "The path, within the share, to consume the files from")
@@ -129,5 +140,25 @@ public class SmbConfiguration {
 
     public void setSmbConfig(SmbConfig smbConfig) {
         this.smbConfig = smbConfig;
+    }
+
+    public GenericFileExist getFileExist() {
+        return fileExist;
+    }
+
+    public void setFileExist(GenericFileExist fileExist) {
+        this.fileExist = fileExist;
+    }
+
+    public boolean isAutoCreate() {
+        return autoCreate;
+    }
+
+    public void setAutoCreate(String autoCreate) {
+        this.autoCreate = Boolean.valueOf(autoCreate);
+    }
+
+    public void setAutoCreate(boolean autoCreate) {
+        this.autoCreate = autoCreate;
     }
 }

@@ -6,7 +6,7 @@
 :since: 4.3
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only consumer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: smb
 

@@ -23,6 +23,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmbEndpoint target = (SmbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocreate":
+        case "autoCreate": target.getConfiguration().setAutoCreate(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -37,11 +39,15 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "fileexist":
+        case "fileExist": target.getConfiguration().setFileExist(property(camelContext, org.apache.camel.component.file.GenericFileExist.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "idempotentrepository":
         case "idempotentRepository": target.getConfiguration().setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
@@ -83,6 +89,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocreate":
+        case "autoCreate": return boolean.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -97,11 +105,15 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fileexist":
+        case "fileExist": return org.apache.camel.component.file.GenericFileExist.class;
         case "greedy": return boolean.class;
         case "idempotentrepository":
         case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
         case "password": return java.lang.String.class;
         case "path": return java.lang.String.class;
         case "pollstrategy":
@@ -139,6 +151,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SmbEndpoint target = (SmbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocreate":
+        case "autoCreate": return target.getConfiguration().isAutoCreate();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
@@ -153,11 +167,15 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "fileexist":
+        case "fileExist": return target.getConfiguration().getFileExist();
         case "greedy": return target.isGreedy();
         case "idempotentrepository":
         case "idempotentRepository": return target.getConfiguration().getIdempotentRepository();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "lazystartproducer":
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "password": return target.getConfiguration().getPassword();
         case "path": return target.getConfiguration().getPath();
         case "pollstrategy":

@@ -41,6 +41,11 @@
       <artifactId>camel-support</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-file</artifactId>
+    </dependency>
+
     <!-- CIFS -->
     <dependency>
       <groupId>com.hierynomus</groupId>

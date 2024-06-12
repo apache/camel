@@ -33,7 +33,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  * Receive files from SMB (Server Message Block) shares.
  */
 @UriEndpoint(firstVersion = "4.3.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName",
-             consumerOnly = true,
              category = { Category.FILE })
 public class SmbEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
@@ -80,7 +79,7 @@ public class SmbEndpoint extends ScheduledPollEndpoint implements EndpointServic
 
     @Override
     public Producer createProducer() {
-        throw new UnsupportedOperationException("SMB producer is not supported.");
+        return new SmbProducer(this);
     }
 
     @Override
