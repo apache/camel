@@ -1195,6 +1195,22 @@ public class KafkaUriDsl(
   }
 
   /**
+   * Sets whether sending to kafka should send the message body as a single record, or use a
+   * java.util.Iterator to send multiple records to kafka (if the message body can be iterated).
+   */
+  public fun useIterator(useIterator: String) {
+    it.property("useIterator", useIterator)
+  }
+
+  /**
+   * Sets whether sending to kafka should send the message body as a single record, or use a
+   * java.util.Iterator to send multiple records to kafka (if the message body can be iterated).
+   */
+  public fun useIterator(useIterator: Boolean) {
+    it.property("useIterator", useIterator.toString())
+  }
+
+  /**
    * The serializer class for messages.
    */
   public fun valueSerializer(valueSerializer: String) {
