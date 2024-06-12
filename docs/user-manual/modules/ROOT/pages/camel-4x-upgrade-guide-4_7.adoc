@@ -33,6 +33,10 @@ The `SupervisingRouteController` has now been pre-configured to report `DOWN` du
 giving up starting a route. It is the `UnhealthyOnExhausted` and `UnhealthyOnRestarting` options that have been changed to be default `true`.
 To have previous behavior you can set these options to `false`.
 
+== camel-cloud
+
+The camel-cloud component has been deprecated.
+
 === DSL
 
 The WireTap EIP in copy mode, will now do a deep-copy if the message body is of `StreamCache` type to make access to the message body thread-safe.

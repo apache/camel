@@ -28,7 +28,10 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * A static list of known servers Camel Service Call EIP.
+ *
+ * @deprecated since 4.7
  */
+@Deprecated(since = "4.7")
 public class StaticServiceDiscovery extends DefaultServiceDiscovery {
     private final List<ServiceDefinition> services;
 
