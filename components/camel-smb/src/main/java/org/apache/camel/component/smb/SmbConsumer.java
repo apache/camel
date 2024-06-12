@@ -58,7 +58,7 @@ public class SmbConsumer extends ScheduledPollConsumer {
                 IdempotentRepository repository = configuration.getIdempotentRepository();
 
                 for (FileIdBothDirectoryInformation f : share.list(configuration.getPath(), configuration.getSearchPattern())) {
-                    if (f.getFileName().equals(".") || f.getFileName().equals("..")) {
+                    if (f.getFileName().equals(".") || f.getFileName().equals("..") || share.folderExists(f.getFileName())) {
                         continue;
                     }
 
