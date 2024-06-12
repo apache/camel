@@ -1525,6 +1525,23 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets whether sending to kafka should send the message body as a
+         * single record, or use a java.util.Iterator to send multiple records
+         * to kafka (if the message body can be iterated).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useIterator the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder useIterator(boolean useIterator) {
+            doSetProperty("useIterator", useIterator);
+            return this;
+        }
+        /**
          * The serializer class for messages.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2282,6 +2299,7 @@ public interface KafkaComponentBuilderFactory {
             case "retries": getOrCreateConfiguration((KafkaComponent) component).setRetries((java.lang.Integer) value); return true;
             case "retryBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMs((java.lang.Integer) value); return true;
             case "sendBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setSendBufferBytes((java.lang.Integer) value); return true;
+            case "useIterator": getOrCreateConfiguration((KafkaComponent) component).setUseIterator((boolean) value); return true;
             case "valueSerializer": getOrCreateConfiguration((KafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "workerPool": getOrCreateConfiguration((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
             case "workerPoolCoreSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolCoreSize((java.lang.Integer) value); return true;
