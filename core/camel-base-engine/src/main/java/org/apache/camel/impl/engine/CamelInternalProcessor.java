@@ -710,15 +710,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             data.doneProcessing();
 
             String uri = null;
+            boolean remote = true;
             Endpoint endpoint = notifier.after(exchange);
             if (endpoint != null) {
                 uri = endpoint.getEndpointUri();
+                remote = endpoint.isRemote();
             } else if ((data.isFirst() || data.isLast()) && data.getToNode() == null && routeDefinition != null) {
                 // pseudo first/last event (the from in the route)
                 Route route = camelContext.getRoute(routeDefinition.getRouteId());
                 if (route != null && route.getConsumer() != null) {
                     // get the actual resolved uri
                     uri = route.getConsumer().getEndpoint().getEndpointUri();
+                    remote = route.getConsumer().getEndpoint().isRemote();
                 } else {
                     uri = routeDefinition.getEndpointUrl();
                 }
@@ -726,6 +729,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (uri != null) {
                 data.setEndpointUri(uri);
             }
+            data.setRemoteEndpoint(remote);
             if (endpoint instanceof EndpointServiceLocation esl) {
                 data.setEndpointServiceUrl(esl.getServiceUrl());
                 data.setEndpointServiceProtocol(esl.getServiceProtocol());

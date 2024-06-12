@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
+
 /**
  * Represents a traced message by the BacklogTracer.
  */
@@ -136,6 +138,13 @@ public interface BacklogTracerEventMessage {
      * as (to, toD, wireTap) etc.
      */
     String getEndpointUri();
+
+    /**
+     * Whether the endpoint is remote.
+     *
+     * @see Endpoint#isRemote()
+     */
+    boolean isRemoteEndpoint();
 
     /**
      * Gets the endpoint remote address such as URL, hostname, connection-string, or cloud region, that are component

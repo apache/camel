@@ -119,21 +119,20 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
             return;
         }
 
+        // skip non-remote endpoints
+        if (!endpoint.isRemote()) {
+            return;
+        }
+
         if (shouldTrace(node)) {
             String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
-
-            // we need to avoid leak the sensible information here
-            // the sanitizeUri takes a very long time for very long string and the format cuts this to
-            // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
-            // characters in the sanitizeUri method and will be reasonably fast
-            String label = URISupport.sanitizeUri(StringHelper.limitLength(node.getLabel(), 50));
 
             StringBuilder sb = new StringBuilder();
             sb.append(String.format(tracingFormat, "   ", routeId, ""));
             sb.append(" ");
 
             StringJoiner sj = new StringJoiner(", ");
-            sj.add("url=" + endpoint.toString());
+            sj.add("url=" + endpoint);
             if (endpoint instanceof EndpointServiceLocation esl && esl.getServiceUrl() != null) {
                 // enrich with service location
                 sj.add("service=" + esl.getServiceUrl());

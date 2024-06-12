@@ -41,6 +41,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String exchangeId;
     private final String threadName;
     private String endpointUri;
+    private boolean remoteEndpoint;
     private String endpointServiceUrl;
     private String endpointServiceProtocol;
     private Map<String, String> endpointServiceMetadata;
@@ -193,6 +194,15 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         return endpointUri;
     }
 
+    @Override
+    public boolean isRemoteEndpoint() {
+        return remoteEndpoint;
+    }
+
+    public void setRemoteEndpoint(boolean remoteEndpoint) {
+        this.remoteEndpoint = remoteEndpoint;
+    }
+
     public void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }
@@ -258,6 +268,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
         if (endpointUri != null) {
             sb.append(prefix).append("  <endpointUri>").append(endpointUri).append("</endpointUri>\n");
+            sb.append(prefix).append("  <remoteEndpoint>").append(remoteEndpoint).append("</remoteEndpoint>\n");
         }
         if (toNode != null) {
             sb.append(prefix).append("  <toNode>").append(toNode).append("</toNode>\n");
@@ -313,6 +324,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         if (endpointUri != null) {
             jo.put("endpointUri", endpointUri);
+            jo.put("remoteEndpoint", remoteEndpoint);
         }
         if (routeId != null) {
             jo.put("routeId", routeId);
