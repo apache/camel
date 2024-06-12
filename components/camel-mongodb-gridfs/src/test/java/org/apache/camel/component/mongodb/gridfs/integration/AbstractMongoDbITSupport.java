@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.mongodb.services.MongoDBService;
 import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
@@ -39,8 +40,8 @@ public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
         return this.getClass().getSimpleName();
     }
 
-    @Override
-    public void doPostTearDown() {
+    @AfterEach
+    public void tearDownMongo() {
         gridFSBucket.find().forEach(gridFSFile -> gridFSBucket.delete(gridFSFile.getId()));
         mongo.close();
     }
