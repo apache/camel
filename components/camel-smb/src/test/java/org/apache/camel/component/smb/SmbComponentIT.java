@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.hierynomus.smbj.SmbConfig;
 import com.hierynomus.smbj.share.File;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,12 +40,22 @@ public class SmbComponentIT extends CamelTestSupport {
     @RegisterExtension
     public static SmbService service = SmbServiceFactory.createService();
 
+    @EndpointInject("mock:result")
+    protected MockEndpoint mockResultEndpoint;
+
     @Test
     public void testSmbRead() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(100);
 
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testSmbSendFile() throws Exception {
+        mockResultEndpoint.expectedMinimumMessageCount(1);
+        Exchange exchange = template.request("direct:smbSendFile", null);
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -70,6 +81,11 @@ public class SmbComponentIT extends CamelTestSupport {
                         service.userName(), service.password())
                         .process(this::process)
                         .to("mock:result");
+
+                fromF("direct:smbSendFile")
+                        .to("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig")
+                        .to("mock:result");
+
             }
         };
     }
