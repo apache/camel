@@ -228,6 +228,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "topicIsPattern": getOrCreateConfiguration(target).setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "useiterator":
+        case "useIterator": getOrCreateConfiguration(target).setUseIterator(property(camelContext, boolean.class, value)); return true;
         case "valuedeserializer":
         case "valueDeserializer": getOrCreateConfiguration(target).setValueDeserializer(property(camelContext, java.lang.String.class, value)); return true;
         case "valueserializer":
@@ -450,6 +452,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "topicIsPattern": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
+        case "useiterator":
+        case "useIterator": return boolean.class;
         case "valuedeserializer":
         case "valueDeserializer": return java.lang.String.class;
         case "valueserializer":
@@ -668,6 +672,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "topicIsPattern": return getOrCreateConfiguration(target).isTopicIsPattern();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
+        case "useiterator":
+        case "useIterator": return getOrCreateConfiguration(target).isUseIterator();
         case "valuedeserializer":
         case "valueDeserializer": return getOrCreateConfiguration(target).getValueDeserializer();
         case "valueserializer":
