@@ -749,12 +749,14 @@ public class Debug extends Run {
     }
 
     private String getStatus(SuspendedRow r) {
+        boolean remote = r.endpoint != null && r.endpoint.getBooleanOrDefault("remote", false);
+
         if (r.first) {
             String s = "Created";
             if (loggingColor) {
                 return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
             } else {
-                return "Input";
+                return s;
             }
         } else if (r.last) {
             String done = r.exception != null ? "Completed (exception)" : "Completed (success)";
@@ -778,10 +780,11 @@ public class Debug extends Run {
                 return fail;
             }
         } else {
+            String s = remote ? "Sent" : "Processed";
             if (loggingColor) {
-                return Ansi.ansi().fg(Ansi.Color.GREEN).a("Processed").reset().toString();
+                return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
             } else {
-                return "Processed";
+                return s;
             }
         }
     }
