@@ -21,18 +21,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ddbstream.client.Ddb2StreamClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
+import java.util.Map;
+
 /**
  * Receive messages from AWS DynamoDB Stream.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true,
              syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING })
-public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
+public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     Ddb2StreamConfiguration configuration;
@@ -95,5 +98,30 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
                + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
                + configuration.getMaxResultsPerRequest() + ", streamIteratorType=" + configuration.getStreamIteratorType()
                + ", uri=" + getEndpointUri() + '}';
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "dynamodb-stream";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getTableName() != null) {
+            return Map.of("table", configuration.getTableName());
+        }
+        return null;
     }
 }
