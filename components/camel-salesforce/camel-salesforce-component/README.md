@@ -5,6 +5,10 @@ There is a companion maven plugin [camel-salesforce-plugin](https://github.com/a
 
 ## Developing the Camel Salesforce component
 
+### Building on Windows/ARM
+
+**Note:** There is no `protoc` compiler available for Windows on ARM, so this component will fail to build in that environment. An issue has been raised against the `protobuf` project to request an executable for Windows on ARM. https://github.com/protocolbuffers/protobuf/issues/16877
+
 ### Running the integration tests
 
 **Note:** These instructions are only for running integration tests, they use permissions and IP restrictions that should be reconsidered for production use. 
