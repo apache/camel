@@ -292,7 +292,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>target/generated-test-sources/protobuf</source>
+                                <source>target/generated-sources/protobuf</source>
                             </sources>
                         </configuration>
                     </execution>
