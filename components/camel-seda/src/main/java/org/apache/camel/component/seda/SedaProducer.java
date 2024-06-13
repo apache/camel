@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
@@ -106,7 +108,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             try {
                 // do not copy as we already did the copy
                 addToQueue(copy, false);
-            } catch (SedaConsumerNotAvailableException e) {
+            } catch (SedaConsumerNotAvailableException | IOException e) {
                 exchange.setException(e);
                 callback.done(true);
                 return true;
@@ -146,7 +148,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             // no wait, eg its a InOnly then just add to queue and return
             try {
                 addToQueue(exchange, true);
-            } catch (SedaConsumerNotAvailableException e) {
+            } catch (SedaConsumerNotAvailableException | IOException e) {
                 exchange.setException(e);
                 callback.done(true);
                 return true;
@@ -187,7 +189,7 @@ public class SedaProducer extends DefaultAsyncProducer {
      * @param exchange the exchange to add to the queue
      * @param copy     whether to create a copy of the exchange to use for adding to the queue
      */
-    protected void addToQueue(Exchange exchange, boolean copy) throws SedaConsumerNotAvailableException {
+    protected void addToQueue(Exchange exchange, boolean copy) throws SedaConsumerNotAvailableException, IOException {
         BlockingQueue<Exchange> queue = null;
         QueueReference queueReference = endpoint.getQueueReference();
         if (queueReference != null) {
@@ -212,6 +214,13 @@ public class SedaProducer extends DefaultAsyncProducer {
         // handover the completion so its the copy which performs that, as we do not wait
         if (copy) {
             target = prepareCopy(exchange, true);
+            // if the body is stream caching based we need to make a deep copy
+            if (target.getMessage().getBody() instanceof StreamCache sc) {
+                StreamCache newBody = sc.copy(target);
+                if (newBody != null) {
+                    target.getMessage().setBody(newBody);
+                }
+            }
         }
 
         LOG.trace("Adding Exchange to queue: {}", target);

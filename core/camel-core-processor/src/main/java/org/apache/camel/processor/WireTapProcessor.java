@@ -247,22 +247,29 @@ public class WireTapProcessor extends AsyncProcessorSupport
         return answer;
     }
 
-    private Exchange configureCopyExchange(Exchange exchange) {
+    private Exchange configureCopyExchange(Exchange exchange) throws IOException {
         // must use a copy as we dont want it to cause side effects of the original exchange
-        Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
+        Exchange target = processorExchangeFactory.createCorrelatedCopy(exchange, false);
         // should not be correlated, but we needed to copy without handover
-        copy.removeProperty(ExchangePropertyKey.CORRELATION_ID);
+        target.removeProperty(ExchangePropertyKey.CORRELATION_ID);
         // set MEP to InOnly as this wire tap is a fire and forget
-        copy.setPattern(ExchangePattern.InOnly);
+        target.setPattern(ExchangePattern.InOnly);
         // move OUT to IN if needed
-        if (copy.hasOut()) {
-            copy.setIn(copy.getOut());
-            copy.setOut(null);
+        if (target.hasOut()) {
+            target.setIn(target.getOut());
+            target.setOut(null);
         }
         // remove STREAM_CACHE_UNIT_OF_WORK property because this wire tap will
         // close its own created stream cache(s)
-        copy.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
-        return copy;
+        target.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
+        // if the body is stream caching based we need to make a deep copy
+        if (target.getMessage().getBody() instanceof StreamCache sc) {
+            StreamCache newBody = sc.copy(target);
+            if (newBody != null) {
+                target.getMessage().setBody(newBody);
+            }
+        }
+        return target;
     }
 
     private Exchange configureNewExchange(Exchange exchange) {
