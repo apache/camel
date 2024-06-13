@@ -144,6 +144,10 @@ As part of CAMEL-20785, we have started to rework the `CamelTestSupport` class. 
 previous versions, as we are laying down the foundations for greater cleanups in the future. However, several methods have been
 marked as deprecated. Users of this class are advised to look at the deprecation notices and adjust the code accordingly.
 
+=== camel-pubnub
+
+Upgraded PubNub client from v6 to v9 and the `wherenow` operation is removed due to no longer present in the client.
+
 === camel-as2
 
 The `camel-as2` component has been updated so that the client can compress a MIME body before signing or compress a MIME body before signing and encrypting as described in

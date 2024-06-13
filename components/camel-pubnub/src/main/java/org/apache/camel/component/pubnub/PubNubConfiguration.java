@@ -43,7 +43,7 @@ public class PubNubConfiguration implements Cloneable {
     @UriParam
     @Metadata(required = true)
     private String uuid;
-    @UriParam(label = "producer", enums = "HERENOW,WHERENOW,GETSTATE,SETSTATE,GETHISTORY,PUBLISH,FIRE")
+    @UriParam(label = "producer", enums = "HERENOW,GETSTATE,SETSTATE,GETHISTORY,PUBLISH,FIRE")
     private String operation;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean withPresence;
@@ -153,7 +153,6 @@ public class PubNubConfiguration implements Cloneable {
      * Event Handlers registered on the channel.</li>
      * <li>HERENOW: Obtain information about the current state of a channel including a list of unique user-ids
      * currently subscribed to the channel and the total occupancy count.</li>
-     * <li>WHERENOW: Obtain information about the current list of channels to which a uuid is subscribed to.</li>
      * <li>GETSTATE: Used to get key/value pairs specific to a subscriber uuid. State information is supplied as a JSON
      * object of key/value pairs</li>
      * <li>SETSTATE: Used to set key/value pairs specific to a subscriber uuid</li>

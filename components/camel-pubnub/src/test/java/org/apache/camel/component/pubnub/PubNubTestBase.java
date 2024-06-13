@@ -23,6 +23,7 @@ import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.UserId;
 import com.pubnub.api.enums.PNLogVerbosity;
+import com.pubnub.internal.PubNubImpl;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -69,7 +70,7 @@ public class PubNubTestBase extends CamelTestSupport {
         pnConfiguration.setPublishKey("myPublishKey");
         pnConfiguration.setLogVerbosity(PNLogVerbosity.NONE);
         pnConfiguration.setHeartbeatNotificationOptions(NONE);
-        class MockedTimePubNub extends PubNub {
+        class MockedTimePubNub extends PubNubImpl {
 
             MockedTimePubNub(PNConfiguration initialConfig) {
                 super(initialConfig);
@@ -83,16 +84,6 @@ public class PubNubTestBase extends CamelTestSupport {
             @Override
             public String getVersion() {
                 return "suchJava";
-            }
-
-            @Override
-            public String getInstanceId() {
-                return "PubNubInstanceId";
-            }
-
-            @Override
-            public String getRequestId() {
-                return "PubNubRequestId";
             }
 
         }

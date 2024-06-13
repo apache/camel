@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.pubnub.api.models.consumer.history.PNHistoryItemResult;
 import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNHereNowResult;
@@ -37,22 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PubNubOperationsTest extends PubNubTestBase {
-
-    @Test
-    public void testWhereNow() {
-        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/uuid/myUUID"))
-                .willReturn(aResponse().withBody(
-                        "{\"status\": 200, \"message\": \"OK\", \"payload\": {\"channels\": [\"channel-a\",\"channel-b\"]}, \"service\": \"Presence\"}")));
-
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(PubNubConstants.OPERATION, "WHERENOW");
-        headers.put(PubNubConstants.UUID, "myUUID");
-        @SuppressWarnings("unchecked")
-        List<String> response = template.requestBodyAndHeaders("direct:publish", null, headers, List.class);
-        assertNotNull(response);
-        assertListSize(response, 2);
-        assertEquals("channel-a", response.get(0));
-    }
 
     @Test
     public void testHereNow() {
@@ -94,8 +80,11 @@ public class PubNubOperationsTest extends PubNubTestBase {
         testArray.add(1234);
         testArray.add(4321);
 
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(testArray);
+
         stubFor(get(urlPathEqualTo("/v2/history/sub-key/mySubscribeKey/channel/myChannel"))
-                .willReturn(aResponse().withBody(getPubnub().getMapper().toJson(testArray))));
+                .willReturn(aResponse().withBody(json)));
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(PubNubConstants.OPERATION, "GETHISTORY");

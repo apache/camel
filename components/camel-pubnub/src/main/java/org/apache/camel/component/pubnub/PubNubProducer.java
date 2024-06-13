@@ -16,17 +16,15 @@
  */
 package org.apache.camel.component.pubnub;
 
-import java.util.Arrays;
+import java.util.List;
 
 import com.pubnub.api.PubNubException;
-import com.pubnub.api.models.consumer.PNErrorData;
 import com.pubnub.api.models.consumer.PNPublishResult;
-import com.pubnub.api.models.consumer.PNStatus;
 import com.pubnub.api.models.consumer.history.PNHistoryResult;
 import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNHereNowResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
-import com.pubnub.api.models.consumer.presence.PNWhereNowResult;
+import com.pubnub.api.v2.callbacks.Result;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -85,10 +83,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
                     doSetState(exchange, callback);
                     break;
                 }
-                case WHERENOW: {
-                    doWhereNow(exchange, callback);
-                    break;
-                }
                 default:
                     throw new UnsupportedOperationException(operation.toString());
             }
@@ -103,7 +97,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
     private void doPublish(Exchange exchange, AsyncCallback callback) {
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
-            throw new RuntimeCamelException("Can not publish empty message");
+            throw new RuntimeCamelException("Cannot publish empty message");
         }
         LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
@@ -111,11 +105,21 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 .message(body)
                 .channel(getChannel(exchange))
                 .usePOST(true)
-                .async((PNPublishResult result, PNStatus status) -> {
-                    if (!status.isError()) {
-                        exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, result.getTimetoken());
+                .async((Result<PNPublishResult> result) -> {
+                    LOG.debug("Got publish message [{}]", result);
+                    if (result.isFailure()) {
+                        PubNubException ex = result.exceptionOrNull();
+                        if (ex != null) {
+                            exchange.setException(ex);
+                        }
+                        callback.done(false);
+                    } else {
+                        PNPublishResult r = result.getOrNull();
+                        if (r != null) {
+                            exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, r.getTimetoken());
+                        }
+                        processMessage(exchange, callback, null);
                     }
-                    processMessage(exchange, callback, status, null);
                 });
     }
 
@@ -130,11 +134,21 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 .fire()
                 .message(body)
                 .channel(getChannel(exchange))
-                .async((PNPublishResult result, PNStatus status) -> {
-                    if (!status.isError()) {
-                        exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, result.getTimetoken());
+                .async((Result<PNPublishResult> result) -> {
+                    LOG.debug("Got fire message [{}]", result);
+                    if (result.isFailure()) {
+                        PubNubException ex = result.exceptionOrNull();
+                        if (ex != null) {
+                            exchange.setException(ex);
+                        }
+                        callback.done(false);
+                    } else {
+                        PNPublishResult r = result.getOrNull();
+                        if (r != null) {
+                            exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, r.getTimetoken());
+                        }
+                        processMessage(exchange, callback, null);
                     }
-                    processMessage(exchange, callback, status, null);
                 });
     }
 
@@ -142,9 +156,18 @@ public class PubNubProducer extends DefaultAsyncProducer {
         endpoint.getPubnub()
                 .history()
                 .channel(getChannel(exchange))
-                .async((PNHistoryResult result, PNStatus status) -> {
+                .async((Result<PNHistoryResult> result) -> {
                     LOG.debug("Got history message [{}]", result);
-                    processMessage(exchange, callback, status, result.getMessages());
+                    if (result.isFailure()) {
+                        PubNubException ex = result.exceptionOrNull();
+                        if (ex != null) {
+                            exchange.setException(ex);
+                        }
+                        callback.done(false);
+                    } else {
+                        PNHistoryResult r = result.getOrNull();
+                        processMessage(exchange, callback, r != null ? r.getMessages() : null);
+                    }
                 });
     }
 
@@ -157,60 +180,69 @@ public class PubNubProducer extends DefaultAsyncProducer {
         LOG.debug("Sending setState [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
                 .setPresenceState()
-                .channels(Arrays.asList(getChannel(exchange)))
+                .channels(List.of(getChannel(exchange)))
                 .state(body)
                 .uuid(getUUID(exchange))
-                .async((PNSetStateResult result, PNStatus status) -> {
-                    LOG.debug("Got setState responsee [{}]", result);
-                    processMessage(exchange, callback, status, result);
+                .async((Result<PNSetStateResult> result) -> {
+                    LOG.debug("Got setState response [{}]", result);
+                    if (result.isFailure()) {
+                        PubNubException ex = result.exceptionOrNull();
+                        if (ex != null) {
+                            exchange.setException(ex);
+                        }
+                        callback.done(false);
+                    } else {
+                        PNSetStateResult r = result.getOrNull();
+                        processMessage(exchange, callback, r);
+                    }
                 });
     }
 
     private void doGetState(Exchange exchange, AsyncCallback callback) {
         endpoint.getPubnub()
                 .getPresenceState()
-                .channels(Arrays.asList(getChannel(exchange)))
+                .channels(List.of(getChannel(exchange)))
                 .uuid(getUUID(exchange))
-                .async((PNGetStateResult result, PNStatus status) -> {
-                    LOG.debug("Got state [{}]", result.getStateByUUID());
-                    processMessage(exchange, callback, status, result);
+                .async((Result<PNGetStateResult> result) -> {
+                    LOG.debug("Got state [{}]", result);
+                    if (result.isFailure()) {
+                        PubNubException ex = result.exceptionOrNull();
+                        if (ex != null) {
+                            exchange.setException(ex);
+                        }
+                        callback.done(false);
+                    } else {
+                        PNGetStateResult r = result.getOrNull();
+                        processMessage(exchange, callback, r);
+                    }
                 });
     }
 
     private void doHereNow(Exchange exchange, AsyncCallback callback) {
         endpoint.getPubnub()
                 .hereNow()
-                .channels(Arrays.asList(getChannel(exchange)))
+                .channels(List.of(getChannel(exchange)))
                 .includeState(true)
                 .includeUUIDs(true)
-                .async((PNHereNowResult result, PNStatus status) -> {
+                .async((Result<PNHereNowResult> result) -> {
                     LOG.debug("Got herNow message [{}]", result);
-                    processMessage(exchange, callback, status, result);
+                    if (result.isFailure()) {
+                        PubNubException ex = result.exceptionOrNull();
+                        if (ex != null) {
+                            exchange.setException(ex);
+                        }
+                        callback.done(false);
+                    } else {
+                        PNHereNowResult r = result.getOrNull();
+                        processMessage(exchange, callback, r);
+                    }
                 });
     }
 
-    private void doWhereNow(Exchange exchange, AsyncCallback callback) {
-        endpoint.getPubnub()
-                .whereNow()
-                .uuid(getUUID(exchange))
-                .async((PNWhereNowResult result, PNStatus status) -> {
-                    LOG.debug("Got whereNow message [{}]", result.getChannels());
-                    processMessage(exchange, callback, status, result.getChannels());
-                });
-    }
-
-    private void processMessage(Exchange exchange, AsyncCallback callback, PNStatus status, Object body) {
-        if (status.isError()) {
-            PNErrorData errorData = status.getErrorData();
-            exchange.setException(errorData.getThrowable());
-            if (errorData != null && errorData.getThrowable() instanceof PubNubException) {
-                PubNubException pubNubException = (PubNubException) errorData.getThrowable();
-                throw new RuntimeCamelException(pubNubException.getPubnubError().getMessage(), errorData.getThrowable());
-            }
-            throw new RuntimeCamelException(status.getErrorData().getThrowable());
+    private void processMessage(Exchange exchange, AsyncCallback callback, Object body) {
+        if (body != null) {
+            ExchangeHelper.setInOutBodyPatternAware(exchange, body);
         }
-
-        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
 
         // signal exchange completion
         callback.done(false);
@@ -236,7 +268,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
 
     private enum Operation {
         HERENOW,
-        WHERENOW,
         GETSTATE,
         SETSTATE,
         GETHISTORY,

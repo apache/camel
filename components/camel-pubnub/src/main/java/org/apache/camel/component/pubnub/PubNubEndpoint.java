@@ -89,7 +89,6 @@ public class PubNubEndpoint extends DefaultEndpoint {
     }
 
     private PubNub getInstance() throws PubNubException {
-        PubNub answer = null;
         PNConfiguration pnConfiguration = new PNConfiguration(new UserId(configuration.getUuid()));
         pnConfiguration.setPublishKey(configuration.getPublishKey());
         pnConfiguration.setSubscribeKey(configuration.getSubscribeKey());
@@ -97,8 +96,6 @@ public class PubNubEndpoint extends DefaultEndpoint {
         pnConfiguration.setAuthKey(configuration.getAuthKey());
         pnConfiguration.setCipherKey(configuration.getCipherKey());
         pnConfiguration.setSecure(configuration.isSecure());
-
-        answer = new PubNub(pnConfiguration);
-        return answer;
+        return PubNub.create(pnConfiguration);
     }
 }
