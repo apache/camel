@@ -31,7 +31,7 @@ public class OnCompletionModeBeforeConsumerExceptionSuppressedTest extends Conte
         Exception fooException = out.getException();
         assertIsInstanceOf(FooException.class, fooException);
         Throwable[] suppressed = fooException.getSuppressed();
-        assertEquals(suppressed.length, 1);
+        assertEquals(1, suppressed.length);
         assertIsInstanceOf(SuppressedException.class, suppressed[0]);
     }
 
