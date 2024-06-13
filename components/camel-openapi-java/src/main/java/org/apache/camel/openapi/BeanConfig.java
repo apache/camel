@@ -132,17 +132,19 @@ public class BeanConfig {
         if (info != null) {
             openApi.setInfo(info);
         }
-        for (String scheme : this.schemes) {
-            String url = scheme + "://" + this.host;
-            if (this.basePath != null) {
-                if (this.basePath.startsWith("/")) {
-                    url += this.basePath;
-                } else {
-                    url = url + "/" + this.basePath;
+        if (this.schemes != null) {
+            for (String scheme : this.schemes) {
+                String url = scheme + "://" + this.host;
+                if (this.basePath != null) {
+                    if (this.basePath.startsWith("/")) {
+                        url += this.basePath;
+                    } else {
+                        url = url + "/" + this.basePath;
+                    }
                 }
+                Server server = new Server().url(url);
+                openApi.addServersItem(server);
             }
-            Server server = new Server().url(url);
-            openApi.addServersItem(server);
         }
         if (isOpenApi31()) {
             // This is a workaround to addType on ComposedSchema
