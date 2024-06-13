@@ -33,7 +33,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
-            ["del", "npm:7.0.0"],\
+            ["del", "npm:7.1.0"],\
             ["eslint", "npm:8.44.0"],\
             ["eslint-config-standard", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:17.1.0"],\
             ["eslint-plugin-import", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:2.26.0"],\
@@ -67,7 +67,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["@apache-camel/docs", "workspace:."],\
-            ["del", "npm:7.0.0"],\
+            ["del", "npm:7.1.0"],\
             ["eslint", "npm:8.44.0"],\
             ["eslint-config-standard", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:17.1.0"],\
             ["eslint-plugin-import", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:2.26.0"],\
@@ -1656,10 +1656,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["del", [\
-        ["npm:7.0.0", {\
-          "packageLocation": "./.yarn/cache/del-npm-7.0.0-c407e052bc-33e5077f18.zip/node_modules/del/",\
+        ["npm:7.1.0", {\
+          "packageLocation": "./.yarn/cache/del-npm-7.1.0-6e8ec2cdcd-93527e78e9.zip/node_modules/del/",\
           "packageDependencies": [\
-            ["del", "npm:7.0.0"],\
+            ["del", "npm:7.1.0"],\
             ["globby", "npm:13.1.2"],\
             ["graceful-fs", "npm:4.2.10"],\
             ["is-glob", "npm:4.0.3"],\
