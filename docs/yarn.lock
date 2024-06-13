@@ -22,7 +22,7 @@ __metadata:
     eslint-plugin-import: ^2.26.0
     eslint-plugin-n: ^15.3.0
     eslint-plugin-node: ^11.1.0
-    eslint-plugin-promise: ^6.0.1
+    eslint-plugin-promise: ^6.2.0
     gulp: ~4.0
     gulp-cli: ~2.3
     gulp-inject: ^5.0.5
@@ -1745,12 +1745,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-promise@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "eslint-plugin-promise@npm:6.0.1"
+"eslint-plugin-promise@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "eslint-plugin-promise@npm:6.2.0"
   peerDependencies:
-    eslint: ^7.0.0 || ^8.0.0
-  checksum: c1bb3c2e591787e97133dcaf764f908420a3a1959a3132e199db8f14d70dfa79fc9caf991ca60a4b60ae5f1f9823bc96c2e52304828a4278ef2f3964fe121de9
+    eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
+  checksum: 4ce2ee365044aaeac7feb7c4b62f7d432594960bf96be703f871fa5fdd61f358d6620222e7c907f7ee43ff54b0b2ff392c1f70680bce335f6396c8c7af79c141
   languageName: node
   linkType: hard
 
