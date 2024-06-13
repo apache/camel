@@ -161,12 +161,10 @@ public interface PubnubComponentBuilderFactory {
          * Event Handlers registered on the channel. HERENOW: Obtain information
          * about the current state of a channel including a list of unique
          * user-ids currently subscribed to the channel and the total occupancy
-         * count. WHERENOW: Obtain information about the current list of
-         * channels to which a uuid is subscribed to. GETSTATE: Used to get
-         * key/value pairs specific to a subscriber uuid. State information is
-         * supplied as a JSON object of key/value pairs SETSTATE: Used to set
-         * key/value pairs specific to a subscriber uuid GETHISTORY: Fetches
-         * historical messages of a channel.
+         * count. GETSTATE: Used to get key/value pairs specific to a subscriber
+         * uuid. State information is supplied as a JSON object of key/value
+         * pairs SETSTATE: Used to set key/value pairs specific to a subscriber
+         * uuid GETHISTORY: Fetches historical messages of a channel.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

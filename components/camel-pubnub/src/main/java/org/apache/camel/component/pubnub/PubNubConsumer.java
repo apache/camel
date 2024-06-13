@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.pubnub.api.enums.PNStatusCategory.PNTimeoutCategory;
+import static com.pubnub.api.enums.PNStatusCategory.PNConnectionError;
 import static com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory;
 import static org.apache.camel.component.pubnub.PubNubConstants.CHANNEL;
 import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
@@ -100,7 +100,7 @@ public class PubNubConsumer extends DefaultConsumer {
 
         @Override
         public void status(PubNub pubnub, PNStatus status) {
-            if (status.getCategory() == PNUnexpectedDisconnectCategory || status.getCategory() == PNTimeoutCategory) {
+            if (status.getCategory() == PNUnexpectedDisconnectCategory || status.getCategory() == PNConnectionError) {
                 LOG.trace("Got status: {}. Reconnecting to PubNub", status);
                 pubnub.reconnect();
             } else {
@@ -116,10 +116,14 @@ public class PubNubConsumer extends DefaultConsumer {
             inmessage.setHeader(TIMETOKEN, message.getTimetoken());
             inmessage.setHeader(CHANNEL, message.getChannel());
             inmessage.setHeader(Exchange.MESSAGE_TIMESTAMP, message.getTimetoken());
+
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                getExceptionHandler().handleException("Error processing exchange", e);
+                exchange.setException(e);
+            }
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange.getException());
             }
         }
 
