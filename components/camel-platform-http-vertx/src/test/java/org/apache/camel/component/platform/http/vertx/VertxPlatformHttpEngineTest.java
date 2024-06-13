@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1023,6 +1024,54 @@ public class VertxPlatformHttpEngineTest {
                     .header("set-cookie", "XSRF-TOKEN=88533580000c314; Path=/")
                     .body(equalTo("replace"));
 
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testResponseTypeConversionErrorHandled() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/error/response")
+                            // Set the response to something that can't be type converted
+                            .setBody().constant(Collections.EMPTY_SET);
+                }
+            });
+
+            context.start();
+
+            get("/error/response")
+                    .then()
+                    .statusCode(500);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testResponseBadQueryParamErrorHandled() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/error/response")
+                            .setBody().constant("Error");
+                }
+            });
+
+            context.start();
+
+            // Add a query param that Vert.x cannot handle
+            get("/error/response?::")
+                    .then()
+                    .statusCode(500);
         } finally {
             context.stop();
         }
