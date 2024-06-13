@@ -33,6 +33,8 @@ To have previous behavior you can set these options to `false`.
 
 === DSL
 
+The WireTap EIP in copy mode, will now do a deep-copy if the message body is of `StreamCache` type to make access to the message body thread-safe.
+
 The Load Balancer EIP has aligned naming and the following balancers has been renamed in XML and YAML DSL:
 
 |===
@@ -80,6 +82,11 @@ To:
 </route>
 ----
 
+=== camel-seda / camel-disruptor
+
+When using `InOnly` exchange pattern then the producer makes a copy of the message to be added to the queue.
+Camel will now do a deep-copy if the message body is of `StreamCache` type to make access to the message body thread-safe.
+
 === camel-debug
 
 The debugger (using `org.apache.camel.spi.BacklogDebugger`) used for tooling such as IDEA and Visual Studio, is fixed
@@ -115,11 +122,6 @@ authorizationPolicy.setAuthorizationManager(AuthorityAuthorizationManager.hasRol
 This new pattern supports a more expressive language to define your own authorization rules, exposing the full power of the Spring Security framework to Camel route policies.
 See the https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler[spring documentation] for further details on how to migrate your custom code from `AccessDecisionManager` to `AuthorizationManager`.
 
-=== camel-as2
-
-The `camel-as2` component has been updated so that the client can compress a MIME body before signing or compress a MIME body before signing and encrypting as described in
-sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and https://datatracker.ietf.org/doc/html/rfc5402/#section-3.5[3.5] of https://datatracker.ietf.org/doc/html/rfc5402/[rfc 5402].
-
 === camel-cloudevents
 
 Moved the `camel-cloudevents` api into `camel-api` and removed the `camel-cloudevents` dependency from all components that provide CloudEvent transformers.
@@ -142,18 +144,10 @@ As part of CAMEL-20785, we have started to rework the `CamelTestSupport` class. 
 previous versions, as we are laying down the foundations for greater cleanups in the future. However, several methods have been
 marked as deprecated. Users of this class are advised to look at the deprecation notices and adjust the code accordingly.
 
-=== Camel Spring Boot
+=== camel-as2
 
-==== camel-debug-starter
-
-Using camel debugger with Spring Boot is now moved from `camel-spring-boot` into `camel-debug-starter` where you can configure the debugger
-via `camel.debug.` options in `application.properties`.
-
-The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
-by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
-
-
-=== Camel AS2
+The `camel-as2` component has been updated so that the client can compress a MIME body before signing or compress a MIME body before signing and encrypting as described in
+sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and https://datatracker.ietf.org/doc/html/rfc5402/#section-3.5[3.5] of https://datatracker.ietf.org/doc/html/rfc5402/[rfc 5402].
 
 When the AS2 server is configured with a decryption key all received messages require encryption otherwise the server
 will return an 'insufficient-security' error disposition. Only messages with valid encryption will be successfully processed,
@@ -192,4 +186,14 @@ and 'encrypted-signed-compressed'.
 | *encrypted-signed-compressed* | decryption-failure | decryption-failure | |
 |===
 
+
+=== Camel Spring Boot
+
+==== camel-debug-starter
+
+Using camel debugger with Spring Boot is now moved from `camel-spring-boot` into `camel-debug-starter` where you can configure the debugger
+via `camel.debug.` options in `application.properties`.
+
+The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
+by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
 
