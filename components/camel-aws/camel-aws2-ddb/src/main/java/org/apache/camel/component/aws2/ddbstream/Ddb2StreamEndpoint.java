@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -27,8 +29,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
-
-import java.util.Map;
 
 /**
  * Receive messages from AWS DynamoDB Stream.
