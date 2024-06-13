@@ -208,9 +208,18 @@ public class DefaultModel implements Model {
                 if (from != null) {
                     String uri = from.getEndpointUri();
                     if (uri != null && uri.startsWith("rest:")) {
-                        ProcessorDefinition<?> def = r.getOutputs().get(0);
-                        if (def instanceof ToDefinition) {
-                            ToDefinition to = (ToDefinition) def;
+                        // find first EIP in the outputs (skip abstract which are onException/intercept etc)
+                        ToDefinition to = null;
+                        for (ProcessorDefinition<?> def : r.getOutputs()) {
+                            if (def.isAbstract()) {
+                                continue;
+                            }
+                            if (def instanceof ToDefinition) {
+                                to = (ToDefinition) def;
+                            }
+                            break;
+                        }
+                        if (to != null) {
                             String toUri = to.getEndpointUri();
                             RouteDefinition toBeInlined = directs.get(toUri);
                             if (toBeInlined != null) {
