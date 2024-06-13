@@ -170,27 +170,27 @@ public final class VertxPlatformHttpSupport {
 
     static Future<Void> writeResponse(
             RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
-        final Object body = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
         final Promise<Void> promise = Promise.promise();
-
-        if (body == null) {
-            LOGGER.trace("No payload to send as reply for exchange: {}", camelExchange);
-            ctx.end();
-            promise.complete();
-        } else if (body instanceof String) {
-            ctx.end((String) body);
-            promise.complete();
-        } else if (body instanceof InputStream) {
-            writeResponseAs(promise, ctx, (InputStream) body);
-        } else if (body instanceof Buffer) {
-            ctx.end((Buffer) body);
-            promise.complete();
-        } else {
-            try {
+        try {
+            final Object body
+                    = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
+            if (body == null) {
+                LOGGER.trace("No payload to send as reply for exchange: {}", camelExchange);
+                ctx.end();
+                promise.complete();
+            } else if (body instanceof String) {
+                ctx.end((String) body);
+                promise.complete();
+            } else if (body instanceof InputStream) {
+                writeResponseAs(promise, ctx, (InputStream) body);
+            } else if (body instanceof Buffer) {
+                ctx.end((Buffer) body);
+                promise.complete();
+            } else {
                 writeResponseAsFallback(promise, camelExchange, body, ctx);
-            } catch (NoTypeConversionAvailableException e) {
-                promise.fail(e);
             }
+        } catch (Exception e) {
+            promise.fail(e);
         }
 
         return promise.future();
