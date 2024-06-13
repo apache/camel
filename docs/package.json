@@ -7,7 +7,7 @@
   "type": "module",
   "license": "Apache-2.0",
   "devDependencies": {
-    "del": "^7.0.0",
+    "del": "^7.1.0",
     "eslint": "^8.44.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
