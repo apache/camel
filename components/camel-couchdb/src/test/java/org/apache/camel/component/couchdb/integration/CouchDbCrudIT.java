@@ -29,20 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.couchdb.CouchDbConstants;
 import org.apache.camel.component.couchdb.CouchDbOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class CouchDbCrudIT extends CouchDbTestSupport {
@@ -103,6 +96,7 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
             // Creating a document should trigger an update notification
             mockUpdateNotifications.expectedHeaderReceived(CouchDbConstants.HEADER_METHOD, "UPDATE");
             mockUpdateNotifications.expectedMessageCount(1);
+
             createExchange = template.request(couchDbIn, e -> e.getMessage().setBody(testDocument));
 
             assertNotNull(getDocumentId(createExchange));

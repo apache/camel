@@ -23,7 +23,7 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(16);
         props.add("bridgeErrorHandler");
         props.add("createDatabase");
         props.add("database");
@@ -33,6 +33,7 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
         props.add("heartbeat");
         props.add("hostname");
         props.add("lazyStartProducer");
+        props.add("maxMessagesPerPoll");
         props.add("password");
         props.add("port");
         props.add("protocol");

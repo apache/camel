@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.couchdb;
 
+import java.util.UUID;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.ibm.cloud.cloudant.v1.model.Document;
+import com.ibm.cloud.cloudant.v1.model.DocumentResult;
+import com.ibm.cloud.sdk.core.http.Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.lightcouch.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,28 +48,28 @@ public class CouchDbProducer extends DefaultProducer {
         JsonElement json = getBodyAsJsonElement(exchange);
         String operation = exchange.getIn().getHeader(CouchDbConstants.HEADER_METHOD, String.class);
         if (ObjectHelper.isEmpty(operation)) {
-            Response save = saveJsonElement(json);
+            Response<DocumentResult> save = saveJsonElement(json);
             if (save == null) {
                 throw new CouchDbException("Could not save document [unknown reason]", exchange);
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Document saved [_id={}, _rev={}]", save.getId(), save.getRev());
+                LOG.trace("Document saved [_id={}, _rev={}]", save.getResult().getId(), save.getResult().getRev());
             }
-            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getRev());
-            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getId());
+            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getResult().getRev());
+            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getResult().getId());
         } else {
             if (operation.equalsIgnoreCase(CouchDbOperations.DELETE.toString())) {
-                Response delete = deleteJsonElement(json);
+                Response<DocumentResult> delete = deleteJsonElement(json);
                 if (delete == null) {
                     throw new CouchDbException("Could not delete document [unknown reason]", exchange);
                 }
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Document saved [_id={}, _rev={}]", delete.getId(), delete.getRev());
+                    LOG.trace("Document saved [_id={}, _rev={}]", delete.getResult().getId(), delete.getResult().getRev());
                 }
-                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getRev());
-                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getId());
+                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getResult().getRev());
+                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getResult().getId());
             }
             if (operation.equalsIgnoreCase(CouchDbOperations.GET.toString())) {
                 String docId = exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
@@ -93,23 +97,37 @@ public class CouchDbProducer extends DefaultProducer {
             }
         } else if (body instanceof JsonElement) {
             return (JsonElement) body;
+        } else if (body instanceof Document document) {
+            return new JsonParser().parse(document.toString());
         } else {
             throw new InvalidPayloadException(exchange, body != null ? body.getClass() : null);
         }
     }
 
-    private Response saveJsonElement(JsonElement json) {
-        Response save;
+    private Response<DocumentResult> saveJsonElement(JsonElement json) {
+        Response save = null;
         if (json instanceof JsonObject) {
             JsonObject obj = (JsonObject) json;
-            if (obj.get("_rev") == null) {
-                save = couchClient.save(json);
-            } else {
-                save = couchClient.update(json);
+            Document.Builder documentBuilder = new Document.Builder();
+            for (String key : obj.keySet()) {
+                if (key.equals("_id")) {
+                    documentBuilder.id(obj.get(key).getAsString());
+                } else {
+                    documentBuilder.add(key, obj.get(key));
+                }
             }
-        } else {
-            save = couchClient.save(json);
+
+            Document document = documentBuilder.build();
+            if (document.getId() == null) {
+                document.setId(UUID.randomUUID().toString());
+            }
+            if (obj.get("_rev") == null) {
+                save = couchClient.save(document);
+            } else {
+                save = couchClient.update(document);
+            }
         }
+
         return save;
     }
 
@@ -117,16 +135,17 @@ public class CouchDbProducer extends DefaultProducer {
         Response delete;
         if (json instanceof JsonObject) {
             JsonObject obj = (JsonObject) json;
-            delete = couchClient.remove(obj);
+            delete = couchClient.removeByIdAndRev(obj.get("_id").getAsString(), obj.get("_rev").getAsString());
         } else {
-            delete = couchClient.remove(json);
+            delete = couchClient.removeByIdAndRev(json.getAsJsonObject().get("_id").getAsString(),
+                    json.getAsJsonObject().get("_rev").getAsString());
         }
         return delete;
     }
 
     private Object getElement(String id) {
         Object response;
-        response = couchClient.get(id);
+        response = couchClient.get(id).getResult();
         return response;
     }
 }

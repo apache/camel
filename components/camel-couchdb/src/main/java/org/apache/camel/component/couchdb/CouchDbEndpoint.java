@@ -19,17 +19,16 @@ package org.apache.camel.component.couchdb;
 import java.net.URI;
 import java.util.Map;
 
+import com.ibm.cloud.cloudant.v1.Cloudant;
+import com.ibm.cloud.sdk.core.security.Authenticator;
+import com.ibm.cloud.sdk.core.security.BasicAuthenticator;
+import com.ibm.cloud.sdk.core.security.NoAuthAuthenticator;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.EndpointServiceLocation;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.DefaultEndpoint;
-import org.lightcouch.CouchDbClient;
 
 /**
  * Consume changesets for inserts, updates and deletes in a CouchDB database, as well as get, save, update and delete
@@ -71,6 +70,8 @@ public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private boolean deletes = true;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean updates = true;
+    @UriParam(label = "consumer", defaultValue = "10")
+    private int maxMessagesPerPoll = 10;
 
     public CouchDbEndpoint() {
     }
@@ -119,6 +120,7 @@ public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         CouchDbConsumer answer = new CouchDbConsumer(this, createClient(), processor);
+        answer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(answer);
         return answer;
     }
@@ -129,8 +131,17 @@ public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     protected CouchDbClientWrapper createClient() {
-        return new CouchDbClientWrapper(
-                new CouchDbClient(database, createDatabase, protocol, hostname, port, username, password));
+        Authenticator authenticator;
+        if (username == null) {
+            authenticator = new NoAuthAuthenticator();
+        } else {
+            authenticator = new BasicAuthenticator(username, password);
+        }
+
+        Cloudant cloudant = new Cloudant("camel-couchdb", authenticator);
+        cloudant.setServiceUrl(getServiceUrl());
+
+        return new CouchDbClientWrapper(cloudant, database, createDatabase);
     }
 
     public String getProtocol() {
@@ -254,5 +265,19 @@ public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceL
      */
     public void setUpdates(boolean updates) {
         this.updates = updates;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    /**
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a
+     * negative number to set it as unlimited.
+     */
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 }

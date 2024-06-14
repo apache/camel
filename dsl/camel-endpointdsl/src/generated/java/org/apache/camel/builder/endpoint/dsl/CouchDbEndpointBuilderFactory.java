@@ -135,6 +135,42 @@ public interface CouchDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Gets the maximum number of messages as a limit to poll at each
+         * polling. Gets the maximum number of messages as a limit to poll at
+         * each polling. The default value is 10. Use 0 or a negative number to
+         * set it as unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default CouchDbEndpointConsumerBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Gets the maximum number of messages as a limit to poll at each
+         * polling. Gets the maximum number of messages as a limit to poll at
+         * each polling. The default value is 10. Use 0 or a negative number to
+         * set it as unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default CouchDbEndpointConsumerBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
          * Specifies how many revisions are returned in the changes array. The
          * default, main_only, will only return the current winning revision;
          * all_docs will return all leaf revisions (including conflicts and

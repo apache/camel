@@ -16,72 +16,112 @@
  */
 package org.apache.camel.component.couchdb;
 
-import java.io.IOException;
-
-import com.google.gson.JsonObject;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
-import org.lightcouch.Changes;
-import org.lightcouch.CouchDbClient;
-import org.lightcouch.CouchDbContext;
-import org.lightcouch.CouchDbException;
-import org.lightcouch.Response;
+import com.ibm.cloud.cloudant.v1.Cloudant;
+import com.ibm.cloud.cloudant.v1.model.*;
+import com.ibm.cloud.sdk.core.http.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Necessary to allow mockito to mock this client. Once LightCouch library adds an interface for the client, this class
- * can be removed.
+ * Necessary to allow mockito to mock this client.
  */
 public class CouchDbClientWrapper {
+    private static final Logger log = LoggerFactory.getLogger(CouchDbEndpoint.class);
 
-    private final CouchDbClient client;
+    private final Cloudant client;
+    private final String dbName;
 
-    public CouchDbClientWrapper(CouchDbClient client) {
+    public CouchDbClientWrapper(Cloudant client, String dbName, boolean createDatabase) {
         this.client = client;
+        this.dbName = dbName;
+
+        initDatabase(createDatabase);
     }
 
-    public Response update(Object doc) {
-        return client.update(doc);
+    public void initDatabase(boolean createDatabase) {
+        if (createDatabase) {
+            boolean alreadyCreated = false;
+            for (String db : client.getAllDbs().execute().getResult()) {
+                if (db.equals(dbName)) {
+                    alreadyCreated = true;
+                    break;
+                }
+            }
+
+            if (!alreadyCreated) {
+                PutDatabaseOptions putDatabaseOptions = new PutDatabaseOptions.Builder()
+                        .db(dbName)
+                        .build();
+
+                client.putDatabase(putDatabaseOptions).execute();
+            }
+
+            log.debug("Database {} created", dbName);
+        }
     }
 
-    public Response save(Object doc) {
-        return client.save(doc);
+    public Response<DocumentResult> update(Document doc) {
+        PostDocumentOptions postDocumentOptions = new PostDocumentOptions.Builder()
+                .document(doc)
+                .db(dbName)
+                .build();
+
+        return client.postDocument(postDocumentOptions).execute();
     }
 
-    public Response remove(Object doc) {
-        return client.remove(doc);
+    public Response save(Document doc) {
+        PutDocumentOptions putDocumentOptions = new PutDocumentOptions.Builder()
+                .document(doc)
+                .docId(doc.getId())
+                .db(dbName)
+                .build();
+
+        return client.putDocument(putDocumentOptions).execute();
     }
 
-    public Changes changes() {
-        return client.changes();
+    public Response removeByIdAndRev(String id, String rev) {
+        DeleteDocumentOptions deleteDocumentOptions = new DeleteDocumentOptions.Builder()
+                .docId(id)
+                .rev(rev)
+                .db(dbName)
+                .build();
+
+        return client.deleteDocument(deleteDocumentOptions).execute();
     }
 
-    public Object get(String id) {
-        return client.find(id);
+    public Response<ChangesResult> pollChanges(String style, String since, long heartBeat, long maxMessagesPerPoll) {
+        PostChangesOptions postChangesOptions = new PostChangesOptions.Builder()
+                .db(dbName)
+                .since(since)
+                .limit(maxMessagesPerPoll)
+                .build();
+
+        return client.postChanges(postChangesOptions).execute();
     }
 
-    public CouchDbContext context() {
-        return client.context();
+    public Response get(String id) {
+        GetDocumentOptions getDocumentOptions = new GetDocumentOptions.Builder()
+                .docId(id)
+                .db(dbName)
+                .build();
+
+        return client.getDocument(getDocumentOptions).execute();
     }
 
     /**
      * In CouchDB 2.3.x, the purge_seq field type was changed from number to string. As such, calling
-     * {@link org.lightcouch.CouchDbContext#info()} was throwing an exception. This method workarounds the issue by
-     * getting the update_seq field while ignoring the purge_seq field.
+     * {@link CouchDbContext#info()} was throwing an exception. This method workarounds the issue by getting the
+     * update_seq field while ignoring the purge_seq field.
      *
      * @return The latest update sequence
      */
     public String getLatestUpdateSequence() {
-        HttpGet getDbInfoRequest = new HttpGet(client.getDBUri());
-        try {
-            HttpResponse getDbInfoResponse = client.executeRequest(getDbInfoRequest);
-            String dbInfoString = EntityUtils.toString(getDbInfoResponse.getEntity());
-            JsonObject dbInfo = client.getGson().fromJson(dbInfoString, JsonObject.class);
-            return dbInfo.get("update_seq").getAsString();
-        } catch (IOException e) {
-            getDbInfoRequest.abort();
-            throw new CouchDbException("Error executing request to fetch the latest update sequence. ", e);
-        }
+        GetDatabaseInformationOptions getDatabaseInformationOptions = new GetDatabaseInformationOptions.Builder()
+                .db(dbName)
+                .build();
+
+        return client.getDatabaseInformation(getDatabaseInformationOptions).execute()
+                .getResult().getUpdateSeq();
     }
 
 }
