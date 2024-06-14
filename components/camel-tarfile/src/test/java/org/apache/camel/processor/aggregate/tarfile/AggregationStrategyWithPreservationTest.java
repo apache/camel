@@ -32,8 +32,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
@@ -58,11 +58,12 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Thread.sleep(500);
+        await("Should be a file in target/out directory").until(() -> {
+            File[] files = new File("target/out").listFiles();
+            return files != null && files.length > 0;
+        });
 
         File[] files = new File("target/out").listFiles();
-        assertTrue(files.length > 0, "Should be a file in target/out directory");
-
         File resultFile = files[0];
         Set<String> expectedTarFiles = new HashSet<>(
                 Arrays.asList("another/hello.txt",
@@ -71,7 +72,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(resultFile));
         try {
             int fileCount = 0;
-            for (TarArchiveEntry te = tin.getNextTarEntry(); te != null; te = tin.getNextTarEntry()) {
+            for (TarArchiveEntry te = tin.getNextEntry(); te != null; te = tin.getNextEntry()) {
                 String name = te.getName();
                 if (expectedTarFiles.contains(name)) {
                     expectedTarFiles.remove(te.getName());
