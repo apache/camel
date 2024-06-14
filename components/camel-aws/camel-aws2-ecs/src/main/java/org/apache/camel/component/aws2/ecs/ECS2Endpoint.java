@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ecs.client.ECS2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -34,7 +35,7 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ecs", title = "AWS Elastic Container Service (ECS)",
              syntax = "aws2-ecs:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = ECS2Constants.class)
-public class ECS2Endpoint extends ScheduledPollEndpoint {
+public class ECS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private EcsClient ecsClient;
 
@@ -85,5 +86,22 @@ public class ECS2Endpoint extends ScheduledPollEndpoint {
 
     public EcsClient getEcsClient() {
         return ecsClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "ecs";
     }
 }
