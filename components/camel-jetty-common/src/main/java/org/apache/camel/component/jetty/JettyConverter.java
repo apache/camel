@@ -31,17 +31,16 @@ public final class JettyConverter {
         //Helper class
     }
 
-    @Converter
-    public static String toString(Response response) {
-        return response.toString();
-    }
-
     @Converter(fallback = true)
     @SuppressWarnings("unchecked")
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (value != null) {
             // should not try to convert Request as its not possible
             if (Request.class.isAssignableFrom(value.getClass())) {
+                return (T) MISS_VALUE;
+            }
+            // should not try to convert Response as its not possible
+            if (Response.class.isAssignableFrom(value.getClass())) {
                 return (T) MISS_VALUE;
             }
         }

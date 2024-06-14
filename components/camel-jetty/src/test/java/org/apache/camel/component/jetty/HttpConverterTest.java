@@ -20,7 +20,6 @@ import java.io.InputStream;
 
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -41,39 +40,13 @@ public class HttpConverterTest extends BaseJettyTest {
     }
 
     @Test
-    public void testToServletRequestAndResponse() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("jetty://http://localhost:{{port}}/test")
-                        // add this node to make sure the convert can work within
-                        // DefaultMessageImpl
-                        .convertBodyTo(String.class).process(new Processor() {
-                            public void process(Exchange exchange) {
-                                HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
-                                assertNotNull(request, "We should get request object here");
-                                HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
-                                assertNotNull(response, "We should get response object here");
-                                String s = exchange.getIn().getBody(String.class);
-                                assertEquals("Hello World", s);
-                            }
-                        }).transform(constant("Bye World"));
-            }
-        });
-        context.start();
-
-        String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
-        assertEquals("Bye World", out);
-    }
-
-    @Test
     public void testToServletInputStreamWithStreamCaching() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        HttpMessage msg = exchange.getIn(HttpMessage.class);
+                        HttpMessage msg = exchange.getMessage(HttpMessage.class);
 
                         // The ServletInputStream should be cached, and you can't read message here
                         ServletInputStream sis = HttpConverter.toServletInputStream(msg);
@@ -99,7 +72,7 @@ public class HttpConverterTest extends BaseJettyTest {
             public void configure() {
                 from("jetty://http://localhost:{{port}}/test?disableStreamCache=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        HttpMessage msg = exchange.getIn(HttpMessage.class);
+                        HttpMessage msg = exchange.getMessage(HttpMessage.class);
 
                         // The ServletInputStream should not be cached
                         ServletInputStream sis = HttpConverter.toServletInputStream(msg);
@@ -126,7 +99,7 @@ public class HttpConverterTest extends BaseJettyTest {
             public void configure() {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) {
-                        HttpMessage msg = exchange.getIn(HttpMessage.class);
+                        HttpMessage msg = exchange.getMessage(HttpMessage.class);
 
                         InputStream sis = msg.getBody(InputStream.class);
                         assertNotNull(sis);

@@ -36,9 +36,6 @@
         <firstVersion>2.8.0</firstVersion>
         <label>soap,webservice</label>
         <title>CXF Transport</title>
-
-
-
     </properties>
 
     <dependencies>
@@ -46,7 +43,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http-common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -58,7 +58,6 @@
             <artifactId>cxf-rt-bindings-soap</artifactId>
             <version>${cxf-version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>jakarta.servlet</groupId>

@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.camel.component.cxf.transport.message.DefaultCxfMessageMapper;
+import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.common.security.SimplePrincipal;
 import org.apache.cxf.message.ExchangeImpl;
@@ -77,6 +78,7 @@ public class DefaultCxfMessageMapperTest {
 
     private Exchange setupCamelExchange(String requestURI, String requestPath, HttpServletRequest request) {
         org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
+        org.apache.camel.http.common.HttpMessage camelHttpMessage = mock(org.apache.camel.http.common.HttpMessage.class);
         Exchange camelExchange = mock(Exchange.class);
         when(camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE,
                 org.apache.cxf.message.Exchange.class)).thenReturn(new ExchangeImpl());
@@ -92,8 +94,9 @@ public class DefaultCxfMessageMapperTest {
         when(camelMessage.getHeader(Exchange.HTTP_BASE_URI, String.class)).thenReturn(requestPath);
         when(camelMessage.getHeader(Exchange.HTTP_METHOD, String.class)).thenReturn("GET");
         when(camelMessage.getHeader(Exchange.HTTP_QUERY, String.class)).thenReturn("");
-        when(camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST)).thenReturn(request);
-        when(camelMessage.getHeader(Exchange.HTTP_SERVLET_RESPONSE)).thenReturn(null);
+        when(camelExchange.getIn(HttpMessage.class)).thenReturn(camelHttpMessage);
+        when(camelHttpMessage.getRequest()).thenReturn(request);
+        when(camelHttpMessage.getResponse()).thenReturn(null);
         when(camelMessage.getBody(InputStream.class)).thenReturn(new ByteArrayInputStream("".getBytes()));
         return camelExchange;
     }

@@ -40,14 +40,9 @@ public final class JettyConverterLoader implements TypeConverterLoader, CamelCon
 
     @Override
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
-        registerConverters(registry);
         registerFallbackConverters(registry);
     }
 
-    private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, java.lang.String.class, org.eclipse.jetty.server.Response.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jetty.JettyConverter.toString((org.eclipse.jetty.server.Response) value));
-    }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
         registry.addTypeConverter(toType, fromType, new SimpleTypeConverter(allowNull, method));

@@ -82,7 +82,6 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
 
     @Test
     public void testInvokeCxfRsConsumer() throws Exception {
-        System.out.println("port1 is " + port1);
         String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerInvokeService/customerservice/customers/123";
         WebClient wc = WebClient.create(address);
         Customer c = wc.accept("application/json").get(Customer.class);

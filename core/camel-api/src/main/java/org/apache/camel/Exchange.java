@@ -195,7 +195,9 @@ public interface Exchange extends VariableAware {
     String HTTP_URI = "CamelHttpUri";
     String HTTP_URL = "CamelHttpUrl";
     String HTTP_CHUNKED = "CamelHttpChunked";
+    @Deprecated(since = "4.7.0")
     String HTTP_SERVLET_REQUEST = "CamelHttpServletRequest";
+    @Deprecated(since = "4.7.0")
     String HTTP_SERVLET_RESPONSE = "CamelHttpServletResponse";
 
     @Metadata(label = "interceptFrom,interceptSendToEndpoint", description = "The endpoint URI that was intercepted",

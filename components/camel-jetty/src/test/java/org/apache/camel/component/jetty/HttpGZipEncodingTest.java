@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpClientConfigurer;
+import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.spi.Registry;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.junit.jupiter.api.Disabled;
@@ -86,8 +87,7 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "/gzip").process(new Processor() {
                     public void process(Exchange exchange) {
                         // check the request method
-                        HttpServletRequest request
-                                = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
+                        HttpServletRequest request = exchange.getMessage(HttpMessage.class).getRequest();
                         if ("POST".equals(request.getMethod())) {
                             String requestBody = exchange.getIn().getBody(String.class);
                             assertEquals("<Hello>World</Hello>", requestBody, "Get a wrong request string");
