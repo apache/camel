@@ -82,6 +82,27 @@ To:
 </route>
 ----
 
+=== camel-jetty / camel-servlet / camel-undertow
+
+When using embedded HTTP server (consumer) then the headers `CamelHttpServletRequest` and `CamelHttpServletResponse`
+has been removed.
+
+To gain access to these then you need to use the `HttpMessage` API instead as shown below:
+
+[source,java]
+----
+ServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
+ServletResponse request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_RESPONSE, ServletResponse.class);
+----
+
+Should be changed to:
+
+[source,java]
+----
+ServletRequest request = exchange.getMessage(HttpMessage.class).getRequest();
+ServletResponse response = exchange.getMessage(HttpMessage.class).getResponse();
+----
+
 === camel-seda / camel-disruptor
 
 When using `InOnly` exchange pattern then the producer makes a copy of the message to be added to the queue.

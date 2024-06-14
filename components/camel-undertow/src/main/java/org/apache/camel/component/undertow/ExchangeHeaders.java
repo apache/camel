@@ -98,8 +98,6 @@ public final class ExchangeHeaders {
     public static final HttpString HTTP_URI = new HttpString("CamelHttpUri");
     public static final HttpString HTTP_URL = new HttpString("CamelHttpUrl");
     public static final HttpString HTTP_CHUNKED = new HttpString("CamelHttpChunked");
-    public static final HttpString HTTP_SERVLET_REQUEST = new HttpString("CamelHttpServletRequest");
-    public static final HttpString HTTP_SERVLET_RESPONSE = new HttpString("CamelHttpServletResponse");
 
     public static final HttpString INTERCEPTED_ENDPOINT = new HttpString("CamelInterceptedEndpoint");
     public static final HttpString INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED

@@ -24,6 +24,7 @@ import jakarta.servlet.ServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.common.HttpMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,8 +74,7 @@ public class HttpHeaderTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
                     public void process(Exchange exchange) {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
-                        ServletRequest request
-                                = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, ServletRequest.class);
+                        ServletRequest request = exchange.getIn(HttpMessage.class).getRequest();
                         assertNotNull(request);
                         assertEquals("HTTP/1.0", request.getProtocol(), "Get a wong http protocol version");
                         for (Entry<String, Object> entry : headers.entrySet()) {
