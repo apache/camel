@@ -20,13 +20,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("https://issues.apache.org/jira/browse/CAMEL-20215")
 public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest
         extends TcpServerConsumerEndOfDataAndValidationTestSupport {
 
