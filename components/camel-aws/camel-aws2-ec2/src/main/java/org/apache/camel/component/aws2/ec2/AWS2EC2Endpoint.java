@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -34,7 +35,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ec2", title = "AWS Elastic Compute Cloud (EC2)",
              syntax = "aws2-ec2:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = AWS2EC2Constants.class)
-public class AWS2EC2Endpoint extends DefaultEndpoint {
+public class AWS2EC2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private Ec2Client ec2Client;
 
@@ -86,5 +87,22 @@ public class AWS2EC2Endpoint extends DefaultEndpoint {
     @Override
     public AWS2EC2Component getComponent() {
         return (AWS2EC2Component) super.getComponent();
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "ec2";
     }
 }
