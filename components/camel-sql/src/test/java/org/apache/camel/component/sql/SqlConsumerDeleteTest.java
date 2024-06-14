@@ -31,6 +31,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -81,17 +82,8 @@ public class SqlConsumerDeleteTest extends CamelTestSupport {
         assertEquals(3, exchanges.get(2).getIn().getBody(Map.class).get("ID"));
         assertEquals("Linux", exchanges.get(2).getIn().getBody(Map.class).get("PROJECT"));
 
-        // some servers may be a bit slow for this
-        for (int i = 0; i < 5; i++) {
-            // give it a little time to delete
-            Thread.sleep(200);
-            int rows = jdbcTemplate.queryForObject("select count(*) from projects", Integer.class);
-            if (rows == 0) {
-                break;
-            }
-        }
-        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class),
-                "Should have deleted all 3 rows");
+        await("Should have deleted all 3 rows")
+                .until(() -> jdbcTemplate.queryForObject("select count(*) from projects", Integer.class) == 0);
     }
 
     @Override
