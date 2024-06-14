@@ -321,12 +321,6 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         }
     }
 
-    private static void copy(File file, OutputStream out) throws IOException {
-        try (InputStream in = new FileInputStream(file)) {
-            copy(in, out);
-        }
-    }
-
     private static void copy(InputStream in, File file) throws IOException {
         try (OutputStream out = new FileOutputStream(file)) {
             copy(in, out);

@@ -157,7 +157,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private TarArchiveEntry getNextEntry() throws IOException {
         TarArchiveEntry entry;
 
-        while ((entry = tarInputStream.getNextTarEntry()) != null) {
+        while ((entry = tarInputStream.getNextEntry()) != null) {
             if (!entry.isDirectory()) {
                 return entry;
             } else {
