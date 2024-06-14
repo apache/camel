@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.eventbridge;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -26,8 +28,6 @@ import org.apache.camel.spi.*;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
-
-import java.util.Map;
 
 /**
  * Send events to AWS Eventbridge cluster instances.
