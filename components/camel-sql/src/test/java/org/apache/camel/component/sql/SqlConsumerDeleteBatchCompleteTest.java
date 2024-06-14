@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sql;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -27,7 +29,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.awaitility.Awaitility.await;
 
 /**
  *
@@ -67,17 +69,9 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        // some servers may be a bit slow for this
-        for (int i = 0; i < 5; i++) {
-            // give it a little time to delete
-            Thread.sleep(200);
-            int rows = jdbcTemplate.queryForObject("select count(*) from projects", Integer.class);
-            if (rows == 0) {
-                break;
-            }
-        }
-        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class),
-                "Should have deleted all 3 rows");
+        await("Should have deleted all 3 rows")
+                .timeout(1, TimeUnit.SECONDS)
+                .until(() -> jdbcTemplate.queryForObject("select count(*) from projects", Integer.class) == 0);
     }
 
     @Override
