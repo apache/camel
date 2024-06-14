@@ -126,6 +126,24 @@ public class CouchdbUriDsl(
   }
 
   /**
+   * Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number
+   * of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative
+   * number to set it as unlimited.
+   */
+  public fun maxMessagesPerPoll(maxMessagesPerPoll: String) {
+    it.property("maxMessagesPerPoll", maxMessagesPerPoll)
+  }
+
+  /**
+   * Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number
+   * of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative
+   * number to set it as unlimited.
+   */
+  public fun maxMessagesPerPoll(maxMessagesPerPoll: Int) {
+    it.property("maxMessagesPerPoll", maxMessagesPerPoll.toString())
+  }
+
+  /**
    * Specifies how many revisions are returned in the changes array. The default, main_only, will
    * only return the current winning revision; all_docs will return all leaf revisions (including
    * conflicts and deleted former conflicts.)

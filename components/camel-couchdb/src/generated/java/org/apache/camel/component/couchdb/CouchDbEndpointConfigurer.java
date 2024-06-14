@@ -35,6 +35,8 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "heartbeat": target.setHeartbeat(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "style": target.setStyle(property(camelContext, java.lang.String.class, value)); return true;
         case "updates": target.setUpdates(property(camelContext, boolean.class, value)); return true;
@@ -58,6 +60,8 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "heartbeat": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
         case "password": return java.lang.String.class;
         case "style": return java.lang.String.class;
         case "updates": return boolean.class;
@@ -82,6 +86,8 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "heartbeat": return target.getHeartbeat();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "password": return target.getPassword();
         case "style": return target.getStyle();
         case "updates": return target.isUpdates();

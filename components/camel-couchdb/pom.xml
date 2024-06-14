@@ -47,16 +47,9 @@
             <artifactId>camel-core-processor</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.lightcouch</groupId>
-            <artifactId>lightcouch</artifactId>
-            <version>${lightcouch-version}</version>
-        </dependency>
-        <!-- prefer to use the httpclient version used by Camel components to align
-            the version -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient4-version}</version>
+            <groupId>com.ibm.cloud</groupId>
+            <artifactId>cloudant</artifactId>
+            <version>0.8.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
