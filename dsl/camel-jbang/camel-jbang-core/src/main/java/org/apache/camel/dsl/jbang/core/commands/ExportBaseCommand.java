@@ -700,27 +700,37 @@ abstract class ExportBaseCommand extends CamelCommand {
         return -1;
     }
 
-    protected static String jibMavenPluginVersion(File settings) {
-        try {
-            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-            return lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
-                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("3.4.3");
-        } catch (Exception e) {
-            // ignore
+    protected static String jibMavenPluginVersion(File settings, Properties prop) {
+        String answer = null;
+        if (prop != null) {
+            answer = prop.getProperty("camel.jbang.jib-maven-plugin-version");
         }
-        return "3.4.3";
+        if (answer == null) {
+            try {
+                List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+                answer = lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
+                        .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return answer != null ? answer : "3.4.3";
     }
 
-    protected static String jkubeMavenPluginVersion(File settings) {
+    protected static String jkubeMavenPluginVersion(File settings, Properties prop) {
+        String answer = null;
+        if (prop != null) {
+            answer = prop.getProperty("camel.jbang.jkube-maven-plugin-version");
+        }
         try {
             List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-            return lines.stream()
+            answer = lines.stream()
                     .filter(l -> l.startsWith("camel.jbang.jkube-maven-plugin-version=") || l.startsWith("jkube.version="))
-                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("1.16.2");
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
         } catch (Exception e) {
             // ignore
         }
-        return "1.16.2";
+        return answer != null ? answer : "1.16.2";
     }
 
     protected void safeCopy(File source, File target, boolean override) throws Exception {

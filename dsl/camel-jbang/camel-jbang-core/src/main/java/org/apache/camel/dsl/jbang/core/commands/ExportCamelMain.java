@@ -269,7 +269,7 @@ class ExportCamelMain extends Export {
             String context2 = IOHelper.loadText(is);
             IOHelper.close(is);
 
-            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings));
+            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings, prop));
 
             // image from/to auth
             String auth = "";
@@ -298,7 +298,8 @@ class ExportCamelMain extends Export {
                 is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
                 String context3 = IOHelper.loadText(is);
                 IOHelper.close(is);
-                context3 = context3.replaceFirst("\\{\\{ \\.JkubeMavenPluginVersion }}", jkubeMavenPluginVersion(settings));
+                context3 = context3.replaceFirst("\\{\\{ \\.JkubeMavenPluginVersion }}",
+                        jkubeMavenPluginVersion(settings, prop));
                 sb2.append(context3);
             }
         }
