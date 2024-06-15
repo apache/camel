@@ -3657,7 +3657,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 |Resource fragments for Kubernetes (Use commas to separate multiple files). See more details at xref:_exporting_to_camel_main_for_kubernetes[].
 
 |`camel.jbang.javaVersion`
-|Java version (11 or 17)
+|Java version (17 or 21). Java 17 is default.
 
 |`camel.jbang.kameletsVersion`
 |Apache Camel Kamelets version
