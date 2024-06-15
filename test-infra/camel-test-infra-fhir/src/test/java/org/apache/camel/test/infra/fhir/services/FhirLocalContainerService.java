@@ -53,6 +53,7 @@ public class FhirLocalContainerService implements FhirService, ContainerService<
                 .withNetworkAliases(containerName)
                 .withExposedPorts(FhirProperties.DEFAULT_SERVICE_PORT)
                 .withStartupTimeout(Duration.ofMinutes(3L))
+                .withStartupAttempts(5)
                 .withEnv("hapi.fhir.allow_multiple_delete", "true")
                 .withEnv("hapi.fhir.fhir_version", "R4")
                 .withEnv("hapi.fhir.reuse_cached_search_results_millis", "-1")
