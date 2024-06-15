@@ -53,6 +53,13 @@ public class SmbProducer extends DefaultProducer {
     private Session session;
     private final SMBClient smbClient;
 
+    HashSet<AccessMask> GENERIC_ALL_ACCESSMASK = new HashSet<AccessMask>(Arrays.asList(AccessMask.GENERIC_ALL));
+    HashSet<AccessMask> FILE_WRITE_DATA_ACCESSMASK = new HashSet<AccessMask>(Arrays.asList(AccessMask.FILE_WRITE_DATA));
+    HashSet<SMB2CreateOptions> FILE_DIRECTORY_CREATE_OPTIONS
+            = new HashSet<>(Arrays.asList(SMB2CreateOptions.FILE_DIRECTORY_FILE));
+    HashSet<FileAttributes> FILE_ATTRIBUTES_NORMAL
+            = new HashSet<FileAttributes>(Arrays.asList(FileAttributes.FILE_ATTRIBUTE_NORMAL));
+
     protected SmbProducer(final SmbEndpoint endpoint) {
         super(endpoint);
 
@@ -72,7 +79,6 @@ public class SmbProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         LOGGER.debug("Producer SMB client started");
-
         super.doStart();
     }
 
@@ -83,6 +89,13 @@ public class SmbProducer extends DefaultProducer {
         String result = file.replace('\\', '/');
         LOGGER.debug("Normalize path {} to {}", file, result);
         return result;
+    }
+
+    private int getReadBufferSize() {
+        int readBufferSize = getEndpoint().getConfiguration().getReadBufferSize();
+        readBufferSize = (readBufferSize <= 0) ? 2048 : readBufferSize;
+
+        return readBufferSize;
     }
 
     protected void connectIfNecessary(Exchange exchange) throws IOException {
@@ -157,43 +170,44 @@ public class SmbProducer extends DefaultProducer {
         SmbConfiguration configuration = getEndpoint().getConfiguration();
         String path = (configuration.getPath() == null) ? "" : configuration.getPath();
 
-        LOGGER.debug("storeFile() fileName [" + fileName + "]");
-
         try {
             connectIfNecessary(exchange);
 
-            java.io.File file = new java.io.File(path + java.io.File.separator + fileName);
+            java.io.File file = new java.io.File(path, fileName);
 
             DiskShare share = (DiskShare) session.connectShare(getEndpoint().getShareName());
             createDirectory(share, file);
 
             GenericFileExist gfe = determineFileExist(exchange);
-
-            SMB2CreateDisposition scd = SMB2CreateDisposition.FILE_OPEN;
-            HashSet<AccessMask> accessMask = new HashSet<AccessMask>(Arrays.asList(AccessMask.GENERIC_ALL));
-            HashSet<SMB2CreateOptions> createOptions = new HashSet<>(Arrays.asList(SMB2CreateOptions.FILE_DIRECTORY_FILE));
-            HashSet<FileAttributes> fileAttributes
-                    = new HashSet<FileAttributes>(Arrays.asList(FileAttributes.FILE_ATTRIBUTE_NORMAL));
+            File shareFile = null;
 
             // File existence modes
             switch (gfe) {
                 case Override:
-                    scd = SMB2CreateDisposition.FILE_OVERWRITE_IF;
-                    break;
-                case Fail:
-                    scd = SMB2CreateDisposition.FILE_CREATE;
-                    if (share.fileExists(file.getPath())) {
-                        doFail(file.getPath());
-                    }
+                    shareFile = share.openFile(file.getPath(),
+                            FILE_WRITE_DATA_ACCESSMASK,
+                            FILE_ATTRIBUTES_NORMAL,
+                            SMB2ShareAccess.ALL,
+                            SMB2CreateDisposition.FILE_OVERWRITE_IF,
+                            FILE_DIRECTORY_CREATE_OPTIONS);
                     break;
                 case Append:
-                    scd = SMB2CreateDisposition.FILE_OPEN_IF;
-                    accessMask = new HashSet<AccessMask>(Arrays.asList(AccessMask.FILE_WRITE_DATA));
+                    shareFile = share.openFile(file.getPath(),
+                            FILE_WRITE_DATA_ACCESSMASK,
+                            FILE_ATTRIBUTES_NORMAL,
+                            SMB2ShareAccess.ALL,
+                            SMB2CreateDisposition.FILE_OPEN_IF,
+                            FILE_DIRECTORY_CREATE_OPTIONS);
                     break;
                 case Ignore:
                     if (share.fileExists(file.getPath())) {
                         doIgnore(file.getPath());
                         return;
+                    }
+                    break;
+                case Fail:
+                    if (share.fileExists(file.getPath())) {
+                        doFail(file.getPath());
                     }
                     break;
                 case Move:
@@ -202,19 +216,12 @@ public class SmbProducer extends DefaultProducer {
                     throw new UnsupportedOperationException("TryRename is not implemented for this producer at the moment");
             }
 
-            File shareFile = share.openFile(file.getPath(),
-                    accessMask,
-                    fileAttributes,
-                    SMB2ShareAccess.ALL,
-                    scd,
-                    createOptions);
-
             InputStream is = (exchange.getMessage(InputStream.class) == null)
                     ? exchange.getMessage().getBody(InputStream.class) : exchange.getMessage(InputStream.class);
 
             // In order to provide append option, we need to use offset / write with shareFile rather
             // than with outputstream
-            int buffer = 2048;
+            int buffer = getReadBufferSize();
             long fileOffset = 0;
 
             byte[] byteBuffer = new byte[buffer];

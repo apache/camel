@@ -39,6 +39,10 @@ public class SmbConfiguration {
               defaultValue = "false")
     private boolean autoCreate;
 
+    @Metadata(required = false, defaultValue = "2048")
+    @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")
+    private int readBufferSize;
+
     @Metadata(required = true)
     @UriParam(description = "The path, within the share, to consume the files from")
     private String path;
@@ -160,5 +164,13 @@ public class SmbConfiguration {
 
     public void setAutoCreate(boolean autoCreate) {
         this.autoCreate = autoCreate;
+    }
+
+    public void setReadBufferSize(int readBufferSize) {
+        this.readBufferSize = readBufferSize;
+    }
+
+    public int getReadBufferSize() {
+        return readBufferSize;
     }
 }
