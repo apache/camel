@@ -30,8 +30,7 @@ public class FtpProducerAllowNullBodyFileAlreadyExistIT extends FtpServerTestSup
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello world", Exchange.FILE_NAME, "hello.txt");
     }
 

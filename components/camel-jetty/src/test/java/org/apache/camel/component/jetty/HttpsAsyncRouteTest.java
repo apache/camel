@@ -33,8 +33,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -56,9 +54,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         // ensure jsse clients can validate the self signed dummy localhost
         // cert,
         // use the server keystore as the trust store for these tests
@@ -69,10 +65,8 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         restoreSystemProperties();
-        super.tearDown();
     }
 
     @Override

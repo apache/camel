@@ -66,9 +66,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() {
         DataSource dataSource = context.getRegistry().lookupByNameAndType(getDatasourceName(), DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();

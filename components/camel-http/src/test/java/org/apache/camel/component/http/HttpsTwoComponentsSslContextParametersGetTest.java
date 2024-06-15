@@ -23,8 +23,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -49,21 +47,16 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     @BindToRegistry("https-bar")
     private HttpComponent httpComponent1 = new HttpComponent();
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext()).create();
         localServer.start();
-
-        super.setUp();
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

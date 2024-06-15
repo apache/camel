@@ -30,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -48,9 +46,7 @@ public class MainHttpsRouteTest extends BaseJettyTest {
     protected final Properties originalValues = new Properties();
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
         setSystemProp("javax.net.ssl.trustStorePassword", "changeit");
@@ -58,10 +54,8 @@ public class MainHttpsRouteTest extends BaseJettyTest {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() throws Exception {
         restoreSystemProperties();
-        super.tearDown();
     }
 
     @Test

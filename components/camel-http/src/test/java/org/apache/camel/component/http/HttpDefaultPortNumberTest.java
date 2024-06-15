@@ -24,7 +24,6 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -41,20 +40,16 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
-
-        super.setUp();
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

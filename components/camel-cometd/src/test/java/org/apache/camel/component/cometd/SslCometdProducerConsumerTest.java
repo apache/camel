@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,13 +51,10 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
-
-        super.setUp();
     }
 
     @Override

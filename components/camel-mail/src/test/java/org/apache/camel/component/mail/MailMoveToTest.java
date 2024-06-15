@@ -31,7 +31,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,10 +45,8 @@ public class MailMoveToTest extends CamelTestSupport {
     private static final MailboxUser jones2 = Mailbox.getOrCreateUser("jones2", "secret");
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         prepareMailbox();
-        super.setUp();
     }
 
     @Test

@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rss.RssUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class RssDataFormatTest extends CamelTestSupport {
@@ -46,11 +45,9 @@ public class RssDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         feed = RssUtils.createFeed("file:src/test/data/rss20.xml");
         feedXml = RssConverter.feedToXml(feed);
-        super.setUp();
     }
 
     @Override

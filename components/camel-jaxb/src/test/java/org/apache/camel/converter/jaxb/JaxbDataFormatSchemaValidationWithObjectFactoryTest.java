@@ -31,7 +31,6 @@ import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.converter.jaxb.message.ObjectFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -49,11 +48,7 @@ public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTe
     private JAXBContext jbCtx;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         XmlRootElement xmlRootElementAnnotation = Message.class.getAnnotation(XmlRootElement.class);
         assertNull(xmlRootElementAnnotation);
 

@@ -29,7 +29,6 @@ import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.spring.spi.TransactionErrorHandler;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -46,9 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class AbstractTransactionIT extends AbstractSpringJMSITSupport {
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() {
         setCamelContextService(null);
         context = null;
         template = null;

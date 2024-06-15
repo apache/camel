@@ -35,8 +35,7 @@ public class FtpProducerRootFileExistFailIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         // create existing file on ftp server
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
     }

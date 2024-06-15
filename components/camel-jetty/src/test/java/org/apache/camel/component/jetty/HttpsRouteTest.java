@@ -39,8 +39,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -72,9 +70,7 @@ public class HttpsRouteTest extends BaseJettyTest {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         // ensure jsse clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
@@ -84,10 +80,8 @@ public class HttpsRouteTest extends BaseJettyTest {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() throws Exception {
         restoreSystemProperties();
-        super.tearDown();
     }
 
     @Override

@@ -20,7 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -51,9 +50,7 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
         if (db != null) {
             db.shutdown();
         }

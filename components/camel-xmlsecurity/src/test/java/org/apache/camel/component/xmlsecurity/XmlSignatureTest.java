@@ -101,7 +101,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -1421,11 +1420,9 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         setUpKeys("RSA", 1024);
         disableJMX();
-        super.setUp();
     }
 
     public void setUpKeys(String algorithm, int keylength) {

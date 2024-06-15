@@ -20,11 +20,12 @@ import org.apache.camel.Exchange;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpProducerNullBodyTest extends BaseHttpTest {
 
@@ -34,9 +35,7 @@ public class HttpProducerNullBodyTest extends BaseHttpTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
@@ -52,10 +51,8 @@ public class HttpProducerNullBodyTest extends BaseHttpTest {
         endpointUrl = "http://localhost:" + localServer.getLocalPort();
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

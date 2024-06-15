@@ -29,8 +29,6 @@ import jakarta.jms.TextMessage;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,9 +50,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         mc1 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
         mc2 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
         mc1.setMessageListener(new MyMessageListener());
@@ -62,15 +58,13 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() throws JMSException {
         MyMessageListener l1 = (MyMessageListener) mc1.getMessageListener();
         l1.close();
         mc1.close();
         MyMessageListener l2 = (MyMessageListener) mc2.getMessageListener();
         l2.close();
         mc2.close();
-        super.tearDown();
     }
 
     /**

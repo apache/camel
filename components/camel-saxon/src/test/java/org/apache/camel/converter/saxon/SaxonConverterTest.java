@@ -36,7 +36,6 @@ import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,9 +52,7 @@ public class SaxonConverterTest extends CamelTestSupport {
     private NodeInfo doc;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         exchange = new DefaultExchange(context);
         evaluator = new XPathEvaluator();
         doc = evaluator.getConfiguration().buildDocumentTree(new StringSource(CONTENT)).getRootNode();

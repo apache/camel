@@ -37,9 +37,8 @@ public class JMSTransactionThrottlingRoutePolicyIT extends AbstractSpringJMSITSu
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         deleteDirectory("activemq-data");
-        super.setUp();
     }
 
     @Test

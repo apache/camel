@@ -24,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -44,15 +42,13 @@ public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/aws/xray/AwsXRaySimpleRouteTest.xml");
     }
 
-    @BeforeEach
-    public void setUp() throws Exception {
+    @Override
+    public void doPreSetup() {
         socketListener.before();
-        super.setUp();
     }
 
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @Override
+    public void doPostTearDown() {
         socketListener.after();
     }
 

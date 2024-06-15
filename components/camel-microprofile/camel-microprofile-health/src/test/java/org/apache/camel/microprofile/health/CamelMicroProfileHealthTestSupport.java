@@ -37,17 +37,14 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.junit.jupiter.api.AfterEach;
 
 public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
 
     protected SmallRyeHealthReporter reporter = new SmallRyeHealthReporter();
 
     @SuppressWarnings("unchecked")
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() {
         // Hack to clean up all registered checks
         Stream.of(HealthType.LIVENESS, HealthType.READINESS)
                 .forEach(type -> {

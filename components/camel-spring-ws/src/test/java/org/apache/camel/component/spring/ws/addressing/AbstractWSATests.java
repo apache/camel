@@ -28,7 +28,6 @@ import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
@@ -54,9 +53,7 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
     private String requestInputAction;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         // initialize beans for catching results
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
         newReply = getMandatoryBean(OutputChannelReceiver.class, "replyReceiver");

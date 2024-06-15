@@ -23,7 +23,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,10 +68,8 @@ public class JGroupsProducerTest extends CamelTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         channel.close();
-        super.tearDown();
     }
 
     @Test

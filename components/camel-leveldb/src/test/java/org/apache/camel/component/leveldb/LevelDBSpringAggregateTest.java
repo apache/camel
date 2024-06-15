@@ -22,7 +22,6 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -35,10 +34,9 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 public class LevelDBSpringAggregateTest extends CamelSpringTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
+        super.doPreSetup();
         deleteDirectory("target/data");
-        super.setUp();
     }
 
     @Override

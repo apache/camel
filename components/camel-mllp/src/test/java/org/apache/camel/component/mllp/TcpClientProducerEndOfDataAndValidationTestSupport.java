@@ -177,10 +177,8 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void doPostTearDown() throws InterruptedException {
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
-
-        super.tearDown();
     }
 
     @Test

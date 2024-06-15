@@ -92,9 +92,7 @@ public class ZooKeeperServiceCallRouteIT extends CamelTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
+    public void doPostTearDown() {
         for (ServiceInstance<MetaData> instace : instances) {
             try {
                 discovery.unregisterService(instace);

@@ -17,14 +17,11 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.BeforeEach;
 
 public class HttpBodyWithOtherProtocolNameTest extends HttpBodyTest {
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPreSetup() throws Exception {
         setProtocolString("newHttp://");
     }
 

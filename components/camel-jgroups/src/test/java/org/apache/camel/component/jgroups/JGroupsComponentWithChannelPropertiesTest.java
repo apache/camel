@@ -22,7 +22,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ObjectMessage;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,10 +71,8 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         clientChannel.close();
-        super.tearDown();
     }
 
     @Test

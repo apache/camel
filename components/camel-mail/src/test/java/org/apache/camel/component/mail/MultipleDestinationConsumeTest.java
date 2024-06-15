@@ -35,7 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,11 +104,8 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         mailSession = Mailbox.getSmtpSession();
-
-        super.setUp();
     }
 
     @Override

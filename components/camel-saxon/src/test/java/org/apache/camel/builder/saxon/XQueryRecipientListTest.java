@@ -19,7 +19,6 @@ package org.apache.camel.builder.saxon;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class XQueryRecipientListTest extends CamelTestSupport {
@@ -48,10 +47,7 @@ public class XQueryRecipientListTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() {
         londonEndpoint = getMockEndpoint("mock:foo.London");
         tampaEndpoint = getMockEndpoint("mock:foo.Tampa");
     }

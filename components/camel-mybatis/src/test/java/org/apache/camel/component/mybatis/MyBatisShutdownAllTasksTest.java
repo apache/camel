@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -30,10 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() {
         // super will insert 2 accounts already
 
         Account account = new Account();

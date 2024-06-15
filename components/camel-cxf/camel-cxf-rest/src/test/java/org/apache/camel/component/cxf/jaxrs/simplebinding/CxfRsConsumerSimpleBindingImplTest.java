@@ -35,8 +35,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,17 +52,13 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     private CloseableHttpClient httpclient;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setupResources() throws Exception {
         httpclient = HttpClientBuilder.create().build();
         jaxb = JAXBContext.newInstance(CustomerList.class, Customer.class, Order.class, Product.class);
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void cleanupResources() throws Exception {
         httpclient.close();
     }
 

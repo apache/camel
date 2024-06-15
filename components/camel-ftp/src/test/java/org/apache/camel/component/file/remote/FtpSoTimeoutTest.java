@@ -26,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPClient;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -47,20 +45,16 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
     // --- Set up
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         // the created server socket makes it possible for the FTP client to
         // establish the socket connection.
         // However, no message will ever be sent back, thus a read timeout
         // should occur within FTPClient#__getReply()
         serverSocket = new ServerSocket(0);
-        super.setUp();
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
         if (serverSocket != null) {
             serverSocket.close();
         }

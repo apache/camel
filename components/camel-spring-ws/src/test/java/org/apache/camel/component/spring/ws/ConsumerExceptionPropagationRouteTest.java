@@ -60,10 +60,8 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
         mockClient = MockWebServiceClient.createClient(applicationContext);
     }
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         context.setTracing(true);
     }
 

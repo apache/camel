@@ -38,7 +38,6 @@ import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Fault;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -56,10 +55,8 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelSpringTestSupp
                                             + "/" + getClass().getSimpleName() + "/PersonService";
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void setupResources() {
         CXFTestSupport.getPort1();
-        super.setUp();
     }
 
     @Override

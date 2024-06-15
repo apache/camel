@@ -65,7 +65,6 @@ import org.apache.camel.component.xmlsecurity.util.TestKeystore;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xmlsecurity.XmlSignatureTest.checkThrownException;
@@ -92,10 +91,8 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         disableJMX();
-        super.setUp();
     }
 
     @Override

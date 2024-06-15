@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -83,9 +82,7 @@ public class MailMessageTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         Mailbox.clearAll();
 
         endpoint = checkEndpoint("pop3://someone@myhost:30/subject");

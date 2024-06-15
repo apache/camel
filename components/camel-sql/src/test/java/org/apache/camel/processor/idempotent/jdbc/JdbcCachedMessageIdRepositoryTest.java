@@ -23,7 +23,6 @@ import javax.sql.DataSource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -48,10 +47,7 @@ public class JdbcCachedMessageIdRepositoryTest extends CamelSpringTestSupport {
     protected MockEndpoint errorEndpoint;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         dataSource = context.getRegistry().lookupByNameAndType("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.update(INSERT_STRING, PROCESSOR_NAME, "1", new Timestamp(System.currentTimeMillis()));

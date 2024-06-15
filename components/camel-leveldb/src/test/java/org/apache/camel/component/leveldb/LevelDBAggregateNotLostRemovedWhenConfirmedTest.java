@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.awaitility.Awaitility;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -40,11 +39,9 @@ public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends LevelDBTest
     private LevelDBAggregationRepository repo;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory("target/data");
         repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
-        super.setUp();
     }
 
     @Test

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.twitter;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +26,9 @@ import org.slf4j.LoggerFactory;
 @EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
                          disabledReason = "Likely has API limits, so it's better to keep it off by default")
 public class DirectMessagePollingIT extends CamelTwitterConsumerITSupport {
+
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         /* Uncomment when you need a test direct message
         TwitterConfiguration properties = new TwitterConfiguration();
         properties.setConsumerKey(consumerKey);

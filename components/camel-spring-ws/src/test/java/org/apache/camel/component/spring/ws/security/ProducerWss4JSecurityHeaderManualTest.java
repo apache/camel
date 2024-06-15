@@ -21,7 +21,6 @@ import net.javacrumbs.calc.model.PlusResponse;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -44,9 +43,7 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
     }
 

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jt400;
 
 import org.apache.camel.Endpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,12 +31,9 @@ public class Jt400ComponentTest extends Jt400TestSupport {
     private Jt400Component component;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() {
         component = new Jt400Component();
-        component.setCamelContext(context());
+        component.setCamelContext(context);
     }
 
     /**

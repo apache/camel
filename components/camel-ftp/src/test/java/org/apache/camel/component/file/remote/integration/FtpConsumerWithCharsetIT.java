@@ -49,8 +49,7 @@ public class FtpConsumerWithCharsetIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         byte[] iso = payload.getBytes(StandardCharsets.ISO_8859_1);
         byte[] utf = payload.getBytes(StandardCharsets.UTF_8);
 

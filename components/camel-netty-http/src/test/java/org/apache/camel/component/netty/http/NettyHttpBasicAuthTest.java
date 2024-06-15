@@ -20,8 +20,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -31,17 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class NettyHttpBasicAuthTest extends BaseNettyTest {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
-        super.setUp();
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         System.clearProperty("java.security.auth.login.config");
-        super.tearDown();
     }
 
     @BindToRegistry("mySecurityConfig")

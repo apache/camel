@@ -24,7 +24,7 @@ import org.apache.camel.component.cxf.spring.jaxws.CxfSpringEndpoint;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -52,12 +52,8 @@ public class CxfGreeterPayLoadWithFeatureRouterTest extends AbstractCXFGreeterRo
         endpoint = Endpoint.publish(address, implementor);
     }
 
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-
-        super.setUp();
-
+    @Test
+    public void testResources() {
         CxfEndpoint endpoint = getMandatoryEndpoint("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD",
                 CxfEndpoint.class);
 

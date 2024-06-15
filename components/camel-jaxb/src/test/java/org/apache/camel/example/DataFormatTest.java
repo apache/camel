@@ -22,7 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,9 +32,7 @@ public class DataFormatTest extends CamelTestSupport {
     private MockEndpoint resultEndpoint;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
 

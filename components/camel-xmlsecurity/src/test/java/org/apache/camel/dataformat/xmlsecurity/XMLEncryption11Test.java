@@ -29,7 +29,6 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.utils.EncryptionConstants;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -59,9 +58,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
     }
 

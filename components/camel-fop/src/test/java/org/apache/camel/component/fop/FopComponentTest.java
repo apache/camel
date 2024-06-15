@@ -28,7 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
@@ -43,27 +42,13 @@ public class FopComponentTest extends CamelTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate template;
 
-    private boolean canTest = true;
-
     @Override
-    @BeforeEach
-    public void setUp() {
+    public void doPreSetup() {
         deleteDirectory("target/data");
-
-        try {
-            super.setUp();
-        } catch (Exception e) {
-            canTest = false;
-        }
     }
 
     @Test
     public void createPdfUsingXmlDataAndXsltTransformation() throws Exception {
-        if (!canTest) {
-            // cannot run on CI
-            return;
-        }
-
         resultEndpoint.expectedMessageCount(1);
         FileInputStream inputStream = new FileInputStream("src/test/data/xml/data.xml");
 

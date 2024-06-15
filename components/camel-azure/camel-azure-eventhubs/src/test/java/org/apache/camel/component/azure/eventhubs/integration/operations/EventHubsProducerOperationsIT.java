@@ -185,7 +185,7 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void cleanup() {
         producerAsyncClient.close();
         consumerAsyncClient.close();
     }

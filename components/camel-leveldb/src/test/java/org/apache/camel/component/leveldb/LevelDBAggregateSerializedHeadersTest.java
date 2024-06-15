@@ -39,10 +39,9 @@ public class LevelDBAggregateSerializedHeadersTest extends LevelDBTestSupport {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory("target/data");
         getRepo().setAllowSerializedHeaders(true);
-        super.setUp();
     }
 
     @Test

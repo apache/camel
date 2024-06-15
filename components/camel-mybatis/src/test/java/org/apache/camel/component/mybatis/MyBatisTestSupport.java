@@ -58,9 +58,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         try (Connection connection = createConnection();
              ResultSet checkTableExistResultSet = connection.getMetaData().getTables(null, null, getTableName(), null);
              Statement deletePreExistingTableStatement = connection.createStatement();

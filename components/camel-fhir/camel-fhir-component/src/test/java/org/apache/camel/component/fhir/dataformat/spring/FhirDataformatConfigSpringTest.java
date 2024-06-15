@@ -28,7 +28,6 @@ import org.apache.camel.component.fhir.FhirDataFormat;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.hl7.fhir.r4.model.IdType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,12 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FhirDataformatConfigSpringTest extends CamelSpringTestSupport {
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     @Test
     public void defaultFhirJsonConfigTest() {

@@ -35,8 +35,7 @@ public class FtpConsumerAsyncStressIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         for (int i = 0; i < files; i++) {
             template.sendBodyAndHeader("file://{{ftp.root.dir}}/filestress", "Hello World", Exchange.FILE_NAME,
                     i + ".txt");

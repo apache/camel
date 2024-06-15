@@ -19,7 +19,6 @@ package org.apache.camel.component.quartz;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,10 +34,8 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         quartz.stop();
-        super.tearDown();
     }
 
     @Test

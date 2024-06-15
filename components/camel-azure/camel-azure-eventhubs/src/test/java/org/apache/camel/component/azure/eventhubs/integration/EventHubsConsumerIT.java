@@ -118,7 +118,7 @@ class EventHubsConsumerIT extends CamelTestSupport {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void cleanup() {
         // delete testing container
         containerAsyncClient.delete().block();
     }

@@ -69,19 +69,13 @@ public class CxfSpringRouterTest extends CamelSpringTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void setupResources() {
         CXFTestSupport.getPort1();
-        super.setUp();
-
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void cleanupResources() throws Exception {
         // Don't close the application context, as it will cause some trouble on the bus shutdown
-        super.tearDown();
-
     }
 
     @Override

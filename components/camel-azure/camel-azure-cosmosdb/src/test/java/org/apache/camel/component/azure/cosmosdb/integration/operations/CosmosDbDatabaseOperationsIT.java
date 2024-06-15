@@ -72,7 +72,7 @@ class CosmosDbDatabaseOperationsIT {
     }
 
     @AfterAll
-    void tearDown() {
+    void cleanup() {
         clientWrapper.getDatabase(DATABASE_NAME).delete().block();
     }
 

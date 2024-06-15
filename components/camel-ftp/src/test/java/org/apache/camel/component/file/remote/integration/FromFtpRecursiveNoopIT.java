@@ -31,9 +31,7 @@ public class FromFtpRecursiveNoopIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "a", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(getFtpUrl(), "b", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(getFtpUrl(), "a2", Exchange.FILE_NAME, "foo/a.txt");

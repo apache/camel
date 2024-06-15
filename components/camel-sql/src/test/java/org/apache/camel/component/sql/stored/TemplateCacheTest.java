@@ -18,8 +18,6 @@ package org.apache.camel.component.sql.stored;
 
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -33,19 +31,17 @@ public class TemplateCacheTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+
+    public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
                 .addScript("sql/storedProcedureTest.sql").build();
-        super.setUp();
+
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
         if (db != null) {
             db.shutdown();
         }
