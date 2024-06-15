@@ -200,6 +200,20 @@ public class SmbUriDsl(
   }
 
   /**
+   * Read buffer size when for file being produced
+   */
+  public fun readBufferSize(readBufferSize: String) {
+    it.property("readBufferSize", readBufferSize)
+  }
+
+  /**
+   * Read buffer size when for file being produced
+   */
+  public fun readBufferSize(readBufferSize: Int) {
+    it.property("readBufferSize", readBufferSize.toString())
+  }
+
+  /**
    * Whether the producer should be started lazy (on the first message). By starting lazy you can
    * use this to allow CamelContext and routes to startup in situations where a producer may otherwise
    * fail during starting and cause the route to fail being started. By deferring this startup to be
