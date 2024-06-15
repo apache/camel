@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "rest",
+    "title": "Rest",
+    "description": "Rest DSL Registry information",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.RestDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.7.0-SNAPSHOT"
+  }
+}
+

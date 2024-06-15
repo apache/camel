@@ -210,7 +210,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         RestOpenApiProcessor target
                 = new RestOpenApiProcessor(this, doc, path, apiContextPath, processor, restOpenapiProcessorStrategy);
         CamelContextAware.trySetCamelContext(target, getCamelContext());
-        return createConsumerFor(path, target);
+        Consumer consumer = createConsumerFor(path, target);
+        target.setConsumer(consumer);
+        return consumer;
     }
 
     protected Consumer createConsumerFor(String basePath, RestOpenApiProcessor processor) throws Exception {

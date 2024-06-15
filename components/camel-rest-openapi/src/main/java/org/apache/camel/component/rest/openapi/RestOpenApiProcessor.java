@@ -33,8 +33,10 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteAware;
 import org.apache.camel.StartupStep;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
@@ -69,6 +71,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final AtomicBoolean packageScanInit = new AtomicBoolean();
     private final Set<Class<?>> scannedClasses = new HashSet<>();
     private PlatformHttpConsumerAware platformHttpConsumer;
+    private Consumer consumer;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 Processor processor, RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -97,6 +100,14 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
     public void setPlatformHttpConsumer(PlatformHttpConsumerAware platformHttpConsumer) {
         this.platformHttpConsumer = platformHttpConsumer;
+    }
+
+    public Consumer getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
     }
 
     @Override
@@ -149,8 +160,8 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     }
 
     @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
 
@@ -160,16 +171,42 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             for (var o : e.getValue().readOperationsMap().entrySet()) {
                 String v = o.getKey().name(); // verb
                 // create per operation binding
-                RestBindingAdvice binding = createRestBinding(o.getValue());
+                RestBindingConfiguration bc = createRestBindingConfiguration(o.getValue());
+
+                String url = basePath + path;
+                if (platformHttpConsumer != null) {
+                    url = platformHttpConsumer.getPlatformHttpConsumer().getEndpoint().getServiceUrl() + url;
+                }
+
+                String desc = o.getValue().getSummary();
+                if (desc != null && desc.isBlank()) {
+                    desc = null;
+                }
+                String routeId = null;
+                if (consumer instanceof RouteAware ra) {
+                    routeId = ra.getRoute().getRouteId();
+                }
+                camelContext.getRestRegistry().addRestService(consumer, url, path, basePath, null, v, bc.getConsumes(),
+                        bc.getProduces(), bc.getType(), bc.getOutType(), routeId, desc);
+
+                RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);
+                RestBindingAdviceFactory.build(camelContext, bc);
+
                 ServiceHelper.buildService(binding);
                 paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
             }
         }
         scannedClasses.clear(); // no longer needed
-        ServiceHelper.buildService(restOpenapiProcessorStrategy);
+
+        restOpenapiProcessorStrategy.setMissingOperation(endpoint.getMissingOperation());
+        restOpenapiProcessorStrategy.setMockIncludePattern(endpoint.getMockIncludePattern());
+        ServiceHelper.initService(restOpenapiProcessorStrategy);
+
+        // validate openapi contract
+        restOpenapiProcessorStrategy.validateOpenApi(openAPI, platformHttpConsumer);
     }
 
-    private RestBindingAdvice createRestBinding(Operation o) throws Exception {
+    private RestBindingConfiguration createRestBindingConfiguration(Operation o) throws Exception {
         RestConfiguration config = camelContext.getRestConfiguration();
         RestConfiguration.RestBindingMode mode = config.getBindingMode();
 
@@ -301,7 +338,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
             }
         }
 
-        return RestBindingAdviceFactory.build(camelContext, bc);
+        return bc;
     }
 
     private Class<?> loadBindingClass(CamelContext camelContext, String ref) {
@@ -337,18 +374,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
 
         // class not found
         return null;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-
-        restOpenapiProcessorStrategy.setMissingOperation(endpoint.getMissingOperation());
-        restOpenapiProcessorStrategy.setMockIncludePattern(endpoint.getMockIncludePattern());
-        ServiceHelper.initService(restOpenapiProcessorStrategy);
-
-        // validate openapi contract
-        restOpenapiProcessorStrategy.validateOpenApi(openAPI, platformHttpConsumer);
     }
 
     @Override
