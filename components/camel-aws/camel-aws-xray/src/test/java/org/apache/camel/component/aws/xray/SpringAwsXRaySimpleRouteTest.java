@@ -43,12 +43,12 @@ public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
-    public void doPreSetup() {
+    public void setupResources() {
         socketListener.before();
     }
 
     @Override
-    public void doPostTearDown() {
+    public void cleanupResources() {
         socketListener.after();
     }
 
