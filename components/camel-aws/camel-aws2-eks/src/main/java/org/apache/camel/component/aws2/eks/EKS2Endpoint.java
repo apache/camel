@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -34,7 +35,7 @@ import software.amazon.awssdk.services.eks.EksClient;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS Elastic Kubernetes Service (EKS)",
              syntax = "aws2-eks:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = EKS2Constants.class)
-public class EKS2Endpoint extends ScheduledPollEndpoint {
+public class EKS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private EksClient eksClient;
 
@@ -85,5 +86,22 @@ public class EKS2Endpoint extends ScheduledPollEndpoint {
 
     public EksClient getEksClient() {
         return eksClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "eks";
     }
 }

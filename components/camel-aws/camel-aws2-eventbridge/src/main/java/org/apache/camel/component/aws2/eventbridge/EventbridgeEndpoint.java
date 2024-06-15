@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.aws2.eventbridge;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeClientFactory;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
@@ -38,7 +37,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
                      Category.CLOUD,
                      Category.MANAGEMENT },
              headersClass = EventbridgeConstants.class)
-public class EventbridgeEndpoint extends DefaultEndpoint {
+public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private EventBridgeClient eventbridgeClient;
 
@@ -93,5 +92,30 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "eventbridge";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getEventbusName() != null) {
+            return Map.of("eventbus", configuration.getEventbusName());
+        }
+        return null;
     }
 }
