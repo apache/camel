@@ -27,7 +27,6 @@ import okhttp3.Response;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,13 +38,11 @@ public class SlackConsumerTest extends CamelTestSupport {
     private String hook;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         token = System.getProperty("SLACK_TOKEN");
         hook = System.getProperty("SLACK_HOOK");
 
         assumeCredentials();
-        super.setUp();
     }
 
     @Test

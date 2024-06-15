@@ -39,7 +39,6 @@ import org.apache.camel.component.xmlsecurity.util.SameDocumentUriDereferencer;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -240,16 +239,8 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() {
+    public void doPreSetup() {
         disableJMX();
-        try {
-            super.setUp();
-        } catch (Exception e) {
-            System.err.println("Cannot test due " + e.getMessage());
-            log.warn("Cannot test due {}", e.getMessage(), e);
-            canTest = false;
-        }
     }
 
     private static KeyStore loadKeystore() throws Exception {

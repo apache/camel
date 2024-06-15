@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -28,9 +27,7 @@ public class Jt400DataQueueProducerTest extends Jt400TestSupport {
     private Jt400DataQueueProducer producer;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         Jt400Endpoint endpoint = resolveMandatoryEndpoint(
                 "jt400://user:" + PASSWORD + "@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool",
                 Jt400Endpoint.class);

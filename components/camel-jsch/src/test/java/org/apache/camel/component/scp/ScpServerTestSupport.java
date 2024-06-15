@@ -44,7 +44,6 @@ import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -90,20 +89,16 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory(getScpPath());
         createDirectory(getScpPath());
 
         setupComplete = startSshd();
         setupKnownHosts();
-        super.setUp();
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-
+    public void doPostTearDown() {
         if (sshd != null) {
             try {
                 sshd.stop(true);

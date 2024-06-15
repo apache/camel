@@ -34,7 +34,6 @@ import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.ResponseContent;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,9 +50,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getHttpProcessor())
                 .register("/basic", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
@@ -70,10 +67,8 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
         verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

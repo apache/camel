@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -44,8 +43,8 @@ public class GooglePubsubLiteProducerTest extends CamelTestSupport {
     @Mock
     private Publisher mockPublisher;
 
-    @BeforeEach
-    public void setUp() {
+    @Override
+    public void doPreSetup() {
         MockitoAnnotations.initMocks(this);
     }
 

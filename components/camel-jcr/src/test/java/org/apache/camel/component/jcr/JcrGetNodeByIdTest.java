@@ -17,6 +17,7 @@
 package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
@@ -25,7 +26,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
@@ -37,10 +37,7 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
     private MockEndpoint result;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPreSetup() throws RepositoryException {
         Session session = openSession();
         Node node = session.getRootNode().addNode("home").addNode("test");
         node.setProperty("content.approved", APPROVED);

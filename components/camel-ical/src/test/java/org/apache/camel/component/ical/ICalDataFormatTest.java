@@ -45,8 +45,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -57,20 +55,14 @@ public class ICalDataFormatTest extends CamelTestSupport {
     private java.util.TimeZone defaultTimeZone;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPostSetup() {
         defaultTimeZone = java.util.TimeZone.getDefault();
         java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/New_York"));
-
-        super.setUp();
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         java.util.TimeZone.setDefault(defaultTimeZone);
-
-        super.tearDown();
     }
 
     @Test

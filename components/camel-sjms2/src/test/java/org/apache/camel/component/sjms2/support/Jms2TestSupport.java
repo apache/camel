@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms2.support;
 
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.Session;
 
@@ -54,8 +55,7 @@ public abstract class Jms2TestSupport extends CamelTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws JMSException {
         DefaultCamelContext dcc = (DefaultCamelContext) context;
         while (!dcc.isStopped()) {
             log.info("Waiting on the Camel Context to stop");

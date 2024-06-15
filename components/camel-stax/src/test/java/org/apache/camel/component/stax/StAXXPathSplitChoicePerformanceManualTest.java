@@ -29,7 +29,6 @@ import org.apache.camel.component.stax.model.Order;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -56,10 +55,8 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         createDataFile(log, size);
-        super.setUp();
     }
 
     @Test

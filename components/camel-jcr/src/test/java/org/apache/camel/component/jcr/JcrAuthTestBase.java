@@ -48,9 +48,8 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void doPostSetup() {
         deleteDirectory(REPO_PATH);
-        super.setUp();
     }
 
     @Override

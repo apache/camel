@@ -24,8 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import quickfix.Acceptor;
 import quickfix.DataDictionary;
@@ -54,10 +52,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     private QuickfixjEngine quickfixjEngine;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         tempdir = settingsFile.getParentFile();
         URL[] urls = new URL[] { tempdir.toURI().toURL() };
@@ -72,11 +67,8 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         Thread.currentThread().setContextClassLoader(contextClassLoader);
-
-        super.tearDown();
     }
 
     @Test

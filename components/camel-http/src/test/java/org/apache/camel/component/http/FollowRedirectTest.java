@@ -32,7 +32,7 @@ public class FollowRedirectTest extends BaseHttpTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
@@ -42,8 +42,6 @@ public class FollowRedirectTest extends BaseHttpTest {
                     response.setCode(303);
                 }).create();
         localServer.start();
-
-        super.setUp();
     }
 
     @Test

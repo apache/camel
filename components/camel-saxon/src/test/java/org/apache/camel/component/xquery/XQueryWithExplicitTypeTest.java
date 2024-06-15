@@ -18,7 +18,6 @@ package org.apache.camel.component.xquery;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
@@ -37,10 +36,7 @@ public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         raleighEndpoint = getMockEndpoint("mock:foo.Raleigh");
         tampaEndpoint = getMockEndpoint("mock:foo.Tampa");
     }

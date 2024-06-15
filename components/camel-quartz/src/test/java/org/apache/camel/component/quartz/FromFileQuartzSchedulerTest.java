@@ -21,17 +21,14 @@ import java.io.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FromFileQuartzSchedulerTest extends BaseQuartzTest {
     protected MockEndpoint resultEndpoint;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         FileUtil.removeDir(new File("target/inbox"));
-        super.setUp();
     }
 
     @Test

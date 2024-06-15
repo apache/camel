@@ -44,7 +44,7 @@ public class FtpProducerFileWithCharsetIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         byte[] utf = payload.getBytes(StandardCharsets.UTF_8);
         byte[] iso = payload.getBytes(StandardCharsets.ISO_8859_1);
 
@@ -57,7 +57,6 @@ public class FtpProducerFileWithCharsetIT extends FtpServerTestSupport {
         for (byte b : iso) {
             LOG.debug("iso byte: {}", b);
         }
-        super.setUp();
     }
 
     @Test

@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.stream.StreamGroupLinesTest.LS;
@@ -46,8 +45,7 @@ public class StreamFileTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory("target/stream");
         createDirectory("target/stream");
 
@@ -56,8 +54,6 @@ public class StreamFileTest extends CamelTestSupport {
 
         fos = new FileOutputStream(file);
         fos.write("Hello\n".getBytes());
-
-        super.setUp();
     }
 
     @Test

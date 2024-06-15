@@ -40,7 +40,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
@@ -298,10 +297,8 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPostSetup() {
         deleteDirectory(TEST_DIR);
-        super.setUp();
     }
 
     private static void copy(InputStream in, OutputStream out) throws IOException {

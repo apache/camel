@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -92,8 +91,8 @@ public class TimerRouteTest extends CamelSpringTestSupport {
         return context;
     }
 
-    @AfterEach
-    public void tearDown() {
+    @Override
+    public void doPostTearDown() {
         endpoint.reset();
         reset(mockRegistry, mockTimer);
     }

@@ -37,7 +37,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.leveldb.serializer.JacksonLevelDBSerializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -49,10 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LevelDBCustomSerializationTest extends CamelTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         deleteDirectory("target/data");
-        super.setUp();
     }
 
     @Test

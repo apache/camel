@@ -31,7 +31,6 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -61,9 +60,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     private SpringLdapProducer ldapProducer;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         when(ldapEndpoint.getLdapTemplate()).thenReturn(ldapTemplate);
         ldapProducer = new SpringLdapProducer(ldapEndpoint);
     }

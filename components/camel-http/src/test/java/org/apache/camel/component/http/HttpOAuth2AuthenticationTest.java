@@ -40,7 +40,7 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Authorization", "Bearer " + FAKE_TOKEN);
 
@@ -58,7 +58,6 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
                 .create();
 
         localServer.start();
-        super.setUp();
     }
 
     @Test

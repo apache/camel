@@ -34,7 +34,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.logging.log4j.core.util.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,10 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         TestSupport.deleteDirectory("target/out");
-        super.setUp();
     }
 
     @Test

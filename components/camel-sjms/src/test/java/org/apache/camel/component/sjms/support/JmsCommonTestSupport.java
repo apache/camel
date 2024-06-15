@@ -37,7 +37,6 @@ import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,9 +105,7 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
     protected abstract void setupFactoryExternal(ActiveMQConnectionFactory factory);
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws JMSException {
         stopContext();
 
         closeSession();

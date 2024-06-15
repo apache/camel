@@ -93,7 +93,7 @@ class QueueServiceOperationsIT {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void cleanup() {
         final QueueServiceClient client = QueueClientFactory.createQueueServiceClient(configuration);
 
         client.deleteQueue(queueName1);

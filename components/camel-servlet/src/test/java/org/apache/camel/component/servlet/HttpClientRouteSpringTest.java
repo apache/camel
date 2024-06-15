@@ -18,16 +18,13 @@ package org.apache.camel.component.servlet;
 
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.web.context.ContextLoaderListener;
 
 public class HttpClientRouteSpringTest extends HttpClientRouteTest {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         startCamelContext = false;
-        super.setUp();
     }
 
     @Override

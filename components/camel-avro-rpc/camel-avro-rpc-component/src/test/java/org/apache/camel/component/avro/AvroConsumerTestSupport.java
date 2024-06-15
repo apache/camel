@@ -27,7 +27,6 @@ import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestPojo;
 import org.apache.camel.avro.test.TestReflection;
 import org.apache.camel.avro.test.TestReflectionImpl;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -59,10 +58,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     protected abstract void initializeTranceiver() throws IOException;
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-
+    public void doPostTearDown() throws Exception {
         if (transceiver != null) {
             transceiver.close();
         }

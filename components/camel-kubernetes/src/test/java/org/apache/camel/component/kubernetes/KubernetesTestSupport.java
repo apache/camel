@@ -43,11 +43,10 @@ public class KubernetesTestSupport extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         // INSERT credentials and host here
         authToken = System.getProperty("kubernetes.test.auth");
         host = System.getProperty("kubernetes.test.host");
-        super.setUp();
     }
 
     public static String toUrlEncoded(String str) throws UnsupportedEncodingException {

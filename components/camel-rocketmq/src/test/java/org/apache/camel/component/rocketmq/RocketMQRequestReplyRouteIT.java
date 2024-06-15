@@ -31,7 +31,6 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,8 +68,7 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         replierProducer = new DefaultMQProducer("replierProducer");
         replierProducer.setNamesrvAddr(rocketMQService.nameserverAddress());
         replierProducer.start();
@@ -127,8 +125,8 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    @AfterEach
-    public void tearDown() {
+    @Override
+    public void doPostTearDown() {
         replierConsumer.shutdown();
         replierProducer.shutdown();
     }

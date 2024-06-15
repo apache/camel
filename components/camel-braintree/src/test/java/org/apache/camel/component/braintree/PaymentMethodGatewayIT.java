@@ -28,7 +28,6 @@ import com.braintreegateway.PaymentMethodRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.PaymentMethodGatewayApiMethod;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -72,8 +71,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() {
+    public void doPostTearDown() {
         if (this.gateway != null) {
             for (String token : this.paymentMethodsTokens) {
                 if (this.gateway.paymentMethod().delete(token).isSuccess()) {

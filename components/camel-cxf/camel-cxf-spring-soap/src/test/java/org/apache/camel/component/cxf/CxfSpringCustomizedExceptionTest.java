@@ -29,8 +29,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.interceptor.Fault;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -57,18 +55,14 @@ public class CxfSpringCustomizedExceptionTest extends CamelSpringTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void setupResources() {
         CXFTestSupport.getPort1();
-        super.setUp();
 
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void cleanupResources() {
         IOHelper.close(applicationContext);
-        super.tearDown();
     }
 
     @Test

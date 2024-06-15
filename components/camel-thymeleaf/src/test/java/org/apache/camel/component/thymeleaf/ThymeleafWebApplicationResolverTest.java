@@ -25,7 +25,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -50,11 +49,8 @@ public class ThymeleafWebApplicationResolverTest extends ThymeleafAbstractBaseTe
 
     private JakartaServletWebApplication jakartaServletWebApplication;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-
-        super.setUp();
-
+    @Override
+    public void doPostSetup() throws Exception {
         File initialFile = new File("src/test/resources/WEB-INF/templates/letter.html");
         InputStream targetStream = FileUtils.openInputStream(initialFile);
         Mockito.when(servletContext.getResourceAsStream(anyString())).thenReturn(targetStream);

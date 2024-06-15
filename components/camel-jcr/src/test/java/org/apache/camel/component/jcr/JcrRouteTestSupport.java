@@ -27,7 +27,6 @@ import javax.jcr.SimpleCredentials;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.junit.jupiter.api.BeforeEach;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
@@ -43,10 +42,8 @@ public abstract class JcrRouteTestSupport extends CamelTestSupport {
     private static final Repository repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory(REPO_PATH);
-        super.setUp();
     }
 
     protected Repository getRepository() {

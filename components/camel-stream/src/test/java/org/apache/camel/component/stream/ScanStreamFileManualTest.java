@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -36,15 +35,12 @@ public class ScanStreamFileManualTest extends CamelTestSupport {
     private File file;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory("target/stream");
         createDirectory("target/stream");
 
         file = new File("target/stream/scanstreamfile.txt");
         file.createNewFile();
-
-        super.setUp();
     }
 
     @Test

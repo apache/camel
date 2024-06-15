@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -33,10 +32,8 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 public class LevelDBAggregateConcurrentDifferentGroupsTest extends LevelDBTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         deleteDirectory("target/data");
-        super.setUp();
     }
 
     @Test

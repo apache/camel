@@ -38,9 +38,7 @@ public class SpringBatchJobLauncherIT extends CamelSpringTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() {
         for (String message : inputMessages) {
             template.sendBody("seda:inputQueue", message);
         }

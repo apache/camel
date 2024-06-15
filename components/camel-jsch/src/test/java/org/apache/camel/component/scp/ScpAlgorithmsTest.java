@@ -49,14 +49,6 @@ public class ScpAlgorithmsTest extends ScpServerTestSupport {
         };
     }
 
-    @Override
-    public void setUp() {
-    }
-
-    @Override
-    public void tearDown() {
-    }
-
     @Test
     public void testScpSimpleProduceWithDifferentAlgorithms() throws Exception {
         Config[] configs = new Config[] {

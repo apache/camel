@@ -22,7 +22,6 @@ import jakarta.validation.bootstrap.GenericBootstrap;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
@@ -39,15 +38,12 @@ public class ValidatorFactoryRegistryTest extends CamelTestSupport {
     private ValidatorFactory otherValidatorFactory;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         GenericBootstrap bootstrap = Validation.byDefaultProvider();
         bootstrap.providerResolver(new HibernateValidationProviderResolver());
 
         this.validatorFactory = bootstrap.configure().buildValidatorFactory();
         this.otherValidatorFactory = bootstrap.configure().buildValidatorFactory();
-
-        super.setUp();
     }
 
     @Test

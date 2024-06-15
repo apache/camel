@@ -20,7 +20,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -46,14 +45,12 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         if (oldPropertyValue != null) {
             System.setProperty(KEY, oldPropertyValue);
         } else {
             System.clearProperty(KEY);
         }
-        super.tearDown();
     }
 
     @Override

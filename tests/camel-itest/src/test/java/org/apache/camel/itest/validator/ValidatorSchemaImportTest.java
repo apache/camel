@@ -145,8 +145,7 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);
         invalidEndpoint = resolveMandatoryEndpoint("mock:invalid", MockEndpoint.class);
         finallyEndpoint = resolveMandatoryEndpoint("mock:finally", MockEndpoint.class);

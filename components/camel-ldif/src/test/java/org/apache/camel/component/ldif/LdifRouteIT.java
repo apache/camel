@@ -46,7 +46,6 @@ import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -110,8 +109,8 @@ public class LdifRouteIT extends LdifTestSupport {
         return reg;
     }
 
-    @AfterEach
-    public void tearDown() {
+    @Override
+    public void doPostTearDown() {
         if (camel != null) {
             camel.stop();
         }

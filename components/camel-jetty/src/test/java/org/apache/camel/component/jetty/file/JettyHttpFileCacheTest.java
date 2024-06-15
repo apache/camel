@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
@@ -33,10 +32,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
                                               + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         context.getStreamCachingStrategy().setSpoolThreshold(16);
         context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
         deleteDirectory("target/cachedir");

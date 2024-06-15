@@ -21,8 +21,6 @@ import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestReflectionImpl;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,18 +29,13 @@ public class AvroNettySpringConsumerTest extends AvroNettyConsumerTest {
     private AbstractApplicationContext applicationContext;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() {
         keyValue = (KeyValueProtocolImpl) applicationContext.getBean("keyValue");
         testReflection = (TestReflectionImpl) applicationContext.getBean("testReflection");
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() {
 
         IOHelper.close(applicationContext);
     }

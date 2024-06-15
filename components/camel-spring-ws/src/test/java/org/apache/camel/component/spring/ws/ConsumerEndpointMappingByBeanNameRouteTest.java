@@ -24,7 +24,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,9 +40,7 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
         expectedResponse = context.getTypeConverter().convertTo(String.class,
                 getClass().getResourceAsStream("/stockquote-response.txt"));

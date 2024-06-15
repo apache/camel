@@ -238,7 +238,7 @@ class QueueOperationsIT extends CamelTestSupport {
     }
 
     @AfterAll
-    public void tearDown() {
+    public void cleanup() {
         // make sure to clean everything
         final List<QueueItem> queues = serviceClientWrapper.listQueues(null, null);
 

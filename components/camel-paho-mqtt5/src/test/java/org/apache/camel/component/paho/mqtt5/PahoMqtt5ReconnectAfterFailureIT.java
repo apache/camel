@@ -34,7 +34,6 @@ import org.apache.camel.test.infra.mosquitto.services.MosquittoRemoteService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,9 +89,7 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() {
         service.shutdown();
     }
 

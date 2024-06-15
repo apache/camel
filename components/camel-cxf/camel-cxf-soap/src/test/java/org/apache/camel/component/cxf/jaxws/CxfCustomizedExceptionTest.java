@@ -43,8 +43,6 @@ import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.interceptor.Fault;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -78,18 +76,13 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     private Bus bus;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void setupResources() {
         bus = BusFactory.getDefaultBus();
-        super.setUp();
-
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void cleanupResources() {
         //TODO need to shutdown the server
-        super.tearDown();
     }
 
     @Override

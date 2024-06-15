@@ -26,7 +26,6 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -42,11 +41,7 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-
-        super.setUp();
-
+    public void doPostSetup() {
         // create a template file in the classpath
         template.sendBodyAndHeader(
                 "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
