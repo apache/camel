@@ -965,14 +965,17 @@ public class XmlConverter {
     }
 
     public DocumentBuilderFactory getDocumentBuilderFactory(Exchange exchange) {
-        DocumentBuilderFactory answer = getDocumentBuilderFactory();
-        // Get the DocumentBuilderFactory from the exchange header first
+        DocumentBuilderFactory answer = null;
         if (exchange != null) {
+            // use custom factory is provided on the exchange
             DocumentBuilderFactory factory
                     = exchange.getProperty(Exchange.DOCUMENT_BUILDER_FACTORY, DocumentBuilderFactory.class);
             if (factory != null) {
                 answer = factory;
             }
+        }
+        if (answer == null) {
+            answer = getDocumentBuilderFactory();
         }
         return answer;
     }
