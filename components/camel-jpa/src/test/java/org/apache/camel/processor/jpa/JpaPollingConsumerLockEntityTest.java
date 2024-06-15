@@ -34,10 +34,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
 
     @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void setupBeans() {
         Customer customer = new Customer();
         customer.setName("Donald Duck");
         saveEntityInDB(customer);

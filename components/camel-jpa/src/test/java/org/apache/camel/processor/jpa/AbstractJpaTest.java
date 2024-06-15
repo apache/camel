@@ -41,10 +41,8 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     protected TransactionTemplate transactionTemplate;
     protected EntityManager entityManager;
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setupEntityManager() {
         EntityManagerFactory entityManagerFactory = applicationContext.getBean("entityManagerFactory",
                 EntityManagerFactory.class);
         transactionTemplate = applicationContext.getBean("transactionTemplate", TransactionTemplate.class);
@@ -52,10 +50,8 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
         cleanupRepository();
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void cleanupEntityManager() {
         if (entityManager != null) {
             entityManager.close();
         }

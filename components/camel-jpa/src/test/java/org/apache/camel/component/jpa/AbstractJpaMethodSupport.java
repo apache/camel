@@ -38,9 +38,8 @@ public class AbstractJpaMethodSupport extends CamelTestSupport {
     protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
 
-    @Override
     @AfterEach
-    public void tearDown() {
+    public void closeEntityManager() {
         if (entityManager != null) {
             entityManager.close();
         }
