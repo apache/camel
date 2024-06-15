@@ -50,7 +50,7 @@ public class MultiRestConsumer extends DefaultConsumer {
                     null, null, null, config, Collections.emptyMap());
             configurer.configure(consumer);
 
-            context.getRestRegistry().addRestService(consumer, url, url, path, null, method,
+            context.getRestRegistry().addRestService(consumer, false, url, url, path, null, method,
                     null, null, null, null, null, null);
 
             this.delegateConsumers.add(consumer);

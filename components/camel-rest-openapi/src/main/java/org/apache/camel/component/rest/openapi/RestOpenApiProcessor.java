@@ -186,7 +186,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                 if (consumer instanceof RouteAware ra) {
                     routeId = ra.getRoute().getRouteId();
                 }
-                camelContext.getRestRegistry().addRestService(consumer, url, path, basePath, null, v, bc.getConsumes(),
+                camelContext.getRestRegistry().addRestService(consumer, true, url, path, basePath, null, v, bc.getConsumes(),
                         bc.getProduces(), bc.getType(), bc.getOutType(), routeId, desc);
 
                 RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);

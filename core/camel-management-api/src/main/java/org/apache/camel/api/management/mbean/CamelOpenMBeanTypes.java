@@ -60,13 +60,13 @@ public final class CamelOpenMBeanTypes {
                 "rests", "Rest Services",
                 new String[] {
                         "url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType", "outType",
-                        "state", "description" },
+                        "kind", "state", "description" },
                 new String[] {
                         "Url", "Base Url", "Base Path", "Uri Template", "Method", "Consumes", "Produces", "Input Type",
-                        "Output Type", "State", "Description" },
+                        "Output Type", "Kind", "State", "Description" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING,
+                        SimpleType.STRING, SimpleType.STRING,
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
     }
 

@@ -77,6 +77,7 @@ public class RestDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             jo.put("url", rs.getUrl());
             jo.put("method", rs.getMethod());
+            jo.put("contractFirst", rs.isContractFirst());
             jo.put("state", rs.getState());
             if (rs.getConsumes() != null) {
                 jo.put("consumes", rs.getConsumes());

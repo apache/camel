@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -34,9 +35,9 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "platform-http",
-         description = "Get embedded HTTP services of Camel integrations", sortOptions = false)
-public class ListPlatformHttp extends ProcessWatchCommand {
+@Command(name = "rest",
+         description = "Get REST services of Camel integrations", sortOptions = false)
+public class ListRest extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -45,7 +46,11 @@ public class ListPlatformHttp extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
-    public ListPlatformHttp(CamelJBangMain main) {
+    @CommandLine.Option(names = { "--verbose" },
+                        description = "Show more details")
+    boolean verbose;
+
+    public ListRest(CamelJBangMain main) {
         super(main);
     }
 
@@ -73,20 +78,19 @@ public class ListPlatformHttp extends ProcessWatchCommand {
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("platform-http");
+                        JsonObject jo = (JsonObject) root.get("rests");
                         if (jo != null) {
-                            String server = jo.getString("server");
-                            JsonArray arr = (JsonArray) jo.get("endpoints");
+                            JsonArray arr = (JsonArray) jo.get("rests");
                             if (arr != null) {
                                 for (int i = 0; i < arr.size(); i++) {
                                     row = row.copy();
                                     jo = (JsonObject) arr.get(i);
-                                    row.server = server;
                                     row.url = jo.getString("url");
-                                    row.path = jo.getString("path");
-                                    row.verbs = jo.getString("verbs");
+                                    row.method = jo.getString("method").toUpperCase(Locale.ROOT);
                                     row.consumes = jo.getString("consumes");
                                     row.produces = jo.getString("produces");
+                                    row.description = jo.getString("description");
+                                    row.contractFirst = jo.getBooleanOrDefault("contractFirst", false);
                                     rows.add(row);
                                 }
                             }
@@ -103,11 +107,17 @@ public class ListPlatformHttp extends ProcessWatchCommand {
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("URL").dataAlign(HorizontalAlign.LEFT).with(r -> r.url),
-                    new Column().header("METHOD").dataAlign(HorizontalAlign.LEFT).with(r -> r.verbs),
+                    new Column().header("METHOD").dataAlign(HorizontalAlign.LEFT).with(r -> r.method),
+                    new Column().header("FIRST").visible(verbose).dataAlign(HorizontalAlign.LEFT).with(this::getKind),
+                    new Column().header("DESCRIPTION").visible(verbose).maxWidth(40, OverflowBehaviour.NEWLINE).dataAlign(HorizontalAlign.LEFT).with(r -> r.description),
                     new Column().header("CONTENT-TYPE").dataAlign(HorizontalAlign.LEFT).with(this::getContent))));
         }
 
         return 0;
+    }
+
+    private String getKind(Row r) {
+        return r.contractFirst ? "Contract" : "Code";
     }
 
     private String getContent(Row r) {
@@ -150,12 +160,12 @@ public class ListPlatformHttp extends ProcessWatchCommand {
         String name;
         String age;
         long uptime;
-        String server;
         String url;
-        String path;
-        String verbs;
+        String method;
         String consumes;
         String produces;
+        String description;
+        boolean contractFirst;
 
         Row copy() {
             try {

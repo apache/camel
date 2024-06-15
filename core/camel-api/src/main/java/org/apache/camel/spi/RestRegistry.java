@@ -38,6 +38,11 @@ public interface RestRegistry extends StaticService {
         Consumer getConsumer();
 
         /**
+         * Is the rest service based on code-first or contract-first
+         */
+        boolean isContractFirst();
+
+        /**
          * Gets the state of the REST service (started, stopped, etc)
          */
         String getState();
@@ -101,23 +106,23 @@ public interface RestRegistry extends StaticService {
     /**
      * Adds a new REST service to the registry.
      *
-     * @param consumer    the consumer
-     * @param url         the absolute url of the REST service
-     * @param baseUrl     the base url of the REST service
-     * @param basePath    the base path
-     * @param uriTemplate the uri template
-     * @param method      the HTTP method
-     * @param consumes    optional details about what media-types the REST service accepts
-     * @param produces    optional details about what media-types the REST service returns
-     * @param inType      optional detail input binding to a FQN class name
-     * @param outType     optional detail output binding to a FQN class name
-     * @param routeId     the id of the route this rest service will be using
-     * @param description optional description about the service
+     * @param consumer      the consumer
+     * @param contractFirst is the rest service based on code-first or contract-first
+     * @param url           the absolute url of the REST service
+     * @param baseUrl       the base url of the REST service
+     * @param basePath      the base path
+     * @param uriTemplate   the uri template
+     * @param method        the HTTP method
+     * @param consumes      optional details about what media-types the REST service accepts
+     * @param produces      optional details about what media-types the REST service returns
+     * @param inType        optional detail input binding to a FQN class name
+     * @param outType       optional detail output binding to a FQN class name
+     * @param routeId       the id of the route this rest service will be using
+     * @param description   optional description about the service
      */
     void addRestService(
-            Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method, String consumes,
-            String produces,
-            String inType, String outType, String routeId, String description);
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate, String method,
+            String consumes, String produces, String inType, String outType, String routeId, String description);
 
     /**
      * Removes the REST service from the registry

@@ -11,13 +11,15 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 The class `org.apache.camel.impl.engine.ValidatorKey` moved to `org.apache.camel.spi.ValidatorKey`.
 The class `org.apache.camel.impl.engine.TransformerKey` moved to `org.apache.camel.spi.TransformerKey`.
 
+The `org.apache.camel.spi.RestRegistry` method `addRestService` has added `boolean contractFirst` parameter to define
+if the Rest service is _contract-first_ or _code-first_.
 
 === camel-core
 
 Add default values to `ThrottlingExceptionRoutePolicy` route policy.
 
 The `EndpointRegistry` interface has been slightly changed to now directly extends `Map<NormalizedEndpointUri, Endpoint>` 
-instead of being a parameterized type.  This may cause some compilation failures if the code is declaring a variable for the registry.
+instead of being a parameterized type. This may cause some compilation failures if the code is declaring a variable for the registry.
 
 === camel-health
 

@@ -48,10 +48,10 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
     @Override
     public void addRestService(
-            Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate, String method,
             String consumes, String produces, String inType, String outType, String routeId, String description) {
         RestServiceEntry entry = new RestServiceEntry(
-                consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, description);
+                consumer, contractFirst, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, description);
         List<RestService> list = registry.computeIfAbsent(consumer, c -> new ArrayList<>());
         list.add(entry);
     }
@@ -167,6 +167,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private static final class RestServiceEntry implements RestService {
 
         private final Consumer consumer;
+        private final boolean contractFirst;
         private final String url;
         private final String baseUrl;
         private final String basePath;
@@ -178,11 +179,11 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         private final String outType;
         private final String description;
 
-        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate,
-                                 String method,
-                                 String consumes, String produces, String inType, String outType,
-                                 String description) {
+        private RestServiceEntry(Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath,
+                                 String uriTemplate, String method, String consumes, String produces,
+                                 String inType, String outType, String description) {
             this.consumer = consumer;
+            this.contractFirst = contractFirst;
             this.url = url;
             this.baseUrl = baseUrl;
             this.basePath = basePath;
@@ -198,6 +199,11 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         @Override
         public Consumer getConsumer() {
             return consumer;
+        }
+
+        @Override
+        public boolean isContractFirst() {
+            return contractFirst;
         }
 
         @Override

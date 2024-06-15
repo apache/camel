@@ -983,6 +983,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("platform-http", json);
                     }
                 }
+                DevConsole dc19 = dcr.resolveById("rest");
+                if (dc19 != null) {
+                    JsonObject json = (JsonObject) dc19.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("rests", json);
+                    }
+                }
             }
             // various details
             JsonObject mem = collectMemory();
