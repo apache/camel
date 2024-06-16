@@ -125,8 +125,6 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new DependencyList(main)))
                         .addSubcommand("copy", new CommandLine(new DependencyCopy(main)))
                         .addSubcommand("update", new CommandLine(new DependencyUpdate(main))))
-                .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
-                        .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("sbom", new CommandLine(new SBOMGenerator(main)))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
                         .addSubcommand("component", new CommandLine(new CatalogComponent(main)))

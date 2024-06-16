@@ -25,7 +25,8 @@ import java.util.Optional;
  */
 public enum PluginType {
 
-    CAMEL_K("camel-k", "k", "Manage Camel integrations on Kubernetes");
+    CAMEL_K("camel-k", "k", "Manage Camel integrations on Kubernetes"),
+    GENERATE("generate", "generate", "Generate code such as DTOs");
 
     private final String name;
     private final String command;

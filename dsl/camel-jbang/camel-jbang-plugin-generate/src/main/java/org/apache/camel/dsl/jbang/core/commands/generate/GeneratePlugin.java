@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.commands.generate;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "generate", description = "Generate source code (use --help to see sub commands)")
-public class CodeGenerator extends CamelCommand {
-
-    public CodeGenerator(CamelJBangMain main) {
-        super(main);
-    }
+@CamelJBangPlugin("camel-jbang-plugin-generate")
+public class GeneratePlugin implements Plugin {
 
     @Override
-    public Integer doCall() throws Exception {
-        new CommandLine(this).execute("--help");
-        return 0;
+    public void customize(CommandLine commandLine, CamelJBangMain main) {
+        var cmd = new picocli.CommandLine(new CodeGenerator(main))
+                .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main)));
+
+        commandLine.addSubcommand("generate", cmd);
     }
+
 }

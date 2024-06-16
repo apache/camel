@@ -594,7 +594,8 @@ public class RestEndpoint extends DefaultEndpoint {
             // add to rest registry, so we can keep track of them, we will remove from the registry when the consumer is removed
             // the rest registry will automatically keep track when the consumer is removed,
             // and un-register the REST service from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(), getMethod(),
+            getCamelContext().getRestRegistry().addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(),
+                    getMethod(),
                     getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
             return consumer;
         } else {

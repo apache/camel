@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +31,8 @@ import io.apicurio.datamodels.models.Document;
 import io.apicurio.datamodels.models.ModelType;
 import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.Level;

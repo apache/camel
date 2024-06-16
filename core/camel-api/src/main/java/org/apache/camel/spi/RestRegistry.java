@@ -121,7 +121,8 @@ public interface RestRegistry extends StaticService {
      * @param description   optional description about the service
      */
     void addRestService(
-            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate, String method,
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate,
+            String method,
             String consumes, String produces, String inType, String outType, String routeId, String description);
 
     /**
