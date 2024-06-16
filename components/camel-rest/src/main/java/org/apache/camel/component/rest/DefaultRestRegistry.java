@@ -48,10 +48,12 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
     @Override
     public void addRestService(
-            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate, String method,
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate,
+            String method,
             String consumes, String produces, String inType, String outType, String routeId, String description) {
         RestServiceEntry entry = new RestServiceEntry(
-                consumer, contractFirst, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, description);
+                consumer, contractFirst, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType,
+                description);
         List<RestService> list = registry.computeIfAbsent(consumer, c -> new ArrayList<>());
         list.add(entry);
     }
