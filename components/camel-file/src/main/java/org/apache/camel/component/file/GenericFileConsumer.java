@@ -612,6 +612,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     private boolean notUnique(GenericFile<T> file) {
+        boolean answer = false;
         // use absolute file path as default key, but evaluate if an
         // expression key was configured
         String key = file.getAbsoluteFilePath();
@@ -620,13 +621,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
             LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
         }
-        if (key != null && endpoint.getIdempotentRepository().contains(key)) {
-            LOG.trace(
-                    "This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}",
-                    key, file);
-            return true;
+        if (key != null) {
+            answer = endpoint.isIdempotentEager()
+                    ? !endpoint.getIdempotentRepository().add(key) : endpoint.getIdempotentRepository().contains(key);
+            if (answer) {
+                LOG.trace(
+                        "This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}",
+                        key, file);
+            }
         }
-        return false;
+        return answer;
     }
 
     /**

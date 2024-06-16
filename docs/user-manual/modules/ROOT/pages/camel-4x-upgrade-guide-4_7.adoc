@@ -84,6 +84,11 @@ To:
 </route>
 ----
 
+=== camel-file
+
+When using `idempontent=true` then the file consumer will now run in eager mode, and `add` the file to the repository
+before processing, and call `confirm` when done. Setting `idempontentEager=false` will use the old behaviour.
+
 === camel-jbang
 
 The `generate` commands has been moved into separate plugin which you need to install first to be able to use.

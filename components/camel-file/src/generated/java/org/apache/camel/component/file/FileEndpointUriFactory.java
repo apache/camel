@@ -23,7 +23,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(97);
+        Set<String> props = new HashSet<>(98);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -62,6 +62,7 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("forceWrites");
         props.add("greedy");
         props.add("idempotent");
+        props.add("idempotentEager");
         props.add("idempotentKey");
         props.add("idempotentRepository");
         props.add("inProgressRepository");
