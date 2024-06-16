@@ -88,6 +88,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forceWrites": target.setForceWrites(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "idempotent": target.setIdempotent(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "idempotenteager":
+        case "idempotentEager": target.setIdempotentEager(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "idempotentkey":
         case "idempotentKey": target.setIdempotentKey(property(camelContext, java.lang.String.class, value)); return true;
         case "idempotentrepository":
@@ -270,6 +272,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forceWrites": return boolean.class;
         case "greedy": return boolean.class;
         case "idempotent": return java.lang.Boolean.class;
+        case "idempotenteager":
+        case "idempotentEager": return java.lang.Boolean.class;
         case "idempotentkey":
         case "idempotentKey": return java.lang.String.class;
         case "idempotentrepository":
@@ -453,6 +457,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "forceWrites": return target.isForceWrites();
         case "greedy": return target.isGreedy();
         case "idempotent": return target.getIdempotent();
+        case "idempotenteager":
+        case "idempotentEager": return target.getIdempotentEager();
         case "idempotentkey":
         case "idempotentKey": return target.getIdempotentKey();
         case "idempotentrepository":

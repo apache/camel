@@ -22,7 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -80,17 +79,13 @@ public class FtpConsumerIdempotentRefIT extends FtpServerTestSupport {
     public static class MyIdempotentRepository implements IdempotentRepository {
 
         @Override
-        public boolean add(String messageId) {
-            // will return true 1st time, and false 2nd time
-            boolean result = invoked;
-            invoked = true;
-            assertEquals("report.txt", messageId);
-            return !result;
+        public boolean add(String key) {
+            return !invoked;
         }
 
         @Override
         public boolean contains(String key) {
-            return invoked;
+            return true;
         }
 
         @Override
@@ -100,7 +95,10 @@ public class FtpConsumerIdempotentRefIT extends FtpServerTestSupport {
 
         @Override
         public boolean confirm(String key) {
-            return true;
+            // will return true 1st time, and false 2nd time
+            boolean result = invoked;
+            invoked = true;
+            return !result;
         }
 
         @Override

@@ -40,6 +40,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
@@ -276,6 +277,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                                + "LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid "
                                                                                + "consuming the same files over and over again.")
     protected Boolean idempotent;
+    @UriParam(label = "consumer,filter", defaultValue = "false", description = "Option to use the Idempotent "
+                                                                               + "Consumer EIP pattern to let Camel skip already processed files. Will by default use a memory based "
+                                                                               + "LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid "
+                                                                               + "consuming the same files over and over again.")
+    @Metadata(label = "consumer,filter", javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Sets whether to eagerly add the filename to the idempotent repository or wait until the exchange is complete.")
+    private Boolean idempotentEager = Boolean.TRUE;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String", description = "To use a custom idempotent "
                                                                                       + "key. By default the absolute path of the file is used. You can use the File Language, for example to "
                                                                                       + "use the file name and file size, you can do: idempotentKey=${file:name}-${file:size}")
@@ -865,6 +873,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return idempotent != null ? idempotent : false;
     }
 
+    public boolean isIdempotentEager() {
+        return idempotentEager != null ? idempotentEager : false;
+    }
+
     public String getCharset() {
         return charset;
     }
@@ -896,6 +908,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setIdempotent(Boolean idempotent) {
         this.idempotent = idempotent;
+    }
+
+    public Boolean getIdempotentEager() {
+        return idempotentEager;
+    }
+
+    /**
+     * Sets whether to eagerly add the key to the idempotent repository or wait until the exchange is complete.
+     */
+    public void setIdempotentEager(Boolean idempotentEager) {
+        this.idempotentEager = idempotentEager;
     }
 
     public Expression getIdempotentKey() {
