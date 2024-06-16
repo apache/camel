@@ -874,6 +874,43 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
+         * already processed files. Will by default use a memory based LRUCache
+         * that holds 1000 entries. If noop=true then idempotent will be enabled
+         * as well to avoid consuming the same files over and over again.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: filter
+         * 
+         * @param idempotentEager the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder idempotentEager(Boolean idempotentEager) {
+            doSetProperty("idempotentEager", idempotentEager);
+            return this;
+        }
+        /**
+         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
+         * already processed files. Will by default use a memory based LRUCache
+         * that holds 1000 entries. If noop=true then idempotent will be enabled
+         * as well to avoid consuming the same files over and over again.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: filter
+         * 
+         * @param idempotentEager the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder idempotentEager(String idempotentEager) {
+            doSetProperty("idempotentEager", idempotentEager);
+            return this;
+        }
+        /**
          * To use a custom idempotent key. By default the absolute path of the
          * file is used. You can use the File Language, for example to use the
          * file name and file size, you can do:

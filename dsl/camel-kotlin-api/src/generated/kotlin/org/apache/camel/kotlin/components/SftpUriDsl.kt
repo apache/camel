@@ -1071,6 +1071,24 @@ public class SftpUriDsl(
   }
 
   /**
+   * Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files.
+   * Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent
+   * will be enabled as well to avoid consuming the same files over and over again.
+   */
+  public fun idempotentEager(idempotentEager: String) {
+    it.property("idempotentEager", idempotentEager)
+  }
+
+  /**
+   * Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files.
+   * Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent
+   * will be enabled as well to avoid consuming the same files over and over again.
+   */
+  public fun idempotentEager(idempotentEager: Boolean) {
+    it.property("idempotentEager", idempotentEager.toString())
+  }
+
+  /**
    * To use a custom idempotent key. By default the absolute path of the file is used. You can use
    * the File Language, for example to use the file name and file size, you can do:
    * idempotentKey=${file:name}-${file:size}
