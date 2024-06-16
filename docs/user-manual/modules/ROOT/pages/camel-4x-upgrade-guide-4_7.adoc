@@ -84,6 +84,17 @@ To:
 </route>
 ----
 
+=== camel-jbang
+
+The `generate` commands has been moved into separate plugin which you need to install first to be able to use.
+
+[source,bash]
+----
+camel plugin add generate
+----
+
+TIP: You can see list of available plugins using `camel plugin get --all`.
+
 === camel-jetty / camel-servlet / camel-undertow
 
 When using embedded HTTP server (consumer) then the headers `CamelHttpServletRequest` and `CamelHttpServletResponse`

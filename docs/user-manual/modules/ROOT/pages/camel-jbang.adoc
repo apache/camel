@@ -1016,8 +1016,9 @@ camel plugin get --all
 ----
 Supported plugins:
 
- NAME     COMMAND  DEPENDENCY                             DESCRIPTION
- camel-k  k        org.apache.camel:camel-jbang-plugin-k  Manage Camel integrations on Kubernetes
+ NAME      COMMAND   DEPENDENCY                                    DESCRIPTION
+ camel-k   k         org.apache.camel:camel-jbang-plugin-k         Manage Camel integrations on Kubernetes
+ generate  generate  org.apache.camel:camel-jbang-plugin-generate  Generate code such as DTOs
 ----
 
 In case you want to enable a plugin and its functionality you can add it as follows:
@@ -1025,6 +1026,13 @@ In case you want to enable a plugin and its functionality you can add it as foll
 [source,bash]
 ----
 camel plugin add <plugin-name>
+----
+
+For example to install `generate` you execute:
+
+[source,bash]
+----
+camel plugin add generate
 ----
 
 This adds the plugin and all subcommands are now available for execution.

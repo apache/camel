@@ -109,7 +109,8 @@ public class ListRest extends ProcessWatchCommand {
                     new Column().header("URL").dataAlign(HorizontalAlign.LEFT).with(r -> r.url),
                     new Column().header("METHOD").dataAlign(HorizontalAlign.LEFT).with(r -> r.method),
                     new Column().header("FIRST").visible(verbose).dataAlign(HorizontalAlign.LEFT).with(this::getKind),
-                    new Column().header("DESCRIPTION").visible(verbose).maxWidth(40, OverflowBehaviour.NEWLINE).dataAlign(HorizontalAlign.LEFT).with(r -> r.description),
+                    new Column().header("DESCRIPTION").visible(verbose).maxWidth(40, OverflowBehaviour.NEWLINE)
+                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.description),
                     new Column().header("CONTENT-TYPE").dataAlign(HorizontalAlign.LEFT).with(this::getContent))));
         }
 
