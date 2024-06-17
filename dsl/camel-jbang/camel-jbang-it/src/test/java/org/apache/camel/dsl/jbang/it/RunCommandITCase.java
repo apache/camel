@@ -131,10 +131,10 @@ public class RunCommandITCase extends JBangTestSupport {
     public void runDownloadedInDirectoryFromGithubTest() {
         execute("init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory="
                 + mountPoint());
-        Assertions.assertThat(Paths.get(getDataFolder()).toFile().listFiles())
+        Assertions.as("custom route directory")
+                .assertThat(Paths.get(getDataFolder()).toFile().listFiles())
                 .extracting("name")
-                .containsExactlyInAnyOrder("Echo.java", "Hello.java", "README.adoc", "application.properties")
-                .as("custom route directory");
+                .containsExactlyInAnyOrder("Echo.java", "Hello.java", "README.adoc", "application.properties");
         executeBackground(String.format("run %s/*", mountPoint()));
         checkLogContains("JackJack!! from Echo");
     }
