@@ -98,9 +98,12 @@ product which is a repackaging of Apache Camel including a full,
 pre-configured OSGi runtime container.
 
 
-== https://talismancloud.io[Talisman Cloud, Inc]
+== https://talismanplatform.com[Talisman Platform]
 
-https://talismancloud.io[Talisman Cloud, Inc] provides support subscription and consulting services for Apache Camel Karavan.
+The https://talismanplatform.com[Talisman Platform] is a production-ready data integration platform designed for business-critical integrations. 
+Designed to facilitate integration driven by the robust capabilities of Apache Camel, 
+building on top of https://github.com/apache/camel-karavan[Apache Camel Karavan], the Talisman Platform offers exclusive additional features to enhance your integration experience. 
+These include Authentication and Authorization mechanisms, advanced Monitoring and Observability tools, and a comprehensive API Gateway.
 
 
 == http://touk.pl[TouK]
