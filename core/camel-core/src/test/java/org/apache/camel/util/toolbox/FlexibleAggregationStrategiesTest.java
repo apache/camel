@@ -125,6 +125,17 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
     }
 
     @Test
+    public void testFlexibleAggregationStrategyStoreInVariableSingleValue() throws Exception {
+        getMockEndpoint("mock:result7").expectedMessageCount(1);
+        getMockEndpoint("mock:result7").message(0).variable("AggregationResult").isInstanceOf(String.class);
+        getMockEndpoint("mock:result7").message(0).variable("AggregationResult").isEqualTo("AGGREGATE1");
+
+        template.sendBody("direct:start7", "AGGREGATE1");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     @SuppressWarnings("rawtypes")
     public void testFlexibleAggregationStrategyGenericArrayListWithoutNulls() throws Exception {
         getMockEndpoint("mock:result4").expectedMessageCount(1);
@@ -266,6 +277,11 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
                         .aggregate(AggregationStrategies.flexible(Integer.class).ignoreInvalidCasts().storeNulls()
                                 .accumulateInCollection(ArrayList.class))
                         .constant(true).completionSize(3).to("mock:result6");
+
+                from("direct:start7")
+                        .aggregate(AggregationStrategies.flexible(String.class).storeInVariable("AggregationResult"))
+                        .constant(true).completionSize(1)
+                        .to("mock:result7");
 
                 AggregationStrategy timeoutCompletionStrategy
                         = AggregationStrategies.flexible(String.class).condition(simple("${body} contains 'AGGREGATE'"))
