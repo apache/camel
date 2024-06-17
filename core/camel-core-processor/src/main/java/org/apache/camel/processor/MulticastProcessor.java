@@ -62,9 +62,11 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -169,7 +171,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private ExecutorService aggregateExecutorService;
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
-    private final ConcurrentMap<Processor, Processor> errorHandlers = new ConcurrentHashMap<>();
+    private final int cacheSize;
+    private final ConcurrentMap<Processor, Processor> errorHandlers;
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
@@ -178,7 +181,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
                               AggregationStrategy aggregationStrategy) {
-        this(camelContext, route, processors, aggregationStrategy, false, null, false, false, false, 0, null, false, false);
+        this(camelContext, route, processors, aggregationStrategy, false, null,
+             false, false, false, 0, null,
+             false, false, CamelContextHelper.getMaximumCachePoolSize(camelContext));
     }
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
@@ -186,7 +191,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                               boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
-                              boolean parallelAggregate) {
+                              boolean parallelAggregate, int cacheSize) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.internalProcessorFactory = PluginHelper.getInternalProcessorFactory(camelContext);
@@ -207,6 +212,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.parallelAggregate = parallelAggregate;
         this.processorExchangeFactory = camelContext.getCamelContextExtension()
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.cacheSize = cacheSize;
+        if (cacheSize >= 0) {
+            this.errorHandlers = (ConcurrentMap) LRUCacheFactory.newLRUCache(cacheSize);
+        } else {
+            // no cache
+            this.errorHandlers = null;
+        }
     }
 
     @Override
@@ -1021,6 +1033,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
+    @SuppressWarnings("unchecked")
     protected Processor wrapInErrorHandler(Route route, Exchange exchange, Processor processor) {
         Processor answer;
         Processor key = processor;
@@ -1038,7 +1051,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             // for the entire multicast block again which will start from scratch again
 
             // lookup cached first to reuse and preserve memory
-            answer = errorHandlers.get(key);
+            answer = errorHandlers != null ? errorHandlers.get(key) : null;
             if (answer != null) {
                 LOG.trace("Using existing error handler for: {}", key);
                 return answer;
@@ -1057,16 +1070,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 ServiceHelper.startService(answer);
 
                 // here we don't cache the child unit of work
-                if (!child) {
-                    // add to cache
-                    // TODO returned value ignored intentionally?
-                    // Findbugs alert:
-                    // The putIfAbsent method is typically used to ensure that a single value
-                    // is associated with a given key (the first value for which put if absent succeeds).
-                    // If you ignore the return value and retain a reference to the value passed in,
-                    // you run the risk of retaining a value that is not the one that is associated
-                    // with the key in the map. If it matters which one you use and you use the one
-                    // that isn't stored in the map, your program will behave incorrectly.
+                if (!child && errorHandlers != null) {
                     errorHandlers.putIfAbsent(key, answer);
                 }
 
@@ -1158,7 +1162,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
         // only clear error handlers when shutting down
-        errorHandlers.clear();
+        if (errorHandlers != null) {
+            errorHandlers.clear();
+        }
 
         if (shutdownExecutorService && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
@@ -1263,6 +1269,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
      */
     public long getTimeout() {
         return timeout;
+    }
+
+    /**
+     * Maximum cache size used for reusing processors
+     */
+    public int getCacheSize() {
+        return cacheSize;
     }
 
     /**

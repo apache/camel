@@ -162,10 +162,11 @@ public class RecipientListProcessor extends MulticastProcessor {
                                   AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                                   boolean streaming, boolean stopOnException,
-                                  long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate) {
+                                  long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate,
+                                  int cacheSize) {
         super(camelContext, route, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
               streaming, stopOnException, timeout, onPrepare,
-              shareUnitOfWork, parallelAggregate);
+              shareUnitOfWork, parallelAggregate, cacheSize);
         this.expression = expression;
         this.delimiter = delimiter;
         this.producerCache = producerCache;
