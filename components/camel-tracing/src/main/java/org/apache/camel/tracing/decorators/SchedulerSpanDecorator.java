@@ -16,16 +16,16 @@
  */
 package org.apache.camel.tracing.decorators;
 
-public class JettySpanDecorator extends AbstractHttpSpanDecorator {
+public class SchedulerSpanDecorator extends TimerSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "jetty";
+        return "scheduler";
     }
 
     @Override
     public String getComponentClassName() {
-        return "org.apache.camel.component.jetty12.JettyHttpComponent12";
+        return "org.apache.camel.component.scheduler.SchedulerComponent";
     }
 
 }

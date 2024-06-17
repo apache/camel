@@ -16,16 +16,29 @@
  */
 package org.apache.camel.tracing.decorators;
 
-public class JettySpanDecorator extends AbstractHttpSpanDecorator {
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+
+public class FileSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "jetty";
+        return "file";
     }
 
     @Override
     public String getComponentClassName() {
-        return "org.apache.camel.component.jetty12.JettyHttpComponent12";
+        return "org.apache.camel.component.file.FileComponent";
+    }
+
+    @Override
+    public String getOperationName(Exchange exchange, Endpoint endpoint) {
+        Object name = exchange.getMessage().getHeader(Exchange.FILE_NAME);
+        if (name instanceof String) {
+            return (String) name;
+        }
+
+        return super.getOperationName(exchange, endpoint);
     }
 
 }

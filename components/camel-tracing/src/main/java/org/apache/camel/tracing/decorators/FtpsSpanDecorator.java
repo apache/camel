@@ -16,16 +16,16 @@
  */
 package org.apache.camel.tracing.decorators;
 
-public class JettySpanDecorator extends AbstractHttpSpanDecorator {
+public class FtpsSpanDecorator extends FileSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "jetty";
+        return "ftps";
     }
 
     @Override
     public String getComponentClassName() {
-        return "org.apache.camel.component.jetty12.JettyHttpComponent12";
+        return "org.apache.camel.component.file.remote.FtpsComponent";
     }
 
 }

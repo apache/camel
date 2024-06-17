@@ -16,16 +16,30 @@
  */
 package org.apache.camel.tracing.decorators;
 
-public class JettySpanDecorator extends AbstractHttpSpanDecorator {
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+
+public class QuartzSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "jetty";
+        return "quartz";
     }
 
     @Override
     public String getComponentClassName() {
-        return "org.apache.camel.component.jetty12.JettyHttpComponent12";
+        return "org.apache.camel.component.quartz.QuartzComponent";
+    }
+
+    @Override
+    public String getOperationName(Exchange exchange, Endpoint endpoint) {
+        String group = exchange.getMessage().getHeader("triggerGroup", String.class);
+        String name = exchange.getMessage().getHeader("triggerName", String.class);
+        if (group != null && name != null) {
+            return group + "/" + name;
+        }
+
+        return super.getOperationName(exchange, endpoint);
     }
 
 }
