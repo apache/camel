@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -43,9 +44,8 @@ public class LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest extends Camel
                 "org/apache/camel/component/leveldb/LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
     }
 
-    @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
+    @BeforeEach
+    public void cleanupDirectory() {
         deleteDirectory("target/data");
     }
 
