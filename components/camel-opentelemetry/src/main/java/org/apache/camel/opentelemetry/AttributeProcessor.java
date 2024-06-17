@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class AttributeProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(AttributeProcessor.class);
+
     private final String attributeName;
     private final Expression expression;
     private String id;
@@ -55,7 +56,7 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
                 String tag = expression.evaluate(exchange, String.class);
                 span.setAttribute(attributeName, tag);
             } else {
-                LOG.warn("OpenTelemetry: could not find managed span for exchange={}", exchange);
+                LOG.warn("OpenTelemetry: Cannot find managed span for exchange: {}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);

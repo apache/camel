@@ -35,7 +35,6 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
     private static final String UNNAMED = "unnamed";
 
     private final OpenTelemetryTracer tracer;
-
     private boolean propagateContext;
 
     public OpenTelemetryTracingStrategy(OpenTelemetryTracer tracer) {
@@ -108,13 +107,12 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
                 if (activateExchange) {
                     ActiveSpanManager.deactivate(exchange);
                 }
-
                 processorSpan.end();
             }
         }
     }
 
-    private class PropagateContext implements Processor {
+    private static class PropagateContext implements Processor {
         private final Processor target;
 
         public PropagateContext(Processor target) {
