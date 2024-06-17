@@ -165,18 +165,6 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         private final Route route;
         private final Exchange original;
 
-        private SplitterIterable() {
-            // used for eager classloading
-            value = null;
-            iterator = null;
-            copy = null;
-            route = null;
-            original = null;
-            // for loading classes from iterator
-            Object dummy = iterator();
-            LOG.trace("Loaded {}", dummy.getClass().getName());
-        }
-
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
             this.value = value;
