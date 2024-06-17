@@ -45,8 +45,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -55,8 +53,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private static final String SINGLE_DELIMITER_MARKER = "single";
@@ -80,7 +76,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     boolean useSubUnitOfWork, boolean parallelAggregate, String delimiter) {
         super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
               shutdownExecutorService, streaming, stopOnException,
-              timeout, onPrepare, useSubUnitOfWork, parallelAggregate);
+              timeout, onPrepare, useSubUnitOfWork, parallelAggregate, 0);
         this.expression = expression;
         StringHelper.notEmpty(delimiter, "delimiter");
         this.delimiter = delimiter;
