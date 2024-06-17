@@ -118,7 +118,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
             boolean shutdownExecutorService = (boolean) args[2];
             return new MulticastProcessor(
                     camelContext, null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
-                    null, false, false);
+                    null, false, false, 0);
         } else if ("Pipeline".equals(definitionName)) {
             List<Processor> processors = (List<Processor>) args[0];
             return Pipeline.newInstance(camelContext, processors);
