@@ -18,6 +18,7 @@ package org.apache.camel.support.scan;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.camel.BindToRegistry;
@@ -63,7 +64,8 @@ public class PackageScanHelper {
                                 created.put(c, b);
                             }
                         }
-                        for (Class<?> c : created.keySet()) {
+                        for (Entry<Class<?>, Object> entry : created.entrySet()) {
+                            Class<?> c = entry.getKey();
                             // phase-2: discover any created beans has @BindToRegistry to register them eager
                             BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
                             if (ann != null) {
@@ -71,7 +73,7 @@ public class PackageScanHelper {
                                 if (isEmpty(name)) {
                                     name = c.getSimpleName();
                                 }
-                                Object bean = created.get(c);
+                                Object bean = entry.getValue();
                                 String beanName = c.getName();
                                 // - bind to registry if @org.apache.camel.BindToRegistry is present
                                 // use dependency injection factory to perform the task of binding the bean to registry
@@ -80,9 +82,10 @@ public class PackageScanHelper {
                                 task.run();
                             }
                         }
-                        for (Class<?> c : created.keySet()) {
+                        for (Entry<Class<?>, Object> entry : created.entrySet()) {
+                            Class<?> c = entry.getKey();
                             // phase-3: now we can do bean post-processing on the created beans
-                            Object bean = created.get(c);
+                            Object bean = entry.getValue();
                             String beanName = c.getName();
                             try {
                                 // - call org.apache.camel.spi.CamelBeanPostProcessor.postProcessBeforeInitialization

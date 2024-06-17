@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -116,8 +117,9 @@ public final class RouteVariableRepository extends ServiceSupport implements Bro
 
     public Stream<String> names() {
         List<String> answer = new ArrayList<>();
-        for (var id : routes.keySet()) {
-            var values = routes.get(id);
+        for (Entry<String, Map<String, Object>> entry : routes.entrySet()) {
+            String id = entry.getKey();
+            Map<String, Object> values = entry.getValue();
             for (var e : values.entrySet()) {
                 answer.add(id + ":" + e.getKey());
             }
@@ -127,8 +129,9 @@ public final class RouteVariableRepository extends ServiceSupport implements Bro
 
     public Map<String, Object> getVariables() {
         Map<String, Object> answer = new ConcurrentHashMap<>();
-        for (var id : routes.keySet()) {
-            var values = routes.get(id);
+        for (Entry<String, Map<String, Object>> entry : routes.entrySet()) {
+            String id = entry.getKey();
+            Map<String, Object> values = entry.getValue();
             for (var e : values.entrySet()) {
                 answer.put(id + ":" + e.getKey(), e.getValue());
             }
