@@ -258,6 +258,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         ObjectHelper.notNull(camelContext, "CamelContext");
 
         server = new VertxPlatformHttpServer(configuration);
+        // adding server to camel-context which will manage shutdown the server, so we should not do this here
         camelContext.addService(server);
         ServiceHelper.startService(server);
         router = VertxPlatformHttpRouter.lookup(camelContext);
@@ -493,11 +494,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             return (Integer) ((JSONObject) json).get("status");
         }
         return 200;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopAndShutdownService(server);
     }
 
     private static void healthCheckStatus(StringBuilder sb, boolean up) {
