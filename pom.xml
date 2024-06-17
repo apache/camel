@@ -132,7 +132,7 @@
         <maven-javadoc-plugin-version>3.7.0</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.2.0</maven-remote-resources-plugin-version>
-        <maven-surefire-plugin-version>3.2.5</maven-surefire-plugin-version>
+        <maven-surefire-plugin-version>3.3.0</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.16.2</versions-maven-plugin-version>
         <maven-artifact-plugin-version>3.5.1</maven-artifact-plugin-version>
 
