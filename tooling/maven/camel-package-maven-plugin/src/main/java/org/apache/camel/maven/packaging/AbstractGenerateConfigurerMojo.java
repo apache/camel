@@ -59,7 +59,6 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 
-import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.readJandexIndex;
 import static org.apache.camel.tooling.util.ReflectionHelper.doWithMethods;
 import static org.apache.camel.tooling.util.Strings.between;
 
