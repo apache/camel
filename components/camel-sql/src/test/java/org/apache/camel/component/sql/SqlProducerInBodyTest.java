@@ -23,8 +23,8 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -34,24 +34,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqlProducerInBodyTest extends CamelTestSupport {
 
-    EmbeddedDatabase db;
+    static EmbeddedDatabase db;
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    @BeforeAll
+    public static void setupDatabase() {
         db = new EmbeddedDatabaseBuilder()
-                .setName(getClass().getSimpleName())
+                .setName(SqlProducerInBodyTest.class.getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql").build();
-
-        super.setUp();
     }
 
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-
+    @AfterAll
+    public static void cleanupDatabase() {
         if (db != null) {
             db.shutdown();
         }
