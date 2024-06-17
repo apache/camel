@@ -61,7 +61,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay = true;
-    private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
+    private PollingConsumerPollStrategy pollStrategy;
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
     private boolean sendEmptyMessageWhenIdle;
     private boolean greedy;
@@ -615,8 +615,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier,
                     backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
         }
-
-        ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
+        if (pollStrategy == null) {
+            pollStrategy = new DefaultPollingConsumerPollStrategy();
+        }
     }
 
     @Override

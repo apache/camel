@@ -19,15 +19,12 @@ package org.apache.camel.support;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A default implementation that will not retry on rollback.
  */
-public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollStrategy {
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+public class DefaultPollingConsumerPollStrategy extends ServiceSupport implements PollingConsumerPollStrategy {
 
     @Override
     public boolean begin(Consumer consumer, Endpoint endpoint) {

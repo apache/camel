@@ -61,7 +61,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer,advanced",
               description = "A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation"
                             + " to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.")
-    private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
+    private PollingConsumerPollStrategy pollStrategy;
     @UriParam(defaultValue = "TRACE", label = "consumer,scheduler",
               description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
