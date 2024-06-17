@@ -58,7 +58,7 @@
         <!-- dependency versions -->
         <activemq-version>5.18.4</activemq-version>
         <activemq6-version>6.1.2</activemq6-version>
-        <activemq-artemis-version>2.34.0</activemq-artemis-version>
+        <activemq-artemis-version>2.35.0</activemq-artemis-version>
         <angus-mail-version>2.0.3</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.21.1</apache-drill-version>
