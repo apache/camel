@@ -78,7 +78,7 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
         MulticastProcessor answer = new MulticastProcessor(
                 camelContext, route, list, strategy, isParallelProcessing, threadPool, shutdownThreadPool, isStreaming,
-                isStopOnException, timeout, prepare, isShareUnitOfWork, isParallelAggregate);
+                isStopOnException, timeout, prepare, isShareUnitOfWork, isParallelAggregate, 0);
         answer.setSynchronous(isSynchronous);
         return answer;
     }
