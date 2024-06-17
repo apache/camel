@@ -109,7 +109,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                         if (o.isSecret()) {
                             // key should be lower and without dashes
                             String key = o.getName().toLowerCase(Locale.ENGLISH);
-                            key = key.replaceAll("-", "");
+                            key = key.replace("-", "");
                             secrets.add(key);
                         }
                     });
@@ -119,7 +119,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                         if (o.isSecret()) {
                             // key should be lower and without dashes
                             String key = o.getName().toLowerCase(Locale.ENGLISH);
-                            key = key.replaceAll("-", "");
+                            key = key.replace("-", "");
                             secrets.add(key);
                         }
                     });
@@ -129,7 +129,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
                         if (o.isSecret()) {
                             // key should be lower and without dashes
                             String key = o.getName().toLowerCase(Locale.ENGLISH);
-                            key = key.replaceAll("-", "");
+                            key = key.replace("-", "");
                             secrets.add(key);
                         }
                     });
