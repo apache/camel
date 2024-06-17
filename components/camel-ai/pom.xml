@@ -40,6 +40,7 @@
         <module>camel-langchain4j-chat</module>
         <module>camel-langchain4j-embeddings</module>
         <module>camel-milvus</module>
+        <module>camel-pinecone</module>
         <module>camel-qdrant</module>
     </modules>
 

@@ -39,7 +39,8 @@ public final class MojoHelper {
             case "camel-ai":
                 return Arrays.asList(dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-langchain4j-core"), dir.resolve("camel-langchain4j-chat"),
-                        dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"));
+                        dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"),
+                        dir.resolve("camel-pinecone"));
             case "camel-as2":
                 return Collections.singletonList(dir.resolve("camel-as2-component"));
             case "camel-avro-rpc":
