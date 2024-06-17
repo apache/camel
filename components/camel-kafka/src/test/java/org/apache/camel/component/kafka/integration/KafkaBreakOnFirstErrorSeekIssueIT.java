@@ -149,8 +149,6 @@ class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
                      + "&allowManualCommit=true"
                      + "&breakOnFirstError=true"
                      + "&maxPollRecords=8"
-                     + "&consumersCount=" + (PARTITION_COUNT) // when one partition stops reading because of breakOnFirstError,
-                                                                                                                                                                                                                                                    //   ensure the other can still continues reading
                      + "&metadataMaxAgeMs=1000"
                      + "&pollTimeoutMs=1000"
                      + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
