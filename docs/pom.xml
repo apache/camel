@@ -149,6 +149,7 @@
                                 <configuration>
                                      <!-- need to specify the normal install as there is another goal specified too and no cache is checked in codebase -->
                                     <arguments>install</arguments>
+                                    <skip>${skipOnUnsupported}</skip>
                                 </configuration>
                             </execution>
                             <execution>
