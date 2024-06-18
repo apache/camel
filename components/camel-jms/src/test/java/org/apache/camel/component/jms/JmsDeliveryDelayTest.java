@@ -85,7 +85,7 @@ public class JmsDeliveryDelayTest extends AbstractPersistentJMSTest {
         var response = template.requestBody("activemq:topic:JmsDeliveryDelayTest2?deliveryDelay=1000", "Hello World 2");
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(response, "Hello World 2");
+        assertEquals("Hello World 2", response);
         // give some slack
         assertTrue(routeWatch.taken() >= 900, "Should take at least 1000 millis");
     }
