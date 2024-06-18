@@ -22,11 +22,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.kms.client.KMS2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.kms.KmsClient;
+
+import java.util.Map;
 
 /**
  * Manage keys stored in AWS KMS instances.
@@ -34,7 +37,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-kms", title = "AWS Key Management Service (KMS)",
              syntax = "aws2-kms:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
              headersClass = KMS2Constants.class)
-public class KMS2Endpoint extends ScheduledPollEndpoint {
+public class KMS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private KmsClient kmsClient;
 
@@ -81,5 +84,22 @@ public class KMS2Endpoint extends ScheduledPollEndpoint {
 
     public KmsClient getKmsClient() {
         return kmsClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "kms";
     }
 }
