@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.timestream;
 
 import org.apache.camel.*;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
