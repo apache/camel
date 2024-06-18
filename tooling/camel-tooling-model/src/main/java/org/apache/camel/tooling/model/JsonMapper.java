@@ -326,6 +326,7 @@ public final class JsonMapper {
         JsonObject mobj = (JsonObject) obj.get("bean");
         PojoBeanModel model = new PojoBeanModel();
         parseModel(mobj, model);
+        parseArtifact(mobj, model);
         JsonObject mprp = (JsonObject) mobj.get("properties");
         if (mprp != null) {
             for (Map.Entry<String, Object> entry : mprp.entrySet()) {
