@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,7 +38,7 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
                      Category.CLOUD,
                      Category.MESSAGING },
              headersClass = KinesisFirehose2Constants.class)
-public class KinesisFirehose2Endpoint extends DefaultEndpoint {
+public class KinesisFirehose2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private KinesisFirehose2Configuration configuration;
@@ -92,4 +93,6 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
     public KinesisFirehose2Configuration getConfiguration() {
         return configuration;
     }
+
+
 }
