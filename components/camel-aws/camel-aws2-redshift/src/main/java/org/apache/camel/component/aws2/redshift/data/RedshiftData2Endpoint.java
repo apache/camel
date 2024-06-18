@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.redshift.data.client.RedshiftData2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,7 +38,7 @@ import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
                      Category.CLOUD, Category.SERVERLESS,
                      Category.DATABASE, Category.BIGDATA },
              headersClass = RedshiftData2Constants.class)
-public class RedshiftData2Endpoint extends DefaultEndpoint {
+public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private RedshiftDataClient awsRedshiftDataClient;
 
@@ -89,6 +90,23 @@ public class RedshiftData2Endpoint extends DefaultEndpoint {
 
     public RedshiftDataClient getAwsRedshiftDataClient() {
         return awsRedshiftDataClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "redshift";
     }
 
 }
