@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.sts.client.STS2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -36,7 +37,7 @@ import software.amazon.awssdk.services.sts.StsClient;
                      Category.CLOUD,
                      Category.MANAGEMENT },
              headersClass = STS2Constants.class)
-public class STS2Endpoint extends DefaultEndpoint {
+public class STS2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private StsClient stsClient;
 
@@ -83,5 +84,22 @@ public class STS2Endpoint extends DefaultEndpoint {
 
     public StsClient getStsClient() {
         return stsClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "sts";
     }
 }
