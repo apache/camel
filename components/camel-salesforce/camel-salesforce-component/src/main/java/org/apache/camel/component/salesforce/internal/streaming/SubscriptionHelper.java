@@ -472,9 +472,12 @@ public class SubscriptionHelper extends ServiceSupport {
         final ClientSessionChannel.MessageListener subscriptionListener = new ClientSessionChannel.MessageListener() {
             public void onMessage(ClientSessionChannel channel, Message message) {
                 LOG.debug("[CHANNEL:META_SUBSCRIBE]: {}", message);
-                final String subscribedChannelName = message.get(SUBSCRIPTION_FIELD).toString();
+                final String subscribedChannelName = message.getOrDefault(SUBSCRIPTION_FIELD, "").toString();
+                if ("".equals(subscribedChannelName)) {
+                    LOG.warn("[CHANNEL:META_SUBSCRIBE]: No field {} found. Skipping message: {}", SUBSCRIPTION_FIELD, message);
+                    return;
+                }
                 if (channelName.equals(subscribedChannelName)) {
-
                     if (!message.isSuccessful()) {
                         String error = (String) message.get(ERROR_FIELD);
                         if (error == null) {
