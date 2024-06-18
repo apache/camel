@@ -250,7 +250,8 @@ public interface Message {
      * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
      *
      * @param  type                    the type that the body
-     * @return                         the body of the message as the specified type, or <tt>null</tt> if body does not exist
+     * @return                         the body of the message as the specified type, or <tt>null</tt> if body does not
+     *                                 exist
      * @throws TypeConversionException is thrown if error during type conversion
      */
     <T> T getBody(Class<T> type);
