@@ -27,8 +27,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
-import java.util.Map;
-
 /**
  * Manage and invoke AWS Lambda functions.
  */
