@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.bedrock.runtime.client.BedrockClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -34,7 +38,7 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock", title = "AWS Bedrock",
              syntax = "aws-bedrock:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
              headersClass = BedrockConstants.class)
-public class BedrockEndpoint extends ScheduledPollEndpoint {
+public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockRuntimeClient bedrockRuntimeClient;
 
@@ -86,5 +90,31 @@ public class BedrockEndpoint extends ScheduledPollEndpoint {
 
     public BedrockRuntimeClient getBedrockRuntimeClient() {
         return bedrockRuntimeClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "bedrock-runtime";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        HashMap<String, String> metadata = new HashMap<>();
+        if (configuration.getModelId() != null) {
+            metadata.put("modelId", configuration.getModelId());
+        }
+        return metadata;
     }
 }
