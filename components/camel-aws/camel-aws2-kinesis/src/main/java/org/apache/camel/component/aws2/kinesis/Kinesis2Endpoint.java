@@ -139,7 +139,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
 
     @Override
     public String getServiceProtocol() {
-        return "eventbridge";
+        return "kinesis";
     }
 
     @Override
