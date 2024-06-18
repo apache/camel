@@ -29,8 +29,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.iam.IamClient;
 
-import java.util.Map;
-
 /**
  * Manage AWS IAM instances.
  */

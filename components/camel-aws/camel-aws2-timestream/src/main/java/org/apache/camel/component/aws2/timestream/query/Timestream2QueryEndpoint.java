@@ -24,9 +24,6 @@ import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Manage and invoke AWS Timestream.
  */

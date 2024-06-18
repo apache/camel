@@ -29,8 +29,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.mq.MqClient;
 
-import java.util.Map;
-
 /**
  * Send messages to AWS MQ.
  */

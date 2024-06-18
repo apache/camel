@@ -29,8 +29,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.kms.KmsClient;
 
-import java.util.Map;
-
 /**
  * Manage keys stored in AWS KMS instances.
  */
