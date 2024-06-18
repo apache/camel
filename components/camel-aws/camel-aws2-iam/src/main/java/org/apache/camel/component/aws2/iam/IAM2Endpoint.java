@@ -104,6 +104,6 @@ public class IAM2Endpoint extends ScheduledPollEndpoint implements EndpointServi
 
     @Override
     public String getServiceProtocol() {
-        return "eventbridge";
+        return "iam";
     }
 }
