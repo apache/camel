@@ -27,12 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -56,7 +51,7 @@ import software.amazon.awssdk.services.sns.model.Topic;
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sns", title = "AWS Simple Notification System (SNS)",
              syntax = "aws2-sns:topicNameOrArn", producerOnly = true,
              category = { Category.CLOUD, Category.MESSAGING, Category.MOBILE }, headersClass = Sns2Constants.class)
-public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Endpoint.class);
 
@@ -212,5 +207,34 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public SnsClient getSNSClient() {
         return snsClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "kinesis";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        HashMap<String, String> metadata = new HashMap<>();
+        if (configuration.getQueueArn() != null) {
+            metadata.put("queueArn", configuration.getQueueArn());
+        }
+        if (configuration.getTopicArn() != null) {
+            metadata.put("topicArn", configuration.getTopicArn());
+        }
+        return metadata;
     }
 }
