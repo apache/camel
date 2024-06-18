@@ -22,18 +22,21 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.mq.client.MQ2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.mq.MqClient;
 
+import java.util.Map;
+
 /**
  * Send messages to AWS MQ.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-mq", title = "AWS MQ", syntax = "aws2-mq:label", producerOnly = true,
              category = { Category.CLOUD, Category.MESSAGING }, headersClass = MQ2Constants.class)
-public class MQ2Endpoint extends ScheduledPollEndpoint {
+public class MQ2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private MqClient mqClient;
 
@@ -85,5 +88,22 @@ public class MQ2Endpoint extends ScheduledPollEndpoint {
 
     public MqClient getAmazonMqClient() {
         return mqClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "mq";
     }
 }
