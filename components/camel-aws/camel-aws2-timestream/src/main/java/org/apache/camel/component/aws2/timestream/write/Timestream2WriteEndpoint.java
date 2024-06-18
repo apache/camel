@@ -20,6 +20,7 @@ import org.apache.camel.*;
 import org.apache.camel.component.aws2.timestream.Timestream2AbstractEndpoint;
 import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
 import org.apache.camel.component.aws2.timestream.client.Timestream2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
 
@@ -27,7 +28,7 @@ import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
  * Manage and invoke AWS Timestream.
  */
 
-public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint {
+public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint implements EndpointServiceLocation {
 
     /** AWS TimestreamWriteClient for TimestreamWrite Endpoint **/
     private TimestreamWriteClient awsTimestreamWriteClient;
@@ -67,6 +68,23 @@ public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint {
 
     public TimestreamWriteClient getAwsTimestreamWriteClient() {
         return awsTimestreamWriteClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!getConfiguration().isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getRegion())) {
+                return getConfiguration().getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(getConfiguration().getUriEndpointOverride())) {
+            return getConfiguration().getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "timestream-write";
     }
 
 }
