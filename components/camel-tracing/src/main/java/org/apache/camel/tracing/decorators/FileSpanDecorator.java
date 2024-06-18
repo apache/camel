@@ -18,6 +18,8 @@ package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.TagConstants;
 
 public class FileSpanDecorator extends AbstractSpanDecorator {
 
@@ -32,13 +34,13 @@ public class FileSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
-    public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        Object name = exchange.getMessage().getHeader(Exchange.FILE_NAME);
-        if (name instanceof String) {
-            return (String) name;
-        }
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
+        super.pre(span, exchange, endpoint);
 
-        return super.getOperationName(exchange, endpoint);
+        String name = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
+        if (name != null) {
+            span.setTag(TagConstants.FILE_NAME, name);
+        }
     }
 
 }
