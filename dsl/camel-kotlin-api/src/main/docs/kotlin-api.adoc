@@ -2,7 +2,7 @@
 :doctitle: Kotlin API
 :shortname: kotlin-api
 :artifactid: camel-kotlin-api
-:description: Camel Kotlin API
+:description: Camel Kotlin API (Deprecated)
 :since: 4.4
 :supportlevel: Experimental
 :tabs-sync-option:

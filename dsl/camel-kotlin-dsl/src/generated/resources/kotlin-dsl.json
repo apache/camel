@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "kotlin-dsl",
     "title": "Kotlin DSL",
-    "description": "Camel DSL with Kotlin",
+    "description": "Camel DSL with Kotlin (Deprecated)",
     "deprecated": false,
     "firstVersion": "3.9.0",
     "label": "dsl",

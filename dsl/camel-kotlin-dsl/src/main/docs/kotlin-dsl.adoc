@@ -2,7 +2,7 @@
 :doctitle: Kotlin DSL
 :shortname: kotlin-dsl
 :artifactid: camel-kotlin-dsl
-:description: Camel DSL with Kotlin
+:description: Camel DSL with Kotlin (Deprecated)
 :since: 3.9
 :supportlevel: Experimental
 :tabs-sync-option:
