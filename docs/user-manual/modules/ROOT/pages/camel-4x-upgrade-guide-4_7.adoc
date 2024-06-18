@@ -240,3 +240,6 @@ via `camel.debug.` options in `application.properties`.
 The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
 by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
 
+=== Camel Kotlin deprecation
+
+Camel Kotlin DSL is deprecated.
