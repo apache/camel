@@ -28,6 +28,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 
+import java.util.Map;
+
 import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
 
 /**
@@ -94,5 +96,28 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint implements Endpoin
         return configuration;
     }
 
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
 
+    @Override
+    public String getServiceProtocol() {
+        return "firehose";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getStreamName() != null) {
+            return Map.of("stream", configuration.getStreamName());
+        }
+        return null;
+    }
 }
