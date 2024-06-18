@@ -116,6 +116,6 @@ public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceL
 
     @Override
     public String getServiceProtocol() {
-        return "iam";
+        return "lambda";
     }
 }
