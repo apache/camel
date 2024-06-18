@@ -82,7 +82,7 @@ class KubeCommandMainTest extends KubeBaseTest {
 
         Integration integration = kubernetesClient.resources(Integration.class).withName("route").get();
         Assertions.assertNotNull(integration);
-        Assertions.assertEquals(integration.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL), "camel-k");
+        Assertions.assertEquals("camel-k", integration.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL));
     }
 
     @Test
