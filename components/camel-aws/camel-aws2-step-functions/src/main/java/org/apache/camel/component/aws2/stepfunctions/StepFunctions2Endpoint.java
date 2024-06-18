@@ -18,11 +18,14 @@ package org.apache.camel.component.aws2.stepfunctions;
 
 import org.apache.camel.*;
 import org.apache.camel.component.aws2.stepfunctions.client.StepFunctions2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.sfn.SfnClient;
+
+import java.util.Map;
 
 /**
  * Manage and invoke AWS Step functions.
@@ -31,7 +34,7 @@ import software.amazon.awssdk.services.sfn.SfnClient;
              syntax = "aws2-step-functions:label",
              producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
              headersClass = StepFunctions2Constants.class)
-public class StepFunctions2Endpoint extends DefaultEndpoint {
+public class StepFunctions2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SfnClient awsSfnClient;
 
@@ -83,6 +86,23 @@ public class StepFunctions2Endpoint extends DefaultEndpoint {
 
     public SfnClient getAwsSfnClient() {
         return awsSfnClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "step-functions";
     }
 
 }

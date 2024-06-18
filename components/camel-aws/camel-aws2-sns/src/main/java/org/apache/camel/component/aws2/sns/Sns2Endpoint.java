@@ -223,7 +223,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     @Override
     public String getServiceProtocol() {
-        return "kinesis";
+        return "sns";
     }
 
     @Override
