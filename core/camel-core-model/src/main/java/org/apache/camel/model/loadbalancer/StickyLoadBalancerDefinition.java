@@ -42,6 +42,16 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
     public StickyLoadBalancerDefinition() {
     }
 
+    protected StickyLoadBalancerDefinition(StickyLoadBalancerDefinition source) {
+        super(source);
+        this.correlationExpression
+                = source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
+    }
+
+    public StickyLoadBalancerDefinition copyDefinition() {
+        return new StickyLoadBalancerDefinition(this);
+    }
+
     public ExpressionSubElementDefinition getCorrelationExpression() {
         return correlationExpression;
     }

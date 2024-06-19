@@ -47,8 +47,20 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     public InterceptSendToEndpointDefinition() {
     }
 
+    protected InterceptSendToEndpointDefinition(InterceptSendToEndpointDefinition source) {
+        super(source);
+        this.uri = source.uri;
+        this.skipSendToOriginalEndpoint = source.skipSendToOriginalEndpoint;
+        this.afterUri = source.afterUri;
+    }
+
     public InterceptSendToEndpointDefinition(String uri) {
         this.uri = uri;
+    }
+
+    @Override
+    public InterceptSendToEndpointDefinition copyDefinition() {
+        return new InterceptSendToEndpointDefinition(this);
     }
 
     @Override

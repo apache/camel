@@ -35,8 +35,17 @@ public class SetBodyDefinition extends ExpressionNode {
     public SetBodyDefinition() {
     }
 
+    protected SetBodyDefinition(SetBodyDefinition source) {
+        super(source);
+    }
+
     public SetBodyDefinition(Expression expression) {
         super(expression);
+    }
+
+    @Override
+    public SetBodyDefinition copyDefinition() {
+        return new SetBodyDefinition(this);
     }
 
     @Override

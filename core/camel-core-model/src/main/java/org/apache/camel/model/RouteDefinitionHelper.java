@@ -274,19 +274,21 @@ public final class RouteDefinitionHelper {
         }
 
         // gather all ids for the target route, but only include custom ids, and
-        // no abstract ids
-        // as abstract nodes is cross-cutting functionality such as interceptors
-        // etc
+        // no abstract ids as abstract nodes is cross-cutting functionality such as interceptors etc
         Set<String> targetIds = new LinkedHashSet<>();
         ProcessorDefinitionHelper.gatherAllNodeIds(target, targetIds, true, false);
 
         // now check for clash with the target route
         for (String id : targetIds) {
-            if (prefixId != null) {
-                id = prefixId + id;
-            }
-            if (routesIds.contains(id)) {
-                return id;
+            // skip ids that are placeholders
+            boolean accept = !id.startsWith("{{");
+            if (accept) {
+                if (prefixId != null) {
+                    id = prefixId + id;
+                }
+                if (routesIds.contains(id)) {
+                    return id;
+                }
             }
         }
 

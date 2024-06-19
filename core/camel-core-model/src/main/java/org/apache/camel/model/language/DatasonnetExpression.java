@@ -41,6 +41,12 @@ public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
     public DatasonnetExpression() {
     }
 
+    protected DatasonnetExpression(DatasonnetExpression source) {
+        super(source);
+        this.bodyMediaType = source.bodyMediaType;
+        this.outputMediaType = source.outputMediaType;
+    }
+
     public DatasonnetExpression(String expression) {
         super(expression);
     }
@@ -53,6 +59,11 @@ public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
         super(builder);
         this.bodyMediaType = builder.bodyMediaType;
         this.outputMediaType = builder.outputMediaType;
+    }
+
+    @Override
+    public DatasonnetExpression copyDefinition() {
+        return new DatasonnetExpression(this);
     }
 
     @Override

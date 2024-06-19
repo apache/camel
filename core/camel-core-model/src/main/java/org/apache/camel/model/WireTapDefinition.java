@@ -60,6 +60,16 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     public WireTapDefinition() {
     }
 
+    public WireTapDefinition(WireTapDefinition<?> source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.onPrepareProcessor = source.onPrepareProcessor;
+        this.copy = source.copy;
+        this.dynamicUri = source.dynamicUri;
+        this.onPrepare = source.onPrepare;
+        this.executorService = source.executorService;
+    }
+
     @Override
     public String getPattern() {
         return ExchangePattern.InOnly.name();
@@ -345,5 +355,10 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
 
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
+    }
+
+    @Override
+    public WireTapDefinition copyDefinition() {
+        return new WireTapDefinition(this);
     }
 }

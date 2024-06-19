@@ -54,6 +54,21 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     public ClaimCheckDefinition() {
     }
 
+    protected ClaimCheckDefinition(ClaimCheckDefinition source) {
+        super(source);
+        this.aggregationStrategyBean = source.aggregationStrategyBean;
+        this.operation = source.operation;
+        this.key = source.key;
+        this.filter = source.filter;
+        this.aggregationStrategy = source.aggregationStrategy;
+        this.aggregationStrategyMethodName = source.aggregationStrategyMethodName;
+    }
+
+    @Override
+    public ClaimCheckDefinition copyDefinition() {
+        return new ClaimCheckDefinition(this);
+    }
+
     @Override
     public String toString() {
         if (operation != null) {

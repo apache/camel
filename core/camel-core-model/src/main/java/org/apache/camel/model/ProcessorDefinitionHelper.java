@@ -461,4 +461,12 @@ public final class ProcessorDefinitionHelper {
         return null;
     }
 
+    public static List<ProcessorDefinition<?>> copyDefinitions(List<ProcessorDefinition<?>> outputs) {
+        var answer = new ArrayList<ProcessorDefinition<?>>();
+        for (var def : outputs) {
+            answer.add(def.copyDefinition());
+        }
+        return answer;
+    }
+
 }

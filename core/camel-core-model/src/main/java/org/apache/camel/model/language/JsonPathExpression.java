@@ -59,6 +59,16 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
     public JsonPathExpression() {
     }
 
+    private JsonPathExpression(JsonPathExpression source) {
+        super(source);
+        this.suppressExceptions = source.suppressExceptions;
+        this.allowSimple = source.allowSimple;
+        this.allowEasyPredicate = source.allowEasyPredicate;
+        this.writeAsString = source.writeAsString;
+        this.unpackArray = source.unpackArray;
+        this.option = source.option;
+    }
+
     public JsonPathExpression(String expression) {
         super(expression);
     }
@@ -71,6 +81,11 @@ public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
         this.writeAsString = builder.writeAsString;
         this.unpackArray = builder.unpackArray;
         this.option = builder.option;
+    }
+
+    @Override
+    public JsonPathExpression copyDefinition() {
+        return new JsonPathExpression(this);
     }
 
     public String getSuppressExceptions() {

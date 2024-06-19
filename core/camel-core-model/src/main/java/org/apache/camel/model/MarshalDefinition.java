@@ -125,8 +125,20 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
     public MarshalDefinition() {
     }
 
+    protected MarshalDefinition(MarshalDefinition source) {
+        super(source);
+        this.variableSend = source.variableSend;
+        this.variableReceive = source.variableReceive;
+        this.dataFormatType = source.dataFormatType != null ? source.dataFormatType.copyDefinition() : null;
+    }
+
     public MarshalDefinition(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
+    }
+
+    @Override
+    public MarshalDefinition copyDefinition() {
+        return new MarshalDefinition(this);
     }
 
     @Override

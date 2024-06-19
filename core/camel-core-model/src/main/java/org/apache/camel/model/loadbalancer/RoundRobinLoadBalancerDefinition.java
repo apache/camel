@@ -35,6 +35,14 @@ public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {
     public RoundRobinLoadBalancerDefinition() {
     }
 
+    protected RoundRobinLoadBalancerDefinition(RoundRobinLoadBalancerDefinition source) {
+        super(source);
+    }
+
+    public RoundRobinLoadBalancerDefinition copyDefinition() {
+        return new RoundRobinLoadBalancerDefinition(this);
+    }
+
     @Override
     public String toString() {
         return "RoundRobinLoadBalancer";

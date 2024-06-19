@@ -40,8 +40,17 @@ public class DataFormatDefinition extends IdentifiedType {
     public DataFormatDefinition() {
     }
 
+    public DataFormatDefinition(DataFormatDefinition source) {
+        this.dataFormat = source.dataFormat;
+        this.dataFormatName = source.dataFormatName;
+    }
+
     public DataFormatDefinition(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
+    }
+
+    public DataFormatDefinition copyDefinition() {
+        return new DataFormatDefinition(this);
     }
 
     protected DataFormatDefinition(String dataFormatName) {

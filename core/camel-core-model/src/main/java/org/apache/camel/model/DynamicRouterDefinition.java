@@ -51,8 +51,20 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     public DynamicRouterDefinition() {
     }
 
+    protected DynamicRouterDefinition(DynamicRouterDefinition source) {
+        super(source);
+        this.uriDelimiter = source.uriDelimiter;
+        this.ignoreInvalidEndpoints = source.ignoreInvalidEndpoints;
+        this.cacheSize = source.cacheSize;
+    }
+
     public DynamicRouterDefinition(Expression expression) {
         super(expression);
+    }
+
+    @Override
+    public DynamicRouterDefinition copyDefinition() {
+        return new DynamicRouterDefinition(this);
     }
 
     @Override

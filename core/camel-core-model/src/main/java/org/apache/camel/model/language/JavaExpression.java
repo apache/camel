@@ -42,6 +42,12 @@ public class JavaExpression extends TypedExpressionDefinition {
     public JavaExpression() {
     }
 
+    protected JavaExpression(JavaExpression source) {
+        super(source);
+        this.preCompile = source.preCompile;
+        this.singleQuotes = source.singleQuotes;
+    }
+
     public JavaExpression(String expression) {
         super(expression);
     }
@@ -50,6 +56,11 @@ public class JavaExpression extends TypedExpressionDefinition {
         super(builder);
         this.preCompile = builder.preCompile;
         this.singleQuotes = builder.singleQuotes;
+    }
+
+    @Override
+    public JavaExpression copyDefinition() {
+        return new JavaExpression(this);
     }
 
     @Override

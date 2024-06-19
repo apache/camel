@@ -60,10 +60,23 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     public ResequenceDefinition() {
     }
 
+    protected ResequenceDefinition(ResequenceDefinition source) {
+        super(source);
+        this.batchConfig = source.batchConfig != null ? source.batchConfig.copyDefinition() : null;
+        this.streamConfig = source.streamConfig != null ? source.streamConfig.copyDefinition() : null;
+        this.resequencerConfig = source.resequencerConfig != null ? source.resequencerConfig.copyDefinition() : null;
+        this.expression = source.expression != null ? source.expression.copyDefinition() : null;
+    }
+
     public ResequenceDefinition(Expression expression) {
         if (expression != null) {
             setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
         }
+    }
+
+    @Override
+    public ResequenceDefinition copyDefinition() {
+        return new ResequenceDefinition(this);
     }
 
     @Override

@@ -128,8 +128,21 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     public UnmarshalDefinition() {
     }
 
+    protected UnmarshalDefinition(UnmarshalDefinition source) {
+        super(source);
+        this.variableSend = source.variableSend;
+        this.variableReceive = source.variableReceive;
+        this.allowNullBody = source.allowNullBody;
+        this.dataFormatType = source.dataFormatType != null ? source.dataFormatType.copyDefinition() : null;
+    }
+
     public UnmarshalDefinition(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
+    }
+
+    @Override
+    public UnmarshalDefinition copyDefinition() {
+        return new UnmarshalDefinition(this);
     }
 
     @Override

@@ -34,12 +34,21 @@ public class ConstantExpression extends TypedExpressionDefinition {
     public ConstantExpression() {
     }
 
+    protected ConstantExpression(ConstantExpression source) {
+        super(source);
+    }
+
     public ConstantExpression(String expression) {
         super(expression);
     }
 
     private ConstantExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public ConstantExpression copyDefinition() {
+        return new ConstantExpression(this);
     }
 
     @Override

@@ -45,11 +45,20 @@ public class PropertyExpressionDefinition implements HasExpressionType {
     public PropertyExpressionDefinition() {
     }
 
+    protected PropertyExpressionDefinition(PropertyExpressionDefinition source) {
+        this.key = source.key;
+        this.expression = source.expression != null ? source.expression.copyDefinition() : null;
+    }
+
     public PropertyExpressionDefinition(String key, Expression expression) {
         this.key = key;
         if (expression != null) {
             setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
         }
+    }
+
+    public PropertyExpressionDefinition copyDefinition() {
+        return new PropertyExpressionDefinition(this);
     }
 
     /**

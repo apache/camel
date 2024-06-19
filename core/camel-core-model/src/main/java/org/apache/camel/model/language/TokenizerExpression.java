@@ -61,6 +61,19 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
     public TokenizerExpression() {
     }
 
+    protected TokenizerExpression(TokenizerExpression source) {
+        super(source);
+        this.token = source.token;
+        this.endToken = source.endToken;
+        this.inheritNamespaceTagName = source.inheritNamespaceTagName;
+        this.regex = source.regex;
+        this.xml = source.xml;
+        this.includeTokens = source.includeTokens;
+        this.group = source.group;
+        this.groupDelimiter = source.groupDelimiter;
+        this.skipFirst = source.skipFirst;
+    }
+
     public TokenizerExpression(String token) {
         this.token = token;
     }
@@ -76,6 +89,11 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         this.group = builder.group;
         this.groupDelimiter = builder.groupDelimiter;
         this.skipFirst = builder.skipFirst;
+    }
+
+    @Override
+    public TokenizerExpression copyDefinition() {
+        return new TokenizerExpression(this);
     }
 
     @Override

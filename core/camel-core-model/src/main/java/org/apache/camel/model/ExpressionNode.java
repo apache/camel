@@ -38,7 +38,8 @@ import org.apache.camel.model.language.ExpressionDefinition;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode> implements HasExpressionType {
+public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
+        implements HasExpressionType {
 
     @XmlElementRef
     private ExpressionDefinition expression;
@@ -60,7 +61,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
 
     protected ExpressionNode(ExpressionNode source) {
         super(source);
-        this.expression = source.expression;
+        this.expression = source.expression != null ? source.expression.copyDefinition() : null;
     }
 
     public ExpressionDefinition getExpression() {

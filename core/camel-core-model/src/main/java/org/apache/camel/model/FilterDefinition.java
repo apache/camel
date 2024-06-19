@@ -42,12 +42,22 @@ public class FilterDefinition extends OutputExpressionNode {
     public FilterDefinition() {
     }
 
+    protected FilterDefinition(FilterDefinition source) {
+        super(source);
+        this.statusPropertyName = source.statusPropertyName;
+    }
+
     public FilterDefinition(ExpressionDefinition expression) {
         super(expression);
     }
 
     public FilterDefinition(Predicate predicate) {
         super(predicate);
+    }
+
+    @Override
+    public FilterDefinition copyDefinition() {
+        return new FilterDefinition(this);
     }
 
     @Override

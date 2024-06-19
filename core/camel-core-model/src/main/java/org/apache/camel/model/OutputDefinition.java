@@ -33,7 +33,22 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.NONE)
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> implements OutputNode {
 
+    // TODO: copyDefinition return value to be class type itself and not generic
+
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<>();
+
+    public OutputDefinition() {
+    }
+
+    protected OutputDefinition(OutputDefinition<?> source) {
+        super(source);
+        this.outputs = ProcessorDefinitionHelper.copyDefinitions(source.outputs);
+    }
+
+    @Override
+    public ProcessorDefinition<?> copyDefinition() {
+        throw new UnsupportedOperationException("Should be implemented in child classes");
+    }
 
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
@@ -58,4 +73,5 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
     public String toString() {
         return getShortName() + " -> [" + outputs + "]";
     }
+
 }

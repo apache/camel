@@ -34,12 +34,21 @@ public class Hl7TerserExpression extends SingleInputTypedExpressionDefinition {
     public Hl7TerserExpression() {
     }
 
+    protected Hl7TerserExpression(Hl7TerserExpression source) {
+        super(source);
+    }
+
     public Hl7TerserExpression(String expression) {
         super(expression);
     }
 
     private Hl7TerserExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public Hl7TerserExpression copyDefinition() {
+        return new Hl7TerserExpression(this);
     }
 
     @Override

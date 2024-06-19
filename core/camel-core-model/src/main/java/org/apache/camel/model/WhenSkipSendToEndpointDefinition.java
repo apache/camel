@@ -32,6 +32,18 @@ import org.apache.camel.spi.Metadata;
 @XmlTransient // do not output in XSD as this is only used in a special "hack" for intercept
 public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
 
+    public WhenSkipSendToEndpointDefinition() {
+    }
+
+    protected WhenSkipSendToEndpointDefinition(WhenSkipSendToEndpointDefinition source) {
+        super(source);
+    }
+
+    @Override
+    public WhenSkipSendToEndpointDefinition copyDefinition() {
+        return new WhenSkipSendToEndpointDefinition(this);
+    }
+
     @Override
     public String getShortName() {
         return "whenSkipSendToEndpoint";

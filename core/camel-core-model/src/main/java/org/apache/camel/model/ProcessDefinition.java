@@ -43,8 +43,19 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     public ProcessDefinition() {
     }
 
+    protected ProcessDefinition(ProcessDefinition source) {
+        super(source);
+        this.processor = source.processor;
+        this.ref = source.ref;
+    }
+
     public ProcessDefinition(Processor processor) {
         this.processor = processor;
+    }
+
+    @Override
+    public ProcessDefinition copyDefinition() {
+        return new ProcessDefinition(this);
     }
 
     @Override

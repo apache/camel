@@ -34,6 +34,18 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
 
+    public FinallyDefinition() {
+    }
+
+    protected FinallyDefinition(FinallyDefinition source) {
+        super(source);
+    }
+
+    @Override
+    public FinallyDefinition copyDefinition() {
+        return new FinallyDefinition(this);
+    }
+
     @Override
     public String toString() {
         return "DoFinally[" + getOutputs() + "]";

@@ -34,12 +34,21 @@ public class ExchangePropertyExpression extends ExpressionDefinition {
     public ExchangePropertyExpression() {
     }
 
+    protected ExchangePropertyExpression(ExchangePropertyExpression source) {
+        super(source);
+    }
+
     public ExchangePropertyExpression(String name) {
         super(name);
     }
 
     private ExchangePropertyExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public ExchangePropertyExpression copyDefinition() {
+        return new ExchangePropertyExpression(this);
     }
 
     @Override

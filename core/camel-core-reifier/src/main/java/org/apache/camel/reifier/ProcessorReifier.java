@@ -915,7 +915,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected String getId(OptionalIdentifiedDefinition<?> def) {
-        return def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        String id = def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        id = parseString(id);
+        return id;
     }
 
     /**

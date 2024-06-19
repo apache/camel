@@ -34,12 +34,21 @@ public class VariableExpression extends ExpressionDefinition {
     public VariableExpression() {
     }
 
+    protected VariableExpression(VariableExpression source) {
+        super(source);
+    }
+
     public VariableExpression(String expression) {
         super(expression);
     }
 
     private VariableExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public VariableExpression copyDefinition() {
+        return new VariableExpression(this);
     }
 
     @Override

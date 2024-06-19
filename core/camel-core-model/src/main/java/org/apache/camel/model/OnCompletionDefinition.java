@@ -73,6 +73,24 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     public OnCompletionDefinition() {
     }
 
+    protected OnCompletionDefinition(OnCompletionDefinition source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.routeScoped = source.routeScoped;
+        this.mode = source.mode;
+        this.onCompleteOnly = source.onCompleteOnly;
+        this.onFailureOnly = source.onFailureOnly;
+        this.parallelProcessing = source.parallelProcessing;
+        this.executorService = source.executorService;
+        this.useOriginalMessage = source.useOriginalMessage;
+        this.onWhen = source.onWhen != null ? source.onWhen.copyDefinition() : null;
+    }
+
+    @Override
+    public OnCompletionDefinition copyDefinition() {
+        return new OnCompletionDefinition(this);
+    }
+
     public void setRouteScoped(boolean routeScoped) {
         this.routeScoped = routeScoped;
     }

@@ -54,6 +54,17 @@ public class MethodCallExpression extends TypedExpressionDefinition {
     public MethodCallExpression() {
     }
 
+    protected MethodCallExpression(MethodCallExpression source) {
+        super(source);
+        this.beanType = source.beanType;
+        this.instance = source.instance;
+        this.ref = source.ref;
+        this.method = source.method;
+        this.beanTypeName = source.beanTypeName;
+        this.scope = source.scope;
+        this.validate = source.validate;
+    }
+
     public MethodCallExpression(String beanName) {
         this(beanName, null);
     }
@@ -100,6 +111,11 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         this.beanTypeName = builder.beanTypeName;
         this.scope = builder.scope;
         this.validate = builder.validate;
+    }
+
+    @Override
+    public MethodCallExpression copyDefinition() {
+        return new MethodCallExpression(this);
     }
 
     @Override
