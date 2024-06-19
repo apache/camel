@@ -34,10 +34,23 @@ public class LoadTransformerDefinition extends TransformerDefinition {
 
     @XmlAttribute
     private String packageScan;
-
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String defaults;
+
+    public LoadTransformerDefinition() {
+    }
+
+    protected LoadTransformerDefinition(LoadTransformerDefinition source) {
+        super(source);
+        this.packageScan = source.packageScan;
+        this.defaults = source.defaults;
+    }
+
+    @Override
+    public LoadTransformerDefinition copyDefinition() {
+        return new LoadTransformerDefinition(this);
+    }
 
     public String getDefaults() {
         return defaults;

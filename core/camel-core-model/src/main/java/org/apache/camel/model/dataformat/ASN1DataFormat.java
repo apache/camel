@@ -47,6 +47,13 @@ public class ASN1DataFormat extends DataFormatDefinition {
         super("asn1");
     }
 
+    protected ASN1DataFormat(ASN1DataFormat source) {
+        super(source);
+        this.unmarshalType = source.unmarshalType;
+        this.unmarshalTypeName = source.unmarshalTypeName;
+        this.usingIterator = source.usingIterator;
+    }
+
     public ASN1DataFormat(Boolean usingIterator) {
         this();
         setUsingIterator(usingIterator != null ? usingIterator.toString() : null);
@@ -69,6 +76,11 @@ public class ASN1DataFormat extends DataFormatDefinition {
         this.usingIterator = builder.usingIterator;
         this.unmarshalTypeName = builder.unmarshalTypeName;
         this.unmarshalType = builder.unmarshalType;
+    }
+
+    @Override
+    public ASN1DataFormat copyDefinition() {
+        return new ASN1DataFormat(this);
     }
 
     public String getUsingIterator() {

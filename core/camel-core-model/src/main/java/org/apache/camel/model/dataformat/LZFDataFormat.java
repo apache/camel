@@ -42,9 +42,19 @@ public class LZFDataFormat extends DataFormatDefinition {
         super("lzf");
     }
 
+    protected LZFDataFormat(LZFDataFormat source) {
+        super(source);
+        this.usingParallelCompression = source.usingParallelCompression;
+    }
+
     private LZFDataFormat(Builder builder) {
         this();
         this.usingParallelCompression = builder.usingParallelCompression;
+    }
+
+    @Override
+    public LZFDataFormat copyDefinition() {
+        return new LZFDataFormat(this);
     }
 
     public String getUsingParallelCompression() {

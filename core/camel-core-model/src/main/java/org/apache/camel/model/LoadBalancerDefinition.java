@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 /**
  * Balances message processing among a number of nodes
  */
-public abstract class LoadBalancerDefinition extends IdentifiedType {
+public abstract class LoadBalancerDefinition extends IdentifiedType implements CopyableDefinition<LoadBalancerDefinition> {
 
     @XmlTransient
     private String loadBalancerTypeName;
@@ -36,8 +36,6 @@ public abstract class LoadBalancerDefinition extends IdentifiedType {
     protected LoadBalancerDefinition(String loadBalancerTypeName) {
         this.loadBalancerTypeName = loadBalancerTypeName;
     }
-
-    protected abstract LoadBalancerDefinition copyDefinition();
 
     /**
      * Maximum number of outputs, as some load balancers only support 1 processor

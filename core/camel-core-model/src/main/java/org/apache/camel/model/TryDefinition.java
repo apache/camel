@@ -58,7 +58,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
 
     protected TryDefinition(TryDefinition source) {
         super(source);
-        this.catchClauses = copyCatchClauses(source);
+        this.catchClauses = ProcessorDefinitionHelper.deepCopyDefinitions(source.catchClauses);
         this.finallyClause = source.finallyClause != null ? source.finallyClause.copyDefinition() : null;
     }
 
@@ -253,17 +253,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
                 finallyClause.setParent(this);
             }
         }
-    }
-
-    private static List<CatchDefinition> copyCatchClauses(TryDefinition source) {
-        if (source.catchClauses != null) {
-            var answer = new ArrayList<CatchDefinition>();
-            for (var def : source.catchClauses) {
-                answer.add(def.copyDefinition());
-            }
-            return answer;
-        }
-        return null;
     }
 
 }

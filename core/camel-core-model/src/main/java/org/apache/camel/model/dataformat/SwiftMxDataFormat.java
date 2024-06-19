@@ -55,6 +55,16 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         super("swiftMx");
     }
 
+    protected SwiftMxDataFormat(SwiftMxDataFormat source) {
+        super(source);
+        this.writeConfigRef = source.writeConfigRef;
+        this.writeConfig = source.writeConfig;
+        this.writeInJson = source.writeInJson;
+        this.readMessageId = source.readMessageId;
+        this.readConfigRef = source.readConfigRef;
+        this.readConfig = source.readConfig;
+    }
+
     public SwiftMxDataFormat(boolean writeInJson) {
         this();
         this.writeInJson = Boolean.toString(writeInJson);
@@ -94,6 +104,11 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         this.readMessageId = builder.readMessageId;
         this.readConfigRef = builder.readConfigRef;
         this.readConfig = builder.readConfig;
+    }
+
+    @Override
+    public SwiftMxDataFormat copyDefinition() {
+        return new SwiftMxDataFormat(this);
     }
 
     public Object getWriteConfig() {

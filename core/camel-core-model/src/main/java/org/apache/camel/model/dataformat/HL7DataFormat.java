@@ -46,10 +46,21 @@ public class HL7DataFormat extends DataFormatDefinition {
         super("hl7");
     }
 
+    protected HL7DataFormat(HL7DataFormat source) {
+        super(source);
+        this.parser = source.parser;
+        this.validate = source.validate;
+    }
+
     private HL7DataFormat(Builder builder) {
         this();
         this.parser = builder.parser;
         this.validate = builder.validate;
+    }
+
+    @Override
+    public HL7DataFormat copyDefinition() {
+        return new HL7DataFormat(this);
     }
 
     public String getValidate() {

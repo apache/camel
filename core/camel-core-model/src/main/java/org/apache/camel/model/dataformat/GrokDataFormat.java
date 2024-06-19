@@ -51,12 +51,25 @@ public class GrokDataFormat extends DataFormatDefinition {
         super("grok");
     }
 
+    protected GrokDataFormat(GrokDataFormat source) {
+        super(source);
+        this.pattern = source.pattern;
+        this.flattened = source.flattened;
+        this.allowMultipleMatchesPerLine = source.allowMultipleMatchesPerLine;
+        this.namedOnly = source.namedOnly;
+    }
+
     private GrokDataFormat(Builder builder) {
         this();
         this.pattern = builder.pattern;
         this.flattened = builder.flattened;
         this.allowMultipleMatchesPerLine = builder.allowMultipleMatchesPerLine;
         this.namedOnly = builder.namedOnly;
+    }
+
+    @Override
+    public GrokDataFormat copyDefinition() {
+        return new GrokDataFormat(this);
     }
 
     public String getPattern() {

@@ -41,6 +41,19 @@ public class PredicateValidatorDefinition extends ValidatorDefinition {
     @XmlElementRef
     private ExpressionDefinition expression;
 
+    public PredicateValidatorDefinition() {
+    }
+
+    protected PredicateValidatorDefinition(PredicateValidatorDefinition source) {
+        super(source);
+        this.expression = source.expression != null ? source.expression.copyDefinition() : null;
+    }
+
+    @Override
+    public ValidatorDefinition copyDefinition() {
+        return new PredicateValidatorDefinition(this);
+    }
+
     public ExpressionDefinition getExpression() {
         return expression;
     }

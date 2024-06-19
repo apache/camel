@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.spi.DataType;
@@ -45,7 +46,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "transformation")
 @XmlType(name = "transformer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class TransformerDefinition {
+public abstract class TransformerDefinition implements CopyableDefinition<TransformerDefinition> {
 
     @XmlAttribute
     private String scheme;
@@ -55,6 +56,16 @@ public abstract class TransformerDefinition {
     private String fromType;
     @XmlAttribute
     private String toType;
+
+    public TransformerDefinition() {
+    }
+
+    protected TransformerDefinition(TransformerDefinition source) {
+        this.scheme = source.scheme;
+        this.name = source.name;
+        this.fromType = source.fromType;
+        this.toType = source.toType;
+    }
 
     public String getScheme() {
         return scheme;

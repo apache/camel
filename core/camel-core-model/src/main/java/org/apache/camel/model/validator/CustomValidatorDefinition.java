@@ -42,6 +42,20 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
         return ref;
     }
 
+    public CustomValidatorDefinition() {
+    }
+
+    protected CustomValidatorDefinition(CustomValidatorDefinition source) {
+        super(source);
+        this.ref = source.ref;
+        this.className = source.className;
+    }
+
+    @Override
+    public CustomValidatorDefinition copyDefinition() {
+        return null;
+    }
+
     /**
      * Set a bean reference of the {@link Validator}
      */

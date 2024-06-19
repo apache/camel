@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatDefinition extends IdentifiedType {
+public class DataFormatDefinition extends IdentifiedType implements CopyableDefinition<DataFormatDefinition> {
 
     @XmlTransient
     private DataFormat dataFormat;
@@ -50,7 +50,7 @@ public class DataFormatDefinition extends IdentifiedType {
     }
 
     public DataFormatDefinition copyDefinition() {
-        return new DataFormatDefinition(this);
+        throw new UnsupportedOperationException("Should be implemented in child classes");
     }
 
     protected DataFormatDefinition(String dataFormatName) {

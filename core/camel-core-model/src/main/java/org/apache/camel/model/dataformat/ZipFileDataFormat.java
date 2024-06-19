@@ -51,12 +51,25 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         super("zipFile");
     }
 
+    protected ZipFileDataFormat(ZipFileDataFormat source) {
+        super(source);
+        this.usingIterator = source.usingIterator;
+        this.allowEmptyDirectory = source.allowEmptyDirectory;
+        this.preservePathElements = source.preservePathElements;
+        this.maxDecompressedSize = source.maxDecompressedSize;
+    }
+
     private ZipFileDataFormat(Builder builder) {
         this();
         this.usingIterator = builder.usingIterator;
         this.allowEmptyDirectory = builder.allowEmptyDirectory;
         this.preservePathElements = builder.preservePathElements;
         this.maxDecompressedSize = builder.maxDecompressedSize;
+    }
+
+    @Override
+    public ZipFileDataFormat copyDefinition() {
+        return new ZipFileDataFormat(this);
     }
 
     public String getUsingIterator() {

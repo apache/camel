@@ -62,8 +62,7 @@ class RouteTemplateDefinitionTest {
     }
 
     private static final class CopyableDefinitionProcessDefinition
-            extends ProcessorDefinition<CopyableDefinitionProcessDefinition>
-            implements CopyableDefinition {
+            extends ProcessorDefinition<CopyableDefinitionProcessDefinition> {
 
         public CopyableDefinitionProcessDefinition() {
             setId(randomUUID().toString());

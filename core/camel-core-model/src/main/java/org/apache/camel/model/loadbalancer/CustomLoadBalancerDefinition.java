@@ -53,6 +53,7 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
         this.ref = ref;
     }
 
+    @Override
     public CustomLoadBalancerDefinition copyDefinition() {
         return new CustomLoadBalancerDefinition(this);
     }

@@ -62,6 +62,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         this.maximumFailoverAttempts = source.maximumFailoverAttempts;
     }
 
+    @Override
     public FailoverLoadBalancerDefinition copyDefinition() {
         return new FailoverLoadBalancerDefinition(this);
     }

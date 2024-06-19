@@ -104,6 +104,34 @@ public class AvroDataFormat extends DataFormatDefinition {
         super("avro");
     }
 
+    protected AvroDataFormat(AvroDataFormat source) {
+        super(source);
+        this.unmarshalType = source.unmarshalType;
+        this.jsonView = source.jsonView;
+        this.collectionType = source.collectionType;
+        this.schema = source.schema;
+        this.instanceClassName = source.instanceClassName;
+        this.library = source.library;
+        this.objectMapper = source.objectMapper;
+        this.useDefaultObjectMapper = source.useDefaultObjectMapper;
+        this.unmarshalTypeName = source.unmarshalTypeName;
+        this.jsonViewTypeName = source.jsonViewTypeName;
+        this.include = source.include;
+        this.allowJmsType = source.allowJmsType;
+        this.collectionTypeName = source.collectionTypeName;
+        this.useList = source.useList;
+        this.moduleClassNames = source.moduleClassNames;
+        this.moduleRefs = source.moduleRefs;
+        this.enableFeatures = source.enableFeatures;
+        this.disableFeatures = source.disableFeatures;
+        this.allowUnmarshallType = source.allowUnmarshallType;
+        this.timezone = source.timezone;
+        this.autoDiscoverObjectMapper = source.autoDiscoverObjectMapper;
+        this.contentTypeHeader = source.contentTypeHeader;
+        this.schemaResolver = source.schemaResolver;
+        this.autoDiscoverSchemaResolver = source.autoDiscoverSchemaResolver;
+    }
+
     public AvroDataFormat(AvroLibrary library) {
         this();
         setLibrary(library);
@@ -140,6 +168,11 @@ public class AvroDataFormat extends DataFormatDefinition {
         this.contentTypeHeader = builder.contentTypeHeader;
         this.schemaResolver = builder.schemaResolver;
         this.autoDiscoverSchemaResolver = builder.autoDiscoverSchemaResolver;
+    }
+
+    @Override
+    public AvroDataFormat copyDefinition() {
+        return new AvroDataFormat(this);
     }
 
     public String getInstanceClassName() {

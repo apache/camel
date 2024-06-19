@@ -17,6 +17,7 @@
 package org.apache.camel.model.dataformat;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -80,6 +81,24 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         super("xmlSecurity");
     }
 
+    protected XMLSecurityDataFormat(XMLSecurityDataFormat source) {
+        super(source);
+        this.xmlCipherAlgorithm = source.xmlCipherAlgorithm;
+        this.passPhrase = source.passPhrase;
+        this.passPhraseByte = source.passPhraseByte;
+        this.secureTag = source.secureTag;
+        this.secureTagContents = source.secureTagContents;
+        this.keyCipherAlgorithm = source.keyCipherAlgorithm;
+        this.recipientKeyAlias = source.recipientKeyAlias;
+        this.keyOrTrustStoreParametersRef = source.keyOrTrustStoreParametersRef;
+        this.keyPassword = source.keyPassword;
+        this.digestAlgorithm = source.digestAlgorithm;
+        this.mgfAlgorithm = source.mgfAlgorithm;
+        this.addKeyValueForEncryptedKey = source.addKeyValueForEncryptedKey;
+        this.keyOrTrustStoreParameters = source.keyOrTrustStoreParameters;
+        this.namespaces = source.namespaces != null ? new LinkedHashMap<>(source.namespaces) : null;
+    }
+
     private XMLSecurityDataFormat(Builder builder) {
         this();
         this.xmlCipherAlgorithm = builder.xmlCipherAlgorithm;
@@ -96,6 +115,11 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.addKeyValueForEncryptedKey = builder.addKeyValueForEncryptedKey;
         this.keyOrTrustStoreParameters = builder.keyOrTrustStoreParameters;
         this.namespaces = builder.namespaces;
+    }
+
+    @Override
+    public XMLSecurityDataFormat copyDefinition() {
+        return new XMLSecurityDataFormat(this);
     }
 
     public String getXmlCipherAlgorithm() {

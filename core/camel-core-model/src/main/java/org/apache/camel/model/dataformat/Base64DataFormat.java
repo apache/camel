@@ -48,11 +48,23 @@ public class Base64DataFormat extends DataFormatDefinition {
         super("base64");
     }
 
+    protected Base64DataFormat(Base64DataFormat source) {
+        super(source);
+        this.lineLength = source.lineLength;
+        this.lineSeparator = source.lineSeparator;
+        this.urlSafe = source.urlSafe;
+    }
+
     private Base64DataFormat(Builder builder) {
         this();
         this.lineLength = builder.lineLength;
         this.lineSeparator = builder.lineSeparator;
         this.urlSafe = builder.urlSafe;
+    }
+
+    @Override
+    public Base64DataFormat copyDefinition() {
+        return new Base64DataFormat(this);
     }
 
     public String getLineLength() {

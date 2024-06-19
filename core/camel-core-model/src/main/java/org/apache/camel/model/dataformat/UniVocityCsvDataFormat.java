@@ -49,12 +49,25 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         super("univocityCsv");
     }
 
+    protected UniVocityCsvDataFormat(UniVocityCsvDataFormat source) {
+        super(source);
+        this.delimiter = source.delimiter;
+        this.quoteAllFields = source.quoteAllFields;
+        this.quote = source.quote;
+        this.quoteEscape = source.quoteEscape;
+    }
+
     private UniVocityCsvDataFormat(Builder builder) {
         super("univocityCsv", builder);
         this.delimiter = builder.delimiter;
         this.quoteAllFields = builder.quoteAllFields;
         this.quote = builder.quote;
         this.quoteEscape = builder.quoteEscape;
+    }
+
+    @Override
+    public UniVocityCsvDataFormat copyDefinition() {
+        return new UniVocityCsvDataFormat(this);
     }
 
     public String getQuoteAllFields() {

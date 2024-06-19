@@ -35,6 +35,15 @@ public class FhirJsonDataFormat extends FhirDataformat {
         super("fhirJson");
     }
 
+    protected FhirJsonDataFormat(FhirJsonDataFormat source) {
+        super(source);
+    }
+
+    @Override
+    public FhirJsonDataFormat copyDefinition() {
+        return new FhirJsonDataFormat(this);
+    }
+
     private FhirJsonDataFormat(Builder builder) {
         super("fhirJson", builder);
     }

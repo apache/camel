@@ -39,6 +39,15 @@ public class FhirXmlDataFormat extends FhirDataformat {
         super("fhirXml", builder);
     }
 
+    protected FhirXmlDataFormat(FhirXmlDataFormat source) {
+        super(source);
+    }
+
+    @Override
+    public FhirXmlDataFormat copyDefinition() {
+        return new FhirXmlDataFormat(this);
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link FhirXmlDataFormat}.
      */

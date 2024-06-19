@@ -63,6 +63,18 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         super("flatpack");
     }
 
+    protected FlatpackDataFormat(FlatpackDataFormat source) {
+        super(source);
+        this.definition = source.definition;
+        this.fixed = source.fixed;
+        this.delimiter = source.delimiter;
+        this.ignoreFirstRecord = source.ignoreFirstRecord;
+        this.allowShortLines = source.allowShortLines;
+        this.ignoreExtraColumns = source.ignoreExtraColumns;
+        this.textQualifier = source.textQualifier;
+        this.parserFactoryRef = source.parserFactoryRef;
+    }
+
     private FlatpackDataFormat(Builder builder) {
         this();
         this.definition = builder.definition;
@@ -73,6 +85,11 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         this.ignoreExtraColumns = builder.ignoreExtraColumns;
         this.textQualifier = builder.textQualifier;
         this.parserFactoryRef = builder.parserFactoryRef;
+    }
+
+    @Override
+    public FlatpackDataFormat copyDefinition() {
+        return new FlatpackDataFormat(this);
     }
 
     public String getDefinition() {

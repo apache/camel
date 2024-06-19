@@ -49,7 +49,7 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
 
     protected SetVariablesDefinition(SetVariablesDefinition source) {
         super(source);
-        this.variables = copyVariables(source);
+        this.variables = ProcessorDefinitionHelper.deepCopyDefinitions(source.variables);
     }
 
     @Override
@@ -122,16 +122,6 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
-    }
-
-    private static List<SetVariableDefinition> copyVariables(SetVariablesDefinition source) {
-        var answer = new ArrayList<SetVariableDefinition>();
-        if (source.variables != null) {
-            for (var def : source.variables) {
-                answer.add(def.copyDefinition());
-            }
-        }
-        return answer;
     }
 
 }

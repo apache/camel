@@ -53,6 +53,15 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
         super("mimeMultipart");
     }
 
+    protected MimeMultipartDataFormat(MimeMultipartDataFormat source) {
+        super(source);
+        this.multipartSubType = source.multipartSubType;
+        this.multipartWithoutAttachment = source.multipartWithoutAttachment;
+        this.headersInline = source.headersInline;
+        this.includeHeaders = source.includeHeaders;
+        this.binaryContent = source.binaryContent;
+    }
+
     private MimeMultipartDataFormat(Builder builder) {
         this();
         this.multipartSubType = builder.multipartSubType;
@@ -60,6 +69,11 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
         this.headersInline = builder.headersInline;
         this.includeHeaders = builder.includeHeaders;
         this.binaryContent = builder.binaryContent;
+    }
+
+    @Override
+    public MimeMultipartDataFormat copyDefinition() {
+        return new MimeMultipartDataFormat(this);
     }
 
     public String getMultipartSubType() {

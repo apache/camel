@@ -48,7 +48,7 @@ public class OnFallbackDefinition extends ProcessorDefinition<OnFallbackDefiniti
     protected OnFallbackDefinition(OnFallbackDefinition source) {
         super(source);
         this.fallbackViaNetwork = source.fallbackViaNetwork;
-        this.outputs = ProcessorDefinitionHelper.copyDefinitions(source.outputs);
+        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
 
     @Override

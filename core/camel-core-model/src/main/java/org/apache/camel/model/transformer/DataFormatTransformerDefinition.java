@@ -120,6 +120,19 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
 
+    public DataFormatTransformerDefinition() {
+    }
+
+    protected DataFormatTransformerDefinition(DataFormatTransformerDefinition source) {
+        super(source);
+        this.dataFormatType = source.dataFormatType != null ? source.dataFormatType.copyDefinition() : null;
+    }
+
+    @Override
+    public DataFormatTransformerDefinition copyDefinition() {
+        return new DataFormatTransformerDefinition(this);
+    }
+
     public DataFormatDefinition getDataFormatType() {
         return dataFormatType;
     }

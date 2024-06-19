@@ -91,6 +91,29 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         super("jacksonXml");
     }
 
+    protected JacksonXMLDataFormat(JacksonXMLDataFormat builder) {
+        super(builder);
+        this.unmarshalType = builder.unmarshalType;
+        this.jsonView = builder.jsonView;
+        this.collectionType = builder.collectionType;
+        this.xmlMapper = builder.xmlMapper;
+        this.prettyPrint = builder.prettyPrint;
+        this.unmarshalTypeName = builder.unmarshalTypeName;
+        this.allowUnmarshallType = builder.allowUnmarshallType;
+        this.jsonViewTypeName = builder.jsonViewTypeName;
+        this.include = builder.include;
+        this.allowJmsType = builder.allowJmsType;
+        this.collectionTypeName = builder.collectionTypeName;
+        this.useList = builder.useList;
+        this.timezone = builder.timezone;
+        this.enableJaxbAnnotationModule = builder.enableJaxbAnnotationModule;
+        this.moduleClassNames = builder.moduleClassNames;
+        this.moduleRefs = builder.moduleRefs;
+        this.enableFeatures = builder.enableFeatures;
+        this.disableFeatures = builder.disableFeatures;
+        this.contentTypeHeader = builder.contentTypeHeader;
+    }
+
     private JacksonXMLDataFormat(Builder builder) {
         this();
         this.unmarshalType = builder.unmarshalType;
@@ -112,6 +135,11 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         this.enableFeatures = builder.enableFeatures;
         this.disableFeatures = builder.disableFeatures;
         this.contentTypeHeader = builder.contentTypeHeader;
+    }
+
+    @Override
+    public JacksonXMLDataFormat copyDefinition() {
+        return new JacksonXMLDataFormat(this);
     }
 
     public String getXmlMapper() {

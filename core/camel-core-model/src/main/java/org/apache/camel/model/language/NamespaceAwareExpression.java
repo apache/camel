@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model.language;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
@@ -50,7 +50,7 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
 
     protected NamespaceAwareExpression(NamespaceAwareExpression source) {
         super(source);
-        this.namespace = copyNamespace(source);
+        this.namespace = ProcessorDefinitionHelper.deepCopyDefinitions(source.namespace);
         this.namespaces = source.namespaces != null ? new LinkedHashMap<>(source.namespaces) : null;
     }
 
@@ -100,17 +100,6 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
             }
         }
         return namespaces;
-    }
-
-    private static List<PropertyDefinition> copyNamespace(NamespaceAwareExpression source) {
-        if (source.namespace != null) {
-            var answer = new ArrayList<PropertyDefinition>();
-            for (var def : source.namespace) {
-                answer.add(def.copyDefinition());
-            }
-            return answer;
-        }
-        return null;
     }
 
     /**

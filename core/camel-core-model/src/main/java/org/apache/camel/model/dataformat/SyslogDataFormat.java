@@ -37,6 +37,15 @@ public class SyslogDataFormat extends DataFormatDefinition {
         super("syslog");
     }
 
+    protected SyslogDataFormat(SyslogDataFormat source) {
+        super(source);
+    }
+
+    @Override
+    public SyslogDataFormat copyDefinition() {
+        return new SyslogDataFormat(this);
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link SyslogDataFormat}.
      */

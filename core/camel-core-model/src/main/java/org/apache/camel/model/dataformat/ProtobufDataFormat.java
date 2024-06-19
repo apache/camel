@@ -122,6 +122,35 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         setContentTypeFormat(contentTypeFormat);
     }
 
+    protected ProtobufDataFormat(ProtobufDataFormat source) {
+        super(source);
+        this.defaultInstance = source.defaultInstance;
+        this.instanceClass = source.instanceClass;
+        this.objectMapper = source.objectMapper;
+        this.useDefaultObjectMapper = source.useDefaultObjectMapper;
+        this.autoDiscoverObjectMapper = source.autoDiscoverObjectMapper;
+        this.library = source.library;
+        this.unmarshalTypeName = source.unmarshalTypeName;
+        this.unmarshalType = source.unmarshalType;
+        this.jsonViewTypeName = source.jsonViewTypeName;
+        this.jsonView = source.jsonView;
+        this.include = source.include;
+        this.allowJmsType = source.allowJmsType;
+        this.collectionTypeName = source.collectionTypeName;
+        this.collectionType = source.collectionType;
+        this.useList = source.useList;
+        this.moduleClassNames = source.moduleClassNames;
+        this.moduleRefs = source.moduleRefs;
+        this.enableFeatures = source.enableFeatures;
+        this.disableFeatures = source.disableFeatures;
+        this.allowUnmarshallType = source.allowUnmarshallType;
+        this.timezone = source.timezone;
+        this.schemaResolver = source.schemaResolver;
+        this.autoDiscoverSchemaResolver = source.autoDiscoverSchemaResolver;
+        this.contentTypeFormat = source.contentTypeFormat;
+        this.contentTypeHeader = source.contentTypeHeader;
+    }
+
     private ProtobufDataFormat(Builder builder) {
         this();
         this.defaultInstance = builder.defaultInstance;
@@ -149,6 +178,11 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         this.autoDiscoverSchemaResolver = builder.autoDiscoverSchemaResolver;
         this.contentTypeFormat = builder.contentTypeFormat;
         this.contentTypeHeader = builder.contentTypeHeader;
+    }
+
+    @Override
+    public ProtobufDataFormat copyDefinition() {
+        return new ProtobufDataFormat(this);
     }
 
     @Override
