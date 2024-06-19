@@ -45,7 +45,9 @@ public interface TimerEndpointBuilderFactory {
         }
 
         /**
-         * Delay before first event is triggered.
+         * The number of milliseconds to wait before the first event is
+         * generated. Should not be used in conjunction with the time option.
+         * The default value is 1000.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -60,7 +62,9 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Delay before first event is triggered.
+         * The number of milliseconds to wait before the first event is
+         * generated. Should not be used in conjunction with the time option.
+         * The default value is 1000.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -139,7 +143,8 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * If greater than 0, generate periodic events every period.
+         * Generate periodic events every period. Must be zero or positive
+         * value. The default value is 1000.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -154,7 +159,8 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * If greater than 0, generate periodic events every period.
+         * Generate periodic events every period. Must be zero or positive
+         * value. The default value is 1000.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
