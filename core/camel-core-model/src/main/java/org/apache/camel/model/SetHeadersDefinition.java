@@ -51,7 +51,7 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
 
     protected SetHeadersDefinition(SetHeadersDefinition source) {
         super(source);
-        this.headers = copyHeaders(source);
+        this.headers = ProcessorDefinitionHelper.deepCopyDefinitions(source.headers);
     }
 
     @Override
@@ -124,16 +124,6 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
-    }
-
-    private static List<SetHeaderDefinition> copyHeaders(SetHeadersDefinition source) {
-        var answer = new ArrayList<SetHeaderDefinition>();
-        if (source.headers != null) {
-            for (var def : source.headers) {
-                answer.add(def.copyDefinition());
-            }
-        }
-        return answer;
     }
 
 }

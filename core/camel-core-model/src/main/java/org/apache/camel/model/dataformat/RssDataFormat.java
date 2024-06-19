@@ -37,6 +37,15 @@ public class RssDataFormat extends DataFormatDefinition {
         super("rss");
     }
 
+    protected RssDataFormat(RssDataFormat source) {
+        super(source);
+    }
+
+    @Override
+    public RssDataFormat copyDefinition() {
+        return new RssDataFormat(this);
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link RssDataFormat}.
      */

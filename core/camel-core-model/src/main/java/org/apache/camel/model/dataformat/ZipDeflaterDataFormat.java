@@ -42,9 +42,19 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
         super("zipDeflater");
     }
 
+    protected ZipDeflaterDataFormat(ZipDeflaterDataFormat source) {
+        super(source);
+        this.compressionLevel = source.compressionLevel;
+    }
+
     private ZipDeflaterDataFormat(Builder builder) {
         this();
         this.compressionLevel = builder.compressionLevel;
+    }
+
+    @Override
+    public ZipDeflaterDataFormat copyDefinition() {
+        return new ZipDeflaterDataFormat(this);
     }
 
     public String getCompressionLevel() {

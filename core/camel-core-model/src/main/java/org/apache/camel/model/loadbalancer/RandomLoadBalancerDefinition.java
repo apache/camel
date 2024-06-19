@@ -38,6 +38,7 @@ public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {
         super(source);
     }
 
+    @Override
     public RandomLoadBalancerDefinition copyDefinition() {
         return new RandomLoadBalancerDefinition(this);
     }

@@ -64,7 +64,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
 
     protected ChoiceDefinition(ChoiceDefinition source) {
         super(source);
-        this.whenClauses = copyWhenClauses(source);
+        this.whenClauses = ProcessorDefinitionHelper.deepCopyDefinitions(source.whenClauses);
         this.otherwise = source.otherwise != null ? source.otherwise.copyDefinition() : null;
         this.precondition = source.precondition;
     }
@@ -329,17 +329,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
                 }
             }
         }
-    }
-
-    private static List<WhenDefinition> copyWhenClauses(ChoiceDefinition source) {
-        if (source.whenClauses != null) {
-            var answer = new ArrayList<WhenDefinition>();
-            for (var def : source.whenClauses) {
-                answer.add(def.copyDefinition());
-            }
-            return answer;
-        }
-        return null;
     }
 
 }

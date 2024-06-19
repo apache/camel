@@ -51,6 +51,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
         this.roundRobin = source.roundRobin;
     }
 
+    @Override
     public WeightedLoadBalancerDefinition copyDefinition() {
         return new WeightedLoadBalancerDefinition(this);
     }

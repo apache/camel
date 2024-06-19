@@ -461,10 +461,21 @@ public final class ProcessorDefinitionHelper {
         return null;
     }
 
-    public static List<ProcessorDefinition<?>> copyDefinitions(List<ProcessorDefinition<?>> outputs) {
-        var answer = new ArrayList<ProcessorDefinition<?>>();
-        for (var def : outputs) {
-            answer.add(def.copyDefinition());
+    /**
+     * Performs a depp copy of the list of model classes
+     *
+     * @param  models list of model classes
+     * @return        a new list containing a deep copy of the model classes
+     */
+    public static List deepCopyDefinitions(List models) {
+        var answer = new ArrayList();
+        if (models != null) {
+            for (var def : models) {
+                if (def instanceof CopyableDefinition<?> copy) {
+                    def = copy.copyDefinition();
+                }
+                answer.add(def);
+            }
         }
         return answer;
     }

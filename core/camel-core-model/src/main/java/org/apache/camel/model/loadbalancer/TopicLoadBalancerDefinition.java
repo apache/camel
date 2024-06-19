@@ -38,6 +38,7 @@ public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {
         super(source);
     }
 
+    @Override
     public TopicLoadBalancerDefinition copyDefinition() {
         return new TopicLoadBalancerDefinition(this);
     }

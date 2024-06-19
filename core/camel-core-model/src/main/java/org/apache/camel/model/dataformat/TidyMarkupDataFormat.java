@@ -51,6 +51,18 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         this.setDataObjectType(Node.class);
     }
 
+    protected TidyMarkupDataFormat(TidyMarkupDataFormat source) {
+        super(source);
+        this.dataObjectType = source.dataObjectType;
+        this.dataObjectTypeName = source.dataObjectTypeName;
+        this.omitXmlDeclaration = source.omitXmlDeclaration;
+    }
+
+    @Override
+    public TidyMarkupDataFormat copyDefinition() {
+        return new TidyMarkupDataFormat(this);
+    }
+
     public TidyMarkupDataFormat(Class<?> dataObjectType) {
         this();
         if (!dataObjectType.isAssignableFrom(String.class) && !dataObjectType.isAssignableFrom(Node.class)) {

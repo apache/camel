@@ -38,6 +38,20 @@ public class CustomTransformerDefinition extends TransformerDefinition {
     @XmlAttribute
     private String className;
 
+    public CustomTransformerDefinition() {
+    }
+
+    protected CustomTransformerDefinition(CustomTransformerDefinition source) {
+        super(source);
+        this.ref = source.ref;
+        this.className = source.className;
+    }
+
+    @Override
+    public CustomTransformerDefinition copyDefinition() {
+        return new CustomTransformerDefinition(this);
+    }
+
     public String getRef() {
         return ref;
     }

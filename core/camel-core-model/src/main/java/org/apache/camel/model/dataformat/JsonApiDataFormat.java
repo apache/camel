@@ -48,12 +48,25 @@ public class JsonApiDataFormat extends DataFormatDefinition {
         super("jsonApi");
     }
 
+    protected JsonApiDataFormat(JsonApiDataFormat source) {
+        super(source);
+        this.dataFormatTypes = source.dataFormatTypes;
+        this.dataFormatTypeClasses = source.dataFormatTypeClasses;
+        this.mainFormatType = source.mainFormatType;
+        this.mainFormatTypeClass = source.mainFormatTypeClass;
+    }
+
     private JsonApiDataFormat(Builder builder) {
         this();
         this.dataFormatTypes = builder.dataFormatTypes;
         this.dataFormatTypeClasses = builder.dataFormatTypeClasses;
         this.mainFormatType = builder.mainFormatType;
         this.mainFormatTypeClass = builder.mainFormatTypeClass;
+    }
+
+    @Override
+    public JsonApiDataFormat copyDefinition() {
+        return new JsonApiDataFormat(this);
     }
 
     public String getDataFormatTypes() {

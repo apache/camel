@@ -20,10 +20,10 @@ package org.apache.camel.model;
  * This interface is used to copy {@link ProcessorDefinition ProcessorDefinitions} during instantiation of route
  * templates.
  */
-public interface CopyableDefinition {
+public interface CopyableDefinition<T> {
 
     /**
      * Makes a copy of this definition.
      */
-    ProcessorDefinition<?> copyDefinition();
+    T copyDefinition();
 }

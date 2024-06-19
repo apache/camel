@@ -48,6 +48,7 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
                 = source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
     }
 
+    @Override
     public StickyLoadBalancerDefinition copyDefinition() {
         return new StickyLoadBalancerDefinition(this);
     }

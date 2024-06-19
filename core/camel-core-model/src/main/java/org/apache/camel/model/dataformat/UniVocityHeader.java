@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlValue;
 
+import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -30,12 +31,25 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation,csv", title = "uniVocity Header")
 @XmlRootElement(name = "univocityHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UniVocityHeader {
+public class UniVocityHeader implements CopyableDefinition<UniVocityHeader> {
 
     @XmlValue
     private String name;
     @XmlAttribute
     private String length;
+
+    public UniVocityHeader() {
+    }
+
+    protected UniVocityHeader(UniVocityHeader source) {
+        this.name = source.name;
+        this.length = source.length;
+    }
+
+    @Override
+    public UniVocityHeader copyDefinition() {
+        return new UniVocityHeader(this);
+    }
 
     public String getName() {
         return name;

@@ -98,6 +98,30 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         super("jaxb");
     }
 
+    private JaxbDataFormat(JaxbDataFormat source) {
+        super(source);
+        this.contextPath = source.contextPath;
+        this.contextPathIsClassName = source.contextPathIsClassName;
+        this.schema = source.schema;
+        this.schemaSeverityLevel = source.schemaSeverityLevel;
+        this.prettyPrint = source.prettyPrint;
+        this.objectFactory = source.objectFactory;
+        this.ignoreJAXBElement = source.ignoreJAXBElement;
+        this.mustBeJAXBElement = source.mustBeJAXBElement;
+        this.filterNonXmlChars = source.filterNonXmlChars;
+        this.encoding = source.encoding;
+        this.fragment = source.fragment;
+        this.partClass = source.partClass;
+        this.partNamespace = source.partNamespace;
+        this.namespacePrefixRef = source.namespacePrefixRef;
+        this.xmlStreamWriterWrapper = source.xmlStreamWriterWrapper;
+        this.schemaLocation = source.schemaLocation;
+        this.noNamespaceSchemaLocation = source.noNamespaceSchemaLocation;
+        this.jaxbProviderProperties = source.jaxbProviderProperties;
+        this.contentTypeHeader = source.contentTypeHeader;
+        this.accessExternalSchemaProtocols = source.accessExternalSchemaProtocols;
+    }
+
     public JaxbDataFormat(boolean prettyPrint) {
         this();
         setPrettyPrint(Boolean.toString(prettyPrint));
@@ -125,6 +149,11 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         this.jaxbProviderProperties = builder.jaxbProviderProperties;
         this.contentTypeHeader = builder.contentTypeHeader;
         this.accessExternalSchemaProtocols = builder.accessExternalSchemaProtocols;
+    }
+
+    @Override
+    public JaxbDataFormat copyDefinition() {
+        return new JaxbDataFormat(this);
     }
 
     public String getContextPath() {

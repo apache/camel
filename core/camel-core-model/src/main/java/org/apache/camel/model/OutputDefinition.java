@@ -42,7 +42,7 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
 
     protected OutputDefinition(OutputDefinition<?> source) {
         super(source);
-        this.outputs = ProcessorDefinitionHelper.copyDefinitions(source.outputs);
+        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
 
     @Override

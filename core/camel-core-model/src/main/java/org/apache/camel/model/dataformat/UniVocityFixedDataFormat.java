@@ -45,11 +45,23 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
         super("univocityFixed");
     }
 
+    protected UniVocityFixedDataFormat(UniVocityFixedDataFormat source) {
+        super(source);
+        this.padding = source.padding;
+        this.skipTrailingCharsUntilNewline = source.skipTrailingCharsUntilNewline;
+        this.recordEndsOnNewline = source.recordEndsOnNewline;
+    }
+
     private UniVocityFixedDataFormat(Builder builder) {
         super("univocityFixed", builder);
         this.padding = builder.padding;
         this.skipTrailingCharsUntilNewline = builder.skipTrailingCharsUntilNewline;
         this.recordEndsOnNewline = builder.recordEndsOnNewline;
+    }
+
+    @Override
+    public UniVocityFixedDataFormat copyDefinition() {
+        return new UniVocityFixedDataFormat(this);
     }
 
     public String getSkipTrailingCharsUntilNewline() {

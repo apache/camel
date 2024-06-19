@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.spi.DataType;
@@ -40,13 +41,20 @@ import org.apache.camel.spi.Validator;
 @Metadata(label = "validation")
 @XmlType(name = "validator")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ValidatorDefinition {
+public abstract class ValidatorDefinition implements CopyableDefinition<ValidatorDefinition> {
 
     @XmlAttribute
     private String type;
 
     public String getType() {
         return type;
+    }
+
+    public ValidatorDefinition() {
+    }
+
+    protected ValidatorDefinition(ValidatorDefinition source) {
+        this.type = source.type;
     }
 
     /**

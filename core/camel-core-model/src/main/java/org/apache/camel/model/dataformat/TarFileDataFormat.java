@@ -51,11 +51,24 @@ public class TarFileDataFormat extends DataFormatDefinition {
         super("tarFile");
     }
 
+    protected TarFileDataFormat(TarFileDataFormat source) {
+        super(source);
+        this.usingIterator = source.usingIterator;
+        this.allowEmptyDirectory = source.allowEmptyDirectory;
+        this.preservePathElements = source.preservePathElements;
+        this.maxDecompressedSize = source.maxDecompressedSize;
+    }
+
     private TarFileDataFormat(Builder builder) {
         this.usingIterator = builder.usingIterator;
         this.allowEmptyDirectory = builder.allowEmptyDirectory;
         this.preservePathElements = builder.preservePathElements;
         this.maxDecompressedSize = builder.maxDecompressedSize;
+    }
+
+    @Override
+    public TarFileDataFormat copyDefinition() {
+        return new TarFileDataFormat(this);
     }
 
     public String getUsingIterator() {

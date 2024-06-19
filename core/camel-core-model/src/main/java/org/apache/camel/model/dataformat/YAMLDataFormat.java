@@ -81,6 +81,24 @@ public class YAMLDataFormat extends DataFormatDefinition {
         this(YAMLLibrary.SnakeYAML);
     }
 
+    protected YAMLDataFormat(YAMLDataFormat source) {
+        super(source);
+        this.classLoader = source.classLoader;
+        this.unmarshalType = source.unmarshalType;
+        this.library = source.library;
+        this.unmarshalTypeName = source.unmarshalTypeName;
+        this.constructor = source.constructor;
+        this.representer = source.representer;
+        this.dumperOptions = source.dumperOptions;
+        this.resolver = source.resolver;
+        this.useApplicationContextClassLoader = source.useApplicationContextClassLoader;
+        this.prettyFlow = source.prettyFlow;
+        this.allowAnyType = source.allowAnyType;
+        this.typeFilters = source.typeFilters;
+        this.maxAliasesForCollections = source.maxAliasesForCollections;
+        this.allowRecursiveKeys = source.allowRecursiveKeys;
+    }
+
     public YAMLDataFormat(YAMLLibrary library) {
         super(library.getDataFormatName());
         this.library = library;
@@ -108,6 +126,11 @@ public class YAMLDataFormat extends DataFormatDefinition {
         this.typeFilters = builder.typeFilters;
         this.maxAliasesForCollections = builder.maxAliasesForCollections;
         this.allowRecursiveKeys = builder.allowRecursiveKeys;
+    }
+
+    @Override
+    public YAMLDataFormat copyDefinition() {
+        return new YAMLDataFormat(this);
     }
 
     @Override

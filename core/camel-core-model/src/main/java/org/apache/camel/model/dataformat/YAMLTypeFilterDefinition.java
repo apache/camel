@@ -21,18 +21,32 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "dataformat,transformation,yaml", title = "YAML Type Filter")
 @XmlRootElement(name = "typeFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class YAMLTypeFilterDefinition {
+public class YAMLTypeFilterDefinition implements CopyableDefinition<YAMLTypeFilterDefinition> {
 
     @XmlAttribute
     private String value;
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.model.dataformat.YAMLTypeFilterType")
     private String type;
+
+    public YAMLTypeFilterDefinition() {
+    }
+
+    protected YAMLTypeFilterDefinition(YAMLTypeFilterDefinition source) {
+        this.value = source.value;
+        this.type = source.type;
+    }
+
+    @Override
+    public YAMLTypeFilterDefinition copyDefinition() {
+        return new YAMLTypeFilterDefinition(this);
+    }
 
     public String getValue() {
         return value;

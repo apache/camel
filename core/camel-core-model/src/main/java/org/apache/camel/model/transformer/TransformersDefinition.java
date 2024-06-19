@@ -24,6 +24,8 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.CopyableDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -32,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "transformation", title = "Transformations")
 @XmlRootElement(name = "transformers")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransformersDefinition {
+public class TransformersDefinition implements CopyableDefinition<TransformersDefinition> {
 
     @XmlElements({
             @XmlElement(name = "dataFormatTransformer", type = DataFormatTransformerDefinition.class),
@@ -40,6 +42,18 @@ public class TransformersDefinition {
             @XmlElement(name = "loadTransformer", type = LoadTransformerDefinition.class),
             @XmlElement(name = "customTransformer", type = CustomTransformerDefinition.class) })
     private List<TransformerDefinition> transformers;
+
+    public TransformersDefinition() {
+    }
+
+    protected TransformersDefinition(TransformersDefinition source) {
+        this.transformers = ProcessorDefinitionHelper.deepCopyDefinitions(source.transformers);
+    }
+
+    @Override
+    public TransformersDefinition copyDefinition() {
+        return new TransformersDefinition(this);
+    }
 
     /**
      * The configured transformers
@@ -51,5 +65,4 @@ public class TransformersDefinition {
     public List<TransformerDefinition> getTransformers() {
         return transformers;
     }
-
 }

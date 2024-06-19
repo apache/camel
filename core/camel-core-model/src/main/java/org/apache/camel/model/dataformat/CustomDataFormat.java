@@ -40,6 +40,11 @@ public class CustomDataFormat extends DataFormatDefinition {
     public CustomDataFormat() {
     }
 
+    protected CustomDataFormat(CustomDataFormat source) {
+        super(source);
+        this.ref = source.ref;
+    }
+
     public CustomDataFormat(String ref) {
         this.ref = ref;
     }
@@ -47,6 +52,11 @@ public class CustomDataFormat extends DataFormatDefinition {
     private CustomDataFormat(Builder builder) {
         this();
         this.ref = builder.ref;
+    }
+
+    @Override
+    public CustomDataFormat copyDefinition() {
+        return new CustomDataFormat(this);
     }
 
     /**

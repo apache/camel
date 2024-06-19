@@ -64,6 +64,19 @@ public class CryptoDataFormat extends DataFormatDefinition {
         super("crypto");
     }
 
+    protected CryptoDataFormat(CryptoDataFormat source) {
+        super(source);
+        this.algorithm = source.algorithm;
+        this.keyRef = source.keyRef;
+        this.cryptoProvider = source.cryptoProvider;
+        this.initVectorRef = source.initVectorRef;
+        this.algorithmParameterRef = source.algorithmParameterRef;
+        this.bufferSize = source.bufferSize;
+        this.macAlgorithm = source.macAlgorithm;
+        this.shouldAppendHMAC = source.shouldAppendHMAC;
+        this.inline = source.inline;
+    }
+
     private CryptoDataFormat(Builder builder) {
         this();
         this.algorithm = builder.algorithm;
@@ -75,6 +88,11 @@ public class CryptoDataFormat extends DataFormatDefinition {
         this.macAlgorithm = builder.macAlgorithm;
         this.shouldAppendHMAC = builder.shouldAppendHMAC;
         this.inline = builder.inline;
+    }
+
+    @Override
+    public CryptoDataFormat copyDefinition() {
+        return new CryptoDataFormat(this);
     }
 
     public String getAlgorithm() {

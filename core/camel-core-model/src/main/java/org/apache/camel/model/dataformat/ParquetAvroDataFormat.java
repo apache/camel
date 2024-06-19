@@ -49,6 +49,14 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
         super("parquetAvro");
     }
 
+    protected ParquetAvroDataFormat(ParquetAvroDataFormat source) {
+        super(source);
+        this.compressionCodecName = source.compressionCodecName;
+        this.unmarshalTypeName = source.unmarshalTypeName;
+        this.unmarshalType = source.unmarshalType;
+        this.lazyLoad = source.lazyLoad;
+    }
+
     public ParquetAvroDataFormat(String unmarshalTypeName) {
         this();
         setUnmarshalTypeName(unmarshalTypeName);
@@ -70,6 +78,11 @@ public class ParquetAvroDataFormat extends DataFormatDefinition {
         this.unmarshalTypeName = builder.unmarshalTypeName;
         this.unmarshalType = builder.unmarshalType;
         this.lazyLoad = builder.lazyLoad;
+    }
+
+    @Override
+    public ParquetAvroDataFormat copyDefinition() {
+        return new ParquetAvroDataFormat(this);
     }
 
     /**

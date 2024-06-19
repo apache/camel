@@ -418,7 +418,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         copy.setLogMask(route.getLogMask());
         copy.setMessageHistory(route.getMessageHistory());
         copy.setOutputType(route.getOutputType());
-        copy.setOutputs(ProcessorDefinitionHelper.copyDefinitions(route.getOutputs()));
+        copy.setOutputs(ProcessorDefinitionHelper.deepCopyDefinitions(route.getOutputs()));
         copy.setRoutePolicies(shallowCopy(route.getRoutePolicies()));
         copy.setRoutePolicyRef(route.getRoutePolicyRef());
         copy.setRouteProperties(shallowCopy(route.getRouteProperties()));
