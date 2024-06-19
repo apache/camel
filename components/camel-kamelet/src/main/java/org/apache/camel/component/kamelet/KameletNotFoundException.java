@@ -21,13 +21,19 @@ import org.apache.camel.CamelException;
 public class KameletNotFoundException extends CamelException {
 
     private final String templateId;
+    private final String locations;
 
     public KameletNotFoundException(String templateId, String locations, Throwable cause) {
-        super("Kamelet with id " + templateId + " not found in locations: " + locations, cause);
+        super("Error loading or creating Kamelet with id " + templateId + " (locations: " + locations + ")", cause);
         this.templateId = templateId;
+        this.locations = locations;
     }
 
     public String getTemplateId() {
         return templateId;
+    }
+
+    public String getLocations() {
+        return locations;
     }
 }
