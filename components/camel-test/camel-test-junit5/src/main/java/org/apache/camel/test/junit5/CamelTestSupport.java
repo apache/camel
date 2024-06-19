@@ -69,6 +69,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     @RegisterExtension
     protected CamelTestSupport camelTestSupportExtension = this;
     private final StopWatch watch = new StopWatch();
+
+    @Deprecated
     private String currentTestName;
 
     private CamelContextManager contextManager;
@@ -155,7 +157,10 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     /**
      * Gets the name of the current test being executed.
+     *
+     * @deprecated Use JUnit's TestInfo class or the {@link TestNameExtension}
      */
+    @Deprecated(since = "4.7.0")
     public final String getCurrentTestName() {
         return currentTestName;
     }

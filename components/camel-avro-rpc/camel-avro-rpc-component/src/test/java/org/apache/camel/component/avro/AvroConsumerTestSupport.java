@@ -27,7 +27,10 @@ import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestPojo;
 import org.apache.camel.avro.test.TestReflection;
 import org.apache.camel.avro.test.TestReflectionImpl;
+import org.apache.camel.test.junit5.TestNameExtension;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,6 +57,10 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
 
     KeyValueProtocolImpl keyValue = new KeyValueProtocolImpl();
     TestReflection testReflection = new TestReflectionImpl();
+
+    @RegisterExtension
+    @Order(10)
+    TestNameExtension testNameExtension = new TestNameExtension();
 
     protected abstract void initializeTranceiver() throws IOException;
 
@@ -187,7 +194,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     }
 
     protected ConsumerRouteType getRouteType() {
-        switch (getCurrentTestName()) {
+        switch (testNameExtension.getCurrentTestName()) {
             case "testInOut()":
             case "testInOnly()":
                 return ConsumerRouteType.specific;
@@ -204,7 +211,8 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
             case "testInOnlyToNotExistingRoute()":
                 return ConsumerRouteType.specificProcessorWrong;
             default:
-                throw new IllegalStateException(String.format("Test '%s' is not listed.", getCurrentTestName()));
+                throw new IllegalStateException(
+                        String.format("Test '%s' is not listed.", testNameExtension.getCurrentTestName()));
         }
     }
 }
