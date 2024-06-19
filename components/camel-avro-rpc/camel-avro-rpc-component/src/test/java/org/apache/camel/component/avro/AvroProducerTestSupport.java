@@ -24,7 +24,10 @@ import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestReflectionImpl;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestNameExtension;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,6 +37,10 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     Server serverReflection;
     KeyValueProtocolImpl keyValue = new KeyValueProtocolImpl();
     TestReflectionImpl testReflection = new TestReflectionImpl();
+
+    @RegisterExtension
+    @Order(10)
+    TestNameExtension testNameExtension = new TestNameExtension();
 
     protected abstract void initializeServer() throws IOException, InterruptedException;
 
@@ -139,7 +146,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     }
 
     protected ProducerRouteType getRouteType() {
-        if (getCurrentTestName().contains("Reflection")) {
+        if (testNameExtension.getCurrentTestName().contains("Reflection")) {
             return ProducerRouteType.reflect;
         }
 

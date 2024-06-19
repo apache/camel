@@ -24,12 +24,18 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestNameExtension;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.consul.Consul;
 
 public class ConsulTestSupport extends CamelTestSupport {
     @RegisterExtension
     public static ConsulService service = ConsulServiceFactory.createService();
+
+    @RegisterExtension
+    @Order(10)
+    TestNameExtension testNameExtension = new TestNameExtension();
 
     public static final String KV_PREFIX = "/camel";
 
@@ -60,6 +66,6 @@ public class ConsulTestSupport extends CamelTestSupport {
     }
 
     protected String generateKey() {
-        return KV_PREFIX + "/" + getCurrentTestName() + "/" + generateRandomString();
+        return KV_PREFIX + "/" + testNameExtension.getCurrentTestName() + "/" + generateRandomString();
     }
 }

@@ -21,9 +21,15 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestNameExtension;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class AbstractNitriteTest extends CamelTestSupport {
+    @RegisterExtension
+    @Order(10)
+    TestNameExtension testNameExtension = new TestNameExtension();
 
     @Override
     protected void doPreSetup() throws Exception {
@@ -32,7 +38,7 @@ public abstract class AbstractNitriteTest extends CamelTestSupport {
     }
 
     protected String tempDb() {
-        return "target/" + getClass().getSimpleName() + "_" + getCurrentTestName() + ".db";
+        return "target/" + getClass().getSimpleName() + "_" + testNameExtension.getCurrentTestName() + ".db";
     }
 
     protected List<Exchange> sortByChangeTimestamp(List<Exchange> input) {
