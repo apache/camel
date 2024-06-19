@@ -62,6 +62,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     public static final String NL = "\n";
 
     private static final Map<String, Class<?>> KNOWN_CLASSES_CACHE = new ConcurrentHashMap<>();
+    private static final RuntimeInstance VELOCITY = createVelocityRuntime();
+    private static final Map<String, Template> VELOCITY_TEMPLATES = new ConcurrentHashMap<String, Template>();
 
     /**
      * The maven project.
@@ -97,7 +99,6 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         KNOWN_CLASSES_CACHE.put("int", int.class);
         KNOWN_CLASSES_CACHE.put("long", long.class);
         KNOWN_CLASSES_CACHE.put("boolean", boolean.class);
-
     }
 
     public void execute(
@@ -120,19 +121,21 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     }
 
     protected String velocity(String templatePath, Map<String, Object> ctx) {
+        VelocityContext context = new VelocityContext(ctx);
+        Template template = VELOCITY_TEMPLATES.computeIfAbsent(templatePath, VELOCITY::getTemplate);
+
+        StringWriter writer = new StringWriter();
+        template.merge(context, writer);
+        return writer.toString();
+    }
+
+    private static RuntimeInstance createVelocityRuntime() {
         Properties props = new Properties();
         props.setProperty("resource.loaders", "class");
         props.setProperty("resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         RuntimeInstance velocity = new RuntimeInstance();
         velocity.init(props);
-
-        VelocityContext context = new VelocityContext();
-        ctx.forEach(context::put);
-
-        Template template = velocity.getTemplate(templatePath);
-        StringWriter writer = new StringWriter();
-        template.merge(context, writer);
-        return writer.toString();
+        return velocity;
     }
 
     protected boolean updateResource(Path dir, String fileName, String data) {
