@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
+import java.util.Map;
+
 import com.azure.cosmos.CosmosAsyncClient;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -28,8 +30,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Map;
 
 /**
  * To read and write records to the CosmosDB database on Azure cloud platform.
