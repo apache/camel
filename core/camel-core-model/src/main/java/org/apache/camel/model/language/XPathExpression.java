@@ -69,6 +69,20 @@ public class XPathExpression extends NamespaceAwareExpression {
     public XPathExpression() {
     }
 
+    protected XPathExpression(XPathExpression source) {
+        super(source);
+        this.documentType = source.documentType;
+        this.xpathFactory = source.xpathFactory;
+        this.documentTypeName = source.documentTypeName;
+        this.resultQName = source.resultQName;
+        this.saxon = source.saxon;
+        this.factoryRef = source.factoryRef;
+        this.objectModel = source.objectModel;
+        this.logNamespaces = source.logNamespaces;
+        this.threadSafety = source.threadSafety;
+        this.preCompile = source.preCompile;
+    }
+
     public XPathExpression(String expression) {
         super(expression);
     }
@@ -89,6 +103,11 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.logNamespaces = builder.logNamespaces;
         this.threadSafety = builder.threadSafety;
         this.preCompile = builder.preCompile;
+    }
+
+    @Override
+    public ExpressionDefinition copyDefinition() {
+        return new XPathExpression(this);
     }
 
     @Override

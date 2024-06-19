@@ -48,8 +48,20 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
     public PolicyDefinition() {
     }
 
+    protected PolicyDefinition(PolicyDefinition source) {
+        super(source);
+        this.type = source.type;
+        this.policy = source.policy;
+        this.ref = source.ref;
+    }
+
     public PolicyDefinition(Policy policy) {
         this.policy = policy;
+    }
+
+    @Override
+    public PolicyDefinition copyDefinition() {
+        return new PolicyDefinition(this);
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +40,23 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefinition> {
 
-    /** This is provided to support XML and YAML DSL */
+    /**
+     * This is provided to support XML and YAML DSL
+     */
     @XmlElementRef(name = "headers")
     private List<SetHeaderDefinition> headers = new java.util.ArrayList<>();
 
     public SetHeadersDefinition() {
+    }
+
+    protected SetHeadersDefinition(SetHeadersDefinition source) {
+        super(source);
+        this.headers = copyHeaders(source);
+    }
+
+    @Override
+    public SetHeadersDefinition copyDefinition() {
+        return new SetHeadersDefinition(this);
     }
 
     /**
@@ -111,6 +124,16 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
+    }
+
+    private static List<SetHeaderDefinition> copyHeaders(SetHeadersDefinition source) {
+        var answer = new ArrayList<SetHeaderDefinition>();
+        if (source.headers != null) {
+            for (var def : source.headers) {
+                answer.add(def.copyDefinition());
+            }
+        }
+        return answer;
     }
 
 }

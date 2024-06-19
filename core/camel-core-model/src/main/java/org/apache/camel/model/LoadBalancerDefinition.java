@@ -29,9 +29,15 @@ public abstract class LoadBalancerDefinition extends IdentifiedType {
     public LoadBalancerDefinition() {
     }
 
+    protected LoadBalancerDefinition(LoadBalancerDefinition source) {
+        this.loadBalancerTypeName = source.loadBalancerTypeName;
+    }
+
     protected LoadBalancerDefinition(String loadBalancerTypeName) {
         this.loadBalancerTypeName = loadBalancerTypeName;
     }
+
+    protected abstract LoadBalancerDefinition copyDefinition();
 
     /**
      * Maximum number of outputs, as some load balancers only support 1 processor

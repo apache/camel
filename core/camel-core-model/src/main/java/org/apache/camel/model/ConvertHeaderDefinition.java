@@ -51,6 +51,21 @@ public class ConvertHeaderDefinition extends NoOutputDefinition<ConvertHeaderDef
     public ConvertHeaderDefinition() {
     }
 
+    protected ConvertHeaderDefinition(ConvertHeaderDefinition source) {
+        super(source);
+        this.typeClass = source.typeClass;
+        this.name = source.name;
+        this.type = source.type;
+        this.toName = source.toName;
+        this.mandatory = source.mandatory;
+        this.charset = source.charset;
+    }
+
+    @Override
+    public ConvertHeaderDefinition copyDefinition() {
+        return new ConvertHeaderDefinition(this);
+    }
+
     public ConvertHeaderDefinition(String name, String type) {
         setName(name);
         setType(type);

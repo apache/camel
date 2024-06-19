@@ -34,6 +34,14 @@ public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {
     public RandomLoadBalancerDefinition() {
     }
 
+    protected RandomLoadBalancerDefinition(RandomLoadBalancerDefinition source) {
+        super(source);
+    }
+
+    public RandomLoadBalancerDefinition copyDefinition() {
+        return new RandomLoadBalancerDefinition(this);
+    }
+
     @Override
     public String toString() {
         return "RandomLoadBalancer";

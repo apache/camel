@@ -51,6 +51,17 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
     public ConvertVariableDefinition() {
     }
 
+    protected ConvertVariableDefinition(ConvertVariableDefinition source) {
+        super(source);
+        ;
+        this.typeClass = source.typeClass;
+        this.name = source.name;
+        this.type = source.type;
+        this.toName = source.toName;
+        this.mandatory = source.mandatory;
+        this.charset = source.charset;
+    }
+
     public ConvertVariableDefinition(String name, String type) {
         setName(name);
         setType(type);
@@ -81,6 +92,11 @@ public class ConvertVariableDefinition extends NoOutputDefinition<ConvertVariabl
         setTypeClass(typeClass);
         setType(typeClass.getCanonicalName());
         setCharset(charset);
+    }
+
+    @Override
+    public ConvertVariableDefinition copyDefinition() {
+        return new ConvertVariableDefinition(this);
     }
 
     @Override

@@ -37,8 +37,18 @@ public class RemoveVariableDefinition extends NoOutputDefinition<RemoveVariableD
     public RemoveVariableDefinition() {
     }
 
+    protected RemoveVariableDefinition(RemoveVariableDefinition source) {
+        super(source);
+        this.name = source.name;
+    }
+
     public RemoveVariableDefinition(String variableName) {
         this.name = variableName;
+    }
+
+    @Override
+    public RemoveVariableDefinition copyDefinition() {
+        return new RemoveVariableDefinition(this);
     }
 
     @Override

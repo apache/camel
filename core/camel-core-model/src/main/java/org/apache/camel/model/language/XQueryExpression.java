@@ -41,6 +41,12 @@ public class XQueryExpression extends NamespaceAwareExpression {
     public XQueryExpression() {
     }
 
+    protected XQueryExpression(XQueryExpression source) {
+        super(source);
+        this.configuration = source.configuration;
+        this.configurationRef = source.configurationRef;
+    }
+
     public XQueryExpression(String expression) {
         super(expression);
     }
@@ -49,6 +55,11 @@ public class XQueryExpression extends NamespaceAwareExpression {
         super(builder);
         this.configuration = builder.configuration;
         this.configurationRef = builder.configurationRef;
+    }
+
+    @Override
+    public XQueryExpression copyDefinition() {
+        return new XQueryExpression(this);
     }
 
     @Override

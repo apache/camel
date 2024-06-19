@@ -34,12 +34,21 @@ public class RefExpression extends TypedExpressionDefinition {
     public RefExpression() {
     }
 
+    protected RefExpression(RefExpression source) {
+        super(source);
+    }
+
     public RefExpression(String ref) {
         super(ref);
     }
 
     private RefExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public RefExpression copyDefinition() {
+        return new RefExpression(this);
     }
 
     @Override

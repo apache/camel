@@ -37,6 +37,16 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
     public RemovePropertyDefinition() {
     }
 
+    protected RemovePropertyDefinition(RemovePropertyDefinition source) {
+        super(source);
+        this.name = source.name;
+    }
+
+    @Override
+    public RemovePropertyDefinition copyDefinition() {
+        return new RemovePropertyDefinition(this);
+    }
+
     public RemovePropertyDefinition(String propertyName) {
         this.name = propertyName;
     }

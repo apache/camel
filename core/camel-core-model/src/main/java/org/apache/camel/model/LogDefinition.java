@@ -53,9 +53,24 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     public LogDefinition() {
     }
 
+    protected LogDefinition(LogDefinition source) {
+        super(source);
+        this.loggerBean = source.loggerBean;
+        this.message = source.message;
+        this.loggingLevel = source.loggingLevel;
+        this.logName = source.logName;
+        this.marker = source.marker;
+        this.logger = source.logger;
+    }
+
     public LogDefinition(String message) {
         this();
         this.message = message;
+    }
+
+    @Override
+    public LogDefinition copyDefinition() {
+        return new LogDefinition(this);
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,16 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
     private List<SetVariableDefinition> variables = new java.util.ArrayList<>();
 
     public SetVariablesDefinition() {
+    }
+
+    protected SetVariablesDefinition(SetVariablesDefinition source) {
+        super(source);
+        this.variables = copyVariables(source);
+    }
+
+    @Override
+    public SetVariablesDefinition copyDefinition() {
+        return new SetVariablesDefinition(this);
     }
 
     /**
@@ -111,6 +122,16 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
+    }
+
+    private static List<SetVariableDefinition> copyVariables(SetVariablesDefinition source) {
+        var answer = new ArrayList<SetVariableDefinition>();
+        if (source.variables != null) {
+            for (var def : source.variables) {
+                answer.add(def.copyDefinition());
+            }
+        }
+        return answer;
     }
 
 }

@@ -96,12 +96,39 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     public RecipientListDefinition() {
     }
 
+    public RecipientListDefinition(RecipientListDefinition source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.aggregationStrategyBean = source.aggregationStrategyBean;
+        this.onPrepareProcessor = source.onPrepareProcessor;
+        this.delimiter = source.delimiter;
+        this.aggregationStrategy = source.aggregationStrategy;
+        this.aggregationStrategyMethodName = source.aggregationStrategyMethodName;
+        this.aggregationStrategyMethodAllowNull = source.aggregationStrategyMethodAllowNull;
+        this.parallelAggregate = source.parallelAggregate;
+        this.parallelProcessing = source.parallelProcessing;
+        this.synchronous = source.synchronous;
+        this.timeout = source.timeout;
+        this.executorService = source.executorService;
+        this.stopOnException = source.stopOnException;
+        this.ignoreInvalidEndpoints = source.ignoreInvalidEndpoints;
+        this.streaming = source.streaming;
+        this.onPrepare = source.onPrepare;
+        this.cacheSize = source.cacheSize;
+        this.shareUnitOfWork = source.shareUnitOfWork;
+    }
+
     public RecipientListDefinition(ExpressionDefinition expression) {
         super(expression);
     }
 
     public RecipientListDefinition(Expression expression) {
         super(expression);
+    }
+
+    @Override
+    public RecipientListDefinition copyDefinition() {
+        return new RecipientListDefinition(this);
     }
 
     @Override

@@ -34,12 +34,21 @@ public class HeaderExpression extends ExpressionDefinition {
     public HeaderExpression() {
     }
 
+    protected HeaderExpression(HeaderExpression source) {
+        super(source);
+    }
+
     public HeaderExpression(String expression) {
         super(expression);
     }
 
     private HeaderExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public HeaderExpression copyDefinition() {
+        return new HeaderExpression(this);
     }
 
     @Override

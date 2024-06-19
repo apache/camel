@@ -38,6 +38,11 @@ public class LanguageExpression extends ExpressionDefinition {
     public LanguageExpression() {
     }
 
+    protected LanguageExpression(LanguageExpression source) {
+        super(source);
+        this.language = source.language;
+    }
+
     public LanguageExpression(String language, String expression) {
         setLanguage(language);
         setExpression(expression);
@@ -46,6 +51,11 @@ public class LanguageExpression extends ExpressionDefinition {
     private LanguageExpression(Builder builder) {
         super(builder);
         this.language = builder.language;
+    }
+
+    @Override
+    public LanguageExpression copyDefinition() {
+        return new LanguageExpression(this);
     }
 
     @Override

@@ -57,9 +57,24 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     public IdempotentConsumerDefinition() {
     }
 
+    protected IdempotentConsumerDefinition(IdempotentConsumerDefinition source) {
+        super(source);
+        this.idempotentRepositoryBean = source.idempotentRepositoryBean;
+        this.idempotentRepository = source.idempotentRepository;
+        this.eager = source.eager;
+        this.completionEager = source.completionEager;
+        this.skipDuplicate = source.skipDuplicate;
+        this.removeOnFailure = source.removeOnFailure;
+    }
+
     public IdempotentConsumerDefinition(Expression messageIdExpression, IdempotentRepository idempotentRepository) {
         super(messageIdExpression);
         this.idempotentRepositoryBean = idempotentRepository;
+    }
+
+    @Override
+    public IdempotentConsumerDefinition copyDefinition() {
+        return new IdempotentConsumerDefinition(this);
     }
 
     @Override

@@ -43,8 +43,18 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
     public CustomLoadBalancerDefinition() {
     }
 
+    protected CustomLoadBalancerDefinition(CustomLoadBalancerDefinition source) {
+        super(source);
+        this.loadBalancer = source.loadBalancer;
+        this.ref = source.ref;
+    }
+
     public CustomLoadBalancerDefinition(String ref) {
         this.ref = ref;
+    }
+
+    public CustomLoadBalancerDefinition copyDefinition() {
+        return new CustomLoadBalancerDefinition(this);
     }
 
     public String getRef() {

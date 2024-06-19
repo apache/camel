@@ -34,12 +34,21 @@ public class SpELExpression extends TypedExpressionDefinition {
     public SpELExpression() {
     }
 
+    protected SpELExpression(SpELExpression source) {
+        super(source);
+    }
+
     public SpELExpression(String expression) {
         super(expression);
     }
 
     private SpELExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public SpELExpression copyDefinition() {
+        return new SpELExpression(this);
     }
 
     @Override

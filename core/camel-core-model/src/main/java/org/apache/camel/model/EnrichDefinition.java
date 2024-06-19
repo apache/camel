@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnrichDefinition extends ExpressionNode
-        implements AggregationStrategyAwareDefinition<EnrichDefinition>, Copyable {
+        implements AggregationStrategyAwareDefinition<EnrichDefinition> {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
@@ -398,7 +398,7 @@ public class EnrichDefinition extends ExpressionNode
     }
 
     @Override
-    public EnrichDefinition copy() {
+    public EnrichDefinition copyDefinition() {
         return new EnrichDefinition(this);
     }
 }

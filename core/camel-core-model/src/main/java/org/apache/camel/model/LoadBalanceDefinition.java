@@ -58,6 +58,16 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
     public LoadBalanceDefinition() {
     }
 
+    protected LoadBalanceDefinition(LoadBalanceDefinition source) {
+        super(source);
+        this.loadBalancerType = source.loadBalancerType != null ? source.loadBalancerType.copyDefinition() : null;
+    }
+
+    @Override
+    public LoadBalanceDefinition copyDefinition() {
+        return new LoadBalanceDefinition(this);
+    }
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;

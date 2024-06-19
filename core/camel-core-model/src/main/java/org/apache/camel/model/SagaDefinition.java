@@ -70,6 +70,23 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     public SagaDefinition() {
     }
 
+    protected SagaDefinition(SagaDefinition source) {
+        super(source);
+        this.sagaServiceBean = source.sagaServiceBean;
+        this.sagaService = source.sagaService;
+        this.propagation = source.propagation;
+        this.completionMode = source.completionMode;
+        this.timeout = source.timeout;
+        this.compensation = source.compensation != null ? source.compensation.copyDefinition() : null;
+        this.completion = source.completion != null ? source.completion.copyDefinition() : null;
+        this.options = copyOptions(source);
+    }
+
+    @Override
+    public SagaDefinition copyDefinition() {
+        return new SagaDefinition(this);
+    }
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
@@ -294,6 +311,17 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
             builder.append(',');
         }
         builder.append(key).append(':').append(value);
+    }
+
+    private static List<PropertyExpressionDefinition> copyOptions(SagaDefinition source) {
+        if (source.options != null) {
+            var answer = new ArrayList<PropertyExpressionDefinition>();
+            for (var def : source.options) {
+                answer.add(def.copyDefinition());
+            }
+            return answer;
+        }
+        return null;
     }
 
 }

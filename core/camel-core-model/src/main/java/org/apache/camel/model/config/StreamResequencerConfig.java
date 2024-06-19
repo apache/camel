@@ -115,6 +115,21 @@ public class StreamResequencerConfig extends ResequencerConfig {
         this.comparatorBean = comparator;
     }
 
+    protected StreamResequencerConfig(StreamResequencerConfig source) {
+        this.comparatorBean = source.comparatorBean;
+        this.capacity = source.capacity;
+        this.timeout = source.timeout;
+        this.deliveryAttemptInterval = source.deliveryAttemptInterval;
+        this.ignoreInvalidExchanges = source.ignoreInvalidExchanges;
+        this.rejectOld = source.rejectOld;
+        this.comparator = source.comparator;
+    }
+
+    @Override
+    public StreamResequencerConfig copyDefinition() {
+        return new StreamResequencerConfig(this);
+    }
+
     /**
      * Returns a new {@link StreamResequencerConfig} instance using default values for <code>capacity</code> (1000) and
      * <code>timeout</code> (1000L). Elements of the sequence are compared using the default

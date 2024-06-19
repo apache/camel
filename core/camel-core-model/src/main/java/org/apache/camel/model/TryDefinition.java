@@ -39,6 +39,7 @@ import org.apache.camel.spi.annotations.DslProperty;
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {
+
     @DslProperty
     @XmlTransient
     private List<CatchDefinition> catchClauses;
@@ -53,6 +54,17 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     private int endCounter; // used for detecting multiple nested doTry blocks
 
     public TryDefinition() {
+    }
+
+    protected TryDefinition(TryDefinition source) {
+        super(source);
+        this.catchClauses = copyCatchClauses(source);
+        this.finallyClause = source.finallyClause != null ? source.finallyClause.copyDefinition() : null;
+    }
+
+    @Override
+    public TryDefinition copyDefinition() {
+        return new TryDefinition(this);
     }
 
     @Override
@@ -242,4 +254,16 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             }
         }
     }
+
+    private static List<CatchDefinition> copyCatchClauses(TryDefinition source) {
+        if (source.catchClauses != null) {
+            var answer = new ArrayList<CatchDefinition>();
+            for (var def : source.catchClauses) {
+                answer.add(def.copyDefinition());
+            }
+            return answer;
+        }
+        return null;
+    }
+
 }

@@ -36,11 +36,16 @@ public class TransformDefinition extends ExpressionNode {
 
     @XmlAttribute
     private String fromType;
-
     @XmlAttribute
     private String toType;
 
     public TransformDefinition() {
+    }
+
+    protected TransformDefinition(TransformDefinition source) {
+        super(source);
+        this.fromType = source.fromType;
+        this.toType = source.toType;
     }
 
     public TransformDefinition(Expression expression) {
@@ -50,6 +55,11 @@ public class TransformDefinition extends ExpressionNode {
     public TransformDefinition(DataType fromType, DataType toType) {
         this.fromType = fromType.getFullName();
         this.toType = toType.getFullName();
+    }
+
+    @Override
+    public TransformDefinition copyDefinition() {
+        return new TransformDefinition(this);
     }
 
     @Override

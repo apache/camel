@@ -34,12 +34,21 @@ public class WhenDefinition extends OutputExpressionNode {
     public WhenDefinition() {
     }
 
+    protected WhenDefinition(WhenDefinition source) {
+        super(source);
+    }
+
     public WhenDefinition(Predicate predicate) {
         super(predicate);
     }
 
     public WhenDefinition(ExpressionDefinition expression) {
         super(expression);
+    }
+
+    @Override
+    public WhenDefinition copyDefinition() {
+        return new WhenDefinition(this);
     }
 
     @Override

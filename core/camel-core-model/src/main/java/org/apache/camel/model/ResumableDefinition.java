@@ -37,22 +37,36 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
 
     @XmlTransient
     private ResumeStrategy resumeStrategyBean;
+    @XmlTransient
+    private ResumeStrategyConfiguration resumeStrategyConfiguration;
 
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "org.apache.camel.resume.ResumeStrategy")
     private String resumeStrategy;
-
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
               enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
-
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String intermittent;
 
-    @XmlTransient
-    private ResumeStrategyConfiguration resumeStrategyConfiguration;
+    public ResumableDefinition() {
+    }
+
+    protected ResumableDefinition(ResumableDefinition source) {
+        super(source);
+        this.resumeStrategyBean = source.resumeStrategyBean;
+        this.resumeStrategyConfiguration = source.resumeStrategyConfiguration;
+        this.resumeStrategy = source.resumeStrategy;
+        this.loggingLevel = source.loggingLevel;
+        this.intermittent = source.intermittent;
+    }
+
+    @Override
+    public ResumableDefinition copyDefinition() {
+        return new ResumableDefinition(this);
+    }
 
     @Override
     public String getShortName() {

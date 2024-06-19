@@ -52,6 +52,16 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public BeanDefinition() {
     }
 
+    protected BeanDefinition(BeanDefinition source) {
+        super(source);
+        this.beanClass = source.beanClass;
+        this.bean = source.bean;
+        this.ref = source.ref;
+        this.method = source.method;
+        this.beanType = source.beanType;
+        this.scope = source.scope;
+    }
+
     public BeanDefinition(String ref) {
         this.ref = ref;
     }
@@ -59,6 +69,11 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public BeanDefinition(String ref, String method) {
         this.ref = ref;
         this.method = method;
+    }
+
+    @Override
+    public BeanDefinition copyDefinition() {
+        return new BeanDefinition(this);
     }
 
     @Override

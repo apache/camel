@@ -16,7 +16,9 @@
  */
 package org.apache.camel.model.language;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +46,12 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
     private Map<String, String> namespaces;
 
     protected NamespaceAwareExpression() {
+    }
+
+    protected NamespaceAwareExpression(NamespaceAwareExpression source) {
+        super(source);
+        this.namespace = copyNamespace(source);
+        this.namespaces = source.namespaces != null ? new LinkedHashMap<>(source.namespaces) : null;
     }
 
     protected NamespaceAwareExpression(String expression) {
@@ -92,6 +100,17 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
             }
         }
         return namespaces;
+    }
+
+    private static List<PropertyDefinition> copyNamespace(NamespaceAwareExpression source) {
+        if (source.namespace != null) {
+            var answer = new ArrayList<PropertyDefinition>();
+            for (var def : source.namespace) {
+                answer.add(def.copyDefinition());
+            }
+            return answer;
+        }
+        return null;
     }
 
     /**
