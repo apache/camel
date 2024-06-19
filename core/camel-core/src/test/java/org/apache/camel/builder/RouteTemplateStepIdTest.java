@@ -19,6 +19,8 @@ package org.apache.camel.builder;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.processor.StepProcessor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +33,16 @@ public class RouteTemplateStepIdTest extends ContextTestSupport {
         context.addRouteFromTemplate("deux", "myTemplate", Map.of("name", "deux", "greeting", "Bonjour", "myPeriod", "5s"));
 
         assertEquals(2, context.getRoutes().size());
+
+        StepProcessor step1 = context.getProcessor("one", StepProcessor.class);
+        Assertions.assertNotNull(step1);
+        Assertions.assertEquals("one", step1.getId());
+        Assertions.assertEquals("one", step1.getRouteId());
+
+        StepProcessor step2 = context.getProcessor("deux", StepProcessor.class);
+        Assertions.assertNotNull(step2);
+        Assertions.assertEquals("deux", step2.getId());
+        Assertions.assertEquals("deux", step2.getRouteId());
     }
 
     @Override
