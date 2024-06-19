@@ -54,13 +54,7 @@ import org.apache.camel.v1.integrationspec.Sources;
 import org.apache.camel.v1.integrationspec.Template;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.template.Spec;
-import org.apache.camel.v1.integrationspec.traits.Builder;
-import org.apache.camel.v1.integrationspec.traits.Camel;
 import org.apache.camel.v1.integrationspec.traits.Container;
-import org.apache.camel.v1.integrationspec.traits.Environment;
-import org.apache.camel.v1.integrationspec.traits.Mount;
-import org.apache.camel.v1.integrationspec.traits.Openapi;
-import org.apache.camel.v1.integrationspec.traits.ServiceBinding;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -245,7 +239,7 @@ public class IntegrationRun extends KubeBaseCommand {
         }
 
         if (image != null) {
-            Container containerTrait = new Container();
+            Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
             containerTrait.setImage(image);
             traitsSpec.setContainer(containerTrait);
         } else {
@@ -310,7 +304,7 @@ public class IntegrationRun extends KubeBaseCommand {
 
         if (output != null) {
             switch (output) {
-                case "yaml" -> printer().println(KubernetesHelper.yaml().dumpAsMap(integration));
+                case "yaml" -> printer().println(KubernetesHelper.dumpYaml(integration));
                 case "json" -> printer().println(
                         JSonHelper.prettyPrint(KubernetesHelper.json().writer().writeValueAsString(integration), 2));
                 default -> {
@@ -347,60 +341,12 @@ public class IntegrationRun extends KubeBaseCommand {
     }
 
     private void convertOptionsToTraits(Traits traitsSpec) {
-        Mount mountTrait = null;
-
-        if (configs != null && configs.length > 0) {
-            mountTrait = new Mount();
-            mountTrait.setConfigs(List.of(configs));
-        }
-
-        if (resources != null && resources.length > 0) {
-            if (mountTrait == null) {
-                mountTrait = new Mount();
-            }
-            mountTrait.setResources(List.of(resources));
-        }
-
-        if (volumes != null && volumes.length > 0) {
-            if (mountTrait == null) {
-                mountTrait = new Mount();
-            }
-            mountTrait.setVolumes(List.of(volumes));
-        }
-
-        if (mountTrait != null) {
-            traitsSpec.setMount(mountTrait);
-        }
-
-        if (openApis != null && openApis.length > 0) {
-            Openapi openapiTrait = new Openapi();
-            openapiTrait.setConfigmaps(List.of(openApis));
-            traitsSpec.setOpenapi(openapiTrait);
-        }
-
-        if (properties != null && properties.length > 0) {
-            Camel camelTrait = new Camel();
-            camelTrait.setProperties(List.of(properties));
-            traitsSpec.setCamel(camelTrait);
-        }
-
-        if (buildProperties != null && buildProperties.length > 0) {
-            Builder builderTrait = new Builder();
-            builderTrait.setProperties(List.of(buildProperties));
-            traitsSpec.setBuilder(builderTrait);
-        }
-
-        if (envVars != null && envVars.length > 0) {
-            Environment environmentTrait = new Environment();
-            environmentTrait.setVars(List.of(envVars));
-            traitsSpec.setEnvironment(environmentTrait);
-        }
-
-        if (connects != null && connects.length > 0) {
-            ServiceBinding serviceBindingTrait = new ServiceBinding();
-            serviceBindingTrait.setServices(List.of(connects));
-            traitsSpec.setServiceBinding(serviceBindingTrait);
-        }
+        TraitHelper.configureMountTrait(traitsSpec, configs, resources, volumes);
+        TraitHelper.configureOpenApiSpec(traitsSpec, openApis);
+        TraitHelper.configureProperties(traitsSpec, properties);
+        TraitHelper.configureBuildProperties(traitsSpec, buildProperties);
+        TraitHelper.configureEnvVars(traitsSpec, envVars);
+        TraitHelper.configureConnects(traitsSpec, connects);
     }
 
     private Source resolveSource(String source) {

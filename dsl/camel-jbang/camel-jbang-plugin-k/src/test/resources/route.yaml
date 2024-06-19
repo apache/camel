@@ -18,6 +18,6 @@
 from:
   uri: timer:tick
   steps:
-    - set-body:
+    - setBody:
         constant: Hello Camel !!!
     - to: log:info
