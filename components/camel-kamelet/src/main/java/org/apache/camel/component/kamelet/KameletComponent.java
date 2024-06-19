@@ -442,7 +442,7 @@ public class KameletComponent extends DefaultComponent {
 
                 LOG.debug("Route with id={} created from template={}", id, templateId);
             } catch (Exception e) {
-                throw new KameletNotFoundException(templateId, loc, e);
+                throw new FailedToCreateKameletException(templateId, loc, e);
             }
         }
 
