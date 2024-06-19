@@ -37,6 +37,7 @@ import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -49,7 +50,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.util.ExtensionHelper.testStartHeader;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -61,6 +61,10 @@ public abstract class CamelTestSupport extends AbstractTestSupport
         implements BeforeEachCallback, AfterEachCallback, AfterAllCallback, BeforeAllCallback, BeforeTestExecutionCallback,
         AfterTestExecutionCallback {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
+
+    @RegisterExtension
+    @Order(10)
+    protected TestLoggerExtension testLoggerExtension = new TestLoggerExtension();
 
     @RegisterExtension
     protected CamelTestSupport camelTestSupportExtension = this;
@@ -165,8 +169,6 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     @Deprecated(since = "4.7.0")
     @BeforeEach
     public void setUp() throws Exception {
-        testStartHeader(getClass(), currentTestName);
-
         unsupportedCheck();
 
         setupResources();
@@ -254,9 +256,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
         long time = watch.taken();
 
         if (isRouteCoverageEnabled()) {
-            ExtensionHelper.testEndFooter(getClass(), currentTestName, time, new RouteCoverageDumperExtension(context));
-        } else {
-            ExtensionHelper.testEndFooter(getClass(), currentTestName, time);
+            final RouteCoverageDumperExtension routeCoverageWrapper = new RouteCoverageDumperExtension(context);
+            routeCoverageWrapper.dumpRouteCoverage(getClass(), currentTestName, time);
         }
 
         if (testConfigurationBuilder.isCreateCamelContextPerClass()) {
