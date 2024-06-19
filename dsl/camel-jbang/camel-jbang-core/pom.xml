@@ -65,6 +65,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-util</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-langchain4j-core</artifactId>
+        </dependency>
 
         <!-- cli -->
         <dependency>
@@ -128,6 +132,19 @@
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>${jansi-version}</version>
+        </dependency>
+
+        <!-- AI -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>${langchain4j-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai</artifactId>
+            <version>${langchain4j-version}</version>
         </dependency>
 
         <!-- test dependencies -->
