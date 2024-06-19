@@ -1,0 +1,34 @@
+= Apache Camel Update Recipes
+
+This project contains recipes to assist in the migration of Camel projects.
+
+You can find the recipes in the src/main/resources/META-INF/rewrite directory.
+
+The names of the recipes correspond to the Camel version they support, formatted as [major].[minor].yaml. To migrate from version X.Y to version A.B, apply all recipes with versions greater than X.Y and less than A.B.
+
+For example, to migrate from version 3.8 to 4.4, you need to apply the recipes `*4.0.yaml*` and `*4.4.yaml*`.
+
+== How to run from cmd
+
+To apply recipes on a standalone Camel Project you can use maven plugin:
+
+```
+
+mvn -U org.openrewrite.maven:rewrite-maven-plugin:5.20.0:run \
+-Drewrite.recipeArtifactCoordinates=org.apache.camel:camel-tooling-updates:4.7.0-SNAPSHOT \
+-DactiveRecipes=org.apache.camel.updates.camel44.CamelMigrationRecipe
+-Drewrite.recipeFile=/org.apache.camel.updates/4.0.yaml
+```
+
+== JUnit testing
+
+Several migration paths to different versions must be covered by the tests.
+Therefore, the project uses the maven-dependency-plugin to download various versions of certain libraries.
+
+Libraries are not packed into the installed jar.
+
+== Test jar
+
+Project installs also test classes into a `test-jar` artifact.
+This allows other projects (like https://github.com/quarkusio/quarkus-updates/[quarkus-updates]) to laverage from the tests.
+
