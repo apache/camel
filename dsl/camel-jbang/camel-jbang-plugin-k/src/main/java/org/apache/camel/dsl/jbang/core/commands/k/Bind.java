@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.k;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,7 +28,6 @@ import org.apache.camel.dsl.jbang.core.commands.bind.TemplateProvider;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.v1.Pipe;
 import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.ServiceBinding;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -165,18 +163,16 @@ public class Bind extends KubeBaseCommand {
             traitsSpec = TraitHelper.parseTraits(traits);
         }
 
-        if (connects != null && connects.length > 0) {
+        if (connects != null) {
             if (traitsSpec == null) {
                 traitsSpec = new Traits();
             }
-
-            ServiceBinding serviceBindingTrait = new ServiceBinding();
-            serviceBindingTrait.setServices(List.of(connects));
-            traitsSpec.setServiceBinding(serviceBindingTrait);
+            TraitHelper.configureConnects(traitsSpec, connects);
         }
 
         if (traitsSpec != null) {
-            String traitYaml = KubernetesHelper.yaml().dumpAsMap(traitsSpec).replaceAll("\n", "\n        ");
+            String traitYaml = KubernetesHelper.dumpYaml(traitsSpec);
+            traitYaml = traitYaml.replaceAll("\n", "\n        ");
             integrationSpec = "  integration:\n    spec:\n      traits:\n        %s\n".formatted(traitYaml.trim());
         }
 

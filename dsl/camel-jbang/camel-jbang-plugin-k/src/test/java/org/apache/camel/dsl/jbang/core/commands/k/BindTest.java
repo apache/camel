@@ -194,7 +194,7 @@ class BindTest extends KubeBaseTest {
                   integration:
                     spec:
                       traits:
-                        serviceBinding:
+                        service-binding:
                           services:
                           - serving.knative.dev/v1:Service:my-service
                   source:

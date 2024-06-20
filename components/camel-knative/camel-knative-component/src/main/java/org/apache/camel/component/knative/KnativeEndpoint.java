@@ -228,7 +228,7 @@ public class KnativeEndpoint extends DefaultEndpoint {
         }
 
         //
-        // For event type endpoints se need to add a filter to filter out events received
+        // For event type endpoints we need to add a filter to filter out events received
         // based on the given type.
         //
         if (resource.getType() == Knative.Type.event && ObjectHelper.isNotEmpty(configuration.getTypeId())) {
