@@ -2,7 +2,7 @@
 
 == Context
 
-The xref:manual::camelcontext.adoc[Camel Context] is the hearth of Apache Camel, which holds everything together.
+The xref:manual::camelcontext.adoc[Camel Context] is the heart of Apache Camel, which holds everything together.
 
 If you are not familiar with Apache Camel, then we recommend reading the xref:manual::camelcontext.adoc[Camel Context] first
 before coming back here.
