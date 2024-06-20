@@ -97,6 +97,35 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
     private String executorServiceRef;
 
+    public DefaultErrorHandlerDefinition() {
+    }
+
+    protected DefaultErrorHandlerDefinition(DefaultErrorHandlerDefinition source) {
+        this.loggerBean = source.loggerBean;
+        this.onRedeliveryProcessor = source.onRedeliveryProcessor;
+        this.onPrepareFailureProcessor = source.onPrepareFailureProcessor;
+        this.onExceptionOccurredProcessor = source.onExceptionOccurredProcessor;
+        this.executorServiceBean = source.executorServiceBean;
+        this.retryWhilePredicate = source.retryWhilePredicate;
+        this.redeliveryPolicy = source.redeliveryPolicy;
+        this.useOriginalMessage = source.useOriginalMessage;
+        this.useOriginalBody = source.useOriginalBody;
+        this.redeliveryPolicyRef = source.redeliveryPolicyRef;
+        this.loggerRef = source.loggerRef;
+        this.level = source.level;
+        this.logName = source.logName;
+        this.onRedeliveryRef = source.onRedeliveryRef;
+        this.onExceptionOccurredRef = source.onExceptionOccurredRef;
+        this.onPrepareFailureRef = source.onPrepareFailureRef;
+        this.retryWhileRef = source.retryWhileRef;
+        this.executorServiceRef = source.executorServiceRef;
+    }
+
+    @Override
+    public DefaultErrorHandlerDefinition copyDefinition() {
+        return new DefaultErrorHandlerDefinition(this);
+    }
+
     @Override
     public boolean supportTransacted() {
         return false;

@@ -36,6 +36,17 @@ public class NoErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         return false;
     }
 
+    public NoErrorHandlerDefinition() {
+    }
+
+    public NoErrorHandlerDefinition(NoErrorHandlerDefinition source) {
+    }
+
+    @Override
+    public NoErrorHandlerDefinition copyDefinition() {
+        return new NoErrorHandlerDefinition(this);
+    }
+
     @Override
     public ErrorHandlerFactory cloneBuilder() {
         // clone is not needed

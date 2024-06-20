@@ -17,11 +17,13 @@
 package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.model.IdentifiedType;
 
 /**
  * Base class for error handler models.
  */
-abstract class BaseErrorHandlerDefinition extends IdentifiedType implements ErrorHandlerFactory {
+abstract class BaseErrorHandlerDefinition extends IdentifiedType
+        implements ErrorHandlerFactory, CopyableDefinition<BaseErrorHandlerDefinition> {
 
 }

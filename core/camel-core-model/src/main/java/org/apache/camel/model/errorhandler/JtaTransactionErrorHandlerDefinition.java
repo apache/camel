@@ -31,6 +31,18 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JtaTransactionErrorHandlerDefinition extends TransactionErrorHandlerDefinition {
 
+    public JtaTransactionErrorHandlerDefinition() {
+    }
+
+    public JtaTransactionErrorHandlerDefinition(JtaTransactionErrorHandlerDefinition source) {
+        super(source);
+    }
+
+    @Override
+    public JtaTransactionErrorHandlerDefinition copyDefinition() {
+        return new JtaTransactionErrorHandlerDefinition(this);
+    }
+
     @Override
     public ErrorHandlerFactory cloneBuilder() {
         TransactionErrorHandlerDefinition answer = new JtaTransactionErrorHandlerDefinition();
