@@ -119,7 +119,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExistingFileExistsTempFileNameMoRENAMED_TEST_FILE_NAMEath() throws Exception {
+    public void testExistingFileExistsTempFileNameMoveDynamicSubdirFullPath() throws Exception {
         final String subdirPrefix = generateRandomString(5);
         final String dynamicPath = "${file:parent}/" + subdirPrefix + "-${date:now:yyyyMMddHHmmssSSS}/${file:onlyname}";
         final String tempFilename = "tempFileName=${file:onlyname}.temp&";
