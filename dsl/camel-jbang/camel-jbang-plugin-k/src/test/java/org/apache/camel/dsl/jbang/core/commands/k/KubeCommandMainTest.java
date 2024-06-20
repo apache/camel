@@ -98,13 +98,12 @@ class KubeCommandMainTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits: {}""", printer.getOutput());
     }
 
