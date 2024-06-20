@@ -31,7 +31,8 @@ import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.server.ServerBuilder;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -49,9 +50,43 @@ public class ScpAlgorithmsTest extends ScpServerTestSupport {
         };
     }
 
-    @Test
-    public void testScpSimpleProduceWithDifferentAlgorithms() throws Exception {
-        Config[] configs = new Config[] {
+    @ParameterizedTest
+    @MethodSource("configProvider")
+    public void testScpSimpleProduceWithDifferentAlgorithms(Config config) throws Exception {
+        LOG.info("Starting SSH server with {} config", config);
+        configureServer(config);
+
+        assumeTrue(this.isSetupComplete());
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    private void configureServer(Config config) {
+        this.serverConfigurer = sshd -> {
+            sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(config.privateKeyLocation)));
+            List<NamedFactory<Signature>> signatureFactories = sshd.getSignatureFactories();
+            signatureFactories.clear();
+            signatureFactories.add(config.signatureAlgorithm);
+            sshd.setSignatureFactories(signatureFactories);
+            List<KeyExchangeFactory> keyExchangeFactories = sshd.getKeyExchangeFactories();
+            keyExchangeFactories.clear();
+            keyExchangeFactories
+                    .add(ServerBuilder.DH2KEX.apply(BuiltinDHFactories.resolveFactory(config.kexAlgorithm.getName())));
+            sshd.setKeyExchangeFactories(keyExchangeFactories);
+            List<NamedFactory<Cipher>> cipherFactories = sshd.getCipherFactories();
+            cipherFactories.clear();
+            cipherFactories.add(config.cipher);
+            sshd.setCipherFactories(cipherFactories);
+        };
+    }
+
+    private static Config[] configProvider() {
+        return new Config[] {
                 //                new Config("hostkey-dsa.pem", BuiltinSignatures.dsa, BuiltinDHFactories.dhg14_256, BuiltinCiphers.aes128ctr),
                 new Config(
                         "hostkey-rsa.pem", BuiltinSignatures.rsaSHA256, BuiltinDHFactories.dhg16_512,
@@ -72,37 +107,6 @@ public class ScpAlgorithmsTest extends ScpServerTestSupport {
                         "hostkey-ed25519.pem", BuiltinSignatures.ed25519, BuiltinDHFactories.curve25519,
                         BuiltinCiphers.aes256gcm)
         };
-
-        for (final Config config : configs) {
-            LOG.info("Starting SSH server with {} config", config);
-            this.serverConfigurer = sshd -> {
-                sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(config.privateKeyLocation)));
-                List<NamedFactory<Signature>> signatureFactories = sshd.getSignatureFactories();
-                signatureFactories.clear();
-                signatureFactories.add(config.signatureAlgorithm);
-                sshd.setSignatureFactories(signatureFactories);
-                List<KeyExchangeFactory> keyExchangeFactories = sshd.getKeyExchangeFactories();
-                keyExchangeFactories.clear();
-                keyExchangeFactories
-                        .add(ServerBuilder.DH2KEX.apply(BuiltinDHFactories.resolveFactory(config.kexAlgorithm.getName())));
-                sshd.setKeyExchangeFactories(keyExchangeFactories);
-                List<NamedFactory<Cipher>> cipherFactories = sshd.getCipherFactories();
-                cipherFactories.clear();
-                cipherFactories.add(config.cipher);
-                sshd.setCipherFactories(cipherFactories);
-            };
-            super.setUp();
-
-            assumeTrue(this.isSetupComplete());
-
-            getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-
-            String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
-            template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-            MockEndpoint.assertIsSatisfied(context);
-            super.tearDown();
-        }
     }
 
     private static final class Config {
