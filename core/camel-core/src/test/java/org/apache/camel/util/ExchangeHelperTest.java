@@ -41,6 +41,15 @@ public class ExchangeHelperTest extends ContextTestSupport {
     protected Exchange exchange;
 
     @Test
+    public void testGetDummy() {
+        Exchange one = ExchangeHelper.getDummy(context);
+        Exchange two = ExchangeHelper.getDummy(context);
+        assertSame(one, two);
+        assertNotSame(exchange, one);
+        assertNotSame(exchange, two);
+    }
+
+    @Test
     public void testValidProperty() throws Exception {
         String value = ExchangeHelper.getMandatoryProperty(exchange, "foo", String.class);
         assertEquals("123", value, "foo property");

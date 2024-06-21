@@ -68,10 +68,23 @@ public final class ExchangeHelper {
             = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
     private static final Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_CHARSET_NAME);
 
+    private static Exchange DUMMY;
+
     /**
      * Utility classes should not have a public constructor.
      */
     private ExchangeHelper() {
+    }
+
+    /**
+     * Gets a singleton dummy exchange used for special purposes only.
+     */
+    public static Exchange getDummy(CamelContext context) {
+        // we dont worry about thread-safety
+        if (DUMMY == null) {
+            DUMMY = new DefaultExchange(context);
+        }
+        return DUMMY;
     }
 
     /**
