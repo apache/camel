@@ -46,6 +46,7 @@ import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.VariableAware;
 import org.apache.camel.WrappedFile;
@@ -1246,6 +1247,23 @@ public final class ExchangeHelper {
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, answer);
         }
         return null;
+    }
+
+    /**
+     * Returns the body as the specified type. If <a href="http://camel.apache.org/stream-caching.html">stream
+     * caching</a>. is enabled and the body is an instance of {@link StreamCache}, the stream is reset before converting
+     * and returning the body.
+     *
+     * @param  exchange the message exchange being processed
+     * @param  type     the type to convert to
+     * @return          the body of the message as the specified type, or <tt>null</tt> if body does not exist
+     */
+    public static <T> T getBodyAndResetStreamCache(Exchange exchange, Class<T> type) {
+        Object body = exchange.getMessage().getBody();
+        if (body instanceof StreamCache) {
+            ((StreamCache) body).reset();
+        }
+        return exchange.getMessage().getBody(type);
     }
 
 }
