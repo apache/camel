@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
@@ -25,9 +24,11 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.catalog.VersionHelper;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
@@ -64,20 +65,42 @@ public final class PluginHelper {
      * @param commandLine the command line to add commands to
      * @param main        the current Camel JBang main
      */
-    public static void addPlugins(CommandLine commandLine, CamelJBangMain main) {
+    public static void addPlugins(CommandLine commandLine, CamelJBangMain main, String... args) {
         JsonObject config = getPluginConfig();
 
+        // first arg is the command name (ie camel generate xxx)
+        String target = args != null && args.length > 0 ? args[0] : null;
+        boolean verbose = args != null && Stream.of(args).anyMatch(a -> a.startsWith("--verbose"));
+
         if (config != null) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String version = catalog.getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
+
             for (String pluginKey : plugins.keySet()) {
                 JsonObject properties = plugins.getMap(pluginKey);
 
                 String name = properties.getOrDefault("name", pluginKey).toString();
                 String command = properties.getOrDefault("command", name).toString();
 
+                if (verbose) {
+                    main.getOut().println("Installed plugin: camel-jbang-plugin-" + command);
+                }
+
+                // only load the plugin if the command-line is calling this plugin
+                if (target != null && !target.equals(command)) {
+                    if (verbose) {
+                        main.getOut().println("Plugin not in use: camel-jbang-plugin-" + command);
+                    }
+                    continue;
+                }
+
                 Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + command, Plugin.class);
                 if (plugin.isEmpty()) {
-                    plugin = downloadPlugin(command, main);
+                    if (verbose) {
+                        main.getOut().println("Downloading plugin: camel-jbang-plugin-" + command);
+                    }
+                    plugin = downloadPlugin(command, main, version);
                 }
                 if (plugin.isPresent()) {
                     plugin.get().customize(commandLine, main);
@@ -89,12 +112,11 @@ public final class PluginHelper {
         }
     }
 
-    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main) {
+    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main, String version) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
         downloader.start();
-        String version = new VersionHelper().getVersion();
         // downloads and adds to the classpath
         downloader.downloadDependency("org.apache.camel", "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
@@ -178,6 +200,7 @@ public final class PluginHelper {
         kubePlugin.put("name", pluginType.getName());
         kubePlugin.put("command", pluginType.getCommand());
         kubePlugin.put("description", pluginType.getDescription());
+        kubePlugin.put("firstVersion", pluginType.getFirstVersion());
         plugins.put(pluginType.getName(), kubePlugin);
 
         PluginHelper.savePluginConfig(pluginConfig);
