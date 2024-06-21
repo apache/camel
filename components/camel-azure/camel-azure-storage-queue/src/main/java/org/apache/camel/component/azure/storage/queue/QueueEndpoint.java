@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.storage.queue;
 
+import java.util.Map;
+
 import com.azure.storage.queue.QueueServiceClient;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -28,8 +30,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Map;
 
 /**
  * Stores and retrieves messages to/from Azure Storage Queue.

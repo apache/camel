@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+import java.util.Map;
+
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -32,8 +34,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Map;
 
 /**
  * Manage secrets and keys in Azure Key Vault Service

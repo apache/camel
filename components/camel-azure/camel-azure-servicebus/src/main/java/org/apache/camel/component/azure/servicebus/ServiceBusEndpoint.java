@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -27,8 +29,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Map;
 
 /**
  * Send and receive messages to/from Azure Service Bus.

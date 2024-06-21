@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.storage.datalake;
 
+import java.util.Map;
+
 import com.azure.storage.file.datalake.DataLakeServiceClient;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -31,8 +33,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Map;
 
 /**
  * Sends and receives files to/from Azure Data Lake Storage.
