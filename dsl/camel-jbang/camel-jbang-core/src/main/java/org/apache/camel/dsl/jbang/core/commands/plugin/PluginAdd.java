@@ -55,6 +55,11 @@ public class PluginAdd extends PluginBaseCommand {
                         description = "Maven artifact version.")
     String version;
 
+    @CommandLine.Option(names = { "--first-version", "-fv" },
+                        defaultValue = "${camel-version}",
+                        description = "First version of this plugin.")
+    String firstVersion;
+
     @CommandLine.Option(names = { "--gav" },
                         description = "Maven group and artifact coordinates.")
     String gav;
@@ -77,16 +82,26 @@ public class PluginAdd extends PluginBaseCommand {
             if (description == null) {
                 description = camelPlugin.get().getDescription();
             }
+            if (firstVersion == null) {
+                firstVersion = camelPlugin.get().getFirstVersion();
+            }
         }
 
         if (command == null) {
             // use plugin name as command
             command = name;
         }
+        if (firstVersion == null) {
+            // fallback to version specified
+            firstVersion = version;
+        }
 
         JsonObject plugin = new JsonObject();
         plugin.put("name", name);
         plugin.put("command", command);
+        if (firstVersion != null) {
+            plugin.put("firstVersion", firstVersion);
+        }
         plugin.put("description",
                 description != null ? description : "Plugin %s called with command %s".formatted(name, command));
 
