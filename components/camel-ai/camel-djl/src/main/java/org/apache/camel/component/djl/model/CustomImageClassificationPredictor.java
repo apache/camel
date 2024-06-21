@@ -17,9 +17,6 @@
 package org.apache.camel.component.djl.model;
 
 import java.io.*;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
@@ -47,24 +44,25 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
     @Override
     public void process(Exchange exchange) throws Exception {
         Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
-        Translator translator = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
+        Translator<Image, Classifications> translator
+                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
 
         if (exchange.getIn().getBody() instanceof byte[]) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
-            Map<String, Float> result = classify(model, translator, new ByteArrayInputStream(bytes));
+            Classifications result = classify(model, translator, new ByteArrayInputStream(bytes));
             exchange.getIn().setBody(result);
         } else if (exchange.getIn().getBody() instanceof File) {
-            Map<String, Float> result = classify(model, translator, exchange.getIn().getBody(File.class));
+            Classifications result = classify(model, translator, exchange.getIn().getBody(File.class));
             exchange.getIn().setBody(result);
         } else if (exchange.getIn().getBody() instanceof InputStream) {
-            Map<String, Float> result = classify(model, translator, exchange.getIn().getBody(InputStream.class));
+            Classifications result = classify(model, translator, exchange.getIn().getBody(InputStream.class));
             exchange.getIn().setBody(result);
         } else {
             throw new RuntimeCamelException("Data type is not supported. Body should be byte[], InputStream or File");
         }
     }
 
-    private Map<String, Float> classify(Model model, Translator translator, File input) {
+    private Classifications classify(Model model, Translator<Image, Classifications> translator, File input) {
         try (InputStream fileInputStream = new FileInputStream(input)) {
             Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
             return classify(model, translator, image);
@@ -74,7 +72,7 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
         }
     }
 
-    private Map<String, Float> classify(Model model, Translator translator, InputStream input) {
+    private Classifications classify(Model model, Translator<Image, Classifications> translator, InputStream input) {
         try {
             Image image = ImageFactory.getInstance().fromInputStream(input);
             return classify(model, translator, image);
@@ -84,12 +82,9 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
         }
     }
 
-    private Map<String, Float> classify(Model model, Translator translator, Image image) {
+    private Classifications classify(Model model, Translator<Image, Classifications> translator, Image image) {
         try (Predictor<Image, Classifications> predictor = model.newPredictor(translator)) {
-            Classifications classifications = predictor.predict(image);
-            List<Classifications.Classification> list = classifications.items();
-            return list.stream()
-                    .collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
+            return predictor.predict(image);
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
             throw new RuntimeCamelException("Could not process input or output", e);
