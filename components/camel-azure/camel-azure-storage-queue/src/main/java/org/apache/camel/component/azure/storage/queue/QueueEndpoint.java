@@ -17,7 +17,11 @@
 package org.apache.camel.component.azure.storage.queue;
 
 import com.azure.storage.queue.QueueServiceClient;
-import org.apache.camel.*;
+import org.apache.camel.Category;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
