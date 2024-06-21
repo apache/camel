@@ -144,6 +144,12 @@ public class Kinesis2Producer extends DefaultProducer {
         ObjectHelper.notNull(connection, "connection", this);
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        flushRequestBatchBuffer();
+        super.doStop();
+    }
+
     private void ensurePartitionKeyNotNull(Object partitionKey) {
         if (partitionKey == null) {
             throw new IllegalArgumentException("Partition key must be specified");
