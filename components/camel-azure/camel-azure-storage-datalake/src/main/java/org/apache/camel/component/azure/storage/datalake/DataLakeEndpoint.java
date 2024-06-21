@@ -26,9 +26,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeClientFactory;
 import org.apache.camel.component.azure.storage.datalake.operations.DataLakeOperationResponse;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
+
+import java.util.Map;
 
 /**
  * Sends and receives files to/from Azure Data Lake Storage.
@@ -36,7 +40,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure Storage Data Lake Service",
              syntax = "azure-storage-datalake:accountName/fileSystemName",
              category = { Category.CLOUD, Category.FILE, Category.BIGDATA }, headersClass = DataLakeConstants.class)
-public class DataLakeEndpoint extends ScheduledPollEndpoint {
+public class DataLakeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam(description = "service client of data lake")
     private DataLakeServiceClient dataLakeServiceClient;
@@ -97,4 +101,24 @@ public class DataLakeEndpoint extends ScheduledPollEndpoint {
         }
     }
 
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getFileSystemName())) {
+            return configuration.getFileSystemName();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "datalake";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (ObjectHelper.isNotEmpty(configuration.getAccountName())) {
+            return Map.of("account", configuration.getAccountName());
+        }
+        return null;
+    }
 }

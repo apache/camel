@@ -124,7 +124,7 @@ public class BlobEndpoint extends ScheduledPollEndpoint implements EndpointServi
 
     @Override
     public String getServiceProtocol() {
-        return "azure-storage-blob";
+        return "storage-blob";
     }
 
     @Override
