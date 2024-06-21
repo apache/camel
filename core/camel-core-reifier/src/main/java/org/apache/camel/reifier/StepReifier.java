@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.Processor;
@@ -33,6 +34,12 @@ public class StepReifier extends ProcessorReifier<StepDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         return this.createChildProcessor(true);
+    }
+
+    @Override
+    protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs) throws Exception {
+        // do not optimize to force always wrapping in step processor
+        return super.createOutputsProcessor(outputs, false);
     }
 
     @Override
