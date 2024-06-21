@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -33,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for writing done files
  */
 public class FilerProducerDoneFileNameTest extends ContextTestSupport {
+
+    public static final String TEST_FILE_NAME_NOEXT = "hello." + UUID.randomUUID();
+    public static final String TEST_FILE_NAME = TEST_FILE_NAME_NOEXT + ".txt";
 
     private final Properties myProp = new Properties();
 
@@ -52,44 +56,45 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
 
     @Test
     public void testProducerConstantDoneFileName() {
-        template.sendBodyAndHeader(fileUri("?doneFileName=done"), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        String doneFileName = "xdone" + UUID.randomUUID();
+        template.sendBodyAndHeader(fileUri("?doneFileName=" + doneFileName), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        assertFileExists(testFile("hello.txt"));
-        assertFileExists(testFile("done"));
+        assertFileExists(testFile(TEST_FILE_NAME));
+        assertFileExists(testFile(doneFileName));
     }
 
     @Test
     public void testProducerPrefixDoneFileName() {
         template.sendBodyAndHeader(fileUri("?doneFileName=done-${file:name}"), "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+                TEST_FILE_NAME);
 
-        assertFileExists(testFile("hello.txt"));
-        assertFileExists(testFile("done-hello.txt"));
+        assertFileExists(testFile(TEST_FILE_NAME));
+        assertFileExists(testFile("done-" + TEST_FILE_NAME));
     }
 
     @Test
     public void testProducerExtDoneFileName() {
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.done"), "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+                TEST_FILE_NAME);
 
-        assertFileExists(testFile("hello.txt"));
-        assertFileExists(testFile("hello.txt.done"));
+        assertFileExists(testFile(TEST_FILE_NAME));
+        assertFileExists(testFile(TEST_FILE_NAME + ".done"));
     }
 
     @Test
     public void testProducerReplaceExtDoneFileName() {
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name.noext}.done"), "Hello World",
-                Exchange.FILE_NAME, "hello.txt");
+                Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        assertFileExists(testFile("hello.txt"));
-        assertFileExists(testFile("hello.done"));
+        assertFileExists(testFile(TEST_FILE_NAME));
+        assertFileExists(testFile(TEST_FILE_NAME_NOEXT + ".done"));
     }
 
     @Test
     public void testProducerInvalidDoneFileName() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(fileUri("?doneFileName=${file:parent}/foo"), "Hello World", Exchange.FILE_NAME,
-                        "hello.txt"));
+                        TEST_FILE_NAME));
         ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
         assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
     }
@@ -97,7 +102,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     @Test
     public void testProducerEmptyDoneFileName() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.sendBodyAndHeader(fileUri("?doneFileName="), "Hello World", Exchange.FILE_NAME, "hello.txt"));
+                () -> template.sendBodyAndHeader(fileUri("?doneFileName="), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME));
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertTrue(cause.getMessage().startsWith("doneFileName must be specified and not empty"), cause.getMessage());
     }
@@ -107,10 +112,10 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
         myProp.put("myDir", testDirectory().toString());
 
         template.sendBodyAndHeader("file:{{myDir}}?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+                TEST_FILE_NAME);
 
-        assertFileExists(testFile("hello.txt"));
-        assertFileExists(testFile("done-hello.txt"));
+        assertFileExists(testFile(TEST_FILE_NAME));
+        assertFileExists(testFile("done-" + TEST_FILE_NAME));
     }
 
 }
