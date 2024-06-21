@@ -20,9 +20,16 @@ package org.apache.camel.component.djl;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class ObjectDetectionTest extends CamelTestSupport {
+
+    @BeforeAll
+    public static void setupDefaultEngine() {
+        // Since Apache MXNet is discontinued, prefer PyTorch as the default engine
+        System.setProperty("ai.djl.default_engine", "PyTorch");
+    }
 
     @Test
     void testDJL() throws Exception {
@@ -37,7 +44,7 @@ public class ObjectDetectionTest extends CamelTestSupport {
             public void configure() {
                 from("file:src/test/resources/data/detect?recursive=true&noop=true")
                         .convertBodyTo(byte[].class)
-                        .to("djl:cv/object_detection?artifactId=ai.djl.mxnet:ssd:0.0.2")
+                        .to("djl:cv/object_detection?artifactId=ai.djl.pytorch:ssd:0.0.1")
                         .log("${header.CamelFileName} = ${body}")
                         .to("mock:result");
             }

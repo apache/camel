@@ -20,9 +20,16 @@ package org.apache.camel.component.djl;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class ImageClassificationTest extends CamelTestSupport {
+
+    @BeforeAll
+    public static void setupDefaultEngine() {
+        // Since Apache MXNet is discontinued, prefer PyTorch as the default engine
+        System.setProperty("ai.djl.default_engine", "PyTorch");
+    }
 
     @Test
     void testDJL() throws Exception {
@@ -37,8 +44,8 @@ public class ImageClassificationTest extends CamelTestSupport {
             public void configure() {
                 from("file:src/test/resources/data/mnist?recursive=true&noop=true")
                         .convertBodyTo(byte[].class)
-                        .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mobilenet:0.0.3")
-                        .log("${header.CamelFileName} = ${body}")
+                        .to("djl:cv/image_classification?artifactId=ai.djl.zoo:mlp:0.0.3")
+                        .log("${header.CamelFileName} = ${body.best.className}")
                         .to("mock:result");
             }
         };
