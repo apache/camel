@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.catalog.CamelCatalog;
@@ -70,7 +69,6 @@ public final class PluginHelper {
 
         // first arg is the command name (ie camel generate xxx)
         String target = args != null && args.length > 0 ? args[0] : null;
-        boolean verbose = args != null && Stream.of(args).anyMatch(a -> a.startsWith("--verbose"));
 
         if (config != null) {
             CamelCatalog catalog = new DefaultCamelCatalog();
@@ -82,24 +80,30 @@ public final class PluginHelper {
 
                 String name = properties.getOrDefault("name", pluginKey).toString();
                 String command = properties.getOrDefault("command", name).toString();
-
-                if (verbose) {
-                    main.getOut().println("Installed plugin: camel-jbang-plugin-" + command);
-                }
+                String firstVersion = properties.getOrDefault("firstVersion", "").toString();
 
                 // only load the plugin if the command-line is calling this plugin
                 if (target != null && !target.equals(command)) {
-                    if (verbose) {
-                        main.getOut().println("Plugin not in use: camel-jbang-plugin-" + command);
-                    }
                     continue;
+                }
+
+                // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
+                if (!firstVersion.isBlank()) {
+                    // compare versions without SNAPSHOT
+                    String source = version;
+                    if (source.endsWith("-SNAPSHOT")) {
+                        source = source.replace("-SNAPSHOT", "");
+                    }
+                    boolean accept = VersionHelper.isGE(source, firstVersion);
+                    if (!accept) {
+                        main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                              + " because plugin has first version: " + firstVersion + ". Exit");
+                        main.quit(1);
+                    }
                 }
 
                 Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + command, Plugin.class);
                 if (plugin.isEmpty()) {
-                    if (verbose) {
-                        main.getOut().println("Downloading plugin: camel-jbang-plugin-" + command);
-                    }
                     plugin = downloadPlugin(command, main, version);
                 }
                 if (plugin.isPresent()) {
