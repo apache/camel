@@ -17,16 +17,15 @@
 package org.apache.camel.component.azure.storage.queue;
 
 import com.azure.storage.queue.QueueServiceClient;
-import org.apache.camel.Category;
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import org.apache.camel.*;
 import org.apache.camel.component.azure.storage.queue.client.QueueClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.Map;
 
 /**
  * Stores and retrieves messages to/from Azure Storage Queue.
@@ -34,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service",
              syntax = "azure-storage-queue:accountName/queueName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = QueueConstants.class)
-public class QueueEndpoint extends ScheduledPollEndpoint {
+public class QueueEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private QueueServiceClient queueServiceClient;
 
@@ -82,5 +81,26 @@ public class QueueEndpoint extends ScheduledPollEndpoint {
 
     public QueueServiceClient getQueueServiceClient() {
         return queueServiceClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getAccountName()) && ObjectHelper.isNotEmpty(configuration.getQueueName())) {
+            return "azure-storage-queue:" + configuration.getAccountName() + "/" + configuration.getQueueName();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "storage-queue";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getCredentialType() != null) {
+            return Map.of("credentialType", configuration.getCredentialType().name());
+        }
+        return null;
     }
 }
