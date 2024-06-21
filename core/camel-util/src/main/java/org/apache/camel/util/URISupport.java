@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
@@ -316,6 +317,22 @@ public final class URISupport {
      * @see              #RAW_TOKEN_END
      */
     public static void resolveRawParameterValues(Map<String, Object> parameters) {
+        resolveRawParameterValues(parameters, null);
+    }
+
+    /**
+     * Traverses the given parameters, and resolve any parameter values which uses the RAW token syntax:
+     * <tt>key=RAW(value)</tt>. This method will then remove the RAW tokens, and replace the content of the value, with
+     * just the value.
+     *
+     * @param parameters the uri parameters
+     * @param onReplace  optional function executed when replace the raw value
+     * @see              #parseQuery(String)
+     * @see              #RAW_TOKEN_PREFIX
+     * @see              #RAW_TOKEN_START
+     * @see              #RAW_TOKEN_END
+     */
+    public static void resolveRawParameterValues(Map<String, Object> parameters, Function<String, String> onReplace) {
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry.getValue() == null) {
                 continue;
@@ -336,6 +353,9 @@ public final class URISupport {
                         // do not encode RAW parameters unless it has %
                         // need to reverse: replace % with %25 to avoid losing "%" when decoding
                         String s = raw.replace("%25", "%");
+                        if (onReplace != null) {
+                            s = onReplace.apply(s);
+                        }
                         list.set(i, s);
                     }
                 }
@@ -346,6 +366,9 @@ public final class URISupport {
                     // do not encode RAW parameters unless it has %
                     // need to reverse: replace % with %25 to avoid losing "%" when decoding
                     String s = raw.replace("%25", "%");
+                    if (onReplace != null) {
+                        s = onReplace.apply(s);
+                    }
                     entry.setValue(s);
                 }
             }

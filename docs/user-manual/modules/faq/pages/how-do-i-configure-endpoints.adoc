@@ -136,6 +136,19 @@ actual password would be as typed, eg `se+re?t&23`.
 
 NOTE: you may find a corner case when you use both `)` and `&` character as part of your password (ie, `se+re)t&23`). The parser will interpret the `)` as closing the `RAW` function and having a parameter started by `&`. In such case, you can instead use the `RAW{}` notation to let you include the `)` character and have it decoded as part of the password (ie, `RAW{se+re)t&23}`). As a safe alternative you can also use `password=#property:myPass` and then have `myPass` a xref:ROOT:property-binding.adoc[property placeholder value].
 
+==== Using ENV variables with raw values
+
+*Since Camel 4.7*
+
+If you need to use environment variables, for example as username or passwords then this is now possible by inlining
+the xref:components:languages:simple-language.adoc[Simple] language
+using `+++$simple{xxx}+++` syntax in `RAW(...)` as shown below:
+
+[source,java]
+----
+.to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})&binary=true")
+----
+
 [[HowdoIconfigureendpoints-Usingpropertyplaceholders]]
 === Using property placeholders
 
