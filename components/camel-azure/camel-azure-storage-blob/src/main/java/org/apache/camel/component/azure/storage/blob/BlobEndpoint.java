@@ -28,10 +28,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.component.azure.storage.blob.operations.BlobOperationResponse;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
+
+import java.util.Map;
 
 /**
  * Store and retrieve blobs from Azure Storage Blob Service.
@@ -39,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service",
              syntax = "azure-storage-blob:accountName/containerName", category = { Category.CLOUD, Category.FILE },
              headersClass = BlobConstants.class)
-public class BlobEndpoint extends ScheduledPollEndpoint {
+public class BlobEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private BlobServiceClient blobServiceClient;
@@ -109,5 +112,26 @@ public class BlobEndpoint extends ScheduledPollEndpoint {
 
     public void setBlobServiceClient(BlobServiceClient blobServiceClient) {
         this.blobServiceClient = blobServiceClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getAccountName()) && ObjectHelper.isNotEmpty(configuration.getContainerName())) {
+            return "azure-storage-blob:" + configuration.getAccountName() + "/" + configuration.getContainerName();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "azure-storage-blob";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getBlobName() != null) {
+            return Map.of("blobName", configuration.getBlobName());
+        }
+        return null;
     }
 }
