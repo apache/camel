@@ -23,6 +23,10 @@ import java.util.List;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 public class CombinedServiceDiscovery implements ServiceDiscovery {
     private final List<ServiceDiscovery> delegates;
 

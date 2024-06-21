@@ -28,6 +28,10 @@ import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 public class DefaultServiceDefinition implements ServiceDefinition {
     private static final ServiceHealth DEFAULT_SERVICE_HEALTH = new DefaultServiceHealth();
 

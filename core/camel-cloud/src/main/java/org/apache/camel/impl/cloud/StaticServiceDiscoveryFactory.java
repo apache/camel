@@ -24,6 +24,10 @@ import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 @CloudServiceFactory("static-service-discovery")
 @Configurer
 public class StaticServiceDiscoveryFactory implements ServiceDiscoveryFactory {

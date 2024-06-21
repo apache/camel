@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
@@ -27,7 +26,8 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.catalog.VersionHelper;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
@@ -64,20 +64,47 @@ public final class PluginHelper {
      * @param commandLine the command line to add commands to
      * @param main        the current Camel JBang main
      */
-    public static void addPlugins(CommandLine commandLine, CamelJBangMain main) {
+    public static void addPlugins(CommandLine commandLine, CamelJBangMain main, String... args) {
         JsonObject config = getPluginConfig();
 
+        // first arg is the command name (ie camel generate xxx)
+        String target = args != null && args.length > 0 ? args[0] : null;
+
         if (config != null) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String version = catalog.getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
+
             for (String pluginKey : plugins.keySet()) {
                 JsonObject properties = plugins.getMap(pluginKey);
 
                 String name = properties.getOrDefault("name", pluginKey).toString();
                 String command = properties.getOrDefault("command", name).toString();
+                String firstVersion = properties.getOrDefault("firstVersion", "").toString();
+
+                // only load the plugin if the command-line is calling this plugin
+                if (target != null && !target.equals(command)) {
+                    continue;
+                }
+
+                // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
+                if (!firstVersion.isBlank()) {
+                    // compare versions without SNAPSHOT
+                    String source = version;
+                    if (source.endsWith("-SNAPSHOT")) {
+                        source = source.replace("-SNAPSHOT", "");
+                    }
+                    boolean accept = VersionHelper.isGE(source, firstVersion);
+                    if (!accept) {
+                        main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                              + " because plugin has first version: " + firstVersion + ". Exit");
+                        main.quit(1);
+                    }
+                }
 
                 Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + command, Plugin.class);
                 if (plugin.isEmpty()) {
-                    plugin = downloadPlugin(command, main);
+                    plugin = downloadPlugin(command, main, version);
                 }
                 if (plugin.isPresent()) {
                     plugin.get().customize(commandLine, main);
@@ -89,12 +116,11 @@ public final class PluginHelper {
         }
     }
 
-    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main) {
+    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main, String version) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
         downloader.start();
-        String version = new VersionHelper().getVersion();
         // downloads and adds to the classpath
         downloader.downloadDependency("org.apache.camel", "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
@@ -178,6 +204,7 @@ public final class PluginHelper {
         kubePlugin.put("name", pluginType.getName());
         kubePlugin.put("command", pluginType.getCommand());
         kubePlugin.put("description", pluginType.getDescription());
+        kubePlugin.put("firstVersion", pluginType.getFirstVersion());
         plugins.put(pluginType.getName(), kubePlugin);
 
         PluginHelper.savePluginConfig(pluginConfig);

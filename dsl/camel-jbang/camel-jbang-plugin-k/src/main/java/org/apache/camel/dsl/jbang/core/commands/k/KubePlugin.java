@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands.k;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -22,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
-@CamelJBangPlugin("camel-jbang-plugin-k")
+@CamelJBangPlugin(name = "camel-jbang-plugin-k", firstVersion = "4.4.0")
 public class KubePlugin implements Plugin {
 
     @Override

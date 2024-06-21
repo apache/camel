@@ -22,6 +22,10 @@ import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 public class ServiceRegistrationRoutePolicyFactory implements RoutePolicyFactory {
     private final ServiceRegistry.Selector serviceRegistrySelector;
     private final ServiceRegistry serviceRegistry;

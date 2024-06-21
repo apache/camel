@@ -22,6 +22,10 @@ import org.apache.camel.cloud.ServiceFilterFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 @CloudServiceFactory("pass-through-service-filter")
 @Configurer
 public class PassThroughServiceFilterFactory implements ServiceFilterFactory {

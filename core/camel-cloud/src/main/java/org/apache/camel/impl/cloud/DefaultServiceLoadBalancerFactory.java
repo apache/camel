@@ -22,6 +22,10 @@ import org.apache.camel.cloud.ServiceLoadBalancerFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.CloudServiceFactory;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 @CloudServiceFactory("default-service-load-balancer")
 @Configurer
 public class DefaultServiceLoadBalancerFactory implements ServiceLoadBalancerFactory {
