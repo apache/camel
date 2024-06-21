@@ -26,10 +26,14 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
+
+import java.util.Map;
 
 /**
  * Manage secrets and keys in Azure Key Vault Service
@@ -42,7 +46,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @Metadata(annotations = {
         "vault=azure-key-vault",
 })
-public class KeyVaultEndpoint extends DefaultEndpoint {
+public class KeyVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SecretClient secretClient;
 
@@ -117,5 +121,26 @@ public class KeyVaultEndpoint extends DefaultEndpoint {
 
     public void setSecretClient(SecretClient secretClient) {
         this.secretClient = secretClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getTenantId())) {
+            return configuration.getTenantId();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "keyvault";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getVaultName() != null) {
+            return Map.of("vault", configuration.getVaultName());
+        }
+        return null;
     }
 }
