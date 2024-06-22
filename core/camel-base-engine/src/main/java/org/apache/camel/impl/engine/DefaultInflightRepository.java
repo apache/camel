@@ -262,6 +262,14 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
+        public boolean isFromRemoteEndpoint() {
+            if (exchange.getFromEndpoint() != null) {
+                return exchange.getFromEndpoint().isRemote();
+            }
+            return false;
+        }
+
+        @Override
         public String getAtRouteId() {
             return ExchangeHelper.getAtRouteId(exchange);
         }
