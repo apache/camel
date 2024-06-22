@@ -96,9 +96,11 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
                             row.from = o.getString("from");
-                            row.remote = o.getBooleanOrDefault("remote", false);
-                            if (row.remote) {
+                            Boolean bool = o.getBoolean("remote");
+                            if (bool != null) {
+                                // older camel versions does not include this information
                                 remoteVisible.set(true);
+                                row.remote = bool;
                             }
                             row.source = o.getString("source");
                             row.state = o.getString("state");
