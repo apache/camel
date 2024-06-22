@@ -63,7 +63,8 @@ public class EndpointDevConsole extends AbstractDevConsole {
                 var stat = findStats(stats, e.getEndpointUri());
                 if (stat.isPresent()) {
                     var st = stat.get();
-                    sb.append(String.format("\n    %s (remote: %s direction: %s, usage: %s)", uri, remote, st.getDirection(), st.getHits()));
+                    sb.append(String.format("\n    %s (remote: %s direction: %s, usage: %s)", uri, remote, st.getDirection(),
+                            st.getHits()));
                 } else {
                     sb.append(String.format("\n    %s (remote: %s)", uri, remote));
                 }
