@@ -63,6 +63,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Uri: %s", mc.getEndpointUri()));
                     sb.append(String.format("\n    State: %s", mc.getState()));
                     sb.append(String.format("\n    Class: %s", mc.getServiceType()));
+                    sb.append(String.format("\n    Remote: %b", mc.isRemoteEndpoint()));
+                    sb.append(String.format("\n    Hosted: %b", mc.isHostedService()));
                     sb.append(String.format("\n    Inflight: %d", inflight));
                     if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
                         sb.append(String.format("\n    Polling: %s", mpc.isPolling()));
@@ -150,6 +152,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     jo.put("uri", mc.getEndpointUri());
                     jo.put("state", mc.getState());
                     jo.put("class", mc.getServiceType());
+                    jo.put("remote", mc.isRemoteEndpoint());
+                    jo.put("hosted", mc.isHostedService());
                     jo.put("inflight", inflight);
                     jo.put("scheduled", false);
                     if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {

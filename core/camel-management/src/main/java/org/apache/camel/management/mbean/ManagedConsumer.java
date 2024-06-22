@@ -56,4 +56,9 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
         }
         return false;
     }
+
+    @Override
+    public boolean isRemoteEndpoint() {
+        return consumer.getEndpoint().isRemote();
+    }
 }

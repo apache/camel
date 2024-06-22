@@ -37,7 +37,7 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Singleton")
     boolean isSingleton();
 
-    @ManagedAttribute(description = "Remote")
+    @ManagedAttribute(description = "Whether this endpoint connects to remote or local systems")
     boolean isRemote();
 
     @ManagedAttribute(description = "Endpoint State")
