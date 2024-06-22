@@ -76,9 +76,9 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                         sb.append(String.format("\n    Greedy: %s", mpc.isGreedy()));
                         sb.append(String.format("\n    Running Logging Level: %s", mpc.getRunningLoggingLevel()));
                         sb.append(String.format("\n    Send Empty Message When Idle: %s", mpc.isSendEmptyMessageWhenIdle()));
-                        sb.append(String.format("\n    Counter(total: %d success: %d error: %d)",
+                        sb.append(String.format("\n    Counter (total: %d success: %d error: %d)",
                                 mpc.getCounter(), mpc.getSuccessCounter(), mpc.getErrorCounter()));
-                        sb.append(String.format("\n    Delay(initial: %d delay: %d unit: %s)",
+                        sb.append(String.format("\n    Delay (initial: %d delay: %d unit: %s)",
                                 mpc.getInitialDelay(), mpc.getDelay(), mpc.getTimeUnit()));
                         sb.append(String.format(
                                 "\n    Backoff(counter: %d multiplier: %d errorThreshold: %d, idleThreshold: %d )",
@@ -115,7 +115,7 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                                     sb.append(String.format("\n    Repeat Count: %s", repeatCount));
                                 }
                                 sb.append(String.format("\n    Running Logging Level: %s", runLoggingLevel));
-                                sb.append(String.format("\n    Counter(total: %s)", counter));
+                                sb.append(String.format("\n    Counter (total: %s)", counter));
 
                             }
                         } catch (Exception e) {
