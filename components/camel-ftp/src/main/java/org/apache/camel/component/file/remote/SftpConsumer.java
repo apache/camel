@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -216,7 +217,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
         // we cannot use the LIST command(s) so we can only poll a named
         // file so created a pseudo file with that name
-        Exchange dummy = endpoint.createExchange();
+        Exchange dummy = ExchangeHelper.getDummy(getEndpoint().getCamelContext());
         String name = evaluateFileExpression(dummy);
         if (name != null) {
             SftpRemoteFile file = new SftpRemoteFileSingle(name);

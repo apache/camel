@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.URISupport;
 
 public final class RawParameterHelper {
@@ -42,7 +42,7 @@ public final class RawParameterHelper {
     public static void resolveRawParameterValues(CamelContext camelContext, Map<String, Object> parameters) {
         URISupport.resolveRawParameterValues(parameters, s -> {
             if (s != null && s.contains("$simple{")) {
-                Exchange dummy = new DefaultExchange(camelContext);
+                Exchange dummy = ExchangeHelper.getDummy(camelContext);
                 s = camelContext.resolveLanguage("simple").createExpression(s).evaluate(dummy, String.class);
             }
             return s;
