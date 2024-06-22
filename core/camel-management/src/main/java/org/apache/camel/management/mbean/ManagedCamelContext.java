@@ -67,6 +67,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     private Statistic remoteExchangesTotal;
     private Statistic remoteExchangesCompleted;
     private Statistic remoteExchangesFailed;
+    private Statistic remoteExchangesInflight;
 
     public ManagedCamelContext(CamelContext context) {
         this.context = context;
@@ -81,6 +82,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         this.remoteExchangesTotal = new StatisticCounter();
         this.remoteExchangesCompleted = new StatisticCounter();
         this.remoteExchangesFailed = new StatisticCounter();
+        this.remoteExchangesInflight = new StatisticCounter();
         boolean enabled = context.getManagementStrategy().getManagementAgent() != null
                 && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
@@ -92,6 +94,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         remoteExchangesTotal.reset();
         remoteExchangesCompleted.reset();
         remoteExchangesFailed.reset();
+        remoteExchangesInflight.reset();
     }
 
     @Override
@@ -108,6 +111,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
                     remoteExchangesTotal.increment();
                     remoteExchangesCompleted.increment();
+                    remoteExchangesInflight.decrement();
                 }
             }
         } else {
@@ -115,6 +119,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
                 remoteExchangesTotal.increment();
                 remoteExchangesCompleted.increment();
+                remoteExchangesInflight.decrement();
             }
         }
     }
@@ -133,6 +138,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
                     remoteExchangesTotal.increment();
                     remoteExchangesFailed.increment();
+                    remoteExchangesInflight.decrement();
                 }
             }
         } else {
@@ -140,6 +146,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
                 remoteExchangesTotal.increment();
                 remoteExchangesFailed.increment();
+                remoteExchangesInflight.decrement();
             }
         }
     }
@@ -155,9 +162,15 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             int level = uow.routeStackLevel(includeRouteTemplates, includeKamelets);
             if (level <= 1) {
                 super.processExchange(exchange, type);
+                if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
+                    remoteExchangesInflight.increment();
+                }
             }
         } else {
             super.processExchange(exchange, type);
+            if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
+                remoteExchangesInflight.increment();
+            }
         }
     }
 
@@ -373,6 +386,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     @Override
     public long getRemoteExchangesFailed() {
         return remoteExchangesFailed.getValue();
+    }
+
+    @Override
+    public long getRemoteExchangesInflight() {
+        return remoteExchangesInflight.getValue();
     }
 
     @Override

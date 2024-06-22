@@ -71,11 +71,9 @@ public class ContextDevConsole extends AbstractDevConsole {
                 if (!thp.isEmpty()) {
                     sb.append(String.format("\n    Messages/Sec: %s", thp));
                 }
-                sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
-                sb.append(String.format("\n    Total (remote): %s", mb.getRemoteExchangesTotal()));
-                sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
-                sb.append(String.format("\n    Failed (remote): %s", mb.getRemoteExchangesFailed()));
-                sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
+                sb.append(String.format("\n    Total: %s/%s", mb.getRemoteExchangesTotal(), mb.getExchangesTotal()));
+                sb.append(String.format("\n    Failed: %s/%s", mb.getRemoteExchangesFailed(), mb.getExchangesFailed()));
+                sb.append(String.format("\n    Inflight: %s/%s", mb.getRemoteExchangesInflight(), mb.getExchangesInflight()));
                 long idle = mb.getIdleSince();
                 if (idle > 0) {
                     sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
@@ -156,6 +154,7 @@ public class ContextDevConsole extends AbstractDevConsole {
                 stats.put("exchangesInflight", mb.getExchangesInflight());
                 stats.put("remoteExchangesTotal", mb.getRemoteExchangesTotal());
                 stats.put("remoteExchangesFailed", mb.getRemoteExchangesFailed());
+                stats.put("remoteExchangesInflight", mb.getRemoteExchangesInflight());
                 stats.put("reloaded", reloaded);
                 stats.put("meanProcessingTime", mb.getMeanProcessingTime());
                 stats.put("maxProcessingTime", mb.getMaxProcessingTime());

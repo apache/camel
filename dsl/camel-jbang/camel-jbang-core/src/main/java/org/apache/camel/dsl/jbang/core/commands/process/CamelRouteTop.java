@@ -35,7 +35,7 @@ public class CamelRouteTop extends CamelRouteStatus {
     }
 
     @Override
-    protected void printTable(List<Row> rows) {
+    protected void printTable(List<Row> rows, boolean remoteVisible) {
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -44,6 +44,9 @@ public class CamelRouteTop extends CamelRouteStatus {
                         .with(this::getId),
                 new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
+                new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
+                        .dataAlign(HorizontalAlign.CENTER)
+                        .with(this::getRemote),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -73,6 +74,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
+        AtomicBoolean remoteVisible = new AtomicBoolean();
         List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
@@ -94,6 +96,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
                             row.from = o.getString("from");
+                            row.remote = o.getBooleanOrDefault("remote", false);
+                            if (row.remote) {
+                                remoteVisible.set(true);
+                            }
                             row.source = o.getString("source");
                             row.state = o.getString("state");
                             row.age = o.getString("uptime");
@@ -172,13 +178,13 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printTable(rows);
+            printTable(rows, remoteVisible.get());
         }
 
         return 0;
     }
 
-    protected void printTable(List<Row> rows) {
+    protected void printTable(List<Row> rows, boolean remoteVisible) {
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -188,9 +194,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
-                new Column().header("FROM").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(45, OverflowBehaviour.NEWLINE)
-                        .with(this::getFrom),
+                new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
+                        .dataAlign(HorizontalAlign.CENTER)
+                        .with(this::getRemote),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
@@ -260,6 +266,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         return s;
     }
 
+    protected String getRemote(Row r) {
+        return r.remote ? "x" : "";
+    }
+
     protected String getId(Row r) {
         if (source && r.source != null) {
             return sourceLocLine(r.source);
@@ -286,6 +296,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         long uptime;
         String routeId;
         String from;
+        boolean remote;
         String source;
         String state;
         String age;
