@@ -58,7 +58,8 @@ public class InflightConsole extends AbstractDevConsole {
             for (InflightRepository.InflightExchange ie : repo.browse(filter, max, false)) {
                 String age = TimeUtils.printDuration(ie.getDuration(), true);
                 sb.append(String.format("\n    %s (from: %s at: %s/%s remote: %b age: %s)",
-                        ie.getExchange().getExchangeId(), ie.getFromRouteId(), ie.getAtRouteId(), ie.getNodeId(), ie.isFromRemoteEndpoint(), age));
+                        ie.getExchange().getExchangeId(), ie.getFromRouteId(), ie.getAtRouteId(), ie.getNodeId(),
+                        ie.isFromRemoteEndpoint(), age));
             }
         }
 
