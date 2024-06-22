@@ -40,12 +40,13 @@ public class ContextDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(String.format("Apache Camel %s %s (%s) uptime %s", getCamelContext().getVersion(),
-                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
-                CamelContextHelper.getUptime(getCamelContext())));
+        String profile = "";
         if (getCamelContext().getCamelContextExtension().getProfile() != null) {
-            sb.append(String.format("\n    Profile: %s", getCamelContext().getCamelContextExtension().getProfile()));
+            profile = " (profile: " + getCamelContext().getCamelContextExtension().getProfile() + ")";
         }
+        sb.append(String.format("Apache Camel %s %s (%s)%s uptime %s", getCamelContext().getVersion(),
+                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
+                profile, CamelContextHelper.getUptime(getCamelContext())));
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("\n    %s", getCamelContext().getDescription()));
         }
