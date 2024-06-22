@@ -178,4 +178,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Whether update route from XML is enabled")
     boolean isUpdateRouteEnabled();
 
+    @ManagedAttribute(description = "Whether the consumer connects to remote or local systems")
+    boolean isRemoteEndpoint();
+
 }

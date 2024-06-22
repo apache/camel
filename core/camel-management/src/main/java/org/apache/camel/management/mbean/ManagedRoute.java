@@ -734,6 +734,14 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public boolean isRemoteEndpoint() {
+        if (route.getEndpoint() != null) {
+            return route.getEndpoint().isRemote();
+        }
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return this == o || o != null && getClass() == o.getClass() && route.equals(((ManagedRoute) o).route);
     }
