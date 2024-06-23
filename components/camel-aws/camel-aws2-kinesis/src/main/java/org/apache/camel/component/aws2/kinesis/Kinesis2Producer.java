@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -26,11 +31,6 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequestEntry;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
-
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Kinesis2Producer extends DefaultProducer {
 
@@ -80,7 +80,8 @@ public class Kinesis2Producer extends DefaultProducer {
         PutRecordsResponse putRecordsResponse = connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
         if (putRecordsResponse.failedRecordCount() > 0) {
             throw new RuntimeException(
-                    "Failed to send records " + putRecordsResponse.failedRecordCount() + " of " + putRecordsResponse.records().size());
+                    "Failed to send records " + putRecordsResponse.failedRecordCount() + " of "
+                                       + putRecordsResponse.records().size());
         }
     }
 
@@ -97,7 +98,8 @@ public class Kinesis2Producer extends DefaultProducer {
             } else if (record instanceof String str) {
                 sdkBytes = SdkBytes.fromUtf8String(str);
             } else {
-                throw new IllegalArgumentException("Record type not supported. Must be byte[], ByteBuffer, InputStream or UTF-8 String");
+                throw new IllegalArgumentException(
+                        "Record type not supported. Must be byte[], ByteBuffer, InputStream or UTF-8 String");
             }
 
             PutRecordsRequestEntry putRecordsRequestEntry = PutRecordsRequestEntry.builder()
