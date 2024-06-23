@@ -28,6 +28,7 @@ import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
@@ -38,8 +39,8 @@ public class ZipAggregationStrategySplitTest extends CamelTestSupport {
     private static final int EXPECTED_NO_FILES = 3;
     private static final String TEST_DIR = "target/out_ZipAggregationStrategyTest";
 
-    @Override
-    public void doPreSetup() {
+    @BeforeEach
+    public void deleteTestDirs() {
         deleteDirectory(TEST_DIR);
     }
 
