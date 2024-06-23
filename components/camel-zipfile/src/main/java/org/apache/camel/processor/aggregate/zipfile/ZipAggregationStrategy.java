@@ -222,7 +222,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         Exchange answer = oldExchange;
 
         // Guard against empty new exchanges
-        if (newExchange == null) {
+        if (newExchange.getIn().getBody() == null && oldExchange != null) {
             return oldExchange;
         }
 
@@ -240,15 +240,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             zipFile = oldExchange.getIn().getBody(File.class);
         }
         Object body = newExchange.getIn().getBody();
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile) body).getFile();
+        if (body instanceof WrappedFile wrappedFile) {
+            body = wrappedFile.getFile();
         }
 
         String charset = ExchangeHelper.getCharsetName(newExchange, true);
 
-        if (body instanceof File) {
+        if (body instanceof File appendFile) {
             try {
-                File appendFile = (File) body;
                 // try to append empty data only when explicit set
                 if (this.allowEmptyFiles || appendFile.length() > 0) {
                     String entryName = preserveFolderStructure
@@ -261,17 +260,19 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             }
         } else {
             // Handle all other messages
-            try {
-                byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
-                // try to append empty data only when explicit set
-                if (this.allowEmptyFiles || buffer.length > 0) {
-                    String entryName = useFilenameHeader
+            if (newExchange.getIn().getBody() != null) {
+                try {
+                    byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
+                    // try to append empty data only when explicit set
+                    if (this.allowEmptyFiles || buffer.length > 0) {
+                        String entryName = useFilenameHeader
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
-                    addEntryToZip(zipFile, entryName, buffer, charset);
+                        addEntryToZip(zipFile, entryName, buffer, charset);
+                    }
+                } catch (Exception e) {
+                    throw new GenericFileOperationFailedException(e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         }
 
