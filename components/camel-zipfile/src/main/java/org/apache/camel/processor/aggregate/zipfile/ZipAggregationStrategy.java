@@ -221,19 +221,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         File zipFile;
         Exchange answer = oldExchange;
 
+        boolean isFirstTimeInAggregation = oldExchange == null;
         // Guard against empty new exchanges
-        if (newExchange.getIn().getBody() == null && oldExchange != null) {
+        if (newExchange.getIn().getBody() == null && !isFirstTimeInAggregation) {
             return oldExchange;
         }
 
-        // First time for this aggregation
-        if (oldExchange == null) {
-            try {
-                zipFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
-                newZipFile(zipFile);
-            } catch (IOException | URISyntaxException e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
-            }
+        if (isFirstTimeInAggregation) {
+            zipFile = createZipFile();
             answer = newExchange;
             answer.getExchangeExtension().addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
         } else {
@@ -247,39 +242,57 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         String charset = ExchangeHelper.getCharsetName(newExchange, true);
 
         if (body instanceof File appendFile) {
-            try {
-                // try to append empty data only when explicit set
-                if (this.allowEmptyFiles || appendFile.length() > 0) {
-                    String entryName = preserveFolderStructure
-                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
-                            : newExchange.getIn().getMessageId();
-                    addFileToZip(zipFile, appendFile, this.preserveFolderStructure ? entryName : null);
-                }
-            } catch (Exception e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
-            }
+            appendFileToZip(newExchange, appendFile, zipFile);
         } else {
-            // Handle all other messages
-            if (newExchange.getIn().getBody() != null) {
-                try {
-                    byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
-                    // try to append empty data only when explicit set
-                    if (this.allowEmptyFiles || buffer.length > 0) {
-                        String entryName = useFilenameHeader
-                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
-                            : newExchange.getIn().getMessageId();
-                        addEntryToZip(zipFile, entryName, buffer, charset);
-                    }
-                } catch (Exception e) {
-                    throw new GenericFileOperationFailedException(e.getMessage(), e);
-                }
-            }
+            appendIncomingBodyAsBytesToZip(newExchange, zipFile, charset);
         }
 
         GenericFile<File> genericFile = FileConsumer.asGenericFile(zipFile.getParent(), zipFile, charset, false);
         genericFile.bindToExchange(answer);
 
         return answer;
+    }
+
+    private void appendIncomingBodyAsBytesToZip(Exchange newExchange, File zipFile, String charset) {
+        if (newExchange.getIn().getBody() != null) {
+            try {
+                byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
+                // try to append empty data only when explicit set
+                if (this.allowEmptyFiles || buffer.length > 0) {
+                    String entryName = useFilenameHeader
+                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
+                            : newExchange.getIn().getMessageId();
+                    addEntryToZip(zipFile, entryName, buffer, charset);
+                }
+            } catch (Exception e) {
+                throw new GenericFileOperationFailedException(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void appendFileToZip(Exchange newExchange, File appendFile, File zipFile) {
+        try {
+            // try to append empty data only when explicit set
+            if (this.allowEmptyFiles || appendFile.length() > 0) {
+                String entryName = preserveFolderStructure
+                        ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
+                        : newExchange.getIn().getMessageId();
+                addFileToZip(zipFile, appendFile, this.preserveFolderStructure ? entryName : null);
+            }
+        } catch (Exception e) {
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        }
+    }
+
+    private File createZipFile() {
+        File zipFile;
+        try {
+            zipFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
+            newZipFile(zipFile);
+        } catch (IOException | URISyntaxException e) {
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        }
+        return zipFile;
     }
 
     @Override
