@@ -351,6 +351,23 @@ public interface Aws2KinesisComponentBuilderFactory {
     
         
         /**
+         * If we want to a KCL Consumer set it to true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useKclConsumers the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder useKclConsumers(boolean useKclConsumers) {
+            doSetProperty("useKclConsumers", useKclConsumers);
+            return this;
+        }
+    
+        
+        /**
          * Used for enabling or disabling all consumer based health checks from
          * this component.
          * 
@@ -607,6 +624,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "amazonKinesisClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisClient((software.amazon.awssdk.services.kinesis.KinesisClient) value); return true;
             case "asyncClient": getOrCreateConfiguration((Kinesis2Component) component).setAsyncClient((boolean) value); return true;
             case "autowiredEnabled": ((Kinesis2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "useKclConsumers": getOrCreateConfiguration((Kinesis2Component) component).setUseKclConsumers((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((Kinesis2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((Kinesis2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Kinesis2Component) component).setProxyHost((java.lang.String) value); return true;

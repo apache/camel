@@ -103,6 +103,9 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "consumer,advanced", description = "The interval in milliseconds to wait between shard polling",
               defaultValue = "10000")
     private long shardMonitorInterval = 10000;
+    @UriParam(label = "advanced",
+              description = "If we want to a KCL Consumer set it to true")
+    private boolean useKclConsumers;
 
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -294,6 +297,14 @@ public class Kinesis2Configuration implements Cloneable {
 
     public void setShardMonitorInterval(long shardMonitorInterval) {
         this.shardMonitorInterval = shardMonitorInterval;
+    }
+
+    public boolean isUseKclConsumers() {
+        return useKclConsumers;
+    }
+
+    public void setUseKclConsumers(boolean useKclConsumers) {
+        this.useKclConsumers = useKclConsumers;
     }
 
     // *************************************************

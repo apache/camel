@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -101,11 +102,17 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
-        consumer.setConnection(getComponent().getConnection());
-        consumer.setSchedulerProperties(getSchedulerProperties());
-        configureConsumer(consumer);
-        return consumer;
+        if (!getConfiguration().isUseKclConsumers()) {
+            final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
+            consumer.setConnection(getComponent().getConnection());
+            consumer.setSchedulerProperties(getSchedulerProperties());
+            configureConsumer(consumer);
+            return consumer;
+        } else {
+            final KclKinesis2Consumer consumer = new KclKinesis2Consumer(this, processor);
+            configureConsumer(consumer);
+            return consumer;
+        }
     }
 
     @Override
@@ -148,5 +155,10 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
             return Map.of("stream", configuration.getStreamName());
         }
         return null;
+    }
+
+    public ExecutorService createExecutor() {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "KinesisStream[" + configuration.getStreamName() + "]", 1);
     }
 }

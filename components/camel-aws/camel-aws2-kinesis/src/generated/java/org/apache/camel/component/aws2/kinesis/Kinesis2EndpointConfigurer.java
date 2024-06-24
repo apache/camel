@@ -101,6 +101,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "usekclconsumers":
+        case "useKclConsumers": target.getConfiguration().setUseKclConsumers(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesessioncredentials":
@@ -195,6 +197,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "usekclconsumers":
+        case "useKclConsumers": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
         case "usesessioncredentials":
@@ -285,6 +289,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "usekclconsumers":
+        case "useKclConsumers": return target.getConfiguration().isUseKclConsumers();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         case "usesessioncredentials":

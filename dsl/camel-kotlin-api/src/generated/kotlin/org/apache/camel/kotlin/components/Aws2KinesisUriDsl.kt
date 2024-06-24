@@ -275,6 +275,20 @@ public class Aws2KinesisUriDsl(
   }
 
   /**
+   * If we want to a KCL Consumer set it to true
+   */
+  public fun useKclConsumers(useKclConsumers: String) {
+    it.property("useKclConsumers", useKclConsumers)
+  }
+
+  /**
+   * If we want to a KCL Consumer set it to true
+   */
+  public fun useKclConsumers(useKclConsumers: Boolean) {
+    it.property("useKclConsumers", useKclConsumers.toString())
+  }
+
+  /**
    * To define a proxy host when instantiating the Kinesis client
    */
   public fun proxyHost(proxyHost: String) {
