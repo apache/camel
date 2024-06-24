@@ -26,10 +26,10 @@
         <version>4.7.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-crypto</artifactId>
+    <artifactId>camel-crypto-pgp</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Crypto</name>
-    <description>Camel Cryptographic Support</description>
+    <name>Camel :: Crypto PGP</name>
+    <description>Camel Cryptographic Support PGP</description>
 
     <dependencies>
         <dependency>
@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
+            <artifactId>bcpg-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
         </dependency>
         <dependency>
