@@ -145,8 +145,8 @@ public class Run extends CamelCommand {
     String quarkusVersion = "3.11.3";
 
     @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-            defaultValue = "3.3.0")
-    String springBootVersion = "3.3.0";
+            defaultValue = "3.3.1")
+    String springBootVersion = "3.3.1";
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
             description = "Profile to run (dev, test, or prod).")

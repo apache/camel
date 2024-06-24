@@ -148,8 +148,8 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "3.3.0")
-    protected String springBootVersion = "3.3.0";
+                        defaultValue = "3.3.1")
+    protected String springBootVersion = "3.3.1";
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     protected String camelSpringBootVersion;
