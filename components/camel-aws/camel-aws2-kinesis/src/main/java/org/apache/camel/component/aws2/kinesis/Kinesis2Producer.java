@@ -34,6 +34,9 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
 
 public class Kinesis2Producer extends DefaultProducer {
 
+    // Maximum number of records that can be sent in a single PutRecords request
+    private static final int MAX_BATCH_SIZE = 500;
+
     private KinesisConnection connection;
 
     public Kinesis2Producer(Kinesis2Endpoint endpoint) {
@@ -73,20 +76,24 @@ public class Kinesis2Producer extends DefaultProducer {
     private void sendBatchRecords(Exchange exchange) {
         Object partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY);
         ensurePartitionKeyNotNull(partitionKey);
-        PutRecordsRequest putRecordsRequest = PutRecordsRequest.builder()
-                .streamName(getEndpoint().getConfiguration().getStreamName())
-                .records(createRequestBatch(exchange, partitionKey))
-                .build();
-        PutRecordsResponse putRecordsResponse = connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
-        if (putRecordsResponse.failedRecordCount() > 0) {
-            throw new RuntimeException(
-                    "Failed to send records " + putRecordsResponse.failedRecordCount() + " of "
-                                       + putRecordsResponse.records().size());
+        List<List<PutRecordsRequestEntry>> requestBatchList = createRequestBatchList(exchange, partitionKey);
+        for (List<PutRecordsRequestEntry> requestBatch : requestBatchList) {
+            PutRecordsRequest putRecordsRequest = PutRecordsRequest.builder()
+                    .streamName(getEndpoint().getConfiguration().getStreamName())
+                    .records(requestBatch)
+                    .build();
+            PutRecordsResponse putRecordsResponse = connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
+            if (putRecordsResponse.failedRecordCount() > 0) {
+                throw new RuntimeException(
+                        "Failed to send records " + putRecordsResponse.failedRecordCount() + " of "
+                                           + putRecordsResponse.records().size());
+            }
         }
     }
 
-    private List<PutRecordsRequestEntry> createRequestBatch(Exchange exchange, Object partitionKey) {
-        List<PutRecordsRequestEntry> requestBatch = new ArrayList<>();
+    private List<List<PutRecordsRequestEntry>> createRequestBatchList(Exchange exchange, Object partitionKey) {
+        List<List<PutRecordsRequestEntry>> requestBatchList = new ArrayList<>();
+        List<PutRecordsRequestEntry> requestBatch = new ArrayList<>(MAX_BATCH_SIZE);
         for (Object record : exchange.getIn().getBody(Iterable.class)) {
             SdkBytes sdkBytes;
             if (record instanceof byte[] bytes) {
@@ -107,9 +114,16 @@ public class Kinesis2Producer extends DefaultProducer {
                     .partitionKey(partitionKey.toString())
                     .build();
             requestBatch.add(putRecordsRequestEntry);
+            if (requestBatch.size() == MAX_BATCH_SIZE) {
+                requestBatchList.add(requestBatch);
+                requestBatch = new ArrayList<>(MAX_BATCH_SIZE);
+            }
+        }
+        if (!requestBatch.isEmpty()) {
+            requestBatchList.add(requestBatch);
         }
 
-        return requestBatch;
+        return requestBatchList;
     }
 
     private void sendSingleRecord(Exchange exchange) {
