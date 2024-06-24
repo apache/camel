@@ -49,13 +49,14 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
         case "vertexcollection":
         case "vertexCollection": getOrCreateConfiguration(target).setVertexCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"arangoDB"};
+        return new String[]{"arangoDB", "vertx"};
     }
 
     @Override
@@ -80,6 +81,7 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "user": return java.lang.String.class;
         case "vertexcollection":
         case "vertexCollection": return java.lang.String.class;
+        case "vertx": return io.vertx.core.Vertx.class;
         default: return null;
         }
     }
@@ -107,6 +109,7 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "user": return getOrCreateConfiguration(target).getUser();
         case "vertexcollection":
         case "vertexCollection": return getOrCreateConfiguration(target).getVertexCollection();
+        case "vertx": return target.getVertx();
         default: return null;
         }
     }

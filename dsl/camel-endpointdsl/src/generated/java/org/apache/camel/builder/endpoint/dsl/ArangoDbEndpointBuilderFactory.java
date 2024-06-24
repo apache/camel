@@ -307,6 +307,35 @@ public interface ArangoDbEndpointBuilderFactory {
             doSetProperty("arangoDB", arangoDB);
             return this;
         }
+        /**
+         * To use an existing Vertx instance in the ArangoDB client.
+         * 
+         * The option is a: <code>io.vertx.core.Vertx</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
+         */
+        default AdvancedArangoDbEndpointBuilder vertx(io.vertx.core.Vertx vertx) {
+            doSetProperty("vertx", vertx);
+            return this;
+        }
+        /**
+         * To use an existing Vertx instance in the ArangoDB client.
+         * 
+         * The option will be converted to a <code>io.vertx.core.Vertx</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
+         */
+        default AdvancedArangoDbEndpointBuilder vertx(String vertx) {
+            doSetProperty("vertx", vertx);
+            return this;
+        }
     }
 
     public interface ArangoDbBuilders {
