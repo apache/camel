@@ -1279,6 +1279,70 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * CloudWatchAsyncClient.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudWatchAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder cloudWatchAsyncClient(software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient cloudWatchAsyncClient) {
+            doSetProperty("cloudWatchAsyncClient", cloudWatchAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * CloudWatchAsyncClient.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudWatchAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder cloudWatchAsyncClient(String cloudWatchAsyncClient) {
+            doSetProperty("cloudWatchAsyncClient", cloudWatchAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * DynamoDbAsyncClient.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param dynamoDbAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder dynamoDbAsyncClient(software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient dynamoDbAsyncClient) {
+            doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * DynamoDbAsyncClient.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param dynamoDbAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder dynamoDbAsyncClient(String dynamoDbAsyncClient) {
+            doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
+            return this;
+        }
+        /**
          * If we want to a KCL Consumer set it to true.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1798,6 +1862,70 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * CloudWatchAsyncClient.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudWatchAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder cloudWatchAsyncClient(software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient cloudWatchAsyncClient) {
+            doSetProperty("cloudWatchAsyncClient", cloudWatchAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * CloudWatchAsyncClient.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudWatchAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder cloudWatchAsyncClient(String cloudWatchAsyncClient) {
+            doSetProperty("cloudWatchAsyncClient", cloudWatchAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * DynamoDbAsyncClient.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param dynamoDbAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder dynamoDbAsyncClient(software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient dynamoDbAsyncClient) {
+            doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * DynamoDbAsyncClient.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param dynamoDbAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder dynamoDbAsyncClient(String dynamoDbAsyncClient) {
+            doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
+            return this;
+        }
+        /**
          * If we want to a KCL Consumer set it to true.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2272,6 +2400,70 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default AdvancedKinesis2EndpointBuilder asyncClient(String asyncClient) {
             doSetProperty("asyncClient", asyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * CloudWatchAsyncClient.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudWatchAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder cloudWatchAsyncClient(software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient cloudWatchAsyncClient) {
+            doSetProperty("cloudWatchAsyncClient", cloudWatchAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * CloudWatchAsyncClient.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudWatchAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder cloudWatchAsyncClient(String cloudWatchAsyncClient) {
+            doSetProperty("cloudWatchAsyncClient", cloudWatchAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * DynamoDbAsyncClient.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param dynamoDbAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder dynamoDbAsyncClient(software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient dynamoDbAsyncClient) {
+            doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * DynamoDbAsyncClient.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param dynamoDbAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder dynamoDbAsyncClient(String dynamoDbAsyncClient) {
+            doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
             return this;
         }
         /**
