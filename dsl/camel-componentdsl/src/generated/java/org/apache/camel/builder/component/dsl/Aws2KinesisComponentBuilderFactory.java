@@ -349,6 +349,40 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * CloudWatchAsyncClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param cloudWatchAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder cloudWatchAsyncClient(software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient cloudWatchAsyncClient) {
+            doSetProperty("cloudWatchAsyncClient", cloudWatchAsyncClient);
+            return this;
+        }
+    
+        /**
+         * If we want to a KCL Consumer, we can pass an instance of
+         * DynamoDbAsyncClient.
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param dynamoDbAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder dynamoDbAsyncClient(software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient dynamoDbAsyncClient) {
+            doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
+            return this;
+        }
+    
         
         /**
          * If we want to a KCL Consumer set it to true.
@@ -624,6 +658,8 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "amazonKinesisClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisClient((software.amazon.awssdk.services.kinesis.KinesisClient) value); return true;
             case "asyncClient": getOrCreateConfiguration((Kinesis2Component) component).setAsyncClient((boolean) value); return true;
             case "autowiredEnabled": ((Kinesis2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "cloudWatchAsyncClient": getOrCreateConfiguration((Kinesis2Component) component).setCloudWatchAsyncClient((software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient) value); return true;
+            case "dynamoDbAsyncClient": getOrCreateConfiguration((Kinesis2Component) component).setDynamoDbAsyncClient((software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient) value); return true;
             case "useKclConsumers": getOrCreateConfiguration((Kinesis2Component) component).setUseKclConsumers((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((Kinesis2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((Kinesis2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
