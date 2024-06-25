@@ -107,13 +107,19 @@ public class MailAttachmentPollEnrichTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").streamCache("false")
+                from("direct:start")
                         .pollEnrich(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100", 5000)
                         .process(e -> {
                             AttachmentMessage attachmentMessage = e.getIn(AttachmentMessage.class);
                             Map<String, DataHandler> attachments = attachmentMessage.getAttachments();
                             assertEquals(1, attachments.size());
                             assertEquals("logo.jpeg", attachments.keySet().iterator().next());
+
+                            DataHandler dh = attachments.values().iterator().next();
+                            byte[] data = context.getTypeConverter().convertTo(byte[].class, e, dh.getInputStream());
+                            assertNotNull(data);
+                            // should be logo that are 10.000 bytes or longer
+                            assertTrue(data.length > 10000, "Should be 10000 bytes or more");
                         })
                         .to("mock:result");
             }
