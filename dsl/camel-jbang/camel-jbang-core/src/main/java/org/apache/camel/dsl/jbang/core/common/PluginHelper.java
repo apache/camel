@@ -36,6 +36,7 @@ import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -78,9 +79,9 @@ public final class PluginHelper {
             for (String pluginKey : plugins.keySet()) {
                 JsonObject properties = plugins.getMap(pluginKey);
 
-                String name = properties.getOrDefault("name", pluginKey).toString();
-                String command = properties.getOrDefault("command", name).toString();
-                String firstVersion = properties.getOrDefault("firstVersion", "").toString();
+                final String name = properties.getOrDefault("name", pluginKey).toString();
+                final String command = properties.getOrDefault("command", name).toString();
+                final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
 
                 // only load the plugin if the command-line is calling this plugin
                 if (target != null && !target.equals(command)) {
@@ -89,22 +90,16 @@ public final class PluginHelper {
 
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
                 if (!firstVersion.isBlank()) {
-                    // compare versions without SNAPSHOT
-                    String source = version;
-                    if (source.endsWith("-SNAPSHOT")) {
-                        source = source.replace("-SNAPSHOT", "");
-                    }
-                    boolean accept = VersionHelper.isGE(source, firstVersion);
-                    if (!accept) {
-                        main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
-                                              + " because plugin has first version: " + firstVersion + ". Exit");
-                        main.quit(1);
-                    }
+                    versionCheck(main, version, firstVersion, command);
                 }
 
                 Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + command, Plugin.class);
                 if (plugin.isEmpty()) {
-                    plugin = downloadPlugin(command, main, version);
+                    final MavenGav mavenGav = dependencyAsMavenGav(properties);
+                    final String group = extractGroup(mavenGav, "org.apache.camel");
+                    final String depVersion = extractVersion(mavenGav, version);
+
+                    plugin = downloadPlugin(command, main, depVersion, group);
                 }
                 if (plugin.isPresent()) {
                     plugin.get().customize(commandLine, main);
@@ -116,13 +111,32 @@ public final class PluginHelper {
         }
     }
 
-    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main, String version) {
+    private static MavenGav dependencyAsMavenGav(JsonObject properties) {
+        final String dependency = properties.get("dependency").toString();
+        return MavenGav.parseGav(dependency);
+    }
+
+    private static void versionCheck(CamelJBangMain main, String version, String firstVersion, String command) {
+        // compare versions without SNAPSHOT
+        String source = version;
+        if (source.endsWith("-SNAPSHOT")) {
+            source = source.replace("-SNAPSHOT", "");
+        }
+        boolean accept = VersionHelper.isGE(source, firstVersion);
+        if (!accept) {
+            main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                  + " because plugin has first version: " + firstVersion + ". Exit");
+            main.quit(1);
+        }
+    }
+
+    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main, String version, String group) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
         downloader.start();
         // downloads and adds to the classpath
-        downloader.downloadDependency("org.apache.camel", "camel-jbang-plugin-" + command, version);
+        downloader.downloadDependency(group, "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
         InputStream in = null;
         String path = FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/camel-jbang-plugin-" + command;
@@ -137,7 +151,7 @@ public final class PluginHelper {
                 Class<?> pluginClass = resolver.resolveClass(pluginClassName, ddlcl);
                 instance = Optional.of(Plugin.class.cast(ObjectHelper.newInstance(pluginClass)));
             } else {
-                String gav = String.join(":", "org.apache.camel", "camel-jbang-plugin-" + command, version);
+                String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
                 main.getOut().printf(String.format("ERROR: Failed to read file %s in dependency %s.\n", path, gav));
             }
         } catch (IOException e) {
@@ -208,5 +222,35 @@ public final class PluginHelper {
         plugins.put(pluginType.getName(), kubePlugin);
 
         PluginHelper.savePluginConfig(pluginConfig);
+    }
+
+    /**
+     * Extracts the group from g:a:v
+     *
+     * @param  gav An instance of a Maven GAV model
+     * @return     The group in g:a:v. That is, "g".
+     */
+    private static String extractGroup(MavenGav gav, String defaultGroup) {
+        final String group = gav.getGroupId();
+        if (group != null) {
+            return group;
+        }
+
+        return defaultGroup;
+    }
+
+    /**
+     * Extracts the version from g:a:v
+     *
+     * @param  gav An instance of a Maven GAV model
+     * @return     The group in g:a:v. That is, "v".
+     */
+    private static String extractVersion(MavenGav gav, String defaultVersion) {
+        final String version = gav.getVersion();
+        if (version != null) {
+            return version;
+        }
+
+        return defaultVersion;
     }
 }
