@@ -17,16 +17,28 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClientBuilder;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClientBuilder;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.kinesis.common.ConfigsBuilder;
 import software.amazon.kinesis.coordinator.Scheduler;
 import software.amazon.kinesis.exceptions.InvalidStateException;
@@ -69,8 +81,58 @@ public class KclKinesis2Consumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         LOG.debug("Starting KCL Consumer");
+        DynamoDbAsyncClient dynamoByAsyncClient = null;
+        CloudWatchAsyncClient cloudWatchAsyncClient = null;
+        KinesisAsyncClient kinesisAsyncClient = getEndpoint().getAsyncClient();
+        Kinesis2Configuration configuration = getEndpoint().getConfiguration();
+        if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getDynamoDbAsyncClient())) {
+            DynamoDbAsyncClientBuilder clientBuilder = DynamoDbAsyncClient.builder();
+            if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())) {
+                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey())));
+            } else if (ObjectHelper.isNotEmpty(configuration.getProfileCredentialsName())) {
+                clientBuilder = clientBuilder
+                        .credentialsProvider(
+                                ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+            } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
+                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
+                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
+                                configuration.getSessionToken())));
+            }
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+            }
+            dynamoByAsyncClient
+                    = clientBuilder.build();
+        }
+        if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getCloudWatchAsyncClient())) {
+            CloudWatchAsyncClientBuilder clientBuilder = CloudWatchAsyncClient.builder();
+            if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())) {
+                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey())));
+            } else if (ObjectHelper.isNotEmpty(configuration.getProfileCredentialsName())) {
+                clientBuilder = clientBuilder
+                        .credentialsProvider(
+                                ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+            } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSecretKey())
+                    && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
+                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
+                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
+                                configuration.getSessionToken())));
+            }
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+            }
+            cloudWatchAsyncClient = clientBuilder.build();
+        }
         this.executor = this.getEndpoint().createExecutor();
-        this.executor.submit(new KclKinesis2Consumer.KclKinesisConsumingTask(this.getEndpoint().getConfiguration()));
+        this.executor.submit(new KclKinesisConsumingTask(
+                configuration.getStreamName(), kinesisAsyncClient, dynamoByAsyncClient, cloudWatchAsyncClient));
     }
 
     @Override
@@ -103,7 +165,7 @@ public class KclKinesis2Consumer extends DefaultConsumer {
 
     class CamelKinesisRecordProcessor implements ShardRecordProcessor {
 
-        private static final Logger log = LoggerFactory.getLogger(CamelKinesisRecordProcessor.class);
+        private static final Logger LOG = LoggerFactory.getLogger(CamelKinesisRecordProcessor.class);
 
         private String shardId;
         private Kinesis2Endpoint endpoint;
@@ -115,13 +177,13 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         @Override
         public void initialize(InitializationInput initializationInput) {
             shardId = initializationInput.shardId();
-            log.debug("Initializing @ Sequence: {}", initializationInput.extendedSequenceNumber());
+            LOG.debug("Initializing @ Sequence: {}", initializationInput.extendedSequenceNumber());
         }
 
         @Override
         public void processRecords(ProcessRecordsInput processRecordsInput) {
             try {
-                log.debug("Processing {} record(s)", processRecordsInput.records().size());
+                LOG.debug("Processing {} record(s)", processRecordsInput.records().size());
                 processRecordsInput.records()
                         .forEach(r -> {
                             try {
@@ -131,32 +193,32 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                             }
                         });
             } catch (Throwable t) {
-                log.error("Caught throwable while processing records. Aborting.");
+                LOG.error("Caught throwable while processing records. Aborting.");
             }
         }
 
         @Override
         public void leaseLost(LeaseLostInput leaseLostInput) {
-            log.debug("Lost lease, so terminating.");
+            LOG.debug("Lost lease, so terminating.");
         }
 
         @Override
         public void shardEnded(ShardEndedInput shardEndedInput) {
             try {
-                log.debug("Reached shard end checkpointing.");
+                LOG.debug("Reached shard end checkpointing.");
                 shardEndedInput.checkpointer().checkpoint();
             } catch (ShutdownException | InvalidStateException e) {
-                log.error("Exception while checkpointing at shard end. Giving up.", e);
+                LOG.error("Exception while checkpointing at shard end. Giving up.", e);
             }
         }
 
         @Override
         public void shutdownRequested(ShutdownRequestedInput shutdownRequestedInput) {
             try {
-                log.debug("Scheduler is shutting down, checkpointing.");
+                LOG.debug("Scheduler is shutting down, checkpointing.");
                 shutdownRequestedInput.checkpointer().checkpoint();
             } catch (ShutdownException | InvalidStateException e) {
-                log.error("Exception while checkpointing at requested shutdown. Giving up.", e);
+                LOG.error("Exception while checkpointing at requested shutdown. Giving up.", e);
             }
         }
 
@@ -177,28 +239,28 @@ public class KclKinesis2Consumer extends DefaultConsumer {
 
     class KclKinesisConsumingTask implements Runnable {
 
-        private final Kinesis2Configuration configuration;
+        private final KinesisAsyncClient kinesisAsyncClient;
+        private final DynamoDbAsyncClient dynamoDbAsyncClient;
+        private final CloudWatchAsyncClient cloudWatchAsyncClient;
+        private final String streamName;
 
-        KclKinesisConsumingTask(Kinesis2Configuration configuration) {
-            this.configuration = configuration;
+        KclKinesisConsumingTask(String streamName, KinesisAsyncClient kinesisAsyncClient,
+                                DynamoDbAsyncClient dynamoDbAsyncClient, CloudWatchAsyncClient cloudWatchAsyncClient) {
+            this.cloudWatchAsyncClient = cloudWatchAsyncClient;
+            this.dynamoDbAsyncClient = dynamoDbAsyncClient;
+            this.kinesisAsyncClient = kinesisAsyncClient;
+            this.streamName = streamName;
         }
 
         @Override
         public void run() {
             try {
-                DynamoDbAsyncClient dynamoClient
-                        = DynamoDbAsyncClient.builder().region(Region.of(getEndpoint().getConfiguration().getRegion())).build();
-                CloudWatchAsyncClient cloudWatchClient = CloudWatchAsyncClient.builder()
-                        .region(Region.of(getEndpoint().getConfiguration().getRegion())).build();
                 ConfigsBuilder configsBuilder = new ConfigsBuilder(
-                        getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getStreamName(),
-                        getEndpoint().getAsyncClient(), dynamoClient, cloudWatchClient, UUID.randomUUID().toString(),
+                        streamName, streamName,
+                        kinesisAsyncClient, dynamoDbAsyncClient, cloudWatchAsyncClient,
+                        "KclKinesisConsumingTask-" + UUID.randomUUID().toString(),
                         new CamelKinesisRecordProcessorFactory());
 
-                /**
-                 * The Scheduler (also called Worker in earlier versions of the KCL) is the entry point to the KCL. This
-                 * instance is configured with defaults provided by the ConfigsBuilder.
-                 */
                 Scheduler scheduler = new Scheduler(
                         configsBuilder.checkpointConfig(),
                         configsBuilder.coordinatorConfig(),
@@ -207,7 +269,7 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                         configsBuilder.metricsConfig(),
                         configsBuilder.processorConfig(),
                         configsBuilder.retrievalConfig().retrievalSpecificConfig(new PollingConfig(
-                                getEndpoint().getConfiguration().getStreamName(), getEndpoint().getAsyncClient())));
+                                getEndpoint().getConfiguration().getStreamName(), kinesisAsyncClient)));
 
                 schedulerKcl = scheduler;
                 Thread schedulerThread = new Thread(scheduler);

@@ -39,7 +39,11 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cborenabled":
         case "cborEnabled": target.getConfiguration().setCborEnabled(property(camelContext, boolean.class, value)); return true;
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": target.getConfiguration().setCloudWatchAsyncClient(property(camelContext, software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": target.getConfiguration().setDynamoDbAsyncClient(property(camelContext, software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -135,7 +139,11 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "bridgeErrorHandler": return boolean.class;
         case "cborenabled":
         case "cborEnabled": return boolean.class;
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": return software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient.class;
         case "delay": return long.class;
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": return software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -227,7 +235,11 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cborenabled":
         case "cborEnabled": return target.getConfiguration().isCborEnabled();
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": return target.getConfiguration().getCloudWatchAsyncClient();
         case "delay": return target.getDelay();
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": return target.getConfiguration().getDynamoDbAsyncClient();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

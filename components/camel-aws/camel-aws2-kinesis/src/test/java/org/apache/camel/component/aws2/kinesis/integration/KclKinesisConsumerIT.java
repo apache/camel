@@ -18,9 +18,7 @@ package org.apache.camel.component.aws2.kinesis.integration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -45,7 +43,7 @@ public class KclKinesisConsumerIT extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:start").delay(50000)
+                from("direct:start").delay(10000)
                         .to("aws2-kinesis://pippo?useDefaultCredentialsProvider=true&region=eu-west-1").startupOrder(2);
 
                 from("aws2-kinesis://pippo?useDefaultCredentialsProvider=true&useKclConsumers=true&region=eu-west-1&asyncClient=true")
