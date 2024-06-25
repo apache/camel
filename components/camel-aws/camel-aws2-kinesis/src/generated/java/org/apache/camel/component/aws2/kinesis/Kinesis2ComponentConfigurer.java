@@ -42,7 +42,11 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cborenabled":
         case "cborEnabled": getOrCreateConfiguration(target).setCborEnabled(property(camelContext, boolean.class, value)); return true;
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": getOrCreateConfiguration(target).setCloudWatchAsyncClient(property(camelContext, software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2Configuration.class, value)); return true;
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": getOrCreateConfiguration(target).setDynamoDbAsyncClient(property(camelContext, software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
@@ -112,7 +116,11 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return boolean.class;
         case "cborenabled":
         case "cborEnabled": return boolean.class;
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": return software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient.class;
         case "configuration": return org.apache.camel.component.aws2.kinesis.Kinesis2Configuration.class;
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": return software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
@@ -178,7 +186,11 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cborenabled":
         case "cborEnabled": return getOrCreateConfiguration(target).isCborEnabled();
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": return getOrCreateConfiguration(target).getCloudWatchAsyncClient();
         case "configuration": return target.getConfiguration();
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": return getOrCreateConfiguration(target).getDynamoDbAsyncClient();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
