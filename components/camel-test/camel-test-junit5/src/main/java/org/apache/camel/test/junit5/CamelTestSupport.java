@@ -119,15 +119,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        if (contextManager == null) {
-            LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
-            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_EACH,
-                    testConfigurationBuilder, camelContextConfiguration);
-        }
-
         currentTestName = context.getDisplayName();
-        ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        contextManager.setGlobalStore(globalStore);
     }
 
     @Override
@@ -143,6 +135,12 @@ public abstract class CamelTestSupport extends AbstractTestSupport
             LOG.trace("Creating a legacy context manager for {}", context.getDisplayName());
             testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
             contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_ALL,
+                    testConfigurationBuilder, camelContextConfiguration);
+        }
+
+        if (contextManager == null) {
+            LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
+            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_EACH,
                     testConfigurationBuilder, camelContextConfiguration);
         }
 
