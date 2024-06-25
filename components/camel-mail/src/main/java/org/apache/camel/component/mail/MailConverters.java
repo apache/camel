@@ -80,21 +80,30 @@ public final class MailConverters {
      */
     @Converter
     public static String toString(Multipart multipart) throws MessagingException, IOException {
-        int size = multipart.getCount();
-        for (int i = 0; i < size; i++) {
-            BodyPart part = multipart.getBodyPart(i);
-            Object content = part.getContent();
-            while (content instanceof MimeMultipart) {
-                if (multipart.getCount() < 1) {
-                    break;
+        try {
+            int size = multipart.getCount();
+            for (int i = 0; i < size; i++) {
+                BodyPart part = multipart.getBodyPart(i);
+                Object content = part.getContent();
+                while (content instanceof MimeMultipart) {
+                    if (multipart.getCount() < 1) {
+                        break;
+                    }
+                    part = ((MimeMultipart) content).getBodyPart(0);
+                    content = part.getContent();
                 }
-                part = ((MimeMultipart) content).getBodyPart(0);
-                content = part.getContent();
+                // Perform a case-insensitive "startsWith" check that works for different locales
+                String prefix = "text";
+                if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
+                    return part.getContent().toString();
+                }
             }
-            // Perform a case insensitive "startsWith" check that works for different locales
-            String prefix = "text";
-            if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
-                return part.getContent().toString();
+        } catch (MessagingException e) {
+            Throwable cause = e.getCause();
+            if (cause != null && "Folder is not Open".equals(cause.getMessage())) {
+                // ignore if folder is not open and we cannot read the mail
+            } else {
+                throw e;
             }
         }
         return null;
