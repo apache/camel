@@ -380,7 +380,7 @@
         <ognl-version>3.4.3</ognl-version>
         <openapi-generator>7.6.0</openapi-generator>
         <openjpa-version>4.0.0</openjpa-version>
-        <opensearch-rest-client-version>2.14.0</opensearch-rest-client-version>
+        <opensearch-rest-client-version>2.15.0</opensearch-rest-client-version>
         <opensearch-java-client-version>2.10.4</opensearch-java-client-version>
         <opensearch-version>2.11.0</opensearch-version>
         <opensearch-testcontainers-version>2.0.1</opensearch-testcontainers-version>
