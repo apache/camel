@@ -172,11 +172,25 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configuration() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
-                    case "routeConfigurations", "routeConfiguration" ->
+                    // load any route configuration before that may be nested under camel/spring/blueprint root tag
+                    case "beans", "blueprint", "camel", "routeConfigurations", "routeConfiguration": {
+                        BeansDefinition bp = camelAppCache.get(input.getLocation());
+                        if (bp != null) {
+                            bp.getRouteConfigurations().forEach(rc -> {
+                                rc.setResource(getResource());
+                                List<RouteConfigurationDefinition> list = new ArrayList<>();
+                                list.add(rc);
+                                RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
+                                def.setResource(getResource());
+                                def.setRouteConfigurations(list);
+                                addConfigurations(def);
+                            });
+                            // remove the configurations we have added
+                            bp.getRouteConfigurations().clear();
+                        }
                         new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteConfigurationsDefinition()
                                 .ifPresent(this::addConfigurations);
-                    default -> {
                     }
                 }
             }
