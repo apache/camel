@@ -17,6 +17,7 @@
 package org.apache.camel.test.junit5;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -119,7 +120,15 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        if (contextManager == null) {
+            LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
+            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_EACH,
+                    testConfigurationBuilder, camelContextConfiguration);
+        }
+
         currentTestName = context.getDisplayName();
+        ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
+        contextManager.setGlobalStore(globalStore);
     }
 
     @Override
@@ -136,21 +145,16 @@ public abstract class CamelTestSupport extends AbstractTestSupport
             testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
             contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_ALL,
                     testConfigurationBuilder, camelContextConfiguration);
+            ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
+            contextManager.setGlobalStore(globalStore);
         }
-
-        if (contextManager == null) {
-            LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
-            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_EACH,
-                    testConfigurationBuilder, camelContextConfiguration);
-        }
-
-        ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        contextManager.setGlobalStore(globalStore);
     }
 
     @Override
     public void afterAll(ExtensionContext context) {
-        contextManager.stop();
+        if(Objects.nonNull(contextManager)) {
+            contextManager.stop();
+        }
     }
 
     /**
