@@ -15,8 +15,7 @@
 
 *{component-header}*
 
-The AWS2 Kinesis component supports consuming messages from and producing messages to Amazon Kinesis (no Batch supported)
-service.
+The AWS2 Kinesis component supports consuming messages from and producing messages to Amazon Kinesis service.
 
 The AWS2 Kinesis component also supports Synchronous and Asynchronous Client, which means you choose what fits best your requirements,
 so if you need the connection (client) to be async, there's a property of 'asyncClient' (in DSL also can be found) needs to be turned true.
@@ -73,6 +72,17 @@ The consumer is able to consume either from a single specific shard or
 all available shards (multiple shards consumption) of Amazon Kinesis, therefore, if you leave the 'shardId'
 property in the DSL configuration empty, then it'll consume all available shards
 otherwise only the specified shard corresponding to the shardId will be consumed.
+
+== Batch Producer
+
+This component implements the Batch Producer.
+
+This allows you to send multiple messages in a single request to Amazon Kinesis.
+Messages with batch size more than 500 is allowed. Producer will split them into multiple requests.
+
+The batch type needs to implement the `Iterable` interface. For example, it can be a `List`, `Set` or any other collection type.
+The message type can be one or more of types `byte[]`, `ByteBuffer`, UTF-8 `String`, or `InputStream`. Other types are not supported.
+
 
 == Usage
 
