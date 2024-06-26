@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.catalog.CamelCatalog;
@@ -113,6 +114,10 @@ public final class PluginHelper {
 
     private static MavenGav dependencyAsMavenGav(JsonObject properties) {
         final String dependency = properties.get("dependency").toString();
+        if (dependency == null) {
+            return null;
+        }
+
         return MavenGav.parseGav(dependency);
     }
 
@@ -225,32 +230,43 @@ public final class PluginHelper {
     }
 
     /**
-     * Extracts the group from g:a:v
+     * Extracts information from the GAV model
      *
-     * @param  gav An instance of a Maven GAV model
-     * @return     The group in g:a:v. That is, "g".
+     * @param  gav         An instance of a Maven GAV model
+     * @param  defaultInfo the default if null or not available
+     * @return             the information
      */
-    private static String extractGroup(MavenGav gav, String defaultGroup) {
-        final String group = gav.getGroupId();
-        if (group != null) {
-            return group;
+    private static String doExtractInfo(MavenGav gav, String defaultInfo, Supplier<String> supplier) {
+        if (gav != null) {
+            final String info = supplier.get();
+            if (info != null) {
+                return info;
+            }
         }
 
-        return defaultGroup;
+        return defaultInfo;
+    }
+
+    /**
+     * Extracts the group from g:a:v
+     *
+     * @param  gav          An instance of a Maven GAV model
+     * @param  defaultGroup the default if null or not available
+     * @return              The group in g:a:v. That is, "g".
+     */
+    private static String extractGroup(MavenGav gav, String defaultGroup) {
+        return doExtractInfo(gav, defaultGroup, gav::getGroupId);
+
     }
 
     /**
      * Extracts the version from g:a:v
      *
-     * @param  gav An instance of a Maven GAV model
-     * @return     The group in g:a:v. That is, "v".
+     * @param  gav            An instance of a Maven GAV model
+     * @param  defaultVersion the default if null or not available
+     * @return                The group in g:a:v. That is, "v".
      */
     private static String extractVersion(MavenGav gav, String defaultVersion) {
-        final String version = gav.getVersion();
-        if (version != null) {
-            return version;
-        }
-
-        return defaultVersion;
+        return doExtractInfo(gav, defaultVersion, gav::getVersion);
     }
 }
