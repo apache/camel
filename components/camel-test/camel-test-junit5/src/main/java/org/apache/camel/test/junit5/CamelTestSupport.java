@@ -151,8 +151,9 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     }
 
     @Override
-    public void afterAll(ExtensionContext context) {
-        if (Objects.nonNull(contextManager)) {
+    public void afterAll(ExtensionContext context) {\
+        if (contextManager != null) {
+            // It may be null in some occasion, such as when failing to initialize the context
             contextManager.stop();
         }
     }
@@ -341,7 +342,6 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     @Deprecated(since = "4.7.0")
     protected void stopCamelContext() throws Exception {
         contextManager.stopCamelContext();
-
     }
 
     @Deprecated(since = "4.7.0")
