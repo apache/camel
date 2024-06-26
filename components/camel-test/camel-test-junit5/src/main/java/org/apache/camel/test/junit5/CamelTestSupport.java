@@ -146,8 +146,14 @@ public abstract class CamelTestSupport extends AbstractTestSupport
                     testConfigurationBuilder, camelContextConfiguration);
         }
 
-        ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        contextManager.setGlobalStore(globalStore);
+        if (contextManager != null) {
+            ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
+            contextManager.setGlobalStore(globalStore);
+        } else {
+            LOG.warn("Unable to set the global store for {} because the context manager is not available",
+                    context.getDisplayName());
+        }
+
     }
 
     @Override
