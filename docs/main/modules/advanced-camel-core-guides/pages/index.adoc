@@ -30,6 +30,7 @@ In these page you can find guides and documents that can help you to discover ho
 * xref:manual::http-session-handling.adoc[HTTP Session Handling]
 * xref:manual::browsable-endpoint.adoc[Browsable Endpoint]
 * xref:manual::camel-configuration-utilities.adoc[Configuration Utilities]
+* xref:manual::event-notifier.adoc[Event Notifier]
 
 If you are looking at contributing to Apache Camel, these guides may also help:
 
