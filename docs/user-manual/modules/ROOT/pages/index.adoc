@@ -85,6 +85,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:exchange-pattern.adoc[Exchange Pattern]
 * xref:exchange-pooling.adoc[Exchange Pooling]
 * xref:expression.adoc[Expression]
+* xref:event-notifier.adoc[Event Notifier]
 * xref:http-session-handling.adoc[HTTP-Session Handling]
 * xref:injector.adoc[Injector]
 * xref:components:eips:intercept.adoc[Intercept]
