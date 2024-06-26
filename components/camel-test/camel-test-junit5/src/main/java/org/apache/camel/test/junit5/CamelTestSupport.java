@@ -152,7 +152,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     @Override
     public void afterAll(ExtensionContext context) {
-        if(Objects.nonNull(contextManager)) {
+        if (Objects.nonNull(contextManager)) {
             contextManager.stop();
         }
     }
