@@ -150,7 +150,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     }
 
     @Override
-    public void afterAll(ExtensionContext context) {\
+    public void afterAll(ExtensionContext context) {
         if (contextManager != null) {
             // It may be null in some occasion, such as when failing to initialize the context
             contextManager.stop();
