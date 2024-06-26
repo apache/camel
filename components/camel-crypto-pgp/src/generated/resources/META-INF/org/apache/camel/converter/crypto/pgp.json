@@ -10,7 +10,7 @@
     "javaType": "org.apache.camel.converter.crypto.PGPDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-crypto",
+    "artifactId": "camel-crypto-pgp",
     "version": "4.7.0-SNAPSHOT",
     "modelName": "pgp",
     "modelJavaType": "org.apache.camel.model.dataformat.PGPDataFormat"
