@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -33,6 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
+    public static final String TEST_FILE_NAME_NOEXT = "hello." + UUID.randomUUID();
+    public static final String TEST_FILE_NAME = TEST_FILE_NAME_NOEXT + ".txt";
     private final MyStrategy myStrategy = new MyStrategy();
 
     @Override
@@ -46,19 +49,19 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
     public void testExistingFileExists() throws Exception {
         template.sendBodyAndHeader(
                 fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
-                "Hello World", Exchange.FILE_NAME, "hello.txt");
+                "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
         template.sendBodyAndHeader(
                 fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
-                "Bye Existing World 1", Exchange.FILE_NAME, "hello.txt");
+                "Bye Existing World 1", Exchange.FILE_NAME, TEST_FILE_NAME);
         template.sendBodyAndHeader(
                 fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy"),
-                "Bye Existing World 2", Exchange.FILE_NAME, "hello.txt");
+                "Bye Existing World 2", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        assertFileExists(testFile("hello.txt"), "Bye Existing World 2");
+        assertFileExists(testFile(TEST_FILE_NAME), "Bye Existing World 2");
 
-        assertFileExists(testFile("renamed-hello2.txt"), "Bye Existing World 1");
+        assertFileExists(testFile("renamed-" + TEST_FILE_NAME_NOEXT + "2.txt"), "Bye Existing World 1");
 
-        assertFileExists(testFile("renamed-hello1.txt"), "Hello World");
+        assertFileExists(testFile("renamed-" + TEST_FILE_NAME_NOEXT + "1.txt"), "Hello World");
     }
 
     private static class MyStrategy implements FileMoveExistingStrategy {
