@@ -17,7 +17,6 @@
 package org.apache.camel.test.junit5;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
