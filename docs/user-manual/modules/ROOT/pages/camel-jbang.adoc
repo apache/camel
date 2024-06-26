@@ -2495,7 +2495,7 @@ The Camel route debugger is available by default (the `camel-debug` component is
 
 You can then use the Integrated Development Environment (IDE) of your choice. For instance https://plugins.jetbrains.com/plugin/9371-apache-camel[IntelliJ], https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code] or https://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop].
 
-A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video] or this /blog/2022/05/start-camel-quarkus-application-with-camel-textual-debug-in-vscode/[blogpost].
+A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video].
 
 TIP: When exporting to Maven projects, then you can use the maven profile `camel.debug` that will include the `camel-debug` JAR
 to make it possible for Camel IDE tools to do Camel route debugging.
