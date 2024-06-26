@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -52,8 +51,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test case for {@link IOConverter}
  */
 public class IOConverterTest extends ContextTestSupport {
-
-    public static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     private static final byte[] TESTDATA = "My test data".getBytes();
 
@@ -79,8 +76,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToOutputStreamFile() throws Exception {
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
-        File file = testFile(TEST_FILE_NAME).toFile();
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = testFile("hello.txt").toFile();
 
         OutputStream os = IOConverter.toOutputStream(file);
         assertIsInstanceOf(BufferedOutputStream.class, os);
@@ -89,8 +86,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToWriterFile() throws Exception {
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
-        File file = testFile(TEST_FILE_NAME).toFile();
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = testFile("hello.txt").toFile();
 
         Writer writer = IOConverter.toWriter(file, null);
         assertIsInstanceOf(BufferedWriter.class, writer);
@@ -152,8 +149,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToByteArrayFile() throws Exception {
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
-        File file = testFile(TEST_FILE_NAME).toFile();
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = testFile("hello.txt").toFile();
 
         byte[] data = IOConverter.toByteArray(file);
         assertNotNull(data);
