@@ -249,14 +249,15 @@ public interface Message {
      * reset the stream to be able to re-read again (if possible). See more details about
      * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
      * <p/>
-     * The helper method {@link org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)}
-     * can be used instead that gets the body, convert to the given type, and ensures to reset the body if its stream based.
+     * The helper method {@link org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)} can
+     * be used instead that gets the body, convert to the given type, and ensures to reset the body if its stream based.
      *
      * @param  type                    the type that the body
      * @return                         the body of the message as the specified type, or <tt>null</tt> if body does not
      *                                 exist
      * @throws TypeConversionException is thrown if error during type conversion
-     * @see org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)
+     * @see                            org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange,
+     *                                 Class)
      */
     <T> T getBody(Class<T> type);
 
@@ -268,13 +269,14 @@ public interface Message {
      * reset the stream to be able to re-read again (if possible). See more details about
      * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
      * <p/>
-     * The helper method {@link org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)}
-     * can be used instead that gets the body, convert to the given type, and ensures to reset the body if its stream based.
+     * The helper method {@link org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)} can
+     * be used instead that gets the body, convert to the given type, and ensures to reset the body if its stream based.
      *
      * @param  type                    the type that the body
      * @return                         the body of the message as the specified type, is never <tt>null</tt>.
      * @throws InvalidPayloadException Is thrown if the body being <tt>null</tt> or wrong class type
-     * @see org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)
+     * @see                            org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange,
+     *                                 Class)
      */
     <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException;
 

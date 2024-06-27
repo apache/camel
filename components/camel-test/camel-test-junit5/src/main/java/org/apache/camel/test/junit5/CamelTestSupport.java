@@ -144,15 +144,17 @@ public abstract class CamelTestSupport extends AbstractTestSupport
             testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
             contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_ALL,
                     testConfigurationBuilder, camelContextConfiguration);
+            ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
+            contextManager.setGlobalStore(globalStore);
         }
-
-        ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        contextManager.setGlobalStore(globalStore);
     }
 
     @Override
     public void afterAll(ExtensionContext context) {
-        contextManager.stop();
+        if (contextManager != null) {
+            // It may be null in some occasion, such as when failing to initialize the context
+            contextManager.stop();
+        }
     }
 
     /**
@@ -339,7 +341,6 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     @Deprecated(since = "4.7.0")
     protected void stopCamelContext() throws Exception {
         contextManager.stopCamelContext();
-
     }
 
     @Deprecated(since = "4.7.0")
