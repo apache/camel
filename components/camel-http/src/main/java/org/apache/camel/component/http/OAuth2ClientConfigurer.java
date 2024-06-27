@@ -36,11 +36,13 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
     private final String clientId;
     private final String clientSecret;
     private final String tokenEndpoint;
+    private final String scope;
 
-    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint) {
+    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String scope) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
+        this.scope = scope;
     }
 
     @Override
@@ -48,7 +50,16 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
         HttpClient httpClient = clientBuilder.build();
         clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
 
-            final HttpPost httpPost = new HttpPost(tokenEndpoint);
+            String url = tokenEndpoint;
+            if (scope != null) {
+                String sep = "?";
+                if (url.contains("?")) {
+                    sep = "&";
+                }
+                url = url + sep + "scope=" + scope;
+            }
+
+            final HttpPost httpPost = new HttpPost(url);
 
             httpPost.addHeader(HttpHeaders.AUTHORIZATION,
                     HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));

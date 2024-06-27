@@ -234,10 +234,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String clientId = getParameter(parameters, "oauth2ClientId", String.class);
         String clientSecret = getParameter(parameters, "oauth2ClientSecret", String.class);
         String tokenEndpoint = getParameter(parameters, "oauth2TokenEndpoint", String.class);
+        String scope = getParameter(parameters, "oauth2Scope", String.class);
 
         if (clientId != null && clientSecret != null && tokenEndpoint != null) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new OAuth2ClientConfigurer(clientId, clientSecret, tokenEndpoint));
+                    new OAuth2ClientConfigurer(clientId, clientSecret, tokenEndpoint, scope));
         }
         return configurer;
     }
