@@ -128,6 +128,22 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
+=== AWS Kinesis KCL Consumer
+
+The component supports also the KCL (Kinesis Client Library) for consuming from a Kinesis Data Stream.
+
+To enable this feature you'll need to set two different parameter in your endpoint:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------
+from("aws2-kinesis://mykinesisstream?asyncClient=true&useDefaultCredentialsProvider=true&useKclConsumers=true")
+  .to("log:out?showAll=true");
+--------------------------------------------------------------------------------------------------------------------
+
+This feature will make possible to automatically checkpointing the Shard Iterations by combining the usage of KCL, DynamoDB Table and CloudWatch alarms.
+
+Everything will work out of the box, by simply using your AWS Credentials.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
