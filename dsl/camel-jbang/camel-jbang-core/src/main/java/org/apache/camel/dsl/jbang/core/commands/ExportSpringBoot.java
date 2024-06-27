@@ -189,14 +189,13 @@ class ExportSpringBoot extends Export {
             String properties = Arrays.stream(additionalProperties.split(","))
                     .map(property -> {
                         String[] keyValueProperty = property.split("=");
-                        return String.format("\t\t<%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
+                        return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
                                 keyValueProperty[0]);
                     })
-                    .map(property -> property + System.lineSeparator())
-                    .collect(Collectors.joining());
-            context = context.replaceFirst("\\{\\{ \\.AdditionalProperties }}", properties);
+                    .collect(Collectors.joining(System.lineSeparator()));
+            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), Matcher.quoteReplacement(properties));
         } else {
-            context = context.replaceFirst("\\{\\{ \\.AdditionalProperties }}", "");
+            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), "");
         }
 
         // Convert jkube properties to maven properties
