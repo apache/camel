@@ -33,7 +33,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.test.junit5.util.ExtensionHelper;
-import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -262,10 +261,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        if (isRouteCoverageEnabled()) {
-            final RouteCoverageDumperExtension routeCoverageWrapper = new RouteCoverageDumperExtension(context);
-            routeCoverageWrapper.dumpRouteCoverage(getClass(), currentTestName, time);
-        }
+        contextManager.dumpRouteCoverage(getClass(), currentTestName, time);
 
         if (testConfigurationBuilder.isCreateCamelContextPerClass()) {
             // will tear down test specially in afterAll callback
