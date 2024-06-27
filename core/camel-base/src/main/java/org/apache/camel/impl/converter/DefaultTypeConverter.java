@@ -40,13 +40,13 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
     private final boolean loadTypeConverters;
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector,
-                                boolean loadTypeConverters) {
-        this(null, resolver, injector, loadTypeConverters);
+                                boolean loadTypeConverters, boolean statisticsEnabled) {
+        this(null, resolver, injector, loadTypeConverters, statisticsEnabled);
     }
 
     public DefaultTypeConverter(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
-                                boolean loadTypeConverters) {
-        super(camelContext, resolver, injector);
+                                boolean loadTypeConverters, boolean statisticsEnabled) {
+        super(camelContext, resolver, injector, statisticsEnabled);
         this.loadTypeConverters = loadTypeConverters;
     }
 

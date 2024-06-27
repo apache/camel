@@ -17,14 +17,21 @@
 
 package org.apache.camel.impl.converter;
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
+
+import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.TypeConvertible;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents utilization statistics
  */
 final class TypeConverterStatistics implements ConverterStatistics {
+    private static final Logger LOG = LoggerFactory.getLogger(TypeConverterStatistics.class);
 
-    private boolean statisticsEnabled;
     private final LongAdder noopCounter = new LongAdder();
     private final LongAdder attemptCounter = new LongAdder();
     private final LongAdder missCounter = new LongAdder();
@@ -57,38 +64,33 @@ final class TypeConverterStatistics implements ConverterStatistics {
     }
 
     @Override
+    public boolean isStatisticsEnabled() {
+        return true;
+    }
+
+    @Override
     public void incrementFailed() {
-        if (statisticsEnabled) {
-            failedCounter.increment();
-        }
+        failedCounter.increment();
     }
 
     @Override
     public void incrementNoop() {
-        if (statisticsEnabled) {
-            noopCounter.increment();
-        }
+        noopCounter.increment();
     }
 
     @Override
     public void incrementHit() {
-        if (statisticsEnabled) {
-            hitCounter.increment();
-        }
+        hitCounter.increment();
     }
 
     @Override
     public void incrementMiss() {
-        if (statisticsEnabled) {
-            missCounter.increment();
-        }
+        missCounter.increment();
     }
 
     @Override
     public void incrementAttempt() {
-        if (statisticsEnabled) {
-            attemptCounter.increment();
-        }
+        attemptCounter.increment();
     }
 
     @Override
@@ -100,19 +102,32 @@ final class TypeConverterStatistics implements ConverterStatistics {
         failedCounter.reset();
     }
 
-    @Override
-    public boolean isStatisticsEnabled() {
-        return statisticsEnabled;
+    /**
+     * Compute the total number of cached missed conversions
+     *
+     * @param  converters    the converters cache instance
+     * @param  missConverter the type that represents a type conversion miss
+     * @return               The number of cached missed conversions as an AtomicInteger instance
+     */
+    private static AtomicInteger computeCachedMisses(
+            Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter) {
+        AtomicInteger misses = new AtomicInteger();
+
+        converters.forEach((k, v) -> {
+            if (v == missConverter) {
+                misses.incrementAndGet();
+            }
+        });
+        return misses;
     }
 
     @Override
-    public void setStatisticsEnabled(boolean statisticsEnabled) {
-        this.statisticsEnabled = statisticsEnabled;
-    }
+    public void logMappingStatisticsMessage(Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter) {
+        final AtomicInteger misses = computeCachedMisses(converters, missConverter);
 
-    @Override
-    public String toString() {
-        return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
-                getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
+        LOG.info(
+                "TypeConverterStatistics utilization[noop={}, attempts={}, hits={}, misses={}, failures={}] mappings[total={}, misses={}]",
+                getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter(), converters.size(),
+                misses);
     }
 }

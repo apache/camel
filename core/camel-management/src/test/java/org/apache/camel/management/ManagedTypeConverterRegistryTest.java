@@ -18,20 +18,32 @@ package org.apache.camel.management;
 
 import java.util.Set;
 
-import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = new DefaultCamelContext(false);
+        context.setTypeConverterStatisticsEnabled(true);
+        return context;
+    }
 
     @Test
     public void testTypeConverterRegistry() throws Exception {
@@ -57,18 +69,6 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         }
         assertNotNull(name, "Cannot find DefaultTypeConverter");
 
-        // is disabled by default
-        Boolean enabled = (Boolean) mbeanServer.getAttribute(name, "StatisticsEnabled");
-        assertEquals(Boolean.FALSE, enabled);
-
-        // need to enable statistics
-        mbeanServer.setAttribute(name, new Attribute("StatisticsEnabled", Boolean.TRUE));
-
-        Long failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
-        assertEquals(0, failed.intValue());
-        Long miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
-        assertEquals(0, miss.intValue());
-
         // reset
         mbeanServer.invoke(name, "resetTypeConversionCounters", null, null);
 
@@ -77,9 +77,9 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         // should hit
         Long hit = (Long) mbeanServer.getAttribute(name, "HitCounter");
         assertEquals(1, hit.intValue());
-        failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
+        Long failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
         assertEquals(0, failed.intValue());
-        miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
+        Long miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
         assertEquals(2, miss.intValue());  // stream caching misses
 
         // reset

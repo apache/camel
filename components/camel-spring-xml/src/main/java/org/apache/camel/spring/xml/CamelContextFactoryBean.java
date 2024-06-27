@@ -519,6 +519,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         ctx.setApplicationContext(getApplicationContext());
         ctx.getCamelContextExtension().setName(getId());
 
+        /*
+         * We need to enable the statistics before the type converter is created, as
+         * it is immutable in the registry.
+         * Because it's disabled by default, we simply parse the value and enable if
+         * it is set to true. Everything else can be ignored.
+         */
+        if (Boolean.parseBoolean(getTypeConverterStatisticsEnabled())) {
+            ctx.setTypeConverterStatisticsEnabled(true);
+        }
+
         return ctx;
     }
 

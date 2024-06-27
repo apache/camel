@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class JaxpTest {
     private static final Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
-    protected final TypeConverter converter = new DefaultTypeConverter(
-            new DefaultPackageScanClassResolver(), new ReflectionInjector(), false);
+    protected TypeConverter converter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(), false, false);
 
     @BeforeEach
     public void setUp() {

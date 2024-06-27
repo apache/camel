@@ -3334,10 +3334,6 @@ public abstract class AbstractCamelContext extends BaseService
         getShutdownStrategy();
         getUuidGenerator();
 
-        if (isTypeConverterStatisticsEnabled()) {
-            getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
-        }
-
         // resolve simple language to initialize it
         resolveLanguage("simple");
     }
