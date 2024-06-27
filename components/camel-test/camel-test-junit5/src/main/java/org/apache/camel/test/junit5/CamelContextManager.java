@@ -109,4 +109,14 @@ public interface CamelContextManager {
      * @param globalStore JUnit's data context instance
      */
     void setGlobalStore(ExtensionContext.Store globalStore);
+
+    /**
+     * Dumps the route coverage information
+     *
+     * @param  clazz
+     * @param  currentTestName
+     * @param  time
+     * @throws Exception
+     */
+    void dumpRouteCoverage(Class<?> clazz, String currentTestName, long time) throws Exception;
 }

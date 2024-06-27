@@ -31,6 +31,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.test.junit5.util.ExtensionHelper;
+import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -270,5 +271,13 @@ public class TransientCamelContextManager implements CamelContextManager {
     @Override
     public void setGlobalStore(ExtensionContext.Store globalStore) {
         this.globalStore = globalStore;
+    }
+
+    @Override
+    public void dumpRouteCoverage(Class<?> clazz, String currentTestName, long time) throws Exception {
+        if (testConfigurationBuilder.isRouteCoverageEnabled()) {
+            final RouteCoverageDumperExtension routeCoverageWrapper = new RouteCoverageDumperExtension(context);
+            routeCoverageWrapper.dumpRouteCoverage(clazz, currentTestName, time);
+        }
     }
 }
