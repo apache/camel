@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -371,6 +373,19 @@ class ExportQuarkus extends Export {
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
+
+        if (additionalProperties != null) {
+            String properties = Arrays.stream(additionalProperties.split(","))
+                    .map(property -> {
+                        String[] keyValueProperty = property.split("=");
+                        return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
+                                keyValueProperty[0]);
+                    })
+                    .collect(Collectors.joining(System.lineSeparator()));
+            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), Matcher.quoteReplacement(properties));
+        } else {
+            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), "");
+        }
 
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
