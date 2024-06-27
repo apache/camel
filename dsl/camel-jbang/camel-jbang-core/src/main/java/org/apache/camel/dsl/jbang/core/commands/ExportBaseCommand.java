@@ -296,6 +296,11 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.exclude = exclude;
         run.openapi = openapi;
         run.download = download;
+        run.camelVersion = camelVersion;
+        run.quarkusVersion = quarkusVersion;
+        run.springBootVersion = springBootVersion;
+        run.kameletsVersion = kameletsVersion;
+        run.localKameletDir = localKameletDir;
         return run.runSilent(ignoreLoadingError);
     }
 
