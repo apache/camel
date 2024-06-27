@@ -58,7 +58,7 @@ public class ConverterTest extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
     protected final TypeConverter converter = new DefaultTypeConverter(
-            new DefaultPackageScanClassResolver(), new ReflectionInjector(), true);
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(), true, false);
 
     @BeforeEach
     public void setUp() {

@@ -38,13 +38,13 @@ public class TypeConverterConsole extends AbstractDevConsole {
         sb.append(String.format("\n    Converters: %s", reg.size()));
         sb.append(String.format("\n    Exists: %s", reg.getTypeConverterExists().name()));
         sb.append(String.format("\n    Exists LoggingLevel: %s", reg.getTypeConverterExistsLoggingLevel()));
-        if (reg.getStatistics().isStatisticsEnabled()) {
-            sb.append(String.format("\n    Attempts: %s", reg.getStatistics().getAttemptCounter()));
-            sb.append(String.format("\n    Hit: %s", reg.getStatistics().getHitCounter()));
-            sb.append(String.format("\n    Miss: %s", reg.getStatistics().getMissCounter()));
-            sb.append(String.format("\n    Failed: %s", reg.getStatistics().getFailedCounter()));
-            sb.append(String.format("\n    Noop: %s", reg.getStatistics().getNoopCounter()));
-        }
+        final TypeConverterRegistry.Statistics statistics = reg.getStatistics();
+
+        statistics.computeIfEnabled(statistics::getAttemptCounter, v -> sb.append(String.format("\n    Attempts: %s", v)));
+        statistics.computeIfEnabled(statistics::getHitCounter, v -> sb.append(String.format("\n    Hit: %s", v)));
+        statistics.computeIfEnabled(statistics::getMissCounter, v -> sb.append(String.format("\n    Miss: %s", v)));
+        statistics.computeIfEnabled(statistics::getFailedCounter, v -> sb.append(String.format("\n    Failed: %s", v)));
+        statistics.computeIfEnabled(statistics::getNoopCounter, v -> sb.append(String.format("\n    Noop: %s", v)));
 
         return sb.toString();
     }
@@ -57,14 +57,18 @@ public class TypeConverterConsole extends AbstractDevConsole {
         root.put("size", reg.size());
         root.put("exists", reg.getTypeConverterExists().name());
         root.put("existsLoggingLevel", reg.getTypeConverterExistsLoggingLevel().name());
-        if (reg.getStatistics().isStatisticsEnabled()) {
-            JsonObject props = new JsonObject();
+
+        final TypeConverterRegistry.Statistics statistics = reg.getStatistics();
+        JsonObject props = new JsonObject();
+
+        statistics.computeIfEnabled(statistics::getAttemptCounter, v -> props.put("attemptCounter", v));
+        statistics.computeIfEnabled(statistics::getHitCounter, v -> props.put("hitCounter", v));
+        statistics.computeIfEnabled(statistics::getMissCounter, v -> props.put("missCounter", v));
+        statistics.computeIfEnabled(statistics::getFailedCounter, v -> props.put("failedCounter", v));
+        statistics.computeIfEnabled(statistics::getFailedCounter, v -> props.put("noopCounter", v));
+
+        if (!props.isEmpty()) {
             root.put("statistics", props);
-            props.put("attemptCounter", reg.getStatistics().getAttemptCounter());
-            props.put("hitCounter", reg.getStatistics().getHitCounter());
-            props.put("missCounter", reg.getStatistics().getAttemptCounter());
-            props.put("failedCounter", reg.getStatistics().getFailedCounter());
-            props.put("noopCounter", reg.getStatistics().getNoopCounter());
         }
 
         return root;

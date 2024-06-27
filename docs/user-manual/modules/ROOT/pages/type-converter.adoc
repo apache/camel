@@ -71,6 +71,10 @@ and invoke these type converters at runtime via quick Java method invocations (n
 
 === Type converter registry utilization statistics
 
+NOTE: as of Camel 4.7.0, the statistics collector in the registry has been made immutable.
+As such, enabling collection of statistics has to be done prior to creating the type converter
+registry.
+
 Camel can gather utilization statistics of the runtime usage of type
 converters. These statistics are available in xref:jmx.adoc[JMX] as well as
 from https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/spi/TypeConverterRegistry.html#getStatistics--[`TypeConverterRegistry#getStatistics()`].

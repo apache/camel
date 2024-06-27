@@ -18,7 +18,6 @@
 package org.apache.camel.impl.converter;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -28,6 +27,8 @@ import org.apache.camel.spi.TypeConvertible;
  * Converter-specific statistics
  */
 interface ConverterStatistics extends TypeConverterRegistry.Statistics {
+
+    boolean isStatisticsEnabled();
 
     /**
      * Increment the count of failed conversions
@@ -55,21 +56,10 @@ interface ConverterStatistics extends TypeConverterRegistry.Statistics {
     void incrementAttempt();
 
     /**
-     * Compute the total number of cached missed conversions
+     * Log the statistics from the converters
      *
-     * @param  converters    the converters cache instance
-     * @param  missConverter the type that represents a type conversion miss
-     * @return               The number of cached missed conversions as an AtomicInteger instance
+     * @param converters    the converters cache instance
+     * @param missConverter the type that represents a type conversion miss
      */
-    static AtomicInteger computeCachedMisses(
-            Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter) {
-        AtomicInteger misses = new AtomicInteger();
-
-        converters.forEach((k, v) -> {
-            if (v == missConverter) {
-                misses.incrementAndGet();
-            }
-        });
-        return misses;
-    }
+    void logMappingStatisticsMessage(Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter);
 }

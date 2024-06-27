@@ -70,16 +70,6 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
     }
 
     @Override
-    public boolean isStatisticsEnabled() {
-        return registry.getStatistics().isStatisticsEnabled();
-    }
-
-    @Override
-    public void setStatisticsEnabled(boolean statisticsEnabled) {
-        registry.getStatistics().setStatisticsEnabled(statisticsEnabled);
-    }
-
-    @Override
     public int getNumberOfTypeConverters() {
         return registry.size();
     }

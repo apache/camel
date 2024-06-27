@@ -24,13 +24,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
+        CamelContext context = new DefaultCamelContext(false);
         context.setTypeConverterStatisticsEnabled(true);
         return context;
     }
@@ -45,7 +44,6 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
 
         TypeConverterRegistry reg = context.getTypeConverterRegistry();
-        assertTrue(reg.getStatistics().isStatisticsEnabled(), "Should be enabled");
 
         long failed = reg.getStatistics().getFailedCounter();
         assertEquals(0, (int) failed);
