@@ -350,7 +350,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 : new MulticastReactiveTask(exchange, pairs, callback, size);
         if (isParallelProcessing()) {
             try {
-                executorService.submit(() -> reactiveExecutor.schedule(state));
+                executorService.submit(() -> reactiveExecutor.scheduleSync(state));
             } catch (RejectedExecutionException e) {
                 state.reject();
             }
@@ -372,7 +372,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         if (isParallelProcessing()) {
             Runnable task = prepareParallelTask(runnable);
             try {
-                executorService.submit(() -> reactiveExecutor.schedule(task));
+                executorService.submit(() -> reactiveExecutor.scheduleSync(task));
             } catch (RejectedExecutionException e) {
                 if (runnable instanceof Rejectable rej) {
                     rej.reject();

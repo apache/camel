@@ -394,7 +394,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
         @Override
         public void run() {
-            halfOpenTimer.cancel();
+            if (halfOpenTimer != null) {
+                halfOpenTimer.cancel();
+            }
             calculateState(route);
         }
     }
