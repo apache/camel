@@ -35,7 +35,7 @@
         <!-- used by camel-catalog -->
         <firstVersion>2.21.0</firstVersion>
         <title>LRA</title>
-        <label>database, microservice</label>
+        <label>microservice</label>
         <supportLevel>preview</supportLevel>
 
         <!-- LRA coordinator container is only available for x86 -->
