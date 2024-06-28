@@ -18,6 +18,7 @@ package org.apache.camel.component.google.mail.stream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
@@ -28,6 +29,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -42,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
              syntax = "google-mail-stream:index",
              consumerOnly = true,
              category = { Category.CLOUD, Category.MAIL }, headersClass = GoogleMailStreamConstants.class)
-public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
+public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleMailStreamConfiguration configuration;
@@ -103,5 +105,18 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
 
     private List<String> splitLabels(String labels) {
         return Splitter.on(',').splitToList(labels);
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApplicationName()) && ObjectHelper.isNotEmpty(configuration.getIndex()))) {
+            return getServiceProtocol() + ":" + configuration.getApplicationName() + ":" + configuration.getIndex();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "mail-stream";
     }
 }
