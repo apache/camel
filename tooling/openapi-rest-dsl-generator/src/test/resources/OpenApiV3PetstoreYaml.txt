@@ -30,7 +30,8 @@
       path: "/pet"
       consumes: "application/json,application/xml"
       param:
-      - dataType: "boolean"
+      - collectionFormat: "multi"
+        dataType: "boolean"
         defaultValue: "false"
         description: "Verbose data"
         name: "verbose"
@@ -180,12 +181,14 @@
       path: "/user/login"
       produces: "application/xml,application/json"
       param:
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         description: "The user name for login"
         name: "username"
         required: true
         type: "query"
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         description: "The password for login in clear text"
         name: "password"
         required: true

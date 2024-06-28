@@ -47,12 +47,14 @@
         name: "petId"
         required: true
         type: "path"
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         description: "Name of pet that needs to be updated"
         name: "name"
         required: false
         type: "query"
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         description: "Status of pet that needs to be updated"
         name: "status"
         required: false
@@ -68,7 +70,8 @@
         name: "petId"
         required: true
         type: "path"
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         description: "Additional Metadata"
         name: "additionalMetadata"
         required: false
@@ -114,7 +117,8 @@
       description: "Multiple status values can be provided with comma separated strings"
       produces: "application/xml,application/json"
       param:
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         defaultValue: "available"
         description: "Status values that need to be considered for filter"
         name: "status"
@@ -132,6 +136,7 @@
       produces: "application/xml,application/json"
       param:
       - arrayType: "string"
+        collectionFormat: "multi"
         dataType: "array"
         description: "Tags to filter by"
         name: "tags"
@@ -170,12 +175,14 @@
       path: "/user/login"
       produces: "application/xml,application/json"
       param:
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         description: "The user name for login"
         name: "username"
         required: false
         type: "query"
-      - dataType: "string"
+      - collectionFormat: "multi"
+        dataType: "string"
         description: "The password for login in clear text"
         name: "password"
         required: false

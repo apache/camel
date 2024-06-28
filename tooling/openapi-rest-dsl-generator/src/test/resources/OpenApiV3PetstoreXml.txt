@@ -5,7 +5,7 @@
             <to uri="direct:updatePet"/>
         </put>
         <post consumes="application/json,application/xml" id="addPet" path="/pet">
-            <param dataType="boolean" defaultValue="false" description="Verbose data" name="verbose" required="false" type="query"/>
+            <param collectionFormat="multi" dataType="boolean" defaultValue="false" description="Verbose data" name="verbose" required="false" type="query"/>
             <param description="Pet object that needs to be added to the store" name="body" required="true" type="body"/>
             <to uri="direct:addPet"/>
         </post>
@@ -66,8 +66,8 @@
             <to uri="direct:createUsersWithListInput"/>
         </post>
         <get id="loginUser" produces="application/xml,application/json" path="/user/login">
-            <param dataType="string" description="The user name for login" name="username" required="true" type="query"/>
-            <param dataType="string" description="The password for login in clear text" name="password" required="true" type="query"/>
+            <param collectionFormat="multi" dataType="string" description="The user name for login" name="username" required="true" type="query"/>
+            <param collectionFormat="multi" dataType="string" description="The password for login in clear text" name="password" required="true" type="query"/>
             <to uri="direct:loginUser"/>
         </get>
         <get id="logoutUser" path="/user/logout">

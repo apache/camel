@@ -16,17 +16,15 @@
  */
 package org.apache.camel.generator.openapi;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslYamlGeneratorV31Test {
 
-    static OpenApiDocument document;
+    static OpenAPI document;
 
     @Test
     public void shouldGenerateYamlWithDefaults() throws Exception {
@@ -50,10 +48,7 @@ public class RestDslYamlGeneratorV31Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        try (InputStream is = RestDslYamlGeneratorV31Test.class.getResourceAsStream("AccountService-v6.json")) {
-            String json = IOHelper.loadText(is);
-            document = (OpenApiDocument) Library.readDocumentFromJSONString(json);
-        }
+        document = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/AccountService-v6.json");
     }
 
 }
