@@ -325,7 +325,7 @@
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.21.1</log4j2-version>
         <logback-version>1.5.6</logback-version>
-        <lucene-version>9.11.0</lucene-version>
+        <lucene-version>9.11.1</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.2.3</littleproxy-version>
         <mapstruct-version>1.5.5.Final</mapstruct-version>
