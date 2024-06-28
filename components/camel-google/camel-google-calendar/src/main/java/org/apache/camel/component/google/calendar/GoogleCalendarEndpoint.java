@@ -27,11 +27,13 @@ import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiColl
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarConstants;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarPropertiesHelper;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Perform various operations on a Google Calendar.
@@ -39,7 +41,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar",
              syntax = "google-calendar:apiName/methodName", apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer", category = { Category.API, Category.CLOUD })
-public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> {
+public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> implements EndpointServiceLocation {
 
     @UriParam
     private GoogleCalendarConfiguration configuration;
@@ -120,6 +122,27 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName()) && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
+            return getServiceProtocol() + ":" + configuration.getApiName() + ":" + configuration.getMethodName();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "calendar";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getApplicationName() != null) {
+            return Map.of("applicationName", configuration.getApplicationName());
+        }
+        return null;
     }
 
 }
