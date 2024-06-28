@@ -41,7 +41,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets",
              syntax = "google-sheets:apiName/methodName", apiSyntax = "apiName/methodName",
              category = { Category.CLOUD, Category.DOCUMENT })
-public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> implements EndpointServiceLocation {
+public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private GoogleSheetsConfiguration configuration;
@@ -114,7 +115,8 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName()) && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName())
+                && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
             return getServiceProtocol() + ":" + configuration.getApiName() + ":" + configuration.getMethodName();
         }
         return null;

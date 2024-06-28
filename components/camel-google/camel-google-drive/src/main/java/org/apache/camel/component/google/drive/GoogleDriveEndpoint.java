@@ -38,7 +38,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive",
              syntax = "google-drive:apiName/methodName", apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API })
-public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> implements EndpointServiceLocation {
+public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration>
+        implements EndpointServiceLocation {
     private Object apiProxy;
 
     @UriParam
@@ -142,7 +143,8 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName()) && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName())
+                && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
             return getServiceProtocol() + ":" + configuration.getApiName() + ":" + configuration.getMethodName();
         }
         return null;

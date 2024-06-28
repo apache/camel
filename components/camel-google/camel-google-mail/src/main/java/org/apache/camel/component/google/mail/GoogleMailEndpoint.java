@@ -45,7 +45,8 @@ import org.apache.camel.util.ObjectHelper;
              apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer",
              category = { Category.CLOUD, Category.API, Category.MAIL })
-public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> implements EndpointServiceLocation {
+public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration>
+        implements EndpointServiceLocation {
 
     private Object apiProxy;
 
@@ -134,7 +135,8 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName()) && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName())
+                && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
             return getServiceProtocol() + ":" + configuration.getApiName() + ":" + configuration.getMethodName();
         }
         return null;
