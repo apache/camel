@@ -100,9 +100,7 @@ public abstract class JpaWithOptionsTestSupport extends AbstractJpaMethodSupport
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        super.beforeEach(context);
-
+    public void beforeEach(ExtensionContext context) {
         final Optional<AnnotatedElement> element = context.getElement();
         if (element.isPresent()) {
             final AnnotatedElement annotatedElement = element.get();

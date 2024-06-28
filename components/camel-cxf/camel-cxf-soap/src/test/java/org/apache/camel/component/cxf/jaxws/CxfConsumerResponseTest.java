@@ -35,12 +35,10 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerResponseTest extends CamelTestSupport {
 
     private static final String ECHO_OPERATION = "echo";

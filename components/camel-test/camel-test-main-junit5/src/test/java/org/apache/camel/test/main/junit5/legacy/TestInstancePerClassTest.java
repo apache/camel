@@ -53,6 +53,7 @@ class TestInstancePerClassTest extends CamelMainTestSupport {
     @Test
     void shouldBeLaunchedSecondWithDifferentResult() throws Exception {
         MockEndpoint mock = context.getEndpoint("mock:bean", MockEndpoint.class);
+        mock.reset();
         mock.expectedBodiesReceived(2);
         int result = template.requestBody("direct:bean", null, Integer.class);
         mock.assertIsSatisfied();

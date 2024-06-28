@@ -30,14 +30,12 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 //Modified from https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerStreamCacheTest extends CamelTestSupport {
 
     protected static final String REQUEST_MESSAGE

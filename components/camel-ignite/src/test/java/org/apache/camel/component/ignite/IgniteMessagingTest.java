@@ -35,11 +35,9 @@ import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.awaitility.Awaitility.await;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteMessagingTest extends AbstractIgniteTest implements Serializable {
 
     private static final long serialVersionUID = 3967738538216977749L;

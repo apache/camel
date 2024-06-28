@@ -30,13 +30,11 @@ import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfNonWrapperTest extends CamelSpringTestSupport {
     int port1 = CXFTestSupport.getPort1();
 

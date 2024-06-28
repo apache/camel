@@ -35,13 +35,11 @@ import org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfProducerSessionTest extends CamelTestSupport {
     private static final int PORT = CXFTestSupport.getPort1();
     private static final String SIMPLE_SERVER_ADDRESS = "http://127.0.0.1:" + PORT + "/CxfProducerSessionTest/test";

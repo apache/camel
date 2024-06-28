@@ -25,13 +25,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.MessageHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";

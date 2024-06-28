@@ -34,6 +34,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +54,11 @@ class BlobProducerIT extends Base {
         // create test container
         containerClient = serviceClient.getBlobContainerClient(containerName);
         containerClient.create();
+    }
+
+    @BeforeEach
+    void cleanupMock() {
+        result.reset();
     }
 
     @Test

@@ -20,10 +20,8 @@ import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfWsdlFirstTest extends AbstractCxfWsdlFirstTest {
 
     @Override

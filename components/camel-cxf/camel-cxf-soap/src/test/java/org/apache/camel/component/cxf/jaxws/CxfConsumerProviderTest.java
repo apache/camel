@@ -26,13 +26,11 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerProviderTest extends CamelTestSupport {
 
     protected static final String REQUEST_MESSAGE

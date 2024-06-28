@@ -29,13 +29,11 @@ import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.SOAPService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
     static int port = CXFTestSupport.getPort1();
