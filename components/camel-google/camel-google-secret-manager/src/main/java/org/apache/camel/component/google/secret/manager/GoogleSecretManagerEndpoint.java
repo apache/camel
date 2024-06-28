@@ -21,10 +21,14 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
+
+import java.util.Map;
 
 /**
  * Manage Google Secret Manager Secrets
@@ -38,7 +42,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @Metadata(annotations = {
         "vault=google-secret-manager",
 })
-public class GoogleSecretManagerEndpoint extends DefaultEndpoint {
+public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleSecretManagerConfiguration configuration;
@@ -91,6 +95,19 @@ public class GoogleSecretManagerEndpoint extends DefaultEndpoint {
 
     public SecretManagerServiceClient getClient() {
         return secretManagerServiceClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getClient()))) {
+            return getServiceProtocol() + ":" + configuration.getProject() + ":" + configuration.getClient();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "secrets-manager";
     }
 
 }
