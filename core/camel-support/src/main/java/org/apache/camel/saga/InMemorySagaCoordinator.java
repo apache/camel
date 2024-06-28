@@ -169,14 +169,16 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
                 });
     }
 
-    public CompletableFuture<Boolean> doFinalize(final Exchange exchange,
+    public CompletableFuture<Boolean> doFinalize(
+            final Exchange exchange,
             Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor, String description) {
         CompletableFuture<Boolean> result = CompletableFuture.completedFuture(true);
         for (CamelSagaStep step : reversed(steps)) {
             Optional<Endpoint> endpoint = endpointExtractor.apply(step);
             if (endpoint.isPresent()) {
                 result = result.thenCompose(
-                        prevResult -> doFinalize(exchange, endpoint.get(), step, 0, description).thenApply(res -> prevResult && res));
+                        prevResult -> doFinalize(exchange, endpoint.get(), step, 0, description)
+                                .thenApply(res -> prevResult && res));
             }
         }
         return result.whenComplete((done, ex) -> {
@@ -188,7 +190,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         });
     }
 
-    private CompletableFuture<Boolean> doFinalize(Exchange exchange, Endpoint endpoint, CamelSagaStep step, int doneAttempts, String description) {
+    private CompletableFuture<Boolean> doFinalize(
+            Exchange exchange, Endpoint endpoint, CamelSagaStep step, int doneAttempts, String description) {
         populateExchange(exchange, step);
 
         return CompletableFuture.supplyAsync(() -> {
