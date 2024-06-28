@@ -897,8 +897,8 @@ public class AggregateProcessor extends AsyncProcessorSupport
                     LOG.trace("Processing aggregated exchange: {} complete.", exchange);
                 }
             });
-            // the call to schedule is needed to ensure in-order processing of the aggregates
-            reactiveExecutor.schedule(task);
+            // execute the task using this thread sync (similar to multicast eip in parallel mode)
+            reactiveExecutor.scheduleSync(task);
         });
     }
 

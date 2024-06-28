@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -75,6 +76,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
+import org.apache.camel.util.concurrent.Rejectable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -347,7 +349,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 ? new MulticastTransactedTask(exchange, pairs, callback, size)
                 : new MulticastReactiveTask(exchange, pairs, callback, size);
         if (isParallelProcessing()) {
-            executorService.submit(() -> reactiveExecutor.schedule(state));
+            try {
+                executorService.submit(() -> reactiveExecutor.scheduleSync(state));
+            } catch (RejectedExecutionException e) {
+                state.reject();
+            }
         } else {
             if (exchange.isTransacted()) {
                 reactiveExecutor.scheduleQueue(state);
@@ -362,10 +368,16 @@ public class MulticastProcessor extends AsyncProcessorSupport
         return false;
     }
 
-    protected void schedule(Runnable runnable) {
+    protected void schedule(final Runnable runnable) {
         if (isParallelProcessing()) {
             Runnable task = prepareParallelTask(runnable);
-            executorService.submit(() -> reactiveExecutor.schedule(task));
+            try {
+                executorService.submit(() -> reactiveExecutor.scheduleSync(task));
+            } catch (RejectedExecutionException e) {
+                if (runnable instanceof Rejectable rej) {
+                    rej.reject();
+                }
+            }
         } else {
             reactiveExecutor.schedule(runnable);
         }
@@ -402,7 +414,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         return answer;
     }
 
-    protected abstract class MulticastTask implements Runnable {
+    protected abstract class MulticastTask implements Runnable, Rejectable {
 
         final Exchange original;
         final Iterable<ProcessorExchangePair> pairs;
@@ -526,6 +538,13 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 }
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
             }
+        }
+
+        @Override
+        public void reject() {
+            original.setException(new RejectedExecutionException("Task rejected executing from ExecutorService"));
+            // and do the done work
+            doDone(null, false);
         }
     }
 
