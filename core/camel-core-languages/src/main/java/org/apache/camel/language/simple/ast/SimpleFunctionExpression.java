@@ -851,6 +851,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (answer != null) {
             return answer;
         }
+        answer = createCodeVariables(function);
+        if (answer != null) {
+            return answer;
+        }
 
         // camelContext OGNL
         String remainder = ifStartsWithReturnRemainder("camelContext", function);
@@ -1068,6 +1072,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "hostName()";
         } else if (ObjectHelper.equal(expression, "camelId")) {
             return "context.getName()";
+        } else if (ObjectHelper.equal(expression, "fromRouteId")) {
+            return "fromRouteId(exchange)";
         } else if (ObjectHelper.equal(expression, "routeId")) {
             return "routeId(exchange)";
         } else if (ObjectHelper.equal(expression, "stepId")) {
@@ -1401,6 +1407,80 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return remainder;
     }
 
+    private String createCodeVariables(final String function) {
+        // variableAs
+        String remainder = ifStartsWithReturnRemainder("variableAs(", function);
+        if (remainder != null) {
+            String keyAndType = StringHelper.before(remainder, ")");
+            if (keyAndType == null) {
+                throw new SimpleParserException("Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
+            }
+            String key = StringHelper.before(keyAndType, ",");
+            String type = StringHelper.after(keyAndType, ",");
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
+            }
+            key = StringHelper.removeQuotes(key);
+            key = key.trim();
+            type = appendClass(type);
+            type = type.replace('$', '.');
+            type = type.trim();
+            return "variableAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
+        }
+
+        // variables function
+        if ("variables".equals(function)) {
+            return "variables(exchange)";
+        }
+
+        // variable
+        remainder = ifStartsWithReturnRemainder("variable", function);
+        if (remainder != null) {
+            // remove leading character (dot or ?)
+            if (remainder.startsWith(".") || remainder.startsWith("?")) {
+                remainder = remainder.substring(1);
+            }
+            // remove starting and ending brackets
+            if (remainder.startsWith("[") && remainder.endsWith("]")) {
+                remainder = remainder.substring(1, remainder.length() - 1);
+            }
+            // remove quotes from key
+            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
+            key = key.trim();
+
+            // validate syntax
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
+            if (invalid) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${variable.name[key]} was: " + function, token.getIndex());
+            }
+
+            // it is an index?
+            String index = null;
+            if (key.endsWith("]")) {
+                index = StringHelper.between(key, "[", "]");
+                if (index != null) {
+                    key = StringHelper.before(key, "[");
+                }
+            }
+            if (index != null) {
+                index = StringHelper.removeLeadingAndEndingQuotes(index);
+                return "variableAsIndex(exchange, Object.class, \"" + key + "\", \"" + index + "\")";
+            } else if (OgnlHelper.isValidOgnlExpression(remainder)) {
+                // ognl based exchange property must be typed
+                throw new SimpleParserException(
+                        "Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
+            } else {
+                // regular property
+                return "variable(exchange, \"" + key + "\")";
+            }
+        }
+
+        return null;
+    }
+
     private String createCodeExchangeProperty(final String function) {
         // exchangePropertyAsIndex
         String remainder = ifStartsWithReturnRemainder("exchangePropertyAsIndex(", function);
@@ -1580,6 +1660,37 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
 
+        // replace function
+        remainder = ifStartsWithReturnRemainder("replace(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${replace(from,to)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${replace(from,to)} was: " + function, token.getIndex());
+            }
+            String from = StringHelper.xmlDecode(tokens[0]);
+            String to = StringHelper.xmlDecode(tokens[1]);
+            // special to make it easy to replace to an empty value (ie remove)
+            if ("&empty;".equals(to)) {
+                to = "";
+            }
+            if ("\"".equals(from)) {
+                from = "\\\"";
+            }
+            if ("\"".equals(to)) {
+                to = "\\\"";
+            }
+            from = StringQuoteHelper.doubleQuote(from);
+            to = StringQuoteHelper.doubleQuote(to);
+            return "replace(exchange, " + from + ", " + to + ")";
+        }
+
         // skip function
         remainder = ifStartsWithReturnRemainder("skip(", function);
         if (remainder != null) {
@@ -1613,6 +1724,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "messageHistory(exchange, " + (detailed ? "true" : "false") + ")";
         } else if (ObjectHelper.equal(function, "messageHistory")) {
             return "messageHistory(exchange, true)";
+        }
+
+        // TODO: uuid function
+        // TODO: hash function
+
+        // empty function
+        remainder = ifStartsWithReturnRemainder("empty(", function);
+        if (remainder != null) {
+            String value = StringHelper.before(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${empty(<type>)} but was: " + function, token.getIndex());
+            }
+            value = StringQuoteHelper.doubleQuote(value);
+            return "empty(exchange, " + value + ")";
         }
 
         return null;

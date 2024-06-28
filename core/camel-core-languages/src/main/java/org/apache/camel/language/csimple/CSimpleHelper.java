@@ -20,6 +20,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -38,6 +39,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
@@ -160,6 +162,36 @@ public final class CSimpleHelper {
         return type.cast(obj);
     }
 
+    public static Object variable(Exchange exchange, String name) {
+        return exchange.getVariable(name);
+    }
+
+    public static <T> T variableAs(Exchange exchange, String name, Class<T> type) {
+        return exchange.getVariable(name, type);
+    }
+
+    public static <T> T variableAsIndex(Exchange exchange, Class<T> type, String name, String key) {
+        Object obj = exchange.getVariable(name);
+        // try key as-is as it may be using dots or something that valid
+        Object objKey = doObjectAsIndex(exchange.getContext(), obj, key);
+        if (objKey != null && objKey != obj) {
+            return type.cast(objKey);
+        }
+        // the key may contain multiple keys ([0][foo]) so we need to walk these keys
+        List<String> keys = OgnlHelper.splitOgnl(key);
+        for (String k : keys) {
+            if (k.startsWith("[") && k.endsWith("]")) {
+                k = StringHelper.between(k, "[", "]");
+            }
+            obj = doObjectAsIndex(exchange.getContext(), obj, k);
+        }
+        return type.cast(obj);
+    }
+
+    public static Map<String, Object> variables(Exchange exchange) {
+        return exchange.getVariables();
+    }
+
     public static String bodyOneLine(Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
         if (body == null) {
@@ -228,8 +260,16 @@ public final class CSimpleHelper {
         return InetAddressUtil.getLocalHostNameSafe();
     }
 
+    public static String fromRouteId(Exchange exchange) {
+        return exchange.getFromRouteId();
+    }
+
     public static String routeId(Exchange exchange) {
         return ExchangeHelper.getRouteId(exchange);
+    }
+
+    public static String routeGroup(Exchange exchange) {
+        return ExchangeHelper.getRouteGroup(exchange);
     }
 
     public static String stepId(Exchange exchange) {
@@ -422,6 +462,26 @@ public final class CSimpleHelper {
             Exception cause = new CamelExchangeException("Cannot evaluate message body as a number", exchange);
             throw RuntimeCamelException.wrapRuntimeCamelException(cause);
         }
+    }
+
+    public static String replace(Exchange exchange, String from, String to) {
+        String source = exchange.getMessage().getBody(String.class);
+        if (source != null) {
+            return source.replace(from, to);
+        } else {
+            return null;
+        }
+    }
+
+    public static Object empty(Exchange exchange, String type) {
+        if ("map".equalsIgnoreCase(type)) {
+            return new LinkedHashMap<>();
+        } else if ("string".equalsIgnoreCase(type)) {
+            return "";
+        } else if ("list".equalsIgnoreCase(type)) {
+            return new ArrayList<>();
+        }
+        throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
     }
 
     public static int random(Exchange exchange, Object min, Object max) {
