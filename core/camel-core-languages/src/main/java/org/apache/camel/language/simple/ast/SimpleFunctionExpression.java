@@ -1726,9 +1726,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "messageHistory(exchange, true)";
         }
 
-        // TODO: uuid function
-        // TODO: hash function
-
         // empty function
         remainder = ifStartsWithReturnRemainder("empty(", function);
         if (remainder != null) {
