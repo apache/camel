@@ -41,6 +41,9 @@ import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.csimple.CSimpleLanguage;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.VariableRepository;
+import org.apache.camel.spi.VariableRepositoryFactory;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.junit.jupiter.api.Disabled;
@@ -58,7 +61,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class OriginalSimpleTest extends LanguageTestSupport {
 
-    private static final String JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index: 2, Size: 2";
     private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
     @BindToRegistry
@@ -229,9 +231,22 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${in.headers.foo}", "abc");
         assertExpression("${header.foo}", "abc");
         assertExpression("${headers.foo}", "abc");
-        assertExpression("${routeId}", exchange.getFromRouteId());
+        assertExpression("${fromRouteId}", exchange.getFromRouteId());
+        assertExpression("${routeId}", ExchangeHelper.getRouteId(exchange));
         exchange.getExchangeExtension().setFromRouteId("myRouteId");
         assertExpression("${routeId}", "myRouteId");
+    }
+
+    @Test
+    public void testReplaceAllExpression() {
+        exchange.getMessage().setBody("Hello a how are you");
+        assertExpression("${replace(a,b)}", "Hello b how bre you");
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot;,&apos;)}", "{'foo': 'cheese'}");
+        exchange.getMessage().setBody("{'foo': 'cheese'}");
+        assertExpression("${replace(&apos;,&quot;)}", "{\"foo\": \"cheese\"}");
+        exchange.getMessage().setBody("{\"foo\": \"cheese\"}");
+        assertExpression("${replace(&quot;,&empty;)}", "{foo: cheese}");
     }
 
     @Test
@@ -1919,6 +1934,130 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getMessage().setHeader("counter", 3);
 
         assertExpression("Hello ${bean:greeter(${body}, ${header.counter})}", "Hello TonyTonyTony");
+    }
+
+    @Test
+    public void testNewEmpty() {
+        assertExpressionCreateNewEmpty("list", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("LIST", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("List", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("map", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("MAP", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("Map", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("string", String.class, v -> ((String) v).isEmpty());
+        assertExpressionCreateNewEmpty("STRING", String.class, v -> ((String) v).isEmpty());
+        assertExpressionCreateNewEmpty("String", String.class, v -> ((String) v).isEmpty());
+
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty(falseSyntax}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty()}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty(}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty}", null));
+        assertThrows(ExpressionEvaluationException.class, () -> evaluateExpression("${empty(unknownType)}", null));
+    }
+
+    private void assertExpressionCreateNewEmpty(
+            String type, Class<?> expectedClass, java.util.function.Predicate<Object> isEmptyAssertion) {
+        Object value = evaluateExpression("${empty(%s)}".formatted(type), null);
+        assertNotNull(value);
+        assertIsInstanceOf(expectedClass, value);
+        assertTrue(isEmptyAssertion.test(value));
+    }
+
+    @Test
+    public void testGlobalVariable() {
+        exchange.setVariable("cheese", "gauda");
+
+        // exchange has 1 variable already set
+        Map<String, Object> variables = exchange.getVariables();
+        assertEquals(1, variables.size());
+
+        VariableRepository global = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
+                .getVariableRepository("global");
+        global.setVariable("foo", "123");
+        global.setVariable("bar", "456");
+        global.setVariable("cheese", "gorgonzola");
+
+        // exchange scoped
+        assertExpression("${variable.cheese}", "gauda");
+        assertExpression("${variable.foo}", null);
+        assertExpression("${variable.bar}", null);
+
+        // global scoped
+        assertExpression("${variable.global:cheese}", "gorgonzola");
+        assertExpression("${variable.global:foo}", "123");
+        assertExpression("${variable.global:bar}", "456");
+
+        // exchange scoped
+        assertExpression("${variableAs('cheese', 'String')}", "gauda");
+        assertExpression("${variableAs('foo', 'int')}", null);
+        assertExpression("${variableAA('bar', 'int')}", null);
+
+        // global scoped
+        assertExpression("${variableAs('global:cheese', 'String')}", "gorgonzola");
+        assertExpression("${variableAs('global:foo', 'int')}", 123);
+        assertExpression("${variableAs('global:bar', 'int')}", 456);
+    }
+
+    @Test
+    public void testVariableKeyWithSpace() {
+        exchange.setVariable("cheese", "gauda");
+
+        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().removeHeaders("*");
+
+        Map<String, Object> variables = exchange.getVariables();
+        variables.put("some key", "Some Value");
+        assertEquals(4, variables.size());
+
+        assertExpression("${variableAs(foo,String)}", "abc");
+        assertExpression("${variableAs(some key,String)}", "Some Value");
+        assertExpression("${variableAs('some key',String)}", "Some Value");
+
+        assertExpression("${variable[foo]}", "abc");
+        assertExpression("${variable[cheese]}", "gauda");
+        assertExpression("${variable[some key]}", "Some Value");
+        assertExpression("${variable['some key']}", "Some Value");
+    }
+
+    @Test
+    public void testVariableAs() {
+        exchange.setVariable("cheese", "gauda");
+
+        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().removeHeaders("*");
+
+        assertExpression("${variableAs(foo,String)}", "abc");
+
+        assertExpression("${variableAs(bar,int)}", 123);
+        assertExpression("${variableAs(bar, int)}", 123);
+        assertExpression("${variableAs('bar', int)}", 123);
+        assertExpression("${variableAs('bar','int')}", 123);
+        assertExpression("${variableAs('bar','Integer')}", 123);
+        assertExpression("${variableAs('bar',\"int\")}", 123);
+        assertExpression("${variableAs(bar,String)}", "123");
+
+        assertExpression("${variableAs(unknown,String)}", null);
+
+        try {
+            assertExpression("${variableAs(unknown String)}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${variableAs(key, type)} was: variableAs(unknown String)"));
+        }
+
+        try {
+            assertExpression("${variableAs(fool,String).test}", null);
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().startsWith("csimple-joor compilation error for class"));
+        }
+
+        try {
+            assertExpression("${variableAs(bar,XXX)}", 123);
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            // expected
+        }
     }
 
     @Override

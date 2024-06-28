@@ -2194,6 +2194,23 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an Expression for the original route id where this exchange was created.
+     */
+    public static Expression fromRouteIdExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exchange.getFromRouteId();
+            }
+
+            @Override
+            public String toString() {
+                return "fromRouteId";
+            }
+        };
+    }
+
+    /**
      * Returns an Expression for the route group
      */
     public static Expression routeGroupExpression() {
