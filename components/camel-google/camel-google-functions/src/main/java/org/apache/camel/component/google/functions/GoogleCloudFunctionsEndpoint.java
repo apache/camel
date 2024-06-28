@@ -27,8 +27,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
-import java.util.Map;
-
 /**
  * Manage and invoke Google Cloud Functions
  *
@@ -96,8 +94,10 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint implements End
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getFunctionName()) && ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getLocation()))) {
-            return getServiceProtocol() + ":" + configuration.getProject() + ":" + configuration.getFunctionName() + ":" + configuration.getLocation();
+        if (ObjectHelper.isNotEmpty(configuration.getFunctionName()) && ObjectHelper.isNotEmpty(
+                ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getLocation()))) {
+            return getServiceProtocol() + ":" + configuration.getProject() + ":" + configuration.getFunctionName() + ":"
+                   + configuration.getLocation();
         }
         return null;
     }

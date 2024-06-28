@@ -18,7 +18,6 @@ package org.apache.camel.component.google.mail.stream;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
@@ -109,7 +108,8 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements E
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApplicationName()) && ObjectHelper.isNotEmpty(configuration.getIndex()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApplicationName())
+                && ObjectHelper.isNotEmpty(configuration.getIndex()))) {
             return getServiceProtocol() + ":" + configuration.getApplicationName() + ":" + configuration.getIndex();
         }
         return null;

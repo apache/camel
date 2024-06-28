@@ -41,7 +41,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar",
              syntax = "google-calendar:apiName/methodName", apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer", category = { Category.API, Category.CLOUD })
-public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> implements EndpointServiceLocation {
+public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration>
+        implements EndpointServiceLocation {
 
     @UriParam
     private GoogleCalendarConfiguration configuration;
@@ -126,7 +127,8 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName()) && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName())
+                && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
             return getServiceProtocol() + ":" + configuration.getApiName() + ":" + configuration.getMethodName();
         }
         return null;

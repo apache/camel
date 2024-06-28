@@ -28,8 +28,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
-import java.util.Map;
-
 /**
  * Manage Google Secret Manager Secrets
  *
@@ -99,7 +97,8 @@ public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements Endp
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getClient()))) {
+        if (ObjectHelper.isNotEmpty(
+                ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getClient()))) {
             return getServiceProtocol() + ":" + configuration.getProject() + ":" + configuration.getClient();
         }
         return null;

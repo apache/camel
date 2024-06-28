@@ -78,7 +78,8 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApplicationName()) && ObjectHelper.isNotEmpty(configuration.getSpreadsheetId()))) {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApplicationName())
+                && ObjectHelper.isNotEmpty(configuration.getSpreadsheetId()))) {
             return getServiceProtocol() + ":" + configuration.getApplicationName() + ":" + configuration.getSpreadsheetId();
         }
         return null;

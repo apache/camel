@@ -27,8 +27,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
-import java.util.Map;
-
 import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY;
 
 /**
@@ -93,9 +91,11 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointS
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getProjectId()) && ObjectHelper.isNotEmpty(configuration.getDatasetId()) && ObjectHelper.isNotEmpty(configuration.getTableId())) {
-                return getServiceProtocol() + ":" + configuration.getProjectId() + ":" + configuration.getDatasetId() + ":" + configuration.getTableId();
-            }
+        if (ObjectHelper.isNotEmpty(configuration.getProjectId()) && ObjectHelper.isNotEmpty(configuration.getDatasetId())
+                && ObjectHelper.isNotEmpty(configuration.getTableId())) {
+            return getServiceProtocol() + ":" + configuration.getProjectId() + ":" + configuration.getDatasetId() + ":"
+                   + configuration.getTableId();
+        }
         return null;
     }
 

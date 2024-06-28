@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.calendar.stream;
 
+import java.util.Map;
+
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import org.apache.camel.Category;
@@ -30,8 +32,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
-import java.util.Map;
 
 /**
  * Poll for changes in a Google Calendar.
@@ -93,7 +93,8 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint implemen
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getCalendarId()) && ObjectHelper.isNotEmpty(configuration.getUser()))) {
+        if (ObjectHelper.isNotEmpty(
+                ObjectHelper.isNotEmpty(configuration.getCalendarId()) && ObjectHelper.isNotEmpty(configuration.getUser()))) {
             return getServiceProtocol() + ":" + configuration.getUser() + ":" + configuration.getCalendarId();
         }
         return null;

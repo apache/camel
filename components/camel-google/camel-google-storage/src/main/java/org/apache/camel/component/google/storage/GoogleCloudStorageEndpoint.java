@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.storage;
 
+import java.util.Map;
+
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.Builder;
@@ -32,8 +34,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
@@ -126,9 +126,10 @@ public class GoogleCloudStorageEndpoint extends ScheduledPollEndpoint implements
 
     @Override
     public String getServiceUrl() {
-        if (ObjectHelper.isNotEmpty(configuration.getBucketName()) && ObjectHelper.isNotEmpty(configuration.getStorageLocation())) {
+        if (ObjectHelper.isNotEmpty(configuration.getBucketName())
+                && ObjectHelper.isNotEmpty(configuration.getStorageLocation())) {
             return getServiceProtocol() + ":" + configuration.getStorageLocation() + ":"
-                    + configuration.getBucketName();
+                   + configuration.getBucketName();
         }
         return null;
     }
