@@ -42,9 +42,7 @@ import org.apache.ignite.lang.IgniteBiPredicate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implements Serializable {
 
     private static final long serialVersionUID = 1L;

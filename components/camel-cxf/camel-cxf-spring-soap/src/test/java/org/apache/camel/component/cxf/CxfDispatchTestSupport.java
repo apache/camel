@@ -29,12 +29,10 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 
 /**
  * Base class for testing arbitrary payload
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     protected static final String DISPATCH_NS = "http://camel.apache.org/cxf/jaxws/dispatch";
     protected static final String INVOKE_NAME = "Invoke";

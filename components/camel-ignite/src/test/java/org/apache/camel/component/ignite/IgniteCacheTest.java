@@ -36,11 +36,9 @@ import org.apache.ignite.lang.IgniteBiPredicate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteCacheTest extends AbstractIgniteTest {
 
     @Override

@@ -34,9 +34,10 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,12 +62,13 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
-    protected void preTestCleanup() {
+    @BeforeEach
+    protected final void preTestCleanup() {
         deleteDirectory("target/activemq-data");
         properties = new Properties();
-
     }
 
+    @BeforeEach
     protected void loadTestProperties() throws IOException {
         final URL url = getClass().getResource("/test-options.properties");
         try (InputStream inStream = url.openStream()) {
@@ -75,17 +77,6 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
     }
 
     protected abstract String getBrokerUri();
-
-    /**
-     * Set up the Broker
-     */
-    @Override
-    protected void doPreSetup() throws Exception {
-        preTestCleanup();
-        loadTestProperties();
-
-        brokerUri = getBrokerUri();
-    }
 
     @Override
     protected boolean useJmx() {
@@ -104,10 +95,8 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
 
     protected abstract void setupFactoryExternal(ActiveMQConnectionFactory factory);
 
-    @Override
-    public void doPostTearDown() throws JMSException {
-        stopContext();
-
+    @AfterEach
+    public void closeSessions() throws JMSException {
         closeSession();
         closeConnection();
     }
@@ -128,16 +117,11 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
         }
     }
 
-    private void stopContext() {
-        DefaultCamelContext dcc = (DefaultCamelContext) context;
-        while (!dcc.isStopped()) {
-            log.info("Waiting on the Camel Context to stop");
-        }
-    }
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+        brokerUri = getBrokerUri();
+
         connectionFactory = new ActiveMQConnectionFactory(brokerUri);
 
         setupFactoryExternal(connectionFactory);

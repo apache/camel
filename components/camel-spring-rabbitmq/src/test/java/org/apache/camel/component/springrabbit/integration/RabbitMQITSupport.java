@@ -21,14 +21,12 @@ import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 import org.apache.camel.component.springrabbit.test.infra.services.RabbitMQServiceFactory;
 import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class RabbitMQITSupport extends CamelTestSupport {
 
     @RegisterExtension

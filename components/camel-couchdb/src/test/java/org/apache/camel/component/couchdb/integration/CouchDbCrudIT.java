@@ -37,7 +37,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(Lifecycle.PER_CLASS)
 public class CouchDbCrudIT extends CouchDbTestSupport {
 
     @EndpointInject("mock:deleteNotifications")
@@ -167,6 +166,7 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
         @Order(6)
         @Test
         void testDelete() throws InterruptedException {
+            mockDeleteNotifications.reset();
             JsonObject retrievedUpdatedDocument = newJsonObject(retrievedUpdatedDocumentString);
 
             // Deleting a retrieved document should trigger a delete notification
@@ -264,6 +264,7 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
         @Order(11)
         @Test
         void testDelete() throws InterruptedException {
+            mockDeleteNotifications.reset();
             JsonObject retrievedUpdatedDocument = newJsonObject(retrievedUpdatedDocumentString);
 
             // Deleting a retrieved document should trigger a delete notification
@@ -287,6 +288,7 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
         @ParameterizedTest
         @ValueSource(ints = { 10, 50, 100 })
         void testUpdateNotifications(int messageCount) throws InterruptedException {
+            mockUpdateNotifications.reset();
             mockUpdateNotifications.expectedMessageCount(messageCount);
 
             for (int messageNumber = 0; messageNumber < messageCount; messageNumber++) {

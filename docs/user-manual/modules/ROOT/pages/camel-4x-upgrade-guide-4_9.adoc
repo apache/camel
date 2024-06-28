@@ -42,3 +42,16 @@ to this
 `{{aws:database#username}}`
 
 You could find more details on CAMEL-21179 issue
+
+=== camel-test
+
+The `CamelTestSupport` class was modified so that the JUnit 5 extension code that was part of the class itself,
+was moved to a separate class. This is part of the work being done on https://issues.apache.org/jira/browse/CAMEL-20837[CAMEL-20837]
+to modernize the base test code.
+
+In many cases, code should work with no changes provided they are not using any of the API methods that
+were deprecated in Camel 4.7.0.
+Additionally, starting with Camel 4.9, we strongly recommend users to avoid relying on single-instance contexts (created
+via `@TestInstance(TestInstance.Lifecycle.PER_CLASS)`), as this is considered a deprecated functionality that will be removed in the
+future.
+The logs will print a warning message if this behavior is detected.
