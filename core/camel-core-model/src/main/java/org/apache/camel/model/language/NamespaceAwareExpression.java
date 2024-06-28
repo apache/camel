@@ -17,6 +17,7 @@
 package org.apache.camel.model.language;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
@@ -44,6 +46,12 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
     private Map<String, String> namespaces;
 
     protected NamespaceAwareExpression() {
+    }
+
+    protected NamespaceAwareExpression(NamespaceAwareExpression source) {
+        super(source);
+        this.namespace = ProcessorDefinitionHelper.deepCopyDefinitions(source.namespace);
+        this.namespaces = source.namespaces != null ? new LinkedHashMap<>(source.namespaces) : null;
     }
 
     protected NamespaceAwareExpression(String expression) {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,9 +26,7 @@ public class Jt400ConfigurationTest extends Jt400TestSupport {
     private Jt400Configuration jt400Configuration;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         jt400Configuration
                 = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
     }

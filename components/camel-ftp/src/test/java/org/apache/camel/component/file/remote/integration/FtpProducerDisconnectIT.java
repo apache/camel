@@ -28,9 +28,7 @@ public class FtpProducerDisconnectIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         // ask the singleton FtpEndpoint to make use of a custom FTPClient
         // so that we can hold a reference on it inside the test below
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);

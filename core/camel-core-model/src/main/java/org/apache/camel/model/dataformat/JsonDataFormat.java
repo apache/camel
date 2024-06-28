@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
+
     @XmlAttribute
     private String objectMapper;
     @XmlAttribute
@@ -116,6 +117,35 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.library = library;
     }
 
+    protected JsonDataFormat(JsonDataFormat source) {
+        super(source);
+        this.objectMapper = source.objectMapper;
+        this.useDefaultObjectMapper = source.useDefaultObjectMapper;
+        this.autoDiscoverObjectMapper = source.autoDiscoverObjectMapper;
+        this.prettyPrint = source.prettyPrint;
+        this.library = source.library;
+        this.unmarshalTypeName = source.unmarshalTypeName;
+        this.unmarshalType = source.unmarshalType;
+        this.jsonViewTypeName = source.jsonViewTypeName;
+        this.jsonView = source.jsonView;
+        this.include = source.include;
+        this.allowJmsType = source.allowJmsType;
+        this.collectionTypeName = source.collectionTypeName;
+        this.collectionType = source.collectionType;
+        this.useList = source.useList;
+        this.moduleClassNames = source.moduleClassNames;
+        this.moduleRefs = source.moduleRefs;
+        this.enableFeatures = source.enableFeatures;
+        this.disableFeatures = source.disableFeatures;
+        this.allowUnmarshallType = source.allowUnmarshallType;
+        this.timezone = source.timezone;
+        this.schemaResolver = source.schemaResolver;
+        this.autoDiscoverSchemaResolver = source.autoDiscoverSchemaResolver;
+        this.namingStrategy = source.namingStrategy;
+        this.contentTypeHeader = source.contentTypeHeader;
+        this.dateFormatPattern = source.dateFormatPattern;
+    }
+
     private JsonDataFormat(Builder builder) {
         this();
         this.objectMapper = builder.objectMapper;
@@ -143,6 +173,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.namingStrategy = builder.namingStrategy;
         this.contentTypeHeader = builder.contentTypeHeader;
         this.dateFormatPattern = builder.dateFormatPattern;
+    }
+
+    @Override
+    public JsonDataFormat copyDefinition() {
+        return new JsonDataFormat(this);
     }
 
     @Override

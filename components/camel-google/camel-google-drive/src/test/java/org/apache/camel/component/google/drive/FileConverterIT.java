@@ -43,9 +43,8 @@ public class FileConverterIT extends AbstractGoogleDriveTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         deleteDirectory("target/convertertest");
-        super.setUp();
     }
 
     @Test

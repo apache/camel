@@ -34,12 +34,21 @@ public class CSimpleExpression extends TypedExpressionDefinition {
     public CSimpleExpression() {
     }
 
+    protected CSimpleExpression(CSimpleExpression source) {
+        super(source);
+    }
+
     public CSimpleExpression(String expression) {
         super(expression);
     }
 
     private CSimpleExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public CSimpleExpression copyDefinition() {
+        return new CSimpleExpression(this);
     }
 
     @Override

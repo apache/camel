@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
+import java.util.Map;
+
 import com.azure.cosmos.CosmosAsyncClient;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -23,6 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosDbClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -34,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.10.0", scheme = "azure-cosmosdb", title = "Azure CosmosDB",
              syntax = "azure-cosmosdb:databaseName/containerName", category = {
                      Category.CLOUD, Category.DATABASE })
-public class CosmosDbEndpoint extends DefaultEndpoint {
+public class CosmosDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private CosmosDbConfiguration configuration;
@@ -103,5 +106,26 @@ public class CosmosDbEndpoint extends DefaultEndpoint {
 
     public void setCosmosAsyncClient(CosmosAsyncClient cosmosAsyncClient) {
         this.cosmosAsyncClient = cosmosAsyncClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getDatabaseEndpoint())) {
+            return configuration.getDatabaseEndpoint();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "cosmosdb";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getDatabaseName() != null) {
+            return Map.of("databaseName", configuration.getDatabaseName());
+        }
+        return null;
     }
 }

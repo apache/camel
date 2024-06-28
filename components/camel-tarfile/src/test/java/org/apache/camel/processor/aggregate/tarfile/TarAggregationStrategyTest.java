@@ -25,7 +25,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
@@ -39,12 +38,10 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
     private TarAggregationStrategy tar = new TarAggregationStrategy();
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");
         deleteDirectory("target/out");
-        super.setUp();
     }
 
     @Test

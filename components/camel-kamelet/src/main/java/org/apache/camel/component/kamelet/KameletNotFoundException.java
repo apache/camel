@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.kamelet;
 
-import org.apache.camel.CamelException;
-
-public class KameletNotFoundException extends CamelException {
-
-    private final String templateId;
+/**
+ * @deprecated use FailedToCreateKameletException
+ */
+@Deprecated(since = "4.7.0")
+public class KameletNotFoundException extends FailedToCreateKameletException {
 
     public KameletNotFoundException(String templateId, String locations, Throwable cause) {
-        super("Kamelet with id " + templateId + " not found in locations: " + locations, cause);
-        this.templateId = templateId;
-    }
-
-    public String getTemplateId() {
-        return templateId;
+        super(templateId, locations, cause);
     }
 }

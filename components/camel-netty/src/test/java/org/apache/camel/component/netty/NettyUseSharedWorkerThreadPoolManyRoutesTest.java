@@ -20,8 +20,6 @@ import io.netty.channel.EventLoopGroup;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,20 +43,16 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         before = Thread.activeCount();
         ports = new AvailablePortFinder.Port[60];
         for (int i = 0; i < ports.length; i++) {
             ports[i] = AvailablePortFinder.find();
         }
-        super.setUp();
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() {
         for (AvailablePortFinder.Port port : ports) {
             port.release();
         }

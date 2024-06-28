@@ -59,6 +59,11 @@ public interface InflightRepository extends StaticService {
         String getFromRouteId();
 
         /**
+         * Whether the endpoint is remote where the exchange originates (started)
+         */
+        boolean isFromRemoteEndpoint();
+
+        /**
          * The id of the route where the exchange currently is being processed
          * <p/>
          * Is <tt>null</tt> if message history is disabled.

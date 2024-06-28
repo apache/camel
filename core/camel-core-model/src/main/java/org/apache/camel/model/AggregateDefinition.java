@@ -153,6 +153,48 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     public AggregateDefinition() {
     }
 
+    protected AggregateDefinition(AggregateDefinition source) {
+        super(source);
+        this.expression = source.expression != null ? source.expression.copyDefinition() : null;
+        this.aggregationStrategyBean = source.aggregationStrategyBean;
+        this.aggregationRepositoryBean = source.aggregationRepositoryBean;
+        this.aggregateControllerBean = source.aggregateControllerBean;
+        this.executorServiceBean = source.executorServiceBean;
+        this.timeoutCheckerExecutorServiceBean = source.timeoutCheckerExecutorServiceBean;
+        this.optimisticLockRetryPolicy = source.optimisticLockRetryPolicy;
+        this.correlationExpression
+                = source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
+        this.completionPredicate = source.completionPredicate != null ? source.completionPredicate.copyDefinition() : null;
+        this.completionTimeoutExpression
+                = source.completionTimeoutExpression != null ? source.completionTimeoutExpression.copyDefinition() : null;
+        this.completionSizeExpression
+                = source.completionSizeExpression != null ? source.completionSizeExpression.copyDefinition() : null;
+        this.optimisticLockRetryPolicyDefinition = source.optimisticLockRetryPolicyDefinition != null
+                ? source.optimisticLockRetryPolicyDefinition.copyDefinition() : null;
+        this.parallelProcessing = source.parallelProcessing;
+        this.optimisticLocking = source.optimisticLocking;
+        this.executorService = source.executorService;
+        this.timeoutCheckerExecutorService = source.timeoutCheckerExecutorService;
+        this.aggregateController = source.aggregateController;
+        this.aggregationRepository = source.aggregationRepository;
+        this.aggregationStrategy = source.aggregationStrategy;
+        this.aggregationStrategyMethodName = source.aggregationStrategyMethodName;
+        this.aggregationStrategyMethodAllowNull = source.aggregationStrategyMethodAllowNull;
+        this.completionSize = source.completionSize;
+        this.completionInterval = source.completionInterval;
+        this.completionTimeout = source.completionTimeout;
+        this.completionTimeoutCheckerInterval = source.completionTimeoutCheckerInterval;
+        this.completionFromBatchConsumer = source.completionFromBatchConsumer;
+        this.completionOnNewCorrelationGroup = source.completionOnNewCorrelationGroup;
+        this.eagerCheckCompletion = source.eagerCheckCompletion;
+        this.ignoreInvalidCorrelationKeys = source.ignoreInvalidCorrelationKeys;
+        this.closeCorrelationKeyOnCompletion = source.closeCorrelationKeyOnCompletion;
+        this.discardOnCompletionTimeout = source.discardOnCompletionTimeout;
+        this.discardOnAggregationFailure = source.discardOnAggregationFailure;
+        this.forceCompletionOnStop = source.forceCompletionOnStop;
+        this.completeAllOnStop = source.completeAllOnStop;
+    }
+
     public AggregateDefinition(@AsPredicate Predicate predicate) {
         this(ExpressionNodeHelper.toExpressionDefinition(predicate));
     }
@@ -172,6 +214,11 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     public AggregateDefinition(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         this(correlationExpression);
         this.aggregationStrategyBean = aggregationStrategy;
+    }
+
+    @Override
+    public AggregateDefinition copyDefinition() {
+        return new AggregateDefinition(this);
     }
 
     @Override

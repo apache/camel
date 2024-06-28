@@ -44,6 +44,18 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     public WeightedLoadBalancerDefinition() {
     }
 
+    protected WeightedLoadBalancerDefinition(WeightedLoadBalancerDefinition source) {
+        super(source);
+        this.distributionRatio = source.distributionRatio;
+        this.distributionRatioDelimiter = source.distributionRatioDelimiter;
+        this.roundRobin = source.roundRobin;
+    }
+
+    @Override
+    public WeightedLoadBalancerDefinition copyDefinition() {
+        return new WeightedLoadBalancerDefinition(this);
+    }
+
     public String getRoundRobin() {
         return roundRobin;
     }

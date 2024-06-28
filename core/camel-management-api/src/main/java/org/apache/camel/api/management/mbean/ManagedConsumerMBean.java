@@ -29,4 +29,7 @@ public interface ManagedConsumerMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Whether this consumer hosts a service such as acting as a HTTP server (only available for some components)")
     boolean isHostedService();
 
+    @ManagedAttribute(description = "Whether this consumer connects to remote or local systems")
+    boolean isRemoteEndpoint();
+
 }

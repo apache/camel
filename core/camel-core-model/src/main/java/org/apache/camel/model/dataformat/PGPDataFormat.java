@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "pgp")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PGPDataFormat extends DataFormatDefinition {
+
     @XmlAttribute
     private String keyUserid;
     @XmlAttribute
@@ -71,6 +72,24 @@ public class PGPDataFormat extends DataFormatDefinition {
         super("pgp");
     }
 
+    protected PGPDataFormat(PGPDataFormat source) {
+        super(source);
+        this.keyUserid = source.keyUserid;
+        this.signatureKeyUserid = source.signatureKeyUserid;
+        this.password = source.password;
+        this.signaturePassword = source.signaturePassword;
+        this.keyFileName = source.keyFileName;
+        this.signatureKeyFileName = source.signatureKeyFileName;
+        this.signatureKeyRing = source.signatureKeyRing;
+        this.armored = source.armored;
+        this.integrity = source.integrity;
+        this.provider = source.provider;
+        this.algorithm = source.algorithm;
+        this.compressionAlgorithm = source.compressionAlgorithm;
+        this.hashAlgorithm = source.hashAlgorithm;
+        this.signatureVerificationOption = source.signatureVerificationOption;
+    }
+
     private PGPDataFormat(Builder builder) {
         this();
         this.keyUserid = builder.keyUserid;
@@ -87,6 +106,11 @@ public class PGPDataFormat extends DataFormatDefinition {
         this.compressionAlgorithm = builder.compressionAlgorithm;
         this.hashAlgorithm = builder.hashAlgorithm;
         this.signatureVerificationOption = builder.signatureVerificationOption;
+    }
+
+    @Override
+    public PGPDataFormat copyDefinition() {
+        return new PGPDataFormat(this);
     }
 
     public String getSignatureKeyUserid() {

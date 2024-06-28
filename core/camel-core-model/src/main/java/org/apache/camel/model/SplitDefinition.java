@@ -88,12 +88,37 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     public SplitDefinition() {
     }
 
+    public SplitDefinition(SplitDefinition source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.aggregationStrategyBean = source.aggregationStrategyBean;
+        this.onPrepareProcessor = source.onPrepareProcessor;
+        this.delimiter = source.delimiter;
+        this.aggregationStrategy = source.aggregationStrategy;
+        this.aggregationStrategyMethodName = source.aggregationStrategyMethodName;
+        this.aggregationStrategyMethodAllowNull = source.aggregationStrategyMethodAllowNull;
+        this.parallelAggregate = source.parallelAggregate;
+        this.parallelProcessing = source.parallelProcessing;
+        this.synchronous = source.synchronous;
+        this.streaming = source.streaming;
+        this.stopOnException = source.stopOnException;
+        this.timeout = source.timeout;
+        this.executorService = source.executorService;
+        this.onPrepare = source.onPrepare;
+        this.shareUnitOfWork = source.shareUnitOfWork;
+    }
+
     public SplitDefinition(Expression expression) {
         super(expression);
     }
 
     public SplitDefinition(ExpressionDefinition expression) {
         super(expression);
+    }
+
+    @Override
+    public SplitDefinition copyDefinition() {
+        return new SplitDefinition(this);
     }
 
     @Override

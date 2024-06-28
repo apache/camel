@@ -40,12 +40,13 @@ public class ContextDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(String.format("Apache Camel %s %s (%s) uptime %s", getCamelContext().getVersion(),
-                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
-                CamelContextHelper.getUptime(getCamelContext())));
+        String profile = "";
         if (getCamelContext().getCamelContextExtension().getProfile() != null) {
-            sb.append(String.format("\n    Profile: %s", getCamelContext().getCamelContextExtension().getProfile()));
+            profile = " (profile: " + getCamelContext().getCamelContextExtension().getProfile() + ")";
         }
+        sb.append(String.format("Apache Camel %s %s (%s)%s uptime %s", getCamelContext().getVersion(),
+                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
+                profile, CamelContextHelper.getUptime(getCamelContext())));
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("\n    %s", getCamelContext().getDescription()));
         }
@@ -70,9 +71,9 @@ public class ContextDevConsole extends AbstractDevConsole {
                 if (!thp.isEmpty()) {
                     sb.append(String.format("\n    Messages/Sec: %s", thp));
                 }
-                sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
-                sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
-                sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
+                sb.append(String.format("\n    Total: %s/%s", mb.getRemoteExchangesTotal(), mb.getExchangesTotal()));
+                sb.append(String.format("\n    Failed: %s/%s", mb.getRemoteExchangesFailed(), mb.getExchangesFailed()));
+                sb.append(String.format("\n    Inflight: %s/%s", mb.getRemoteExchangesInflight(), mb.getExchangesInflight()));
                 long idle = mb.getIdleSince();
                 if (idle > 0) {
                     sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
@@ -151,6 +152,9 @@ public class ContextDevConsole extends AbstractDevConsole {
                 stats.put("exchangesTotal", mb.getExchangesTotal());
                 stats.put("exchangesFailed", mb.getExchangesFailed());
                 stats.put("exchangesInflight", mb.getExchangesInflight());
+                stats.put("remoteExchangesTotal", mb.getRemoteExchangesTotal());
+                stats.put("remoteExchangesFailed", mb.getRemoteExchangesFailed());
+                stats.put("remoteExchangesInflight", mb.getRemoteExchangesInflight());
                 stats.put("reloaded", reloaded);
                 stats.put("meanProcessingTime", mb.getMeanProcessingTime());
                 stats.put("maxProcessingTime", mb.getMaxProcessingTime());

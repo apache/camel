@@ -46,6 +46,8 @@ public final class ICalConverterLoader implements TypeConverterLoader, CamelCont
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.ByteArrayInputStream.class, net.fortuna.ical4j.model.Calendar.class, false,
             (type, exchange, value) -> org.apache.camel.component.ical.ICalConverter.toStream((net.fortuna.ical4j.model.Calendar) value, exchange));
+        addTypeConverter(registry, java.time.Instant.class, net.fortuna.ical4j.model.property.DateProperty.class, false,
+            (type, exchange, value) -> org.apache.camel.component.ical.ICalConverter.toInstant((net.fortuna.ical4j.model.property.DateProperty) value));
         addTypeConverter(registry, java.util.Date.class, net.fortuna.ical4j.model.property.DateProperty.class, false,
             (type, exchange, value) -> org.apache.camel.component.ical.ICalConverter.toDate((net.fortuna.ical4j.model.property.DateProperty) value));
     }

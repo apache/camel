@@ -40,9 +40,19 @@ public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
         super("univocityTsv");
     }
 
+    protected UniVocityTsvDataFormat(UniVocityTsvDataFormat source) {
+        super(source);
+        this.escapeChar = source.escapeChar;
+    }
+
     private UniVocityTsvDataFormat(Builder builder) {
         super("univocityTsv", builder);
         this.escapeChar = builder.escapeChar;
+    }
+
+    @Override
+    public UniVocityTsvDataFormat copyDefinition() {
+        return new UniVocityTsvDataFormat(this);
     }
 
     public String getEscapeChar() {

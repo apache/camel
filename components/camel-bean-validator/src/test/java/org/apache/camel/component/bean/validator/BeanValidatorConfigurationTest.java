@@ -28,7 +28,6 @@ import jakarta.validation.TraversableResolver;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
@@ -48,13 +47,10 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     private ConstraintValidatorFactory constraintValidatorFactory;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         this.messageInterpolator = new MyMessageInterpolator();
         this.traversableResolver = new MyTraversableResolver();
         this.constraintValidatorFactory = new MyConstraintValidatorFactory();
-
-        super.setUp();
     }
 
     @Test

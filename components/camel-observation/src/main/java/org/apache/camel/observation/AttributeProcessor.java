@@ -54,7 +54,7 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
                 String tag = expression.evaluate(exchange, String.class);
                 observation.highCardinalityKeyValue(attributeName, tag);
             } else {
-                LOG.warn("Micrometer Observation: could not find managed span for exchange={}", exchange);
+                LOG.warn("Micrometer Observation: Cannot find managed span for exchange: {}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);

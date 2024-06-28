@@ -52,7 +52,8 @@ public class TimerUriDsl(
   }
 
   /**
-   * Delay before first event is triggered.
+   * The number of milliseconds to wait before the first event is generated. Should not be used in
+   * conjunction with the time option. The default value is 1000.
    */
   public fun delay(delay: String) {
     it.property("delay", delay)
@@ -87,7 +88,8 @@ public class TimerUriDsl(
   }
 
   /**
-   * If greater than 0, generate periodic events every period.
+   * Generate periodic events every period. Must be zero or positive value. The default value is
+   * 1000.
    */
   public fun period(period: String) {
     it.property("period", period)

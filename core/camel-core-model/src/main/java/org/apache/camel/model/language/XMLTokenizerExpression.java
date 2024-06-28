@@ -43,6 +43,12 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     public XMLTokenizerExpression() {
     }
 
+    protected XMLTokenizerExpression(XMLTokenizerExpression source) {
+        super(source);
+        this.mode = source.mode;
+        this.group = source.group;
+    }
+
     public XMLTokenizerExpression(String expression) {
         super(expression);
     }
@@ -55,6 +61,11 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         super(builder);
         this.mode = builder.mode;
         this.group = builder.group;
+    }
+
+    @Override
+    public XMLTokenizerExpression copyDefinition() {
+        return new XMLTokenizerExpression(this);
     }
 
     @Override

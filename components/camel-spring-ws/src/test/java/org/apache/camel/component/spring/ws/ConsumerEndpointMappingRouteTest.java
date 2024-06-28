@@ -26,7 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -68,9 +67,7 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
     }
 

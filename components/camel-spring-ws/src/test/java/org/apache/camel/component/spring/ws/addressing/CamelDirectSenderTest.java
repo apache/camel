@@ -46,10 +46,8 @@ public class CamelDirectSenderTest extends AbstractWSATests {
     @EndpointInject("mock:camelDirect")
     private MockEndpoint endpointCamelDirect;
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setupBeans() {
         // initialize beans for catching results
         customChannel = getMandatoryBean(OutputChannelReceiver.class, "customReceiver");
         customChannel.clear();

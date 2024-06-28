@@ -41,7 +41,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
@@ -259,10 +258,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPostSetup() {
         deleteDirectory(TEST_DIR);
-        super.setUp();
     }
 
     private static void copy(InputStream in, OutputStream out) throws IOException {

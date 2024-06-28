@@ -39,8 +39,17 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     public FaultToleranceConfigurationDefinition() {
     }
 
+    protected FaultToleranceConfigurationDefinition(FaultToleranceConfigurationDefinition source) {
+        super(source);
+        this.parent = source.parent;
+    }
+
     public FaultToleranceConfigurationDefinition(CircuitBreakerDefinition parent) {
         this.parent = parent;
+    }
+
+    public FaultToleranceConfigurationDefinition copyDefinition() {
+        return new FaultToleranceConfigurationDefinition(this);
     }
 
     // Fluent API

@@ -38,6 +38,10 @@ public class ExpressionSubElementDefinition implements HasExpressionType {
     public ExpressionSubElementDefinition() {
     }
 
+    public ExpressionSubElementDefinition(ExpressionSubElementDefinition source) {
+        this.expressionType = source.expressionType != null ? source.expressionType.copyDefinition() : null;
+    }
+
     public ExpressionSubElementDefinition(ExpressionDefinition expressionType) {
         this.expressionType = expressionType;
     }
@@ -48,6 +52,10 @@ public class ExpressionSubElementDefinition implements HasExpressionType {
 
     public ExpressionSubElementDefinition(Predicate predicate) {
         this.expressionType = new ExpressionDefinition(predicate);
+    }
+
+    public ExpressionSubElementDefinition copyDefinition() {
+        return new ExpressionSubElementDefinition(this);
     }
 
     @Override

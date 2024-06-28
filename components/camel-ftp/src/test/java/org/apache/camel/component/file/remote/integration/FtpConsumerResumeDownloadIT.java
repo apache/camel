@@ -44,9 +44,7 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         // create file on FTP server to download
         Path myserver = service.ftpFile("myserver");
         createDirectory(myserver);

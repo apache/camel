@@ -70,6 +70,23 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     public SagaDefinition() {
     }
 
+    protected SagaDefinition(SagaDefinition source) {
+        super(source);
+        this.sagaServiceBean = source.sagaServiceBean;
+        this.sagaService = source.sagaService;
+        this.propagation = source.propagation;
+        this.completionMode = source.completionMode;
+        this.timeout = source.timeout;
+        this.compensation = source.compensation != null ? source.compensation.copyDefinition() : null;
+        this.completion = source.completion != null ? source.completion.copyDefinition() : null;
+        this.options = ProcessorDefinitionHelper.deepCopyDefinitions(source.options);
+    }
+
+    @Override
+    public SagaDefinition copyDefinition() {
+        return new SagaDefinition(this);
+    }
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;

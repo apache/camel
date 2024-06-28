@@ -116,13 +116,12 @@ public class ControlBusProducer extends DefaultAsyncProducer {
             Object result = null;
 
             try {
-                // create dummy exchange
-                Exchange dummy = ExchangeHelper.createCopy(exchange, true);
-
-                task = dummy.getIn().getMandatoryBody(String.class);
+                // create copy of exchange to not cause side effect
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
+                task = copy.getIn().getMandatoryBody(String.class);
                 if (task != null) {
                     Expression exp = language.createExpression(task);
-                    result = exp.evaluate(dummy, Object.class);
+                    result = exp.evaluate(copy, Object.class);
                 }
 
                 if (result != null && !getEndpoint().isAsync()) {

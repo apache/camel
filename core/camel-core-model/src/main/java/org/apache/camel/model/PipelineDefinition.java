@@ -36,6 +36,15 @@ public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
     public PipelineDefinition() {
     }
 
+    protected PipelineDefinition(PipelineDefinition source) {
+        super(source);
+    }
+
+    @Override
+    public PipelineDefinition copyDefinition() {
+        return new PipelineDefinition(this);
+    }
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;

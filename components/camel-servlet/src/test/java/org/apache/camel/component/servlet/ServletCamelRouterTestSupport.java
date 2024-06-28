@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.ServletException;
+
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
@@ -38,21 +40,17 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 
 public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
     public static final String CONTEXT = "/mycontext";
     protected String contextUrl;
-    protected boolean startCamelContext = true;
     protected int port;
     protected DeploymentManager manager;
     protected Undertow server;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void setupResources() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         DeploymentInfo servletBuilder = getDeploymentInfo();
         manager = Servlets.newContainer().addDeployment(servletBuilder);
@@ -63,17 +61,12 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
                 .setHandler(path).build();
         server.start();
         contextUrl = "http://localhost:" + port + CONTEXT;
-        if (startCamelContext) {
-            super.setUp();
-        }
+
+        testConfiguration().withAutoStartContext(true);
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        if (startCamelContext) {
-            super.tearDown();
-        }
+    public void cleanupResources() throws ServletException {
         server.stop();
         manager.stop();
         manager.undeploy();

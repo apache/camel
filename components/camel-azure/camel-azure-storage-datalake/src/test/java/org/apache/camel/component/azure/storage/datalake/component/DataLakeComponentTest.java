@@ -78,7 +78,7 @@ class DataLakeComponentTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getServiceClient());
         assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
         assertEquals("test.txt", endpoint.getConfiguration().getFileName());
-        assertEquals(endpoint.getConfiguration().getCredentialType(), CredentialType.AZURE_IDENTITY);
+        assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
@@ -93,7 +93,7 @@ class DataLakeComponentTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getServiceClient());
         assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
         assertEquals("test.txt", endpoint.getConfiguration().getFileName());
-        assertEquals(endpoint.getConfiguration().getCredentialType(), CredentialType.AZURE_SAS);
+        assertEquals(CredentialType.AZURE_SAS, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test

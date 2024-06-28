@@ -53,8 +53,21 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     public DelayDefinition() {
     }
 
+    protected DelayDefinition(DelayDefinition source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.asyncDelayed = source.asyncDelayed;
+        this.callerRunsWhenRejected = source.callerRunsWhenRejected;
+        this.executorService = source.executorService;
+    }
+
     public DelayDefinition(Expression delay) {
         super(delay);
+    }
+
+    @Override
+    public DelayDefinition copyDefinition() {
+        return new DelayDefinition(this);
     }
 
     @Override

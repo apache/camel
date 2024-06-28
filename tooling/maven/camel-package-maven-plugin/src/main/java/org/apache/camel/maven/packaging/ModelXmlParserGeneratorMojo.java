@@ -130,7 +130,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("mojo", this);
         ctx.put("model", model.stream().map(ClassWrapper::new).toList());
-        ctx.put("package", "org.apache.camel.xml.in");
+        ctx.put("package", PARSER_PACKAGE);
         return velocity("velocity/model-parser.vm", ctx);
     }
 

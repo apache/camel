@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.tracing.decorators;
 
-/**
- * This interface is used to copy {@link ProcessorDefinition ProcessorDefinitions} during instantiation of a route
- * template.
- */
-interface Copyable {
-    ProcessorDefinition<?> copy();
+public class ActiveMQ6SpanDecorator extends JmsSpanDecorator {
+
+    @Override
+    public String getComponent() {
+        return "activemq6";
+    }
+
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.activemq6.ActiveMQComponent";
+    }
+
 }

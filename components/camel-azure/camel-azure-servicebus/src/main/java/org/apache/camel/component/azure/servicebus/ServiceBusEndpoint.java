@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Send and receive messages to/from Azure Service Bus.
@@ -33,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "azure-servicebus:topicOrQueueName", category = {
                      Category.CLOUD, Category.MESSAGING },
              headersClass = ServiceBusConstants.class)
-public class ServiceBusEndpoint extends DefaultEndpoint {
+public class ServiceBusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private ServiceBusConfiguration configuration;
@@ -77,5 +81,26 @@ public class ServiceBusEndpoint extends DefaultEndpoint {
 
     public void setServiceBusClientFactory(ServiceBusClientFactory serviceBusClientFactory) {
         this.serviceBusClientFactory = serviceBusClientFactory;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getFullyQualifiedNamespace())) {
+            return configuration.getFullyQualifiedNamespace();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "servicebus";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getTopicOrQueueName() != null) {
+            return Map.of("topic-or-queue-name", configuration.getTopicOrQueueName());
+        }
+        return null;
     }
 }

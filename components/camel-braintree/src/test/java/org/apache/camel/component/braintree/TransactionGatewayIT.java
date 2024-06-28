@@ -31,7 +31,6 @@ import com.braintreegateway.TransactionRequest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -66,8 +65,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() {
+    public void doPostTearDown() {
         if (this.gateway != null) {
             for (String token : this.transactionIds) {
                 // TODO: cleanup

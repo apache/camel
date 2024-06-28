@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
@@ -48,13 +47,6 @@ public class RocketMQRouteIT extends RocketMQTestSupport {
     @BeforeAll
     static void beforeAll() throws Exception {
         rocketMQService.createTopic("START_TOPIC");
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
     }
 
     @Override

@@ -69,6 +69,19 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         totalRequestsMode();
     }
 
+    protected ThrottleDefinition(ThrottleDefinition source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.mode = source.mode;
+        this.correlationExpression
+                = source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
+        this.executorService = source.executorService;
+        this.asyncDelayed = source.asyncDelayed;
+        this.callerRunsWhenRejected = source.callerRunsWhenRejected;
+        this.rejectExecution = source.rejectExecution;
+        this.timePeriodMillis = source.timePeriodMillis;
+    }
+
     public ThrottleDefinition(Expression maximumRequestsPerPeriod) {
         super(maximumRequestsPerPeriod);
 
@@ -87,6 +100,11 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         setCorrelationExpression(cor);
 
         totalRequestsMode();
+    }
+
+    @Override
+    public ThrottleDefinition copyDefinition() {
+        return new ThrottleDefinition(this);
     }
 
     public ThrottleDefinition totalRequestsMode() {

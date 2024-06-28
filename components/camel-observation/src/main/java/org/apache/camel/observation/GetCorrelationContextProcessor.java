@@ -28,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GetCorrelationContextProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
     private static final Logger LOG = LoggerFactory.getLogger(GetCorrelationContextProcessor.class);
+
     private final String headerName;
     private final String keyName;
     private String id;
@@ -47,7 +49,7 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
                 String item = camelSpan.getContextPropagationItem(keyName);
                 exchange.getMessage().setHeader(headerName, item);
             } else {
-                LOG.warn("Observation: could not find managed span for exchange={}", exchange);
+                LOG.warn("Micrometer Observation: Cannot find managed span for exchange: {}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);

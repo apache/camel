@@ -47,6 +47,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
@@ -235,7 +236,8 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.headers.foo}", "abc");
         assertExpression("${header.foo}", "abc");
         assertExpression("${headers.foo}", "abc");
-        assertExpression("${routeId}", exchange.getFromRouteId());
+        assertExpression("${routeId}", ExchangeHelper.getRouteId(exchange));
+        assertExpression("${fromRouteId}", exchange.getFromRouteId());
         exchange.getExchangeExtension().setFromRouteId("myRouteId");
         assertExpression("${routeId}", "myRouteId");
     }

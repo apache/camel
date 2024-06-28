@@ -31,7 +31,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.angus.mail.imap.SortTerm;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,10 +52,8 @@ public class MailSortTermTest extends CamelTestSupport {
     private SearchTerm searchTerm = new SearchTermBuilder().subject("Camel").build();
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         prepareMailbox();
-        super.setUp();
     }
 
     @Test

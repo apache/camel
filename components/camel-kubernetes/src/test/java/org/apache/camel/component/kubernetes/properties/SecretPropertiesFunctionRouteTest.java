@@ -85,7 +85,7 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         if (client != null && sec != null) {
             try {
                 client.resource(sec).delete();
@@ -93,8 +93,6 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
                 // ignore
             }
         }
-
-        super.tearDown();
     }
 
     @Test

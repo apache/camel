@@ -15,8 +15,7 @@
 
 *{component-header}*
 
-The AWS2 Kinesis component supports consuming messages from and producing messages to Amazon Kinesis (no Batch supported)
-service.
+The AWS2 Kinesis component supports consuming messages from and producing messages to Amazon Kinesis service.
 
 The AWS2 Kinesis component also supports Synchronous and Asynchronous Client, which means you choose what fits best your requirements,
 so if you need the connection (client) to be async, there's a property of 'asyncClient' (in DSL also can be found) needs to be turned true.
@@ -74,6 +73,17 @@ all available shards (multiple shards consumption) of Amazon Kinesis, therefore,
 property in the DSL configuration empty, then it'll consume all available shards
 otherwise only the specified shard corresponding to the shardId will be consumed.
 
+== Batch Producer
+
+This component implements the Batch Producer.
+
+This allows you to send multiple messages in a single request to Amazon Kinesis.
+Messages with batch size more than 500 is allowed. Producer will split them into multiple requests.
+
+The batch type needs to implement the `Iterable` interface. For example, it can be a `List`, `Set` or any other collection type.
+The message type can be one or more of types `byte[]`, `ByteBuffer`, UTF-8 `String`, or `InputStream`. Other types are not supported.
+
+
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
@@ -117,6 +127,22 @@ that is the default when creating a new ClientConfiguration instance,
 however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
+
+=== AWS Kinesis KCL Consumer
+
+The component supports also the KCL (Kinesis Client Library) for consuming from a Kinesis Data Stream.
+
+To enable this feature you'll need to set two different parameter in your endpoint:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------
+from("aws2-kinesis://mykinesisstream?asyncClient=true&useDefaultCredentialsProvider=true&useKclConsumers=true")
+  .to("log:out?showAll=true");
+--------------------------------------------------------------------------------------------------------------------
+
+This feature will make possible to automatically checkpointing the Shard Iterations by combining the usage of KCL, DynamoDB Table and CloudWatch alarms.
+
+Everything will work out of the box, by simply using your AWS Credentials.
 
 == Dependencies
 

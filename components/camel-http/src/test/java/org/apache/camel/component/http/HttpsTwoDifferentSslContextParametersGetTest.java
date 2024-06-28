@@ -22,8 +22,6 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -45,22 +43,16 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
     @BindToRegistry("sslContextParameters2")
     private SSLContextParameters sslContextParameters2 = new SSLContextParameters();
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext()).create();
         localServer.start();
-
-        super.setUp();
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
+    public void cleanupResources() {
         if (localServer != null) {
             localServer.stop();
         }

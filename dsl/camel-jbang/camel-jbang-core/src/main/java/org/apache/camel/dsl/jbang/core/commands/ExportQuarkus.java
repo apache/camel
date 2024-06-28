@@ -26,12 +26,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -189,6 +192,13 @@ class ExportQuarkus extends Export {
             }
             if (routes != null) {
                 properties.setProperty("camel.main.routes-include-pattern", routes);
+            }
+        }
+
+        // CAMEL-20911 workaround due to a bug in CEQ 3.11 and 3.12
+        if (VersionHelper.isBetween(quarkusVersion, "3.11", "3.13")) {
+            if (!properties.containsKey("quarkus.camel.openapi.codegen.model-package")) {
+                properties.put("quarkus.camel.openapi.codegen.model-package", "org.apache.camel.quarkus");
             }
         }
     }
@@ -363,6 +373,19 @@ class ExportQuarkus extends Export {
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
+
+        if (additionalProperties != null) {
+            String properties = Arrays.stream(additionalProperties.split(","))
+                    .map(property -> {
+                        String[] keyValueProperty = property.split("=");
+                        return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
+                                keyValueProperty[0]);
+                    })
+                    .collect(Collectors.joining(System.lineSeparator()));
+            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), Matcher.quoteReplacement(properties));
+        } else {
+            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), "");
+        }
 
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");

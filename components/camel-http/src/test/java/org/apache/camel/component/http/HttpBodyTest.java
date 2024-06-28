@@ -26,8 +26,6 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.ContentType.IMAGE_JPEG;
@@ -41,9 +39,8 @@ public class HttpBodyTest extends BaseHttpTest {
     private HttpServer localServer;
     private String endpointUrl;
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void setupResources() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put(CONTENT_TYPE, IMAGE_JPEG.getMimeType());
 
@@ -57,14 +54,10 @@ public class HttpBodyTest extends BaseHttpTest {
         localServer.start();
 
         endpointUrl = getProtocolString() + "localhost:" + localServer.getLocalPort();
-
-        super.setUp();
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

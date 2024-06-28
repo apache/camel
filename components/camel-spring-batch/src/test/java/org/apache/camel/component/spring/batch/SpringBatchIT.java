@@ -19,7 +19,6 @@ package org.apache.camel.component.spring.batch;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -39,10 +38,7 @@ public class SpringBatchIT extends CamelSpringTestSupport {
     String[] inputMessages = new String[] { "foo", "bar", "baz", null };
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() {
         for (String message : inputMessages) {
             template.sendBody("seda:inputQueue", message);
         }

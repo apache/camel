@@ -74,6 +74,15 @@ public class ExpressionDefinition
     public ExpressionDefinition() {
     }
 
+    public ExpressionDefinition(ExpressionDefinition source) {
+        this.predicate = source.predicate;
+        this.expressionValue = source.expressionValue;
+        this.expressionType = source.expressionType != null ? source.expressionType.copyDefinition() : null;
+        this.id = source.id;
+        this.expression = source.expression;
+        this.trim = source.trim;
+    }
+
     public ExpressionDefinition(String expression) {
         this.expression = expression;
     }
@@ -91,6 +100,10 @@ public class ExpressionDefinition
         this.expression = builder.expression;
         this.trim = builder.trim;
         this.predicate = builder.predicate;
+    }
+
+    public ExpressionDefinition copyDefinition() {
+        return new ExpressionDefinition(this);
     }
 
     public static String getLabel(List<ExpressionDefinition> expressions) {

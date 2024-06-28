@@ -52,6 +52,14 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
         super("thrift");
     }
 
+    protected ThriftDataFormat(ThriftDataFormat builder) {
+        super(builder);
+        this.defaultInstance = builder.defaultInstance;
+        this.instanceClass = builder.instanceClass;
+        this.contentTypeFormat = builder.contentTypeFormat;
+        this.contentTypeHeader = builder.contentTypeHeader;
+    }
+
     public ThriftDataFormat(String instanceClass) {
         this();
         setInstanceClass(instanceClass);
@@ -69,6 +77,11 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
         this.instanceClass = builder.instanceClass;
         this.contentTypeFormat = builder.contentTypeFormat;
         this.contentTypeHeader = builder.contentTypeHeader;
+    }
+
+    @Override
+    public ThriftDataFormat copyDefinition() {
+        return new ThriftDataFormat(this);
     }
 
     public String getInstanceClass() {

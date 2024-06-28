@@ -23,7 +23,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -51,12 +50,18 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     private HttpContext testHttpContext;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public final void doPreSetup() throws Exception {
+        super.doPreSetup();
+
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();
         this.testHttpContext = new BasicHttpContext();
-        super.setUp();
+    }
+
+    @Override
+    protected final void doPostSetup() throws Exception {
+        super.doPostSetup();
+
         this.endpoint1 = context.getEndpoint(TEST_URI_1, HttpEndpoint.class);
         this.endpoint2 = context.getEndpoint(TEST_URI_2, HttpEndpoint.class);
     }

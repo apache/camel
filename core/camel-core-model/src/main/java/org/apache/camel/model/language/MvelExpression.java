@@ -34,12 +34,21 @@ public class MvelExpression extends TypedExpressionDefinition {
     public MvelExpression() {
     }
 
+    protected MvelExpression(MvelExpression source) {
+        super(source);
+    }
+
     public MvelExpression(String expression) {
         super(expression);
     }
 
     private MvelExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public MvelExpression copyDefinition() {
+        return new MvelExpression(this);
     }
 
     @Override

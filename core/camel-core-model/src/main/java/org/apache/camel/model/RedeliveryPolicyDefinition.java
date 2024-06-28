@@ -111,12 +111,47 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
         return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + "]";
     }
 
+    public RedeliveryPolicyDefinition() {
+    }
+
+    protected RedeliveryPolicyDefinition(RedeliveryPolicyDefinition source) {
+        this.maximumRedeliveries = source.maximumRedeliveries;
+        this.redeliveryDelay = source.redeliveryDelay;
+        this.asyncDelayedRedelivery = source.asyncDelayedRedelivery;
+        this.backOffMultiplier = source.backOffMultiplier;
+        this.useExponentialBackOff = source.useExponentialBackOff;
+        this.collisionAvoidanceFactor = source.collisionAvoidanceFactor;
+        this.useCollisionAvoidance = source.useCollisionAvoidance;
+        this.maximumRedeliveryDelay = source.maximumRedeliveryDelay;
+        this.retriesExhaustedLogLevel = source.retriesExhaustedLogLevel;
+        this.retryAttemptedLogLevel = source.retryAttemptedLogLevel;
+        this.retryAttemptedLogInterval = source.retryAttemptedLogInterval;
+        this.logRetryAttempted = source.logRetryAttempted;
+        this.logStackTrace = source.logStackTrace;
+        this.logRetryStackTrace = source.logRetryStackTrace;
+        this.logHandled = source.logHandled;
+        this.logNewException = source.logNewException;
+        this.logContinued = source.logContinued;
+        this.logExhausted = source.logExhausted;
+        this.logExhaustedMessageHistory = source.logExhaustedMessageHistory;
+        this.logExhaustedMessageBody = source.logExhaustedMessageBody;
+        this.disableRedelivery = source.disableRedelivery;
+        this.delayPattern = source.delayPattern;
+        this.allowRedeliveryWhileStopping = source.allowRedeliveryWhileStopping;
+        this.exchangeFormatterRef = source.exchangeFormatterRef;
+    }
+
+    @Deprecated
     public RedeliveryPolicyDefinition copy() {
         try {
             return (RedeliveryPolicyDefinition) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Could not clone: " + e, e);
         }
+    }
+
+    public RedeliveryPolicyDefinition copyDefinition() {
+        return new RedeliveryPolicyDefinition(this);
     }
 
     // Fluent API

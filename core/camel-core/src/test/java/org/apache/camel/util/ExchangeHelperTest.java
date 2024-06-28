@@ -26,17 +26,28 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExchangeHelperTest extends ContextTestSupport {
 
     protected Exchange exchange;
+
+    @Test
+    public void testGetDummy() {
+        Exchange one = ExchangeHelper.getDummy(context);
+        Exchange two = ExchangeHelper.getDummy(context);
+        assertSame(one, two);
+        assertNotSame(exchange, one);
+        assertNotSame(exchange, two);
+    }
 
     @Test
     public void testValidProperty() throws Exception {
@@ -211,6 +222,23 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertFalse(ExchangeHelper.isStreamCachingEnabled(exchange));
         exchange.getContext().getStreamCachingStrategy().setEnabled(true);
         assertTrue(ExchangeHelper.isStreamCachingEnabled(exchange));
+    }
+
+    @Test
+    public void testGetBodyAndResetStreamCache() {
+        InputStreamCache body = new InputStreamCache("Hello Camel Rider!".getBytes(UTF_8));
+        exchange.getMessage().setBody(body);
+
+        String first = ExchangeHelper.getBodyAndResetStreamCache(exchange, String.class);
+        String second = ExchangeHelper.getBodyAndResetStreamCache(exchange, String.class);
+
+        assertFalse(ObjectHelper.isEmpty(second), "second should not be null or empty");
+        assertEquals(first, second);
+
+        // Null checks..
+        exchange.getMessage().setBody(null);
+        String third = ExchangeHelper.getBodyAndResetStreamCache(exchange, String.class);
+        assertNull(third);
     }
 
     @Override

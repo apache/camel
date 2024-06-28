@@ -34,12 +34,21 @@ public class PythonExpression extends TypedExpressionDefinition {
     public PythonExpression() {
     }
 
+    protected PythonExpression(PythonExpression source) {
+        super(source);
+    }
+
     public PythonExpression(String expression) {
         super(expression);
     }
 
     private PythonExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public PythonExpression copyDefinition() {
+        return new PythonExpression(this);
     }
 
     @Override

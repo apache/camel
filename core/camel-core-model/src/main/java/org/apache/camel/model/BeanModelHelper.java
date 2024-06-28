@@ -27,9 +27,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ScriptingLanguage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.StringHelper;
@@ -78,16 +78,10 @@ public final class BeanModelHelper {
                 bindings.put("context", context);
                 target = slan.evaluate(def.getScript(), bindings, clazz);
             } else {
-                // exchange based languages needs a dummy exchange to be evaluated
-                ExchangeFactory ef = context.getCamelContextExtension().getExchangeFactory();
-                Exchange dummy = ef.create(false);
-                try {
-                    String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, def.getScript());
-                    Expression exp = lan.createExpression(text);
-                    target = exp.evaluate(dummy, clazz);
-                } finally {
-                    ef.release(dummy);
-                }
+                Exchange dummy = ExchangeHelper.getDummy(context);
+                String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, def.getScript());
+                Expression exp = lan.createExpression(text);
+                target = exp.evaluate(dummy, clazz);
             }
 
             // a bean must be created
@@ -215,9 +209,8 @@ public final class BeanModelHelper {
                 // and memorize so the script is only evaluated once and the local bean is the same
                 // if a route template refers to the local bean multiple times
                 routeTemplateContext.bind(def.getName(), clazz, Suppliers.memorize(() -> {
-                    ExchangeFactory ef = camelContext.getCamelContextExtension().getExchangeFactory();
-                    Exchange dummy = ef.create(false);
                     try {
+                        Exchange dummy = ExchangeHelper.getDummy(camelContext);
                         String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
                         if (text != null) {
                             Expression exp = lan.createExpression(text);
@@ -242,8 +235,6 @@ public final class BeanModelHelper {
                     } catch (Exception e) {
                         throw new IllegalStateException(
                                 "Cannot create bean: " + def.getType(), e);
-                    } finally {
-                        ef.release(dummy);
                     }
                 }));
             }

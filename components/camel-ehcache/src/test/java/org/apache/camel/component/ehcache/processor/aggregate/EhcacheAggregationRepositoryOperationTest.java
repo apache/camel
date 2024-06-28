@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,10 +42,8 @@ public class EhcacheAggregationRepositoryOperationTest extends EhcacheTestSuppor
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         aggregationRepository.stop();
-        super.tearDown();
     }
 
     private boolean exists(String key) {

@@ -50,6 +50,18 @@ public class OptimisticLockRetryPolicyDefinition {
     public OptimisticLockRetryPolicyDefinition() {
     }
 
+    protected OptimisticLockRetryPolicyDefinition(OptimisticLockRetryPolicyDefinition source) {
+        this.maximumRetries = source.maximumRetries;
+        this.retryDelay = source.retryDelay;
+        this.maximumRetryDelay = source.maximumRetryDelay;
+        this.exponentialBackOff = source.exponentialBackOff;
+        this.randomBackOff = source.randomBackOff;
+    }
+
+    public OptimisticLockRetryPolicyDefinition copyDefinition() {
+        return new OptimisticLockRetryPolicyDefinition(this);
+    }
+
     /**
      * Sets the maximum number of retries
      */

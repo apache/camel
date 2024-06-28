@@ -34,8 +34,7 @@ public class FromFtpMoveFileAbsoluteFolderRecursiveIT extends FtpServerTestSuppo
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         prepareFtpServer();
     }
 

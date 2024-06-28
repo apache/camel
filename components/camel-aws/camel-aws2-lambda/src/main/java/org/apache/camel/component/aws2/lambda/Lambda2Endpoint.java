@@ -22,10 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.lambda.client.Lambda2ClientFactory;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.lambda.LambdaClient;
@@ -36,7 +33,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS Lambda", syntax = "aws2-lambda:function",
              producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
              headersClass = Lambda2Constants.class)
-public class Lambda2Endpoint extends DefaultEndpoint {
+public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private LambdaClient awsLambdaClient;
 
@@ -101,5 +98,22 @@ public class Lambda2Endpoint extends DefaultEndpoint {
 
     public LambdaClient getAwsLambdaClient() {
         return awsLambdaClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "lambda";
     }
 }

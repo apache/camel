@@ -20,13 +20,14 @@ import org.apache.camel.*;
 import org.apache.camel.component.aws2.timestream.Timestream2AbstractEndpoint;
 import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
 import org.apache.camel.component.aws2.timestream.client.Timestream2ClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
 
 /**
  * Manage and invoke AWS Timestream.
  */
-public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint {
+public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint implements EndpointServiceLocation {
 
     /** AWS TimestreamQueryClient for TimestreamQuery Endpoint **/
     private TimestreamQueryClient awsTimestreamQueryClient;
@@ -66,6 +67,23 @@ public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint {
 
     public TimestreamQueryClient getAwsTimestreamQueryClient() {
         return awsTimestreamQueryClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!getConfiguration().isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getRegion())) {
+                return getConfiguration().getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(getConfiguration().getUriEndpointOverride())) {
+            return getConfiguration().getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "timestream-query";
     }
 
 }

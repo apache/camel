@@ -25,7 +25,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -71,9 +70,7 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
     }
 

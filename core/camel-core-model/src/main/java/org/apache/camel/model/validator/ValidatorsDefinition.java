@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -39,6 +40,13 @@ public class ValidatorsDefinition {
             @XmlElement(name = "predicateValidator", type = PredicateValidatorDefinition.class),
             @XmlElement(name = "customValidator", type = CustomValidatorDefinition.class) })
     private List<ValidatorDefinition> validators;
+
+    public ValidatorsDefinition() {
+    }
+
+    protected ValidatorsDefinition(ValidatorsDefinition source) {
+        this.validators = ProcessorDefinitionHelper.deepCopyDefinitions(source.validators);
+    }
 
     /**
      * The configured transformers

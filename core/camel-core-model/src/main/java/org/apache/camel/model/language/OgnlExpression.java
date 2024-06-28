@@ -34,12 +34,21 @@ public class OgnlExpression extends TypedExpressionDefinition {
     public OgnlExpression() {
     }
 
+    protected OgnlExpression(OgnlExpression source) {
+        super(source);
+    }
+
     public OgnlExpression(String expression) {
         super(expression);
     }
 
     private OgnlExpression(Builder builder) {
         super(builder);
+    }
+
+    @Override
+    public OgnlExpression copyDefinition() {
+        return new OgnlExpression(this);
     }
 
     @Override

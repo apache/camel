@@ -36,6 +36,15 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
     public OtherwiseDefinition() {
     }
 
+    protected OtherwiseDefinition(OtherwiseDefinition source) {
+        super(source);
+    }
+
+    @Override
+    public OtherwiseDefinition copyDefinition() {
+        return new OtherwiseDefinition(this);
+    }
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;

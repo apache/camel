@@ -37,8 +37,18 @@ public class InterceptFromDefinition extends InterceptDefinition {
     public InterceptFromDefinition() {
     }
 
+    public InterceptFromDefinition(InterceptFromDefinition source) {
+        super(source);
+        this.uri = source.uri;
+    }
+
     public InterceptFromDefinition(String uri) {
         this.uri = uri;
+    }
+
+    @Override
+    public InterceptFromDefinition copyDefinition() {
+        return new InterceptFromDefinition(this);
     }
 
     @Override

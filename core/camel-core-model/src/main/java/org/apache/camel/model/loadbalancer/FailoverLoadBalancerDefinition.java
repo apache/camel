@@ -36,6 +36,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "failoverLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
+
     @XmlTransient
     private List<Class<?>> exceptionTypes = new ArrayList<>();
 
@@ -50,6 +51,20 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     private String maximumFailoverAttempts;
 
     public FailoverLoadBalancerDefinition() {
+    }
+
+    protected FailoverLoadBalancerDefinition(FailoverLoadBalancerDefinition source) {
+        super(source);
+        this.exceptionTypes = new ArrayList<>(source.exceptionTypes);
+        this.exceptions = new ArrayList<>(source.exceptions);
+        this.roundRobin = source.roundRobin;
+        this.sticky = source.sticky;
+        this.maximumFailoverAttempts = source.maximumFailoverAttempts;
+    }
+
+    @Override
+    public FailoverLoadBalancerDefinition copyDefinition() {
+        return new FailoverLoadBalancerDefinition(this);
     }
 
     public List<String> getExceptions() {

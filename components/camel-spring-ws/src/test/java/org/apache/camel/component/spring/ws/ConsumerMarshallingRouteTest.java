@@ -25,7 +25,6 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +47,7 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         context.setTracing(true);
     }
 

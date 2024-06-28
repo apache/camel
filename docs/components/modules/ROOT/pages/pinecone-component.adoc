@@ -1,1 +1,1 @@
-../../../../../components/camel-pinecone/src/main/docs/pinecone-component.adoc
+../../../../../components/camel-ai/camel-pinecone/src/main/docs/pinecone-component.adoc

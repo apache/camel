@@ -16,22 +16,20 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.SshServer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 
 public class SshComponentTestSupport extends CamelTestSupport {
     protected SshServer sshd;
     protected int port;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
 
         sshd = SshServer.setUpDefaultServer();
@@ -41,8 +39,6 @@ public class SshComponentTestSupport extends CamelTestSupport {
         sshd.setPasswordAuthenticator((username, password, session) -> true);
         sshd.setPublickeyAuthenticator((username, key, session) -> true);
         sshd.start();
-
-        super.setUp();
     }
 
     protected String getHostKey() {
@@ -50,10 +46,7 @@ public class SshComponentTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-
+    public void doPostTearDown() throws IOException, InterruptedException {
         if (sshd != null) {
             sshd.stop(true);
             Thread.sleep(50);

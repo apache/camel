@@ -151,8 +151,6 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private String writeBulkLoader(String fqn, List<MethodInfo> converters, boolean base) {
-        StringBuilder writer = new StringBuilder();
-
         // sort by to so we can group them together
         converters.sort((o1, o2) -> {
             int sort = o1.returnType().name().compareTo(o2.returnType().name());

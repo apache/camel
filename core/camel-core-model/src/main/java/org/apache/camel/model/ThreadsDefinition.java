@@ -77,6 +77,26 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
         this.threadName = "Threads";
     }
 
+    protected ThreadsDefinition(ThreadsDefinition source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.executorService = source.executorService;
+        this.poolSize = source.poolSize;
+        this.maxPoolSize = source.maxPoolSize;
+        this.keepAliveTime = source.keepAliveTime;
+        this.timeUnit = source.timeUnit;
+        this.maxQueueSize = source.maxQueueSize;
+        this.allowCoreThreadTimeOut = source.allowCoreThreadTimeOut;
+        this.threadName = source.threadName;
+        this.rejectedPolicy = source.rejectedPolicy;
+        this.callerRunsWhenRejected = source.callerRunsWhenRejected;
+    }
+
+    @Override
+    public ThreadsDefinition copyDefinition() {
+        return new ThreadsDefinition(this);
+    }
+
     @Override
     public String getShortName() {
         return "threads";

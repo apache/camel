@@ -73,12 +73,6 @@
             <version>${djl-version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>ai.djl.mxnet</groupId>
-            <artifactId>mxnet-native-auto</artifactId>
-            <version>${djl-mxnet-native-version}</version>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- Pytorch Engine -->
         <dependency>
@@ -92,12 +86,6 @@
             <artifactId>pytorch-engine</artifactId>
             <version>${djl-version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ai.djl.pytorch</groupId>
-            <artifactId>pytorch-native-auto</artifactId>
-            <version>${djl-pytorch-native-version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- Tensorflow Engine -->
@@ -118,12 +106,6 @@
             <artifactId>tensorflow-api</artifactId>
             <version>${djl-version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ai.djl.tensorflow</groupId>
-            <artifactId>tensorflow-native-auto</artifactId>
-            <version>${djl-tensorflow-native-version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- testing -->

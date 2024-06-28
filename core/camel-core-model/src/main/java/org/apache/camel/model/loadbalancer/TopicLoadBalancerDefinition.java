@@ -34,6 +34,15 @@ public class TopicLoadBalancerDefinition extends LoadBalancerDefinition {
     public TopicLoadBalancerDefinition() {
     }
 
+    protected TopicLoadBalancerDefinition(TopicLoadBalancerDefinition source) {
+        super(source);
+    }
+
+    @Override
+    public TopicLoadBalancerDefinition copyDefinition() {
+        return new TopicLoadBalancerDefinition(this);
+    }
+
     @Override
     public String toString() {
         return "TopicLoadBalancer";

@@ -62,9 +62,7 @@ public class FtpBadLoginMockNoopConnectionLeakIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
         endpoint.setFtpClient(new FTPClient() {
             @Override

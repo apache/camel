@@ -18,7 +18,6 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
@@ -54,10 +53,7 @@ public class JettyWithXPathChoiceTest extends BaseJettyTest {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void doPostSetup() throws Exception {
         x = getMockEndpoint("mock:x");
         y = getMockEndpoint("mock:y");
         z = getMockEndpoint("mock:z");

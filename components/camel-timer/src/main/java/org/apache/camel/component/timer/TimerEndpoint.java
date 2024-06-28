@@ -47,19 +47,19 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     @UriPath
     @Metadata(required = true)
     private String timerName;
-    @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period.",
-              javaType = "java.time.Duration")
+    @UriParam(defaultValue = "1000", javaType = "java.time.Duration")
     private long period = 1000;
-    @UriParam(defaultValue = "1000", description = "Delay before first event is triggered.", javaType = "java.time.Duration")
+    @UriParam(defaultValue = "1000", javaType = "java.time.Duration")
     private long delay = 1000;
     @UriParam
     private long repeatCount;
-    @UriParam(defaultValue = "TRACE", label = "consumer,scheduler",
-              description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
-    private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
     @UriParam
     private boolean fixedRate;
-    @UriParam(defaultValue = "true", label = "advanced")
+    @UriParam
+    private boolean includeMetadata;
+    @UriParam(defaultValue = "TRACE", label = "consumer,scheduler")
+    private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean daemon = true;
     @UriParam(label = "advanced")
     private Date time;
@@ -67,10 +67,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private String pattern;
     @UriParam(label = "advanced")
     private Timer timer;
-    @UriParam
-    private boolean includeMetadata;
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+    @UriParam(label = "advanced")
     private boolean synchronous;
 
     public TimerEndpoint() {
@@ -190,6 +187,10 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return runLoggingLevel;
     }
 
+    /**
+     * The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level
+     * for that.
+     */
     @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     public void setRunLoggingLevel(LoggingLevel runLoggingLevel) {
         this.runLoggingLevel = runLoggingLevel;
@@ -201,7 +202,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * If greater than 0, generate periodic events every period milliseconds.
+     * Generate periodic events every period. Must be zero or positive value.
      * <p/>
      * The default value is 1000.
      */
@@ -279,10 +280,14 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.includeMetadata = includeMetadata;
     }
 
+    @ManagedAttribute(description = "Whether synchronous processing should be strictly used")
     public boolean isSynchronous() {
         return synchronous;
     }
 
+    /**
+     * Sets whether synchronous processing should be strictly used
+     */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
     }

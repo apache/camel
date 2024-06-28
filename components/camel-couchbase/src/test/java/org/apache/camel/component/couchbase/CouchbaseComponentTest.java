@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,10 +30,8 @@ public class CouchbaseComponentTest extends CamelTestSupport {
 
     private CouchbaseComponent component;
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         component = context.getComponent("couchbase", CouchbaseComponent.class);
     }
 

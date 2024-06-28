@@ -43,6 +43,12 @@ public class JoorExpression extends TypedExpressionDefinition {
     public JoorExpression() {
     }
 
+    protected JoorExpression(JoorExpression source) {
+        super(source);
+        this.preCompile = source.preCompile;
+        this.singleQuotes = source.singleQuotes;
+    }
+
     public JoorExpression(String expression) {
         super(expression);
     }
@@ -51,6 +57,11 @@ public class JoorExpression extends TypedExpressionDefinition {
         super(builder);
         this.preCompile = builder.preCompile;
         this.singleQuotes = builder.singleQuotes;
+    }
+
+    @Override
+    public JoorExpression copyDefinition() {
+        return new JoorExpression(this);
     }
 
     @Override

@@ -67,6 +67,19 @@ public class BatchResequencerConfig extends ResequencerConfig {
         this.batchTimeout = Long.toString(batchTimeout);
     }
 
+    protected BatchResequencerConfig(BatchResequencerConfig source) {
+        this.batchSize = source.batchSize;
+        this.batchTimeout = source.batchTimeout;
+        this.allowDuplicates = source.allowDuplicates;
+        this.reverse = source.reverse;
+        this.ignoreInvalidExchanges = source.ignoreInvalidExchanges;
+    }
+
+    @Override
+    public BatchResequencerConfig copyDefinition() {
+        return new BatchResequencerConfig(this);
+    }
+
     /**
      * Returns a new {@link BatchResequencerConfig} instance using default values for <code>batchSize</code> (100) and
      * <code>batchTimeout</code> (1000L).

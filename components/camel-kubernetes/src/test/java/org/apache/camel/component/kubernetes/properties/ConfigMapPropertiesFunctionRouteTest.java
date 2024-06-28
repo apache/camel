@@ -84,7 +84,7 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         if (client != null && cm != null) {
             try {
                 client.resource(cm).delete();
@@ -92,8 +92,6 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
                 // ignore
             }
         }
-
-        super.tearDown();
     }
 
     @Test

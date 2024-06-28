@@ -85,7 +85,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
                 // parameters using raw syntax: RAW(value)
                 // should have the token removed, so its only the value we have in parameters, as we are about to create
                 // an endpoint and want to have the parameter values without the RAW tokens
-                URISupport.resolveRawParameterValues(map);
+                RawParameterHelper.resolveRawParameterValues(exchange.getContext(), map);
             }
             // okay so only add the known properties as they are the non lenient properties
             properties = new LinkedHashMap<>();
@@ -116,7 +116,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
                 // parameters using raw syntax: RAW(value)
                 // should have the token removed, so its only the value we have in parameters, as we are about to create
                 // an endpoint and want to have the parameter values without the RAW tokens
-                URISupport.resolveRawParameterValues(map);
+                RawParameterHelper.resolveRawParameterValues(exchange.getContext(), map);
             }
             properties = new LinkedHashMap<>();
             map.forEach((k, v) -> {
@@ -138,7 +138,6 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     public String asEndpointUri(Exchange exchange, String uri, Map<String, Object> properties) throws Exception {
         String query = URISupport.createQueryString(properties, false);
-
         return StringHelper.before(uri, "?", uri) + "?" + query;
     }
 

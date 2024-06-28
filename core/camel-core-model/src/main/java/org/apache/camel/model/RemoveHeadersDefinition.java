@@ -46,6 +46,13 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
     public RemoveHeadersDefinition() {
     }
 
+    protected RemoveHeadersDefinition(RemoveHeadersDefinition source) {
+        super(source);
+        this.excludePatterns = source.excludePatterns;
+        this.pattern = source.pattern;
+        this.excludePattern = source.excludePattern;
+    }
+
     public RemoveHeadersDefinition(String pattern) {
         setPattern(pattern);
     }
@@ -53,6 +60,11 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
     public RemoveHeadersDefinition(String pattern, String... excludePatterns) {
         setPattern(pattern);
         setExcludePatterns(excludePatterns);
+    }
+
+    @Override
+    public RemoveHeadersDefinition copyDefinition() {
+        return new RemoveHeadersDefinition(this);
     }
 
     @Override

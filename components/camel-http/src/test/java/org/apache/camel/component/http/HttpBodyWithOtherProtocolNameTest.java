@@ -22,9 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 public class HttpBodyWithOtherProtocolNameTest extends HttpBodyTest {
 
     @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setupProtocol() {
         setProtocolString("newHttp://");
     }
 

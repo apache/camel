@@ -28,6 +28,10 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestNameExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +39,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 public class FileWatchComponentTestBase extends CamelTestSupport {
+
+    @RegisterExtension
+    @Order(10)
+    TestNameExtension testNameExtension = new TestNameExtension();
 
     @TempDir
     public Path folder;
@@ -49,21 +57,20 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         cleanTestDir(new File(testPath()));
-        new File(testPath()).mkdirs();
+        Files.createDirectories(Path.of(testPath()));
         for (int i = 0; i < 10; i++) {
-            File newFile = new File(testPath(), getCurrentTestName() + "-" + i);
+            File newFile = new File(testPath(), testNameExtension.getCurrentTestName() + "-" + i);
             assumeTrue(newFile.createNewFile());
             testFiles.add(newFile.toPath());
         }
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    @AfterEach
+    public void cleanupTestDir() throws Exception {
         cleanTestDir(new File(testPath()));
     }
 
-    private void cleanTestDir(File file) throws Exception {
+    private static void cleanTestDir(File file) throws Exception {
         if (file == null || !file.exists() || file.listFiles() == null) {
             return;
         }
@@ -86,7 +93,7 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
         try {
             return folder.toRealPath()
                    + folder.getFileSystem().getSeparator()
-                   + getClass().getSimpleName() + "_" + getCurrentTestName()
+                   + getClass().getSimpleName() + "_" + testNameExtension.getCurrentTestName()
                    + folder.getFileSystem().getSeparator();
         } catch (IOException e) {
             throw new IOError(e);

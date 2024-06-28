@@ -31,7 +31,10 @@ import org.slf4j.LoggerFactory;
  serviceCall("myService", "http:myService.host:myService.port/foo") -> http:hostname:port/foo
  serviceCall("myService", "netty:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
  * </pre>
+ *
+ * @deprecated since 4.7
  */
+@Deprecated(since = "4.7")
 public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceCallExpression.class);
 

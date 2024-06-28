@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.lang.annotation.Documented;
@@ -31,5 +30,13 @@ import org.apache.camel.spi.annotations.ServiceFactory;
 @ServiceFactory("camel-jbang-plugin")
 public @interface CamelJBangPlugin {
 
-    String value();
+    /**
+     * Name of plugin
+     */
+    String name();
+
+    /**
+     * First version this plugin was released.
+     */
+    String firstVersion();
 }

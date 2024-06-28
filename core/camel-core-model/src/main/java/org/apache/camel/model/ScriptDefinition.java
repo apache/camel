@@ -35,8 +35,17 @@ public class ScriptDefinition extends ExpressionNode {
     public ScriptDefinition() {
     }
 
+    private ScriptDefinition(ScriptDefinition source) {
+        super(source);
+    }
+
     public ScriptDefinition(Expression expression) {
         super(expression);
+    }
+
+    @Override
+    public ScriptDefinition copyDefinition() {
+        return new ScriptDefinition(this);
     }
 
     @Override

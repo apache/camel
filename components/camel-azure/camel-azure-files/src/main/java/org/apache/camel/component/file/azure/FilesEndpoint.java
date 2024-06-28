@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.azure;
 
 import java.time.Duration;
+import java.util.Map;
 
 import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Category;
@@ -29,6 +30,7 @@ import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.azure.strategy.FilesProcessStrategyFactory;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -49,7 +51,7 @@ import org.apache.camel.util.ObjectHelper;
                               + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
                               + "bufferSize,moveExisting,username,host")
 @ManagedResource(description = "Camel Azure Files endpoint")
-public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
+public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements EndpointServiceLocation {
 
     // without hiding configuration field from type GenericFileEndpoint<ShareFileItem>
     // camel-package-maven-plugin: Missing @UriPath on endpoint
@@ -180,4 +182,24 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> {
         return Duration.ofDays(10); // block
     }
 
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getShare())) {
+            return configuration.getShare();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "azure-files";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getAccount() != null) {
+            return Map.of("account", configuration.getAccount());
+        }
+        return null;
+    }
 }

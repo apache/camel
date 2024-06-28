@@ -27,7 +27,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.util.SystemReader;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
@@ -59,18 +58,15 @@ public class GitTestSupport extends CamelTestSupport {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         File localPath = File.createTempFile(gitLocalRepo, "");
         localPath.delete();
         File path = new File(gitLocalRepo);
         path.deleteOnExit();
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() {
         File path = new File(gitLocalRepo);
         deleteDirectory(path);
     }

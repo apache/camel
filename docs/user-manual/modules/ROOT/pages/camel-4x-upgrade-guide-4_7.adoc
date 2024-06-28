@@ -33,6 +33,14 @@ The `SupervisingRouteController` has now been pre-configured to report `DOWN` du
 giving up starting a route. It is the `UnhealthyOnExhausted` and `UnhealthyOnRestarting` options that have been changed to be default `true`.
 To have previous behavior you can set these options to `false`.
 
+== camel-cloud
+
+The camel-cloud component has been deprecated.
+
+=== camel-crypto
+
+PGP dataformat functionality was extracted from `camel-crypto` JAR and placed into `camel-crypto-pgp`.
+
 === DSL
 
 The WireTap EIP in copy mode, will now do a deep-copy if the message body is of `StreamCache` type to make access to the message body thread-safe.
@@ -240,3 +248,6 @@ via `camel.debug.` options in `application.properties`.
 The `camel-debug-starter` now has `camel.debug.enabled=true` by default to let the debugger be installed out of the box,
 by having the JAR on the classpath (as intended). You can turn this off via `camel.debug.enabled=false`.
 
+=== Camel Kotlin deprecation
+
+Camel Kotlin DSL is deprecated.

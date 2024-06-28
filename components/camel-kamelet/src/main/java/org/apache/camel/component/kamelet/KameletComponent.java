@@ -56,7 +56,8 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_UUID;
  */
 @Component(Kamelet.SCHEME)
 public class KameletComponent extends DefaultComponent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KameletComponent.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(KameletComponent.class);
 
     private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
 
@@ -422,12 +423,12 @@ public class KameletComponent extends DefaultComponent {
             final String uuid = (String) endpoint.getKameletProperties().get(PARAM_UUID);
 
             if (context.getRouteTemplateDefinition(templateId) == null && loc != null) {
-                LOGGER.debug("Loading route template={} from {}", templateId, loc);
+                LOG.debug("Loading route template={} from {}", templateId, loc);
                 RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), routeTemplateLoaderListener, templateId,
                         loc);
             }
 
-            LOGGER.debug("Creating route from template={} and id={}", templateId, routeId);
+            LOG.debug("Creating route from template={} and id={}", templateId, routeId);
             try {
                 String id = context.addRouteFromTemplate(routeId, templateId, uuid, endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
@@ -439,9 +440,9 @@ public class KameletComponent extends DefaultComponent {
                     context.startRouteDefinitions(Collections.singletonList(def));
                 }
 
-                LOGGER.debug("Route with id={} created from template={}", id, templateId);
+                LOG.debug("Route with id={} created from template={}", id, templateId);
             } catch (Exception e) {
-                throw new KameletNotFoundException(templateId, loc, e);
+                throw new FailedToCreateKameletException(templateId, loc, e);
             }
         }
 
@@ -473,7 +474,7 @@ public class KameletComponent extends DefaultComponent {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             } else {
-                LOGGER.debug("Tracking route template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
+                LOG.debug("Tracking route template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
                 this.endpoints.add(endpoint);
             }
         }

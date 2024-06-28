@@ -82,8 +82,20 @@ public class ListProcess extends ProcessWatchCommand {
                         Map<String, ?> stats = context.getMap("statistics");
                         if (stats != null) {
                             row.total = stats.get("exchangesTotal").toString();
-                            row.inflight = stats.get("exchangesInflight").toString();
+                            Object num = stats.get("remoteExchangesTotal");
+                            if (num != null) {
+                                row.totalRemote = num.toString();
+                            }
                             row.failed = stats.get("exchangesFailed").toString();
+                            num = stats.get("remoteExchangesFailed");
+                            if (num != null) {
+                                row.failedRemote = num.toString();
+                            }
+                            row.inflight = stats.get("exchangesInflight").toString();
+                            num = stats.get("remoteExchangesInflight");
+                            if (num != null) {
+                                row.inflightRemote = num.toString();
+                            }
                         }
                         rows.add(row);
                     }
@@ -105,13 +117,34 @@ public class ListProcess extends ProcessWatchCommand {
                         new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                                 .with(r -> extractState(r.state)),
                         new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                        new Column().header("TOTAL").with(r -> r.total),
-                        new Column().header("FAIL").with(r -> r.failed),
-                        new Column().header("INFLIGHT").with(r -> r.inflight))));
+                        new Column().header("TOTAL").with(this::getTotal),
+                        new Column().header("FAIL").with(this::getFailed),
+                        new Column().header("INFLIGHT").with(this::getInflight))));
             }
         }
 
         return 0;
+    }
+
+    private String getTotal(Row r) {
+        if (r.totalRemote != null) {
+            return r.totalRemote + "/" + r.total;
+        }
+        return r.total;
+    }
+
+    private String getFailed(Row r) {
+        if (r.failedRemote != null) {
+            return r.failedRemote + "/" + r.failed;
+        }
+        return r.failed;
+    }
+
+    private String getInflight(Row r) {
+        if (r.inflightRemote != null) {
+            return r.inflightRemote + "/" + r.inflight;
+        }
+        return r.inflight;
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -141,8 +174,11 @@ public class ListProcess extends ProcessWatchCommand {
         String ago;
         long uptime;
         String total;
+        String totalRemote;
         String failed;
+        String failedRemote;
         String inflight;
+        String inflightRemote;
     }
 
 }

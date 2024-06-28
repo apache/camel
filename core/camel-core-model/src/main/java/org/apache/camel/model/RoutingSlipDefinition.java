@@ -57,6 +57,13 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         }
     }
 
+    private RoutingSlipDefinition(RoutingSlipDefinition source) {
+        super(source);
+        this.uriDelimiter = source.uriDelimiter;
+        this.ignoreInvalidEndpoints = source.ignoreInvalidEndpoints;
+        this.cacheSize = source.cacheSize;
+    }
+
     public RoutingSlipDefinition(String headerName) {
         this(headerName, DEFAULT_DELIMITER);
     }
@@ -73,6 +80,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
 
     public RoutingSlipDefinition(Expression expression) {
         this(expression, DEFAULT_DELIMITER);
+    }
+
+    @Override
+    public RoutingSlipDefinition copyDefinition() {
+        return new RoutingSlipDefinition<>(this);
     }
 
     @Override

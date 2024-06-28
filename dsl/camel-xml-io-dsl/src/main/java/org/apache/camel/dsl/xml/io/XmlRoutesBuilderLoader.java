@@ -120,51 +120,67 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configure() throws Exception {
                 String resourceLocation = input.getLocation();
-                switch (xmlInfo.getRootElementName()) {
-                    case "beans", "blueprint", "camel" -> {
-                        BeansDefinition def = camelAppCache.get(resourceLocation);
-                        if (def != null) {
-                            configureCamel(def);
-                        } else {
+                try {
+                    switch (xmlInfo.getRootElementName()) {
+                        case "beans", "blueprint", "camel" -> {
+                            BeansDefinition def = camelAppCache.get(resourceLocation);
+                            if (def != null) {
+                                configureCamel(def);
+                            } else {
+                                new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                                        .parseBeansDefinition()
+                                        .ifPresent(this::configureCamel);
+                            }
+                        }
+                        case "routeTemplate", "routeTemplates" ->
                             new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                    .parseBeansDefinition()
-                                    .ifPresent(this::configureCamel);
+                                    .parseRouteTemplatesDefinition()
+                                    .ifPresent(this::setRouteTemplateCollection);
+                        case "templatedRoutes", "templatedRoute" ->
+                            new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                                    .parseTemplatedRoutesDefinition()
+                                    .ifPresent(this::setTemplatedRouteCollection);
+                        case "rests", "rest" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseRestsDefinition()
+                                .ifPresent(this::setRestCollection);
+                        case "routes", "route" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseRoutesDefinition()
+                                .ifPresent(this::addRoutes);
+                        default -> {
                         }
                     }
-                    case "routeTemplate", "routeTemplates" ->
-                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                .parseRouteTemplatesDefinition()
-                                .ifPresent(this::setRouteTemplateCollection);
-                    case "templatedRoutes", "templatedRoute" ->
-                        new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                .parseTemplatedRoutesDefinition()
-                                .ifPresent(this::setTemplatedRouteCollection);
-                    case "rests", "rest" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                            .parseRestsDefinition()
-                            .ifPresent(this::setRestCollection);
-                    case "routes", "route" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                            .parseRoutesDefinition()
-                            .ifPresent(this::addRoutes);
-                    default -> {
-                    }
+                } finally {
+                    // knowing this is the last time an XML may have been parsed, we can clear the cache
+                    // (route may get reloaded later)
+                    resourceCache.remove(resourceLocation);
+                    xmlInfoCache.remove(resourceLocation);
+                    camelAppCache.remove(resourceLocation);
+                    preparseDone.remove(resourceLocation);
                 }
-
-                // knowing this is the last time an XML may have been parsed, we can clear the cache
-                // (route may get reloaded later)
-                resourceCache.remove(resourceLocation);
-                xmlInfoCache.remove(resourceLocation);
-                camelAppCache.remove(resourceLocation);
-                preparseDone.remove(resourceLocation);
             }
 
             @Override
             public void configuration() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
-                    case "routeConfigurations", "routeConfiguration" ->
+                    // load any route configuration before that may be nested under camel/spring/blueprint root tag
+                    case "beans", "blueprint", "camel", "routeConfigurations", "routeConfiguration": {
+                        BeansDefinition bp = camelAppCache.get(input.getLocation());
+                        if (bp != null) {
+                            bp.getRouteConfigurations().forEach(rc -> {
+                                rc.setResource(getResource());
+                                List<RouteConfigurationDefinition> list = new ArrayList<>();
+                                list.add(rc);
+                                RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
+                                def.setResource(getResource());
+                                def.setRouteConfigurations(list);
+                                addConfigurations(def);
+                            });
+                            // remove the configurations we have added
+                            bp.getRouteConfigurations().clear();
+                        }
                         new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRouteConfigurationsDefinition()
                                 .ifPresent(this::addConfigurations);
-                    default -> {
                     }
                 }
             }

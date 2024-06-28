@@ -39,12 +39,22 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
     public SetExchangePatternDefinition() {
     }
 
+    protected SetExchangePatternDefinition(SetExchangePatternDefinition source) {
+        super(source);
+        this.pattern = source.pattern;
+    }
+
     public SetExchangePatternDefinition(ExchangePattern pattern) {
         this(pattern.name());
     }
 
     public SetExchangePatternDefinition(String pattern) {
         this.pattern = pattern;
+    }
+
+    @Override
+    public SetExchangePatternDefinition copyDefinition() {
+        return new SetExchangePatternDefinition(this);
     }
 
     public SetExchangePatternDefinition pattern(ExchangePattern pattern) {

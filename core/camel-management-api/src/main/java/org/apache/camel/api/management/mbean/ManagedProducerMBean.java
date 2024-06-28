@@ -26,4 +26,7 @@ public interface ManagedProducerMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Singleton")
     boolean isSingleton();
 
+    @ManagedAttribute(description = "Whether this producer connects to remote or local systems")
+    boolean isRemoteEndpoint();
+
 }

@@ -21,9 +21,11 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Manage and invoke Google Cloud Functions
@@ -35,7 +37,7 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "google-functions:functionName", category = {
                      Category.CLOUD },
              producerOnly = true, headersClass = GoogleCloudFunctionsConstants.class)
-public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
+public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleCloudFunctionsConfiguration configuration;
@@ -90,4 +92,18 @@ public class GoogleCloudFunctionsEndpoint extends DefaultEndpoint {
         return cloudFunctionsClient;
     }
 
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getFunctionName()) && ObjectHelper.isNotEmpty(
+                ObjectHelper.isNotEmpty(configuration.getProject()) && ObjectHelper.isNotEmpty(configuration.getLocation()))) {
+            return getServiceProtocol() + ":" + configuration.getProject() + ":" + configuration.getFunctionName() + ":"
+                   + configuration.getLocation();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "functions";
+    }
 }

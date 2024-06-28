@@ -32,7 +32,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.ResponseContent;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,11 +45,8 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     private Map<String, Object> parameters;
     private ComponentVerifierExtension verifier;
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
+    public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getHttpProcessor())
                 .register("/verify", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
@@ -58,19 +54,20 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         localServer.start();
 
-        RestComponent component = context().getComponent("rest", RestComponent.class);
-        verifier = component.getVerifier();
-
         parameters = new HashMap<>();
         parameters.put("producerComponentName", "http");
         parameters.put("host", "http://localhost:" + localServer.getLocalPort());
         parameters.put("path", "verify");
     }
 
-    @AfterEach
+    @BeforeEach
+    public void setupVerifier() {
+        RestComponent component = context().getComponent("rest", RestComponent.class);
+        verifier = component.getVerifier();
+    }
+
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

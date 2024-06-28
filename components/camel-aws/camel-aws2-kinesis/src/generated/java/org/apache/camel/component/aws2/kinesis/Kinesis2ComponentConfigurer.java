@@ -42,7 +42,11 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cborenabled":
         case "cborEnabled": getOrCreateConfiguration(target).setCborEnabled(property(camelContext, boolean.class, value)); return true;
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": getOrCreateConfiguration(target).setCloudWatchAsyncClient(property(camelContext, software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2Configuration.class, value)); return true;
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": getOrCreateConfiguration(target).setDynamoDbAsyncClient(property(camelContext, software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
@@ -82,6 +86,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "usekclconsumers":
+        case "useKclConsumers": getOrCreateConfiguration(target).setUseKclConsumers(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesessioncredentials":
@@ -110,7 +116,11 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return boolean.class;
         case "cborenabled":
         case "cborEnabled": return boolean.class;
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": return software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient.class;
         case "configuration": return org.apache.camel.component.aws2.kinesis.Kinesis2Configuration.class;
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": return software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
@@ -150,6 +160,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
+        case "usekclconsumers":
+        case "useKclConsumers": return boolean.class;
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return boolean.class;
         case "usesessioncredentials":
@@ -174,7 +186,11 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cborenabled":
         case "cborEnabled": return getOrCreateConfiguration(target).isCborEnabled();
+        case "cloudwatchasyncclient":
+        case "cloudWatchAsyncClient": return getOrCreateConfiguration(target).getCloudWatchAsyncClient();
         case "configuration": return target.getConfiguration();
+        case "dynamodbasyncclient":
+        case "dynamoDbAsyncClient": return getOrCreateConfiguration(target).getDynamoDbAsyncClient();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
@@ -214,6 +230,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
+        case "usekclconsumers":
+        case "useKclConsumers": return getOrCreateConfiguration(target).isUseKclConsumers();
         case "useprofilecredentialsprovider":
         case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
         case "usesessioncredentials":

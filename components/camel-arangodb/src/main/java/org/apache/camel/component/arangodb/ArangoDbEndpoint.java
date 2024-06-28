@@ -19,6 +19,8 @@ package org.apache.camel.component.arangodb;
 import java.util.Map;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.http.HttpProtocolConfig;
+import io.vertx.core.Vertx;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -45,6 +47,8 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
     private ArangoDbConfiguration configuration;
     @UriParam(label = "advanced")
     private ArangoDB arangoDB;
+    @UriParam(label = "advanced")
+    private Vertx vertx;
 
     public ArangoDbEndpoint() {
     }
@@ -91,6 +95,17 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
         this.arangoDB = arangoDB;
     }
 
+    public Vertx getVertx() {
+        return vertx;
+    }
+
+    /**
+     * To use an existing Vertx instance in the ArangoDB client.
+     */
+    public void setVertx(Vertx vertx) {
+        this.vertx = vertx;
+    }
+
     public ArangoDbConfiguration getConfiguration() {
         return configuration;
     }
@@ -115,6 +130,10 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
                 builder.user(configuration.getUser()).password(configuration.getPassword());
             }
 
+            if (vertx != null) {
+                builder.protocolConfig(HttpProtocolConfig.builder().vertx(vertx).build());
+            }
+
             arangoDB = builder.build();
         }
 
@@ -127,5 +146,4 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
             arangoDB.shutdown();
         }
     }
-
 }

@@ -40,11 +40,9 @@ public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
         return this.getClass().getSimpleName();
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDownMongo() {
         gridFSBucket.find().forEach(gridFSFile -> gridFSBucket.delete(gridFSFile.getId()));
-        super.tearDown();
         mongo.close();
     }
 

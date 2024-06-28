@@ -31,8 +31,6 @@ import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,9 +45,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     protected Message inMessage;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         BusFactory bf = BusFactory.newInstance();
         //setup the camel transport for the bus
         bus = bf.createBus();
@@ -65,10 +61,8 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void doPostTearDown() {
         bus.shutdown(true);
-        super.tearDown();
     }
 
     protected CamelConduit setupCamelConduit(EndpointInfo endpointInfo, boolean send, boolean decoupled) {

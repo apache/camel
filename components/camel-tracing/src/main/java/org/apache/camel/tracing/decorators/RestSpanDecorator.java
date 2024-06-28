@@ -25,12 +25,8 @@ import java.util.List;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RestSpanDecorator extends AbstractHttpSpanDecorator {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RestSpanDecorator.class);
 
     @Override
     public String getComponent() {

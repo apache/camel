@@ -108,6 +108,31 @@ XML::
   </step>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:SomeQueue
+      steps:
+        - step:
+            id: foo
+            steps:
+              - bean:
+                  ref: foo
+              - to:
+                  uri: activemq:OutputQueue
+        - step:
+            id: bar
+            steps:
+              - bean:
+                  ref: something
+              - to:
+                  uri: log:Something
+----
+
 ====
 
 === JMX Management of Step EIP

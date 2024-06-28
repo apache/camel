@@ -49,12 +49,25 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         super("barcode");
     }
 
+    protected BarcodeDataFormat(BarcodeDataFormat source) {
+        super(source);
+        this.barcodeFormat = source.barcodeFormat;
+        this.imageType = source.imageType;
+        this.width = source.width;
+        this.height = source.height;
+    }
+
     private BarcodeDataFormat(Builder builder) {
         this();
         this.barcodeFormat = builder.barcodeFormat;
         this.imageType = builder.imageType;
         this.width = builder.width;
         this.height = builder.height;
+    }
+
+    @Override
+    public BarcodeDataFormat copyDefinition() {
+        return new BarcodeDataFormat(this);
     }
 
     public String getWidth() {

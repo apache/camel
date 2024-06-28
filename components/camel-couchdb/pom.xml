@@ -49,7 +49,7 @@
         <dependency>
             <groupId>com.ibm.cloud</groupId>
             <artifactId>cloudant</artifactId>
-            <version>0.8.6</version>
+            <version>${cloudant-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

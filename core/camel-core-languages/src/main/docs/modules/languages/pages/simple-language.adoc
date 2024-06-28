@@ -200,6 +200,8 @@ specified.
 |propertiesExist:key |String |Checks whether a property placeholder with the given key exists or not.
 The result can be negated by prefixing the key with `!`.
 
+|fromRouteId |String |Returns the original route id where this exchange was created.
+
 |routeId |String |Returns the route id of the current route the
 Exchange is being routed.
 

@@ -21,17 +21,18 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GooglePubsubLiteComponentTest extends CamelTestSupport {
 
     private GooglePubsubLiteComponent googlePubsubLiteComponent;
 
-    @BeforeEach
-    public void setUp() throws Exception {
+    @Override
+    public void doPreSetup() {
         googlePubsubLiteComponent = new GooglePubsubLiteComponent();
     }
 

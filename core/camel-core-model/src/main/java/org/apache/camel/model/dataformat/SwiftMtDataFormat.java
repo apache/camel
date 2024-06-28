@@ -42,6 +42,11 @@ public class SwiftMtDataFormat extends DataFormatDefinition {
         super("swiftMt");
     }
 
+    protected SwiftMtDataFormat(SwiftMtDataFormat source) {
+        super(source);
+        this.writeInJson = source.writeInJson;
+    }
+
     public SwiftMtDataFormat(String writeInJson) {
         this();
         this.writeInJson = writeInJson;
@@ -50,6 +55,11 @@ public class SwiftMtDataFormat extends DataFormatDefinition {
     private SwiftMtDataFormat(Builder builder) {
         this();
         this.writeInJson = builder.writeInJson;
+    }
+
+    @Override
+    public SwiftMtDataFormat copyDefinition() {
+        return new SwiftMtDataFormat(this);
     }
 
     public String getWriteInJson() {

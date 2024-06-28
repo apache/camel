@@ -19,10 +19,7 @@ package org.apache.camel.component.djl;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -37,6 +34,7 @@ import ai.djl.translate.Translator;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +46,12 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
 
     private static final String MODEL_DIR = "src/test/resources/models/mnist";
     private static final String MODEL_NAME = "mlp";
+
+    @BeforeAll
+    public static void setupDefaultEngine() {
+        // Since Apache MXNet is discontinued, prefer PyTorch as the default engine
+        System.setProperty("ai.djl.default_engine", "PyTorch");
+    }
 
     @Test
     void testDJL() throws Exception {
@@ -74,9 +78,8 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
                         .log("${header.CamelFileName} = ${body}")
                         .process(exchange -> {
                             String filename = exchange.getIn().getHeader("CamelFileName", String.class);
-                            Map<String, Float> result = exchange.getIn().getBody(Map.class);
-                            String max = Collections.max(result.entrySet(), Comparator.comparingDouble(Map.Entry::getValue))
-                                    .getKey();
+                            Classifications result = exchange.getIn().getBody(Classifications.class);
+                            String max = result.best().getClassName();
                             exchange.getIn().setBody(filename.startsWith(max));
                         })
                         .log("${header.CamelFileName} = ${body}")

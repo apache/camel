@@ -47,6 +47,19 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     public ConvertBodyDefinition() {
     }
 
+    protected ConvertBodyDefinition(ConvertBodyDefinition source) {
+        super(source);
+        this.typeClass = source.typeClass;
+        this.type = source.type;
+        this.mandatory = source.mandatory;
+        this.charset = source.charset;
+    }
+
+    @Override
+    public ConvertBodyDefinition copyDefinition() {
+        return new ConvertBodyDefinition(this);
+    }
+
     public ConvertBodyDefinition(String type) {
         setType(type);
     }

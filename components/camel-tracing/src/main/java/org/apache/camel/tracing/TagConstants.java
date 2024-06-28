@@ -42,6 +42,9 @@ public class TagConstants {
     public static final String MESSAGE_BUS_DESTINATION = "messaging.destination.name";
     public static final String MESSAGE_ID = "messaging.message.id";
 
+    // File attributes
+    public static final String FILE_NAME = "file.name";
+
     // Database attributes
     public static final String DB_SYSTEM = "db.system";
     public static final String DB_NAME = "db.name";

@@ -43,8 +43,19 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     public ProcessDefinition() {
     }
 
+    protected ProcessDefinition(ProcessDefinition source) {
+        super(source);
+        this.processor = source.processor;
+        this.ref = source.ref;
+    }
+
     public ProcessDefinition(Processor processor) {
         this.processor = processor;
+    }
+
+    @Override
+    public ProcessDefinition copyDefinition() {
+        return new ProcessDefinition(this);
     }
 
     @Override
@@ -89,11 +100,16 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     /**
      * Reference to the Processor to lookup in the registry to use.
      *
-     * Can also be used for creating new beans by their class name by prefixing with #class, eg
-     * #class:com.foo.MyClassType.
+     * A Processor is a class of type org.apache.camel.Processor, which can are to be called by this EIP. In this
+     * processor you have custom Java code, that can work with the message, such as to do custom business logic, special
+     * message manipulations and so on.
      *
-     * And it is also possible to refer to singleton beans by their type in the registry by prefixing with #type:
-     * syntax, eg #type:com.foo.MyClassType
+     * By default, the ref, will lookup the bean in the Camel registry.
+     *
+     * The ref can use prefix that controls how the processor is obtained. You can use #bean:myBean where myBean is the
+     * id of the Camel processor (lookup). Can also be used for creating new beans by their class name by prefixing with
+     * #class, eg #class:com.foo.MyClassType. And it is also possible to refer to singleton beans by their type in the
+     * registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType
      */
     public void setRef(String ref) {
         this.ref = ref;

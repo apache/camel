@@ -40,7 +40,7 @@ class RouteTemplateDefinitionTest {
         }));
         route.setInput(new FromDefinition("direct://fromEndpoint"));
         route.setOutputs(List.of(
-                new CopyableProcessDefinition(),
+                new CopyableDefinitionProcessDefinition(),
                 new NonCopyableProcessDefinition()));
         RouteTemplateDefinition routeTemplate = new RouteTemplateDefinition();
         routeTemplate.setRoute(route);
@@ -55,22 +55,22 @@ class RouteTemplateDefinitionTest {
         assertEquals(route.getInput().getUri(), routeCopy.getInput().getUri());
         assertNotSame(route.getOutputs(), routeCopy.getOutputs());
         assertEquals(2, routeCopy.getOutputs().size());
-        assertInstanceOf(CopyableProcessDefinition.class, routeCopy.getOutputs().get(0));
+        assertInstanceOf(CopyableDefinitionProcessDefinition.class, routeCopy.getOutputs().get(0));
         assertNotSame(route.getOutputs().get(0), routeCopy.getOutputs().get(0));
         assertEquals(route.getOutputs().get(0).getId(), routeCopy.getOutputs().get(0).getId());
         assertSame(route.getOutputs().get(1), routeCopy.getOutputs().get(1));
     }
 
-    private static final class CopyableProcessDefinition extends ProcessorDefinition<CopyableProcessDefinition>
-            implements Copyable {
+    private static final class CopyableDefinitionProcessDefinition
+            extends ProcessorDefinition<CopyableDefinitionProcessDefinition> {
 
-        public CopyableProcessDefinition() {
+        public CopyableDefinitionProcessDefinition() {
             setId(randomUUID().toString());
         }
 
         @Override
-        public ProcessorDefinition<?> copy() {
-            var copy = new CopyableProcessDefinition();
+        public ProcessorDefinition<?> copyDefinition() {
+            var copy = new CopyableDefinitionProcessDefinition();
             copy.setId(getId());
             return copy;
         }
@@ -96,6 +96,11 @@ class RouteTemplateDefinitionTest {
         @Override
         public List<ProcessorDefinition<?>> getOutputs() {
             return emptyList();
+        }
+
+        @Override
+        public ProcessorDefinition<?> copyDefinition() {
+            return this;
         }
     }
 }

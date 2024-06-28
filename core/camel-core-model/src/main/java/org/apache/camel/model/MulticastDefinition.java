@@ -88,6 +88,30 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     public MulticastDefinition() {
     }
 
+    protected MulticastDefinition(MulticastDefinition source) {
+        super(source);
+        this.executorServiceBean = source.executorServiceBean;
+        this.aggregationStrategyBean = source.aggregationStrategyBean;
+        this.onPrepareProcessor = source.onPrepareProcessor;
+        this.aggregationStrategy = source.aggregationStrategy;
+        this.aggregationStrategyMethodName = source.aggregationStrategyMethodName;
+        this.aggregationStrategyMethodAllowNull = source.aggregationStrategyMethodAllowNull;
+        this.parallelAggregate = source.parallelAggregate;
+        this.parallelProcessing = source.parallelProcessing;
+        this.synchronous = source.synchronous;
+        this.streaming = source.streaming;
+        this.stopOnException = source.stopOnException;
+        this.timeout = source.timeout;
+        this.executorService = source.executorService;
+        this.onPrepare = source.onPrepare;
+        this.shareUnitOfWork = source.shareUnitOfWork;
+    }
+
+    @Override
+    public MulticastDefinition copyDefinition() {
+        return new MulticastDefinition(this);
+    }
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;

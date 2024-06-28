@@ -23,7 +23,7 @@ public class ArangoDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(13);
         props.add("arangoDB");
         props.add("database");
         props.add("documentCollection");
@@ -36,6 +36,7 @@ public class ArangoDbEndpointUriFactory extends org.apache.camel.support.compone
         props.add("port");
         props.add("user");
         props.add("vertexCollection");
+        props.add("vertx");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");

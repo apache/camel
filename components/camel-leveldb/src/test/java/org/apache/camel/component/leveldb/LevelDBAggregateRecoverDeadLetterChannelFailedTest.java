@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -33,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends LevelDBTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory("target/data");
         // enable recovery
         getRepo().setUseRecovery(true);
@@ -44,8 +42,6 @@ public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends LevelDBT
         getRepo().setDeadLetterUri("direct:dead");
         // check faster
         getRepo().setRecoveryInterval(1000, TimeUnit.MILLISECONDS);
-
-        super.setUp();
     }
 
     @Test

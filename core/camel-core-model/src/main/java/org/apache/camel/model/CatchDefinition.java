@@ -52,12 +52,24 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     public CatchDefinition() {
     }
 
+    protected CatchDefinition(CatchDefinition source) {
+        super(source);
+        this.exceptionClasses = source.exceptionClasses;
+        this.exceptions = source.exceptions != null ? new ArrayList<>(source.exceptions) : null;
+        this.onWhen = source.onWhen != null ? source.onWhen.copyDefinition() : null;
+    }
+
     public CatchDefinition(List<Class<? extends Throwable>> exceptionClasses) {
         exception(exceptionClasses);
     }
 
     public CatchDefinition(Class<? extends Throwable> exceptionType) {
         exception(exceptionType);
+    }
+
+    @Override
+    public CatchDefinition copyDefinition() {
+        return new CatchDefinition(this);
     }
 
     @Override

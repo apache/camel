@@ -47,8 +47,6 @@ import org.apache.hc.core5.http.io.entity.HttpEntityWrapper;
 import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.http.common.HttpMethods.POST;
@@ -62,9 +60,8 @@ public class HttpCompressionTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void setupResources() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put(CONTENT_TYPE, TEXT_PLAIN.getMimeType());
         expectedHeaders.put(CONTENT_ENCODING, "gzip");
@@ -76,14 +73,10 @@ public class HttpCompressionTest extends BaseHttpTest {
                         new HeaderValidationHandler(POST.name(), null, getBody(), getExpectedContent(), expectedHeaders))
                 .create();
         localServer.start();
-
-        super.setUp();
     }
 
-    @AfterEach
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void cleanupResources() throws Exception {
 
         if (localServer != null) {
             localServer.stop();

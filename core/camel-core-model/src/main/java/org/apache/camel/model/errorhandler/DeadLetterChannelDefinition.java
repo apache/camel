@@ -43,12 +43,23 @@ public class DeadLetterChannelDefinition extends DefaultErrorHandlerDefinition {
     public DeadLetterChannelDefinition() {
     }
 
+    public DeadLetterChannelDefinition(DeadLetterChannelDefinition source) {
+        super(source);
+        this.deadLetterUri = source.deadLetterUri;
+        this.deadLetterHandleNewException = source.deadLetterHandleNewException;
+    }
+
     public DeadLetterChannelDefinition(String deadLetterUri) {
         this.deadLetterUri = deadLetterUri;
     }
 
     public DeadLetterChannelDefinition(Endpoint deadLetterUri) {
         this.deadLetterUri = deadLetterUri.getEndpointUri();
+    }
+
+    @Override
+    public DeadLetterChannelDefinition copyDefinition() {
+        return new DeadLetterChannelDefinition(this);
     }
 
     @Override

@@ -33,10 +33,10 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.test.junit5.util.ExtensionHelper;
-import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -49,7 +49,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.util.ExtensionHelper.testStartHeader;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -63,8 +62,14 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
 
     @RegisterExtension
+    @Order(10)
+    protected TestLoggerExtension testLoggerExtension = new TestLoggerExtension();
+
+    @RegisterExtension
     protected CamelTestSupport camelTestSupportExtension = this;
     private final StopWatch watch = new StopWatch();
+
+    @Deprecated
     private String currentTestName;
 
     private CamelContextManager contextManager;
@@ -138,20 +143,25 @@ public abstract class CamelTestSupport extends AbstractTestSupport
             testConfigurationBuilder.withCreateCamelContextPerClass(perClassPresent);
             contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_ALL,
                     testConfigurationBuilder, camelContextConfiguration);
+            ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
+            contextManager.setGlobalStore(globalStore);
         }
-
-        ExtensionContext.Store globalStore = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        contextManager.setGlobalStore(globalStore);
     }
 
     @Override
     public void afterAll(ExtensionContext context) {
-        contextManager.stop();
+        if (contextManager != null) {
+            // It may be null in some occasion, such as when failing to initialize the context
+            contextManager.stop();
+        }
     }
 
     /**
      * Gets the name of the current test being executed.
+     *
+     * @deprecated Use JUnit's TestInfo class or the {@link TestNameExtension}
      */
+    @Deprecated(since = "4.7.0")
     public final String getCurrentTestName() {
         return currentTestName;
     }
@@ -165,8 +175,6 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     @Deprecated(since = "4.7.0")
     @BeforeEach
     public void setUp() throws Exception {
-        testStartHeader(getClass(), currentTestName);
-
         unsupportedCheck();
 
         setupResources();
@@ -253,11 +261,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     public void tearDown() throws Exception {
         long time = watch.taken();
 
-        if (isRouteCoverageEnabled()) {
-            ExtensionHelper.testEndFooter(getClass(), currentTestName, time, new RouteCoverageDumperExtension(context));
-        } else {
-            ExtensionHelper.testEndFooter(getClass(), currentTestName, time);
-        }
+        contextManager.dumpRouteCoverage(getClass(), currentTestName, time);
 
         if (testConfigurationBuilder.isCreateCamelContextPerClass()) {
             // will tear down test specially in afterAll callback
@@ -333,7 +337,6 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     @Deprecated(since = "4.7.0")
     protected void stopCamelContext() throws Exception {
         contextManager.stopCamelContext();
-
     }
 
     @Deprecated(since = "4.7.0")

@@ -42,8 +42,6 @@ public class StepProcessor extends Pipeline {
     public static Processor newInstance(CamelContext camelContext, List<Processor> processors, String stepId) {
         if (processors.isEmpty()) {
             return null;
-        } else if (processors.size() == 1) {
-            return processors.get(0);
         }
         return new StepProcessor(camelContext, processors, stepId);
     }

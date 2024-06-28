@@ -22,6 +22,10 @@ import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * @deprecated since 4.7
+ */
+@Deprecated(since = "4.7")
 public class RoundRobinServiceChooser implements ServiceChooser {
     private int counter = -1;
 

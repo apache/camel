@@ -42,6 +42,20 @@ public class EndpointValidatorDefinition extends ValidatorDefinition {
     @XmlAttribute
     private String uri;
 
+    public EndpointValidatorDefinition() {
+    }
+
+    public EndpointValidatorDefinition(EndpointValidatorDefinition source) {
+        super(source);
+        this.ref = source.ref;
+        this.uri = source.ref;
+    }
+
+    @Override
+    public EndpointValidatorDefinition copyDefinition() {
+        return new EndpointValidatorDefinition(this);
+    }
+
     public String getRef() {
         return ref;
     }

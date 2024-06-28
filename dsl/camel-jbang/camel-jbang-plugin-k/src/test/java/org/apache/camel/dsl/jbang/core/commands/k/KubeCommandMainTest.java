@@ -82,7 +82,7 @@ class KubeCommandMainTest extends KubeBaseTest {
 
         Integration integration = kubernetesClient.resources(Integration.class).withName("route").get();
         Assertions.assertNotNull(integration);
-        Assertions.assertEquals(integration.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL), "camel-k");
+        Assertions.assertEquals("camel-k", integration.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL));
     }
 
     @Test
@@ -98,13 +98,12 @@ class KubeCommandMainTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits: {}""", printer.getOutput());
     }
 

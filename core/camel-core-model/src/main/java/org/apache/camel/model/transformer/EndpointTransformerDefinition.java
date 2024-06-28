@@ -40,6 +40,20 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
     @XmlAttribute
     private String uri;
 
+    public EndpointTransformerDefinition() {
+    }
+
+    protected EndpointTransformerDefinition(EndpointTransformerDefinition source) {
+        super(source);
+        this.ref = source.ref;
+        this.uri = source.uri;
+    }
+
+    @Override
+    public EndpointTransformerDefinition copyDefinition() {
+        return new EndpointTransformerDefinition(this);
+    }
+
     public String getRef() {
         return ref;
     }

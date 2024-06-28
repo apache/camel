@@ -41,6 +41,15 @@ public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
     public RefErrorHandlerDefinition() {
     }
 
+    public RefErrorHandlerDefinition(RefErrorHandlerDefinition source) {
+        this.ref = source.ref;
+    }
+
+    @Override
+    public RefErrorHandlerDefinition copyDefinition() {
+        return new RefErrorHandlerDefinition(this);
+    }
+
     public RefErrorHandlerDefinition(String ref) {
         this.ref = ref;
     }

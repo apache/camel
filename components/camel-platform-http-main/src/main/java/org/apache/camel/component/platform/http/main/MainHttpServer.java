@@ -280,6 +280,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         ObjectHelper.notNull(camelContext, "CamelContext");
 
         server = new VertxPlatformHttpServer(configuration);
+        // adding server to camel-context which will manage shutdown the server, so we should not do this here
         camelContext.addService(server);
 
         pluginRegistry = getCamelContext().getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
@@ -626,11 +627,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 PlatformHttpPluginRegistry.class);
         return result.orElseThrow(() -> new IllegalArgumentException(
                 "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopAndShutdownService(server);
     }
 
     private static void healthCheckStatus(StringBuilder sb, boolean up) {

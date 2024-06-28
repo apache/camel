@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.bedrock.agent;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -23,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.bedrock.agent.client.BedrockAgentClientFactory;
 import org.apache.camel.component.aws2.bedrock.agentruntime.BedrockAgentRuntimeConstants;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -35,7 +39,7 @@ import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
 @UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent", title = "AWS Bedrock Agent",
              syntax = "aws-bedrock-agent:label", category = { Category.AI, Category.CLOUD },
              headersClass = BedrockAgentRuntimeConstants.class)
-public class BedrockAgentEndpoint extends ScheduledPollEndpoint {
+public class BedrockAgentEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockAgentClient bedrockAgentClient;
 
@@ -89,5 +93,31 @@ public class BedrockAgentEndpoint extends ScheduledPollEndpoint {
 
     public BedrockAgentClient getBedrockAgentClient() {
         return bedrockAgentClient;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "bedrock-agent";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        HashMap<String, String> metadata = new HashMap<>();
+        if (configuration.getModelId() != null) {
+            metadata.put("modelId", configuration.getModelId());
+        }
+        return metadata;
     }
 }

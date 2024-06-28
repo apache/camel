@@ -41,8 +41,17 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     public Resilience4jConfigurationDefinition() {
     }
 
+    public Resilience4jConfigurationDefinition(Resilience4jConfigurationDefinition source) {
+        super(source);
+        this.parent = source.parent;
+    }
+
     public Resilience4jConfigurationDefinition(CircuitBreakerDefinition parent) {
         this.parent = parent;
+    }
+
+    public Resilience4jConfigurationDefinition copyDefinition() {
+        return new Resilience4jConfigurationDefinition(this);
     }
 
     // Fluent API

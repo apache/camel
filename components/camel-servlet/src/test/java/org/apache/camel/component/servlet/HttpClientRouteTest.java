@@ -115,7 +115,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testCreateSerlvetEndpointProducer() throws Exception {
-        assumeTrue(startCamelContext, "don't test it with web.xml configure");
+        assumeTrue(testConfiguration().autoStartContext(), "don't test it with web.xml configure");
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override

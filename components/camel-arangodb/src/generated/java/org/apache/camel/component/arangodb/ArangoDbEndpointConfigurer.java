@@ -39,6 +39,7 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         case "vertexcollection":
         case "vertexCollection": target.getConfiguration().setVertexCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
         default: return false;
         }
     }
@@ -62,6 +63,7 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "user": return java.lang.String.class;
         case "vertexcollection":
         case "vertexCollection": return java.lang.String.class;
+        case "vertx": return io.vertx.core.Vertx.class;
         default: return null;
         }
     }
@@ -86,6 +88,7 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
         case "user": return target.getConfiguration().getUser();
         case "vertexcollection":
         case "vertexCollection": return target.getConfiguration().getVertexCollection();
+        case "vertx": return target.getVertx();
         default: return null;
         }
     }

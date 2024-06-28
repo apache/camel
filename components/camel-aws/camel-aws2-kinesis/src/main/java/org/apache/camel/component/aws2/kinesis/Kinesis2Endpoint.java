@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -37,7 +40,7 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis", title = "AWS Kinesis", syntax = "aws2-kinesis:streamName",
              category = { Category.CLOUD, Category.MESSAGING }, headersClass = Kinesis2Constants.class)
-public class Kinesis2Endpoint extends ScheduledPollEndpoint {
+public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private Kinesis2Configuration configuration;
@@ -99,11 +102,17 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
-        consumer.setConnection(getComponent().getConnection());
-        consumer.setSchedulerProperties(getSchedulerProperties());
-        configureConsumer(consumer);
-        return consumer;
+        if (!getConfiguration().isUseKclConsumers()) {
+            final Kinesis2Consumer consumer = new Kinesis2Consumer(this, processor);
+            consumer.setConnection(getComponent().getConnection());
+            consumer.setSchedulerProperties(getSchedulerProperties());
+            configureConsumer(consumer);
+            return consumer;
+        } else {
+            final KclKinesis2Consumer consumer = new KclKinesis2Consumer(this, processor);
+            configureConsumer(consumer);
+            return consumer;
+        }
     }
 
     @Override
@@ -121,5 +130,35 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     public Kinesis2Configuration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "kinesis";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getStreamName() != null) {
+            return Map.of("stream", configuration.getStreamName());
+        }
+        return null;
+    }
+
+    public ExecutorService createExecutor() {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "KinesisStream[" + configuration.getStreamName() + "]", 1);
     }
 }

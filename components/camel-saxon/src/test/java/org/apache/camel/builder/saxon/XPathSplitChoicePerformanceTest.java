@@ -30,7 +30,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -57,10 +56,8 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         createDataFile(LOG, size);
-        super.setUp();
     }
 
     @Test

@@ -78,18 +78,51 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     container:
-                      imagePullPolicy: ALWAYS
+                      imagePullPolicy: Always
                     logging:
                       level: DEBUG""", printer.getOutput());
+    }
+
+    @Test
+    public void shouldAddTraitAddons() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.traits = new String[] {
+                "container.port=8080", "telemetry.enabled=true",
+                "telemetry.endpoint=http://opentelemetrycollector.ns.svc.cluster.local:8080" };
+        command.output = "yaml";
+        command.doCall();
+
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  annotations:
+                    camel.apache.org/operator.id: camel-k
+                  name: route
+                spec:
+                  flows:
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
+                  traits:
+                    addons:
+                      telemetry:
+                        endpoint: http://opentelemetrycollector.ns.svc.cluster.local:8080
+                        enabled: true
+                    container:
+                      port: 8080""", printer.getOutput());
     }
 
     @Test
@@ -118,13 +151,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: custom
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   profile: knative
                   repositories:
                   - http://custom-repository
@@ -149,13 +181,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     mount:
                       volumes:
@@ -184,13 +215,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   - camel:jms
                   - mvn:foo:bar:1.0
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits: {}""", printer.getOutput());
     }
 
@@ -211,13 +241,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     environment:
                       vars:
@@ -241,13 +270,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     camel:
                       properties:
@@ -271,13 +299,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     builder:
                       properties:
@@ -301,13 +328,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   integrationKit:
                     name: kit-123456789
                   traits: {}""", printer.getOutput());
@@ -329,13 +355,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits: {}""", printer.getOutput());
     }
 
@@ -356,15 +381,14 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
-                    serviceBinding:
+                    service-binding:
                       services:
                       - serving.knative.dev/v1:Service:foo""", printer.getOutput());
     }
@@ -386,13 +410,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   template:
                     spec:
                       containers:
@@ -426,13 +449,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     mount:
                       configs:
@@ -457,13 +479,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     mount:
                       resources:
@@ -487,13 +508,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     openapi:
                       configmaps:
@@ -541,13 +561,12 @@ class IntegrationRunTest extends KubeBaseTest {
                   name: route
                 spec:
                   flows:
-                  - additionalProperties:
-                      from:
-                        uri: timer:tick
-                        steps:
-                        - set-body:
-                            constant: Hello Camel !!!
-                        - to: log:info
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
                   traits:
                     affinity:
                       nodeAffinityLabels:
@@ -579,7 +598,7 @@ class IntegrationRunTest extends KubeBaseTest {
                         spec:
                           sources:
                           - compression: true
-                            content: ZFNNb6NADL3zK5zk0kr5WO2RPbFpoqKtiBRoqxwnYMAqzLAzZmn+/XoI2UbauSDP2M/vPZtFsIAXylE7LIANcI0QdSqXT2pKHpRF2JteF4rJaHiI0v0jSIgWjEYwFlpjUUByo9nSuWe5aq6AoCqL2KJmtwZIEUf05JDF2x2U1CAU5K5F0nwgrgWHa3IwGPsBpSCpoiDfWDVAWi7aKw2LlbIF6UradhdLVc1gBo3W1dStBSXzMtL9jYm7wo49ReTJ9JOGO7mTC0t4Exjf5Pv6myA9+JT59Dh//AEXKW7VBbRh6B3eIeNnjh0LUWHVdg0pneOXrH8dxIvThGHOrCRdjTLAlPdpoDhYSOV4auYu3GyGYVirke7a2GpzU7d5EUeTdLcaKUvNq27QObHpd09WvD1fQHXCKFdn4dmowQ9unM44dKEwWPFZV0tw09QF5X46X3bd6Inq+wQxTGmYRynE6Rx+RmmcLgXjPc6eD68ZvEfHY5Rk8S6FwxG2h+QpzuJDItEeouQEv+LkaQkoZkkb/Oys5y8kyRuJhZ/pbYFuBPx++Nh1mFNJuejSVa8qhMr8Qav9enRoW3J+nE7oFYLSUEs8bpH7X5S0CYLSmjYMAHpLITC1aEOm/ENuHGPn/BPAChzy6myKyzX2R34Bx0pzCM/YNAa2qsUGZrPZVMEmhMZUod/k4C8AAAD//w==
+                            content: ZFPBbtswDL3nK16TSwukybCjd3LTBDVWOECcrshRsWlbqC15Ej03fz/KSdYA08WgRD6+90jPJjO86pyMpwJswTUh7lQun8yWPChH2NjeFIq1NbiPs80DJCQHawjWobWOBCS3hp0+9ixXzRkQqnJELRn2CyAjGtHT7T5ZrVHqhlBofy6S5oPmWnC41h6DdR8oBUkVhQ6NVQNt5KI903BUKVdoU0nb7uR0VTPsYMj5WncLQdkHGdnmysSfYceeIvJg+4uGG7kXF+b4JTChyffFN0G6DynTy+P04QdOUtyqE4xl9J5ukOkzp46FqLBqu0Yrk9OXrH8dxIvDBcMeWUm6GmXAlrdpUDyZSeV4auYuWi6HYVioke7Cump5Vbd8FUfTbP04UpaaN9OQ92LT71478fZ4guqEUa6OwrNRQxjcOJ1x6EJhcOKzqebwl6kLyu10vuy60hPVtwlimDKYxhmSbIqnOEuyuWC8J/uX7dse7/FuF6f7ZJ1hu8Nqmz4n+2SbSrRBnB7wM0mf5yAxS9rQZ+cCfyGpg5FUhJleF+hKIOxHiH1HuS51LrpM1auKUNk/5ExYj45cq30Ypxd6haA0utU8bpH/X5S0mUxKZ9toAvROR2DdkotY5x9y45k6H56AR3jiJ1uczmE48gd4VoYjvFDTWKxUSw3u7u4uBWwjNLaKwiJP/gIAAP//
                             language: yaml
                             name: route.yaml
                           traits: {}""",
@@ -616,7 +635,7 @@ class IntegrationRunTest extends KubeBaseTest {
                       from:
                         uri: timer:tick
                         steps:
-                          - set-body:
+                          - setBody:
                               constant: Hello Camel !!!
                           - to: log:info
                     language: yaml

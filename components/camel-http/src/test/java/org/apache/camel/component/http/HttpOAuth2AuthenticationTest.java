@@ -25,7 +25,6 @@ import org.apache.camel.component.http.handler.OAuth2TokenRequestHandler;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,9 +37,8 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void setupResources() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Authorization", "Bearer " + FAKE_TOKEN);
 
@@ -58,7 +56,6 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
                 .create();
 
         localServer.start();
-        super.setUp();
     }
 
     @Test

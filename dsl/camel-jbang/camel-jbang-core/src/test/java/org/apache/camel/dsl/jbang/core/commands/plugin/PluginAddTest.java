@@ -44,8 +44,10 @@ class PluginAddTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals("", printer.getOutput());
 
-        Assertions.assertEquals("{\"plugins\":{\"camel-k\":{\"name\":\"camel-k\",\"command\":\"k\",\"description\":\"%s\"}}}"
-                .formatted(PluginType.CAMEL_K.getDescription()), PluginHelper.getOrCreatePluginConfig().toJson());
+        Assertions.assertEquals(
+                "{\"plugins\":{\"camel-k\":{\"name\":\"camel-k\",\"command\":\"k\",\"firstVersion\":\"4.4.0\",\"description\":\"%s\"}}}"
+                        .formatted(PluginType.CAMEL_K.getDescription()),
+                PluginHelper.getOrCreatePluginConfig().toJson());
     }
 
     @Test
@@ -54,12 +56,13 @@ class PluginAddTest extends CamelCommandBaseTest {
         command.name = "foo-plugin";
         command.command = "foo";
         command.description = "Some plugin";
+        command.firstVersion = "1.2.3";
         command.doCall();
 
         Assertions.assertEquals("", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
-                                "\"description\":\"Some plugin\"}}}",
+                                "\"firstVersion\":\"1.2.3\",\"description\":\"Some plugin\"}}}",
                 PluginHelper.getOrCreatePluginConfig().toJson());
     }
 
@@ -104,7 +107,8 @@ class PluginAddTest extends CamelCommandBaseTest {
         Assertions.assertEquals("", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
-                                "\"description\":\"Plugin foo-plugin called with command foo\",\"dependency\":\"org.foo:foo-bar:1.0.0\"}}}",
+                                "\"firstVersion\":\"1.0.0\",\"description\":\"Plugin foo-plugin called with command foo\"" +
+                                ",\"dependency\":\"org.foo:foo-bar:1.0.0\"}}}",
                 PluginHelper.getOrCreatePluginConfig().toJson());
     }
 

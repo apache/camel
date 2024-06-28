@@ -53,10 +53,8 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
     private final String xmlBody = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
     private String requestInputAction;
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setupCommonBeans() {
         // initialize beans for catching results
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
         newReply = getMandatoryBean(OutputChannelReceiver.class, "replyReceiver");

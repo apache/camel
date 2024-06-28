@@ -56,6 +56,17 @@ public class SoapDataFormat extends DataFormatDefinition {
         super("soap");
     }
 
+    protected SoapDataFormat(SoapDataFormat source) {
+        super(source);
+        this.contextPath = source.contextPath;
+        this.encoding = source.encoding;
+        this.elementNameStrategyRef = source.elementNameStrategyRef;
+        this.elementNameStrategy = source.elementNameStrategy;
+        this.version = source.version;
+        this.namespacePrefixRef = source.namespacePrefixRef;
+        this.schema = source.schema;
+    }
+
     public SoapDataFormat(String contextPath) {
         this();
         setContextPath(contextPath);
@@ -82,6 +93,11 @@ public class SoapDataFormat extends DataFormatDefinition {
         this.version = builder.version;
         this.namespacePrefixRef = builder.namespacePrefixRef;
         this.schema = builder.schema;
+    }
+
+    @Override
+    public SoapDataFormat copyDefinition() {
+        return new SoapDataFormat(this);
     }
 
     /**

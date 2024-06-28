@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,9 +28,8 @@ public class SpringRabbitMQSendDynamicAwareTest extends CamelTestSupport {
 
     SpringRabbitMQSendDynamicAware springRabbitMQSendDynamicAware;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    @Override
+    public void doPostSetup() {
         this.springRabbitMQSendDynamicAware = new SpringRabbitMQSendDynamicAware();
     }
 

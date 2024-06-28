@@ -37,6 +37,16 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
     @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String rollbackLoggingLevel;
 
+    public TransactionErrorHandlerDefinition() {
+    }
+
+    public TransactionErrorHandlerDefinition(TransactionErrorHandlerDefinition source) {
+        super(source);
+        this.transactedPolicy = source.transactedPolicy;
+        this.transactedPolicyRef = source.transactedPolicyRef;
+        this.rollbackLoggingLevel = source.rollbackLoggingLevel;
+    }
+
     @Override
     public boolean supportTransacted() {
         return true;

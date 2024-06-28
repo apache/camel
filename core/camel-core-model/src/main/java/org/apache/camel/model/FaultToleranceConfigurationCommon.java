@@ -65,6 +65,29 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String bulkheadExecutorService;
 
+    public FaultToleranceConfigurationCommon() {
+    }
+
+    protected FaultToleranceConfigurationCommon(FaultToleranceConfigurationCommon source) {
+        this.circuitBreaker = source.circuitBreaker;
+        this.delay = source.delay;
+        this.successThreshold = source.successThreshold;
+        this.requestVolumeThreshold = source.requestVolumeThreshold;
+        this.failureRatio = source.failureRatio;
+        this.timeoutEnabled = source.timeoutEnabled;
+        this.timeoutDuration = source.timeoutDuration;
+        this.timeoutPoolSize = source.timeoutPoolSize;
+        this.timeoutScheduledExecutorService = source.timeoutScheduledExecutorService;
+        this.bulkheadEnabled = source.bulkheadEnabled;
+        this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
+        this.bulkheadWaitingTaskQueue = source.bulkheadWaitingTaskQueue;
+        this.bulkheadExecutorService = source.bulkheadExecutorService;
+    }
+
+    public FaultToleranceConfigurationCommon copyDefinition() {
+        return new FaultToleranceConfigurationCommon(this);
+    }
+
     // Getter/Setter
     // -------------------------------------------------------------------------
 

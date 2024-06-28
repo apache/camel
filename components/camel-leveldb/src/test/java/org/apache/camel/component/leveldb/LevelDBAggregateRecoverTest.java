@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -47,14 +46,12 @@ public class LevelDBAggregateRecoverTest extends LevelDBTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory("target/data");
         // enable recovery
         getRepo().setUseRecovery(true);
         // check faster
         getRepo().setRecoveryInterval(500, TimeUnit.MILLISECONDS);
-        super.setUp();
     }
 
     @Test

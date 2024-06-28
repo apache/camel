@@ -803,6 +803,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs) throws Exception {
+        return createOutputsProcessor(outputs, true);
+    }
+
+    protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs, boolean optimize) throws Exception {
         List<Processor> list = new ArrayList<>();
         for (ProcessorDefinition<?> output : outputs) {
 
@@ -832,7 +836,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // keep it as is
         Processor processor = null;
         if (!list.isEmpty()) {
-            if (list.size() == 1) {
+            if (optimize && list.size() == 1) {
                 processor = list.get(0);
             } else {
                 processor = createCompositeProcessor(list);
@@ -915,7 +919,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected String getId(OptionalIdentifiedDefinition<?> def) {
-        return def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        String id = def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        id = parseString(id);
+        return id;
     }
 
     /**

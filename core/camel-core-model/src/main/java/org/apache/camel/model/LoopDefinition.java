@@ -47,6 +47,13 @@ public class LoopDefinition extends OutputExpressionNode {
     public LoopDefinition() {
     }
 
+    protected LoopDefinition(LoopDefinition source) {
+        super(source);
+        this.copy = source.copy;
+        this.doWhile = source.doWhile;
+        this.breakOnShutdown = source.breakOnShutdown;
+    }
+
     public LoopDefinition(Expression expression) {
         super(expression);
     }
@@ -58,6 +65,11 @@ public class LoopDefinition extends OutputExpressionNode {
 
     public LoopDefinition(ExpressionDefinition expression) {
         super(expression);
+    }
+
+    @Override
+    public LoopDefinition copyDefinition() {
+        return new LoopDefinition(this);
     }
 
     /**

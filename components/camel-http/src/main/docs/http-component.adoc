@@ -353,9 +353,10 @@ In below example camel will do an underlying request to `https://localhost:8080/
 String clientId = "my-client-id";
 String clientSecret = "my-client-secret";
 String tokenEndpoint = "https://localhost:8080/realms/master/protocol/openid-connect/token";
+String scope = "my-scope"; // optional scope
 
 from("direct:start")
-  .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint);
+  .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope);
 ------------------------------------------------------------------------------------
 
 [NOTE]

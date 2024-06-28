@@ -35,8 +35,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,8 +78,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void setupResources() {
         /*
          * We start a undertow for the service in order to have better control over
          * the response. The response must contain only a Content-Type and a
@@ -108,19 +105,16 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
         server.start();
         // Load the CXF endpoints for the route
         LOG.info("Start Routing Scenario at port {}", CXFTestSupport.getPort1());
-        super.setUp();
     }
 
     @Override
-    @AfterEach
-    public void tearDown() throws Exception {
+    public void cleanupResources() {
         // close the spring context
         IOHelper.close(applicationContext);
         // stop the undertow server
         if (server != null) {
             server.stop();
         }
-        super.tearDown();
     }
 
     @Override

@@ -40,6 +40,11 @@ public class SetVariableDefinition extends ExpressionNode {
     public SetVariableDefinition() {
     }
 
+    protected SetVariableDefinition(SetVariableDefinition source) {
+        super(source);
+        this.name = source.name;
+    }
+
     public SetVariableDefinition(String name, ExpressionDefinition expression) {
         super(expression);
         setName(name);
@@ -53,6 +58,11 @@ public class SetVariableDefinition extends ExpressionNode {
     public SetVariableDefinition(String name, String value) {
         super(ExpressionBuilder.constantExpression(value));
         setName(name);
+    }
+
+    @Override
+    public SetVariableDefinition copyDefinition() {
+        return new SetVariableDefinition(this);
     }
 
     @Override

@@ -35,11 +35,9 @@ public class JMSTransactionThrottlingRoutePolicyIT extends AbstractSpringJMSITSu
                 "/org/apache/camel/component/jms/integration/spring/tx/JMSTransactionThrottlingRoutePolicyIT.xml");
     }
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    public void cleanupDataDirectory() {
         deleteDirectory("activemq-data");
-        super.setUp();
     }
 
     @Test

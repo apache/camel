@@ -250,6 +250,21 @@ public interface ArangodbComponentBuilderFactory {
         }
     
         /**
+         * To use an existing Vertx in the ArangoDB client.
+         * 
+         * The option is a: &lt;code&gt;io.vertx.core.Vertx&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
+         */
+        default ArangodbComponentBuilder vertx(io.vertx.core.Vertx vertx) {
+            doSetProperty("vertx", vertx);
+            return this;
+        }
+    
+        /**
          * ArangoDB password. If user and password are default, this field is
          * Optional.
          * 
@@ -312,6 +327,7 @@ public interface ArangodbComponentBuilderFactory {
             case "vertexCollection": getOrCreateConfiguration((ArangoDbComponent) component).setVertexCollection((java.lang.String) value); return true;
             case "arangoDB": ((ArangoDbComponent) component).setArangoDB((com.arangodb.ArangoDB) value); return true;
             case "autowiredEnabled": ((ArangoDbComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "vertx": ((ArangoDbComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
             case "password": getOrCreateConfiguration((ArangoDbComponent) component).setPassword((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((ArangoDbComponent) component).setUser((java.lang.String) value); return true;
             default: return false;

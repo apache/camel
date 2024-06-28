@@ -39,6 +39,11 @@ public class WasmExpression extends TypedExpressionDefinition {
     public WasmExpression() {
     }
 
+    protected WasmExpression(WasmExpression source) {
+        super(source);
+        this.module = source.module;
+    }
+
     public WasmExpression(String expression) {
         super(expression);
     }
@@ -51,6 +56,11 @@ public class WasmExpression extends TypedExpressionDefinition {
     private WasmExpression(Builder builder) {
         super(builder);
         this.module = builder.module;
+    }
+
+    @Override
+    public WasmExpression copyDefinition() {
+        return new WasmExpression(this);
     }
 
     public String getModule() {

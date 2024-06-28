@@ -148,8 +148,8 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "3.3.0")
-    protected String springBootVersion = "3.3.0";
+                        defaultValue = "3.3.1")
+    protected String springBootVersion = "3.3.1";
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     protected String camelSpringBootVersion;
@@ -163,8 +163,8 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId = "quarkus-bom";
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "3.11.1")
-    protected String quarkusVersion = "3.11.1";
+                        defaultValue = "3.12.0")
+    protected String quarkusVersion = "3.12.0";
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
@@ -296,6 +296,11 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.exclude = exclude;
         run.openapi = openapi;
         run.download = download;
+        run.camelVersion = camelVersion;
+        run.quarkusVersion = quarkusVersion;
+        run.springBootVersion = springBootVersion;
+        run.kameletsVersion = kameletsVersion;
+        run.localKameletDir = localKameletDir;
         return run.runSilent(ignoreLoadingError);
     }
 

@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.Expression;
@@ -42,12 +42,10 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
     private CountDownLatch latch = new CountDownLatch(1);
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    @BeforeAll
+    public static void hibernateCheck() {
         // Don't run on Hibernate
         assumeTrue(ObjectHelper.loadClass("org.hibernate.Hibernate") == null);
-        super.setUp();
     }
 
     @Test

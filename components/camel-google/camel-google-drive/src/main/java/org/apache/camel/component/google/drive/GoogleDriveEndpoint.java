@@ -19,19 +19,18 @@ package org.apache.camel.component.google.drive;
 import java.util.Map;
 
 import com.google.api.services.drive.Drive;
-import org.apache.camel.Category;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import org.apache.camel.*;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.component.google.drive.internal.GoogleDriveConstants;
 import org.apache.camel.component.google.drive.internal.GoogleDrivePropertiesHelper;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Manage files in Google Drive.
@@ -39,7 +38,8 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive",
              syntax = "google-drive:apiName/methodName", apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API })
-public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
+public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration>
+        implements EndpointServiceLocation {
     private Object apiProxy;
 
     @UriParam
@@ -139,5 +139,27 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
      */
     public void setClientFactory(GoogleDriveClientFactory clientFactory) {
         this.clientFactory = clientFactory;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApiName())
+                && ObjectHelper.isNotEmpty(configuration.getMethodName()))) {
+            return getServiceProtocol() + ":" + configuration.getApiName() + ":" + configuration.getMethodName();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "drive";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getApplicationName() != null) {
+            return Map.of("applicationName", configuration.getApplicationName());
+        }
+        return null;
     }
 }

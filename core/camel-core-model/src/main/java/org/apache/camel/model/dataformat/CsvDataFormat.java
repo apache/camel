@@ -128,6 +128,39 @@ public class CsvDataFormat extends DataFormatDefinition {
         super("csv");
     }
 
+    protected CsvDataFormat(CsvDataFormat source) {
+        super(source);
+        this.formatRef = source.formatRef;
+        this.formatName = source.formatName;
+        this.commentMarkerDisabled = source.commentMarkerDisabled;
+        this.commentMarker = source.commentMarker;
+        this.delimiter = source.delimiter;
+        this.escapeDisabled = source.escapeDisabled;
+        this.escape = source.escape;
+        this.headerDisabled = source.headerDisabled;
+        this.header = source.header;
+        this.allowMissingColumnNames = source.allowMissingColumnNames;
+        this.ignoreEmptyLines = source.ignoreEmptyLines;
+        this.ignoreSurroundingSpaces = source.ignoreSurroundingSpaces;
+        this.nullStringDisabled = source.nullStringDisabled;
+        this.nullString = source.nullString;
+        this.quoteDisabled = source.quoteDisabled;
+        this.quote = source.quote;
+        this.recordSeparatorDisabled = source.recordSeparatorDisabled;
+        this.recordSeparator = source.recordSeparator;
+        this.skipHeaderRecord = source.skipHeaderRecord;
+        this.quoteMode = source.quoteMode;
+        this.ignoreHeaderCase = source.ignoreHeaderCase;
+        this.trim = source.trim;
+        this.trailingDelimiter = source.trailingDelimiter;
+        this.marshallerFactoryRef = source.marshallerFactoryRef;
+        this.lazyLoad = source.lazyLoad;
+        this.useMaps = source.useMaps;
+        this.useOrderedMaps = source.useOrderedMaps;
+        this.recordConverterRef = source.recordConverterRef;
+        this.captureHeaderRecord = source.captureHeaderRecord;
+    }
+
     public CsvDataFormat(String delimiter) {
         this();
         setDelimiter(delimiter);
@@ -169,6 +202,11 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.useOrderedMaps = builder.useOrderedMaps;
         this.recordConverterRef = builder.recordConverterRef;
         this.captureHeaderRecord = builder.captureHeaderRecord;
+    }
+
+    @Override
+    public CsvDataFormat copyDefinition() {
+        return new CsvDataFormat(this);
     }
 
     /**

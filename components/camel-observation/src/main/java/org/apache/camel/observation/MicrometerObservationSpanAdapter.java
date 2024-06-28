@@ -30,7 +30,6 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     private static final String DEFAULT_EVENT_NAME = "log";
 
     private final Observation observation;
-
     private final Tracer tracer;
 
     MicrometerObservationSpanAdapter(Observation observation, Tracer tracer) {
@@ -145,7 +144,6 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
         if (eventValue != null) {
             return eventValue.toString();
         }
-
         return DEFAULT_EVENT_NAME;
     }
 

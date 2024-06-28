@@ -53,8 +53,20 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     public TransactedDefinition() {
     }
 
+    protected TransactedDefinition(TransactedDefinition source) {
+        super(source);
+        this.type = source.type;
+        this.policy = source.policy;
+        this.ref = source.ref;
+    }
+
     public TransactedDefinition(Policy policy) {
         this.policy = policy;
+    }
+
+    @Override
+    public TransactedDefinition copyDefinition() {
+        return new TransactedDefinition(this);
     }
 
     @Override

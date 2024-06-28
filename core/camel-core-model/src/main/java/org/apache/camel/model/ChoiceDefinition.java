@@ -62,6 +62,18 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     public ChoiceDefinition() {
     }
 
+    protected ChoiceDefinition(ChoiceDefinition source) {
+        super(source);
+        this.whenClauses = ProcessorDefinitionHelper.deepCopyDefinitions(source.whenClauses);
+        this.otherwise = source.otherwise != null ? source.otherwise.copyDefinition() : null;
+        this.precondition = source.precondition;
+    }
+
+    @Override
+    public ChoiceDefinition copyDefinition() {
+        return new ChoiceDefinition(this);
+    }
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         // wrap the outputs into a list where we can on the inside control the
@@ -318,4 +330,5 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
             }
         }
     }
+
 }

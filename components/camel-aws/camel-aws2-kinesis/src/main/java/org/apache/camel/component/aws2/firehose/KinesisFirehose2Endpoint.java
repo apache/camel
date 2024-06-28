@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.aws2.firehose;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -37,7 +40,7 @@ import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
                      Category.CLOUD,
                      Category.MESSAGING },
              headersClass = KinesisFirehose2Constants.class)
-public class KinesisFirehose2Endpoint extends DefaultEndpoint {
+public class KinesisFirehose2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private KinesisFirehose2Configuration configuration;
@@ -91,5 +94,30 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
 
     public KinesisFirehose2Configuration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (!configuration.isOverrideEndpoint()) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                return configuration.getRegion();
+            }
+        } else if (ObjectHelper.isNotEmpty(configuration.getUriEndpointOverride())) {
+            return configuration.getUriEndpointOverride();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "firehose";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (configuration.getStreamName() != null) {
+            return Map.of("stream", configuration.getStreamName());
+        }
+        return null;
     }
 }

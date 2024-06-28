@@ -97,6 +97,38 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     @Metadata(label = "advanced")
     private List<String> ignoreExceptions = new ArrayList<>();
 
+    public Resilience4jConfigurationCommon() {
+    }
+
+    protected Resilience4jConfigurationCommon(Resilience4jConfigurationCommon source) {
+        this.circuitBreaker = source.circuitBreaker;
+        this.config = source.config;
+        this.failureRateThreshold = source.failureRateThreshold;
+        this.permittedNumberOfCallsInHalfOpenState = source.permittedNumberOfCallsInHalfOpenState;
+        this.throwExceptionWhenHalfOpenOrOpenState = source.throwExceptionWhenHalfOpenOrOpenState;
+        this.slidingWindowSize = source.slidingWindowSize;
+        this.slidingWindowType = source.slidingWindowType;
+        this.minimumNumberOfCalls = source.minimumNumberOfCalls;
+        this.writableStackTraceEnabled = source.writableStackTraceEnabled;
+        this.waitDurationInOpenState = source.waitDurationInOpenState;
+        this.automaticTransitionFromOpenToHalfOpenEnabled = source.automaticTransitionFromOpenToHalfOpenEnabled;
+        this.slowCallRateThreshold = source.slowCallRateThreshold;
+        this.slowCallDurationThreshold = source.slowCallDurationThreshold;
+        this.bulkheadEnabled = source.bulkheadEnabled;
+        this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
+        this.bulkheadMaxWaitDuration = source.bulkheadMaxWaitDuration;
+        this.timeoutEnabled = source.timeoutEnabled;
+        this.timeoutExecutorService = source.timeoutExecutorService;
+        this.timeoutDuration = source.timeoutDuration;
+        this.timeoutCancelRunningFuture = source.timeoutCancelRunningFuture;
+        this.recordExceptions = new ArrayList<>(source.ignoreExceptions);
+        this.ignoreExceptions = new ArrayList<>(source.ignoreExceptions);
+    }
+
+    public Resilience4jConfigurationCommon copyDefinition() {
+        return new Resilience4jConfigurationCommon(this);
+    }
+
     // Getter/Setter
     // -------------------------------------------------------------------------
 

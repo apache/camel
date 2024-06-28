@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
-@CamelJBangPlugin("camel-jbang-plugin-generate")
+@CamelJBangPlugin(name = "camel-jbang-plugin-generate", firstVersion = "4.7.0")
 public class GeneratePlugin implements Plugin {
 
     @Override

@@ -21,9 +21,11 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants.SCHEME_BIGQUERY;
 
@@ -42,7 +44,7 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
 @UriEndpoint(firstVersion = "2.20.0", scheme = SCHEME_BIGQUERY, title = "Google BigQuery",
              syntax = "google-bigquery:projectId:datasetId:tableId",
              category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true, headersClass = GoogleBigQueryConstants.class)
-public class GoogleBigQueryEndpoint extends DefaultEndpoint {
+public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     protected final GoogleBigQueryConfiguration configuration;
@@ -87,4 +89,18 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
         return (GoogleBigQueryComponent) super.getComponent();
     }
 
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(configuration.getProjectId()) && ObjectHelper.isNotEmpty(configuration.getDatasetId())
+                && ObjectHelper.isNotEmpty(configuration.getTableId())) {
+            return getServiceProtocol() + ":" + configuration.getProjectId() + ":" + configuration.getDatasetId() + ":"
+                   + configuration.getTableId();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "big-query";
+    }
 }

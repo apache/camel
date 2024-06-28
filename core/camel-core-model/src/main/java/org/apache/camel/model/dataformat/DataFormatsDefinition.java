@@ -26,7 +26,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -35,7 +37,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation", title = "Data formats")
 @XmlRootElement(name = "dataFormats")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatsDefinition {
+public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefinition> {
 
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
@@ -81,6 +83,18 @@ public class DataFormatsDefinition {
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private List<DataFormatDefinition> dataFormats;
+
+    public DataFormatsDefinition() {
+    }
+
+    protected DataFormatsDefinition(DataFormatsDefinition source) {
+        this.dataFormats = ProcessorDefinitionHelper.deepCopyDefinitions(source.dataFormats);
+    }
+
+    @Override
+    public DataFormatsDefinition copyDefinition() {
+        return new DataFormatsDefinition(this);
+    }
 
     /**
      * A list holding the configured data formats

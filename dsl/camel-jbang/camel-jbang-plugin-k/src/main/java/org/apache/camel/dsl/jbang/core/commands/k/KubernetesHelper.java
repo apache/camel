@@ -129,4 +129,15 @@ public final class KubernetesHelper {
     static void setKubernetesClient(KubernetesClient kubernetesClient) {
         KubernetesHelper.kubernetesClient = kubernetesClient;
     }
+
+    /**
+     * Dump given domain model object as YAML. Uses Json conversion to generic map as intermediate step. This makes sure
+     * to properly write Json additional properties.
+     *
+     * @param  model
+     * @return
+     */
+    public static String dumpYaml(Object model) {
+        return yaml().dumpAsMap(json().convertValue(model, Map.class));
+    }
 }

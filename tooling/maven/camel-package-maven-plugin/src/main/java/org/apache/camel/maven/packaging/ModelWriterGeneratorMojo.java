@@ -132,8 +132,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         ctx.put("package", getWriterPackage());
         ctx.put("model", model);
         ctx.put("mojo", this);
-        String parser = velocity("velocity/model-writer.vm", ctx);
-        return parser;
+        return velocity("velocity/model-writer.vm", ctx);
     }
 
     protected Class<?> loadClass(ClassLoader loader, String name) {

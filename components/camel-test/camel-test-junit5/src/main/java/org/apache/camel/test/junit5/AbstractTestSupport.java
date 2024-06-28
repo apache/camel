@@ -354,8 +354,10 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     /**
      * Whether route coverage is enabled
      *
-     * @return true if enabled or false otherwise
+     * @deprecated Use the methods {@link #testConfiguration()} to enable or disable the route converage dumper
+     * @return     true if enabled or false otherwise
      */
+    @Deprecated(since = "4.7.0")
     protected boolean isRouteCoverageEnabled() {
         return testConfigurationBuilder.isRouteCoverageEnabled();
     }

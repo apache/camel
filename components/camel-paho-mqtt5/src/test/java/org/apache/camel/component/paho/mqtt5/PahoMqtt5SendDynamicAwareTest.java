@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,9 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PahoMqtt5SendDynamicAwareTest extends CamelTestSupport {
     PahoMqtt5SendDynamicAware pahoMqtt5SendDynamicAware;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         this.pahoMqtt5SendDynamicAware = new PahoMqtt5SendDynamicAware();
     }
 

@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
@@ -41,12 +40,10 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
     private static final String TEST_DIR = "target/out_ZipAggregationStrategyEmptyFileTest";
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
+    public void doPreSetup() {
         deleteDirectory("target/foo");
         deleteDirectory("target/bar");
         deleteDirectory(TEST_DIR);
-        super.setUp();
     }
 
     @Test

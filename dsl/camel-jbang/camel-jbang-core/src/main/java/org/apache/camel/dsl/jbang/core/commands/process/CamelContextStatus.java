@@ -90,8 +90,20 @@ public class CamelContextStatus extends ProcessWatchCommand {
                                 row.throughput = thp.toString();
                             }
                             row.total = stats.get("exchangesTotal").toString();
-                            row.inflight = stats.get("exchangesInflight").toString();
+                            Object num = stats.get("remoteExchangesTotal");
+                            if (num != null) {
+                                row.totalRemote = num.toString();
+                            }
                             row.failed = stats.get("exchangesFailed").toString();
+                            num = stats.get("remoteExchangesFailed");
+                            if (num != null) {
+                                row.failedRemote = num.toString();
+                            }
+                            row.inflight = stats.get("exchangesInflight").toString();
+                            num = stats.get("remoteExchangesInflight");
+                            if (num != null) {
+                                row.inflightRemote = num.toString();
+                            }
                             row.reloaded = stats.get("reloaded").toString();
                             Object last = stats.get("lastProcessingTime");
                             if (last != null) {
@@ -157,9 +169,9 @@ public class CamelContextStatus extends ProcessWatchCommand {
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("MSG/S").with(this::getThroughput),
-                    new Column().header("TOTAL").with(r -> r.total),
-                    new Column().header("FAIL").with(r -> r.failed),
-                    new Column().header("INFLIGHT").with(r -> r.inflight),
+                    new Column().header("TOTAL").with(this::getTotal),
+                    new Column().header("FAIL").with(this::getFailed),
+                    new Column().header("INFLIGHT").with(this::getInflight),
                     new Column().header("LAST").with(r -> r.last),
                     new Column().header("DELTA").with(this::getDelta),
                     new Column().header("SINCE-LAST").with(this::getSinceLast))));
@@ -206,6 +218,27 @@ public class CamelContextStatus extends ProcessWatchCommand {
             default:
                 return 0;
         }
+    }
+
+    private String getTotal(Row r) {
+        if (r.totalRemote != null) {
+            return r.totalRemote + "/" + r.total;
+        }
+        return r.total;
+    }
+
+    private String getFailed(Row r) {
+        if (r.failedRemote != null) {
+            return r.failedRemote + "/" + r.failed;
+        }
+        return r.failed;
+    }
+
+    private String getInflight(Row r) {
+        if (r.inflightRemote != null) {
+            return r.inflightRemote + "/" + r.inflight;
+        }
+        return r.inflight;
     }
 
     private String getPlatform(Row r) {
@@ -271,8 +304,11 @@ public class CamelContextStatus extends ProcessWatchCommand {
         long uptime;
         String throughput;
         String total;
+        String totalRemote;
         String failed;
+        String failedRemote;
         String inflight;
+        String inflightRemote;
         String last;
         String delta;
         String sinceLastStarted;

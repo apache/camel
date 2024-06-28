@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "kotlin-api",
     "title": "Kotlin API",
-    "description": "Camel Kotlin API",
+    "description": "Camel Kotlin API (Deprecated)",
     "deprecated": false,
     "firstVersion": "4.4.0",
     "label": "dsl",

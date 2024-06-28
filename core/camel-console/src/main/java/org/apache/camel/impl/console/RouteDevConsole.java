@@ -87,6 +87,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 sb.append(String.format("    Node Prefix Id: %s", mrb.getNodePrefixId()));
             }
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
+            sb.append(String.format("\n    Remote: %s", mrb.isRemoteEndpoint()));
             if (mrb.getSourceLocation() != null) {
                 sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
             }
@@ -233,6 +234,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 jo.put("nodePrefixId", mrb.getNodePrefixId());
             }
             jo.put("from", mrb.getEndpointUri());
+            jo.put("remote", mrb.isRemoteEndpoint());
             if (mrb.getSourceLocation() != null) {
                 jo.put("source", mrb.getSourceLocation());
             }

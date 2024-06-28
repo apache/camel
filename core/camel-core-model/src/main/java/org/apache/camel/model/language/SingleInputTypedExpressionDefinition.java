@@ -32,6 +32,11 @@ public abstract class SingleInputTypedExpressionDefinition extends TypedExpressi
     protected SingleInputTypedExpressionDefinition() {
     }
 
+    protected SingleInputTypedExpressionDefinition(SingleInputTypedExpressionDefinition source) {
+        super(source);
+        this.source = source.source;
+    }
+
     protected SingleInputTypedExpressionDefinition(String expression) {
         super(expression);
     }

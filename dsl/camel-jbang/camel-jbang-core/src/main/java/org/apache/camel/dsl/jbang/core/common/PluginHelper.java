@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
@@ -25,9 +24,11 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.catalog.VersionHelper;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
@@ -36,6 +37,7 @@ import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -64,20 +66,41 @@ public final class PluginHelper {
      * @param commandLine the command line to add commands to
      * @param main        the current Camel JBang main
      */
-    public static void addPlugins(CommandLine commandLine, CamelJBangMain main) {
+    public static void addPlugins(CommandLine commandLine, CamelJBangMain main, String... args) {
         JsonObject config = getPluginConfig();
 
+        // first arg is the command name (ie camel generate xxx)
+        String target = args != null && args.length > 0 ? args[0] : null;
+
         if (config != null) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String version = catalog.getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
+
             for (String pluginKey : plugins.keySet()) {
                 JsonObject properties = plugins.getMap(pluginKey);
 
-                String name = properties.getOrDefault("name", pluginKey).toString();
-                String command = properties.getOrDefault("command", name).toString();
+                final String name = properties.getOrDefault("name", pluginKey).toString();
+                final String command = properties.getOrDefault("command", name).toString();
+                final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
+
+                // only load the plugin if the command-line is calling this plugin
+                if (target != null && !target.equals(command)) {
+                    continue;
+                }
+
+                // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
+                if (!firstVersion.isBlank()) {
+                    versionCheck(main, version, firstVersion, command);
+                }
 
                 Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + command, Plugin.class);
                 if (plugin.isEmpty()) {
-                    plugin = downloadPlugin(command, main);
+                    final MavenGav mavenGav = dependencyAsMavenGav(properties);
+                    final String group = extractGroup(mavenGav, "org.apache.camel");
+                    final String depVersion = extractVersion(mavenGav, version);
+
+                    plugin = downloadPlugin(command, main, depVersion, group);
                 }
                 if (plugin.isPresent()) {
                     plugin.get().customize(commandLine, main);
@@ -89,14 +112,36 @@ public final class PluginHelper {
         }
     }
 
-    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main) {
+    private static MavenGav dependencyAsMavenGav(JsonObject properties) {
+        final String dependency = properties.get("dependency").toString();
+        if (dependency == null) {
+            return null;
+        }
+
+        return MavenGav.parseGav(dependency);
+    }
+
+    private static void versionCheck(CamelJBangMain main, String version, String firstVersion, String command) {
+        // compare versions without SNAPSHOT
+        String source = version;
+        if (source.endsWith("-SNAPSHOT")) {
+            source = source.replace("-SNAPSHOT", "");
+        }
+        boolean accept = VersionHelper.isGE(source, firstVersion);
+        if (!accept) {
+            main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                  + " because plugin has first version: " + firstVersion + ". Exit");
+            main.quit(1);
+        }
+    }
+
+    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main, String version, String group) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
         downloader.start();
-        String version = new VersionHelper().getVersion();
         // downloads and adds to the classpath
-        downloader.downloadDependency("org.apache.camel", "camel-jbang-plugin-" + command, version);
+        downloader.downloadDependency(group, "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
         InputStream in = null;
         String path = FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/camel-jbang-plugin-" + command;
@@ -111,7 +156,7 @@ public final class PluginHelper {
                 Class<?> pluginClass = resolver.resolveClass(pluginClassName, ddlcl);
                 instance = Optional.of(Plugin.class.cast(ObjectHelper.newInstance(pluginClass)));
             } else {
-                String gav = String.join(":", "org.apache.camel", "camel-jbang-plugin-" + command, version);
+                String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
                 main.getOut().printf(String.format("ERROR: Failed to read file %s in dependency %s.\n", path, gav));
             }
         } catch (IOException e) {
@@ -178,8 +223,50 @@ public final class PluginHelper {
         kubePlugin.put("name", pluginType.getName());
         kubePlugin.put("command", pluginType.getCommand());
         kubePlugin.put("description", pluginType.getDescription());
+        kubePlugin.put("firstVersion", pluginType.getFirstVersion());
         plugins.put(pluginType.getName(), kubePlugin);
 
         PluginHelper.savePluginConfig(pluginConfig);
+    }
+
+    /**
+     * Extracts information from the GAV model
+     *
+     * @param  gav         An instance of a Maven GAV model
+     * @param  defaultInfo the default if null or not available
+     * @return             the information
+     */
+    private static String doExtractInfo(MavenGav gav, String defaultInfo, Supplier<String> supplier) {
+        if (gav != null) {
+            final String info = supplier.get();
+            if (info != null) {
+                return info;
+            }
+        }
+
+        return defaultInfo;
+    }
+
+    /**
+     * Extracts the group from g:a:v
+     *
+     * @param  gav          An instance of a Maven GAV model
+     * @param  defaultGroup the default if null or not available
+     * @return              The group in g:a:v. That is, "g".
+     */
+    private static String extractGroup(MavenGav gav, String defaultGroup) {
+        return doExtractInfo(gav, defaultGroup, gav::getGroupId);
+
+    }
+
+    /**
+     * Extracts the version from g:a:v
+     *
+     * @param  gav            An instance of a Maven GAV model
+     * @param  defaultVersion the default if null or not available
+     * @return                The group in g:a:v. That is, "v".
+     */
+    private static String extractVersion(MavenGav gav, String defaultVersion) {
+        return doExtractInfo(gav, defaultVersion, gav::getVersion);
     }
 }

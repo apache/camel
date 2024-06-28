@@ -39,9 +39,18 @@ public class PropertyDefinition {
     public PropertyDefinition() {
     }
 
+    protected PropertyDefinition(PropertyDefinition source) {
+        this.key = source.key;
+        this.value = source.value;
+    }
+
     public PropertyDefinition(String key, String value) {
         this.key = key;
         this.value = value;
+    }
+
+    public PropertyDefinition copyDefinition() {
+        return new PropertyDefinition(this);
     }
 
     /**

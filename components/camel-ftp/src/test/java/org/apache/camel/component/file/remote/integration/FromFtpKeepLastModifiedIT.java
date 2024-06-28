@@ -43,8 +43,7 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", "CamelFileName", "hello.txt");
     }
 

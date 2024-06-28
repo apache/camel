@@ -95,12 +95,38 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     public OnExceptionDefinition() {
     }
 
+    protected OnExceptionDefinition(OnExceptionDefinition source) {
+        super(source);
+        this.handledPolicy = source.handledPolicy;
+        this.continuedPolicy = source.continuedPolicy;
+        this.retryWhilePolicy = source.retryWhilePolicy;
+        this.onRedelivery = source.onRedelivery;
+        this.onExceptionOccurred = source.onExceptionOccurred;
+        this.routeScoped = source.routeScoped;
+        this.exceptions = new ArrayList<>(source.exceptions);
+        this.onWhen = source.onWhen != null ? source.onWhen.copyDefinition() : null;
+        this.retryWhile = source.retryWhile != null ? source.retryWhile.copyDefinition() : null;
+        this.redeliveryPolicyType = source.redeliveryPolicyType != null ? source.redeliveryPolicyType.copyDefinition() : null;
+        this.redeliveryPolicyRef = source.redeliveryPolicyRef;
+        this.handled = source.handled != null ? source.handled.copyDefinition() : null;
+        this.continued = source.continued != null ? source.continued.copyDefinition() : null;
+        this.onRedeliveryRef = source.onRedeliveryRef;
+        this.onExceptionOccurredRef = source.onExceptionOccurredRef;
+        this.useOriginalMessage = source.useOriginalMessage;
+        this.useOriginalBody = source.useOriginalBody;
+    }
+
     public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
         this.exceptions.addAll(exceptionClasses.stream().map(Class::getName).toList());
     }
 
     public OnExceptionDefinition(Class<? extends Throwable> exceptionType) {
         this.exceptions.add(exceptionType.getName());
+    }
+
+    @Override
+    public OnExceptionDefinition copyDefinition() {
+        return new OnExceptionDefinition(this);
     }
 
     public void setRouteScoped(boolean routeScoped) {

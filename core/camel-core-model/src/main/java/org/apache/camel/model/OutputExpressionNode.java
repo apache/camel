@@ -41,6 +41,11 @@ public abstract class OutputExpressionNode extends ExpressionNode implements Out
     public OutputExpressionNode() {
     }
 
+    public OutputExpressionNode(OutputExpressionNode source) {
+        super(source);
+        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
+    }
+
     public OutputExpressionNode(ExpressionDefinition expression) {
         super(expression);
     }

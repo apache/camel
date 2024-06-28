@@ -61,6 +61,18 @@ public class BeanioDataFormat extends DataFormatDefinition {
         super("beanio");
     }
 
+    protected BeanioDataFormat(BeanioDataFormat source) {
+        super(source);
+        this.mapping = source.mapping;
+        this.streamName = source.streamName;
+        this.ignoreUnidentifiedRecords = source.ignoreUnidentifiedRecords;
+        this.ignoreUnexpectedRecords = source.ignoreUnexpectedRecords;
+        this.ignoreInvalidRecords = source.ignoreInvalidRecords;
+        this.encoding = source.encoding;
+        this.beanReaderErrorHandlerType = source.beanReaderErrorHandlerType;
+        this.unmarshalSingleObject = source.unmarshalSingleObject;
+    }
+
     private BeanioDataFormat(BeanioDataFormat.Builder builder) {
         this();
         this.mapping = builder.mapping;
@@ -71,6 +83,11 @@ public class BeanioDataFormat extends DataFormatDefinition {
         this.encoding = builder.encoding;
         this.beanReaderErrorHandlerType = builder.beanReaderErrorHandlerType;
         this.unmarshalSingleObject = builder.unmarshalSingleObject;
+    }
+
+    @Override
+    public BeanioDataFormat copyDefinition() {
+        return new BeanioDataFormat(this);
     }
 
     public String getMapping() {

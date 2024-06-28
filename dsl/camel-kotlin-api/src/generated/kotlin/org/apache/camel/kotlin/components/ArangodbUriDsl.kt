@@ -147,6 +147,13 @@ public class ArangodbUriDsl(
   }
 
   /**
+   * To use an existing Vertx instance in the ArangoDB client.
+   */
+  public fun vertx(vertx: String) {
+    it.property("vertx", vertx)
+  }
+
+  /**
    * ArangoDB password. If user and password are default, this field is Optional.
    */
   public fun password(password: String) {

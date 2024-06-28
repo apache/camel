@@ -1462,8 +1462,8 @@ camel get
  63068  mygroovy  3.20.0  JBang                1/1   Running      5s      2       0         0     0s/0s/-
 ----
 
-The `camel get` command will default display integrations, which is equivalent to
-typing `camel get integrations` or `camel get int`.
+The `camel get` command will default display Camel application (context), which is equivalent to
+typing `camel get context`.
 
 This displays overall information for every Camel integration, where you can see
 the total number of messages processed. The column _Since Last_
@@ -1474,6 +1474,20 @@ and  that there has not been any failed message yet. And this example `9s/9s/1h3
 completed message is 9 seconds ago, and last failed is 1 hour and 3 minutes ago.
 
 TIP: You can run in _watch_ mode using: `camel get --watch`
+
+From *Camel 4.7* onwards two numbers will be displayed for _TOTAL_, _FAILED_, and _INFLIGHT_ columns.
+The first number is messages received from external systems (databases, cloud systems), and then second
+number is the total number (as in earlier versions).
+
+[source,bash]
+----
+camel get
+  PID   NAME    CAMEL  PLATFORM        PROFILE  READY  STATUS   RELOAD  AGE   ROUTE  MSG/S  TOTAL  FAIL  INFLIGHT  LAST  DELTA  SINCE-LAST
+ 42240  cheese  4.7.0  JBang v0.116.0  dev       1/1   Running       0  1m8s    2/2   1.01   1/65   0/0       0/0     0     -1     1s/1s/-
+----
+
+The _TOTAL_ column above shows `1/65` which mean that 1 message was from external source, and 65 in total; which means that
+64 are from internal sources (such as timer, seda).
 
 You can also see the status of every routes, from all the local Camel integrations with `camel get route`:
 
@@ -2481,7 +2495,7 @@ The Camel route debugger is available by default (the `camel-debug` component is
 
 You can then use the Integrated Development Environment (IDE) of your choice. For instance https://plugins.jetbrains.com/plugin/9371-apache-camel[IntelliJ], https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code] or https://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop].
 
-A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video] or this /blog/2022/05/start-camel-quarkus-application-with-camel-textual-debug-in-vscode/[blogpost].
+A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video].
 
 TIP: When exporting to Maven projects, then you can use the maven profile `camel.debug` that will include the `camel-debug` JAR
 to make it possible for Camel IDE tools to do Camel route debugging.

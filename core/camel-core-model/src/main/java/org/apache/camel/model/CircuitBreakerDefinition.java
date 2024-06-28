@@ -48,6 +48,21 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     public CircuitBreakerDefinition() {
     }
 
+    protected CircuitBreakerDefinition(CircuitBreakerDefinition source) {
+        super(source);
+        this.configuration = source.configuration;
+        this.resilience4jConfiguration
+                = source.resilience4jConfiguration != null ? source.resilience4jConfiguration.copyDefinition() : null;
+        this.faultToleranceConfiguration
+                = source.faultToleranceConfiguration != null ? source.faultToleranceConfiguration.copyDefinition() : null;
+        this.onFallback = source.onFallback != null ? source.onFallback.copyDefinition() : null;
+    }
+
+    @Override
+    public CircuitBreakerDefinition copyDefinition() {
+        return new CircuitBreakerDefinition(this);
+    }
+
     @Override
     public String toString() {
         return "CircuitBreaker[" + getOutputs() + "]";

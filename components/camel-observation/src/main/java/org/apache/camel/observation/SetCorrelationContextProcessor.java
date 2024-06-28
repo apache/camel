@@ -50,7 +50,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
                 String item = expression.evaluate(exchange, String.class);
                 camelSpan.setCorrelationContextItem(baggageName, item);
             } else {
-                LOG.warn("OpenTelemetry: could not find managed span for exchange={}", exchange);
+                LOG.warn("Micrometer Observation: Cannot find managed span for exchange: {}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -93,16 +93,6 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
 
     public Expression getExpression() {
         return expression;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
     }
 
     @Override

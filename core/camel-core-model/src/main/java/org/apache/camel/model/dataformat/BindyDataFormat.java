@@ -58,6 +58,16 @@ public class BindyDataFormat extends DataFormatDefinition {
         super("bindy");
     }
 
+    protected BindyDataFormat(BindyDataFormat source) {
+        super(source);
+        this.classType = source.classType;
+        this.type = source.type;
+        this.classTypeAsString = source.classTypeAsString;
+        this.allowEmptyStream = source.allowEmptyStream;
+        this.unwrapSingleInstance = source.unwrapSingleInstance;
+        this.locale = source.locale;
+    }
+
     private BindyDataFormat(Builder builder) {
         this();
         this.classType = builder.classType;
@@ -66,6 +76,11 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.allowEmptyStream = builder.allowEmptyStream;
         this.unwrapSingleInstance = builder.unwrapSingleInstance;
         this.locale = builder.locale;
+    }
+
+    @Override
+    public BindyDataFormat copyDefinition() {
+        return new BindyDataFormat(this);
     }
 
     public String getType() {

@@ -17,8 +17,6 @@
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400ConnectionPool;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,9 +27,7 @@ public class Jt400ComponentDefaultSecureConnectionPoolTest extends Jt400TestSupp
     private Jt400Component component;
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doPostSetup() {
         component = new Jt400Component();
         component.setCamelContext(context);
         try {
@@ -45,8 +41,7 @@ public class Jt400ComponentDefaultSecureConnectionPoolTest extends Jt400TestSupp
     }
 
     @Override
-    @AfterEach
-    public void tearDown() {
+    public void doPostTearDown() {
         if (component != null) {
             component.stop();
         }

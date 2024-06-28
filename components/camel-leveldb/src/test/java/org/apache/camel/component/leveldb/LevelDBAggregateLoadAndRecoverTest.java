@@ -45,9 +45,8 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
 
     @BeforeEach
     @Override
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         deleteDirectory("target/data");
-        super.setUp();
     }
 
     @Test

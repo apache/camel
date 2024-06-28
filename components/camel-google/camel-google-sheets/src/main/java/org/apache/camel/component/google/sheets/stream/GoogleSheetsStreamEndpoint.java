@@ -22,9 +22,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Poll for changes in Google Sheets.
@@ -35,7 +37,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
              syntax = "google-sheets-stream:spreadsheetId",
              consumerOnly = true,
              category = { Category.CLOUD, Category.DOCUMENT }, headersClass = GoogleSheetsStreamConstants.class)
-public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
+public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleSheetsStreamConfiguration configuration;
@@ -72,6 +74,20 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
 
     public GoogleSheetsStreamConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApplicationName())
+                && ObjectHelper.isNotEmpty(configuration.getSpreadsheetId()))) {
+            return getServiceProtocol() + ":" + configuration.getApplicationName() + ":" + configuration.getSpreadsheetId();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "sheets-stream";
     }
 
 }

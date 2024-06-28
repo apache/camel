@@ -418,7 +418,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         copy.setLogMask(route.getLogMask());
         copy.setMessageHistory(route.getMessageHistory());
         copy.setOutputType(route.getOutputType());
-        copy.setOutputs(copy(route.getOutputs()));
+        copy.setOutputs(ProcessorDefinitionHelper.deepCopyDefinitions(route.getOutputs()));
         copy.setRoutePolicies(shallowCopy(route.getRoutePolicies()));
         copy.setRoutePolicyRef(route.getRoutePolicyRef());
         copy.setRouteProperties(shallowCopy(route.getRouteProperties()));
@@ -445,18 +445,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
 
     private <K, V> Map<K, V> shallowCopy(Map<K, V> map) {
         return (map != null) ? new HashMap<>(map) : null;
-    }
-
-    private List<ProcessorDefinition<?>> copy(List<ProcessorDefinition<?>> outputs) {
-        var copy = new ArrayList<ProcessorDefinition<?>>();
-        for (var definition : outputs) {
-            if (definition instanceof Copyable copyableDefinition) {
-                copy.add(copyableDefinition.copy());
-            } else {
-                copy.add(definition);
-            }
-        }
-        return copy;
     }
 
     @FunctionalInterface
