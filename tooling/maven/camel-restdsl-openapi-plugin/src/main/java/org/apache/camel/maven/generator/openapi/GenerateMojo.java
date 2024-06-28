@@ -20,7 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.generator.openapi.RestDslSourceCodeGenerator;
@@ -57,12 +58,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             return;
         }
 
-        OpenApiDocument openapi;
-        try {
-            openapi = readOpenApiDoc(specificationUri);
-        } catch (Exception e1) {
-            throw new MojoExecutionException("can't load open api doc from " + specificationUri, e1);
-        }
+        OpenAPI openapi = new OpenAPIV3Parser().read(specificationUri);
 
         if (openapi == null) {
             throw new MojoExecutionException(

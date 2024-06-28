@@ -32,9 +32,9 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import io.apicurio.datamodels.models.Info;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
-import io.apicurio.datamodels.models.openapi.OpenApiPathItem;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -50,17 +50,17 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
     private static final String DEFAULT_INDENT = "    ";
 
-    private Function<OpenApiDocument, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
+    private Function<OpenAPI, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
 
     private Instant generated = Instant.now();
 
     private String indent = DEFAULT_INDENT;
 
-    private Function<OpenApiDocument, String> packageNameGenerator = RestDslSourceCodeGenerator::generatePackageName;
+    private Function<OpenAPI, String> packageNameGenerator = RestDslSourceCodeGenerator::generatePackageName;
 
     private boolean sourceCodeTimestamps;
 
-    RestDslSourceCodeGenerator(final OpenApiDocument document) {
+    RestDslSourceCodeGenerator(final OpenAPI document) {
         super(document);
     }
 
@@ -98,7 +98,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
-    MethodSpec generateConfigureMethod(final OpenApiDocument document) {
+    MethodSpec generateConfigureMethod(final OpenAPI document) {
         final MethodSpec.Builder configure = MethodSpec.methodBuilder("configure").addModifiers(Modifier.PUBLIC)
                 .returns(void.class).addJavadoc("Defines Apache Camel routes using REST DSL fluent API.\n");
 
@@ -125,8 +125,8 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
 
-        for (String name : document.getPaths().getItemNames()) {
-            OpenApiPathItem s = document.getPaths().getItem(name);
+        for (String name : document.getPaths().keySet()) {
+            PathItem s = document.getPaths().get(name);
             // there must be at least one verb
             if (s.getGet() != null || s.getDelete() != null || s.getHead() != null || s.getOptions() != null
                     || s.getPut() != null || s.getPatch() != null
@@ -184,7 +184,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
-    static String generateClassName(final OpenApiDocument document) {
+    static String generateClassName(final OpenAPI document) {
         final Info info = document.getInfo();
         if (info == null) {
             return DEFAULT_CLASS_NAME;
@@ -206,7 +206,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return className;
     }
 
-    static String generatePackageName(final OpenApiDocument document) {
+    static String generatePackageName(final OpenAPI document) {
         final String host = RestDslGenerator.determineHostFrom(document);
 
         if (ObjectHelper.isNotEmpty(host)) {

@@ -21,11 +21,11 @@ import java.io.IOException;
 import javax.annotation.processing.Filer;
 
 import com.squareup.javapoet.JavaFile;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
 
 final class FilerGenerator extends RestDslSourceCodeGenerator<Filer> {
 
-    FilerGenerator(final OpenApiDocument document) {
+    FilerGenerator(final OpenAPI document) {
         super(document);
     }
 

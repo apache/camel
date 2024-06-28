@@ -21,11 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.slf4j.Logger;
@@ -61,15 +58,8 @@ public class OpenApiGeneratorReloadStrategy extends FileWatcherResourceReloadStr
 
             LOG.info("Generating open-api rest-dsl from: {}", openapi);
             try {
-                ObjectMapper mapper;
-                boolean yaml = openapi.getName().endsWith(".yaml") || openapi.getName().endsWith(".yml");
-                if (yaml) {
-                    mapper = new YAMLMapper();
-                } else {
-                    mapper = new ObjectMapper();
-                }
-                ObjectNode node = (ObjectNode) mapper.readTree(openapi);
-                OpenApiDocument document = (OpenApiDocument) Library.readDocument(node);
+                OpenAPIV3Parser parser = new OpenAPIV3Parser();
+                OpenAPI document = parser.read(openapi.getAbsolutePath());
                 String out = RestDslGenerator.toYaml(document).generate(getCamelContext(), false);
                 Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
             } catch (Exception e) {

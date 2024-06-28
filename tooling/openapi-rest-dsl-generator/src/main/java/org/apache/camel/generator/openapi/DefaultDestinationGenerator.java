@@ -19,7 +19,7 @@ package org.apache.camel.generator.openapi;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.apicurio.datamodels.models.openapi.OpenApiOperation;
+import io.swagger.v3.oas.models.Operation;
 
 public class DefaultDestinationGenerator implements DestinationGenerator {
 
@@ -35,7 +35,7 @@ public class DefaultDestinationGenerator implements DestinationGenerator {
     }
 
     @Override
-    public String generateDestinationFor(final OpenApiOperation operation) {
+    public String generateDestinationFor(final Operation operation) {
         String answer = syntax;
         if (answer.contains("${operationId")) {
             String id = Optional.ofNullable(operation.getOperationId()).orElseGet(this::generateDirectName);
