@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.google.pubsublite;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.*;
 import org.apache.camel.component.google.pubsublite.serializer.DefaultGooglePubsubSerializer;
 import org.apache.camel.component.google.pubsublite.serializer.GooglePubsubSerializer;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -39,7 +37,7 @@ import org.slf4j.LoggerFactory;
              syntax = "google-pubsub-lite:projectId:location:destinationName",
              category = { Category.CLOUD, Category.MESSAGING },
              headersClass = GooglePubsubLiteConstants.class)
-public class GooglePubsubLiteEndpoint extends DefaultEndpoint {
+public class GooglePubsubLiteEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private Logger log;
 
@@ -229,5 +227,26 @@ public class GooglePubsubLiteEndpoint extends DefaultEndpoint {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (ObjectHelper.isNotEmpty(getPubsubEndpoint())) {
+            return getServiceProtocol() + ":" + getPubsubEndpoint();
+        }
+        return null;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "pubsub-lite";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (getDestinationName() != null) {
+            return Map.of("destinationName", getDestinationName());
+        }
+        return null;
     }
 }
