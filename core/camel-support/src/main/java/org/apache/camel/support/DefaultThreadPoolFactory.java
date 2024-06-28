@@ -101,6 +101,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
         } else if (maxQueueSize <= 0) {
             // use a synchronous queue for direct-handover (no tasks stored on the queue)
             workQueue = new SynchronousQueue<>();
+            // force pool to reject tasks if no room (as otherwise threads can get stuck with reactive routing-engine)
+            rejectedExecutionHandler = new ThreadPoolExecutor.AbortPolicy();
         } else {
             // bounded task queue to store tasks on the queue
             workQueue = new LinkedBlockingQueue<>(maxQueueSize);

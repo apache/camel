@@ -21,6 +21,11 @@ Add default values to `ThrottlingExceptionRoutePolicy` route policy.
 The `EndpointRegistry` interface has been slightly changed to now directly extends `Map<NormalizedEndpointUri, Endpoint>` 
 instead of being a parameterized type. This may cause some compilation failures if the code is declaring a variable for the registry.
 
+When using thread pools with no queues (`maxQueueSize=0`) is now always using rejection policy `Abort`, instead of `CallerRuns`.
+This is necessary, to ensure the thread pool cannot cause _stuck threads_ in Camel routing engine due to thread pool did not
+have any free thread, and current thread was _piggy bagged_ (due to `CallerRuns`) to process the tasks which can lead to routing engine
+now able to continued potential other tasks that are forced being waiting.
+
 === camel-health
 
 Routes which has are set to **not** auto-startup are reported as UP in health-checks.
