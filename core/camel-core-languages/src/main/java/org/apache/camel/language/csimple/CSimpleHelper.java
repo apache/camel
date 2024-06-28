@@ -39,7 +39,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
