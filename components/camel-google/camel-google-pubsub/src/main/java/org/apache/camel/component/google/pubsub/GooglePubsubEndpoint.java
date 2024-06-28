@@ -277,7 +277,6 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
     public Map<String, String> getServiceMetadata() {
         if (getDestinationName() != null) {
             return Map.of("destinationName", getDestinationName());
-            );
         }
         return null;
     }
