@@ -322,8 +322,9 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 if (function != null) {
                     String remainder = StringHelper.after(key, ":");
                     if (function.lookupFirst(remainder)) {
+                        boolean functionOptional = remainder.startsWith(OPTIONAL_TOKEN);
                         String value = getPropertyValue(remainder, input);
-                        if (optional && value == null) {
+                        if (functionOptional && value == null) {
                             return null;
                         }
                         // it was not possible to resolve
