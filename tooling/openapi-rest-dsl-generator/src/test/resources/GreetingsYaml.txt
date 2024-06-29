@@ -3,6 +3,7 @@
     get:
     - id: "greeting-api"
       path: "/greetings/{name}"
+      produces: "*/*"
       param:
       - dataType: "string"
         name: "name"
@@ -12,6 +13,7 @@
     post:
     - id: "post-greeting-api"
       path: "/greetings/{name}"
+      produces: "*/*"
       param:
       - dataType: "string"
         name: "name"
@@ -20,6 +22,7 @@
       to: "direct:post-greeting-api"
     - id: "bye-api"
       path: "/bye/{name}"
+      produces: "*/*"
       param:
       - dataType: "string"
         name: "name"

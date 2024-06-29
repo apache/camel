@@ -17,19 +17,13 @@
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.Document;
-import io.apicurio.datamodels.models.ModelType;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -40,9 +34,6 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 import picocli.CommandLine;
 
 import static org.openapitools.codegen.CodegenConstants.GENERATE_MODELS;
@@ -77,19 +68,10 @@ public class CodeRestGenerator extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        OpenApiDocument doc;
+        OpenAPI doc;
 
-        final ObjectNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
-        Document source = Library.readDocument(node);
-        ModelType mt = ModelType.OPENAPI30;
-        if ("3.1".equals(openApiVersion)) {
-            mt = ModelType.OPENAPI31;
-        }
-        if (!source.root().modelType().equals(mt)) {
-            doc = (OpenApiDocument) Library.transformDocument(source, mt);
-        } else {
-            doc = (OpenApiDocument) source;
-        }
+        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+        doc = parser.read(input);
 
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new DefaultCamelContext()) {
@@ -115,18 +97,6 @@ public class CodeRestGenerator extends CamelCommand {
             generateDto();
         }
         return 0;
-    }
-
-    private ObjectNode readNodeFromJson() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        return (ObjectNode) mapper.readTree(Paths.get(input).toFile());
-    }
-
-    private ObjectNode readNodeFromYaml() throws FileNotFoundException {
-        final ObjectMapper mapper = new ObjectMapper();
-        Yaml loader = new Yaml(new SafeConstructor(new LoaderOptions()));
-        Map<?, ?> map = loader.load(new FileInputStream(Paths.get(input).toFile()));
-        return mapper.convertValue(map, ObjectNode.class);
     }
 
     private void generateDto() throws IOException {

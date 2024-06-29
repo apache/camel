@@ -16,7 +16,6 @@
  */
 package org.apache.camel.generator.openapi;
 
-import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -30,11 +29,10 @@ import org.w3c.dom.Document;
 
 import org.xml.sax.InputSource;
 
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslXmlGeneratorV3Test {
 
-    static OpenApiDocument document;
+    static OpenAPI document;
 
     @Test
     public void shouldGenerateBlueprintXml() throws Exception {
@@ -104,10 +102,7 @@ public class RestDslXmlGeneratorV3Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        try (InputStream is = RestDslXmlGeneratorV3Test.class.getResourceAsStream("openapi-spec.json")) {
-            String json = IOHelper.loadText(is);
-            document = (OpenApiDocument) Library.readDocumentFromJSONString(json);
-        }
+        document = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-spec.json");
     }
 
 }

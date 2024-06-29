@@ -19,7 +19,8 @@ package org.apache.camel.maven.generator.openapi;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
@@ -55,12 +56,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
             return;
         }
 
-        OpenApiDocument openapi;
-        try {
-            openapi = readOpenApiDoc(specificationUri);
-        } catch (Exception e1) {
-            throw new MojoExecutionException("can't load open api doc from " + specificationUri, e1);
-        }
+        OpenAPI openapi = new OpenAPIV3Parser().read(specificationUri);
 
         if (openapi == null) {
             throw new MojoExecutionException(

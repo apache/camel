@@ -18,7 +18,6 @@ package org.apache.camel.maven.generator.openapi;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -27,24 +26,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -57,9 +47,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.inspector.TagInspector;
 import org.yaml.snakeyaml.nodes.Tag;
 
@@ -312,53 +299,6 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             }
         }
         return null;
-    }
-
-    OpenApiDocument readOpenApiDoc(String specificationUri) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        URL inputSpecRemoteUrl = inputSpecRemoteUrl(specificationUri);
-        File inputSpecTempFile = new File(specificationUri);
-
-        if (inputSpecRemoteUrl != null) {
-            inputSpecTempFile = File.createTempFile("openapi-spec", ".tmp");
-
-            URLConnection conn = inputSpecRemoteUrl.openConnection();
-            if (isNotEmpty(auth)) {
-                Map<String, String> authList = parse(auth);
-                for (Entry<String, String> a : authList.entrySet()) {
-                    conn.setRequestProperty(a.getKey(), a.getValue());
-                }
-            }
-            try (ReadableByteChannel readableByteChannel = Channels.newChannel(conn.getInputStream())) {
-                FileChannel fileChannel;
-                try (FileOutputStream fileOutputStream = new FileOutputStream(inputSpecTempFile)) {
-                    fileChannel = fileOutputStream.getChannel();
-                    fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-                }
-            }
-        }
-
-        InputStream is;
-        try {
-            is = new FileInputStream(inputSpecTempFile);
-        } catch (Exception ex) {
-            //use classloader resource stream as fallback
-            is = this.getClass().getClassLoader().getResourceAsStream(specificationUri);
-        }
-
-        String suffix = ".yaml";
-        if (specificationUri.regionMatches(true, specificationUri.length() - suffix.length(), suffix, 0, suffix.length())) {
-            LoaderOptions options = new LoaderOptions();
-            options.setTagInspector(new TrustedTagInspector());
-            Yaml loader = new Yaml(new SafeConstructor(options));
-            Map<?, ?> map = loader.load(is);
-            ObjectNode node = mapper.convertValue(map, ObjectNode.class);
-            return (OpenApiDocument) Library.readDocument(node);
-        } else {
-            ObjectNode node = (ObjectNode) mapper.readTree(is);
-            return (OpenApiDocument) Library.readDocument(node);
-        }
     }
 
     protected String findAppropriateComponent() {

@@ -16,17 +16,13 @@
  */
 package org.apache.camel.generator.openapi;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import io.apicurio.datamodels.Library;
-import io.apicurio.datamodels.models.openapi.OpenApiDocument;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslYamlGeneratorV302Test {
 
-    static OpenApiDocument document;
+    static OpenAPI document;
 
     @Test
     public void shouldGenerateYamlWithAllowedValues() throws Exception {
@@ -52,11 +48,7 @@ public class RestDslYamlGeneratorV302Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        final ObjectMapper mapper = new YAMLMapper();
-        try (InputStream is = RestDslYamlGeneratorV302Test.class.getResourceAsStream("petstore-v3.yaml")) {
-            final ObjectNode node = (ObjectNode) mapper.readTree(is);
-            document = (OpenApiDocument) Library.readDocument(node);
-        }
+        document = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/petstore-v3.yaml");
     }
 
 }
