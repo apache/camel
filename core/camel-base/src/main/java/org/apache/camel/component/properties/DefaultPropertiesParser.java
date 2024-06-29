@@ -321,10 +321,10 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 PropertiesFunction function = propertiesComponent.getPropertiesFunction(prefix);
                 if (function != null) {
                     String remainder = StringHelper.after(key, ":");
+                    boolean remainderOptional = remainder.startsWith(OPTIONAL_TOKEN);
                     if (function.lookupFirst(remainder)) {
-                        boolean functionOptional = remainder.startsWith(OPTIONAL_TOKEN);
                         String value = getPropertyValue(remainder, input);
-                        if (functionOptional && value == null) {
+                        if (value == null && (remainderOptional || function.optional(remainder))) {
                             return null;
                         }
                         // it was not possible to resolve
@@ -337,11 +337,15 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
                     String value = function.apply(remainder);
                     if (value == null) {
-                        if (!optional && propertiesComponent != null && propertiesComponent.isIgnoreMissingProperty()) {
+                        if (!remainderOptional) {
+                            remainderOptional = function.optional(remainder);
+                        }
+                        if (!remainderOptional && propertiesComponent != null
+                                && propertiesComponent.isIgnoreMissingProperty()) {
                             // property is missing, but we should ignore this and return the placeholder unresolved
                             return UNRESOLVED_PREFIX_TOKEN + key + UNRESOLVED_SUFFIX_TOKEN;
                         }
-                        if (!optional) {
+                        if (!remainderOptional) {
                             throw new IllegalArgumentException(
                                     "Property with key [" + key + "] using function [" + function.getName() + "]"
                                                                + " returned null value which is not allowed, from input: "
