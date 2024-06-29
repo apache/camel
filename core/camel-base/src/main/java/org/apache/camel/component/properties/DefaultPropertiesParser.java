@@ -306,6 +306,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
          * @return       Value of the property with the given key
          */
         private String getPropertyValue(String key, String input) {
+            if (key == null) {
+                return null;
+            }
+
+            boolean optional = key.startsWith(OPTIONAL_TOKEN);
+            if (optional) {
+                key = key.substring(OPTIONAL_TOKEN.length());
+            }
 
             // the key may be a function, so lets check this first
             if (propertiesComponent != null) {
@@ -314,7 +322,6 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 if (function != null) {
                     String remainder = StringHelper.after(key, ":");
                     if (function.lookupFirst(remainder)) {
-                        boolean optional = remainder != null && remainder.startsWith(OPTIONAL_TOKEN);
                         String value = getPropertyValue(remainder, input);
                         if (optional && value == null) {
                             return null;
@@ -329,10 +336,23 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
                     String value = function.apply(remainder);
                     if (value == null) {
-                        throw new IllegalArgumentException(
-                                "Property with key [" + key + "] using function [" + function.getName() + "]"
-                                                           + " returned null value which is not allowed, from input: "
-                                                           + input);
+                        if (!optional && propertiesComponent != null && propertiesComponent.isIgnoreMissingProperty()) {
+                            // property is missing, but we should ignore this and return the placeholder unresolved
+                            return UNRESOLVED_PREFIX_TOKEN + key + UNRESOLVED_SUFFIX_TOKEN;
+                        }
+                        if (!optional) {
+                            throw new IllegalArgumentException(
+                                    "Property with key [" + key + "] using function [" + function.getName() + "]"
+                                                               + " returned null value which is not allowed, from input: "
+                                                               + input);
+                        } else {
+                            if (keepUnresolvedOptional) {
+                                // mark the key as unresolved
+                                return UNRESOLVED_PREFIX_TOKEN + OPTIONAL_TOKEN + key + UNRESOLVED_SUFFIX_TOKEN;
+                            } else {
+                                return null;
+                            }
+                        }
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
@@ -348,11 +368,6 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (defaultFallbackEnabled && key.contains(GET_OR_ELSE_TOKEN)) {
                 defaultValue = StringHelper.after(key, GET_OR_ELSE_TOKEN);
                 key = StringHelper.before(key, GET_OR_ELSE_TOKEN);
-            }
-
-            boolean optional = key != null && key.startsWith(OPTIONAL_TOKEN);
-            if (optional) {
-                key = key.substring(OPTIONAL_TOKEN.length());
             }
 
             String value = doGetPropertyValue(key, defaultValue);
