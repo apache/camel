@@ -491,7 +491,7 @@ public class PropertiesComponent extends ServiceSupport
         this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
-    @ManagedAttribute(description = "Ignore missing location")
+    @ManagedAttribute(description = "Ignore missing property")
     public boolean isIgnoreMissingProperty() {
         return ignoreMissingProperty;
     }
