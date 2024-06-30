@@ -46,4 +46,14 @@ public interface PropertiesFunction {
         return false;
     }
 
+    /**
+     * If the property value cannot be found should the property be regarded as optional and ignore missing value.
+     *
+     * @param  remainder the remainder value
+     * @return           true to make this property as optional
+     */
+    default boolean optional(String remainder) {
+        return false;
+    }
+
 }

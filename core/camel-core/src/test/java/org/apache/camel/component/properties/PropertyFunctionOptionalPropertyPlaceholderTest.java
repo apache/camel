@@ -108,6 +108,52 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
     }
 
     @Test
+    public void testFunctionMagic() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .setBody().constant("{{magic:myMagic}}")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+        getMockEndpoint("mock:result").allMessages().body().isEqualTo("magic");
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(2, getMockEndpoint("mock:result").getReceivedExchanges().size());
+    }
+
+    @Test
+    public void testFunctionMagicOptional() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .setBody().constant("{{magic:myOptional}}")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+        getMockEndpoint("mock:result").allMessages().body().isNull();
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(2, getMockEndpoint("mock:result").getReceivedExchanges().size());
+    }
+
+    @Test
     public void testFunctionPresent() throws Exception {
         Properties prop = new Properties();
         prop.put("myKey", "123");
@@ -188,6 +234,9 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
         ReverseFunction func = new ReverseFunction();
         func.setCamelContext(context);
         context.getPropertiesComponent().addPropertiesFunction(func);
+        MagicFunction func2 = new MagicFunction();
+        func2.setCamelContext(context);
+        context.getPropertiesComponent().addPropertiesFunction(func2);
         return context;
     }
 
@@ -222,6 +271,36 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
             }
             StringBuilder sb = new StringBuilder(remainder);
             return sb.reverse().toString();
+        }
+    }
+
+    private static class MagicFunction implements PropertiesFunction, CamelContextAware {
+
+        private CamelContext camelContext;
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        @Override
+        public String getName() {
+            return "magic";
+        }
+
+        @Override
+        public String apply(String remainder) {
+            return "myMagic".equals(remainder) ? "magic" : null;
+        }
+
+        @Override
+        public boolean optional(String remainder) {
+            return "myOptional".equals(remainder);
         }
     }
 
