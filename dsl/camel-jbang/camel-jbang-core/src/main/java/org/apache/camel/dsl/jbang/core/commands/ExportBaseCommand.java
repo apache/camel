@@ -290,7 +290,6 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
-        run.localKameletDir = localKameletDir;
         run.dependencies = dependencies;
         run.files = files;
         run.exclude = exclude;
@@ -301,7 +300,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         run.springBootVersion = springBootVersion;
         run.kameletsVersion = kameletsVersion;
         run.localKameletDir = localKameletDir;
-        return run.runSilent(ignoreLoadingError);
+        return run.runExport(ignoreLoadingError);
     }
 
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {

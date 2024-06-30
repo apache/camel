@@ -398,6 +398,11 @@ public class KameletMain extends MainCommandLineSupport {
         // setup backlog recorder from very start
         answer.getCamelContextExtension().setStartupStepRecorder(new BacklogStartupStepRecorder());
 
+        boolean export = "true".equals(getInitialProperties().get("camel.jbang.export"));
+        if (export) {
+            addInitialProperty("camel.component.properties.ignore-missing-property", "true");
+        }
+
         boolean prompt = "true".equals(getInitialProperties().get("camel.jbang.prompt"));
         if (prompt) {
             answer.getPropertiesComponent().addPropertiesSource(new PromptPropertyPlaceholderSource());
@@ -673,7 +678,8 @@ public class KameletMain extends MainCommandLineSupport {
 
         org.apache.camel.component.properties.PropertiesComponent pc
                 = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-        pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(camelContext));
+        boolean export = "true".equals(getInitialProperties().get("camel.jbang.export"));
+        pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(camelContext, export));
     }
 
     @Override

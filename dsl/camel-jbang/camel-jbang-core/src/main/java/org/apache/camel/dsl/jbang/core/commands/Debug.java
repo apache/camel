@@ -129,7 +129,7 @@ public class Debug extends Run {
 
     @Override
     public Integer doCall() throws Exception {
-        if (!silentRun) {
+        if (!exportRun) {
             printConfigurationValues("Debugging integration with the following configuration:");
         }
 

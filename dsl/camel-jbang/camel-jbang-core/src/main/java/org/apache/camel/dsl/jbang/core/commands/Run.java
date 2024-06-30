@@ -105,7 +105,7 @@ public class Run extends CamelCommand {
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
-    public boolean silentRun;
+    public boolean exportRun;
     boolean scriptRun;
     boolean transformRun;
     boolean transformMessageRun;
@@ -308,20 +308,20 @@ public class Run extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        if (!silentRun) {
+        if (!exportRun) {
             printConfigurationValues("Running integration with the following configuration:");
         }
         // run
         return run();
     }
 
-    public Integer runSilent() throws Exception {
-        return runSilent(false);
+    public Integer runExport() throws Exception {
+        return runExport(false);
     }
 
-    protected Integer runSilent(boolean ignoreLoadingError) throws Exception {
+    protected Integer runExport(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
-        this.silentRun = true;
+        this.exportRun = true;
         return run();
     }
 
@@ -443,7 +443,7 @@ public class Run extends CamelCommand {
                 String routes
                         = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
                 if (routes == null) {
-                    if (!silentRun) {
+                    if (!exportRun) {
                         String run = "run";
                         if (transformRun) {
                             run = "transform";
@@ -550,8 +550,9 @@ public class Run extends CamelCommand {
             }
         }
 
-        if (silentRun) {
+        if (exportRun) {
             main.setSilent(true);
+            main.addInitialProperty("camel.jbang.export", "true");
             // enable stub in silent mode so we do not use real components
             main.setStubPattern("*");
             // do not run for very long in silent run
@@ -898,7 +899,7 @@ public class Run extends CamelCommand {
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            if (!silentRun && !transformRun && !transformMessageRun) {
+            if (!exportRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel Quarkus integration: " + name + " (version: " + eq.quarkusVersion
                                   + ") in background");
             }
@@ -974,7 +975,7 @@ public class Run extends CamelCommand {
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            if (!silentRun && !transformRun && !transformMessageRun) {
+            if (!exportRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel Spring Boot integration: " + name + " (version: " + camelVersion
                                   + ") in background");
             }
@@ -1173,7 +1174,7 @@ public class Run extends CamelCommand {
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            if (!silentRun && !transformRun && !transformMessageRun) {
+            if (!exportRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel integration: " + name + " (version: " + camelVersion
                                   + ") in background with PID: " + p.pid());
             }
@@ -1208,7 +1209,7 @@ public class Run extends CamelCommand {
         pb.command(cmds);
         Process p = pb.start();
         this.spawnPid = p.pid();
-        if (!silentRun && !transformRun && !transformMessageRun) {
+        if (!exportRun && !transformRun && !transformMessageRun) {
             printer().println("Running Camel integration: " + name + " in background with PID: " + p.pid());
         }
         return 0;
@@ -1285,7 +1286,7 @@ public class Run extends CamelCommand {
         if (background) {
             Process p = pb.start();
             this.spawnPid = p.pid();
-            if (!silentRun && !transformRun && !transformMessageRun) {
+            if (!exportRun && !transformRun && !transformMessageRun) {
                 printer().println("Running Camel integration: " + name + " (version: " + camelVersion
                                   + ") in background with PID: " + p.pid());
             }
@@ -1442,7 +1443,7 @@ public class Run extends CamelCommand {
     }
 
     private void configureLogging() throws Exception {
-        if (silentRun) {
+        if (exportRun) {
             // do not configure logging
         } else if (logging) {
             // allow to configure individual logging levels in application.properties
