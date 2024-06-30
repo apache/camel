@@ -21,12 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.saga.InMemorySagaService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Disabled("TODO: Fix me")
 public class SagaOptionsTest extends ContextTestSupport {
 
     @Test

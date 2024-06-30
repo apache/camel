@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
  */
 public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
+    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
+
     private enum Status {
         RUNNING,
         COMPENSATING,
@@ -192,10 +194,10 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
     private CompletableFuture<Boolean> doFinalize(
             Exchange exchange, Endpoint endpoint, CamelSagaStep step, int doneAttempts, String description) {
-        populateExchange(exchange, step);
+        Exchange target = createExchange(exchange, endpoint, step);
 
         return CompletableFuture.supplyAsync(() -> {
-            Exchange res = camelContext.createFluentProducerTemplate().to(endpoint).withExchange(exchange).send();
+            Exchange res = camelContext.createFluentProducerTemplate().to(endpoint).withExchange(target).send();
             Exception ex = res.getException();
             if (ex != null) {
                 throw new RuntimeCamelException(res.getException());
@@ -214,7 +216,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             } else {
                 CompletableFuture<Boolean> future = new CompletableFuture<>();
                 sagaService.getExecutorService().schedule(() -> {
-                    doFinalize(exchange, endpoint, step, currentAttempt, description).whenComplete((res, ex) -> {
+                    doFinalize(target, endpoint, step, currentAttempt, description).whenComplete((res, ex) -> {
                         if (ex != null) {
                             future.completeExceptionally(ex);
                         } else {
@@ -227,15 +229,23 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         });
     }
 
-    private void populateExchange(Exchange exchange, CamelSagaStep step) {
-        exchange.getMessage().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, getId());
+    private Exchange createExchange(Exchange parent, Endpoint endpoint, CamelSagaStep step) {
+        Exchange answer = endpoint.createExchange();
+        answer.getMessage().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, getId());
+
+        // preserve span from parent, so we can link this new exchange to the parent span for distributed tracing
+        Object span = parent != null ? parent.getProperty(ACTIVE_SPAN_PROPERTY) : null;
+        if (span != null) {
+            answer.setProperty(ACTIVE_SPAN_PROPERTY, span);
+        }
 
         Map<String, Object> values = optionValues.get(step);
         if (values != null) {
             for (Map.Entry<String, Object> entry : values.entrySet()) {
-                exchange.getMessage().setHeader(entry.getKey(), entry.getValue());
+                answer.getMessage().setHeader(entry.getKey(), entry.getValue());
             }
         }
+        return answer;
     }
 
     private <T> List<T> reversed(List<T> list) {
