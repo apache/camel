@@ -192,7 +192,8 @@ public class CamelBeanDump extends ActionBaseCommand {
                         .with(r -> r.name),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.type),
-                new Column().header("CONFIGURATION").visible(dsl).dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                new Column().header("CONFIGURATION").visible(dsl).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(r -> r.configValue),
                 new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(this::getValue))));
