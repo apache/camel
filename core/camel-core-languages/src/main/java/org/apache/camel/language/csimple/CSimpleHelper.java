@@ -52,6 +52,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
+import static org.apache.camel.util.StringHelper.between;
+
 /**
  * A set of helper as static imports for the Camel compiled simple language.
  */
@@ -128,7 +130,7 @@ public final class CSimpleHelper {
         List<String> keys = OgnlHelper.splitOgnl(key);
         for (String k : keys) {
             if (k.startsWith("[") && k.endsWith("]")) {
-                k = StringHelper.between(k, "[", "]");
+                k = between(k, "[", "]");
             }
             obj = doObjectAsIndex(context, obj, k);
         }
@@ -154,7 +156,7 @@ public final class CSimpleHelper {
         List<String> keys = OgnlHelper.splitOgnl(key);
         for (String k : keys) {
             if (k.startsWith("[") && k.endsWith("]")) {
-                k = StringHelper.between(k, "[", "]");
+                k = between(k, "[", "]");
             }
             obj = doObjectAsIndex(exchange.getContext(), obj, k);
         }
@@ -180,7 +182,7 @@ public final class CSimpleHelper {
         List<String> keys = OgnlHelper.splitOgnl(key);
         for (String k : keys) {
             if (k.startsWith("[") && k.endsWith("]")) {
-                k = StringHelper.between(k, "[", "]");
+                k = between(k, "[", "]");
             }
             obj = doObjectAsIndex(exchange.getContext(), obj, k);
         }
@@ -497,23 +499,7 @@ public final class CSimpleHelper {
         if (text == null) {
             return null;
         }
-        int len = text.length();
-        if (head > 0) {
-            if (head <= len) {
-                text = text.substring(head);
-            } else {
-                text = "";
-            }
-            len = text.length();
-        }
-        if (tail > 0) {
-            if (tail <= len) {
-                text = text.substring(0, len - tail);
-            } else {
-                text = "";
-            }
-        }
-        return text;
+        return between(text, head, tail);
     }
 
     public static int random(Exchange exchange, Object min, Object max) {
