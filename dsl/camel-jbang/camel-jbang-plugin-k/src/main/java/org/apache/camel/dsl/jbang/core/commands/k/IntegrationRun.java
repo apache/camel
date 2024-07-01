@@ -79,6 +79,9 @@ public class IntegrationRun extends KubeBaseCommand {
     @CommandLine.Option(names = { "--profile" }, description = "The trait profile to use for the deployment.")
     String profile;
 
+    @CommandLine.Option(names = { "--integration-profile" }, description = "The integration profile to use for the deployment.")
+    String integrationProfile;
+
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run this Integration.")
     String serviceAccount;
 
@@ -222,6 +225,18 @@ public class IntegrationRun extends KubeBaseCommand {
 
         // --operator-id={id} is a syntax sugar for '--annotation camel.apache.org/operator.id={id}'
         integration.getMetadata().getAnnotations().put(KubeCommand.OPERATOR_ID_LABEL, operatorId);
+
+        // --integration-profile={id} is a syntax sugar for '--annotation camel.apache.org/integration-profile.id={id}'
+        if (integrationProfile != null) {
+            if (integrationProfile.contains("/")) {
+                String[] namespacedName = integrationProfile.split("/", 2);
+                integration.getMetadata().getAnnotations().put(KubeCommand.INTEGRATION_PROFILE_NAMESPACE_ANNOTATION,
+                        namespacedName[0]);
+                integration.getMetadata().getAnnotations().put(KubeCommand.INTEGRATION_PROFILE_ANNOTATION, namespacedName[1]);
+            } else {
+                integration.getMetadata().getAnnotations().put(KubeCommand.INTEGRATION_PROFILE_ANNOTATION, integrationProfile);
+            }
+        }
 
         if (labels != null && labels.length > 0) {
             integration.getMetadata().setLabels(Arrays.stream(labels)

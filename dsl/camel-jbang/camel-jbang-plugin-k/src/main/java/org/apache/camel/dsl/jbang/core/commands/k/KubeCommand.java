@@ -27,6 +27,9 @@ public class KubeCommand extends KubeBaseCommand {
     public static final String INTEGRATION_LABEL = "camel.apache.org/integration";
     public static final String INTEGRATION_CONTAINER_NAME = "integration";
 
+    public static final String INTEGRATION_PROFILE_ANNOTATION = "camel.apache.org/integration-profile.id";
+    public static final String INTEGRATION_PROFILE_NAMESPACE_ANNOTATION = "camel.apache.org/integration-profile.namespace";
+
     public KubeCommand(CamelJBangMain main) {
         super(main);
     }
