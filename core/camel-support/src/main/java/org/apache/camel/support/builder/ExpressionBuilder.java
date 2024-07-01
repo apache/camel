@@ -61,6 +61,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
+import static org.apache.camel.util.StringHelper.between;
+
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  */
@@ -1854,23 +1856,7 @@ public class ExpressionBuilder {
                 if (text == null) {
                     return null;
                 }
-                int len = text.length();
-                if (head > 0) {
-                    if (head <= len) {
-                        text = text.substring(head);
-                    } else {
-                        text = "";
-                    }
-                    len = text.length();
-                }
-                if (tail > 0) {
-                    if (tail <= len) {
-                        text = text.substring(0, len - tail);
-                    } else {
-                        text = "";
-                    }
-                }
-                return text;
+                return between(text, head, tail);
             }
 
             @Override

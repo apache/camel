@@ -832,6 +832,34 @@ public final class StringHelper {
     }
 
     /**
+     * Returns the substring between the given head and tail
+     *
+     * @param  text the text
+     * @param  head the head of the substring
+     * @param  tail the tail of the substring
+     * @return      the substring between the given head and tail
+     */
+    public static String between(String text, int head, int tail) {
+        int len = text.length();
+        if (head > 0) {
+            if (head <= len) {
+                text = text.substring(head);
+            } else {
+                text = "";
+            }
+            len = text.length();
+        }
+        if (tail > 0) {
+            if (tail <= len) {
+                text = text.substring(0, len - tail);
+            } else {
+                text = "";
+            }
+        }
+        return text;
+    }
+
+    /**
      * Returns the string between the most outer pair of tokens
      * <p/>
      * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise
