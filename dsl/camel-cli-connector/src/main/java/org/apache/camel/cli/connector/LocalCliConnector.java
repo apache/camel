@@ -263,15 +263,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionSendTask(root);
             } else if ("transform".equals(action)) {
                 doActionTransformTask(root);
+            } else if ("bean".equals(action)) {
+                doActionBeanTask(root);
             }
-
-            // action done so delete file
-            FileUtil.deleteFile(actionFile);
-
         } catch (Exception e) {
             // ignore
             LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(),
                     e);
+        } finally {
+            // action done so delete file
+            FileUtil.deleteFile(actionFile);
         }
     }
 
@@ -692,6 +693,31 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         }
+    }
+
+    private void doActionBeanTask(JsonObject root) throws IOException {
+        String filter = root.getStringOrDefault("filter", "");
+        String properties = root.getStringOrDefault("properties", "true");
+        String nulls = root.getStringOrDefault("nulls", "true");
+        String internal = root.getStringOrDefault("internal", "false");
+
+        Map<String, Object> options = Map.of("filter", filter, "properties", properties, "nulls", nulls, "internal", internal);
+
+        JsonObject answer = new JsonObject();
+        DevConsole dc1 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("bean");
+        DevConsole dc2 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("bean-model");
+        if (dc1 != null) {
+            JsonObject json = (JsonObject) dc1.call(DevConsole.MediaType.JSON, options);
+            answer.put("beans", json.getMap("beans"));
+        }
+        if (dc2 != null) {
+            JsonObject json = (JsonObject) dc2.call(DevConsole.MediaType.JSON, options);
+            answer.put("bean-models", json.getMap("beans"));
+        }
+        LOG.trace("Updating output file: {}", outputFile);
+        IOHelper.writeText(answer.toJson(), outputFile);
     }
 
     private void doActionResetStatsTask() throws Exception {

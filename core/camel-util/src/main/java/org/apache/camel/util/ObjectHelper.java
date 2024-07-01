@@ -495,7 +495,7 @@ public final class ObjectHelper {
             return Object[].class;
         } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
             return String[].class;
-            // and these is common as well
+            // and these are common as well
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return String.class;
         } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name)) {

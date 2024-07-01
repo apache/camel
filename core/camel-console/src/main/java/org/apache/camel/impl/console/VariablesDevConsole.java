@@ -76,10 +76,10 @@ public class VariablesDevConsole extends AbstractDevConsole {
             String t = v != null ? v.getClass().getName() : null;
             JsonObject e = new JsonObject();
             e.put("key", k);
-            e.put("value", v);
             if (t != null) {
-                e.put("className", t);
+                e.put("type", t);
             }
+            e.put("value", v);
             arr.add(e);
         }
         return arr;
