@@ -235,6 +235,46 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Substring string values from the expression
+     */
+    public static Expression substringExpression(final String expression, final String head, final String tail) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                exp1 = ExpressionBuilder.simpleExpression(head);
+                exp1.init(context);
+                exp2 = ExpressionBuilder.simpleExpression(tail);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                int num1 = exp1.evaluate(exchange, Integer.class);
+                int num2 = exp2.evaluate(exchange, Integer.class);
+                if (num1 < 0 && num2 == 0) {
+                    // if there is only one value and its negative then we want to clip from tail
+                    num2 = num1;
+                    num1 = 0;
+                }
+                num1 = Math.abs(num1);
+                num2 = Math.abs(num2);
+                return ExpressionBuilder.substring(exp, num1, num2).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "substring(" + expression + "," + head + "," + tail + ")";
+            }
+        };
+    }
+
+    /**
      * Hashes the value using the given algorithm
      */
     public static Expression hashExpression(final String expression, final String algorithm) {
