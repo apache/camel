@@ -51,11 +51,17 @@ public class BeanDevConsole extends AbstractDevConsole {
      */
     public static final String NULLS = "nulls";
 
+    /**
+     * Whether to include internal Camel beans
+     */
+    public static final String INTERNAL = "internal";
+
     @Override
     protected String doCallText(Map<String, Object> options) {
         String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true"));
-        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true"));
+        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
+        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true").toString());
+        boolean internal = "true".equals(options.getOrDefault(INTERNAL, "true").toString());
 
         StringBuilder sb = new StringBuilder();
 
@@ -65,25 +71,28 @@ public class BeanDevConsole extends AbstractDevConsole {
         keys.forEach(k -> {
             Object bean = beans.get(k);
             if (bean != null) {
-                sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
+                boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
+                if (include) {
+                    sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
 
-                Map<String, Object> values = new TreeMap<>();
-                if (properties) {
-                    try {
-                        bi.getProperties(bean, values, null);
-                    } catch (Throwable e) {
-                        // ignore
-                    }
-                    values.forEach((pk, pv) -> {
-                        if (pv == null) {
-                            if (nulls) {
-                                sb.append(String.format("        %s = null%n", pk));
-                            }
-                        } else {
-                            String t = pv.getClass().getName();
-                            sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
+                    Map<String, Object> values = new TreeMap<>();
+                    if (properties) {
+                        try {
+                            bi.getProperties(bean, values, null);
+                        } catch (Throwable e) {
+                            // ignore
                         }
-                    });
+                        values.forEach((pk, pv) -> {
+                            if (pv == null) {
+                                if (nulls) {
+                                    sb.append(String.format("        %s = null%n", pk));
+                                }
+                            } else {
+                                String t = pv.getClass().getName();
+                                sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
+                            }
+                        });
+                    }
                 }
             }
             sb.append("\n");
@@ -95,8 +104,9 @@ public class BeanDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         String filter = (String) options.get(FILTER);
-        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true"));
-        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true"));
+        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true").toString());
+        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true").toString());
+        boolean internal = "true".equals(options.getOrDefault(INTERNAL, "true").toString());
 
         JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();
@@ -107,48 +117,51 @@ public class BeanDevConsole extends AbstractDevConsole {
         Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
 
         keys.forEach(k -> {
-            Object b = beans.get(k);
-            if (b != null) {
-                Map<String, Object> values = new TreeMap<>();
-                if (properties) {
-                    try {
-                        bi.getProperties(b, values, null);
-                    } catch (Throwable e) {
-                        // ignore
+            Object bean = beans.get(k);
+            if (bean != null) {
+                boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
+                if (include) {
+                    Map<String, Object> values = new TreeMap<>();
+                    if (properties) {
+                        try {
+                            bi.getProperties(bean, values, null);
+                        } catch (Throwable e) {
+                            // ignore
+                        }
                     }
-                }
-                JsonObject jb = new JsonObject();
-                jb.put("name", k);
-                jb.put("type", b.getClass().getName());
-                jo.put(k, jb);
+                    JsonObject jb = new JsonObject();
+                    jb.put("name", k);
+                    jb.put("type", bean.getClass().getName());
+                    jo.put(k, jb);
 
-                if (!values.isEmpty()) {
-                    JsonArray arr = new JsonArray();
-                    values.forEach((pk, pv) -> {
-                        Object value = pv;
-                        String type = pv != null ? pv.getClass().getName() : null;
-                        if (type != null) {
-                            value = Jsoner.trySerialize(pv);
-                            if (value == null) {
-                                // cannot serialize so escape
-                                value = Jsoner.escape(pv.toString());
-                            } else {
-                                // okay so use the value as-s
-                                value = pv;
+                    if (!values.isEmpty()) {
+                        JsonArray arr = new JsonArray();
+                        values.forEach((pk, pv) -> {
+                            Object value = pv;
+                            String type = pv != null ? pv.getClass().getName() : null;
+                            if (type != null) {
+                                value = Jsoner.trySerialize(pv);
+                                if (value == null) {
+                                    // cannot serialize so escape
+                                    value = Jsoner.escape(pv.toString());
+                                } else {
+                                    // okay so use the value as-s
+                                    value = pv;
+                                }
                             }
-                        }
-                        JsonObject jp = new JsonObject();
-                        jp.put("name", pk);
-                        if (type != null) {
-                            jp.put("type", type);
-                        }
-                        jp.put("value", value);
-                        boolean accept = value != null || nulls;
-                        if (accept) {
-                            arr.add(jp);
-                        }
-                    });
-                    jb.put("properties", arr);
+                            JsonObject jp = new JsonObject();
+                            jp.put("name", pk);
+                            if (type != null) {
+                                jp.put("type", type);
+                            }
+                            jp.put("value", value);
+                            boolean accept = value != null || nulls;
+                            if (accept) {
+                                arr.add(jp);
+                            }
+                        });
+                        jb.put("properties", arr);
+                    }
                 }
             }
         });

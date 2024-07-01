@@ -61,9 +61,17 @@ public class CamelBeanDump extends ActionBaseCommand {
                         description = "Filter beans names (use all to include all beans)", defaultValue = "all")
     String filter;
 
+    @CommandLine.Option(names = { "--properties" },
+                        description = "Show bean properties", defaultValue = "true")
+    boolean properties;
+
     @CommandLine.Option(names = { "--nulls" },
                         description = "Include null values", defaultValue = "true")
     boolean nulls;
+
+    @CommandLine.Option(names = { "--internal" },
+                        description = "Include internal Camel beans", defaultValue = "false")
+    boolean internal;
 
     private volatile long pid;
 
@@ -92,6 +100,12 @@ public class CamelBeanDump extends ActionBaseCommand {
 
         JsonObject root = new JsonObject();
         root.put("action", "bean");
+        if (!"all".equals(filter)) {
+            root.put("filter", filter);
+        }
+        root.put("properties", properties);
+        root.put("nulls", nulls);
+        root.put("internal", internal);
         File f = getActionFile(Long.toString(pid));
         try {
             IOHelper.writeText(root.toJson(), f);
@@ -100,21 +114,13 @@ public class CamelBeanDump extends ActionBaseCommand {
         }
 
         JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            JsonArray arr = (JsonArray) jo.get("beans");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jt = (JsonObject) arr.get(i);
 
+        if (jo != null) {
+            JsonObject beans = (JsonObject) jo.get("beans");
+            for (String name : beans.keySet()) {
+                JsonObject jt = (JsonObject) beans.get(name);
                 Row row = new Row();
                 row.name = jt.getString("name");
-
-                // filter
-                boolean match
-                        = "all".equals(filter) || row.name.contains(filter) || PatternHelper.matchPattern(row.name, filter);
-                if (!match) {
-                    continue;
-                }
-
                 row.type = jt.getString("type");
                 row.properties = jt.getCollection("properties");
                 rows.add(row);
@@ -138,7 +144,7 @@ public class CamelBeanDump extends ActionBaseCommand {
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(100, OverflowBehaviour.CLIP_LEFT)
                         .with(r -> r.type))));
     }
 
