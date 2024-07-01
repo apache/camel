@@ -263,6 +263,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionSendTask(root);
             } else if ("transform".equals(action)) {
                 doActionTransformTask(root);
+            } else if ("bean".equals(action)) {
+                doActionBeanTask();
             }
 
             // action done so delete file
@@ -692,6 +694,24 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         }
+    }
+
+    private void doActionBeanTask() throws IOException {
+        JsonObject root = new JsonObject();
+        DevConsole dc1 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("bean");
+        DevConsole dc2 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("bean-model");
+        if (dc1 != null) {
+            JsonObject json = (JsonObject) dc1.call(DevConsole.MediaType.JSON);
+            root.put("beans", json.getCollection("beans"));
+        }
+        if (dc2 != null) {
+            JsonObject json = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
+            root.put("bean-models", json.getCollection("beans"));
+        }
+        LOG.trace("Updating output file: {}", outputFile);
+        IOHelper.writeText(root.toJson(), outputFile);
     }
 
     private void doActionResetStatsTask() throws Exception {

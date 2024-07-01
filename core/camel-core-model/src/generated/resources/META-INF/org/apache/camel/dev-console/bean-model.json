@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "bean-model",
+    "title": "Bean Model",
+    "description": "Displays beans from the DSL model",
+    "deprecated": false,
+    "javaType": "org.apache.camel.model.BeanModelDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-model",
+    "version": "4.7.0-SNAPSHOT"
+  }
+}
+
