@@ -250,6 +250,32 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSubstringExpression() {
+        exchange.getMessage().setBody("ABCDEFGHIJK");
+        // head
+        assertExpression("${substring(0)}", "ABCDEFGHIJK");
+        assertExpression("${substring(1)}", "BCDEFGHIJK");
+        assertExpression("${substring(3)}", "DEFGHIJK");
+        assertExpression("${substring(99)}", "");
+        // tail
+        assertExpression("${substring(0)}", "ABCDEFGHIJK");
+        assertExpression("${substring(-1)}", "ABCDEFGHIJ");
+        assertExpression("${substring(-3)}", "ABCDEFGH");
+        assertExpression("${substring(-99)}", "");
+        // head and tail
+        assertExpression("${substring(1,-1)}", "BCDEFGHIJ");
+        assertExpression("${substring(3,-3)}", "DEFGH");
+        assertExpression("${substring(1,-3)}", "BCDEFGH");
+        assertExpression("${substring(3,-1)}", "DEFGHIJ");
+        assertExpression("${substring(0,-1)}", "ABCDEFGHIJ");
+        assertExpression("${substring(1,0)}", "BCDEFGHIJK");
+        assertExpression("${substring(99,-99)}", "");
+        assertExpression("${substring(0,-99)}", "");
+        assertExpression("${substring(99,0)}", "");
+        assertExpression("${substring(0,0)}", "ABCDEFGHIJK");
+    }
+
+    @Test
     public void testTrimSimpleExpressions() {
         assertExpression(" \t${exchangeId}\n".trim(), exchange.getExchangeId());
         assertExpression("\n${id}\r".trim(), exchange.getIn().getMessageId());

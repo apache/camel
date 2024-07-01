@@ -246,6 +246,18 @@ To make it easier to replace single and double quotes, then you can use XML esca
 |replace(from,to,exp) |String |replace all the string values in the given expression.
 To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 
+|substring(num1) |String |returns a substring of the message body.
+If the number is positive then the returned string is clipped from the beginning.
+If the number is negative then the returned string is clipped from the ending.
+
+|substring(num1,num2) |String |returns a substring of the message body.
+If the number is positive then the returned string is clipped from the beginning.
+If the number is negative then the returned string is clipped from the ending.
+
+|substring(num1,num2,exp) |String |replace all the string values in the given expression.
+If the number is positive then the returned string is clipped from the beginning.
+If the number is negative then the returned string is clipped from the ending.
+
 |collate(group) |List |The collate function iterates the message body and groups
 the data into sub lists of specified size. This can be used with the
 Splitter EIP to split a message body and group/batch
@@ -852,6 +864,34 @@ You can nest functions, such as shown below:
 <setHeader name="myHeader">
   <simple>${properties:${header.someKey}}</simple>
 </setHeader>
+----
+
+=== Substring
+
+You can use the `substring` function to more easily clip the message body.
+For example if the message body contains the following 10 letters `ABCDEFGHIJ` then:
+
+[source,xml]
+----
+<setBody>
+  <simple>${substring(3)}</simple>
+</setBody>
+----
+
+Then the message body after the substring will be `DEFGHIJ`.
+If you want to clip from the end instead, then use negative values such as `substring(-3)`.
+
+You can also clip from both ends at the same time such as `substring(1,-1)` that will clip the first and last character in the String.
+
+If the number is higher than the length of the message body, then an empty string is returned, for example `substring(99)`.
+
+Instead of the message body then a simple expression can be nested as input, for example using a variable, as shown below:
+
+[source,xml]
+----
+<setBody>
+  <simple>${substring(1,-1,${variable.foo})}</simple>
+</setBody>
 ----
 
 === Replacing double and single quotes

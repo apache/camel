@@ -689,6 +689,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.replaceExpression(exp, from, to);
         }
 
+        // substring function
+        remainder = ifStartsWithReturnRemainder("substring(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substring(num)}, ${substring(num,num)}, or ${substring(num,num,expression)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${replace(num,num,expression)} was: " + function, token.getIndex());
+            }
+            String num1 = tokens[0];
+            String num2 = "0";
+            if (tokens.length > 1) {
+                num2 = tokens[1];
+            }
+            String exp = "${body}";
+            if (tokens.length == 3) {
+                exp = tokens[2];
+            }
+            return SimpleExpressionBuilder.substringExpression(exp, num1, num2);
+        }
+
         // random function
         remainder = ifStartsWithReturnRemainder("random(", function);
         if (remainder != null) {
@@ -1637,6 +1664,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     private String createCodeExpressionMisc(String function) {
         String remainder;
+
+        // substring function
+        remainder = ifStartsWithReturnRemainder("substring(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substring(num)}, ${substring(num,num)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${replace(num,num)} was: " + function, token.getIndex());
+            }
+            String num1 = tokens[0];
+            String num2 = "0";
+            if (tokens.length > 1) {
+                num2 = tokens[1];
+            }
+            num1 = num1.trim();
+            num2 = num2.trim();
+            return "substring(exchange, " + num1 + ", " + num2 + ")";
+        }
 
         // random function
         remainder = ifStartsWithReturnRemainder("random(", function);

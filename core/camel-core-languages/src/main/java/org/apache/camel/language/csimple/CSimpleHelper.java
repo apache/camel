@@ -483,6 +483,39 @@ public final class CSimpleHelper {
         throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
     }
 
+    public static String substring(Exchange exchange, Object num1, Object num2) {
+        int head = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, num1);
+        int tail = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, num2);
+        if (head < 0 && tail == 0) {
+            // if there is only one value and its negative then we want to clip from tail
+            tail = head;
+            head = 0;
+        }
+        head = Math.abs(head);
+        tail = Math.abs(tail);
+        String text = exchange.getMessage().getBody(String.class);
+        if (text == null) {
+            return null;
+        }
+        int len = text.length();
+        if (head > 0) {
+            if (head <= len) {
+                text = text.substring(head);
+            } else {
+                text = "";
+            }
+            len = text.length();
+        }
+        if (tail > 0) {
+            if (tail <= len) {
+                text = text.substring(0, len - tail);
+            } else {
+                text = "";
+            }
+        }
+        return text;
+    }
+
     public static int random(Exchange exchange, Object min, Object max) {
         int num1 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, min);
         int num2 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, max);
