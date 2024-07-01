@@ -27,7 +27,6 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -74,7 +73,7 @@ public class CamelBeanDump extends ActionBaseCommand {
     boolean internal;
 
     @CommandLine.Option(names = { "--dsl" },
-                        description = "Include only beans from DSL", defaultValue = "false")
+                        description = "Include only beans from YAML or XML DSL", defaultValue = "false")
     boolean dsl;
 
     private volatile long pid;
