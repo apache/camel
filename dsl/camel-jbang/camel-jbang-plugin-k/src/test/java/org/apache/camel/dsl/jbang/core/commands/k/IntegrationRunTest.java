@@ -340,6 +340,61 @@ class IntegrationRunTest extends KubeBaseTest {
     }
 
     @Test
+    public void shouldUseIntegrationProfile() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.integrationProfile = "my-profile";
+        command.output = "yaml";
+        command.doCall();
+
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  annotations:
+                    camel.apache.org/operator.id: camel-k
+                    camel.apache.org/integration-profile.id: my-profile
+                  name: route
+                spec:
+                  flows:
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
+                  traits: {}""", printer.getOutput());
+    }
+
+    @Test
+    public void shouldUseNamespacedIntegrationProfile() throws Exception {
+        IntegrationRun command = createCommand();
+        command.filePaths = new String[] { "classpath:route.yaml" };
+        command.integrationProfile = "my-namespace/my-profile";
+        command.output = "yaml";
+        command.doCall();
+
+        Assertions.assertEquals("""
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  annotations:
+                    camel.apache.org/operator.id: camel-k
+                    camel.apache.org/integration-profile.namespace: my-namespace
+                    camel.apache.org/integration-profile.id: my-profile
+                  name: route
+                spec:
+                  flows:
+                  - from:
+                      uri: timer:tick
+                      steps:
+                      - setBody:
+                          constant: Hello Camel !!!
+                      - to: log:info
+                  traits: {}""", printer.getOutput());
+    }
+
+    @Test
     public void shouldAddSources() throws Exception {
         IntegrationRun command = createCommand();
         command.sources = new String[] { "classpath:route.yaml" };
