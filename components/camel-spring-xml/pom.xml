@@ -323,7 +323,7 @@
                                     <classifier>sources</classifier>
                                     <overWrite>true</overWrite>
                                     <includes>**/*</includes>
-                                    <excludes>**/*Configurer.java</excludes>
+                                    <excludes>**/*Configurer.java,**/console/*</excludes>
                                     <outputDirectory>target/sources/camel-core-model</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>

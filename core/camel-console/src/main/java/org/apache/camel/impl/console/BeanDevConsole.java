@@ -16,12 +16,13 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
@@ -35,15 +36,57 @@ public class BeanDevConsole extends AbstractDevConsole {
         super("camel", "bean", "Bean", "Displays Java beans from the registry");
     }
 
+    /**
+     * Filters the beans matching by name
+     */
+    public static final String FILTER = "filter";
+
+    /**
+     * Whether to include bean properties
+     */
+    public static final String PROPERTIES = "properties";
+
+    /**
+     * Whether to include null values
+     */
+    public static final String NULLS = "nulls";
+
     @Override
     protected String doCallText(Map<String, Object> options) {
+        String filter = (String) options.get(FILTER);
+        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true"));
+        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true"));
+
         StringBuilder sb = new StringBuilder();
 
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
         Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
-        Stream<String> keys = beans.keySet().stream().sorted(String::compareToIgnoreCase);
+        Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
         keys.forEach(k -> {
-            String v = beans.getOrDefault(k, "<null>").getClass().getName();
-            sb.append(String.format("    %s (class: %s)%n", k, v));
+            Object bean = beans.get(k);
+            if (bean != null) {
+                sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
+
+                Map<String, Object> values = new TreeMap<>();
+                if (properties) {
+                    try {
+                        bi.getProperties(bean, values, null);
+                    } catch (Throwable e) {
+                        // ignore
+                    }
+                    values.forEach((pk, pv) -> {
+                        if (pv == null) {
+                            if (nulls) {
+                                sb.append(String.format("        %s = null%n", pk));
+                            }
+                        } else {
+                            String t = pv.getClass().getName();
+                            sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
+                        }
+                    });
+                }
+            }
+            sb.append("\n");
         });
 
         return sb.toString();
@@ -51,23 +94,28 @@ public class BeanDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+        String filter = (String) options.get(FILTER);
+        boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true"));
+        boolean nulls = "true".equals(options.getOrDefault(NULLS, "true"));
 
+        JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();
         root.put("beans", jo);
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
         Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
-        Stream<String> keys = beans.keySet().stream().sorted(String::compareToIgnoreCase);
+        Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
 
         keys.forEach(k -> {
             Object b = beans.get(k);
             if (b != null) {
-                Map<String, Object> values = new HashMap<>();
-                try {
-                    bi.getProperties(b, values, null);
-                } catch (Exception e) {
-                    // ignore
+                Map<String, Object> values = new TreeMap<>();
+                if (properties) {
+                    try {
+                        bi.getProperties(b, values, null);
+                    } catch (Throwable e) {
+                        // ignore
+                    }
                 }
                 JsonObject jb = new JsonObject();
                 jb.put("name", k);
@@ -95,7 +143,10 @@ public class BeanDevConsole extends AbstractDevConsole {
                             jp.put("type", type);
                         }
                         jp.put("value", value);
-                        arr.add(jp);
+                        boolean accept = value != null || nulls;
+                        if (accept) {
+                            arr.add(jp);
+                        }
                     });
                     jb.put("properties", arr);
                 }
@@ -104,4 +155,13 @@ public class BeanDevConsole extends AbstractDevConsole {
 
         return root;
     }
+
+    private static boolean accept(String name, String filter) {
+        if (filter == null || filter.isBlank()) {
+            return true;
+        }
+
+        return PatternHelper.matchPattern(name, filter);
+    }
+
 }
