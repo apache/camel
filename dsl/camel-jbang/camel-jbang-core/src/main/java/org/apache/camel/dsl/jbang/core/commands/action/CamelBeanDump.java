@@ -73,6 +73,10 @@ public class CamelBeanDump extends ActionBaseCommand {
                         description = "Include internal Camel beans", defaultValue = "false")
     boolean internal;
 
+    @CommandLine.Option(names = { "--dsl" },
+                        description = "Include only beans from DSL", defaultValue = "false")
+    boolean dsl;
+
     private volatile long pid;
 
     public CamelBeanDump(CamelJBangMain main) {
@@ -116,13 +120,36 @@ public class CamelBeanDump extends ActionBaseCommand {
         JsonObject jo = waitForOutputFile(outputFile);
 
         if (jo != null) {
-            JsonObject beans = (JsonObject) jo.get("beans");
+            JsonObject beans;
+            if (dsl) {
+                beans = (JsonObject) jo.get("bean-models");
+            } else {
+                beans = (JsonObject) jo.get("beans");
+            }
             for (String name : beans.keySet()) {
                 JsonObject jt = (JsonObject) beans.get(name);
                 Row row = new Row();
                 row.name = jt.getString("name");
                 row.type = jt.getString("type");
-                row.properties = jt.getCollection("properties");
+                JsonArray arr = jt.getCollection("properties");
+                JsonArray arr2 = jt.getCollection("modelProperties");
+                if (arr != null) {
+                    row.properties = new ArrayList<>();
+                    for (int i = 0; i < arr.size(); i++) {
+                        PropertyRow pr = new PropertyRow();
+                        row.properties.add(pr);
+                        JsonObject p = (JsonObject) arr.get(i);
+                        pr.name = p.getString("name");
+                        pr.type = p.getString("type");
+                        pr.value = p.get("value");
+                        if (arr2 != null) {
+                            JsonObject p2 = (JsonObject) arr2.get(i);
+                            if (p2 != null) {
+                                pr.configValue = p2.getString("value");
+                            }
+                        }
+                    }
+                }
                 rows.add(row);
             }
         } else {
@@ -132,7 +159,19 @@ public class CamelBeanDump extends ActionBaseCommand {
 
         // sort rows
         rows.sort(this::sortRow);
-        singleTable(rows);
+        if (properties) {
+            for (Row row : rows) {
+                String line = "BEAN: " + row.name + " (" + row.type + "):";
+                printer().println(line);
+                printer().println("-".repeat(line.length()));
+                if (row.properties != null) {
+                    propertiesTable(row.properties);
+                }
+                printer().println();
+            }
+        } else {
+            singleTable(rows);
+        }
 
         // delete output file after use
         FileUtil.deleteFile(outputFile);
@@ -146,6 +185,25 @@ public class CamelBeanDump extends ActionBaseCommand {
                         .with(r -> r.name),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(100, OverflowBehaviour.CLIP_LEFT)
                         .with(r -> r.type))));
+    }
+
+    protected void propertiesTable(List<PropertyRow> rows) {
+        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                new Column().header("PROPERTY").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(r -> r.name),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(r -> r.type),
+                new Column().header("CONFIGURATION").visible(dsl).dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.configValue),
+                new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getValue))));
+    }
+
+    private String getValue(PropertyRow r) {
+        if (r.value != null) {
+            return r.value.toString();
+        }
+        return "null";
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -170,7 +228,14 @@ public class CamelBeanDump extends ActionBaseCommand {
     private static class Row {
         String name;
         String type;
-        JsonArray properties;
+        List<PropertyRow> properties;
+    }
+
+    private static class PropertyRow {
+        String name;
+        String type;
+        Object value;
+        String configValue;
     }
 
 }
