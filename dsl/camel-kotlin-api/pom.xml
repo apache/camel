@@ -29,8 +29,8 @@
 
     <artifactId>camel-kotlin-api</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Kotlin API (Deprecated)</name>
-    <description>Camel Kotlin API (Deprecated)</description>
+    <name>Camel :: Kotlin API (deprecated)</name>
+    <description>Camel Kotlin API (deprecated)</description>
 
     <properties>
         <firstVersion>4.4.0</firstVersion>

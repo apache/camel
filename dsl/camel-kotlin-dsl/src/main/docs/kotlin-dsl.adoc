@@ -1,10 +1,11 @@
-= Kotlin DSL Component
+= Kotlin DSL Component (deprecated)
 :doctitle: Kotlin DSL
 :shortname: kotlin-dsl
 :artifactid: camel-kotlin-dsl
-:description: Camel DSL with Kotlin (Deprecated)
+:description: Camel DSL with Kotlin (deprecated)
 :since: 3.9
-:supportlevel: Experimental
+:supportlevel: Experimental-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :group: DSL

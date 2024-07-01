@@ -1,10 +1,11 @@
-= Kotlin API Component
+= Kotlin API Component (deprecated)
 :doctitle: Kotlin API
 :shortname: kotlin-api
 :artifactid: camel-kotlin-api
-:description: Camel Kotlin API (Deprecated)
+:description: Camel Kotlin API (deprecated)
 :since: 4.4
-:supportlevel: Experimental
+:supportlevel: Experimental-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :group: DSL
