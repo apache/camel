@@ -15361,6 +15361,15 @@ Marks this rest operation as deprecated in OpenApi documentation. Default value:
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="streamCache" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether stream caching is enabled on this rest operation. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="routeId" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

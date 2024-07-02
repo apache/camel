@@ -27,6 +27,7 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -88,6 +89,9 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String deprecated;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String streamCache;
+    @XmlAttribute
     private String routeId;
     @XmlElement(required = true)
     private ToDefinition to;
@@ -120,6 +124,31 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
 
     public String getRouteId() {
         return routeId;
+    }
+
+    /**
+     * Whether stream caching is enabled on this rest operation.
+     */
+    public String getStreamCache() {
+        return streamCache;
+    }
+
+    /**
+     * Whether stream caching is enabled on this rest operation.
+     */
+    public void setStreamCache(String streamCache) {
+        this.streamCache = streamCache;
+    }
+
+    /**
+     * Enable or disables stream caching for this rest operation.
+     *
+     * @param  streamCache whether to use stream caching (true or false), the value can be a property placeholder
+     * @return             the builder
+     */
+    public VerbDefinition streamCache(String streamCache) {
+        setStreamCache(streamCache);
+        return this;
     }
 
     /**

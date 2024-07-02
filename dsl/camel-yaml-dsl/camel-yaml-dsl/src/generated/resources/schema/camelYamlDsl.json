@@ -14310,6 +14310,11 @@
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level"
           },
+          "streamCache" : {
+            "type" : "boolean",
+            "title" : "Stream Cache",
+            "description" : "Whether stream caching is enabled on this rest operation."
+          },
           "to" : {
             "title" : "To",
             "description" : "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.",
@@ -14423,6 +14428,11 @@
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level"
           },
+          "streamCache" : {
+            "type" : "boolean",
+            "title" : "Stream Cache",
+            "description" : "Whether stream caching is enabled on this rest operation."
+          },
           "to" : {
             "title" : "To",
             "description" : "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.",
@@ -14535,6 +14545,11 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level"
+          },
+          "streamCache" : {
+            "type" : "boolean",
+            "title" : "Stream Cache",
+            "description" : "Whether stream caching is enabled on this rest operation."
           },
           "to" : {
             "title" : "To",
@@ -14863,6 +14878,11 @@
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level"
           },
+          "streamCache" : {
+            "type" : "boolean",
+            "title" : "Stream Cache",
+            "description" : "Whether stream caching is enabled on this rest operation."
+          },
           "to" : {
             "title" : "To",
             "description" : "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.",
@@ -14976,6 +14996,11 @@
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level"
           },
+          "streamCache" : {
+            "type" : "boolean",
+            "title" : "Stream Cache",
+            "description" : "Whether stream caching is enabled on this rest operation."
+          },
           "to" : {
             "title" : "To",
             "description" : "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.",
@@ -15088,6 +15113,11 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level"
+          },
+          "streamCache" : {
+            "type" : "boolean",
+            "title" : "Stream Cache",
+            "description" : "Whether stream caching is enabled on this rest operation."
           },
           "to" : {
             "title" : "To",

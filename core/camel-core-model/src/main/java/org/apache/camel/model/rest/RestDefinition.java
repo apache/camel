@@ -1064,6 +1064,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (verb.getRouteId() != null) {
                 route.routeId(parseText(camelContext, verb.getRouteId()));
             }
+            if (verb.getStreamCache() != null) {
+                route.streamCache(parseText(camelContext, verb.getStreamCache()));
+            }
             route.getOutputs().add(verb.getTo());
 
             // add the binding

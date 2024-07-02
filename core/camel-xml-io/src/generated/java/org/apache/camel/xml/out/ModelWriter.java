@@ -3428,6 +3428,7 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("enableCORS", def.getEnableCORS());
         doWriteAttribute("deprecated", def.getDeprecated());
+        doWriteAttribute("streamCache", def.getStreamCache());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("outType", def.getOutType());
         doWriteAttribute("path", def.getPath());

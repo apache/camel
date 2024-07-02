@@ -2452,6 +2452,7 @@ public class ModelParser extends BaseParser {
             case "produces": def.setProduces(val); yield true;
             case "routeId": def.setRouteId(val); yield true;
             case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); yield true;
+            case "streamCache": def.setStreamCache(val); yield true;
             case "type": def.setType(val); yield true;
             default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
         };

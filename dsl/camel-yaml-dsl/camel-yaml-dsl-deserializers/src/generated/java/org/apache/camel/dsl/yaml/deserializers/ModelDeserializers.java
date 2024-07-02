@@ -4850,6 +4850,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "streamCache", type = "boolean", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level. The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Type")
             }
@@ -4947,6 +4948,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "skipBindingOnErrorCode": {
                     String val = asText(node);
                     target.setSkipBindingOnErrorCode(val);
+                    break;
+                }
+                case "streamCache": {
+                    String val = asText(node);
+                    target.setStreamCache(val);
                     break;
                 }
                 case "to": {
@@ -6281,6 +6287,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "streamCache", type = "boolean", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level. The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Type")
             }
@@ -6378,6 +6385,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "skipBindingOnErrorCode": {
                     String val = asText(node);
                     target.setSkipBindingOnErrorCode(val);
+                    break;
+                }
+                case "streamCache": {
+                    String val = asText(node);
+                    target.setStreamCache(val);
                     break;
                 }
                 case "to": {
@@ -6742,6 +6754,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "streamCache", type = "boolean", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level. The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Type")
             }
@@ -6839,6 +6852,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "skipBindingOnErrorCode": {
                     String val = asText(node);
                     target.setSkipBindingOnErrorCode(val);
+                    break;
+                }
+                case "streamCache": {
+                    String val = asText(node);
+                    target.setStreamCache(val);
                     break;
                 }
                 case "to": {
@@ -11255,6 +11273,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "streamCache", type = "boolean", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level. The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Type")
             }
@@ -11352,6 +11371,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "skipBindingOnErrorCode": {
                     String val = asText(node);
                     target.setSkipBindingOnErrorCode(val);
+                    break;
+                }
+                case "streamCache": {
+                    String val = asText(node);
+                    target.setStreamCache(val);
                     break;
                 }
                 case "to": {
@@ -11737,6 +11761,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "streamCache", type = "boolean", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level. The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Type")
             }
@@ -11834,6 +11859,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "skipBindingOnErrorCode": {
                     String val = asText(node);
                     target.setSkipBindingOnErrorCode(val);
+                    break;
+                }
+                case "streamCache": {
+                    String val = asText(node);
+                    target.setStreamCache(val);
                     break;
                 }
                 case "to": {
@@ -12267,6 +12297,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "routeId", type = "string", description = "Sets the id of the route", displayName = "Route Id"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level", displayName = "Skip Binding On Error Code"),
+                    @YamlProperty(name = "streamCache", type = "boolean", description = "Whether stream caching is enabled on this rest operation.", displayName = "Stream Cache"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition", description = "The Camel endpoint this REST service will call, such as a direct endpoint to link to an existing route that handles this REST call.", displayName = "To"),
                     @YamlProperty(name = "type", type = "string", description = "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level. The name of the class of the input data. Append a to the end of the name if you want the input to be an array type.", displayName = "Type")
             }
@@ -12364,6 +12395,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "skipBindingOnErrorCode": {
                     String val = asText(node);
                     target.setSkipBindingOnErrorCode(val);
+                    break;
+                }
+                case "streamCache": {
+                    String val = asText(node);
+                    target.setStreamCache(val);
                     break;
                 }
                 case "to": {
