@@ -65,12 +65,12 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         this(new TempFileManager(file, true));
     }
 
-    FileInputStreamCache(TempFileManager closer) {
-        this.file = closer.getTempFile();
+    FileInputStreamCache(TempFileManager tempFileManager) {
+        this.file = tempFileManager.getTempFile();
         this.stream = null;
-        this.ciphers = closer.getCiphers();
+        this.ciphers = tempFileManager.getCiphers();
         this.length = file.length();
-        this.tempFileManager = closer;
+        this.tempFileManager = tempFileManager;
         this.tempFileManager.add(this);
     }
 
@@ -178,17 +178,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     private InputStream createInputStream(File file) throws IOException {
         InputStream in = new BufferedInputStream(Files.newInputStream(file.toPath(), StandardOpenOption.READ));
         if (ciphers != null) {
-            in = new CipherInputStream(in, ciphers.createDecryptor()) {
-                boolean closed;
-
-                @Override
-                public void close() throws IOException {
-                    if (!closed) {
-                        super.close();
-                        closed = true;
-                    }
-                }
-            };
+            in = new CipherInputStream(in, ciphers.createDecryptor());
         }
         return in;
     }
@@ -314,22 +304,12 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             if (ObjectHelper.isNotEmpty(strategy.getSpoolCipher())) {
                 try {
                     if (ciphers == null) {
-                        ciphers = new CipherPair(strategy.getSpoolCipher());
+                        ciphers = new CipherPair(strategy.getSpoolCipher(), strategy.getSecureRandomParameters());
                     }
                 } catch (GeneralSecurityException e) {
                     throw new IOException(e.getMessage(), e);
                 }
-                out = new CipherOutputStream(out, ciphers.getEncryptor()) {
-                    boolean closed;
-
-                    @Override
-                    public void close() throws IOException {
-                        if (!closed) {
-                            super.close();
-                            closed = true;
-                        }
-                    }
-                };
+                out = new CipherOutputStream(out, ciphers.createEncryptor());
             }
             outputStream = out;
             return out;

@@ -159,6 +159,7 @@ public class CachedOutputStream extends OutputStream {
             // creates a tmp file and a file output stream
             currentStream = tempFileManager.createOutputStream(strategy);
             bout.writeTo(currentStream);
+            currentStream.flush();
         } finally {
             // ensure flag is flipped to file based
             inMemory = false;
