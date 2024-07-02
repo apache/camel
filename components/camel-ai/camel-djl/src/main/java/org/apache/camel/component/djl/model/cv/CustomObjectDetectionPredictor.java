@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.djl.model;
+package org.apache.camel.component.djl.model.cv;
 
 import java.io.*;
 
@@ -27,6 +27,7 @@ import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.djl.model.AbstractPredictor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

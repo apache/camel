@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.djl;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class ImageClassificationTest extends CamelTestSupport {
+public class CvSemanticSegmentationTest extends CamelTestSupport {
 
     @BeforeAll
     public static void setupDefaultEngine() {
@@ -33,8 +31,8 @@ public class ImageClassificationTest extends CamelTestSupport {
 
     @Test
     void testDJL() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(98);
+        var mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(3);
         mock.await();
     }
 
@@ -42,10 +40,10 @@ public class ImageClassificationTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:src/test/resources/data/mnist?recursive=true&noop=true")
+                from("file:src/test/resources/data/detect?recursive=true&noop=true")
                         .convertBodyTo(byte[].class)
-                        .to("djl:cv/image_classification?artifactId=ai.djl.zoo:mlp:0.0.3")
-                        .log("${header.CamelFileName} = ${body.best.className}")
+                        .to("djl:cv/semantic_segmentation?artifactId=ai.djl.pytorch:deeplabv3:0.0.1")
+                        .log("${header.CamelFileName} = ${body}")
                         .to("mock:result");
             }
         };

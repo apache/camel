@@ -55,9 +55,17 @@
             <version>${djl-version}</version>
         </dependency>
         <dependency>
+            <groupId>ai.djl.timeseries</groupId>
+            <artifactId>timeseries</artifactId>
+            <version>${djl-version}</version>
+        </dependency>
+
+        <!-- DJL builtin model -->
+        <dependency>
             <groupId>ai.djl</groupId>
             <artifactId>model-zoo</artifactId>
             <version>${djl-version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- MxNet Engine-->
