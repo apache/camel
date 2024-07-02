@@ -117,21 +117,23 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         Processor onRedelivery = getProcessor(def.getOnRedelivery(), def.getOnRedeliveryRef());
         Processor onExceptionOccurred = getProcessor(def.getOnExceptionOccurred(), def.getOnExceptionOccurredRef());
         return new ExceptionPolicy(
-                def.getId(), CamelContextHelper.getRouteId(def),
+                parseString(def.getId()), CamelContextHelper.getRouteId(def),
                 parseBoolean(def.getUseOriginalMessage(), false),
                 parseBoolean(def.getUseOriginalBody(), false),
                 ObjectHelper.isNotEmpty(def.getOutputs()), handled,
                 continued, retryWhile, onRedelivery,
-                onExceptionOccurred, def.getRedeliveryPolicyRef(),
+                onExceptionOccurred, parseString(def.getRedeliveryPolicyRef()),
                 createRedeliveryPolicyOptions(def.getRedeliveryPolicyType()), def.getExceptions());
     }
 
-    public static RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicyDefinition definition, CamelContext context) {
+    @Deprecated
+    public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicyDefinition definition, CamelContext context) {
         Map<RedeliveryOption, String> options = createRedeliveryPolicyOptions(definition);
         return createRedeliveryPolicy(options, context, null);
     }
 
-    private static RedeliveryPolicy createRedeliveryPolicy(
+    @Deprecated
+    private RedeliveryPolicy createRedeliveryPolicy(
             Map<RedeliveryOption, String> definition, CamelContext context, RedeliveryPolicy parentPolicy) {
         RedeliveryPolicy answer;
         if (parentPolicy != null) {
@@ -240,7 +242,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         return answer;
     }
 
-    private static Map<RedeliveryOption, String> createRedeliveryPolicyOptions(RedeliveryPolicyDefinition definition) {
+    private Map<RedeliveryOption, String> createRedeliveryPolicyOptions(RedeliveryPolicyDefinition definition) {
         if (definition == null) {
             return null;
         }
@@ -272,16 +274,16 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         return policy;
     }
 
-    private static void setOption(Map<RedeliveryOption, String> policy, RedeliveryOption option, Object value) {
+    private void setOption(Map<RedeliveryOption, String> policy, RedeliveryOption option, String value) {
         setOption(policy, option, value, null);
     }
 
-    private static void setOption(
-            Map<RedeliveryOption, String> policy, RedeliveryOption option, Object value, Object defaultValue) {
+    private void setOption(
+            Map<RedeliveryOption, String> policy, RedeliveryOption option, String value, String defaultValue) {
         if (value != null) {
-            policy.put(option, value.toString());
+            policy.put(option, parseString(value));
         } else if (defaultValue != null) {
-            policy.put(option, defaultValue.toString());
+            policy.put(option, defaultValue);
         }
     }
 
@@ -455,6 +457,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     protected Predicate getPredicate(Predicate pred, String ref) {
+        ref = parseString(ref);
+
         if (pred == null && ref != null) {
             // its a bean expression
             Language bean = camelContext.resolveLanguage("bean");
@@ -464,6 +468,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     protected <U> U getBean(Class<U> clazz, U bean, String ref) {
+        ref = parseString(ref);
+
         if (bean == null && ref != null) {
             bean = lookupByNameAndType(ref, clazz);
         }
@@ -471,6 +477,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     protected Processor getProcessor(Processor processor, String ref) {
+        ref = parseString(ref);
+
         if (processor == null) {
             processor = getBean(Processor.class, null, ref);
         }
