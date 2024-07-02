@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -71,17 +70,17 @@ public class SplitterParallelAggregateManualTest extends ContextTestSupport {
 
     protected void timeSplitRoutes(int numberOfRequests) throws Exception {
         String[] endpoints = new String[] { "direct:splitSynchronizedAggregation", "direct:splitUnsynchronizedAggregation" };
-        List<Future<File>> futures = new ArrayList<>();
+        List<Future<String>> futures = new ArrayList<>();
         StopWatch stopWatch = new StopWatch(false);
 
         for (String endpoint : endpoints) {
             stopWatch.restart();
             for (int requestIndex = 0; requestIndex < numberOfRequests; requestIndex++) {
-                futures.add(template.asyncRequestBody(endpoint, null, File.class));
+                futures.add(template.asyncRequestBody(endpoint, null, String.class));
             }
 
             for (int i = 0; i < futures.size(); i++) {
-                Future<File> future = futures.get(i);
+                Future<String> future = futures.get(i);
                 future.get();
             }
             stopWatch.taken();
