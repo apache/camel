@@ -45,19 +45,19 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        ObjectHelper.notNull(definition.getDeadLetterUri(), "deadLetterUri", this);
+        String uri = parseString(definition.getDeadLetterUri());
+        ObjectHelper.notNull(uri, "deadLetterUri", this);
 
         // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy = resolveRedeliveryPolicy(definition, camelContext);
         CamelLogger logger = resolveLogger(definition);
 
-        Processor deadLetterProcessor = createDeadLetterChannelProcessor(definition.getDeadLetterUri());
+        Processor deadLetterProcessor = createDeadLetterChannelProcessor(uri);
 
         DeadLetterChannel answer = new DeadLetterChannel(
                 camelContext, processor, logger,
                 getProcessor(definition.getOnRedeliveryProcessor(), definition.getOnRedeliveryRef()),
-                redeliveryPolicy, deadLetterProcessor,
-                definition.getDeadLetterUri(),
+                redeliveryPolicy, deadLetterProcessor, uri,
                 parseBoolean(definition.getDeadLetterHandleNewException(), true),
                 parseBoolean(definition.getUseOriginalMessage(), false),
                 parseBoolean(definition.getUseOriginalBody(), false),
