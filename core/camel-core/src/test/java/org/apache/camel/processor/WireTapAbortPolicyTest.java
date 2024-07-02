@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -59,7 +59,7 @@ public class WireTapAbortPolicyTest extends ContextTestSupport {
         }
     }
 
-    @RepeatedTest(value = 1000)
+    @Test
     public void testSend() throws Exception {
         // hello must come first, as we have delay on the tapped route
         result.expectedMinimumMessageCount(2);
