@@ -1,0 +1,122 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://camel.apache.org/manual/camel-4x-upgrade-guide.html
+#####
+
+#####
+# Update the Camel project
+#####
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel44.CamelMigrationRecipe
+displayName: Migrates `camel 4.0` application to `camel 4.4`
+description: Migrates `camel 4.0` application to `camel 4.4`.
+recipeList:
+  # to camel 4.1
+  - org.apache.camel.updates.camel41.CamelCoreRecipe
+  - org.apache.camel.updates.camel41.XmlDslRecipe
+  - org.apache.camel.updates.camel41.YamlDslRecipe
+  - org.apache.camel.updates.camel41.TracingTag
+  # to camel 4.2
+  - org.apache.camel.updates.camel42.CamelMainDebugger
+  - org.apache.camel.updates.camel42.CamelSagaRecipe  
+  # to camel 4.3
+  - org.apache.camel.updates.camel43.StateRepository
+  - org.apache.camel.updates.camel43.CamelResequenceEIPXmlRecipe
+  - org.apache.camel.updates.camel43.CamelThrottleEIPRecipe
+  - org.apache.camel.updates.camel43.KafkaMetadata
+  # to camel 4.4
+  - org.apache.camel.updates.camel44.CamelCoreRecipe
+  - org.apache.camel.updates.camel44.RouteControllerProperties
+  - org.apache.camel.updates.camel44.DefaultJsonSchemaLoader
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_1.html#_camel_tracing
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel41.TracingTag
+displayName: Tag Enum has been deprecated
+description: The Tag Enum containing constants for tagging spans has been deprecated. Instead, use constants from the TagConstants.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.tracing.Tag
+      newFullyQualifiedTypeName: org.apache.camel.tracing.TagConstants
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_2.html#_camel_main
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel42.CamelMainDebugger
+displayName: The option camel.main.debugger has been renamed
+description: The option camel.main.debugger has been renamed to camel.debug.enabled.
+recipeList:
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: (.*)camel.main.debugger
+      newPropertyKey: $1camel.debug.enabled
+      regex: true
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_3.html#_camel_core
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel43.StateRepository
+displayName: MemoryStateRepository and FileStateRepository were moved to another package and library
+description: Moved classes MemoryStateRepository and FileStateRepositor from camel-base-engine to  camel-support.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.impl.engine.MemoryStateRepository
+      newFullyQualifiedTypeName: org.apache.camel.support.processor.state.MemoryStateRepository
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.impl.engine.FileStateRepository
+      newFullyQualifiedTypeName: org.apache.camel.support.processor.state.FileStateRepository
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_3.html#_camel_kafka_2
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel43.KafkaMetadata
+displayName: The header name for the List metadata has changed
+description: The header name for the List metadata has changed also the dsl method for metadata changed.
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory$KafkaHeaderNameBuilder orgApacheKafkaClientsProducerRecordmetadata()
+      newMethodName: kafkaRecordMeta
+  - org.openrewrite.java.ReplaceConstantWithAnotherConstant:
+      existingFullyQualifiedConstantName: org.apache.camel.component.kafka.KafkaConstants.KAFKA_RECORDMETA
+      fullyQualifiedConstantName: org.apache.camel.component.kafka.KafkaConstants.KAFKA_RECORD_META
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_json_validator
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel44.DefaultJsonSchemaLoader
+displayName: Replace depricated DefaultJsonSchemaLoader with DefaultJsonUriSchemaLoader
+description: Replaces depricated class withits successor.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.component.jsonvalidator.DefaultJsonSchemaLoader
+      newFullyQualifiedTypeName: org.apache.camel.component.jsonvalidator.DefaultJsonUriSchemaLoader
+---
+#https://camel.apache.org/manual/camel-4x-upgrade-guide-4_4.html#_camel_main
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel44.RouteControllerProperties
+displayName: Replace 'camel.main.routeController' with `camel.routecontroller'
+recipeList:
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: camel.main.routeControllerSuperviseEnabled
+      newPropertyKey: camel.routeController.enabled
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: camel.main.route-controller-supervise-enabled
+      newPropertyKey: camel.routeController.enabled
+  - org.apache.camel.updates.customRecipes.ChangePropertyKeyWithCaseChange:
+      oldPropertyKey: camel.main.routeController(.*)
+      newPrefix: camel.routeController.
+  - org.apache.camel.updates.customRecipes.ChangePropertyKeyWithCaseChange:
+      oldPropertyKey: camel.main.route-controller-(.*)
+      newPrefix: camel.routeController.

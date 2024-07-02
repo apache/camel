@@ -1,0 +1,109 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#####
+# Rules coming from https://github.com/openrewrite/rewrite-migrate-java/blob/main/src/main/resources/META-INF/rewrite/jakarta-ee-9.yml
+# modified to:
+# - use the Jakarta EE 10 versions (except for JPA as we are waiting for the Hibernate ORM 6 upgrade)
+# - not add new dependencies but transform them
+#####
+
+#####
+# Update the Camel project
+#####
+---
+type: specs.openrewrite.org/v1beta/category
+name: Camel 3.x
+packageName: org.apache.camel.updates30
+description: Migrate from Camel 3.x to 4.x.
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel40.CamelMigrationRecipe
+displayName: Migrate `camel3` application to `camel4.`
+description: Migrate `camel3` application to `camel4`.
+recipeList:
+  - org.apache.camel.updates.camel40.xml.XmlDslRecipe
+  - org.apache.camel.updates.camel40.xml.CircuitBreakerXmlDslRecipe
+  - org.apache.camel.updates.camel40.yaml.CamelYamlRouteConfigurationSequenceRecipe
+  - org.apache.camel.updates.camel40.yaml.CamelYamlStepsInFromRecipe
+  - org.apache.camel.updates.camel40.java.CamelAPIsRecipe
+  - org.apache.camel.updates.camel40.java.CamelEIPRecipe
+  - org.apache.camel.updates.camel40.java.CamelBeanRecipe
+  - org.apache.camel.updates.camel40.java.CamelHttpRecipe
+  - org.apache.camel.updates.camel40.UsePluginHelperForContextGetters
+  - org.apache.camel.updates.camel40.ChangeTypes
+  - org.apache.camel.updates.camel40.ChangeManagedChoiceMBeanMethodName
+  - org.apache.camel.updates.camel40.ChangeManagedFailoverLoadBalancerMBeanMethodName
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel40.ChangeTypes
+displayName: Migrate moved types between Came 3.x and Camel 4.x
+description: Change type of classes related to change of API.
+recipeList:
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: org.apache.camel.support.IntrospectionSupport
+      newFullyQualifiedTypeName: org.apache.camel.impl.engine.IntrospectionSupport
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.camel.migrate.ChangePropertyValue
+displayName: Camel API changes in application.properties
+description: Apache Camel API migration from version 3.20 or higher to 4.0. Removal of deprecated APIs, which could be part of the application.properties.
+#todo would be better to put a comment about changed property and its alternative, once the openrewrite recipe allows that
+recipeList:
+  - org.openrewrite.properties.ChangePropertyValue:
+      propertyKey: camel.threadpool.rejectedPolicy
+      newValue: "Abort #DiscardOldest has been removed, consider Abort"
+      oldValue: DiscardOldest
+  - org.openrewrite.properties.ChangePropertyValue:
+        propertyKey: camel.threadpool.rejectedPolicy
+        newValue: "Abort #Discard has been removed, consider Abort"
+        oldValue: Discard
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel40.ChangeManagedChoiceMBeanMethodName
+displayName: Change of method names brought by Camel JMX API changes
+description: MBeans now use a consistent method name of `extendedInformation`.
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.api.management.mbean.ManagedChoiceMBean choiceStatistics()
+      newMethodName: extendedInformation
+      matchOverrides: null
+      ignoreDefinition: null
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel40.ChangeManagedFailoverLoadBalancerMBeanMethodName
+displayName: Change of method names brought by Camel JMX API changes
+description: MBeans now use a consistent method name of `extendedInformation`.
+recipeList:
+  - org.openrewrite.java.ChangeMethodName:
+      methodPattern: org.apache.camel.api.management.mbean.ManagedFailoverLoadBalancerMBean exceptionStatistics()
+      newMethodName: extendedInformation
+      matchOverrides: null
+      ignoreDefinition: null
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apache.camel.updates.camel40.UsePluginHelperForContextGetters
+displayName: Replace context.getExtension(ExtendedCamelContext.class).get* with PluginHelper.get*(context)
+recipeList:
+  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+      oldMethodName: getComponentNameResolver
+  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+      oldMethodName: getModelJAXBContextFactory
+  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+      oldMethodName: getModelToXMLDumper
+  - org.apache.camel.updates.customRecipes.MoveGetterToPluginHelper:
+      oldMethodName: getRoutesLoader
