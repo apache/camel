@@ -27,7 +27,6 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 
