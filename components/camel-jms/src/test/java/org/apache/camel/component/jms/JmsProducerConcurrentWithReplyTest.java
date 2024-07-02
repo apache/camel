@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +32,7 @@ import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -58,12 +57,12 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
         executor.shutdownNow();
     }
 
-    @Test
+    @RepeatedTest(50)
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
-    @Test
+    @RepeatedTest(50)
     public void testConcurrentProducers() throws Exception {
         doSendMessages(200, 5);
     }
@@ -73,18 +72,19 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
         executor = Executors.newFixedThreadPool(poolSize);
-        final List<Future<String>> futures = new ArrayList<>();
+        final List<String> data = new ArrayList<>(files);
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future<String> out = executor.submit(() -> template.requestBody("direct:start", "Message " + index, String.class));
-            futures.add(out);
+            executor.submit(() -> {
+                String out = template.requestBody("direct:start", "Message " + index, String.class);
+                data.add(index, out);
+            });
         }
 
         MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
-        for (int i = 0; i < futures.size(); i++) {
-            Object out = futures.get(i).get(5, TimeUnit.SECONDS);
-            assertEquals("Bye Message " + i, out);
+        for (int i = 0; i < data.size(); i++) {
+            assertEquals("Bye Message " + i, data.get(i));
         }
 
     }
