@@ -26,6 +26,7 @@ import io.qdrant.client.ValueFactory;
 import io.qdrant.client.VectorsFactory;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.Message;
+import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.qdrant.Qdrant;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
@@ -40,7 +41,7 @@ public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader("CamelLangChain4jEmbeddingsVector", Embedding.class);
+        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         TextSegment text = message.getBody(TextSegment.class);
         Points.PointId id
                 = message.getHeader(Qdrant.Headers.POINT_ID, () -> PointIdFactory.id(UUID.randomUUID()), Points.PointId.class);

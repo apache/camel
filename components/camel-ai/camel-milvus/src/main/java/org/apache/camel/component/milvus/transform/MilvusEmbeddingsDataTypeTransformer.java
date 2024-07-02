@@ -25,6 +25,7 @@ import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import io.milvus.param.dml.InsertParam;
 import org.apache.camel.Message;
+import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.milvus.Milvus;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
@@ -40,7 +41,7 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader("CamelLangChain4jEmbeddingsVector", Embedding.class);
+        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         String textFieldName = message.getHeader(Milvus.Headers.TEXT_FIELD_NAME, () -> "text", String.class);
         String vectorFieldName = message.getHeader(Milvus.Headers.VECTOR_FIELD_NAME, () -> "vector", String.class);
         String collectionName = message.getHeader(Milvus.Headers.COLLECTION_NAME, () -> "embeddings", String.class);

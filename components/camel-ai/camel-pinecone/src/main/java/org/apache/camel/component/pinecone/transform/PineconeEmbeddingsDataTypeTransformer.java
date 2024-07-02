@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import dev.langchain4j.data.embedding.Embedding;
 import org.apache.camel.Message;
+import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.pinecone.PineconeVectorDb;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
@@ -36,7 +37,7 @@ public class PineconeEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader("CamelLangChain4jEmbeddingsVector", Embedding.class);
+        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         String indexId = message.getHeader(PineconeVectorDb.Headers.INDEX_ID, UUID.randomUUID(), String.class);
         String indexName = message.getHeader(PineconeVectorDb.Headers.INDEX_NAME, "embeddings", String.class);
 
