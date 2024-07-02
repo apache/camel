@@ -10680,10 +10680,10 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require
-the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel
-synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance
-when the AggregationStrategy is implemented as thread-safe. Default value: false
+Deprecated: If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this
+would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false
+meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive
+higher performance when the AggregationStrategy is implemented as thread-safe. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11701,10 +11701,10 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require
-the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel
-synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance
-when the AggregationStrategy is implemented as thread-safe. Default value: false
+Deprecated: If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this
+would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false
+meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive
+higher performance when the AggregationStrategy is implemented as thread-safe. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13333,10 +13333,10 @@ Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require
-the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel
-synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance
-when the AggregationStrategy is implemented as thread-safe. Default value: false
+Deprecated: If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this
+would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false
+meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive
+higher performance when the AggregationStrategy is implemented as thread-safe. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>

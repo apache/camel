@@ -57,6 +57,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
+    @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
@@ -285,6 +286,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public MulticastDefinition parallelAggregate() {
         setParallelAggregate(Boolean.toString(true));
         return this;
@@ -298,6 +300,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public MulticastDefinition parallelAggregate(boolean parallelAggregate) {
         setParallelAggregate(Boolean.toString(parallelAggregate));
         return this;
@@ -311,6 +314,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public MulticastDefinition parallelAggregate(String parallelAggregate) {
         setParallelAggregate(parallelAggregate);
         return this;
@@ -579,10 +583,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
+    @Deprecated(since = "4.7.0")
     public String getParallelAggregate() {
         return parallelAggregate;
     }
 
+    @Deprecated(since = "4.7.0")
     public void setParallelAggregate(String parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }

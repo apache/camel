@@ -1,1 +1,1 @@
-../../../../../components/camel-crypto-pgp/src/main/docs/pgp-dataformat.adoc
+../../../../../components/camel-crypto/src/main/docs/pgp-dataformat.adoc

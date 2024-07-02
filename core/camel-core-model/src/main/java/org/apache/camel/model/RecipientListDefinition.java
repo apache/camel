@@ -59,6 +59,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
+    @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
@@ -277,6 +278,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public RecipientListDefinition<Type> parallelAggregate() {
         return parallelAggregate(Boolean.toString(true));
     }
@@ -289,6 +291,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public RecipientListDefinition<Type> parallelAggregate(boolean parallelAggregate) {
         setParallelAggregate(Boolean.toString(parallelAggregate));
         return this;
@@ -302,6 +305,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public RecipientListDefinition<Type> parallelAggregate(String parallelAggregate) {
         setParallelAggregate(parallelAggregate);
         return this;
@@ -639,10 +643,12 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.cacheSize = cacheSize;
     }
 
+    @Deprecated(since = "4.7.0")
     public String getParallelAggregate() {
         return parallelAggregate;
     }
 
+    @Deprecated(since = "4.7.0")
     public void setParallelAggregate(String parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }

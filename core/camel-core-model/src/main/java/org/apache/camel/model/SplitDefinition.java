@@ -57,6 +57,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
+    @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
@@ -273,6 +274,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public SplitDefinition parallelAggregate() {
         return parallelAggregate(true);
     }
@@ -285,6 +287,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public SplitDefinition parallelAggregate(boolean parallelAggregate) {
         return parallelAggregate(Boolean.toString(parallelAggregate));
     }
@@ -297,6 +300,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      *
      * @return the builder
      */
+    @Deprecated(since = "4.7.0")
     public SplitDefinition parallelAggregate(String parallelAggregate) {
         setParallelAggregate(parallelAggregate);
         return this;
@@ -611,10 +615,12 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.streaming = streaming;
     }
 
+    @Deprecated(since = "4.7.0")
     public String getParallelAggregate() {
         return parallelAggregate;
     }
 
+    @Deprecated(since = "4.7.0")
     public void setParallelAggregate(String parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }

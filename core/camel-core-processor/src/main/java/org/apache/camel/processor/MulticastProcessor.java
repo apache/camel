@@ -1304,6 +1304,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         return parallelProcessing;
     }
 
+    @Deprecated(since = "4.7.0")
     public boolean isParallelAggregate() {
         return parallelAggregate;
     }

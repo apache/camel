@@ -3334,7 +3334,8 @@
           "parallelAggregate" : {
             "type" : "boolean",
             "title" : "Parallel Aggregate",
-            "description" : "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe."
+            "description" : "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
+            "deprecated" : true
           },
           "parallelProcessing" : {
             "type" : "boolean",
@@ -4275,7 +4276,8 @@
           "parallelAggregate" : {
             "type" : "boolean",
             "title" : "Parallel Aggregate",
-            "description" : "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe."
+            "description" : "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
+            "deprecated" : true
           },
           "parallelProcessing" : {
             "type" : "boolean",
@@ -6584,7 +6586,8 @@
           "parallelAggregate" : {
             "type" : "boolean",
             "title" : "Parallel Aggregate",
-            "description" : "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe."
+            "description" : "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
+            "deprecated" : true
           },
           "parallelProcessing" : {
             "type" : "boolean",
