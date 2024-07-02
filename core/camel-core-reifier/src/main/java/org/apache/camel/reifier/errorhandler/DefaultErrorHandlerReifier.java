@@ -63,6 +63,7 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         return answer;
     }
 
+    @Deprecated
     private Predicate resolveRetryWhilePolicy(DeadLetterChannelDefinition definition, CamelContext camelContext) {
         Predicate answer = definition.getRetryWhilePredicate();
 
@@ -90,6 +91,7 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         return answer;
     }
 
+    @Deprecated
     private Processor createDeadLetterChannelProcessor(String uri) {
         // wrap in our special safe fallback error handler if sending to
         // dead letter channel fails
@@ -121,6 +123,8 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
 
     protected synchronized ScheduledExecutorService getExecutorService(
             ScheduledExecutorService executorService, String executorServiceRef) {
+
+        executorServiceRef = parseString(executorServiceRef);
         if (executorService == null || executorService.isShutdown()) {
             // camel context will shutdown the executor when it shutdown so no
             // need to shut it down when stopping
