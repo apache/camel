@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ImageClassificationLocalTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(ImageClassificationLocalTest.class);
+public class CvImageClassificationLocalTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CvImageClassificationLocalTest.class);
 
     private static final String MODEL_DIR = "src/test/resources/models/mnist";
     private static final String MODEL_NAME = "mlp";

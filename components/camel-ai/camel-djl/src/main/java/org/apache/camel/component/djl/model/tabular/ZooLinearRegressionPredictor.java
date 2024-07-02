@@ -14,28 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.djl;
+package org.apache.camel.component.djl.model.tabular;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.djl.model.AbstractPredictor;
-import org.apache.camel.component.djl.model.ModelPredictorProducer;
-import org.apache.camel.support.DefaultProducer;
 
-public class DJLProducer extends DefaultProducer {
-    private final AbstractPredictor predictor;
-
-    public DJLProducer(DJLEndpoint endpoint) throws Exception {
-        super(endpoint);
-        if (endpoint.getArtifactId() != null) {
-            this.predictor = ModelPredictorProducer.getZooPredictor(
-                    endpoint.getApplication(), endpoint.getArtifactId());
-        } else {
-            this.predictor = ModelPredictorProducer.getCustomPredictor(
-                    endpoint.getApplication(), endpoint.getModel(), endpoint.getTranslator());
-        }
+public class ZooLinearRegressionPredictor extends AbstractPredictor {
+    public ZooLinearRegressionPredictor(String artifactId) {
+        super();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
-        this.predictor.process(exchange);
+
     }
 }
