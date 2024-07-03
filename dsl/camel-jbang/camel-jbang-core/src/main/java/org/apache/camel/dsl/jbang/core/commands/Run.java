@@ -303,9 +303,9 @@ public class Run extends CamelCommand {
 
     @Override
     public boolean disarrangeLogging() {
-        if (runtime.equals("quarkus")) {
+        if (RuntimeType.quarkus == runtime) {
             return true;
-        } else if (runtime.equals("spring-boot")) {
+        } else if (RuntimeType.springBoot == runtime) {
             return true;
         }
         return false;
@@ -410,9 +410,9 @@ public class Run extends CamelCommand {
             return 1;
         }
 
-        if (runtime.equals("quarkus")) {
+        if (RuntimeType.quarkus == runtime) {
             return runQuarkus();
-        } else if (runtime.equals("spring-boot")) {
+        } else if (RuntimeType.springBoot == runtime) {
             return runSpringBoot();
         }
 
