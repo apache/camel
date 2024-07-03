@@ -82,8 +82,26 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
                     .raftId(raftId);
         }
         fireLeadershipChangedEvent((CamelClusterMember) null);
-        raftHandle.addRoleListener(new ClusterRoleChangeListener(this));
-        raftHandle.channel().connect(jgroupsClusterName);
+
+        // it may take a while for event to trigger and allow us to join so retry a while
+        Exception cause = null;
+        for (int i = 1; i < 11; i++) {
+            LOG.debug("Attempt #{} for raft {} to join {}", i, raftId, jgroupsClusterName);
+            try {
+                raftHandle.addRoleListener(new ClusterRoleChangeListener(this));
+                raftHandle.channel().connect(jgroupsClusterName);
+                LOG.debug("Joined and connected to {} with raft id: {}", jgroupsClusterName, raftId);
+                cause = null;
+                break;
+            } catch (Exception e) {
+                cause = e;
+            }
+            // wait for next attempt
+            Thread.sleep(5000);
+        }
+        if (cause != null) {
+            throw cause;
+        }
     }
 
     @Override
