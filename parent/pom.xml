@@ -364,7 +364,7 @@
         <mockito-version>5.12.0</mockito-version>
         <mongo-java-driver-version>4.11.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
-        <msal4j-version>1.15.1</msal4j-version>
+        <msal4j-version>1.16.0</msal4j-version>
         <mustache-java-version>0.9.13</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.16</mybatis-version>
