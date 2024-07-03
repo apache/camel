@@ -169,13 +169,14 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             }
 
             if (cause != null) {
-                String message = "Leadership taking. Attempt #" + task.getCurrentAttempts()
+                String message = "Leadership taken. Attempt #" + task.getCurrentAttempts()
                                  + " failed to start consumer due to: " + cause.getMessage();
                 getExceptionHandler().handleException(message, cause);
                 return true; // retry
             }
 
-            LOG.info("Leadership taken. Consumer started: {}", delegatedEndpoint);
+            LOG.info("Leadership taken. Attempt #" + task.getCurrentAttempts() + " success. Consumer started: {}",
+                    delegatedEndpoint);
             return false; // no more attempts
         });
     }
