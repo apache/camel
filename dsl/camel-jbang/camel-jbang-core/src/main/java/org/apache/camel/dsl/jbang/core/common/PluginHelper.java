@@ -113,12 +113,12 @@ public final class PluginHelper {
     }
 
     private static MavenGav dependencyAsMavenGav(JsonObject properties) {
-        final String dependency = properties.get("dependency").toString();
+        final Object dependency = properties.get("dependency");
         if (dependency == null) {
             return null;
         }
 
-        return MavenGav.parseGav(dependency);
+        return MavenGav.parseGav(dependency.toString());
     }
 
     private static void versionCheck(CamelJBangMain main, String version, String firstVersion, String command) {
@@ -255,8 +255,7 @@ public final class PluginHelper {
      * @return              The group in g:a:v. That is, "g".
      */
     private static String extractGroup(MavenGav gav, String defaultGroup) {
-        return doExtractInfo(gav, defaultGroup, gav::getGroupId);
-
+        return doExtractInfo(gav, defaultGroup, gav != null ? gav::getGroupId : () -> "");
     }
 
     /**
@@ -267,6 +266,6 @@ public final class PluginHelper {
      * @return                The group in g:a:v. That is, "v".
      */
     private static String extractVersion(MavenGav gav, String defaultVersion) {
-        return doExtractInfo(gav, defaultVersion, gav::getVersion);
+        return doExtractInfo(gav, defaultVersion, gav != null ? gav::getVersion : () -> "");
     }
 }
