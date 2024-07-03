@@ -22,12 +22,14 @@ import java.util.List;
 import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesBaseCommand;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.v1.Integration;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "delete", description = "Delete integrations deployed on Kubernetes", sortOptions = false)
-public class IntegrationDelete extends KubeBaseCommand {
+public class IntegrationDelete extends KubernetesBaseCommand {
 
     @CommandLine.Parameters(description = "Integration names to delete.",
                             arity = "0..*", paramLabel = "<names>")

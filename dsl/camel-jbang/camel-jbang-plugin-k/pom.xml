@@ -46,6 +46,13 @@
           <artifactId>camel-jbang-core</artifactId>
         </dependency>
 
+        <!-- TODO: clarify why jbang plugin is not part of camel-bom -->
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-jbang-plugin-kubernetes</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+
         <!-- kubernetes -->
         <dependency>
             <groupId>io.fabric8</groupId>

@@ -15,11 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-public enum TraitProfile {
+import org.apache.camel.v1.integrationspec.Traits;
 
-    OPENSHIFT,
-    KUBERNETES,
-    KNATIVE
+public interface Trait extends Comparable<Trait> {
+
+    boolean configure(Traits traitConfig, TraitContext context);
+
+    void apply(Traits traitConfig, TraitContext context);
+
+    int order();
+
+    boolean accept(TraitProfile profile);
+
+    @Override
+    default int compareTo(Trait o) {
+        return Integer.compare(order(), o.order());
+    }
 }

@@ -17,15 +17,16 @@
 package org.apache.camel.dsl.jbang.core.commands.k;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesBaseCommand;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "k",
                      description = "Manage Camel integrations on Kubernetes (use k --help to see sub commands)")
-public class KubeCommand extends KubeBaseCommand {
+public class KubeCommand extends KubernetesBaseCommand {
 
-    public static final String OPERATOR_ID_LABEL = "camel.apache.org/operator.id";
-    public static final String INTEGRATION_LABEL = "camel.apache.org/integration";
-    public static final String INTEGRATION_CONTAINER_NAME = "integration";
+    static final String OPERATOR_ID_LABEL = "camel.apache.org/operator.id";
+    static final String INTEGRATION_LABEL = "camel.apache.org/integration";
+    static final String INTEGRATION_CONTAINER_NAME = "integration";
 
     public static final String INTEGRATION_PROFILE_ANNOTATION = "camel.apache.org/integration-profile.id";
     public static final String INTEGRATION_PROFILE_NAMESPACE_ANNOTATION = "camel.apache.org/integration-profile.namespace";

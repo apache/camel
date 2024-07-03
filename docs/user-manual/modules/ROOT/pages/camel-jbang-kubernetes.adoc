@@ -1,0 +1,670 @@
+= Camel Kubernetes plugin
+
+This plugin helps you to get started with running Camel applications on Kubernetes.
+Please make sure to meet these prerequisites for running Camel integrations on Kubernetes:
+
+* Connect to a running Kubernetes cluster where you want to run the Camel integration
+
+To set up a local Kubernetes cluster you have several options.
+Camel JBang is able to interact with all of these Kubernetes platforms.
+
+* Kind
+* Minikube
+* any other local Kubernetes platform
+
+Of course, you may also connect to a remote Kubernetes cluster.
+
+Running Camel routes on Kubernetes is quite simple with Camel JBang.
+In fact, you can develop and test your Camel route locally with Camel JBang and then promote the same source to running it as an integration on Kubernetes.
+
+The Camel JBang Kubernetes functionality is provided as a command plugin.
+This means you need to enable the `kubernetes` plugin first to use the subcommands in Camel JBang.
+
+[source,bash]
+----
+camel plugin add kubernetes
+----
+
+You should see the `kubernetes` plugin listed as an installed plugin.
+
+[source,bash]
+----
+camel plugin get
+----
+
+[source,bash]
+----
+ NAME        COMMAND     DEPENDENCY                                      DESCRIPTION
+ kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
+----
+
+Now Camel JBang is able to run the subcommands offered by the plugin.
+
+== Kubernetes export
+
+The Kubernetes plugin works with the Camel JBang export functionality.
+The project export generates a proper Maven/Gradle project following one of the available runtime types Quarkus, SpringBoot or camel-main.
+
+The exported project holds all information (e.g. sources, properties, dependencies, etc.) and is ready to build, push and deploy the application to Kubernetes.
+The Kubenretes export also generates a Kubernetes manifest (kubernetes.yml) that holds all resources (e.g. Deployment, Service, ConfigMap) required to run the application on Kubernetes.
+
+You can run the export with following command.
+
+[source,bash]
+----
+camel kubernetes export route.yaml --runtime=quarkus --dir some/path/to/project
+----
+
+The command receives one or more source files (e.g. Camel routes) and performs the export.
+As a result you will find the Maven/Gradle project sources generated into the given project path.
+
+If you want to run this application on Kubernetes you need to build the container image, push it to a registry and deploy the application to Kubernetes.
+
+TIP: The Camel JBang Kubernetes plugin provides a `run` command that combines these steps (export, container image build, push, deploy) into a single command.
+
+You can now navigate to the generated project folder and build the project artifacts for instance with this Maven command.
+
+[source,bash]
+----
+./mvnw package -Dquarkus.container-image.build=true
+----
+
+According to the runtime type (e.g. quarkus) defined for the export this builds and creates a Quarkus application artifact JAR in the Maven build output folder (e.g. `target/route-1.0-SNAPSHOT.jar`).
+
+The option `-Dquarkus.container-image.build=true` also builds a container image that is ready for deployment to Kubernetes.
+More precisely the exported project uses the very same tooling and options as an arbitrary Quarkus/SpringBoot application would do.
+This means you can easily customize the container image and all settings provided by the runtime provider (e.g. Quarkus or SpringBoot) after the export.
+
+The Kubernetes deployment resources are automatically generated with the export, too.
+
+You can find the Kubernetes manifest in `src/main/kubernetes/kubernetes.yml`.
+
+For instance with the option `-Dquarkus.kubernetes.deploy=true` uses this manifest to trigger the Kubernetes deployment as part of the Maven build.
+
+[source,bash]
+----
+./mvnw package -Dquarkus.kubernetes.deploy=true
+----
+
+You will see the Deployment on Kubernetes shortly after this command has finished.
+
+The Camel JBang Kubernetes export command provides several options to customize the exported project.
+
+[width="100%",cols="1m,3",options="header",]
+|=======================================================================
+|Option |Description
+
+|--trait-profile
+|The trait profile to use for the deployment.
+
+|--dependency
+|Adds dependency that should be included, use "camel:" prefix for a Camel component, "mvn:org.my:app:1.0" for a Maven dependency.
+
+|--property
+|Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]).
+
+|--config
+|Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap,secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).
+
+|--resource
+|Add a runtime resource from a Configmap or a Secret (syntax: [configmap,secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).
+
+|--open-api-spec
+|Add an OpenAPI spec (syntax: [configmap,file]:name).
+
+|--env
+|Set an environment variable in the integration container, for instance "-e MY_VAR=my-value".
+
+|--volume
+|Mount a volume into the integration container, for instance "-v pvcname:/container/path".
+
+|--connect
+|A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
+
+|--source
+|Add source file to your integration, this is added to the list of files listed as arguments of the command.
+
+|--annotation
+|Add an annotation to the integration. Use name values pairs like "--annotation my.company=hello".
+
+|--label
+|Add a label to the integration. Use name values pairs like "--label my.company=hello".
+
+|--traits
+|Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
+
+|--image
+|An image built externally (for instance via CI/CD). Enabling it will skip the integration build phase.
+
+|--image-registry
+|The image registry to hold the app container image. Default is `quay.io`
+
+|--image-group
+|The image registry group used to push images to.
+|=======================================================================
+
+=== Kubernetes manifest options
+
+The Kubernetes manifest (kubernetes.yml) describes all resources to successfully run the application on Kubernetes.
+The manifest usually holds the deployment, a service definition, config maps and much more.
+
+You can use several options on the `export` command to customize this manifest with the traits.
+The trait concept was born out of Camel K and the Camel K operator uses the traits to configure the Kubernetes resources that are managed by an integration.
+You can use the same options to also customize the Kubernetes manifest that is generated as part of the project export.
+
+=== Container trait options
+
+The container specification is part of the Kubernetes Deployment resource and describes the application container image, exposed ports and health probes for example.
+
+The container trait is able to customize the container specification with following options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| container.port
+| int
+| To configure a different port exposed by the container (default `8080`).
+
+| container.port-name
+| string
+| To configure a different port name for the port exposed by the container. It defaults to `http` only when the `expose` parameter is true.
+
+| container.service-port
+| int
+| To configure under which service port the container port is to be exposed (default `80`).
+
+| container.service-port-name
+| string
+| To configure under which service port name the container port is to be exposed (default `http`).
+
+| container.name
+| string
+| The application container name.
+
+| container.image
+| string
+| The application container image to use for the Deployment.
+
+| container.image-pull-policy
+| PullPolicy
+| The pull policy: Always\|Never\|IfNotPresent
+
+|===
+
+The syntax to specify container trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait container.[key]=[value]
+----
+
+You may specify these options with the export command to customize the container specification.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait container.name=my-container --trait container.port=8088 --trait container.imagePullPolicy=IfNotPresent
+----
+
+This results in the following container specification in the Deployment resource.
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    camel.apache.org/integration: sample
+  name: sample
+spec:
+  selector:
+    matchLabels:
+      camel.apache.org/integration: sample
+  template:
+    metadata:
+      labels:
+        camel.apache.org/integration: sample
+    spec:
+      containers:
+      - image: quay.io/sample:1.0-SNAPSHOT #<1>
+        imagePullPolicy: IfNotPresent #<2>
+        name: my-container #<3>
+        ports:
+        - containerPort: 8088 #<4>
+          name: http
+          protocol: TCP
+----
+<1> Container image running the application
+<2> Customized image pull policy
+<3> Custom container name
+<4> Custom container port exposed
+
+=== Labels and annotations
+
+You may need to add labels or annotations to the generated Kubernetes resources.
+By default, the generated resources will have the label `camel.apache.org/integration` set to the exported project name.
+
+You can add labels and annotations with these options on the export command:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --annotation [key]=[value] --label [key]=[value]
+----
+
+.Example
+
+[source,bash]
+----
+camel kubernetes export Sample.java --annotation project.team=camel-experts
+----
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    project.team: camel-experts #<1>
+  labels:
+    camel.apache.org/integration: sample
+  name: sample
+spec:
+  selector:
+    matchLabels:
+      camel.apache.org/integration: sample
+  template:
+    metadata:
+      labels:
+        camel.apache.org/integration: sample
+    spec:
+      containers:
+      - image: quay.io/sample:1.0-SNAPSHOT
+        name: sample
+----
+<1> Custom deployment annotation
+
+=== Environment variables
+
+The environment trait is there to set environment variables on the container specification.
+
+The environment trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| environment.vars
+| []string
+| A list of environment variables to be added to the integration container.
+The syntax is KEY=VALUE, e.g., `MY_VAR="my value"`.
+These take precedence over the previously defined environment variables.
+
+|===
+
+The syntax to specify environment trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait environment.[key]=[value]
+----
+
+There is also a shortcut option `--env` that you can use.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --env [key]=[value]
+----
+
+.Example
+[source,bash]
+----
+camel kubernetes export Sample.java --trait environment.vars=MY_ENV=foo --env FOO_ENV=bar
+----
+
+This results in the following container specification in the Deployment resource.
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    camel.apache.org/integration: sample
+  name: sample
+spec:
+  selector:
+    matchLabels:
+      camel.apache.org/integration: sample
+  template:
+    metadata:
+      labels:
+        camel.apache.org/integration: sample
+    spec:
+      containers:
+      - image: quay.io/sample:1.0-SNAPSHOT
+        name: sample
+        env: #<1>
+          - name: MY_ENV
+            value: foo
+          - name: FOO_ENV
+            value: bar
+----
+<1> Environment variables set in the container specification
+
+=== Mount trait options
+
+The mount trait is able to configure volume mounts on the Deployment resource in order to inject data from Kubernetes resources such as config maps or secrets.
+
+There are also shortcut options like `--volume`, `--config` and `--resource` for the mount trait.
+These options are described in more detail in the next section.
+For now let's have a look into the pure mount trait configuration options.
+
+The mount trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| mount.configs
+| []string
+| A list of configuration pointing to configmap/secret.
+The configuration are expected to be UTF-8 resources as they are processed by runtime Camel Context and tried to be parsed as property files.
+They are also made available on the classpath in order to ease their usage directly from the Route.
+Syntax: [configmap\|secret]:name[/key], where name represents the resource name and key optionally represents the resource key to be filtered
+
+| mount.resources
+| []string
+| A list of resources (text or binary content) pointing to a configmap/secret.
+The resources are expected to be any resource type (text or binary content).
+The destination path can be either a default location or any path specified by the user.
+Syntax: [configmap\|secret]:name[/key][@path], where name represents the resource name, key optionally represents the resource key to be filtered and path represents the destination path
+
+| mount.volumes
+| []string
+| A list of Persistent Volume Claims to be mounted. Syntax: [pvcname:/container/path]
+
+|===
+
+The syntax to specify mount trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait mount.[key]=[value]
+----
+
+.Example
+[source,bash]
+----
+camel kubernetes export Sample.java --trait mount.configs=configmap:my-data --trait mount.volumes=my-pvc:/container/path
+----
+
+This results in the following container specification in the Deployment resource.
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    camel.apache.org/integration: sample
+  name: sample
+spec:
+  selector:
+    matchLabels:
+      camel.apache.org/integration: sample
+  template:
+    metadata:
+      labels:
+        camel.apache.org/integration: sample
+    spec:
+      containers:
+        - image: quay.io/sample:1.0-SNAPSHOT
+          name: sample
+          volumeMounts:
+            - mountPath: /etc/camel/conf.d/_configmaps/my-data #<1>
+              name: my-data
+              readOnly: true
+            - mountPath: /container/path #<2>
+              name: my-pvc
+              readOnly: false
+      volumes:
+        - name: my-data #<3>
+          configMap:
+            name: my-data
+        - name: my-pvc #<4>
+          persistentVolumeClaim:
+            claimName: my-pvc
+----
+<1> The config map my-data mounted into the container with default mount path for configurations
+<2> The volume mounted into the container with given path
+<3> The config map reference as volume spec
+<4> The persistent volume claim my-pvc
+
+=== ConfigMaps, volumes and secrets
+
+In the previous section we have seen how to mount volumes, configs, resources into the container.
+
+The Kubernetes export command provides some shortcut options for adding configmaps and secrets as volume mounts.
+The syntax is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --config [key]=[value] --resource [key]=[value] --volume [key]=[value]
+----
+
+The options expect the following syntax:
+
+[cols="2m,1m,5a"]
+|===
+|Option | Syntax
+
+| config
+| Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).
+
+| resource
+| Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).
+
+| volume
+| Mount a volume into the integration container, for instance "--volume pvcname:/container/path".
+
+|===
+
+.Example
+[source,bash]
+----
+camel kubernetes export Sample.java --config secret:my-credentials  --resource configmap:my-data --volume my-pvc:/container/path
+----
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    camel.apache.org/integration: sample
+  name: sample
+spec:
+  selector:
+    matchLabels:
+      camel.apache.org/integration: sample
+  template:
+    metadata:
+      labels:
+        camel.apache.org/integration: sample
+    spec:
+      containers:
+        - image: quay.io/sample:1.0-SNAPSHOT
+          name: sample
+          volumeMounts:
+            - mountPath: /etc/camel/conf.d/_secrets/my-credentials
+              name: my-credentials #<1>
+              readOnly: true
+            - mountPath: /etc/camel/resources.d/_configmaps/my-data
+              name: my-data #<2>
+              readOnly: true
+            - mountPath: /container/path
+              name: my-pvc #<3>
+              readOnly: false
+      volumes:
+        - name: my-credentials #<4>
+          secret:
+            secretName: my-credentials
+        - name: my-data #<5>
+          configMap:
+            name: my-data
+        - name: my-pvc #<6>
+          persistentVolumeClaim:
+            claimName: my-pvc
+----
+<1> The secret configuration volume mount
+<2> The config map resource volume mount
+<3> The volume mount
+<4> The secret configuration volume
+<5> The config map resource volume
+<6> The persistent volume claim volume
+
+The trait volume mounts follow some best practices in specifying the mount paths in the container. Configurations and resources, secrets and configmaps do use different paths in the container. The Camel application is automatically configured to read these paths as resource folders, so you can use the mounted data in the Camel routes via classpath reference for instance.
+
+=== OpenApi specifications
+
+You can mount OpenAPI specifications to the application container with this trait.
+
+The openapi trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| openapi.configmaps
+| []string
+| The configmaps holding the spec of the OpenAPI
+
+|===
+
+The syntax to specify openapi trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait openapi.[key]=[value]
+----
+
+TIP: There is also a shortcut option `--open-api-spec=configmap:my-configmap`.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --open-api-spec configmap:[value]
+----
+
+.Example
+[source,bash]
+----
+camel kubernetes export Sample.java --trait openapi.configmaps=configmap:my-spec
+----
+
+This results in the following container specification in the Deployment resource.
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    camel.apache.org/integration: sample
+  name: sample
+spec:
+  selector:
+    matchLabels:
+      camel.apache.org/integration: sample
+  template:
+    metadata:
+      labels:
+        camel.apache.org/integration: sample
+    spec:
+      containers:
+      - image: quay.io/sample:1.0-SNAPSHOT
+        name: sample
+        volumeMounts:
+            - mountPath: /etc/camel/resources.d/_configmaps/my-spec
+              name: my-spec #<1>
+              readOnly: true
+      volumes:
+        - name: my-spec #<2>
+          configMap:
+            name: my-spec
+----
+<1> OpenAPI specification volume mount
+<2> Volume referencing the config map holding the OpenAPI specification
+
+== Kubernetes run
+
+The run command combines several steps into one single command.
+The command performs a project export to a temporary folder, builds the project artifacts as well as the container images, pushes the image to an image registry and finally performs the deployment to Kubernetes using the generated Kubernetes manifest (`kubernetes.yml`).
+
+[source,bash]
+----
+camel kubernetes run route.yaml --image-registry=kind
+----
+
+When connecting to a local Kubernetes cluster you may need to specify the image registry where the application container image gets pushed to.
+The run command is able to automatically configure the local registry when using predefined names such as `kind` or `minikube`.
+
+Use the `--image-group` or the `--image` option to customize the container image.
+
+[source,bash]
+----
+camel kubernetes run route.yaml --image-registry=kind --image-group camel-experts
+----
+
+The command above builds and pushes the container image: `localhost:5001/camel-experts/route:1.0-SNAPSHOT`.
+
+[source,bash]
+----
+camel kubernetes run route.yaml --image quay.io/camel-experts/demo-app:1.0
+----
+
+The `--image` option forces the container image group, name, version as well as the image registry.
+
+=== Customize the Kubernetes manifest
+
+The `run` command provides the same options to customize the Kubernetes manifest as the `export` command.
+You may want to add environment variables, mount secrets and configmaps, adjust the exposed service and many other things with trait options as described in the export command section.
+
+=== Auto reload with --dev option
+
+The `--dev` option runs the application on Kubenretes and automatically adds a file watcher to listen for changes on the Camel route source files.
+In case the sources get changed the process will automatically perform a rebuild and redeployment.
+The command constantly prints the logs to the output so you may see the changes directly being applied to the Kubernetes deployment.
+
+[source,bash]
+----
+camel kubernetes run route.yaml --image-registry=kind --dev
+----
+
+You need to terminate the process to stop the dev mode.
+This automatically removes the Kubernetes deployment from the cluster on shutdown.
+
+== Show logs
+
+To inspect the log output of a running deployment call:
+
+[source,bash]
+----
+camel kubernetes logs --name=route
+----
+
+The command connects to the running integration Pod on the cluster and streams the log output.
+Just terminate the process to stop printing the logs.
+
+The `--name` option should point to a previously exported project (either via `run` or `export` command).
+
+== Delete deployments
+
+Of course, you may also delete a deployment from the cluster.
+
+[source,bash]
+----
+camel kubernetes delete --name=route
+----
+
+Use the `--name` option to select a previously exported project (either via `run` or `export` command).
+The delete operation will remove all resources defined in the Kubernetes manifest.

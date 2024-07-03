@@ -57,7 +57,8 @@ class IntegrationLogsTest extends KubeBaseTest {
         IntegrationLogs command = createCommand();
 
         command.name = "routes";
-        command.doCall();
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
     }
 
     private IntegrationLogs createCommand() {

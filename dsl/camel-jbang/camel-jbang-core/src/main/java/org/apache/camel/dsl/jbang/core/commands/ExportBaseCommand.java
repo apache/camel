@@ -63,7 +63,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-abstract class ExportBaseCommand extends CamelCommand {
+public abstract class ExportBaseCommand extends CamelCommand {
 
     protected static final String BUILD_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/work";
 
@@ -211,11 +211,11 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
-    boolean logging;
+    protected boolean logging;
 
     @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
                         description = "Will be quiet, only print when error occurs")
-    boolean quiet;
+    protected boolean quiet;
 
     @CommandLine.Option(names = { "--ignore-loading-error" },
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
@@ -327,7 +327,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         // custom dependencies
         if (dependencies != null) {
             for (String d : dependencies.split(",")) {
-                answer.add(d.trim());
+                answer.add(normalizeDependency(d.trim()));
             }
         }
 
@@ -800,6 +800,32 @@ abstract class ExportBaseCommand extends CamelCommand {
     private static String determinePackageName(String content) {
         final Matcher matcher = PACKAGE_PATTERN.matcher(content);
         return matcher.find() ? matcher.group(1) : null;
+    }
+
+    /**
+     * Normalize dependency expression. Basically replaces "camel-" based artifact names to use proper "camel:" prefix.
+     *
+     * @param  dependency to normalize.
+     * @return            normalized dependency.
+     */
+    private static String normalizeDependency(String dependency) {
+        if (dependency.startsWith("camel-quarkus-")) {
+            return "camel:" + dependency.substring("camel-quarkus-".length());
+        }
+
+        if (dependency.startsWith("camel-quarkus:")) {
+            return "camel:" + dependency.substring("camel-quarkus:".length());
+        }
+
+        if (dependency.startsWith("camel-k-")) {
+            return "camel-k:" + dependency.substring("camel-k-".length());
+        }
+
+        if (dependency.startsWith("camel-")) {
+            return "camel:" + dependency.substring("camel-".length());
+        }
+
+        return dependency;
     }
 
     protected static MavenGav parseMavenGav(String dep) {

@@ -15,34 +15,43 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k;
+package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.Arrays;
 import java.util.Locale;
 
 /**
- * Supported set of file resource and URL schemes that may be used to resolve an integration resource (e.g. source
- * file).
+ * Supported set of file resource and URL schemes that may be used to resolve a resource (e.g. source file).
  */
 public enum SourceScheme {
 
-    GIST("https://gist.github"),
-    GITHUB("https://github.com/"),
-    RAW_GITHUB("https://raw.githubusercontent.com/"),
+    GIST("https://gist.github", true),
+    GITHUB("https://github.com/", true),
+    RAW_GITHUB("https://raw.githubusercontent.com/", true),
     FILE,
     CLASSPATH,
-    HTTP,
-    HTTPS,
+    HTTP(true),
+    HTTPS(true),
     UNKNOWN;
 
     private final String uri;
+    private final boolean remote;
 
     SourceScheme() {
-        this(null);
+        this(false);
     }
 
-    SourceScheme(String uri) {
+    SourceScheme(boolean remote) {
+        this(null, remote);
+    }
+
+    SourceScheme(String uri, boolean remote) {
         this.uri = uri;
+        this.remote = remote;
+    }
+
+    public boolean isRemote() {
+        return remote;
     }
 
     /**

@@ -52,6 +52,7 @@ import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.tooling.maven.RemoteArtifactDownloadListener;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -257,7 +258,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }
 
         // we need version to be able to download from maven
-        if (version == null) {
+        if (ObjectHelper.isEmpty(version)) {
             return;
         }
 

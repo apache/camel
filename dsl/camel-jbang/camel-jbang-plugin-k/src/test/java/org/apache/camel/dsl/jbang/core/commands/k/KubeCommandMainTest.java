@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.FactoryFinder;
@@ -65,6 +67,11 @@ class KubeCommandMainTest extends KubeBaseTest {
                 .withName(integration.getMetadata().getName())
                 .withLabels(Collections.singletonMap(KubeCommand.INTEGRATION_LABEL, integration.getMetadata().getName()))
                 .endMetadata()
+                .withNewSpec()
+                .addToContainers(new ContainerBuilder()
+                        .withName(KubeCommand.INTEGRATION_CONTAINER_NAME)
+                        .build())
+                .endSpec()
                 .withNewStatus()
                 .withPhase("Running")
                 .endStatus()
@@ -72,7 +79,7 @@ class KubeCommandMainTest extends KubeBaseTest {
 
         kubernetesClient.pods().resource(pod).create();
 
-        CamelJBangMain.run(createMain(), "k", "logs", "routes");
+        CamelJBangMain.run(createMain(), "k", "logs", integration.getMetadata().getName());
     }
 
     @Test
