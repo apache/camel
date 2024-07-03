@@ -87,6 +87,7 @@ public class HttpProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
 
     private static final Integer OK_RESPONSE_CODE = 200;
+    private static final int BUFFER_SIZE = 1024 * 2;
 
     private HttpClient httpClient;
     private final HttpContext httpContext;
@@ -526,6 +527,12 @@ public class HttpProducer extends DefaultProducer {
             // find the charset and set it to the Exchange
             HttpHelper.setCharsetFromContentType(contentType, exchange);
         }
+
+        if (ignoreResponseBody) {
+            // ignore response
+            return null;
+        }
+
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
             // only deserialize java if allowed
@@ -536,33 +543,36 @@ public class HttpProducer extends DefaultProducer {
                 return null;
             }
         } else {
-            if (!getEndpoint().isDisableStreamCache()) {
-                if (ignoreResponseBody) {
-                    // ignore response
-                    return null;
-                }
-                int max = getEndpoint().getComponent().getResponsePayloadStreamingThreshold();
-                if (max > 0) {
-                    // optimize when we have content-length for small sizes to avoid creating streaming objects
-                    long len = entity.getContentLength();
-                    if (len > 0 && len <= max) {
-                        int i = (int) len;
-                        byte[] arr = new byte[i];
-                        int read = 0;
-                        int offset = 0;
-                        int remain = i;
-                        while ((read = is.read(arr, offset, remain)) > 0 && remain > 0) {
-                            offset += read;
-                            remain -= read;
+            if (entity.isStreaming()) {
+                if (getEndpoint().isDisableStreamCache()) {
+                    // write to in-memory buffer
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream(BUFFER_SIZE);
+                    entity.writeTo(bos);
+                    return bos.toByteArray();
+                } else {
+                    int max = getEndpoint().getComponent().getResponsePayloadStreamingThreshold();
+                    if (max > 0) {
+                        // optimize when we have content-length for small sizes to avoid creating streaming objects
+                        long len = entity.getContentLength();
+                        if (len > 0 && len <= max) {
+                            int i = (int) len;
+                            byte[] arr = new byte[i];
+                            int read;
+                            int offset = 0;
+                            int remain = i;
+                            while ((read = is.read(arr, offset, remain)) > 0 && remain > 0) {
+                                offset += read;
+                                remain -= read;
+                            }
+                            IOHelper.close(is);
+                            return arr;
                         }
-                        IOHelper.close(is);
-                        return arr;
                     }
+                    // else for bigger payloads then wrap the response in a stream cache so its re-readable
+                    return doExtractResponseBodyAsStream(is, exchange);
                 }
-                // else for bigger payloads then wrap the response in a stream cache so its re-readable
-                return doExtractResponseBodyAsStream(is, exchange);
             } else {
-                // use the response stream as-is
+                // use the response as-is
                 return is;
             }
         }
