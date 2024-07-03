@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -33,13 +34,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class LumberjackMultiThreadIT extends CamelTestSupport {
 
     private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static final int CONCURRENCY_LEVEL = Math.min(Runtime.getRuntime().availableProcessors(), 4);
-
+    private CountDownLatch latch = new CountDownLatch(CONCURRENCY_LEVEL);
     private volatile boolean interrupted;
 
     // create a number of threads
@@ -72,6 +74,9 @@ public class LumberjackMultiThreadIT extends CamelTestSupport {
         mock.expectedMessageCount(25 * CONCURRENCY_LEVEL);
         mock.allMessages().body().isInstanceOf(Map.class);
 
+        final boolean await = latch.await(5, TimeUnit.SECONDS);
+        assertTrue(await, "All threads should have sent their messages by now");
+
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
 
@@ -95,6 +100,7 @@ public class LumberjackMultiThreadIT extends CamelTestSupport {
         public void run() {
             try {
                 this.responses = LumberjackUtil.sendMessages(PORT, null, Arrays.asList(15, 10));
+                latch.countDown();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 interrupted = true;
