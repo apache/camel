@@ -33,6 +33,8 @@ import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.resume.AdapterHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.backoff.BackOff;
+import org.apache.camel.util.backoff.BackOffTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed Master Consumer")
 public class MasterConsumer extends DefaultConsumer implements ResumeAware<ResumeStrategy> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MasterConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MasterConsumer.class);
 
     private final CamelClusterService clusterService;
     private final MasterEndpoint masterEndpoint;
@@ -133,31 +135,46 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             return;
         }
 
-        delegatedConsumer = delegatedEndpoint.createConsumer(processor);
-        if (delegatedConsumer instanceof StartupListener) {
-            getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
-        }
+        // start consumer using background task up till X attempts
+        long delay = masterEndpoint.getComponent().getBackOffDelay();
+        long max = masterEndpoint.getComponent().getBackOffMaxAttempts();
 
-        if (delegatedConsumer instanceof ResumeAware resumeAwareConsumer && resumeStrategy != null) {
-            LOG.info("Setting up the resume adapter for the resume strategy in the delegated consumer");
-            ResumeAdapter resumeAdapter
-                    = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer, resumeStrategy);
-            resumeStrategy.setAdapter(resumeAdapter);
+        BackOffTimer timer = new BackOffTimer(masterEndpoint.getComponent().getBackOffThreadPool());
+        timer.schedule(BackOff.builder().delay(delay).maxAttempts(max).build(), task -> {
+            LOG.info("Leadership taken. Attempt #{} to start consumer: {}", task.getCurrentAttempts(),
+                    delegatedEndpoint);
 
-            LOG.info("Setting up the resume strategy for the delegated consumer");
-            resumeAwareConsumer.setResumeStrategy(resumeStrategy);
-        }
+            if (delegatedConsumer == null) {
+                delegatedConsumer = delegatedEndpoint.createConsumer(processor);
+                if (delegatedConsumer instanceof StartupListener) {
+                    getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
+                }
+                if (delegatedConsumer instanceof ResumeAware resumeAwareConsumer && resumeStrategy != null) {
+                    LOG.debug("Setting up the resume adapter for the resume strategy in consumer");
+                    ResumeAdapter resumeAdapter
+                            = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer,
+                                    resumeStrategy);
+                    resumeStrategy.setAdapter(resumeAdapter);
 
-        ServiceHelper.startService(delegatedEndpoint, delegatedConsumer);
+                    LOG.debug("Setting up the resume strategy for consumer");
+                    resumeAwareConsumer.setResumeStrategy(resumeStrategy);
+                }
+            }
 
-        LOG.info("Leadership taken. Consumer started: {}", delegatedEndpoint);
+            ServiceHelper.startService(delegatedEndpoint, delegatedConsumer);
+
+            LOG.info("Leadership taken. Consumer started: {}", delegatedEndpoint);
+            return true;
+        });
     }
 
     private synchronized void onLeadershipLost() {
-        ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
-
-        delegatedConsumer = null;
-
+        LOG.debug("Leadership lost. Stopping consumer: {}", delegatedEndpoint);
+        try {
+            ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
+        } finally {
+            delegatedConsumer = null;
+        }
         LOG.info("Leadership lost. Consumer stopped: {}", delegatedEndpoint);
     }
 

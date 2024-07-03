@@ -25,6 +25,10 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "backoffdelay":
+        case "backOffDelay": target.setBackOffDelay(property(camelContext, long.class, value)); return true;
+        case "backoffmaxattempts":
+        case "backOffMaxAttempts": target.setBackOffMaxAttempts(property(camelContext, long.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "service": target.setService(property(camelContext, org.apache.camel.cluster.CamelClusterService.class, value)); return true;
@@ -39,6 +43,10 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "backoffdelay":
+        case "backOffDelay": return long.class;
+        case "backoffmaxattempts":
+        case "backOffMaxAttempts": return long.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "service": return org.apache.camel.cluster.CamelClusterService.class;
@@ -54,6 +62,10 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "backoffdelay":
+        case "backOffDelay": return target.getBackOffDelay();
+        case "backoffmaxattempts":
+        case "backOffMaxAttempts": return target.getBackOffMaxAttempts();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "service": return target.getService();
