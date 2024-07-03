@@ -1,6 +1,3 @@
-// camel-k: language=kotlin
-
-// Write your routes here, for example:
 from("timer:kotlin?period=1000")
   .setBody()
     .simple("Hello Camel from \${routeId}")

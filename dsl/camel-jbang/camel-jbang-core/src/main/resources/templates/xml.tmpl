@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- camel-k: language=xml -->
-
 <camel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://camel.apache.org/schema/spring"
         xsi:schemaLocation="
             http://camel.apache.org/schema/spring
             https://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<!-- Write your routes here, for example: -->
     <route>
-        <from uri="timer:xml?period={{time:1000}}"/>
+        <from uri="timer:xml?period=1000"/>
         <setBody>
             <simple>Hello Camel from ${routeId}</simple>
         </setBody>

@@ -1,7 +1,4 @@
-// camel-k: language=js
-
-// Write your routes here, for example:
 from('timer:js?period=1000')
-    .setBody()
-      .simple('Hello Camel from ${routeId}')
-    .log('${body}')
+  .setBody()
+    .simple('Hello Camel from ${routeId}')
+  .log('${body}')
