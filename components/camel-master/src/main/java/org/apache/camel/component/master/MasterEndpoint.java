@@ -75,7 +75,9 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new MasterConsumer(this, processor, clusterService);
+        MasterConsumer consumer = new MasterConsumer(this, processor, clusterService);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

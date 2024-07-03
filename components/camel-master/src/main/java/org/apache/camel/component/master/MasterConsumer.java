@@ -144,27 +144,39 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             LOG.info("Leadership taken. Attempt #{} to start consumer: {}", task.getCurrentAttempts(),
                     delegatedEndpoint);
 
-            if (delegatedConsumer == null) {
-                delegatedConsumer = delegatedEndpoint.createConsumer(processor);
-                if (delegatedConsumer instanceof StartupListener) {
-                    getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
-                }
-                if (delegatedConsumer instanceof ResumeAware resumeAwareConsumer && resumeStrategy != null) {
-                    LOG.debug("Setting up the resume adapter for the resume strategy in consumer");
-                    ResumeAdapter resumeAdapter
-                            = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer,
-                                    resumeStrategy);
-                    resumeStrategy.setAdapter(resumeAdapter);
+            Exception cause = null;
+            try {
+                if (delegatedConsumer == null) {
+                    delegatedConsumer = delegatedEndpoint.createConsumer(processor);
+                    if (delegatedConsumer instanceof StartupListener) {
+                        getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
+                    }
+                    if (delegatedConsumer instanceof ResumeAware resumeAwareConsumer && resumeStrategy != null) {
+                        LOG.debug("Setting up the resume adapter for the resume strategy in consumer");
+                        ResumeAdapter resumeAdapter
+                                = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer,
+                                        resumeStrategy);
+                        resumeStrategy.setAdapter(resumeAdapter);
 
-                    LOG.debug("Setting up the resume strategy for consumer");
-                    resumeAwareConsumer.setResumeStrategy(resumeStrategy);
+                        LOG.debug("Setting up the resume strategy for consumer");
+                        resumeAwareConsumer.setResumeStrategy(resumeStrategy);
+                    }
                 }
+                ServiceHelper.startService(delegatedEndpoint, delegatedConsumer);
+
+            } catch (Exception e) {
+                cause = e;
             }
 
-            ServiceHelper.startService(delegatedEndpoint, delegatedConsumer);
+            if (cause != null) {
+                String message = "Leadership taking. Attempt #" + task.getCurrentAttempts()
+                                 + " failed to start consumer due to: " + cause.getMessage();
+                getExceptionHandler().handleException(message, cause);
+                return true; // retry
+            }
 
             LOG.info("Leadership taken. Consumer started: {}", delegatedEndpoint);
-            return true;
+            return false; // no more attempts
         });
     }
 
