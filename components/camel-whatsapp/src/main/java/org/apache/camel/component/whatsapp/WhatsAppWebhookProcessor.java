@@ -52,7 +52,6 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
         String content;
 
         if ("GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD).toString())) {
-            isGet.set(true);
             // Parse params from the webhook verification request
             Map<String, String> queryParams = parseQueryParam(exchange);
 
