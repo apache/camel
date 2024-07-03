@@ -115,7 +115,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     @Override
     public String executeGenericCommand(String command) {
         try {
-            LOG.debug("executing {}", command);
+            LOG.debug("Executing command: {}", command);
             Container.ExecResult execResult = container.execInContainer("/bin/bash", "-c", command);
             if (execResult.getExitCode() != 0) {
                 Assertions.fail(String.format("command %s failed with output %s and error %s", command, execResult.getStdout(),
@@ -127,7 +127,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
             }
             return execResult.getStdout();
         } catch (Exception e) {
-            Assertions.fail(String.format("command %s failed", command), e);
+            LOG.error("ERROR running generic command: {}", command, e);
             throw new RuntimeException(e);
         }
     }

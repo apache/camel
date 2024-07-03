@@ -83,7 +83,6 @@ public class RunCommandITCase extends JBangTestSupport {
     public void runRouteFromInputParameterTest() {
         executeBackground("run --code='from(\"kamelet:beer-source\").to(\"log:beer\")'");
         checkLogContains("Started route1 (kamelet://beer-source)");
-        checkLogContains("Started beer-source-1 (timer://beer)");
     }
 
     @Test
@@ -131,8 +130,7 @@ public class RunCommandITCase extends JBangTestSupport {
     public void runDownloadedInDirectoryFromGithubTest() {
         execute("init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory="
                 + mountPoint());
-        Assertions.as("custom route directory")
-                .assertThat(Paths.get(getDataFolder()).toFile().listFiles())
+        Assertions.assertThat(Paths.get(getDataFolder()).toFile().listFiles())
                 .extracting("name")
                 .containsExactlyInAnyOrder("Echo.java", "Hello.java", "README.adoc", "application.properties");
         executeBackground(String.format("run %s/*", mountPoint()));

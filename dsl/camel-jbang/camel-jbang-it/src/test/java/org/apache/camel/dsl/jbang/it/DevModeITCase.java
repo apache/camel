@@ -76,12 +76,13 @@ public class DevModeITCase extends JBangTestSupport {
     @Test
     public void runUsingProfileTest() throws IOException {
         copyResourceInDataFolder(TestResources.HELLO_NAME);
-        copyResourceInDataFolder(TestResources.LOCAL_PROP);
-        containerService.copyFileInternally(mountPoint() + "/" + TestResources.LOCAL_PROP.getName(), DEFAULT_ROUTE_FOLDER);
+        copyResourceInDataFolder(TestResources.TEST_PROFILE_PROP);
+        containerService.copyFileInternally(mountPoint() + "/" + TestResources.TEST_PROFILE_PROP.getName(),
+                DEFAULT_ROUTE_FOLDER);
         executeBackground(String.format("run %s/%s", mountPoint(), TestResources.HELLO_NAME.getName()));
         checkLogContains("Hello Camel from John");
         execute("stop helloName");
-        executeBackground(String.format("run %s/%s --profile=local", mountPoint(), TestResources.HELLO_NAME.getName()));
+        executeBackground(String.format("run %s/%s --profile=test", mountPoint(), TestResources.HELLO_NAME.getName()));
         checkLogContains("Hello Camel from Jenna");
     }
 

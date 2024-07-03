@@ -1058,7 +1058,11 @@ public class Run extends CamelCommand {
             // application-profile.properties should override standard application.properties
             Properties override = doLoadAndInitProfileProperties(profilePropertiesFile);
             if (override != null) {
-                answer.putAll(override);
+                if (answer == null) {
+                    answer = override;
+                } else {
+                    answer.putAll(override);
+                }
             }
         }
 

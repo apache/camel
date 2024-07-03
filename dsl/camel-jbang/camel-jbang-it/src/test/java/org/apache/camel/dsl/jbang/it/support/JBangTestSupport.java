@@ -84,7 +84,7 @@ public abstract class JBangTestSupport {
 
     protected enum TestResources {
         ROUTE2("route2.yaml", "/jbang/it/route2.yaml"),
-        LOCAL_PROP("local.properties", "/jbang/it/local.properties"),
+        TEST_PROFILE_PROP("application-test.properties", "/jbang/it/application-test.properties"),
         HELLO_NAME("helloName.xml", "/jbang/it/helloName.xml"),
         JOKE("joke.yaml", "/jbang/it/joke.yaml"),
         MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml");

@@ -46,6 +46,7 @@ WORKDIR $HOME
 
 ENV JAVA_HOME=/usr/lib/jvm/java
 
+RUN echo "Installing JBang..."
 RUN curl -Ls https://sh.jbang.dev | bash -s - app setup \
     && source ~/.bashrc \
     && jbang version --update \
@@ -66,6 +67,9 @@ USER root
 RUN echo "jbang:$SSH_PASSWORD" | chpasswd
 RUN chown jbang /opt/entrypoint.sh \
     && chmod +x /opt/entrypoint.sh
+
+RUN echo "Clearing JBang cache"
+RUN jbang cache clear
 
 EXPOSE 22
 
