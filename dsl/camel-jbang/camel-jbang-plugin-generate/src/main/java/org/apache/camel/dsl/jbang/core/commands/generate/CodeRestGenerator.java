@@ -27,6 +27,9 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.Level;
@@ -52,9 +55,12 @@ public class CodeRestGenerator extends CamelCommand {
     private boolean generateRoutes;
     @CommandLine.Option(names = { "--dto" }, description = "Generate Java Data Objects")
     private boolean generateDataObjects;
-    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (quarkus, or spring-boot)",
-                        defaultValue = "quarkus")
-    private String runtime;
+    @CommandLine.Option(names = { "--runtime" },
+                        completionCandidates = RuntimeCompletionCandidates.class,
+                        converter = RuntimeTypeConverter.class,
+                        defaultValue = "quarkus",
+                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    RuntimeType runtime = RuntimeType.quarkus;
     @CommandLine.Option(names = { "--package" }, description = "Package for generated Java models",
                         defaultValue = "model")
     private String packageName;

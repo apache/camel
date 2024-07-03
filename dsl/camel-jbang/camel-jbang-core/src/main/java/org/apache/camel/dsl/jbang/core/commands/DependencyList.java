@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.XmlHelper;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -185,8 +186,8 @@ public class DependencyList extends Export {
         if (profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
-            if (this.runtime == null) {
-                this.runtime = prop.getProperty("camel.jbang.runtime");
+            if (this.runtime == null && prop.containsKey("camel.jbang.runtime")) {
+                this.runtime = RuntimeType.fromValue(prop.getProperty("camel.jbang.runtime"));
             }
             if (this.gav == null) {
                 this.gav = prop.getProperty("camel.jbang.gav");
@@ -208,19 +209,24 @@ public class DependencyList extends Export {
             gav = "org.apache.camel:camel-jbang-dummy:1.0";
         }
         if (runtime == null) {
-            runtime = "camel-main";
+            runtime = RuntimeType.main;
         }
 
         // turn off noise
-        if ("spring-boot".equals(runtime) || "camel-spring-boot".equals(runtime)) {
-            return export(new ExportSpringBoot(getMain()));
-        } else if ("quarkus".equals(runtime) || "camel-quarkus".equals(runtime)) {
-            return export(new ExportQuarkus(getMain()));
-        } else if ("main".equals(runtime) || "camel-main".equals(runtime)) {
-            return export(new ExportCamelMain(getMain()));
-        } else {
-            System.err.println("Unknown runtime: " + runtime);
-            return 1;
+        switch (runtime) {
+            case springBoot -> {
+                return export(new ExportSpringBoot(getMain()));
+            }
+            case quarkus -> {
+                return export(new ExportQuarkus(getMain()));
+            }
+            case main -> {
+                return export(new ExportCamelMain(getMain()));
+            }
+            default -> {
+                System.err.println("Unknown runtime: " + runtime);
+                return 1;
+            }
         }
     }
 

@@ -51,6 +51,8 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
@@ -120,9 +122,12 @@ public class Run extends CamelCommand {
 
     public List<String> files = new ArrayList<>();
 
-    @Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
-            defaultValue = "camel-main", description = "Runtime (${COMPLETION-CANDIDATES})")
-    String runtime = "camel-main";
+    @Option(names = { "--runtime" },
+            completionCandidates = RuntimeCompletionCandidates.class,
+            defaultValue = "camel-main",
+            converter = RuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES})")
+    RuntimeType runtime = RuntimeType.main;
 
     @Option(names = { "--source-dir" },
             description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
@@ -141,12 +146,12 @@ public class Run extends CamelCommand {
     String kameletsVersion;
 
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-            defaultValue = "3.12.0")
-    String quarkusVersion = "3.12.0";
+            defaultValue = RuntimeType.QUARKUS_VERSION)
+    String quarkusVersion = RuntimeType.QUARKUS_VERSION;
 
     @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-            defaultValue = "3.3.1")
-    String springBootVersion = "3.3.1";
+            defaultValue = RuntimeType.SPRING_BOOT_VERSION)
+    String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
             description = "Profile to run (dev, test, or prod).")
