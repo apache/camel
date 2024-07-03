@@ -103,6 +103,42 @@ public interface MasterComponentBuilderFactory {
         }
     
         /**
+         * When the master becomes leader then backoff is in use to repeat
+         * starting the consumer until the consumer is successfully started or
+         * max attempts reached. This option is the delay in millis between
+         * start attempts.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param backOffDelay the value to set
+         * @return the dsl builder
+         */
+        default MasterComponentBuilder backOffDelay(long backOffDelay) {
+            doSetProperty("backOffDelay", backOffDelay);
+            return this;
+        }
+    
+        /**
+         * When the master becomes leader then backoff is in use to repeat
+         * starting the consumer until the consumer is successfully started or
+         * max attempts reached. This option is the maximum number of attempts
+         * to try.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param backOffMaxAttempts the value to set
+         * @return the dsl builder
+         */
+        default MasterComponentBuilder backOffMaxAttempts(long backOffMaxAttempts) {
+            doSetProperty("backOffMaxAttempts", backOffMaxAttempts);
+            return this;
+        }
+    
+        /**
          * Inject the service to use.
          * 
          * The option is a:
@@ -152,6 +188,8 @@ public interface MasterComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((MasterComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "autowiredEnabled": ((MasterComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "backOffDelay": ((MasterComponent) component).setBackOffDelay((long) value); return true;
+            case "backOffMaxAttempts": ((MasterComponent) component).setBackOffMaxAttempts((long) value); return true;
             case "service": ((MasterComponent) component).setService((org.apache.camel.cluster.CamelClusterService) value); return true;
             case "serviceSelector": ((MasterComponent) component).setServiceSelector((org.apache.camel.cluster.CamelClusterService.Selector) value); return true;
             default: return false;
