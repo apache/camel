@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.component.master.MasterConsumer;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.awaitility.Awaitility;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
@@ -64,11 +65,11 @@ public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
         contextB.start();
         contextC.start();
         waitForLeader(50, handleA, handleB, handleC);
-        assertEquals(1, countActiveFromEndpoints(lcc, rn));
+        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
 
         contextA.stop();
         waitForLeader(50, handleA, handleB, handleC);
-        assertEquals(1, countActiveFromEndpoints(lcc, rn));
+        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
 
         contextB.stop();
         JGroupsRaftClusterService service = new JGroupsRaftClusterService();
@@ -79,7 +80,7 @@ public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
         contextA.addService(service);
         contextA.start();
         waitForLeader(50, handleA, handleB, handleC);
-        assertEquals(1, countActiveFromEndpoints(lcc, rn));
+        Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
     }
 
     private CamelContext createContext(String id, RaftHandle rh) throws Exception {

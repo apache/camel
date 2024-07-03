@@ -64,13 +64,20 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     }
 
     @Override
+    public MasterComponent getComponent() {
+        return (MasterComponent) super.getComponent();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Cannot produce from this endpoint");
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new MasterConsumer(this, processor, clusterService);
+        MasterConsumer consumer = new MasterConsumer(this, processor, clusterService);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
