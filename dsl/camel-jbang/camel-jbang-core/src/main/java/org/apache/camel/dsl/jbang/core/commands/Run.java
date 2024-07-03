@@ -628,6 +628,14 @@ public class Run extends CamelCommand {
             }
         }
 
+        if (profile != null) {
+            // need to include profile application properties if exists
+            String name = "application-" + profile + ".properties";
+            if (new File(name).exists() && !files.contains(name)) {
+                files.add(name);
+            }
+        }
+
         for (String file : files) {
             if (file.startsWith("clipboard") && !(new File(file).exists())) {
                 file = loadFromClipboard(file);
