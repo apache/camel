@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.InputStream;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConversionException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
@@ -28,9 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.http.common.HttpMethods.GET;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
@@ -60,16 +55,10 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
                 exchange1 -> {
                 });
 
-        InputStream is = assertIsInstanceOf(InputStream.class, exchange.getMessage().getBody());
-        assertNotNull(is);
+        byte[] arr = assertIsInstanceOf(byte[].class, exchange.getMessage().getBody());
+        assertNotNull(arr);
 
-        String name = is.getClass().getName();
-        // should not be stream cache
-        assertFalse(name.contains("CachedOutputStream"));
-
-        TypeConverter converter = context.getTypeConverter();
-        assertThrows(TypeConversionException.class, () -> converter.convertTo(String.class, exchange, is),
-                "Should have thrown an exception");
+        assertEquals("camel rocks!", context.getTypeConverter().convertTo(String.class, arr));
     }
 
 }
