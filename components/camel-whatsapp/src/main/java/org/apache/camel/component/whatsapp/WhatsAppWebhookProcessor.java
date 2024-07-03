@@ -50,7 +50,6 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         String content;
-        AtomicBoolean isGet = new AtomicBoolean(false);
 
         if ("GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD).toString())) {
             isGet.set(true);
@@ -75,7 +74,6 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
             }
         } else {
-            isGet.set(false);
             InputStream body = exchange.getIn().getBody(InputStream.class);
 
             try {
