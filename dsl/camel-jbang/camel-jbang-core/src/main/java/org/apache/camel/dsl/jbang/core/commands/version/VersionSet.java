@@ -20,6 +20,8 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "set", description = "Set/change current Camel version")
@@ -28,9 +30,11 @@ public class VersionSet extends CamelCommand {
     @CommandLine.Parameters(description = "Camel version", arity = "0..1")
     String version;
 
-    @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
+    @CommandLine.Option(names = { "--runtime" },
+                        completionCandidates = RuntimeCompletionCandidates.class,
+                        converter = RuntimeTypeConverter.class,
                         description = "Runtime (${COMPLETION-CANDIDATES})")
-    String runtime;
+    RuntimeType runtime;
 
     @CommandLine.Option(names = { "--repo", "--repos" }, description = "Maven repository for downloading the dependencies")
     String repo;
@@ -59,7 +63,7 @@ public class VersionSet extends CamelCommand {
                     properties.put("repos", repo);
                 }
                 if (runtime != null) {
-                    properties.put("runtime", runtime);
+                    properties.put("runtime", runtime.runtime());
                 }
             }
             CommandLineHelper.storeProperties(properties, printer());

@@ -39,6 +39,8 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -58,9 +60,11 @@ public class VersionList extends CamelCommand {
     private static final String GIT_CAMEL_QUARKUS_URL
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
 
-    @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
+    @CommandLine.Option(names = { "--runtime" },
+                        completionCandidates = RuntimeCompletionCandidates.class,
+                        converter = RuntimeTypeConverter.class,
                         description = "Runtime (${COMPLETION-CANDIDATES})")
-    String runtime;
+    RuntimeType runtime;
 
     @CommandLine.Option(names = { "--from-version" },
                         description = "Filter by Camel version (inclusive)", defaultValue = "4.0.0")
@@ -102,10 +106,10 @@ public class VersionList extends CamelCommand {
 
             String g = "org.apache.camel";
             String a = "camel-catalog";
-            if ("spring-boot".equalsIgnoreCase(runtime)) {
+            if (RuntimeType.springBoot == runtime) {
                 g = "org.apache.camel.springboot";
                 a = "camel-spring-boot";
-            } else if ("quarkus".equalsIgnoreCase(runtime)) {
+            } else if (RuntimeType.quarkus == runtime) {
                 g = "org.apache.camel.quarkus";
                 a = "camel-quarkus-catalog";
             }
@@ -137,7 +141,7 @@ public class VersionList extends CamelCommand {
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
-        List<ReleaseModel> releases = "quarkus".equals(runtime) ? catalog.camelQuarkusReleases() : catalog.camelReleases();
+        List<ReleaseModel> releases = RuntimeType.quarkus == runtime ? catalog.camelQuarkusReleases() : catalog.camelReleases();
 
         List<Row> rows = new ArrayList<>();
         for (String[] v : versions) {
@@ -147,7 +151,7 @@ public class VersionList extends CamelCommand {
             row.runtimeVersion = v[1];
 
             // enrich with details from catalog (if we can find any)
-            String catalogVersion = "quarkus".equals(runtime) ? v[1] : v[0];
+            String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
             ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
             if (rm == null) {
                 // unknown release but if it's an Apache Camel release we can grab from online
@@ -175,9 +179,9 @@ public class VersionList extends CamelCommand {
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("CAMEL VERSION")
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion),
-                new Column().header("QUARKUS").visible("quarkus".equalsIgnoreCase(runtime))
+                new Column().header("QUARKUS").visible(RuntimeType.quarkus == runtime)
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
-                new Column().header("SPRING-BOOT").visible("spring-boot".equalsIgnoreCase(runtime))
+                new Column().header("SPRING-BOOT").visible(RuntimeType.springBoot == runtime)
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
                 new Column().header("JDK")
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::jdkVersion),
@@ -259,8 +263,8 @@ public class VersionList extends CamelCommand {
         return VersionHelper.isGE(version, fromVersion);
     }
 
-    private ReleaseModel onlineRelease(String runtime, String coreVersion) throws Exception {
-        String gitUrl = String.format("quarkus".equals(runtime) ? GIT_CAMEL_QUARKUS_URL : GIT_CAMEL_URL, coreVersion);
+    private ReleaseModel onlineRelease(RuntimeType runtime, String coreVersion) throws Exception {
+        String gitUrl = String.format(RuntimeType.quarkus == runtime ? GIT_CAMEL_QUARKUS_URL : GIT_CAMEL_URL, coreVersion);
 
         HttpClient hc = HttpClient.newHttpClient();
         HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),

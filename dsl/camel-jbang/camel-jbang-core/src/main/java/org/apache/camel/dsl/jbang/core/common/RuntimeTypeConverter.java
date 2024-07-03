@@ -15,24 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k.support;
+package org.apache.camel.dsl.jbang.core.common;
 
-public enum RuntimeType {
-    springBoot,
-    quarkus,
-    camelMain;
+import picocli.CommandLine;
 
-    public static RuntimeType fromValue(String value) {
-        switch (value) {
-            case "spring-boot":
-                return RuntimeType.springBoot;
-            case "quarkus":
-                return RuntimeType.quarkus;
-            case "camel-main":
-                return RuntimeType.camelMain;
-            default:
-                throw new IllegalArgumentException("Unsupported runtime " + value);
-        }
-
+public class RuntimeTypeConverter implements CommandLine.ITypeConverter<RuntimeType> {
+    public RuntimeType convert(String value) throws Exception {
+        return RuntimeType.fromValue(value);
     }
 }
