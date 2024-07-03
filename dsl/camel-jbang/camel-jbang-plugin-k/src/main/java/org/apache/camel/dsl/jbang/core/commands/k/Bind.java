@@ -25,6 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.bind.TemplateProvider;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesBaseCommand;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.v1.Pipe;
 import org.apache.camel.v1.integrationspec.Traits;
@@ -34,7 +37,7 @@ import picocli.CommandLine.Command;
 @Command(name = "bind",
          description = "Bind Kubernetes resources such as Kamelets in a new integration pipe connecting a source and a sink",
          sortOptions = false)
-public class Bind extends KubeBaseCommand {
+public class Bind extends KubernetesBaseCommand {
 
     private final org.apache.camel.dsl.jbang.core.commands.bind.Bind delegate;
 
@@ -202,7 +205,10 @@ public class Bind extends KubeBaseCommand {
         }
 
         if (logs) {
-            new IntegrationLogs(getMain()).watchLogs(pipeResource.getMetadata().getName());
+            IntegrationLogs logsCommand = new IntegrationLogs(getMain());
+            logsCommand.withClient(client());
+            logsCommand.name = pipeResource.getMetadata().getName();
+            logsCommand.doCall();
         }
 
         return 0;

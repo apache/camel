@@ -1,14 +1,22 @@
-= Camel Integration with Kubernetes
+= Camel K plugin
 
 Please make sure to meet these prerequisites for running Camel integrations on Kubernetes:
 
 * Connect to namespace on a Kubernetes cluster where you want to run the integration
 * Camel K operator must be installed on the Kubernetes cluster (either installed on the same namespace or as global operator for the whole cluster)
 
+To set up a local Kubernetes cluster you have several options.
+Camel K JBang is able to interact with all of these Kubernetes platforms.
+
+* Kind
+* Minikube
+
+Of course, you may also connect to a remote Kubernetes cluster.
+
 Running Camel routes on Kubernetes is quite simple with Camel JBang.
 In fact, you can develop and test your Camel route locally with Camel JBang and then promote the same source to running it as an integration on Kubernetes.
 
-The Camel JBang Kubernetes functionality is provided as a command plugin.
+The Camel K JBang functionality is provided as a command plugin.
 This means you need to enable the `camel-k` plugin first to use the subcommands in Camel JBang.
 
 [source,bash]
@@ -16,11 +24,17 @@ This means you need to enable the `camel-k` plugin first to use the subcommands 
 camel plugin add camel-k
 ----
 
-You should see the `camel-k` plugin listed as installed plugin.
+You should see the `camel-k` plugin listed as an installed plugin.
 
 [source,bash]
 ----
 camel plugin get
+----
+
+[source,bash]
+----
+ NAME        COMMAND     DEPENDENCY                                      DESCRIPTION
+ camel-k     k           org.apache.camel:camel-jbang-plugin-k           Manage Camel integrations on Kubernetes
 ----
 
 Now Camel JBang is able to run the subcommands offered by the plugin.
@@ -61,7 +75,7 @@ The run command offers a lot more options that you may use to configure the Came
 |--kit, -k
 |The kit used to run the integration.
 
-|--profile
+|--trait-profile
 |The trait profile to use for the deployment.
 
 |--service-account
@@ -128,7 +142,7 @@ The run command offers a lot more options that you may use to configure the Came
 |Print logs after integration has been started.
 
 |--output, -o
-|Just output the generated integration custom resource (supports: yaml or json).
+|Just output the generated integration custom resource (supports: yaml or json or k8s).
 |=======================================================================
 
 == List integrations

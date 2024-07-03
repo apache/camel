@@ -1037,9 +1037,10 @@ camel plugin get --all
 ----
 Supported plugins:
 
- NAME      COMMAND   DEPENDENCY                                    DESCRIPTION
- camel-k   k         org.apache.camel:camel-jbang-plugin-k         Manage Camel integrations on Kubernetes
- generate  generate  org.apache.camel:camel-jbang-plugin-generate  Generate code such as DTOs
+ NAME        COMMAND     DEPENDENCY                                      DESCRIPTION
+ kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
+ camel-k     k           org.apache.camel:camel-jbang-plugin-k           Managed Camel integrations on Kubernetes
+ generate    generate    org.apache.camel:camel-jbang-plugin-generate    Generate code such as DTOs
 ----
 
 In case you want to enable a plugin and its functionality you can add it as follows:
@@ -1726,9 +1727,17 @@ comma such as: camel cmd start-route --id=route1,hello. Use `camel cmd start-rou
 ==== Running Camel integrations on Kubernetes
 
 After developing the Camel routes locally with JBang you may want to run these also on the Kubernetes platform at some point.
-The Camel K commands get you started with this journey and help you to run and manage Camel integrations on Kubernetes.
 
-Read about it in xref:camel-jbang-k.adoc[Camel Integration with Kubernetes].
+Camel JBang provides a plugin for managing and easily running Camel applications on Kubernetes.
+The plugin uses the project export functionality to build and deploy the application on Kubernetes with Quarkus or SpringBoot.
+
+Read about it in xref:camel-jbang-kubernetes.adoc[Camel Kubernetes plugin].
+
+In addition to that you can also leverage the Camel K plugin commands that interact with the Camel K operator on Kubernetes.
+Camel K gets you started with the journey of running Camel integrations on Kubernetes in a declarative way.
+The container image build, push to registry as well as the ownership of deployments is all taken care of by the Camel K operator.
+
+Read about it in xref:camel-jbang-k.adoc[Camel K plugin].
 
 ==== Configuring logging levels
 

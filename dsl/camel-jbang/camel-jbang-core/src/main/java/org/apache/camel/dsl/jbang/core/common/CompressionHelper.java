@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k;
+package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

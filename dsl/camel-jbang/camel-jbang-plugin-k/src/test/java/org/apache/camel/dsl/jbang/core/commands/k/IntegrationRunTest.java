@@ -135,7 +135,7 @@ class IntegrationRunTest extends KubeBaseTest {
         command.labels = new String[] { "custom-label=enabled" };
         command.annotations = new String[] { "custom-annotation=enabled" };
         command.repositories = new String[] { "http://custom-repository" };
-        command.profile = "knative";
+        command.traitProfile = "knative";
         command.output = "yaml";
         command.doCall();
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -126,7 +126,7 @@ public final class KubernetesHelper {
      *
      * @param kubernetesClient
      */
-    static void setKubernetesClient(KubernetesClient kubernetesClient) {
+    public static void setKubernetesClient(KubernetesClient kubernetesClient) {
         KubernetesHelper.kubernetesClient = kubernetesClient;
     }
 

@@ -170,7 +170,7 @@ public class SBOMGenerator extends Export {
         // use temporary export dir
         exportDir = EXPORT_DIR;
         if (gav == null) {
-            gav = "org.apache.camel:camel-jbang-export:1.0";
+            gav = "org.example.project:camel-jbang-export:1.0";
         }
         if (runtime == null) {
             runtime = RuntimeType.main;

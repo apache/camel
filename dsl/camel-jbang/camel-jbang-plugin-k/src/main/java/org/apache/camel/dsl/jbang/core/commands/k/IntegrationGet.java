@@ -25,12 +25,13 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesBaseCommand;
 import org.apache.camel.v1.Integration;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "get", description = "List Camel integrations deployed on Kubernetes", sortOptions = false)
-public class IntegrationGet extends KubeBaseCommand {
+public class IntegrationGet extends KubernetesBaseCommand {
 
     @CommandLine.Option(names = { "--name" },
                         description = "List only given integration name in the output")
