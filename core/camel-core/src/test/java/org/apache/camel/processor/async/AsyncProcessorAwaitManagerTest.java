@@ -77,7 +77,6 @@ public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
                                 log.info("Thread {} has waited for {} msec.", thread.getBlockedThread().getName(), wait);
 
                                 assertEquals("myRoute", thread.getRouteId());
-                                // assertEquals("myAsync", thread.getNodeId());
                                 assertThat(thread.getNodeId()).matches("process[0-9]+");
                             }
                         }).to("mock:result");
