@@ -23,9 +23,11 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(76);
+        Set<String> props = new HashSet<>(81);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
+        props.add("cdcChangeTablesSchema");
+        props.add("cdcControlSchema");
         props.add("columnExcludeList");
         props.add("columnIncludeList");
         props.add("columnPropagateSourceType");
@@ -37,6 +39,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("databasePort");
         props.add("databaseUser");
         props.add("datatypePropagateSourceType");
+        props.add("db2Platform");
         props.add("decimalHandlingMode");
         props.add("errorsMaxRetries");
         props.add("eventProcessingFailureHandlingMode");
@@ -93,6 +96,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
+        props.add("streamingDelayMs");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
         props.add("tableIncludeList");
@@ -100,6 +104,7 @@ public class DebeziumDb2EndpointUriFactory extends org.apache.camel.support.comp
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");
         props.add("topicPrefix");
+        props.add("transactionMetadataFactory");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

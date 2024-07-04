@@ -1290,6 +1290,24 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         
         /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder streamingDelayMs(long streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+    
+        
+        /**
          * Whether delete operations should be represented by a delete event and
          * a subsequent tombstone event (true) or only by a delete event
          * (false). Emitting the tombstone event (the default behavior) allows
@@ -1345,6 +1363,24 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder topicPrefix(java.lang.String topicPrefix) {
             doSetProperty("topicPrefix", topicPrefix);
+            return this;
+        }
+    
+        
+        /**
+         * Class to make transaction context &amp; transaction struct/schemas.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory
+         * Group: mongodb
+         * 
+         * @param transactionMetadataFactory the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder transactionMetadataFactory(java.lang.String transactionMetadataFactory) {
+            doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
             return this;
         }
     }
@@ -1437,9 +1473,11 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeConfigurationBasedStartStream((boolean) value); return true;
             case "snapshotModeCustomName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotModeCustomName((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
+            case "streamingDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setStreamingDelayMs((long) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTombstonesOnDelete((boolean) value); return true;
             case "topicNamingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
             case "topicPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTopicPrefix((java.lang.String) value); return true;
+            case "transactionMetadataFactory": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTransactionMetadataFactory((java.lang.String) value); return true;
             default: return false;
             }
         }

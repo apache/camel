@@ -23,7 +23,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(85);
+        Set<String> props = new HashSet<>(88);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -38,6 +38,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("databaseNames");
         props.add("databasePassword");
         props.add("databasePort");
+        props.add("databaseQueryTimeoutMs");
         props.add("databaseUser");
         props.add("datatypePropagateSourceType");
         props.add("decimalHandlingMode");
@@ -102,6 +103,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
+        props.add("streamingDelayMs");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
         props.add("tableIncludeList");
@@ -109,6 +111,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");
         props.add("topicPrefix");
+        props.add("transactionMetadataFactory");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

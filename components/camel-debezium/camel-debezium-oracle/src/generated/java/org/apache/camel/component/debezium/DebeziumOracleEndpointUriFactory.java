@@ -23,7 +23,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(122);
+        Set<String> props = new HashSet<>(124);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -41,6 +41,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("databasePassword");
         props.add("databasePdbName");
         props.add("databasePort");
+        props.add("databaseQueryTimeoutMs");
         props.add("databaseUrl");
         props.add("databaseUser");
         props.add("datatypePropagateSourceType");
@@ -123,7 +124,6 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("skippedOperations");
         props.add("snapshotDatabaseErrorsMaxRetries");
         props.add("snapshotDelayMs");
-        props.add("snapshotEnhancePredicateScn");
         props.add("snapshotFetchSize");
         props.add("snapshotIncludeCollectionList");
         props.add("snapshotLockTimeoutMs");
@@ -139,12 +139,14 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
+        props.add("streamingDelayMs");
         props.add("tableExcludeList");
         props.add("tableIncludeList");
         props.add("timePrecisionMode");
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");
         props.add("topicPrefix");
+        props.add("transactionMetadataFactory");
         props.add("unavailableValuePlaceholder");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

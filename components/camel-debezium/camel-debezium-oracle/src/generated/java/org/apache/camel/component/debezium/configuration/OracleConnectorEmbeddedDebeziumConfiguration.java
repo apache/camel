@@ -18,6 +18,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private boolean logMiningBufferDropOnStop = false;
     @UriParam(label = LABEL_NAME)
     private String messageKeyColumns;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
+    private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
     @UriParam(label = LABEL_NAME)
@@ -116,6 +118,10 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long logMiningBatchSizeDefault = 20000;
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long streamingDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "10m", javaType = "java.time.Duration")
+    private int databaseQueryTimeoutMs = 600000;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
     private int queryFetchSize = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
@@ -226,8 +232,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "1000")
     private long logMiningBatchSizeMin = 1000;
-    @UriParam(label = LABEL_NAME)
-    private String snapshotEnhancePredicateScn;
 
     /**
      * Controls how the connector holds locks on tables while performing the
@@ -279,6 +283,17 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getMessageKeyColumns() {
         return messageKeyColumns;
+    }
+
+    /**
+     * Class to make transaction context & transaction struct/schemas
+     */
+    public void setTransactionMetadataFactory(String transactionMetadataFactory) {
+        this.transactionMetadataFactory = transactionMetadataFactory;
+    }
+
+    public String getTransactionMetadataFactory() {
+        return transactionMetadataFactory;
     }
 
     /**
@@ -956,6 +971,30 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getTableIncludeList() {
         return tableIncludeList;
+    }
+
+    /**
+     * A delay period after the snapshot is completed and the streaming begins,
+     * given in milliseconds. Defaults to 0 ms.
+     */
+    public void setStreamingDelayMs(long streamingDelayMs) {
+        this.streamingDelayMs = streamingDelayMs;
+    }
+
+    public long getStreamingDelayMs() {
+        return streamingDelayMs;
+    }
+
+    /**
+     * Time to wait for a query to execute, given in milliseconds. Defaults to
+     * 600 seconds (600,000 ms); zero means there is no limit.
+     */
+    public void setDatabaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
+        this.databaseQueryTimeoutMs = databaseQueryTimeoutMs;
+    }
+
+    public int getDatabaseQueryTimeoutMs() {
+        return databaseQueryTimeoutMs;
     }
 
     /**
@@ -1663,18 +1702,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         return logMiningBatchSizeMin;
     }
 
-    /**
-     * A token to replace on snapshot predicate template
-     */
-    public void setSnapshotEnhancePredicateScn(
-            String snapshotEnhancePredicateScn) {
-        this.snapshotEnhancePredicateScn = snapshotEnhancePredicateScn;
-    }
-
-    public String getSnapshotEnhancePredicateScn() {
-        return snapshotEnhancePredicateScn;
-    }
-
     @Override
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
@@ -1682,6 +1709,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.locking.mode", snapshotLockingMode);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.drop.on.stop", logMiningBufferDropOnStop);
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
+        addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "openlogreplicator.host", openlogreplicatorHost);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
@@ -1731,6 +1759,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.default", logMiningBatchSizeDefault);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
+        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
+        addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.min.ms", logMiningSleepTimeMinMs);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
@@ -1785,7 +1815,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.session.max.ms", logMiningSessionMaxMs);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.min", logMiningBatchSizeMin);
-        addPropertyIfNotNull(configBuilder, "snapshot.enhance.predicate.scn", snapshotEnhancePredicateScn);
         
         return configBuilder.build();
     }

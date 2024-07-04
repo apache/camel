@@ -303,6 +303,14 @@ public class DebeziumPostgresUriDsl(
   }
 
   /**
+   * Time to wait for a query to execute, given in milliseconds. Defaults to 600 seconds (600,000
+   * ms); zero means there is no limit.
+   */
+  public fun databaseQueryTimeoutMs(databaseQueryTimeoutMs: String) {
+    it.property("databaseQueryTimeoutMs", databaseQueryTimeoutMs)
+  }
+
+  /**
    * File containing the SSL Certificate for the client. See the Postgres SSL docs for further
    * information
    */
@@ -1126,6 +1134,14 @@ public class DebeziumPostgresUriDsl(
   }
 
   /**
+   * A delay period after the snapshot is completed and the streaming begins, given in milliseconds.
+   * Defaults to 0 ms.
+   */
+  public fun streamingDelayMs(streamingDelayMs: String) {
+    it.property("streamingDelayMs", streamingDelayMs)
+  }
+
+  /**
    * A comma-separated list of regular expressions that match the fully-qualified names of tables to
    * be excluded from monitoring
    */
@@ -1202,6 +1218,13 @@ public class DebeziumPostgresUriDsl(
    */
   public fun topicPrefix(topicPrefix: String) {
     it.property("topicPrefix", topicPrefix)
+  }
+
+  /**
+   * Class to make transaction context & transaction struct/schemas
+   */
+  public fun transactionMetadataFactory(transactionMetadataFactory: String) {
+    it.property("transactionMetadataFactory", transactionMetadataFactory)
   }
 
   /**

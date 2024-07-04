@@ -784,6 +784,14 @@ public class DebeziumMongodbUriDsl(
   }
 
   /**
+   * A delay period after the snapshot is completed and the streaming begins, given in milliseconds.
+   * Defaults to 0 ms.
+   */
+  public fun streamingDelayMs(streamingDelayMs: String) {
+    it.property("streamingDelayMs", streamingDelayMs)
+  }
+
+  /**
    * Whether delete operations should be represented by a delete event and a subsequent tombstone
    * event (true) or only by a delete event (false). Emitting the tombstone event (the default
    * behavior) allows Kafka to completely delete all events pertaining to the given key once the source
@@ -819,5 +827,12 @@ public class DebeziumMongodbUriDsl(
    */
   public fun topicPrefix(topicPrefix: String) {
     it.property("topicPrefix", topicPrefix)
+  }
+
+  /**
+   * Class to make transaction context & transaction struct/schemas
+   */
+  public fun transactionMetadataFactory(transactionMetadataFactory: String) {
+    it.property("transactionMetadataFactory", transactionMetadataFactory)
   }
 }

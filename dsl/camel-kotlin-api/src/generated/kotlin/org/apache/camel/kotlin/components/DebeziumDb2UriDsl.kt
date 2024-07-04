@@ -206,6 +206,20 @@ public class DebeziumDb2UriDsl(
   }
 
   /**
+   * The name of the schema where CDC change tables are located; defaults to 'ASNCDC'
+   */
+  public fun cdcChangeTablesSchema(cdcChangeTablesSchema: String) {
+    it.property("cdcChangeTablesSchema", cdcChangeTablesSchema)
+  }
+
+  /**
+   * The name of the schema where CDC control structures are located; defaults to 'ASNCDC'
+   */
+  public fun cdcControlSchema(cdcControlSchema: String) {
+    it.property("cdcControlSchema", cdcControlSchema)
+  }
+
+  /**
    * Regular expressions matching columns to exclude from change events
    */
   public fun columnExcludeList(columnExcludeList: String) {
@@ -295,6 +309,15 @@ public class DebeziumDb2UriDsl(
    */
   public fun datatypePropagateSourceType(datatypePropagateSourceType: String) {
     it.property("datatypePropagateSourceType", datatypePropagateSourceType)
+  }
+
+  /**
+   * Informs connector which Db2 implementation platform it is connected to. The default is 'LUW',
+   * which means Windows, UNIX, Linux. Using a value of 'Z' ensures that the Db2 for z/OS specific SQL
+   * statements are used.
+   */
+  public fun db2Platform(db2Platform: String) {
+    it.property("db2Platform", db2Platform)
   }
 
   /**
@@ -835,6 +858,14 @@ public class DebeziumDb2UriDsl(
   }
 
   /**
+   * A delay period after the snapshot is completed and the streaming begins, given in milliseconds.
+   * Defaults to 0 ms.
+   */
+  public fun streamingDelayMs(streamingDelayMs: String) {
+    it.property("streamingDelayMs", streamingDelayMs)
+  }
+
+  /**
    * A comma-separated list of regular expressions that match the fully-qualified names of tables to
    * be excluded from monitoring
    */
@@ -911,5 +942,12 @@ public class DebeziumDb2UriDsl(
    */
   public fun topicPrefix(topicPrefix: String) {
     it.property("topicPrefix", topicPrefix)
+  }
+
+  /**
+   * Class to make transaction context & transaction struct/schemas
+   */
+  public fun transactionMetadataFactory(transactionMetadataFactory: String) {
+    it.property("transactionMetadataFactory", transactionMetadataFactory)
   }
 }

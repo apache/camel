@@ -564,6 +564,24 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Time to wait for a query to execute, given in milliseconds. Defaults
+         * to 600 seconds (600,000 ms); zero means there is no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10m
+         * Group: oracle
+         * 
+         * @param databaseQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder databaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
+            doSetProperty("databaseQueryTimeoutMs", databaseQueryTimeoutMs);
+            return this;
+        }
+    
         /**
          * Complete JDBC URL as an alternative to specifying hostname, port and
          * database provided as a way to support alternative connection
@@ -1839,21 +1857,6 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
-         * A token to replace on snapshot predicate template.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param snapshotEnhancePredicateScn the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder snapshotEnhancePredicateScn(java.lang.String snapshotEnhancePredicateScn) {
-            doSetProperty("snapshotEnhancePredicateScn", snapshotEnhancePredicateScn);
-            return this;
-        }
-    
-        /**
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
@@ -2163,6 +2166,24 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder streamingDelayMs(long streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+    
         /**
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
@@ -2280,6 +2301,24 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
+         * Class to make transaction context &amp; transaction struct/schemas.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory
+         * Group: oracle
+         * 
+         * @param transactionMetadataFactory the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder transactionMetadataFactory(java.lang.String transactionMetadataFactory) {
+            doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
+            return this;
+        }
+    
+        
+        /**
          * Specify the constant that will be provided by Debezium to indicate
          * that the original value is unavailable and not provided by the
          * database.
@@ -2346,6 +2385,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "databasePassword": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePdbName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePdbName((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePort((int) value); return true;
+            case "databaseQueryTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseQueryTimeoutMs((int) value); return true;
             case "databaseUrl": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseUrl((java.lang.String) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseUser((java.lang.String) value); return true;
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
@@ -2415,7 +2455,6 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "skippedOperations": getOrCreateConfiguration((DebeziumOracleComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDatabaseErrorsMaxRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDatabaseErrorsMaxRetries((int) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDelayMs((long) value); return true;
-            case "snapshotEnhancePredicateScn": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotEnhancePredicateScn((java.lang.String) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotFetchSize((int) value); return true;
             case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
             case "snapshotLockingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotLockingMode((java.lang.String) value); return true;
@@ -2431,12 +2470,14 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumOracleComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
+            case "streamingDelayMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setStreamingDelayMs((long) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableIncludeList((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumOracleComponent) component).setTombstonesOnDelete((boolean) value); return true;
             case "topicNamingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
             case "topicPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setTopicPrefix((java.lang.String) value); return true;
+            case "transactionMetadataFactory": getOrCreateConfiguration((DebeziumOracleComponent) component).setTransactionMetadataFactory((java.lang.String) value); return true;
             case "unavailableValuePlaceholder": getOrCreateConfiguration((DebeziumOracleComponent) component).setUnavailableValuePlaceholder((java.lang.String) value); return true;
             default: return false;
             }

@@ -12,6 +12,10 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
             EmbeddedDebeziumConfiguration {
 
     private static final String LABEL_NAME = "consumer,mongodb";
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
+    private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long streamingDelayMs = 0;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
     @UriParam(label = LABEL_NAME)
@@ -130,6 +134,29 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int mongodbHeartbeatFrequencyMs = 10000;
     @UriParam(label = LABEL_NAME)
     private String databaseIncludeList;
+
+    /**
+     * Class to make transaction context & transaction struct/schemas
+     */
+    public void setTransactionMetadataFactory(String transactionMetadataFactory) {
+        this.transactionMetadataFactory = transactionMetadataFactory;
+    }
+
+    public String getTransactionMetadataFactory() {
+        return transactionMetadataFactory;
+    }
+
+    /**
+     * A delay period after the snapshot is completed and the streaming begins,
+     * given in milliseconds. Defaults to 0 ms.
+     */
+    public void setStreamingDelayMs(long streamingDelayMs) {
+        this.streamingDelayMs = streamingDelayMs;
+    }
+
+    public long getStreamingDelayMs() {
+        return streamingDelayMs;
+    }
 
     /**
      * The custom metric tags will accept key-value pairs to customize the MBean
@@ -885,6 +912,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
         
+        addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
+        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "mongodb.connection.string", mongodbConnectionString);
         addPropertyIfNotNull(configBuilder, "mongodb.password", mongodbPassword);

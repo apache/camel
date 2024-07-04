@@ -311,6 +311,42 @@ public interface DebeziumDb2ComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The name of the schema where CDC change tables are located; defaults
+         * to 'ASNCDC'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ASNCDC
+         * Group: db2
+         * 
+         * @param cdcChangeTablesSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder cdcChangeTablesSchema(java.lang.String cdcChangeTablesSchema) {
+            doSetProperty("cdcChangeTablesSchema", cdcChangeTablesSchema);
+            return this;
+        }
+    
+        
+        /**
+         * The name of the schema where CDC control structures are located;
+         * defaults to 'ASNCDC'.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ASNCDC
+         * Group: db2
+         * 
+         * @param cdcControlSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder cdcControlSchema(java.lang.String cdcControlSchema) {
+            doSetProperty("cdcControlSchema", cdcControlSchema);
+            return this;
+        }
+    
         /**
          * Regular expressions matching columns to exclude from change events.
          * 
@@ -489,6 +525,26 @@ public interface DebeziumDb2ComponentBuilderFactory {
          */
         default DebeziumDb2ComponentBuilder datatypePropagateSourceType(java.lang.String datatypePropagateSourceType) {
             doSetProperty("datatypePropagateSourceType", datatypePropagateSourceType);
+            return this;
+        }
+    
+        
+        /**
+         * Informs connector which Db2 implementation platform it is connected
+         * to. The default is 'LUW', which means Windows, UNIX, Linux. Using a
+         * value of 'Z' ensures that the Db2 for z/OS specific SQL statements
+         * are used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: LUW
+         * Group: db2
+         * 
+         * @param db2Platform the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder db2Platform(java.lang.String db2Platform) {
+            doSetProperty("db2Platform", db2Platform);
             return this;
         }
     
@@ -1313,6 +1369,24 @@ public interface DebeziumDb2ComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: db2
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder streamingDelayMs(long streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+    
         /**
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
@@ -1444,6 +1518,24 @@ public interface DebeziumDb2ComponentBuilderFactory {
             doSetProperty("topicPrefix", topicPrefix);
             return this;
         }
+    
+        
+        /**
+         * Class to make transaction context &amp; transaction struct/schemas.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory
+         * Group: db2
+         * 
+         * @param transactionMetadataFactory the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder transactionMetadataFactory(java.lang.String transactionMetadataFactory) {
+            doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
+            return this;
+        }
     }
 
     class DebeziumDb2ComponentBuilderImpl
@@ -1479,6 +1571,8 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumDb2Component) component).setOffsetStorageReplicationFactor((int) value); return true;
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumDb2Component) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumDb2Component) component).setAutowiredEnabled((boolean) value); return true;
+            case "cdcChangeTablesSchema": getOrCreateConfiguration((DebeziumDb2Component) component).setCdcChangeTablesSchema((java.lang.String) value); return true;
+            case "cdcControlSchema": getOrCreateConfiguration((DebeziumDb2Component) component).setCdcControlSchema((java.lang.String) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumDb2Component) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumDb2Component) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumDb2Component) component).setColumnPropagateSourceType((java.lang.String) value); return true;
@@ -1490,6 +1584,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "databasePort": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabasePort((int) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabaseUser((java.lang.String) value); return true;
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumDb2Component) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
+            case "db2Platform": getOrCreateConfiguration((DebeziumDb2Component) component).setDb2Platform((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumDb2Component) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumDb2Component) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumDb2Component) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
@@ -1533,6 +1628,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumDb2Component) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumDb2Component) component).setSourceinfoStructMaker((java.lang.String) value); return true;
+            case "streamingDelayMs": getOrCreateConfiguration((DebeziumDb2Component) component).setStreamingDelayMs((long) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumDb2Component) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumDb2Component) component).setTableIgnoreBuiltin((boolean) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumDb2Component) component).setTableIncludeList((java.lang.String) value); return true;
@@ -1540,6 +1636,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumDb2Component) component).setTombstonesOnDelete((boolean) value); return true;
             case "topicNamingStrategy": getOrCreateConfiguration((DebeziumDb2Component) component).setTopicNamingStrategy((java.lang.String) value); return true;
             case "topicPrefix": getOrCreateConfiguration((DebeziumDb2Component) component).setTopicPrefix((java.lang.String) value); return true;
+            case "transactionMetadataFactory": getOrCreateConfiguration((DebeziumDb2Component) component).setTransactionMetadataFactory((java.lang.String) value); return true;
             default: return false;
             }
         }

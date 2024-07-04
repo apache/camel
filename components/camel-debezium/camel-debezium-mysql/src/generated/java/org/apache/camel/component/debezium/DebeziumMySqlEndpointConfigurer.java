@@ -27,8 +27,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": target.getConfiguration().setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": target.getConfiguration().setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": target.getConfiguration().setBinlogBufferSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
@@ -45,8 +43,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "connectKeepAliveIntervalMs": target.getConfiguration().setConnectKeepAliveIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connecttimeoutms":
         case "connectTimeoutMs": target.getConfiguration().setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
-        case "connectoradapter":
-        case "connectorAdapter": target.getConfiguration().setConnectorAdapter(property(camelContext, java.lang.String.class, value)); return true;
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "custommetrictags":
         case "customMetricTags": target.getConfiguration().setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
@@ -64,6 +60,10 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databasePassword": target.getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": target.getConfiguration().setDatabasePort(property(camelContext, int.class, value)); return true;
+        case "databaseprotocol":
+        case "databaseProtocol": target.getConfiguration().setDatabaseProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": target.getConfiguration().setDatabaseQueryTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databaseserverid":
         case "databaseServerId": target.getConfiguration().setDatabaseServerId(property(camelContext, long.class, value)); return true;
         case "databaseserveridoffset":
@@ -212,8 +212,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotModeConfigurationBasedStartStream": target.getConfiguration().setSnapshotModeConfigurationBasedStartStream(property(camelContext, boolean.class, value)); return true;
         case "snapshotmodecustomname":
         case "snapshotModeCustomName": target.getConfiguration().setSnapshotModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
-        case "snapshotnewtables":
-        case "snapshotNewTables": target.getConfiguration().setSnapshotNewTables(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotquerymode":
         case "snapshotQueryMode": target.getConfiguration().setSnapshotQueryMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotquerymodecustomname":
@@ -224,6 +222,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotTablesOrderByRowCount": target.getConfiguration().setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": target.getConfiguration().setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamingdelayms":
+        case "streamingDelayMs": target.getConfiguration().setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "tableexcludelist":
         case "tableExcludeList": target.getConfiguration().setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -238,6 +238,10 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "topicNamingStrategy": target.getConfiguration().setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "topicprefix":
         case "topicPrefix": target.getConfiguration().setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": target.getConfiguration().setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
+        case "usenongracefuldisconnect":
+        case "useNongracefulDisconnect": target.getConfiguration().setUseNongracefulDisconnect(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -249,8 +253,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": return java.util.Map.class;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return java.lang.String.class;
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": return java.lang.String.class;
         case "binlogbuffersize":
         case "binlogBufferSize": return int.class;
         case "bridgeerrorhandler":
@@ -267,8 +269,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "connectKeepAliveIntervalMs": return long.class;
         case "connecttimeoutms":
         case "connectTimeoutMs": return int.class;
-        case "connectoradapter":
-        case "connectorAdapter": return java.lang.String.class;
         case "converters": return java.lang.String.class;
         case "custommetrictags":
         case "customMetricTags": return java.lang.String.class;
@@ -286,6 +286,10 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
+        case "databaseprotocol":
+        case "databaseProtocol": return java.lang.String.class;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return int.class;
         case "databaseserverid":
         case "databaseServerId": return long.class;
         case "databaseserveridoffset":
@@ -434,8 +438,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotModeConfigurationBasedStartStream": return boolean.class;
         case "snapshotmodecustomname":
         case "snapshotModeCustomName": return java.lang.String.class;
-        case "snapshotnewtables":
-        case "snapshotNewTables": return java.lang.String.class;
         case "snapshotquerymode":
         case "snapshotQueryMode": return java.lang.String.class;
         case "snapshotquerymodecustomname":
@@ -446,6 +448,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "streamingdelayms":
+        case "streamingDelayMs": return long.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
@@ -460,6 +464,10 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "topicNamingStrategy": return java.lang.String.class;
         case "topicprefix":
         case "topicPrefix": return java.lang.String.class;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return java.lang.String.class;
+        case "usenongracefuldisconnect":
+        case "useNongracefulDisconnect": return boolean.class;
         default: return null;
         }
     }
@@ -472,8 +480,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return target.getConfiguration().getBigintUnsignedHandlingMode();
-        case "binaryhandlingmode":
-        case "binaryHandlingMode": return target.getConfiguration().getBinaryHandlingMode();
         case "binlogbuffersize":
         case "binlogBufferSize": return target.getConfiguration().getBinlogBufferSize();
         case "bridgeerrorhandler":
@@ -490,8 +496,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "connectKeepAliveIntervalMs": return target.getConfiguration().getConnectKeepAliveIntervalMs();
         case "connecttimeoutms":
         case "connectTimeoutMs": return target.getConfiguration().getConnectTimeoutMs();
-        case "connectoradapter":
-        case "connectorAdapter": return target.getConfiguration().getConnectorAdapter();
         case "converters": return target.getConfiguration().getConverters();
         case "custommetrictags":
         case "customMetricTags": return target.getConfiguration().getCustomMetricTags();
@@ -509,6 +513,10 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "databasePassword": return target.getConfiguration().getDatabasePassword();
         case "databaseport":
         case "databasePort": return target.getConfiguration().getDatabasePort();
+        case "databaseprotocol":
+        case "databaseProtocol": return target.getConfiguration().getDatabaseProtocol();
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return target.getConfiguration().getDatabaseQueryTimeoutMs();
         case "databaseserverid":
         case "databaseServerId": return target.getConfiguration().getDatabaseServerId();
         case "databaseserveridoffset":
@@ -657,8 +665,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotModeConfigurationBasedStartStream": return target.getConfiguration().isSnapshotModeConfigurationBasedStartStream();
         case "snapshotmodecustomname":
         case "snapshotModeCustomName": return target.getConfiguration().getSnapshotModeCustomName();
-        case "snapshotnewtables":
-        case "snapshotNewTables": return target.getConfiguration().getSnapshotNewTables();
         case "snapshotquerymode":
         case "snapshotQueryMode": return target.getConfiguration().getSnapshotQueryMode();
         case "snapshotquerymodecustomname":
@@ -669,6 +675,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotTablesOrderByRowCount": return target.getConfiguration().getSnapshotTablesOrderByRowCount();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return target.getConfiguration().getSourceinfoStructMaker();
+        case "streamingdelayms":
+        case "streamingDelayMs": return target.getConfiguration().getStreamingDelayMs();
         case "tableexcludelist":
         case "tableExcludeList": return target.getConfiguration().getTableExcludeList();
         case "tableignorebuiltin":
@@ -683,6 +691,10 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "topicNamingStrategy": return target.getConfiguration().getTopicNamingStrategy();
         case "topicprefix":
         case "topicPrefix": return target.getConfiguration().getTopicPrefix();
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return target.getConfiguration().getTransactionMetadataFactory();
+        case "usenongracefuldisconnect":
+        case "useNongracefulDisconnect": return target.getConfiguration().isUseNongracefulDisconnect();
         default: return null;
         }
     }

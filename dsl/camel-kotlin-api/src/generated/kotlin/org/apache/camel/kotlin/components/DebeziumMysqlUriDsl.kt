@@ -217,19 +217,9 @@ public class DebeziumMysqlUriDsl(
   }
 
   /**
-   * Specify how binary (blob, binary, etc.) columns should be represented in change events,
-   * including: 'bytes' represents binary data as byte array (default); 'base64' represents binary data
-   * as base64-encoded string; 'base64-url-safe' represents binary data as base64-url-safe-encoded
-   * string; 'hex' represents binary data as hex-encoded (base16) string
-   */
-  public fun binaryHandlingMode(binaryHandlingMode: String) {
-    it.property("binaryHandlingMode", binaryHandlingMode)
-  }
-
-  /**
    * The size of a look-ahead buffer used by the binlog reader to decide whether the transaction in
    * progress is going to be committed or rolled back. Use 0 to disable look-ahead buffering. Defaults
-   * to 0 (i.e. buffering is disabled).
+   * to 0 (i.e. buffering is disabled.
    */
   public fun binlogBufferSize(binlogBufferSize: String) {
     it.property("binlogBufferSize", binlogBufferSize)
@@ -238,7 +228,7 @@ public class DebeziumMysqlUriDsl(
   /**
    * The size of a look-ahead buffer used by the binlog reader to decide whether the transaction in
    * progress is going to be committed or rolled back. Use 0 to disable look-ahead buffering. Defaults
-   * to 0 (i.e. buffering is disabled).
+   * to 0 (i.e. buffering is disabled.
    */
   public fun binlogBufferSize(binlogBufferSize: Int) {
     it.property("binlogBufferSize", binlogBufferSize.toString())
@@ -287,13 +277,6 @@ public class DebeziumMysqlUriDsl(
    */
   public fun connectKeepAliveIntervalMs(connectKeepAliveIntervalMs: String) {
     it.property("connectKeepAliveIntervalMs", connectKeepAliveIntervalMs)
-  }
-
-  /**
-   * Specifies the connection adapter to be used
-   */
-  public fun connectorAdapter(connectorAdapter: String) {
-    it.property("connectorAdapter", connectorAdapter)
   }
 
   /**
@@ -384,9 +367,24 @@ public class DebeziumMysqlUriDsl(
   }
 
   /**
+   * JDBC protocol to use with the driver.
+   */
+  public fun databaseProtocol(databaseProtocol: String) {
+    it.property("databaseProtocol", databaseProtocol)
+  }
+
+  /**
+   * Time to wait for a query to execute, given in milliseconds. Defaults to 600 seconds (600,000
+   * ms); zero means there is no limit.
+   */
+  public fun databaseQueryTimeoutMs(databaseQueryTimeoutMs: String) {
+    it.property("databaseQueryTimeoutMs", databaseQueryTimeoutMs)
+  }
+
+  /**
    * A numeric ID of this database client, which must be unique across all currently-running
-   * database processes in the cluster. This connector joins the MySQL database cluster as another
-   * server (with this unique ID) so it can read the binlog.
+   * database processes in the cluster. This connector joins the database cluster as another server
+   * (with this unique ID) so it can read the binlog.
    */
   public fun databaseServerId(databaseServerId: String) {
     it.property("databaseServerId", databaseServerId)
@@ -394,8 +392,8 @@ public class DebeziumMysqlUriDsl(
 
   /**
    * A numeric ID of this database client, which must be unique across all currently-running
-   * database processes in the cluster. This connector joins the MySQL database cluster as another
-   * server (with this unique ID) so it can read the binlog.
+   * database processes in the cluster. This connector joins the database cluster as another server
+   * (with this unique ID) so it can read the binlog.
    */
   public fun databaseServerId(databaseServerId: Int) {
     it.property("databaseServerId", databaseServerId.toString())
@@ -421,7 +419,7 @@ public class DebeziumMysqlUriDsl(
 
   /**
    * The location of the key store file. This is optional and can be used for two-way authentication
-   * between the client and the MySQL Server.
+   * between the client and the database.
    */
   public fun databaseSslKeystore(databaseSslKeystore: String) {
     it.property("databaseSslKeystore", databaseSslKeystore)
@@ -436,13 +434,13 @@ public class DebeziumMysqlUriDsl(
   }
 
   /**
-   * Whether to use an encrypted connection to MySQL. Options include: 'disabled' to use an
+   * Whether to use an encrypted connection to the database. Options include: 'disabled' to use an
    * unencrypted connection; 'preferred' (the default) to establish a secure (encrypted) connection if
    * the server supports secure connections, but fall back to an unencrypted connection otherwise;
    * 'required' to use a secure (encrypted) connection, and fail if one cannot be established;
    * 'verify_ca' like 'required' but additionally verify the server TLS certificate against the
    * configured Certificate Authority (CA) certificates, or fail if no valid matching CA certificates
-   * are found; or'verify_identity' like 'verify_ca' but additionally verify that the server
+   * are found; or 'verify_identity' like 'verify_ca' but additionally verify that the server
    * certificate matches the host to which the connection is attempted.
    */
   public fun databaseSslMode(databaseSslMode: String) {
@@ -493,18 +491,18 @@ public class DebeziumMysqlUriDsl(
   }
 
   /**
-   * MySQL allows user to insert year value as either 2-digit or 4-digit. In case of two digit the
-   * value is automatically mapped into 1970 - 2069.false - delegates the implicit conversion to the
-   * databasetrue - (the default) Debezium makes the conversion
+   * The database allows the user to insert year value as either 2-digit or 4-digit. In case of two
+   * digit the value is automatically mapped into 1970 - 2069.false - delegates the implicit conversion
+   * to the database; true - (the default) Debezium makes the conversion
    */
   public fun enableTimeAdjuster(enableTimeAdjuster: String) {
     it.property("enableTimeAdjuster", enableTimeAdjuster)
   }
 
   /**
-   * MySQL allows user to insert year value as either 2-digit or 4-digit. In case of two digit the
-   * value is automatically mapped into 1970 - 2069.false - delegates the implicit conversion to the
-   * databasetrue - (the default) Debezium makes the conversion
+   * The database allows the user to insert year value as either 2-digit or 4-digit. In case of two
+   * digit the value is automatically mapped into 1970 - 2069.false - delegates the implicit conversion
+   * to the database; true - (the default) Debezium makes the conversion
    */
   public fun enableTimeAdjuster(enableTimeAdjuster: Boolean) {
     it.property("enableTimeAdjuster", enableTimeAdjuster.toString())
@@ -558,18 +556,18 @@ public class DebeziumMysqlUriDsl(
   }
 
   /**
-   * If set to true, we will only produce DML events into Kafka for transactions that were written
-   * on mysql servers with UUIDs matching the filters defined by the gtid.source.includes or
-   * gtid.source.excludes configuration options, if they are specified.
+   * When set to true, only produce DML events for transactions that were written on the server with
+   * matching GTIDs defined by the gtid.source.includes or gtid.source.excludes, if they were
+   * specified.
    */
   public fun gtidSourceFilterDmlEvents(gtidSourceFilterDmlEvents: String) {
     it.property("gtidSourceFilterDmlEvents", gtidSourceFilterDmlEvents)
   }
 
   /**
-   * If set to true, we will only produce DML events into Kafka for transactions that were written
-   * on mysql servers with UUIDs matching the filters defined by the gtid.source.includes or
-   * gtid.source.excludes configuration options, if they are specified.
+   * When set to true, only produce DML events for transactions that were written on the server with
+   * matching GTIDs defined by the gtid.source.includes or gtid.source.excludes, if they were
+   * specified.
    */
   public fun gtidSourceFilterDmlEvents(gtidSourceFilterDmlEvents: Boolean) {
     it.property("gtidSourceFilterDmlEvents", gtidSourceFilterDmlEvents.toString())
@@ -607,11 +605,11 @@ public class DebeziumMysqlUriDsl(
 
   /**
    * Whether the connector should include the original SQL query that generated the change event.
-   * Note: This option requires MySQL be configured with the binlog_rows_query_log_events option set to
-   * ON. If using MariaDB, configure the binlog_annotate_row_events option must be set to ON. Query
-   * will not be present for events generated from snapshot. WARNING: Enabling this option may expose
-   * tables or fields explicitly excluded or masked by including the original SQL statement in the
-   * change event. For this reason the default value is 'false'.
+   * Note: This option requires the database to be configured using the server option
+   * binlog_rows_query_log_events (MySQL) or binlog_annotate_row_events (MariaDB) set to ON.Query will
+   * not be present for events generated from snapshot. WARNING: Enabling this option may expose tables
+   * or fields explicitly excluded or masked by including the original SQL statement in the change
+   * event. For this reason the default value is 'false'.
    */
   public fun includeQuery(includeQuery: String) {
     it.property("includeQuery", includeQuery)
@@ -619,11 +617,11 @@ public class DebeziumMysqlUriDsl(
 
   /**
    * Whether the connector should include the original SQL query that generated the change event.
-   * Note: This option requires MySQL be configured with the binlog_rows_query_log_events option set to
-   * ON. If using MariaDB, configure the binlog_annotate_row_events option must be set to ON. Query
-   * will not be present for events generated from snapshot. WARNING: Enabling this option may expose
-   * tables or fields explicitly excluded or masked by including the original SQL statement in the
-   * change event. For this reason the default value is 'false'.
+   * Note: This option requires the database to be configured using the server option
+   * binlog_rows_query_log_events (MySQL) or binlog_annotate_row_events (MariaDB) set to ON.Query will
+   * not be present for events generated from snapshot. WARNING: Enabling this option may expose tables
+   * or fields explicitly excluded or masked by including the original SQL statement in the change
+   * event. For this reason the default value is 'false'.
    */
   public fun includeQuery(includeQuery: Boolean) {
     it.property("includeQuery", includeQuery.toString())
@@ -1200,20 +1198,6 @@ public class DebeziumMysqlUriDsl(
   }
 
   /**
-   * BETA FEATURE: On connector restart, the connector will check if there have been any new tables
-   * added to the configuration, and snapshot them. There is presently only two options: 'off': Default
-   * behavior. Do not snapshot new tables. 'parallel': The snapshot of the new tables will occur in
-   * parallel to the continued binlog reading of the old tables. When the snapshot completes, an
-   * independent binlog reader will begin reading the events for the new tables until it catches up to
-   * present time. At this point, both old and new binlog readers will be momentarily halted and new
-   * binlog reader will start that will read the binlog for all configured tables. The parallel binlog
-   * reader will have a configured server id of 10000 the primary binlog reader's server id.
-   */
-  public fun snapshotNewTables(snapshotNewTables: String) {
-    it.property("snapshotNewTables", snapshotNewTables)
-  }
-
-  /**
    * Controls query used during the snapshot
    */
   public fun snapshotQueryMode(snapshotQueryMode: String) {
@@ -1257,6 +1241,14 @@ public class DebeziumMysqlUriDsl(
    */
   public fun sourceinfoStructMaker(sourceinfoStructMaker: String) {
     it.property("sourceinfoStructMaker", sourceinfoStructMaker)
+  }
+
+  /**
+   * A delay period after the snapshot is completed and the streaming begins, given in milliseconds.
+   * Defaults to 0 ms.
+   */
+  public fun streamingDelayMs(streamingDelayMs: String) {
+    it.property("streamingDelayMs", streamingDelayMs)
   }
 
   /**
@@ -1336,5 +1328,28 @@ public class DebeziumMysqlUriDsl(
    */
   public fun topicPrefix(topicPrefix: String) {
     it.property("topicPrefix", topicPrefix)
+  }
+
+  /**
+   * Class to make transaction context & transaction struct/schemas
+   */
+  public fun transactionMetadataFactory(transactionMetadataFactory: String) {
+    it.property("transactionMetadataFactory", transactionMetadataFactory)
+  }
+
+  /**
+   * Whether to use socket.setSoLinger(true, 0) when BinaryLogClient keepalive thread triggers a
+   * disconnect for a stale connection.
+   */
+  public fun useNongracefulDisconnect(useNongracefulDisconnect: String) {
+    it.property("useNongracefulDisconnect", useNongracefulDisconnect)
+  }
+
+  /**
+   * Whether to use socket.setSoLinger(true, 0) when BinaryLogClient keepalive thread triggers a
+   * disconnect for a stale connection.
+   */
+  public fun useNongracefulDisconnect(useNongracefulDisconnect: Boolean) {
+    it.property("useNongracefulDisconnect", useNongracefulDisconnect.toString())
   }
 }

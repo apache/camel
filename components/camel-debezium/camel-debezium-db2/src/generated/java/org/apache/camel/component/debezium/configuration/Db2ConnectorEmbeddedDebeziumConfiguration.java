@@ -14,6 +14,10 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private static final String LABEL_NAME = "consumer,db2";
     @UriParam(label = LABEL_NAME)
     private String messageKeyColumns;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
+    private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long streamingDelayMs = 0;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
@@ -34,6 +38,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "ASNCDC")
+    private String cdcChangeTablesSchema = "ASNCDC";
     @UriParam(label = LABEL_NAME)
     private String databaseUser;
     @UriParam(label = LABEL_NAME)
@@ -100,6 +106,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.db2.Db2SourceInfoStructMaker")
     private String sourceinfoStructMaker = "io.debezium.connector.db2.Db2SourceInfoStructMaker";
+    @UriParam(label = LABEL_NAME, defaultValue = "ASNCDC")
+    private String cdcControlSchema = "ASNCDC";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
@@ -136,6 +144,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String schemaNameAdjustmentMode = "none";
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "LUW")
+    private String db2Platform = "LUW";
 
     /**
      * A semicolon-separated list of expressions that match fully-qualified
@@ -154,6 +164,29 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
 
     public String getMessageKeyColumns() {
         return messageKeyColumns;
+    }
+
+    /**
+     * Class to make transaction context & transaction struct/schemas
+     */
+    public void setTransactionMetadataFactory(String transactionMetadataFactory) {
+        this.transactionMetadataFactory = transactionMetadataFactory;
+    }
+
+    public String getTransactionMetadataFactory() {
+        return transactionMetadataFactory;
+    }
+
+    /**
+     * A delay period after the snapshot is completed and the streaming begins,
+     * given in milliseconds. Defaults to 0 ms.
+     */
+    public void setStreamingDelayMs(long streamingDelayMs) {
+        this.streamingDelayMs = streamingDelayMs;
+    }
+
+    public long getStreamingDelayMs() {
+        return streamingDelayMs;
     }
 
     /**
@@ -283,6 +316,18 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
 
     public long getSnapshotLockTimeoutMs() {
         return snapshotLockTimeoutMs;
+    }
+
+    /**
+     * The name of the schema where CDC change tables are located; defaults to
+     * 'ASNCDC'
+     */
+    public void setCdcChangeTablesSchema(String cdcChangeTablesSchema) {
+        this.cdcChangeTablesSchema = cdcChangeTablesSchema;
+    }
+
+    public String getCdcChangeTablesSchema() {
+        return cdcChangeTablesSchema;
     }
 
     /**
@@ -721,6 +766,18 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The name of the schema where CDC control structures are located; defaults
+     * to 'ASNCDC'
+     */
+    public void setCdcControlSchema(String cdcControlSchema) {
+        this.cdcControlSchema = cdcControlSchema;
+    }
+
+    public String getCdcControlSchema() {
+        return cdcControlSchema;
+    }
+
+    /**
      * Flag specifying whether built-in tables should be ignored.
      */
     public void setTableIgnoreBuiltin(boolean tableIgnoreBuiltin) {
@@ -955,11 +1012,26 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         return tableIncludeList;
     }
 
+    /**
+     * Informs connector which Db2 implementation platform it is connected to.
+     * The default is 'LUW', which means Windows, UNIX, Linux. Using a value of
+     * 'Z' ensures that the Db2 for z/OS specific SQL statements are used.
+     */
+    public void setDb2Platform(String db2Platform) {
+        this.db2Platform = db2Platform;
+    }
+
+    public String getDb2Platform() {
+        return db2Platform;
+    }
+
     @Override
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
         
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
+        addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
+        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
@@ -970,6 +1042,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "cdc.change.tables.schema", cdcChangeTablesSchema);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
@@ -1002,6 +1075,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
+        addPropertyIfNotNull(configBuilder, "cdc.control.schema", cdcControlSchema);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
@@ -1020,6 +1094,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
+        addPropertyIfNotNull(configBuilder, "db2.platform", db2Platform);
         
         return configBuilder.build();
     }

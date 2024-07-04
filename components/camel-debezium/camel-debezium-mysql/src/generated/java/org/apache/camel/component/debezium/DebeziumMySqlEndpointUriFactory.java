@@ -23,10 +23,9 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(109);
+        Set<String> props = new HashSet<>(111);
         props.add("additionalProperties");
         props.add("bigintUnsignedHandlingMode");
-        props.add("binaryHandlingMode");
         props.add("binlogBufferSize");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
@@ -35,7 +34,6 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("connectKeepAlive");
         props.add("connectKeepAliveIntervalMs");
         props.add("connectTimeoutMs");
-        props.add("connectorAdapter");
         props.add("converters");
         props.add("customMetricTags");
         props.add("databaseExcludeList");
@@ -45,6 +43,8 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("databaseJdbcDriver");
         props.add("databasePassword");
         props.add("databasePort");
+        props.add("databaseProtocol");
+        props.add("databaseQueryTimeoutMs");
         props.add("databaseServerId");
         props.add("databaseServerIdOffset");
         props.add("databaseSslKeystore");
@@ -120,12 +120,12 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("snapshotModeConfigurationBasedSnapshotSchema");
         props.add("snapshotModeConfigurationBasedStartStream");
         props.add("snapshotModeCustomName");
-        props.add("snapshotNewTables");
         props.add("snapshotQueryMode");
         props.add("snapshotQueryModeCustomName");
         props.add("snapshotSelectStatementOverrides");
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
+        props.add("streamingDelayMs");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
         props.add("tableIncludeList");
@@ -133,6 +133,8 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");
         props.add("topicPrefix");
+        props.add("transactionMetadataFactory");
+        props.add("useNongracefulDisconnect");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

@@ -23,7 +23,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(73);
+        Set<String> props = new HashSet<>(75);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("captureMode");
@@ -94,9 +94,11 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("snapshotModeConfigurationBasedStartStream");
         props.add("snapshotModeCustomName");
         props.add("sourceinfoStructMaker");
+        props.add("streamingDelayMs");
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");
         props.add("topicPrefix");
+        props.add("transactionMetadataFactory");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);
