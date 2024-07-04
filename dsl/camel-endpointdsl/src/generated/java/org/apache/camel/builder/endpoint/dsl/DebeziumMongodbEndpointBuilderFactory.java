@@ -1625,6 +1625,38 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder streamingDelayMs(long streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+        /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder streamingDelayMs(String streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+        /**
          * Whether delete operations should be represented by a delete event and
          * a subsequent tombstone event (true) or only by a delete event
          * (false). Emitting the tombstone event (the default behavior) allows
@@ -1697,6 +1729,22 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         default DebeziumMongodbEndpointBuilder topicPrefix(String topicPrefix) {
             doSetProperty("topicPrefix", topicPrefix);
+            return this;
+        }
+        /**
+         * Class to make transaction context &amp; transaction struct/schemas.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory
+         * Group: mongodb
+         * 
+         * @param transactionMetadataFactory the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder transactionMetadataFactory(String transactionMetadataFactory) {
+            doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
             return this;
         }
     }

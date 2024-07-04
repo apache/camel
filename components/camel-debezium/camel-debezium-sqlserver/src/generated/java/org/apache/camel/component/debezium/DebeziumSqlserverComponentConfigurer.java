@@ -60,6 +60,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": getOrCreateConfiguration(target).setDatabasePort(property(camelContext, int.class, value)); return true;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": getOrCreateConfiguration(target).setDatabaseQueryTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databaseuser":
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "datatypepropagatesourcetype":
@@ -182,6 +184,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotTablesOrderByRowCount": getOrCreateConfiguration(target).setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamingdelayms":
+        case "streamingDelayMs": getOrCreateConfiguration(target).setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -196,6 +200,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "topicNamingStrategy": getOrCreateConfiguration(target).setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "topicprefix":
         case "topicPrefix": getOrCreateConfiguration(target).setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": getOrCreateConfiguration(target).setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -233,6 +239,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return int.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
         case "datatypepropagatesourcetype":
@@ -355,6 +363,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "streamingdelayms":
+        case "streamingDelayMs": return long.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
@@ -369,6 +379,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "topicNamingStrategy": return java.lang.String.class;
         case "topicprefix":
         case "topicPrefix": return java.lang.String.class;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return java.lang.String.class;
         default: return null;
         }
     }
@@ -407,6 +419,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databaseport":
         case "databasePort": return getOrCreateConfiguration(target).getDatabasePort();
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return getOrCreateConfiguration(target).getDatabaseQueryTimeoutMs();
         case "databaseuser":
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
         case "datatypepropagatesourcetype":
@@ -529,6 +543,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotTablesOrderByRowCount": return getOrCreateConfiguration(target).getSnapshotTablesOrderByRowCount();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
+        case "streamingdelayms":
+        case "streamingDelayMs": return getOrCreateConfiguration(target).getStreamingDelayMs();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":
@@ -543,6 +559,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "topicNamingStrategy": return getOrCreateConfiguration(target).getTopicNamingStrategy();
         case "topicprefix":
         case "topicPrefix": return getOrCreateConfiguration(target).getTopicPrefix();
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return getOrCreateConfiguration(target).getTransactionMetadataFactory();
         default: return null;
         }
     }

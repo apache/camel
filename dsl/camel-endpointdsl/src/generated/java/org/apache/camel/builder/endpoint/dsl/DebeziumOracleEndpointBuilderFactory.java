@@ -582,6 +582,38 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Time to wait for a query to execute, given in milliseconds. Defaults
+         * to 600 seconds (600,000 ms); zero means there is no limit.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10m
+         * Group: oracle
+         * 
+         * @param databaseQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder databaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
+            doSetProperty("databaseQueryTimeoutMs", databaseQueryTimeoutMs);
+            return this;
+        }
+        /**
+         * Time to wait for a query to execute, given in milliseconds. Defaults
+         * to 600 seconds (600,000 ms); zero means there is no limit.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10m
+         * Group: oracle
+         * 
+         * @param databaseQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder databaseQueryTimeoutMs(String databaseQueryTimeoutMs) {
+            doSetProperty("databaseQueryTimeoutMs", databaseQueryTimeoutMs);
+            return this;
+        }
+        /**
          * Complete JDBC URL as an alternative to specifying hostname, port and
          * database provided as a way to support alternative connection
          * scenarios.
@@ -2365,20 +2397,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * A token to replace on snapshot predicate template.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: oracle
-         * 
-         * @param snapshotEnhancePredicateScn the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder snapshotEnhancePredicateScn(String snapshotEnhancePredicateScn) {
-            doSetProperty("snapshotEnhancePredicateScn", snapshotEnhancePredicateScn);
-            return this;
-        }
-        /**
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
@@ -2796,6 +2814,38 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder streamingDelayMs(long streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+        /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder streamingDelayMs(String streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
@@ -2919,6 +2969,22 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder topicPrefix(String topicPrefix) {
             doSetProperty("topicPrefix", topicPrefix);
+            return this;
+        }
+        /**
+         * Class to make transaction context &amp; transaction struct/schemas.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory
+         * Group: oracle
+         * 
+         * @param transactionMetadataFactory the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder transactionMetadataFactory(String transactionMetadataFactory) {
+            doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
             return this;
         }
         /**

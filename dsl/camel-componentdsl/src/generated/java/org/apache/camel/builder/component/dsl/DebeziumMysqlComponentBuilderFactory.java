@@ -334,33 +334,11 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * Specify how binary (blob, binary, etc.) columns should be represented
-         * in change events, including: 'bytes' represents binary data as byte
-         * array (default); 'base64' represents binary data as base64-encoded
-         * string; 'base64-url-safe' represents binary data as
-         * base64-url-safe-encoded string; 'hex' represents binary data as
-         * hex-encoded (base16) string.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: bytes
-         * Group: mysql
-         * 
-         * @param binaryHandlingMode the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMysqlComponentBuilder binaryHandlingMode(java.lang.String binaryHandlingMode) {
-            doSetProperty("binaryHandlingMode", binaryHandlingMode);
-            return this;
-        }
-    
         /**
          * The size of a look-ahead buffer used by the binlog reader to decide
          * whether the transaction in progress is going to be committed or
          * rolled back. Use 0 to disable look-ahead buffering. Defaults to 0
-         * (i.e. buffering is disabled).
+         * (i.e. buffering is disabled.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -455,23 +433,6 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder connectKeepAliveIntervalMs(long connectKeepAliveIntervalMs) {
             doSetProperty("connectKeepAliveIntervalMs", connectKeepAliveIntervalMs);
-            return this;
-        }
-    
-        
-        /**
-         * Specifies the connection adapter to be used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: mysql
-         * Group: mysql
-         * 
-         * @param connectorAdapter the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMysqlComponentBuilder connectorAdapter(java.lang.String connectorAdapter) {
-            doSetProperty("connectorAdapter", connectorAdapter);
             return this;
         }
     
@@ -647,11 +608,46 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * JDBC protocol to use with the driver.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: jdbc:mysql
+         * Group: mysql
+         * 
+         * @param databaseProtocol the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder databaseProtocol(java.lang.String databaseProtocol) {
+            doSetProperty("databaseProtocol", databaseProtocol);
+            return this;
+        }
+    
+        
+        /**
+         * Time to wait for a query to execute, given in milliseconds. Defaults
+         * to 600 seconds (600,000 ms); zero means there is no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10m
+         * Group: mysql
+         * 
+         * @param databaseQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder databaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
+            doSetProperty("databaseQueryTimeoutMs", databaseQueryTimeoutMs);
+            return this;
+        }
+    
         /**
          * A numeric ID of this database client, which must be unique across all
          * currently-running database processes in the cluster. This connector
-         * joins the MySQL database cluster as another server (with this unique
-         * ID) so it can read the binlog.
+         * joins the database cluster as another server (with this unique ID) so
+         * it can read the binlog.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -687,7 +683,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         /**
          * The location of the key store file. This is optional and can be used
-         * for two-way authentication between the client and the MySQL Server.
+         * for two-way authentication between the client and the database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -719,15 +715,15 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
-         * Whether to use an encrypted connection to MySQL. Options include:
-         * 'disabled' to use an unencrypted connection; 'preferred' (the
-         * default) to establish a secure (encrypted) connection if the server
-         * supports secure connections, but fall back to an unencrypted
+         * Whether to use an encrypted connection to the database. Options
+         * include: 'disabled' to use an unencrypted connection; 'preferred'
+         * (the default) to establish a secure (encrypted) connection if the
+         * server supports secure connections, but fall back to an unencrypted
          * connection otherwise; 'required' to use a secure (encrypted)
          * connection, and fail if one cannot be established; 'verify_ca' like
          * 'required' but additionally verify the server TLS certificate against
          * the configured Certificate Authority (CA) certificates, or fail if no
-         * valid matching CA certificates are found; or'verify_identity' like
+         * valid matching CA certificates are found; or 'verify_identity' like
          * 'verify_ca' but additionally verify that the server certificate
          * matches the host to which the connection is attempted.
          * 
@@ -835,10 +831,10 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
-         * MySQL allows user to insert year value as either 2-digit or 4-digit.
-         * In case of two digit the value is automatically mapped into 1970 -
-         * 2069.false - delegates the implicit conversion to the databasetrue -
-         * (the default) Debezium makes the conversion.
+         * The database allows the user to insert year value as either 2-digit
+         * or 4-digit. In case of two digit the value is automatically mapped
+         * into 1970 - 2069.false - delegates the implicit conversion to the
+         * database; true - (the default) Debezium makes the conversion.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -934,10 +930,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
-         * If set to true, we will only produce DML events into Kafka for
-         * transactions that were written on mysql servers with UUIDs matching
-         * the filters defined by the gtid.source.includes or
-         * gtid.source.excludes configuration options, if they are specified.
+         * When set to true, only produce DML events for transactions that were
+         * written on the server with matching GTIDs defined by the
+         * gtid.source.includes or gtid.source.excludes, if they were specified.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1023,13 +1018,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         
         /**
          * Whether the connector should include the original SQL query that
-         * generated the change event. Note: This option requires MySQL be
-         * configured with the binlog_rows_query_log_events option set to ON. If
-         * using MariaDB, configure the binlog_annotate_row_events option must
-         * be set to ON. Query will not be present for events generated from
-         * snapshot. WARNING: Enabling this option may expose tables or fields
-         * explicitly excluded or masked by including the original SQL statement
-         * in the change event. For this reason the default value is 'false'.
+         * generated the change event. Note: This option requires the database
+         * to be configured using the server option binlog_rows_query_log_events
+         * (MySQL) or binlog_annotate_row_events (MariaDB) set to ON.Query will
+         * not be present for events generated from snapshot. WARNING: Enabling
+         * this option may expose tables or fields explicitly excluded or masked
+         * by including the original SQL statement in the change event. For this
+         * reason the default value is 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1854,34 +1849,6 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
-         * BETA FEATURE: On connector restart, the connector will check if there
-         * have been any new tables added to the configuration, and snapshot
-         * them. There is presently only two options: 'off': Default behavior.
-         * Do not snapshot new tables. 'parallel': The snapshot of the new
-         * tables will occur in parallel to the continued binlog reading of the
-         * old tables. When the snapshot completes, an independent binlog reader
-         * will begin reading the events for the new tables until it catches up
-         * to present time. At this point, both old and new binlog readers will
-         * be momentarily halted and new binlog reader will start that will read
-         * the binlog for all configured tables. The parallel binlog reader will
-         * have a configured server id of 10000 the primary binlog reader's
-         * server id.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: off
-         * Group: mysql
-         * 
-         * @param snapshotNewTables the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMysqlComponentBuilder snapshotNewTables(java.lang.String snapshotNewTables) {
-            doSetProperty("snapshotNewTables", snapshotNewTables);
-            return this;
-        }
-    
-        
-        /**
          * Controls query used during the snapshot.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1978,6 +1945,24 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder sourceinfoStructMaker(java.lang.String sourceinfoStructMaker) {
             doSetProperty("sourceinfoStructMaker", sourceinfoStructMaker);
+            return this;
+        }
+    
+        
+        /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: mysql
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder streamingDelayMs(long streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
             return this;
         }
     
@@ -2111,6 +2096,42 @@ public interface DebeziumMysqlComponentBuilderFactory {
             doSetProperty("topicPrefix", topicPrefix);
             return this;
         }
+    
+        
+        /**
+         * Class to make transaction context &amp; transaction struct/schemas.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory
+         * Group: mysql
+         * 
+         * @param transactionMetadataFactory the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder transactionMetadataFactory(java.lang.String transactionMetadataFactory) {
+            doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to use socket.setSoLinger(true, 0) when BinaryLogClient
+         * keepalive thread triggers a disconnect for a stale connection.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param useNongracefulDisconnect the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder useNongracefulDisconnect(boolean useNongracefulDisconnect) {
+            doSetProperty("useNongracefulDisconnect", useNongracefulDisconnect);
+            return this;
+        }
     }
 
     class DebeziumMysqlComponentBuilderImpl
@@ -2147,14 +2168,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumMySqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bigintUnsignedHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBigintUnsignedHandlingMode((java.lang.String) value); return true;
-            case "binaryHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "binlogBufferSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogBufferSize((int) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
             case "connectKeepAlive": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAlive((boolean) value); return true;
             case "connectKeepAliveIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAliveIntervalMs((long) value); return true;
-            case "connectorAdapter": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectorAdapter((java.lang.String) value); return true;
             case "connectTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectTimeoutMs((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumMySqlComponent) component).setCustomMetricTags((java.lang.String) value); return true;
@@ -2165,6 +2184,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "databaseJdbcDriver": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseJdbcDriver((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabasePort((int) value); return true;
+            case "databaseProtocol": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseProtocol((java.lang.String) value); return true;
+            case "databaseQueryTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseQueryTimeoutMs((int) value); return true;
             case "databaseServerId": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseServerId((long) value); return true;
             case "databaseServerIdOffset": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseServerIdOffset((long) value); return true;
             case "databaseSslKeystore": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseSslKeystore((java.lang.String) value); return true;
@@ -2227,12 +2248,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "snapshotModeConfigurationBasedSnapshotSchema": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotModeConfigurationBasedSnapshotSchema((boolean) value); return true;
             case "snapshotModeConfigurationBasedStartStream": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotModeConfigurationBasedStartStream((boolean) value); return true;
             case "snapshotModeCustomName": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotModeCustomName((java.lang.String) value); return true;
-            case "snapshotNewTables": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotNewTables((java.lang.String) value); return true;
             case "snapshotQueryMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotQueryMode((java.lang.String) value); return true;
             case "snapshotQueryModeCustomName": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotQueryModeCustomName((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
+            case "streamingDelayMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setStreamingDelayMs((long) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableIncludeList((java.lang.String) value); return true;
@@ -2240,6 +2261,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTombstonesOnDelete((boolean) value); return true;
             case "topicNamingStrategy": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
             case "topicPrefix": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTopicPrefix((java.lang.String) value); return true;
+            case "transactionMetadataFactory": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTransactionMetadataFactory((java.lang.String) value); return true;
+            case "useNongracefulDisconnect": getOrCreateConfiguration((DebeziumMySqlComponent) component).setUseNongracefulDisconnect((boolean) value); return true;
             default: return false;
             }
         }

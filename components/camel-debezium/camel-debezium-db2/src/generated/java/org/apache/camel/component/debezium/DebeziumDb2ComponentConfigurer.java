@@ -36,6 +36,10 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "cdcchangetablesschema":
+        case "cdcChangeTablesSchema": getOrCreateConfiguration(target).setCdcChangeTablesSchema(property(camelContext, java.lang.String.class, value)); return true;
+        case "cdccontrolschema":
+        case "cdcControlSchema": getOrCreateConfiguration(target).setCdcControlSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "columnexcludelist":
         case "columnExcludeList": getOrCreateConfiguration(target).setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnincludelist":
@@ -58,6 +62,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "datatypepropagatesourcetype":
         case "datatypePropagateSourceType": getOrCreateConfiguration(target).setDatatypePropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "db2platform":
+        case "db2Platform": getOrCreateConfiguration(target).setDb2Platform(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "errorsmaxretries":
@@ -164,6 +170,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "snapshotTablesOrderByRowCount": getOrCreateConfiguration(target).setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamingdelayms":
+        case "streamingDelayMs": getOrCreateConfiguration(target).setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -178,6 +186,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "topicNamingStrategy": getOrCreateConfiguration(target).setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "topicprefix":
         case "topicPrefix": getOrCreateConfiguration(target).setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": getOrCreateConfiguration(target).setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -191,6 +201,10 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "cdcchangetablesschema":
+        case "cdcChangeTablesSchema": return java.lang.String.class;
+        case "cdccontrolschema":
+        case "cdcControlSchema": return java.lang.String.class;
         case "columnexcludelist":
         case "columnExcludeList": return java.lang.String.class;
         case "columnincludelist":
@@ -213,6 +227,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "databaseUser": return java.lang.String.class;
         case "datatypepropagatesourcetype":
         case "datatypePropagateSourceType": return java.lang.String.class;
+        case "db2platform":
+        case "db2Platform": return java.lang.String.class;
         case "decimalhandlingmode":
         case "decimalHandlingMode": return java.lang.String.class;
         case "errorsmaxretries":
@@ -319,6 +335,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "streamingdelayms":
+        case "streamingDelayMs": return long.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
@@ -333,6 +351,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "topicNamingStrategy": return java.lang.String.class;
         case "topicprefix":
         case "topicPrefix": return java.lang.String.class;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return java.lang.String.class;
         default: return null;
         }
     }
@@ -347,6 +367,10 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "cdcchangetablesschema":
+        case "cdcChangeTablesSchema": return getOrCreateConfiguration(target).getCdcChangeTablesSchema();
+        case "cdccontrolschema":
+        case "cdcControlSchema": return getOrCreateConfiguration(target).getCdcControlSchema();
         case "columnexcludelist":
         case "columnExcludeList": return getOrCreateConfiguration(target).getColumnExcludeList();
         case "columnincludelist":
@@ -369,6 +393,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
         case "datatypepropagatesourcetype":
         case "datatypePropagateSourceType": return getOrCreateConfiguration(target).getDatatypePropagateSourceType();
+        case "db2platform":
+        case "db2Platform": return getOrCreateConfiguration(target).getDb2Platform();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "errorsmaxretries":
@@ -475,6 +501,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "snapshotTablesOrderByRowCount": return getOrCreateConfiguration(target).getSnapshotTablesOrderByRowCount();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
+        case "streamingdelayms":
+        case "streamingDelayMs": return getOrCreateConfiguration(target).getStreamingDelayMs();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":
@@ -489,6 +517,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "topicNamingStrategy": return getOrCreateConfiguration(target).getTopicNamingStrategy();
         case "topicprefix":
         case "topicPrefix": return getOrCreateConfiguration(target).getTopicPrefix();
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return getOrCreateConfiguration(target).getTransactionMetadataFactory();
         default: return null;
         }
     }

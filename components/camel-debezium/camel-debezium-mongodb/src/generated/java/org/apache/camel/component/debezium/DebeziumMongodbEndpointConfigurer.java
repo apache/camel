@@ -160,12 +160,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotModeCustomName": target.getConfiguration().setSnapshotModeCustomName(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": target.getConfiguration().setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamingdelayms":
+        case "streamingDelayMs": target.getConfiguration().setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         case "topicnamingstrategy":
         case "topicNamingStrategy": target.getConfiguration().setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "topicprefix":
         case "topicPrefix": target.getConfiguration().setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": target.getConfiguration().setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -310,12 +314,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotModeCustomName": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "streamingdelayms":
+        case "streamingDelayMs": return long.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
         case "topicnamingstrategy":
         case "topicNamingStrategy": return java.lang.String.class;
         case "topicprefix":
         case "topicPrefix": return java.lang.String.class;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return java.lang.String.class;
         default: return null;
         }
     }
@@ -461,12 +469,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotModeCustomName": return target.getConfiguration().getSnapshotModeCustomName();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return target.getConfiguration().getSourceinfoStructMaker();
+        case "streamingdelayms":
+        case "streamingDelayMs": return target.getConfiguration().getStreamingDelayMs();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
         case "topicnamingstrategy":
         case "topicNamingStrategy": return target.getConfiguration().getTopicNamingStrategy();
         case "topicprefix":
         case "topicPrefix": return target.getConfiguration().getTopicPrefix();
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return target.getConfiguration().getTransactionMetadataFactory();
         default: return null;
         }
     }

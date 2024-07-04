@@ -66,6 +66,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databasePdbName": getOrCreateConfiguration(target).setDatabasePdbName(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": getOrCreateConfiguration(target).setDatabasePort(property(camelContext, int.class, value)); return true;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": getOrCreateConfiguration(target).setDatabaseQueryTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databaseurl":
         case "databaseUrl": getOrCreateConfiguration(target).setDatabaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
@@ -224,8 +226,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotDatabaseErrorsMaxRetries": getOrCreateConfiguration(target).setSnapshotDatabaseErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "snapshotenhancepredicatescn":
-        case "snapshotEnhancePredicateScn": getOrCreateConfiguration(target).setSnapshotEnhancePredicateScn(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotincludecollectionlist":
@@ -256,6 +256,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotTablesOrderByRowCount": getOrCreateConfiguration(target).setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamingdelayms":
+        case "streamingDelayMs": getOrCreateConfiguration(target).setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableincludelist":
@@ -268,6 +270,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "topicNamingStrategy": getOrCreateConfiguration(target).setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "topicprefix":
         case "topicPrefix": getOrCreateConfiguration(target).setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": getOrCreateConfiguration(target).setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": getOrCreateConfiguration(target).setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -313,6 +317,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databasePdbName": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return int.class;
         case "databaseurl":
         case "databaseUrl": return java.lang.String.class;
         case "databaseuser":
@@ -471,8 +477,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotDatabaseErrorsMaxRetries": return int.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
-        case "snapshotenhancepredicatescn":
-        case "snapshotEnhancePredicateScn": return java.lang.String.class;
         case "snapshotfetchsize":
         case "snapshotFetchSize": return int.class;
         case "snapshotincludecollectionlist":
@@ -503,6 +507,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return java.lang.String.class;
+        case "streamingdelayms":
+        case "streamingDelayMs": return long.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableincludelist":
@@ -515,6 +521,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "topicNamingStrategy": return java.lang.String.class;
         case "topicprefix":
         case "topicPrefix": return java.lang.String.class;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return java.lang.String.class;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return java.lang.String.class;
         default: return null;
@@ -561,6 +569,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databasePdbName": return getOrCreateConfiguration(target).getDatabasePdbName();
         case "databaseport":
         case "databasePort": return getOrCreateConfiguration(target).getDatabasePort();
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return getOrCreateConfiguration(target).getDatabaseQueryTimeoutMs();
         case "databaseurl":
         case "databaseUrl": return getOrCreateConfiguration(target).getDatabaseUrl();
         case "databaseuser":
@@ -719,8 +729,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotDatabaseErrorsMaxRetries": return getOrCreateConfiguration(target).getSnapshotDatabaseErrorsMaxRetries();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
-        case "snapshotenhancepredicatescn":
-        case "snapshotEnhancePredicateScn": return getOrCreateConfiguration(target).getSnapshotEnhancePredicateScn();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
         case "snapshotincludecollectionlist":
@@ -751,6 +759,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "snapshotTablesOrderByRowCount": return getOrCreateConfiguration(target).getSnapshotTablesOrderByRowCount();
         case "sourceinfostructmaker":
         case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
+        case "streamingdelayms":
+        case "streamingDelayMs": return getOrCreateConfiguration(target).getStreamingDelayMs();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableincludelist":
@@ -763,6 +773,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "topicNamingStrategy": return getOrCreateConfiguration(target).getTopicNamingStrategy();
         case "topicprefix":
         case "topicPrefix": return getOrCreateConfiguration(target).getTopicPrefix();
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return getOrCreateConfiguration(target).getTransactionMetadataFactory();
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return getOrCreateConfiguration(target).getUnavailableValuePlaceholder();
         default: return null;

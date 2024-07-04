@@ -58,6 +58,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": getOrCreateConfiguration(target).setDatabasePort(property(camelContext, int.class, value)); return true;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": getOrCreateConfiguration(target).setDatabaseQueryTimeoutMs(property(camelContext, int.class, value)); return true;
         case "databasesslcert":
         case "databaseSslcert": getOrCreateConfiguration(target).setDatabaseSslcert(property(camelContext, java.lang.String.class, value)); return true;
         case "databasesslfactory":
@@ -224,6 +226,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": getOrCreateConfiguration(target).setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
+        case "streamingdelayms":
+        case "streamingDelayMs": getOrCreateConfiguration(target).setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -238,6 +242,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "topicNamingStrategy": getOrCreateConfiguration(target).setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "topicprefix":
         case "topicPrefix": getOrCreateConfiguration(target).setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": getOrCreateConfiguration(target).setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": getOrCreateConfiguration(target).setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "xminfetchintervalms":
@@ -277,6 +283,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return int.class;
         case "databasesslcert":
         case "databaseSslcert": return java.lang.String.class;
         case "databasesslfactory":
@@ -443,6 +451,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "sourceinfoStructMaker": return java.lang.String.class;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return int.class;
+        case "streamingdelayms":
+        case "streamingDelayMs": return long.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
@@ -457,6 +467,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "topicNamingStrategy": return java.lang.String.class;
         case "topicprefix":
         case "topicPrefix": return java.lang.String.class;
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return java.lang.String.class;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return java.lang.String.class;
         case "xminfetchintervalms":
@@ -497,6 +509,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databaseport":
         case "databasePort": return getOrCreateConfiguration(target).getDatabasePort();
+        case "databasequerytimeoutms":
+        case "databaseQueryTimeoutMs": return getOrCreateConfiguration(target).getDatabaseQueryTimeoutMs();
         case "databasesslcert":
         case "databaseSslcert": return getOrCreateConfiguration(target).getDatabaseSslcert();
         case "databasesslfactory":
@@ -663,6 +677,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return getOrCreateConfiguration(target).getStatusUpdateIntervalMs();
+        case "streamingdelayms":
+        case "streamingDelayMs": return getOrCreateConfiguration(target).getStreamingDelayMs();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":
@@ -677,6 +693,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "topicNamingStrategy": return getOrCreateConfiguration(target).getTopicNamingStrategy();
         case "topicprefix":
         case "topicPrefix": return getOrCreateConfiguration(target).getTopicPrefix();
+        case "transactionmetadatafactory":
+        case "transactionMetadataFactory": return getOrCreateConfiguration(target).getTransactionMetadataFactory();
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return getOrCreateConfiguration(target).getUnavailableValuePlaceholder();
         case "xminfetchintervalms":

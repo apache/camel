@@ -23,7 +23,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(108);
+        Set<String> props = new HashSet<>(111);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -37,6 +37,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("databaseInitialStatements");
         props.add("databasePassword");
         props.add("databasePort");
+        props.add("databaseQueryTimeoutMs");
         props.add("databaseSslcert");
         props.add("databaseSslfactory");
         props.add("databaseSslkey");
@@ -123,6 +124,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
         props.add("statusUpdateIntervalMs");
+        props.add("streamingDelayMs");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
         props.add("tableIncludeList");
@@ -130,6 +132,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("tombstonesOnDelete");
         props.add("topicNamingStrategy");
         props.add("topicPrefix");
+        props.add("transactionMetadataFactory");
         props.add("unavailableValuePlaceholder");
         props.add("xminFetchIntervalMs");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

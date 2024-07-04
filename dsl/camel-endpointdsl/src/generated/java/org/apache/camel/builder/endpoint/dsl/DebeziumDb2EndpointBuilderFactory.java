@@ -314,6 +314,38 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the schema where CDC change tables are located; defaults
+         * to 'ASNCDC'.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ASNCDC
+         * Group: db2
+         * 
+         * @param cdcChangeTablesSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder cdcChangeTablesSchema(String cdcChangeTablesSchema) {
+            doSetProperty("cdcChangeTablesSchema", cdcChangeTablesSchema);
+            return this;
+        }
+        /**
+         * The name of the schema where CDC control structures are located;
+         * defaults to 'ASNCDC'.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ASNCDC
+         * Group: db2
+         * 
+         * @param cdcControlSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder cdcControlSchema(String cdcControlSchema) {
+            doSetProperty("cdcControlSchema", cdcControlSchema);
+            return this;
+        }
+        /**
          * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -496,6 +528,24 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder datatypePropagateSourceType(String datatypePropagateSourceType) {
             doSetProperty("datatypePropagateSourceType", datatypePropagateSourceType);
+            return this;
+        }
+        /**
+         * Informs connector which Db2 implementation platform it is connected
+         * to. The default is 'LUW', which means Windows, UNIX, Linux. Using a
+         * value of 'Z' ensures that the Db2 for z/OS specific SQL statements
+         * are used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: LUW
+         * Group: db2
+         * 
+         * @param db2Platform the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder db2Platform(String db2Platform) {
+            doSetProperty("db2Platform", db2Platform);
             return this;
         }
         /**
@@ -1635,6 +1685,38 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: db2
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder streamingDelayMs(long streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+        /**
+         * A delay period after the snapshot is completed and the streaming
+         * begins, given in milliseconds. Defaults to 0 ms.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: db2
+         * 
+         * @param streamingDelayMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder streamingDelayMs(String streamingDelayMs) {
+            doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
@@ -1788,6 +1870,22 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder topicPrefix(String topicPrefix) {
             doSetProperty("topicPrefix", topicPrefix);
+            return this;
+        }
+        /**
+         * Class to make transaction context &amp; transaction struct/schemas.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory
+         * Group: db2
+         * 
+         * @param transactionMetadataFactory the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder transactionMetadataFactory(String transactionMetadataFactory) {
+            doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
             return this;
         }
     }

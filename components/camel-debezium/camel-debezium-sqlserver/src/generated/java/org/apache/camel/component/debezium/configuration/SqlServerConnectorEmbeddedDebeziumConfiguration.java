@@ -14,8 +14,14 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private static final String LABEL_NAME = "consumer,sqlserver";
     @UriParam(label = LABEL_NAME)
     private String messageKeyColumns;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
+    private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long streamingDelayMs = 0;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
+    @UriParam(label = LABEL_NAME, defaultValue = "10m", javaType = "java.time.Duration")
+    private int databaseQueryTimeoutMs = 600000;
     @UriParam(label = LABEL_NAME, defaultValue = "function")
     private String dataQueryMode = "function";
     @UriParam(label = LABEL_NAME, defaultValue = "source")
@@ -144,8 +150,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String snapshotModeCustomName;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.storage.kafka.history.KafkaSchemaHistory")
     private String schemaHistoryInternal = "io.debezium.storage.kafka.history.KafkaSchemaHistory";
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private int maxIterationTransactions = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "500")
+    private int maxIterationTransactions = 500;
     @UriParam(label = LABEL_NAME)
     private String columnExcludeList;
     @UriParam(label = LABEL_NAME)
@@ -175,6 +181,29 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Class to make transaction context & transaction struct/schemas
+     */
+    public void setTransactionMetadataFactory(String transactionMetadataFactory) {
+        this.transactionMetadataFactory = transactionMetadataFactory;
+    }
+
+    public String getTransactionMetadataFactory() {
+        return transactionMetadataFactory;
+    }
+
+    /**
+     * A delay period after the snapshot is completed and the streaming begins,
+     * given in milliseconds. Defaults to 0 ms.
+     */
+    public void setStreamingDelayMs(long streamingDelayMs) {
+        this.streamingDelayMs = streamingDelayMs;
+    }
+
+    public long getStreamingDelayMs() {
+        return streamingDelayMs;
+    }
+
+    /**
      * The custom metric tags will accept key-value pairs to customize the MBean
      * object name which should be appended the end of regular name, each key
      * would represent a tag for the MBean object name, and the corresponding
@@ -186,6 +215,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getCustomMetricTags() {
         return customMetricTags;
+    }
+
+    /**
+     * Time to wait for a query to execute, given in milliseconds. Defaults to
+     * 600 seconds (600,000 ms); zero means there is no limit.
+     */
+    public void setDatabaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
+        this.databaseQueryTimeoutMs = databaseQueryTimeoutMs;
+    }
+
+    public int getDatabaseQueryTimeoutMs() {
+        return databaseQueryTimeoutMs;
     }
 
     /**
@@ -1125,7 +1166,10 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         final Configuration.Builder configBuilder = Configuration.create();
         
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
+        addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
+        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
+        addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "data.query.mode", dataQueryMode);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "database.instance", databaseInstance);
