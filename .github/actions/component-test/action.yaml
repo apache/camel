@@ -65,7 +65,7 @@ runs:
         path: tests.log
     - name: Success comment
       if: success()
-      uses: ./.github/actions/create-or-update-comment
+      uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
       with:
         comment-id: ${{ inputs.comment-id }}
         edit-mode: replace
@@ -75,7 +75,7 @@ runs:
           **Result** :white_check_mark: The tests passed successfully
     - name: Failure comment
       if: failure()
-      uses: ./.github/actions/create-or-update-comment
+      uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
       with:
         comment-id: ${{ inputs.comment-id }}
         edit-mode: replace
