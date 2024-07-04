@@ -59,7 +59,7 @@ public class SmbConsumer extends ScheduledPollConsumer {
             }
 
             String fullFilePath = "";
-            if (path != "") {
+            if (!"".equals(path)) {
                 fullFilePath = new String(path + java.io.File.separator + f.getFileName());
             }
 
