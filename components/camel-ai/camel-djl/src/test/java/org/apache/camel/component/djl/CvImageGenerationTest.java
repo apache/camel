@@ -54,7 +54,7 @@ public class CvImageGenerationTest extends CamelTestSupport {
                             image.save(os, "png");
                             exchange.getIn().setBody(os.toByteArray());
                         })
-                        .to("file:target/output?fileName=ImageGenerationTest-${date:now:ssSSS}.png")
+                        .to("file:target/output?fileName=CvImageGenerationTest-${date:now:ssSSS}.png")
                         .to("mock:result");
             }
         };

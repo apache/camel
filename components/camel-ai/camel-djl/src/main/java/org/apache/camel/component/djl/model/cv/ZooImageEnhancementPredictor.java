@@ -31,7 +31,7 @@ public class ZooImageEnhancementPredictor extends AbstractCvZooPredictor<Image> 
     public ZooImageEnhancementPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
                                                            IOException {
         Criteria<Image, Image> criteria = Criteria.builder()
-                .optApplication(Application.CV.SEMANTIC_SEGMENTATION)
+                .optApplication(Application.CV.IMAGE_ENHANCEMENT)
                 .setTypes(Image.class, Image.class)
                 .optArtifactId(artifactId)
                 .optProgress(new ProgressBar())

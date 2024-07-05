@@ -14,18 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.djl.model.audio;
+package org.apache.camel.component.djl.model.nlp;
 
+import ai.djl.ndarray.NDList;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.djl.model.AbstractPredictor;
 
-public class ZooAudioClassificationPredictor extends AbstractPredictor {
-    public ZooAudioClassificationPredictor(String artifactId) {
-        super();
+public class CustomWordEmbeddingPredictor extends CustomNlpPredictor<NDList> {
+
+    public CustomWordEmbeddingPredictor(String modelName, String translatorName) {
+        super(modelName, translatorName);
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-
+    public void process(Exchange exchange) {
+        super.process(exchange);
+        // DJL NDList should not be exposed outside the endpoint
+        NDList result = exchange.getIn().getBody(NDList.class);
+        exchange.getIn().setBody(result.encode());
     }
 }

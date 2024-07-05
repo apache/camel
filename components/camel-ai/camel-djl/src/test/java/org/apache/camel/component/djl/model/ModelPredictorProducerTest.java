@@ -20,6 +20,9 @@ import java.io.IOException;
 
 import ai.djl.MalformedModelException;
 import ai.djl.repository.zoo.ModelNotFoundException;
+import org.apache.camel.component.djl.model.audio.CustomAudioPredictor;
+import org.apache.camel.component.djl.model.cv.CustomCvPredictor;
+import org.apache.camel.component.djl.model.cv.CustomImageGenerationPredictor;
 import org.apache.camel.component.djl.model.cv.ZooActionRecognitionPredictor;
 import org.apache.camel.component.djl.model.cv.ZooImageClassificationPredictor;
 import org.apache.camel.component.djl.model.cv.ZooImageGenerationPredictor;
@@ -27,13 +30,19 @@ import org.apache.camel.component.djl.model.cv.ZooInstanceSegmentationPredictor;
 import org.apache.camel.component.djl.model.cv.ZooObjectDetectionPredictor;
 import org.apache.camel.component.djl.model.cv.ZooPoseEstimationPredictor;
 import org.apache.camel.component.djl.model.cv.ZooSemanticSegmentationPredictor;
+import org.apache.camel.component.djl.model.nlp.CustomNlpPredictor;
+import org.apache.camel.component.djl.model.nlp.CustomQuestionAnswerPredictor;
+import org.apache.camel.component.djl.model.nlp.CustomWordEmbeddingPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooQuestionAnswerPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooSentimentAnalysisPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooWordEmbeddingPredictor;
+import org.apache.camel.component.djl.model.tabular.CustomTabularPredictor;
+import org.apache.camel.component.djl.model.timeseries.CustomForecastingPredictor;
 import org.apache.camel.component.djl.model.timeseries.ZooForecastingPredictor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.djl.model.ModelPredictorProducer.getCustomPredictor;
 import static org.apache.camel.component.djl.model.ModelPredictorProducer.getZooPredictor;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -90,5 +99,67 @@ class ModelPredictorProducerTest {
         // Time Series
         assertInstanceOf(ZooForecastingPredictor.class,
                 getZooPredictor("timeseries/forecasting", "ai.djl.pytorch:deepar:0.0.1"));
+    }
+
+    @Test
+    void testGetCustomPredictor() {
+        var modelName = "MyModel";
+        var translatorName = "MyTranslator";
+
+        // CV
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/image_classification", modelName, translatorName));
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/object_detection", modelName, translatorName));
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/semantic_segmentation", modelName, translatorName));
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/instance_segmentation", modelName, translatorName));
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/pose_estimation", modelName, translatorName));
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/action_recognition", modelName, translatorName));
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/word_recognition", modelName, translatorName));
+        assertInstanceOf(CustomImageGenerationPredictor.class,
+                getCustomPredictor("cv/image_generation", modelName, translatorName));
+        assertInstanceOf(CustomCvPredictor.class,
+                getCustomPredictor("cv/image_enhancement", modelName, translatorName));
+
+        // NLP
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/fill_mask", modelName, translatorName));
+        assertInstanceOf(CustomQuestionAnswerPredictor.class,
+                getCustomPredictor("nlp/question_answer", modelName, translatorName));
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/text_classification", modelName, translatorName));
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/sentiment_analysis", modelName, translatorName));
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/token_classification", modelName, translatorName));
+        assertInstanceOf(CustomWordEmbeddingPredictor.class,
+                getCustomPredictor("nlp/word_embedding", modelName, translatorName));
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/text_generation", modelName, translatorName));
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/machine_translation", modelName, translatorName));
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/multiple_choice", modelName, translatorName));
+        assertInstanceOf(CustomNlpPredictor.class,
+                getCustomPredictor("nlp/text_embedding", modelName, translatorName));
+
+        // Tabular
+        assertInstanceOf(CustomTabularPredictor.class,
+                getCustomPredictor("tabular/linear_regression", modelName, translatorName));
+        assertInstanceOf(CustomTabularPredictor.class,
+                getCustomPredictor("tabular/softmax_regression", modelName, translatorName));
+
+        // Audio
+        assertInstanceOf(CustomAudioPredictor.class,
+                getCustomPredictor("audio", modelName, translatorName));
+
+        // Time Series
+        assertInstanceOf(CustomForecastingPredictor.class,
+                getCustomPredictor("timeseries/forecasting", modelName, translatorName));
     }
 }

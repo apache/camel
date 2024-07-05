@@ -16,76 +16,82 @@
  */
 package org.apache.camel.component.djl.model.cv;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
-import ai.djl.modality.Classifications;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.ImageFactory;
 import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.djl.DJLConstants;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CustomImageClassificationPredictor extends AbstractPredictor {
-    private static final Logger LOG = LoggerFactory.getLogger(CustomImageClassificationPredictor.class);
+public class CustomCvPredictor<T> extends AbstractPredictor {
 
-    private final String modelName;
-    private final String translatorName;
+    private static final Logger LOG = LoggerFactory.getLogger(CustomCvPredictor.class);
 
-    public CustomImageClassificationPredictor(String modelName, String translatorName) {
+    protected final String modelName;
+    protected final String translatorName;
+
+    public CustomCvPredictor(String modelName, String translatorName) {
         this.modelName = modelName;
         this.translatorName = translatorName;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
-        @SuppressWarnings("unchecked")
-        Translator<Image, Classifications> translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
-
-        if (exchange.getIn().getBody() instanceof byte[]) {
+        Object body = exchange.getIn().getBody();
+        T result;
+        if (body instanceof byte[]) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
-            Classifications result = classify(model, translator, new ByteArrayInputStream(bytes));
-            exchange.getIn().setBody(result);
-        } else if (exchange.getIn().getBody() instanceof File) {
-            Classifications result = classify(model, translator, exchange.getIn().getBody(File.class));
-            exchange.getIn().setBody(result);
-        } else if (exchange.getIn().getBody() instanceof InputStream) {
-            Classifications result = classify(model, translator, exchange.getIn().getBody(InputStream.class));
-            exchange.getIn().setBody(result);
+            result = predict(exchange, new ByteArrayInputStream(bytes));
+        } else if (body instanceof File) {
+            result = predict(exchange, exchange.getIn().getBody(File.class));
+        } else if (body instanceof InputStream) {
+            result = predict(exchange, exchange.getIn().getBody(InputStream.class));
         } else {
             throw new RuntimeCamelException("Data type is not supported. Body should be byte[], InputStream or File");
         }
+        exchange.getIn().setBody(result);
     }
 
-    private Classifications classify(Model model, Translator<Image, Classifications> translator, File input) {
+    protected T predict(Exchange exchange, File input) {
         try (InputStream fileInputStream = new FileInputStream(input)) {
             Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
-            return classify(model, translator, image);
+            return predict(exchange, image);
         } catch (IOException e) {
             LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
             throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
         }
     }
 
-    private Classifications classify(Model model, Translator<Image, Classifications> translator, InputStream input) {
+    protected T predict(Exchange exchange, InputStream input) {
         try {
             Image image = ImageFactory.getInstance().fromInputStream(input);
-            return classify(model, translator, image);
+            return predict(exchange, image);
         } catch (IOException e) {
             LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
             throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
         }
     }
 
-    private Classifications classify(Model model, Translator<Image, Classifications> translator, Image image) {
-        try (Predictor<Image, Classifications> predictor = model.newPredictor(translator)) {
+    protected T predict(Exchange exchange, Image image) {
+        Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
+        @SuppressWarnings("unchecked")
+        Translator<Image, T> translator
+                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
+
+        exchange.getIn().setHeader(DJLConstants.INPUT, image);
+        try (Predictor<Image, T> predictor = model.newPredictor(translator)) {
             return predictor.predict(image);
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);

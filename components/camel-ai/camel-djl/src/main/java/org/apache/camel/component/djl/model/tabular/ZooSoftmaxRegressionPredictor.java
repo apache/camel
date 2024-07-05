@@ -26,6 +26,6 @@ public class ZooSoftmaxRegressionPredictor extends AbstractPredictor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-
+        // TODO: impl
     }
 }
