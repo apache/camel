@@ -29,10 +29,16 @@ import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.cometd.client.BayeuxClient;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.determineReplayIdFor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.cometd.client.transport.ClientTransport.MAX_NETWORK_DELAY_OPTION;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -165,5 +171,22 @@ public class SubscriptionHelperTest {
 
         assertNotNull(bayeuxClient);
         verify(session).login(null);
+    }
+
+    @Test
+    public void defaultLongPollingTimeoutShouldBeGreaterThanSalesforceTimeout() throws SalesforceException {
+        var endpointConfig = new SalesforceEndpointConfig();
+        endpointConfig.setHttpClient(mock(SalesforceHttpClient.class));
+        var session = mock(SalesforceSession.class);
+        var component = mock(SalesforceComponent.class);
+        when(component.getLoginConfig()).thenReturn(new SalesforceLoginConfig());
+        when(component.getConfig()).thenReturn(endpointConfig);
+        when(component.getSession()).thenReturn(session);
+        var bayeuxClient = SubscriptionHelper.createClient(component, session);
+
+        var longPollingTimeout = bayeuxClient.getTransport("long-polling").getOption(MAX_NETWORK_DELAY_OPTION);
+
+        MatcherAssert.assertThat(longPollingTimeout, instanceOf(Integer.class));
+        MatcherAssert.assertThat((Integer) longPollingTimeout, greaterThan(110000));
     }
 }
