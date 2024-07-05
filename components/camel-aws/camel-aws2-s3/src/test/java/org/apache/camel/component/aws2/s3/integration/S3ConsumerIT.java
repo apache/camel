@@ -24,8 +24,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
+import org.apache.camel.component.aws2.s3.AWS2S3Endpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class S3ConsumerIT extends Aws2S3Base {
@@ -69,6 +71,15 @@ public class S3ConsumerIT extends Aws2S3Base {
 
         Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+
+        // in-progress should remove keys when complete
+        AWS2S3Endpoint s3 = (AWS2S3Endpoint) context.getRoute("s3consumer").getEndpoint();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Assertions.assertFalse(s3.getInProgressRepository().contains("test.txt"));
+                    Assertions.assertFalse(s3.getInProgressRepository().contains("test1.txt"));
+                    Assertions.assertFalse(s3.getInProgressRepository().contains("test2.txt"));
+                });
     }
 
     @Override
@@ -78,11 +89,20 @@ public class S3ConsumerIT extends Aws2S3Base {
             public void configure() {
                 String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
-                from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
+                from("direct:putObject").startupOrder(1).to(awsEndpoint);
 
                 from("aws2-s3://" + name.get()
                      + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
-                        .startupOrder(2).log("${body}");
+                        .routeId("s3consumer")
+                        .startupOrder(2).log("${body}")
+                        .process(e -> {
+                            String key = e.getMessage().getHeader(AWS2S3Constants.KEY, String.class);
+                            log.info("Processing S3Object: {}", key);
+                            // should be in-progress
+                            AWS2S3Endpoint s3 = (AWS2S3Endpoint) context.getRoute("s3consumer").getEndpoint();
+                            Assertions.assertTrue(s3.getInProgressRepository().contains(key));
+                        })
+                        .to("mock:result");
 
             }
         };

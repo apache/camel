@@ -80,6 +80,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "ignorebody":
         case "ignoreBody": target.getConfiguration().setIgnoreBody(property(camelContext, boolean.class, value)); return true;
+        case "inprogressrepository":
+        case "inProgressRepository": target.setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -234,6 +236,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "greedy": return boolean.class;
         case "ignorebody":
         case "ignoreBody": return boolean.class;
+        case "inprogressrepository":
+        case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -384,6 +388,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "greedy": return target.isGreedy();
         case "ignorebody":
         case "ignoreBody": return target.getConfiguration().isIgnoreBody();
+        case "inprogressrepository":
+        case "inProgressRepository": return target.getInProgressRepository();
         case "includebody":
         case "includeBody": return target.getConfiguration().isIncludeBody();
         case "includefolders":

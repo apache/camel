@@ -26,11 +26,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
 import org.apache.camel.component.aws2.s3.stream.AWS2S3StreamUploadProducer;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +52,7 @@ import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
 public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Endpoint.class);
+    private static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 10000;
 
     private S3Client s3Client;
 
@@ -61,6 +65,11 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
     private int maxMessagesPerPoll = 10;
     @UriParam(label = "consumer", defaultValue = "60")
     private int maxConnections = 50 + maxMessagesPerPoll;
+    @UriParam(label = "consumer,advanced", description = "A pluggable in-progress repository "
+                                                         + "org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in "
+                                                         + "progress files being consumed. By default a memory based repository is used.")
+    private IdempotentRepository inProgressRepository
+            = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
 
     public AWS2S3Endpoint(String uri, Component comp, AWS2S3Configuration configuration) {
         super(uri, comp);
@@ -169,6 +178,8 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
 
             LOG.trace("Bucket policy updated");
         }
+
+        ServiceHelper.startService(inProgressRepository);
     }
 
     @Override
@@ -178,6 +189,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
                 s3Client.close();
             }
         }
+        ServiceHelper.stopService(inProgressRepository);
         super.doStop();
     }
 
@@ -220,5 +232,13 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
      */
     public void setMaxConnections(int maxConnections) {
         this.maxConnections = maxConnections;
+    }
+
+    public IdempotentRepository getInProgressRepository() {
+        return inProgressRepository;
+    }
+
+    public void setInProgressRepository(IdempotentRepository inProgressRepository) {
+        this.inProgressRepository = inProgressRepository;
     }
 }

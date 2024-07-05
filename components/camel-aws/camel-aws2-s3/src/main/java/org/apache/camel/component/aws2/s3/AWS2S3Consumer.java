@@ -203,8 +203,20 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> answer = new LinkedList<>();
         try {
             for (S3Object s3ObjectSummary : s3ObjectSummaries) {
+                String key = s3ObjectSummary.key();
+
+                // check if file is already in progress (add false = duplicate file)
+                if (!getEndpoint().getInProgressRepository().add(key)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Skipping as s3 object is already in progress: {}", key);
+                    }
+                    continue;
+                }
+
+                LOG.debug("S3Object to be consumed: {}", key);
+
                 Builder getRequest
-                        = GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(s3ObjectSummary.key());
+                        = GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(key);
                 if (getConfiguration().isUseCustomerKey()) {
                     if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
                         getRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
@@ -221,19 +233,28 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 if (includeS3Object(s3Object)) {
                     s3Objects.add(s3Object);
-                    Exchange exchange = createExchange(s3Object, s3ObjectSummary.key());
+                    Exchange exchange = createExchange(s3Object, key);
                     answer.add(exchange);
                 } else {
                     // If includeFolders != true and the object is not included, it is safe to close the object here.
                     // If includeFolders == true, the exchange will close the object.
                     IOHelper.close(s3Object);
+                    // remove in progress
+                    getEndpoint().getInProgressRepository().remove(key);
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error getting S3Object due: {}", e.getMessage(), e);
+            LOG.warn("Error getting S3Object due: {}. This exception is ignored.", e.getMessage(), e);
             // ensure all previous gathered s3 objects are closed
             // if there was an exception creating the exchanges in this batch
             s3Objects.forEach(IOHelper::close);
+            // remove all in-progress as we failed
+            for (Exchange exchange : answer) {
+                String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
+                if (key != null) {
+                    getEndpoint().getInProgressRepository().remove(key);
+                }
+            }
             throw e;
         }
 
@@ -243,8 +264,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     /**
      * Decide whether to include the S3Objects in the results
      *
-     * @param  s3Object
-     * @return          true to include, false to exclude
+     * @return true to include, false to exclude
      */
     protected boolean includeS3Object(ResponseInputStream<GetObjectResponse> s3Object) {
         if (getConfiguration().isIncludeFolders()) {
@@ -274,11 +294,25 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange);
+                    final String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
+                    try {
+                        processCommit(exchange);
+                    } finally {
+                        if (key != null) {
+                            getEndpoint().getInProgressRepository().remove(key);
+                        }
+                    }
                 }
 
                 public void onFailure(Exchange exchange) {
-                    processRollback(exchange);
+                    final String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
+                    try {
+                        processRollback(exchange);
+                    } finally {
+                        if (key != null) {
+                            getEndpoint().getInProgressRepository().remove(key);
+                        }
+                    }
                 }
 
                 @Override
@@ -396,6 +430,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             }
         }
 
+        message.getExchange().setProperty(AWS2S3Constants.KEY, key);
         message.setHeader(AWS2S3Constants.KEY, key);
         message.setHeader(AWS2S3Constants.BUCKET_NAME, getConfiguration().getBucketName());
         message.setHeader(AWS2S3Constants.E_TAG, s3Object.response().eTag());
