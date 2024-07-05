@@ -56,31 +56,29 @@ public class KafkaConsumerListener implements ConsumerListener<Object, Processin
 
     @Override
     public boolean afterConsume(@SuppressWarnings("unused") Object ignored) {
-        if (afterConsumeEval.test(null)) {
-            LOG.warn("State changed, therefore resuming the consumer");
+        boolean resume = afterConsumeEval.test(null);
+        if (resume) {
+            LOG.debug("Resuming consumer");
             consumer.resume(consumer.assignment());
-
-            return true;
+        } else {
+            LOG.debug("Pausing consumer");
         }
-
-        LOG.warn("The consumer is not yet resumable");
-        return false;
+        return resume;
     }
 
     @Override
     public boolean afterProcess(ProcessingResult result) {
         if (result.isFailed()) {
-            LOG.warn("Pausing consumer due to error on the last processing");
+            LOG.debug("Pausing consumer due to last processing error");
             consumer.pause(consumer.assignment());
 
             if (seekPolicy == SeekPolicy.BEGINNING) {
-                LOG.debug("Seeking from the beginning of topic");
+                LOG.debug("Seeking to beginning of topic");
                 consumer.seekToBeginning(consumer.assignment());
             } else if (seekPolicy == SeekPolicy.END) {
-                LOG.debug("Seeking from the end off the topic");
+                LOG.debug("Seeking to end of topic");
                 consumer.seekToEnd(consumer.assignment());
             }
-
             return false;
         }
 
