@@ -375,7 +375,7 @@ public class Aws2SqsUriDsl(
 
   /**
    * A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress
-   * repository is used to account the current in progress files being consumed. By default a memory
+   * repository is used to account the current in progress messages being consumed. By default a memory
    * based repository is used.
    */
   public fun inProgressRepository(inProgressRepository: String) {

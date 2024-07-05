@@ -75,7 +75,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     private int maxMessagesPerPoll;
     @UriParam(label = "consumer,advanced", description = "A pluggable in-progress repository "
                                                          + "org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in "
-                                                         + "progress files being consumed. By default a memory based repository is used.")
+                                                         + "progress messages being consumed. By default a memory based repository is used.")
     private IdempotentRepository inProgressRepository
             = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
     @UriParam

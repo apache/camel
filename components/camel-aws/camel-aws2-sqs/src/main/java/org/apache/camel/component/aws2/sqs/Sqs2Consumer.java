@@ -159,7 +159,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         try {
             for (software.amazon.awssdk.services.sqs.model.Message message : messages) {
                 String key = message.messageId();
-                // check if sqs is already in progress (add false = duplicate file)
+                // check if sqs is already in progress (add false = duplicate message)
                 if (!getEndpoint().getInProgressRepository().add(key)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Skipping as sqs message is already in progress: {}", key);

@@ -1612,8 +1612,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * A pluggable in-progress repository
          * org.apache.camel.spi.IdempotentRepository. The in-progress repository
-         * is used to account the current in progress files being consumed. By
-         * default a memory based repository is used.
+         * is used to account the current in progress messages being consumed.
+         * By default a memory based repository is used.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
@@ -1630,8 +1630,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * A pluggable in-progress repository
          * org.apache.camel.spi.IdempotentRepository. The in-progress repository
-         * is used to account the current in progress files being consumed. By
-         * default a memory based repository is used.
+         * is used to account the current in progress messages being consumed.
+         * By default a memory based repository is used.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
