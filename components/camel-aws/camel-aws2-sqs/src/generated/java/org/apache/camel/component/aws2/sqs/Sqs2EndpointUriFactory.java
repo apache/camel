@@ -23,7 +23,7 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(68);
         props.add("accessKey");
         props.add("amazonAWSHost");
         props.add("amazonSQSClient");
@@ -46,6 +46,7 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("extendMessageVisibility");
         props.add("greedy");
         props.add("headerFilterStrategy");
+        props.add("inProgressRepository");
         props.add("initialDelay");
         props.add("kmsDataKeyReusePeriodSeconds");
         props.add("kmsMasterKeyId");

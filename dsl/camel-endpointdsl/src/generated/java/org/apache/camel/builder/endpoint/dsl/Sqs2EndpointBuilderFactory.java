@@ -1610,6 +1610,42 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * A pluggable in-progress repository
+         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
+         * is used to account the current in progress files being consumed. By
+         * default a memory based repository is used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param inProgressRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointConsumerBuilder inProgressRepository(org.apache.camel.spi.IdempotentRepository inProgressRepository) {
+            doSetProperty("inProgressRepository", inProgressRepository);
+            return this;
+        }
+        /**
+         * A pluggable in-progress repository
+         * org.apache.camel.spi.IdempotentRepository. The in-progress repository
+         * is used to account the current in progress files being consumed. By
+         * default a memory based repository is used.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param inProgressRepository the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqs2EndpointConsumerBuilder inProgressRepository(String inProgressRepository) {
+            doSetProperty("inProgressRepository", inProgressRepository);
+            return this;
+        }
+        /**
          * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have

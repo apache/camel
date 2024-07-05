@@ -429,15 +429,6 @@ public class Aws2S3UriDsl(
   }
 
   /**
-   * A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress
-   * repository is used to account the current in progress files being consumed. By default a memory
-   * based repository is used.
-   */
-  public fun inProgressRepository(inProgressRepository: String) {
-    it.property("inProgressRepository", inProgressRepository)
-  }
-
-  /**
    * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom
    * implementation to control error handling usually occurred during the poll operation before an
    * Exchange have been created and being routed in Camel.

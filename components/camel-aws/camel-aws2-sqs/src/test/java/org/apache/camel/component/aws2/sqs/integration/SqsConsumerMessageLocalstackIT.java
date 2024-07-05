@@ -16,14 +16,21 @@
  */
 package org.apache.camel.component.aws2.sqs.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.sqs.Sqs2Constants;
+import org.apache.camel.component.aws2.sqs.Sqs2Endpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 public class SqsConsumerMessageLocalstackIT extends Aws2SQSBaseTest {
 
@@ -50,6 +57,15 @@ public class SqsConsumerMessageLocalstackIT extends Aws2SQSBaseTest {
         });
 
         MockEndpoint.assertIsSatisfied(context);
+
+        Sqs2Endpoint sqs = (Sqs2Endpoint) context.getRoute("sqsConsumer").getEndpoint();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) sqs.getInProgressRepository();
+
+        // in-progress should remove keys when complete
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Assertions.assertEquals(repo.getCacheSize(), 0);
+                });
     }
 
     @Override
@@ -62,7 +78,16 @@ public class SqsConsumerMessageLocalstackIT extends Aws2SQSBaseTest {
 
                 fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true&autoCreateQueue=true",
                         sharedNameGenerator.getName())
+                        .routeId("sqsConsumer")
                         .startupOrder(1)
+                        .process(e -> {
+                            String key = e.getMessage().getHeader(Sqs2Constants.MESSAGE_ID, String.class);
+                            log.info("Processing SQS: {}", key);
+                            // should be in-progress
+                            Sqs2Endpoint sqs = (Sqs2Endpoint) context.getRoute("sqsConsumer").getEndpoint();
+                            MemoryIdempotentRepository repo = (MemoryIdempotentRepository) sqs.getInProgressRepository();
+                            Assertions.assertTrue(repo.getCacheSize() > 0);
+                        })
                         .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
                         .to("mock:result");
             }
