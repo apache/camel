@@ -943,7 +943,7 @@ public final class Jsoner {
             writableDestination.write("null");
         } else if (jsonSerializable instanceof Jsonable && flags.contains(SerializationOptions.ALLOW_JSONABLES)) {
             /* Writes the writable as defined by the writable. */
-            writableDestination.write(((Jsonable) jsonSerializable).toJson());
+            ((Jsonable) jsonSerializable).toJson(writableDestination);
         } else if (jsonSerializable instanceof Enum
                 && flags.contains(SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS)) {
             /*
