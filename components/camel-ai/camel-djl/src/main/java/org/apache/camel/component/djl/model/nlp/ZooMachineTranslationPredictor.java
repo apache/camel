@@ -30,7 +30,7 @@ public class ZooMachineTranslationPredictor extends AbstractNlpZooPredictor<Stri
     public ZooMachineTranslationPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
                                                              IOException {
         Criteria<String, String> criteria = Criteria.builder()
-                .optApplication(Application.NLP.TEXT_GENERATION)
+                .optApplication(Application.NLP.MACHINE_TRANSLATION)
                 .setTypes(String.class, String.class)
                 .optArtifactId(artifactId)
                 .optProgress(new ProgressBar())
