@@ -156,9 +156,28 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         Queue<Exchange> answer = new LinkedList<>();
-        for (software.amazon.awssdk.services.sqs.model.Message message : messages) {
-            Exchange exchange = createExchange(message);
-            answer.add(exchange);
+        try {
+            for (software.amazon.awssdk.services.sqs.model.Message message : messages) {
+                String key = message.messageId();
+                // check if sqs is already in progress (add false = duplicate message)
+                if (!getEndpoint().getInProgressRepository().add(key)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Skipping as sqs message is already in progress: {}", key);
+                    }
+                    continue;
+                }
+                Exchange exchange = createExchange(message);
+                answer.add(exchange);
+            }
+        } catch (Exception e) {
+            // remove all in-progress as we failed
+            for (Exchange exchange : answer) {
+                String key = exchange.getProperty(Sqs2Constants.MESSAGE_ID, String.class);
+                if (key != null) {
+                    getEndpoint().getInProgressRepository().remove(key);
+                }
+            }
+            throw e;
         }
 
         return answer;
@@ -187,12 +206,26 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange);
+                    final String key = exchange.getProperty(Sqs2Constants.MESSAGE_ID, String.class);
+                    try {
+                        processCommit(exchange);
+                    } finally {
+                        if (key != null) {
+                            getEndpoint().getInProgressRepository().remove(key);
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    processRollback(exchange);
+                    final String key = exchange.getProperty(Sqs2Constants.MESSAGE_ID, String.class);
+                    try {
+                        processRollback(exchange);
+                    } finally {
+                        if (key != null) {
+                            getEndpoint().getInProgressRepository().remove(key);
+                        }
+                    }
                 }
 
                 @Override
@@ -216,7 +249,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
      */
     protected void processCommit(Exchange exchange) {
         try {
-
             if (shouldDelete(exchange)) {
                 String receiptHandle = exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class);
                 DeleteMessageRequest.Builder deleteRequest
@@ -285,6 +317,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         Message message = exchange.getIn();
         message.setBody(msg.body());
         message.setHeaders(new HashMap<>(msg.attributesAsStrings()));
+        message.getExchange().setProperty(Sqs2Constants.MESSAGE_ID, msg.messageId());
         message.setHeader(Sqs2Constants.MESSAGE_ID, msg.messageId());
         message.setHeader(Sqs2Constants.MD5_OF_BODY, msg.md5OfBody());
         message.setHeader(Sqs2Constants.RECEIPT_HANDLE, msg.receiptHandle());
