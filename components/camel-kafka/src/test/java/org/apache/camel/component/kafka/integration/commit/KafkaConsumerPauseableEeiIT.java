@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaConsumerPauseableEeiIT extends BaseManualCommitTestSupport {
 
@@ -45,7 +46,7 @@ public class KafkaConsumerPauseableEeiIT extends BaseManualCommitTestSupport {
     protected RouteBuilder createRouteBuilder() {
         String from = "kafka:" + TOPIC
                       + "?groupId=KafkaConsumerPauseableEeiIT&pollTimeoutMs=1000"
-                      + "&autoOffsetReset=earliest&autoCommitEnable=false&allowManualCommit=true&maxPollRecords=1";
+                      + "&autoCommitEnable=false&allowManualCommit=true&maxPollRecords=1";
 
         return new RouteBuilder() {
             @Override
@@ -69,13 +70,13 @@ public class KafkaConsumerPauseableEeiIT extends BaseManualCommitTestSupport {
     @RepeatedTest(1)
     public void kafkaPauseableEip() throws Exception {
         MockEndpoint result = contextExtension.getMockEndpoint("mock:result");
-
-        result.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-10", "message-11", "message-12",
-                "message-13");
+        result.expectedMessageCount(15);
 
         sendRecords(0, 15, TOPIC);
 
         result.assertIsSatisfied();
+
+        assertTrue(count > 20);
     }
 
     public boolean canContinue() {

@@ -346,6 +346,13 @@ public class KafkaFetchRecords implements Runnable {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
                 if (consumerListener != null) {
                     if (!consumerListener.afterConsume(consumer)) {
+                        // because the consumer will just poll the same messages again (then we need to avoid consuming asap
+                        // and need to simulate a poll duration
+                        try {
+                            Thread.sleep(pollTimeoutMs);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                         continue;
                     }
                 }

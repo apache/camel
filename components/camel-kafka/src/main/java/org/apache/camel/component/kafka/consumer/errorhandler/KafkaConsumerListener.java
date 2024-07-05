@@ -30,7 +30,6 @@ public class KafkaConsumerListener implements ConsumerListener<Object, Processin
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerListener.class);
     private Consumer<?, ?> consumer;
     private SeekPolicy seekPolicy;
-
     private Predicate<?> afterConsumeEval;
 
     public Consumer<?, ?> getConsumer() {
@@ -62,6 +61,7 @@ public class KafkaConsumerListener implements ConsumerListener<Object, Processin
             consumer.resume(consumer.assignment());
         } else {
             LOG.debug("Pausing consumer");
+            seekConsumer();
         }
         return resume;
     }
@@ -71,17 +71,19 @@ public class KafkaConsumerListener implements ConsumerListener<Object, Processin
         if (result.isFailed()) {
             LOG.debug("Pausing consumer due to last processing error");
             consumer.pause(consumer.assignment());
-
-            if (seekPolicy == SeekPolicy.BEGINNING) {
-                LOG.debug("Seeking to beginning of topic");
-                consumer.seekToBeginning(consumer.assignment());
-            } else if (seekPolicy == SeekPolicy.END) {
-                LOG.debug("Seeking to end of topic");
-                consumer.seekToEnd(consumer.assignment());
-            }
+            seekConsumer();
             return false;
         }
-
         return true;
+    }
+
+    protected void seekConsumer() {
+        if (seekPolicy == SeekPolicy.BEGINNING) {
+            LOG.debug("Seeking to beginning of topic");
+            consumer.seekToBeginning(consumer.assignment());
+        } else if (seekPolicy == SeekPolicy.END) {
+            LOG.debug("Seeking to end of topic");
+            consumer.seekToEnd(consumer.assignment());
+        }
     }
 }

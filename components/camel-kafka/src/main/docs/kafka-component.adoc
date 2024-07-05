@@ -441,8 +441,6 @@ In this example, consuming messages can pause (by calling the Kafka's Consumer p
 The pausable EIP is meant to be used as a support mechanism when there is an exception somewhere in the route that prevents the exchange from being processed. More specifically,
 the check called by the `pausable` EIP should be used to test for transient conditions preventing the exchange from being processed.
 
-NOTE: If you use manual commit with Pauseable to only commit offset when the consumer is not paused, then also set `autoOffsetReset=true`.
-
 == Kafka Headers propagation
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.
