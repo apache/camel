@@ -43,8 +43,8 @@ public class SqsBatchConsumerConcurrentConsumersIT extends CamelTestSupport {
         for (int counter = 0; counter < 6; counter++) {
             Message.Builder message = Message.builder();
             message.body("Message " + counter);
-            message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee-" + counter);
-            message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458-" + counter);
+            message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
+            message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
             message.receiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5");
 
             clientMock.messages.add(message.build());

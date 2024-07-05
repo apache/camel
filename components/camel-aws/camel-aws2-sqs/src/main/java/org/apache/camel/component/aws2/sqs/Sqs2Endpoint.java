@@ -31,8 +31,6 @@ import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.spi.*;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
-import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
@@ -60,7 +58,6 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Endpoint.class);
-    private static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 10000;
 
     private SqsClient client;
     private String queueUrl;
@@ -73,11 +70,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     private Sqs2Configuration configuration;
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
-    @UriParam(label = "consumer,advanced", description = "A pluggable in-progress repository "
-                                                         + "org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in "
-                                                         + "progress messages being consumed. By default a memory based repository is used.")
-    private IdempotentRepository inProgressRepository
-            = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -150,7 +142,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        ServiceHelper.initService(inProgressRepository);
 
         client = configuration.getAmazonSQSClient() != null
                 ? configuration.getAmazonSQSClient() : Sqs2ClientFactory.getSqsClient(configuration).getSQSClient();
@@ -190,13 +181,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             LOG.debug("Using Amazon SQS queue url: {}", queueUrl);
             updateQueueAttributes(client);
         }
-        ServiceHelper.initService(inProgressRepository);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        ServiceHelper.startService(inProgressRepository);
     }
 
     private void initQueueUrl() {
@@ -373,7 +357,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 client.close();
             }
         }
-        ServiceHelper.stopService(inProgressRepository);
         super.doStop();
     }
 
@@ -416,14 +399,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
-    }
-
-    public IdempotentRepository getInProgressRepository() {
-        return inProgressRepository;
-    }
-
-    public void setInProgressRepository(IdempotentRepository inProgressRepository) {
-        this.inProgressRepository = inProgressRepository;
     }
 
     @Override

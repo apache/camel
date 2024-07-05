@@ -65,8 +65,6 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "inprogressrepository":
-        case "inProgressRepository": target.setInProgressRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "kmsdatakeyreuseperiodseconds":
@@ -204,8 +202,6 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
-        case "inprogressrepository":
-        case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "kmsdatakeyreuseperiodseconds":
@@ -339,8 +335,6 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "greedy": return target.isGreedy();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
-        case "inprogressrepository":
-        case "inProgressRepository": return target.getInProgressRepository();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "kmsdatakeyreuseperiodseconds":
