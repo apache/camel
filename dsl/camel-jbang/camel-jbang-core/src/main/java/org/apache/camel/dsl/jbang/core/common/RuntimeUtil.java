@@ -174,10 +174,10 @@ public final class RuntimeUtil {
         String deps = properties != null ? properties.getProperty("camel.jbang.dependencies") : null;
         if (deps != null) {
             deps = deps.trim();
-            if (deps.length() > 0 && deps.charAt(0) == ',') {
+            if (!deps.isEmpty() && deps.charAt(0) == ',') {
                 deps = deps.substring(1);
             }
-            if (deps.length() > 0 && deps.charAt(deps.length() - 1) == ',') {
+            if (!deps.isEmpty() && deps.charAt(deps.length() - 1) == ',') {
                 deps = deps.substring(0, deps.lastIndexOf(","));
             }
         } else {

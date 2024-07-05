@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common;
 
 import picocli.CommandLine;
 
 public class RuntimeTypeConverter implements CommandLine.ITypeConverter<RuntimeType> {
+
     public RuntimeType convert(String value) throws Exception {
         return RuntimeType.fromValue(value);
     }

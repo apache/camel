@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 
 public enum RuntimeType {
+
     springBoot,
     quarkus,
     main;
