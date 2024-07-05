@@ -70,12 +70,14 @@ public class KafkaConsumerPauseableEeiIT extends BaseManualCommitTestSupport {
     @RepeatedTest(1)
     public void kafkaPauseableEip() throws Exception {
         MockEndpoint result = contextExtension.getMockEndpoint("mock:result");
+        // we receive all 15 records
         result.expectedMessageCount(15);
 
         sendRecords(0, 15, TOPIC);
 
         result.assertIsSatisfied();
 
+        // but some were temporary paused so the counter should be higher
         assertTrue(count > 20);
     }
 
