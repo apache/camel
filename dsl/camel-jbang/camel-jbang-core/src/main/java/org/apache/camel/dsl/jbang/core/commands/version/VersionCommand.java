@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "version",
-                     description = "Manage Camel versions (use config --help to see sub commands)")
+                     description = "Manage Camel versions (use version --help to see sub commands)")
 public class VersionCommand extends CamelCommand {
 
     public VersionCommand(CamelJBangMain main) {

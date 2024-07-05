@@ -32,7 +32,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "variable", description = "List variables in a running Camel integration", sortOptions = false)
+@Command(name = "variable", description = "List variables of Camel integrations", sortOptions = false)
 public class ListVariable extends ProcessWatchCommand {
 
     public static class PidNameKeyCompletionCandidates implements Iterable<String> {
