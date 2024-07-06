@@ -87,22 +87,22 @@ public class StingQuoteHelperTest {
         assertEquals("Hello Camel", out[0]);
         assertEquals("Bye World", out[1]);
 
-        out = StringQuoteHelper.splitSafeQuote("'Hello Camel', ' Bye World'", ',', false);
+        out = StringQuoteHelper.splitSafeQuote("'Hello Camel',' Bye World'", ',', false);
         assertEquals(2, out.length);
         assertEquals("Hello Camel", out[0]);
         assertEquals(" Bye World", out[1]);
 
-        out = StringQuoteHelper.splitSafeQuote("'http:', ' '", ',', false);
+        out = StringQuoteHelper.splitSafeQuote("'http:',' '", ',', false);
         assertEquals(2, out.length);
         assertEquals("http:", out[0]);
         assertEquals(" ", out[1]);
 
-        out = StringQuoteHelper.splitSafeQuote("'http:', ''", ',', false);
+        out = StringQuoteHelper.splitSafeQuote("'http:',''", ',', false);
         assertEquals(2, out.length);
         assertEquals("http:", out[0]);
         assertEquals("", out[1]);
 
-        out = StringQuoteHelper.splitSafeQuote("'Hello Camel', 5, true", ',', false);
+        out = StringQuoteHelper.splitSafeQuote("'Hello Camel',5,true", ',', false);
         assertEquals(3, out.length);
         assertEquals("Hello Camel", out[0]);
         assertEquals("5", out[1]);
@@ -114,13 +114,13 @@ public class StingQuoteHelperTest {
         assertEquals("5", out[1]);
         assertEquals("true", out[2]);
 
-        out = StringQuoteHelper.splitSafeQuote("   'Hello Camel',  5   ,  true   ", ',', false);
+        out = StringQuoteHelper.splitSafeQuote("   'Hello Camel',  5   ,  true   ", ',', true);
         assertEquals(3, out.length);
         assertEquals("Hello Camel", out[0]);
         assertEquals("5", out[1]);
         assertEquals("true", out[2]);
 
-        out = StringQuoteHelper.splitSafeQuote("*, '', 'arg3'", ',', false);
+        out = StringQuoteHelper.splitSafeQuote("*, '', 'arg3'", ',', true);
         assertEquals(3, out.length);
         assertEquals("*", out[0]);
         assertEquals("", out[1]);
@@ -130,9 +130,13 @@ public class StingQuoteHelperTest {
         assertEquals(1, out.length);
         assertEquals("Hello", out[0]);
 
-        out = StringQuoteHelper.splitSafeQuote("' Hello '", ',', true);
+        out = StringQuoteHelper.splitSafeQuote(" Hello ", ',', true);
         assertEquals(1, out.length);
         assertEquals("Hello", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("' Hello '", ',', true);
+        assertEquals(1, out.length);
+        assertEquals(" Hello ", out[0]);
 
         out = StringQuoteHelper.splitSafeQuote("' Hello '", ',', false);
         assertEquals(1, out.length);
@@ -147,9 +151,13 @@ public class StingQuoteHelperTest {
         assertEquals(1, out.length);
         assertEquals("Hello", out[0]);
 
-        out = StringQuoteHelper.splitSafeQuote("\" Hello \"", ',', true);
+        out = StringQuoteHelper.splitSafeQuote(" Hello ", ',', true);
         assertEquals(1, out.length);
         assertEquals("Hello", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("\" Hello \"", ',', true);
+        assertEquals(1, out.length);
+        assertEquals(" Hello ", out[0]);
 
         out = StringQuoteHelper.splitSafeQuote("\" Hello \"", ',', false);
         assertEquals(1, out.length);
@@ -231,17 +239,17 @@ public class StingQuoteHelperTest {
         assertEquals(1, out.length);
         assertEquals("'body'", out[0]);
 
-        out = StringQuoteHelper.splitSafeQuote("'body', 123", ',', false, true);
+        out = StringQuoteHelper.splitSafeQuote("'body',123", ',', false, true);
         assertEquals(2, out.length);
         assertEquals("'body'", out[0]);
         assertEquals("123", out[1]);
 
-        out = StringQuoteHelper.splitSafeQuote("'body', \"world\"", ',', false, true);
+        out = StringQuoteHelper.splitSafeQuote("'body',\"world\"", ',', false, true);
         assertEquals(2, out.length);
         assertEquals("'body'", out[0]);
         assertEquals("\"world\"", out[1]);
 
-        out = StringQuoteHelper.splitSafeQuote("'body', \"world\", 123", ',', false, true);
+        out = StringQuoteHelper.splitSafeQuote("'body',\"world\",123", ',', false, true);
         assertEquals(3, out.length);
         assertEquals("'body'", out[0]);
         assertEquals("\"world\"", out[1]);

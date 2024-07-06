@@ -797,7 +797,7 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             public void configure() {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
                         .templateBean("myBar").type("#class:org.apache.camel.builder.MyConstructorProcessor")
-                        .constructor(0, "MyCtr ").end()
+                        .constructor(0, "'MyCtr '").end()
                         .from("direct:{{foo}}")
                         .to("bean:{{bar}}");
             }

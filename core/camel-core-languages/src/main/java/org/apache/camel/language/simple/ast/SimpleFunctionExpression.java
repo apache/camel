@@ -1675,7 +1675,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                                                 + function,
                         token.getIndex());
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${replace(num,num)} was: " + function, token.getIndex());
@@ -1721,7 +1721,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         "Valid syntax: ${replace(from,to)} was: " + function,
                         token.getIndex());
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${replace(from,to)} was: " + function, token.getIndex());
