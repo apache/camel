@@ -290,6 +290,27 @@ This is very limited as the CLI argument is a bit cumbersome to use than files.
 
 NOTE: Using `--code` is only usable for very quick and small prototypes.
 
+From *Camel 4.8* onwards the `--code` parameter can also refer to a `.java` source file,
+that are not wrapped in a `public class` which makes it possible to quickly try a prototype
+with some Camel java based routes such as the following stored in a file named `quick.java`:
+
+[source,java]
+----
+from("timer:java?period=1000")
+    .setBody()
+        .simple("Hello Quick Camel from ${routeId}")
+    .log("${body}");
+----
+
+Then you can run this route via:
+
+[source,bash]
+----
+camel run --code=quick.java
+----
+
+NOTE: You cannot use `--dev` to hot-reload this on code changes.
+
 === Running Routes from source directory
 
 You can also run dev mode when running Camel with `--source-dir`, such as:

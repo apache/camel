@@ -283,7 +283,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     String openapi;
 
-    @Option(names = { "--code" }, description = "Run the given string as Java DSL route")
+    @Option(names = { "--code" }, description = "Run the given text or file as Java DSL routes")
     String code;
 
     @Option(names = { "--verbose" }, description = "Verbose output of startup activity (dependency resolution and downloading")
@@ -428,8 +428,23 @@ public class Run extends CamelCommand {
 
         // route code as option
         if (!empty && code != null) {
+            // code may refer to an existing file
+            String name = "CodeRoute";
+            boolean file = false;
+            File f = new File(code);
+            if (f.isFile() && f.exists()) {
+                // must be a java file
+                boolean java = f.getName().endsWith(".java");
+                if (!java) {
+                    printer().println("ERROR: Only java source files is accepted when using --code parameter");
+                    return 1;
+                }
+                code = Files.readString(f.toPath());
+                name = FileUtil.onlyName(f.getName());
+                file = true;
+            }
             // store code in temporary file
-            String codeFile = loadFromCode(code);
+            String codeFile = loadFromCode(code, name, file);
             // use code as first file
             files.add(0, codeFile);
         }
@@ -1329,19 +1344,22 @@ public class Run extends CamelCommand {
         return main.getExitCode();
     }
 
-    private String loadFromCode(String code) throws IOException {
-        String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CodeRoute.java";
+    private String loadFromCode(String code, String name, boolean file) throws IOException {
+        String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/" + name + ".java";
         InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/code-java.tmpl");
         String content = IOHelper.loadText(is);
         IOHelper.close(is);
-        // need to replace single quote as double quotes and end with semicolon
-        code = code.replace("'", "\"");
-        code = code.trim();
+        if (!file) {
+            // need to replace single quote as double quotes (from input string)
+            code = code.replace("'", "\"");
+            code = code.trim();
+        }
+        // ensure the code ends with semicolon to finish the java statement
         if (!code.endsWith(";")) {
             code = code + ";";
         }
-        content = content.replaceFirst("\\{\\{ \\.Name }}", "CodeRoute");
-        content = content.replaceFirst("\\{\\{ \\.Code }}", code);
+        content = StringHelper.replaceFirst(content, "{{ .Name }}", name);
+        content = StringHelper.replaceFirst(content, "{{ .Code }}", code);
         Files.writeString(Paths.get(fn), content);
         return "file:" + fn;
     }
@@ -1417,8 +1435,8 @@ public class Run extends CamelCommand {
             if ("java".equals(ext)) {
                 String fqn = determineClassName(t.toString());
                 if (fqn == null) {
-                    throw new IllegalArgumentException(
-                            "Cannot determine the Java class name from the source in the clipboard");
+                    // wrap code in wrapper
+                    return loadFromCode(t.toString(), "ClipboardRoute", true);
                 }
                 // drop package in file name
                 String cn = fqn;
