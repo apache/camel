@@ -109,10 +109,13 @@ public final class StringQuoteHelper {
                 boolean doubleQuoted = ch == '"' && ch2 == '"';
                 if (!keepQuotes && (singleQuoted || doubleQuoted)) {
                     input = input.substring(1, input.length() - 1);
+                    // do not trim quoted text
+                } else if (trim) {
+                    input = input.trim();
                 }
             }
             // no separator in data, so return single string with input as is
-            return new String[] { trim ? input.trim() : input };
+            return new String[] { input };
         }
 
         List<String> answer = new ArrayList<>();
@@ -120,6 +123,7 @@ public final class StringQuoteHelper {
 
         boolean singleQuoted = false;
         boolean doubleQuoted = false;
+        boolean separating = false;
 
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
@@ -183,9 +187,8 @@ public final class StringQuoteHelper {
                     sb.append(ch);
                 }
                 continue;
-            } else if (!isQuoting && separator != ' ' && ch == ' ') {
-                continue;
             } else if (!isQuoting && ch == separator) {
+                separating = true;
                 // add as answer if we are not in a quote
                 if (!sb.isEmpty()) {
                     String text = sb.toString();
@@ -198,6 +201,11 @@ public final class StringQuoteHelper {
                 // we should avoid adding the separator
                 continue;
             }
+
+            if (trim && !isQuoting && separating && separator != ' ' && ch == ' ') {
+                continue;
+            }
+            separating = false;
 
             // append char
             sb.append(ch);

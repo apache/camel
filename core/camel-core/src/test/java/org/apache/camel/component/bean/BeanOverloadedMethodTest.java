@@ -241,6 +241,27 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testPropertyPlaceholder() throws Exception {
+        context.getPropertiesComponent().addInitialProperty("myDestination", "Mars");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").bean(MyBean.class, "sendMsg(String.class ${body}, String.class {{myDestination}})")
+                        .to("mock:result");
+
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Sending rockets to Mars");
+
+        template.sendBody("direct:start", "rockets");
+
+        assertMockEndpointsSatisfied();
+    }
+
     // START SNIPPET: e1
     public static final class MyBean {
 
@@ -281,6 +302,10 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
                 }
             }
             return sb.toString();
+        }
+
+        public String sendMsg(String message, String destination) {
+            return "Sending " + message + " to " + destination;
         }
 
     }
