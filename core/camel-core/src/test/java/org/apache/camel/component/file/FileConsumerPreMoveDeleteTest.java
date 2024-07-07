@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,19 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Test
     public void testPreMoveDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
 
-        assertFalse(Files.exists(testFile("work/hello.txt")), "Pre move file should have been deleted");
+        assertFalse(Files.exists(testFile("work/" + TEST_FILE_NAME)), "Pre move file should have been deleted");
     }
 
     @Test
@@ -49,7 +51,7 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
@@ -59,12 +61,12 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
         oneExchangeDone.reset();
         mock.expectedBodiesReceived("Hello Again World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello Again World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello Again World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
 
-        assertFalse(Files.exists(testFile("work/hello.txt")), "Pre move file should have been deleted");
+        assertFalse(Files.exists(testFile("work/" + TEST_FILE_NAME)), "Pre move file should have been deleted");
     }
 
     @Override
@@ -82,7 +84,7 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) {
-            assertTrue(Files.exists(testFile("work/hello.txt")), "Pre move file should exist");
+            assertTrue(Files.exists(testFile("work/" + TEST_FILE_NAME)), "Pre move file should exist");
         }
     }
 }
