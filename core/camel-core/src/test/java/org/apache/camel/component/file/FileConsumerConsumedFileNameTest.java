@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,16 +28,17 @@ import org.junit.jupiter.api.Test;
  * Unit test that checks for the existence of the CamelFileNameConsumed header.
  */
 public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Test
     public void testValidFilenameOnExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).header(Exchange.FILE_NAME).isEqualTo("hello.txt");
-        mock.message(0).header(Exchange.FILE_NAME_CONSUMED).isEqualTo("hello.txt");
+        mock.message(0).header(Exchange.FILE_NAME).isEqualTo(TEST_FILE_NAME);
+        mock.message(0).header(Exchange.FILE_NAME_CONSUMED).isEqualTo(TEST_FILE_NAME);
 
         // the file name is also starting with consumedfilename
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }

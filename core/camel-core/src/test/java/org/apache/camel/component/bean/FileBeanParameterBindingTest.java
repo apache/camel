@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FileBeanParameterBindingTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
@@ -41,7 +44,7 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
     public void testFileToBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }
@@ -65,13 +68,13 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
 
         public void before(@Header("bar") Integer bar, @Header(Exchange.FILE_NAME) String name) {
             assertNull(bar, "There should be no bar");
-            assertEquals("hello.txt", name);
+            assertEquals(TEST_FILE_NAME, name);
         }
 
         public void after(@Header("bar") Integer bar, @Header(Exchange.FILE_NAME) String name) {
             assertNotNull(bar, "There should be bar");
             assertEquals(123, bar.intValue());
-            assertEquals("hello.txt", name);
+            assertEquals(TEST_FILE_NAME, name);
         }
     }
 }

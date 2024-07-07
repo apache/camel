@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
@@ -27,12 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  */
 public class ConsumerTemplateFileShutdownTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Test
     public void testConsumerTemplateFile() {
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        Exchange exchange = consumer.receive(fileUri("?fileName=hello.txt"), 5000);
+        Exchange exchange = consumer.receive(fileUri("?fileName=" + TEST_FILE_NAME), 5000);
         assertNotNull(exchange);
 
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
