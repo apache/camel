@@ -25,10 +25,14 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bootstrapservers":
         case "bootstrapServers": target.setBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "groupid":
+        case "groupId": target.setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxcachesize":
         case "maxCacheSize": target.setMaxCacheSize(property(camelContext, int.class, value)); return true;
         case "polldurationms":
         case "pollDurationMs": target.setPollDurationMs(property(camelContext, int.class, value)); return true;
+        case "startuponly":
+        case "startupOnly": target.setStartupOnly(property(camelContext, boolean.class, value)); return true;
         case "topic": target.setTopic(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -39,10 +43,14 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bootstrapservers":
         case "bootstrapServers": return java.lang.String.class;
+        case "groupid":
+        case "groupId": return java.lang.String.class;
         case "maxcachesize":
         case "maxCacheSize": return int.class;
         case "polldurationms":
         case "pollDurationMs": return int.class;
+        case "startuponly":
+        case "startupOnly": return boolean.class;
         case "topic": return java.lang.String.class;
         default: return null;
         }
@@ -54,10 +62,14 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bootstrapservers":
         case "bootstrapServers": return target.getBootstrapServers();
+        case "groupid":
+        case "groupId": return target.getGroupId();
         case "maxcachesize":
         case "maxCacheSize": return target.getMaxCacheSize();
         case "polldurationms":
         case "pollDurationMs": return target.getPollDurationMs();
+        case "startuponly":
+        case "startupOnly": return target.isStartupOnly();
         case "topic": return target.getTopic();
         default: return null;
         }
