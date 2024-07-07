@@ -1,0 +1,13 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.7 to 4.8
+
+=== camel-kafka
+
+The `KafkaIdempotentRepository` will now continue to sync cache updates after Camel has been started.
+You can configure `startupOnly=true` to only sync the cache once on startup
+(however then the cache is not synced with other Camel nodes in a cluster).
