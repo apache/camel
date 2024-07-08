@@ -29,7 +29,15 @@ public final class VersionHelper {
 
     public static String getJBangVersion() {
         try {
-            File file = new File(CommandLineHelper.getHomeDir(), ".jbang/cache/version.txt");
+            // find actual version in JBANG_HOME
+            String homeDir = System.getenv("JBANG_HOME");
+            String path = "/";
+            if (homeDir == null || homeDir.isBlank()) {
+                // fallback to .jbang cache that has a list of latest version
+                path = ".jbang/cache/";
+                homeDir = CommandLineHelper.getHomeDir();
+            }
+            File file = new File(homeDir, path + "version.txt");
             if (file.exists() && file.isFile()) {
                 FileInputStream fis = new FileInputStream(file);
                 String text = IOHelper.loadText(fis);
