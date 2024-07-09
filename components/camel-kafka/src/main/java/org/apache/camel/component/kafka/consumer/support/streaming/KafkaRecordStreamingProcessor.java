@@ -86,9 +86,12 @@ final class KafkaRecordStreamingProcessor extends KafkaRecordProcessor {
             final ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
 
             boolean breakOnErrorExit = processException(exchange, topicPartition, consumerRecord, exceptionHandler);
-            result = new ProcessingResult(breakOnErrorExit, true);
+            result = new ProcessingResult(
+                    breakOnErrorExit, true, consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset());
         } else {
-            result = new ProcessingResult(false, exchange.getException() != null);
+            result = new ProcessingResult(
+                    false, exchange.getException() != null, consumerRecord.topic(), consumerRecord.partition(),
+                    consumerRecord.offset());
         }
 
         if (!result.isBreakOnErrorHit()) {

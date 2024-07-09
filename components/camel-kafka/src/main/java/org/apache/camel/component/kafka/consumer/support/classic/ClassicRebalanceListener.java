@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support.classic;
 
 import java.util.Collection;
@@ -28,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClassicRebalanceListener implements ConsumerRebalanceListener {
+
     private static final Logger LOG = LoggerFactory.getLogger(ClassicRebalanceListener.class);
 
     private final String threadId;

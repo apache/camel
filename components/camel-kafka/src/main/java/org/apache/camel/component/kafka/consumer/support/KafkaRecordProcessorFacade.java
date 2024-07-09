@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -23,6 +22,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
  * A processing facade that allows processing consumer records in different ways
  */
 public interface KafkaRecordProcessorFacade {
+
     /**
      * Sends a set of records polled from Kafka for processing
      *

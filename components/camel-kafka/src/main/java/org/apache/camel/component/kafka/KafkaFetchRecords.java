@@ -45,6 +45,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -92,11 +94,18 @@ public class KafkaFetchRecords implements Runnable {
 
     private volatile boolean terminated;
     private volatile long currentBackoffInterval;
-
     private volatile boolean reconnect; // The reconnect must be false at init (this is the policy whether to reconnect).
     private volatile boolean connected; // this is the state (connected or not)
-
     private volatile State state = State.RUNNING;
+
+    record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {
+    }
+
+    record LastRecord(String topic, int partition, long offset) {
+    }
+
+    private volatile GroupMetadata groupMetadata;
+    private volatile LastRecord lastRecord;
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -167,6 +176,15 @@ public class KafkaFetchRecords implements Runnable {
                 }
 
                 setConnected(true);
+            }
+
+            if (isConnected()) {
+                // store metadata
+                ConsumerGroupMetadata meta = consumer.groupMetadata();
+                if (meta != null) {
+                    groupMetadata = new GroupMetadata(
+                            meta.groupId(), meta.groupInstanceId().orElse(""), meta.memberId(), meta.generationId());
+                }
             }
 
             setLastError(null);
@@ -351,6 +369,9 @@ public class KafkaFetchRecords implements Runnable {
                 }
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
+                if (result != null && result.getTopic() != null) {
+                    lastRecord = new LastRecord(result.getTopic(), result.getPartition(), result.getOffset());
+                }
                 updateTaskState();
 
                 // when breakOnFirstError we want to unsubscribe from Kafka
@@ -494,7 +515,7 @@ public class KafkaFetchRecords implements Runnable {
         return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped();
     }
 
-    private boolean isReconnect() {
+    boolean isReconnect() {
         return reconnect;
     }
 
@@ -632,5 +653,25 @@ public class KafkaFetchRecords implements Runnable {
 
     private synchronized void setLastError(Exception lastError) {
         this.lastError = lastError;
+    }
+
+    Exception getLastError() {
+        return lastError;
+    }
+
+    GroupMetadata getGroupMetadata() {
+        return groupMetadata;
+    }
+
+    public LastRecord getLastRecord() {
+        return lastRecord;
+    }
+
+    String getThreadId() {
+        return threadId;
+    }
+
+    String getState() {
+        return state.name();
     }
 }

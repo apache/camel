@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support;
 
 /**
  * Holds the result of processing one or more consumer records
  */
 public final class ProcessingResult {
+
     private static final ProcessingResult UNPROCESSED_RESULT
             = new ProcessingResult(false, false);
 
     private final boolean breakOnErrorHit;
     private final boolean failed;
+    private final String topic;
+    private final int partition;
+    private final long offset;
 
     /**
      * Constructs a new processing result
@@ -34,8 +37,22 @@ public final class ProcessingResult {
      * @param failed          whether processing has failed
      */
     public ProcessingResult(boolean breakOnErrorHit, boolean failed) {
+        this(breakOnErrorHit, failed, null, 0, 0);
+    }
+
+    /**
+     * Constructs a new processing result
+     *
+     * @param breakOnErrorHit break on error hit setting
+     * @param failed          whether processing has failed
+     */
+    public ProcessingResult(boolean breakOnErrorHit, boolean failed, String topic, int partition, long offset) {
         this.breakOnErrorHit = breakOnErrorHit;
         this.failed = failed;
+        this.topic = topic;
+        ;
+        this.partition = partition;
+        this.offset = offset;
     }
 
     public boolean isBreakOnErrorHit() {
@@ -44,6 +61,18 @@ public final class ProcessingResult {
 
     public boolean isFailed() {
         return failed;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public int getPartition() {
+        return partition;
+    }
+
+    public long getOffset() {
+        return offset;
     }
 
     public static ProcessingResult newUnprocessed() {
