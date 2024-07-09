@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +30,13 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -49,6 +55,10 @@ public class ListKafka extends ProcessWatchCommand {
                         description = "Show group metadata")
     boolean metadata;
 
+    @CommandLine.Option(names = { "--committed" },
+                        description = "Show committed offset (slower due to sync call to Kafka brokers)")
+    boolean committed;
+
     @CommandLine.Option(names = { "--short-uri" },
                         description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
@@ -59,6 +69,11 @@ public class ListKafka extends ProcessWatchCommand {
 
     public ListKafka(CamelJBangMain main) {
         super(main);
+    }
+
+    @Override
+    protected void autoClearScreen() {
+        // do not auto clear as can be slow when getting committed details
     }
 
     @Override
@@ -87,7 +102,23 @@ public class ListKafka extends ProcessWatchCommand {
 
                         JsonObject jo = (JsonObject) root.get("kafka");
                         if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("kafkaConsumers");
+                            if (committed) {
+                                // we ask for committed so need to do an action on-demand to get data
+                                // ensure output file is deleted before executing action
+                                File outputFile = getOutputFile(Long.toString(ph.pid()));
+                                FileUtil.deleteFile(outputFile);
+
+                                JsonObject root2 = new JsonObject();
+                                root2.put("action", "kafka");
+                                File file = getActionFile(Long.toString(ph.pid()));
+                                try {
+                                    IOHelper.writeText(root2.toJson(), file);
+                                } catch (Exception e) {
+                                    // ignore
+                                }
+                                jo = waitForOutputFile(outputFile);
+                            }
+                            JsonArray arr = jo != null ? (JsonArray) jo.get("kafkaConsumers") : null;
                             if (arr != null) {
                                 for (int i = 0; i < arr.size(); i++) {
                                     Row row = copy.copy();
@@ -110,6 +141,26 @@ public class ListKafka extends ProcessWatchCommand {
                                             row.lastTopic = wo.getString("lastTopic");
                                             row.lastPartition = wo.getIntegerOrDefault("lastPartition", 0);
                                             row.lastOffset = wo.getLongOrDefault("lastOffset", 0);
+                                            if (committed) {
+                                                JsonArray ca = (JsonArray) wo.get("committed");
+                                                if (ca != null) {
+                                                    JsonObject found = null;
+                                                    for (int k = 0; k < ca.size(); k++) {
+                                                        JsonObject co = (JsonObject) ca.get(k);
+                                                        if (row.lastTopic == null
+                                                                || (row.lastTopic.equals(co.getString("topic"))
+                                                                        && row.lastPartition == co.getInteger("partition"))) {
+                                                            found = co;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (found != null) {
+                                                        row.lastTopic = found.getString("topic");
+                                                        row.lastPartition = found.getIntegerOrDefault("partition", 0);
+                                                        row.committedOffset = found.getLongOrDefault("offset", 0);
+                                                    }
+                                                }
+                                            }
                                             rows.add(row);
                                             row = row.copy();
                                         }
@@ -125,6 +176,11 @@ public class ListKafka extends ProcessWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
+        // clear before writing new data
+        if (watch) {
+            clearScreen();
+        }
+
         if (!rows.isEmpty()) {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
@@ -136,6 +192,8 @@ public class ListKafka extends ProcessWatchCommand {
                     new Column().header("TOPIC").dataAlign(HorizontalAlign.RIGHT).with(r -> r.lastTopic),
                     new Column().header("PARTITION").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastPartition),
                     new Column().header("OFFSET").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastOffset),
+                    new Column().header("COMMITTED").visible(committed).dataAlign(HorizontalAlign.RIGHT)
+                            .with(r -> "" + r.committedOffset),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getUri),
@@ -210,6 +268,7 @@ public class ListKafka extends ProcessWatchCommand {
         String lastTopic;
         int lastPartition;
         long lastOffset;
+        long committedOffset;
 
         Row copy() {
             try {
@@ -218,6 +277,28 @@ public class ListKafka extends ProcessWatchCommand {
                 return null;
             }
         }
+    }
+
+    private JsonObject waitForOutputFile(File outputFile) {
+        JsonObject answer = null;
+
+        StopWatch watch = new StopWatch();
+        while (watch.taken() < 10000 && answer == null) {
+            try {
+                // give time for response to be ready
+                Thread.sleep(100);
+
+                if (outputFile.exists()) {
+                    FileInputStream fis = new FileInputStream(outputFile);
+                    String text = IOHelper.loadText(fis);
+                    IOHelper.close(fis);
+                    answer = (JsonObject) Jsoner.deserialize(text);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return answer;
     }
 
 }

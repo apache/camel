@@ -265,6 +265,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionTransformTask(root);
             } else if ("bean".equals(action)) {
                 doActionBeanTask(root);
+            } else if ("kafka".equals(action)) {
+                doActionKafkaTask();
             }
         } catch (Exception e) {
             // ignore
@@ -692,6 +694,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        }
+    }
+
+    private void doActionKafkaTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("kafka");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("committed", "true"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 

@@ -17,8 +17,15 @@
 package org.apache.camel.component.kafka;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
@@ -45,7 +52,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -101,11 +107,14 @@ public class KafkaFetchRecords implements Runnable {
     record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {
     }
 
-    record LastRecord(String topic, int partition, long offset) {
+    record KafkaTopicPosition(String topic, int partition, long offset) {
     }
 
     private volatile GroupMetadata groupMetadata;
-    private volatile LastRecord lastRecord;
+    private volatile KafkaTopicPosition lastRecord;
+    private final List<KafkaTopicPosition> commitRecords = new ArrayList<>();
+    private final AtomicBoolean commitRecordsRequested = new AtomicBoolean();
+    private final AtomicReference<CountDownLatch> latch = new AtomicReference<>();
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -361,6 +370,28 @@ public class KafkaFetchRecords implements Runnable {
             final KafkaRecordProcessorFacade recordProcessorFacade = createRecordProcessor();
 
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
+
+                if (commitRecordsRequested.compareAndSet(true, false)) {
+                    try {
+                        // we want to get details about last committed offsets (which MUST be done by this consumer thread)
+                        Map<TopicPartition, OffsetAndMetadata> commits = consumer.committed(consumer.assignment());
+                        commitRecords.clear();
+                        for (var e : commits.entrySet()) {
+                            KafkaTopicPosition p
+                                    = new KafkaTopicPosition(e.getKey().topic(), e.getKey().partition(), e.getValue().offset());
+                            commitRecords.add(p);
+                        }
+                        CountDownLatch count = latch.get();
+                        if (count != null) {
+                            count.countDown();
+                        }
+                    } catch (Exception e) {
+                        // ignore cannot get last commit details
+                        LOG.debug("Cannot get last offset committed from Kafka brokers due to: {}. This exception is ignored.",
+                                e.getMessage(), e);
+                    }
+                }
+
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
                 if (consumerListener != null) {
                     if (!consumerListener.afterConsume(consumer)) {
@@ -370,7 +401,7 @@ public class KafkaFetchRecords implements Runnable {
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
                 if (result != null && result.getTopic() != null) {
-                    lastRecord = new LastRecord(result.getTopic(), result.getPartition(), result.getOffset());
+                    lastRecord = new KafkaTopicPosition(result.getTopic(), result.getPartition(), result.getOffset());
                 }
                 updateTaskState();
 
@@ -663,7 +694,7 @@ public class KafkaFetchRecords implements Runnable {
         return groupMetadata;
     }
 
-    public LastRecord getLastRecord() {
+    public KafkaTopicPosition getLastRecord() {
         return lastRecord;
     }
 
@@ -673,5 +704,21 @@ public class KafkaFetchRecords implements Runnable {
 
     String getState() {
         return state.name();
+    }
+
+    CountDownLatch fetchCommitRecords() {
+        commitRecords.clear();
+        commitRecordsRequested.set(true);
+        CountDownLatch answer = new CountDownLatch(1);
+        latch.set(answer);
+        return answer;
+    }
+
+    List<KafkaTopicPosition> getCommitRecords() {
+        if (commitRecords != null) {
+            return Collections.unmodifiableList(commitRecords);
+        } else {
+            return null;
+        }
     }
 }

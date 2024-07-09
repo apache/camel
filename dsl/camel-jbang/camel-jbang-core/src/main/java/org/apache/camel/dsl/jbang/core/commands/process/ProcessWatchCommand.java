@@ -39,7 +39,7 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
         int exit;
         if (watch) {
             do {
-                clearScreen();
+                autoClearScreen();
                 exit = doProcessWatchCall();
                 if (exit == 0) {
                     // use 2-sec delay in watch mode
@@ -50,6 +50,10 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
             exit = doProcessWatchCall();
         }
         return exit;
+    }
+
+    protected void autoClearScreen() {
+        clearScreen();
     }
 
     protected void clearScreen() {
