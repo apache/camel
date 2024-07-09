@@ -28,22 +28,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "SLACK_TOKEN", matches = ".*"),
+        @EnabledIfSystemProperty(named = "SLACK_HOOK", matches = ".*")
+})
 public class SlackConsumerTest extends CamelTestSupport {
 
-    private String token;
-    private String hook;
-
-    @Override
-    public void doPreSetup() {
-        token = System.getProperty("SLACK_TOKEN");
-        hook = System.getProperty("SLACK_HOOK");
-
-        assumeCredentials();
-    }
+    private String token = System.getProperty("SLACK_TOKEN");
+    private String hook = System.getProperty("SLACK_HOOK");
 
     @Test
     public void testConsumePrefixedMessages() throws Exception {
@@ -55,11 +52,6 @@ public class SlackConsumerTest extends CamelTestSupport {
         mock.message(0).simple("${body.getText()}").isEqualTo(message);
 
         MockEndpoint.assertIsSatisfied(context);
-    }
-
-    private void assumeCredentials() {
-        assumeTrue(token != null, "Please specify a Slack access token");
-        assumeTrue(hook != null, "Please specify a Slack application webhook URL");
     }
 
     private void sendMessage(String message) throws IOException {
