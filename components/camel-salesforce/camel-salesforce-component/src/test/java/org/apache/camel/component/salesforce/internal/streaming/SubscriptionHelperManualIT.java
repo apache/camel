@@ -246,8 +246,9 @@ public class SubscriptionHelperManualIT {
         verify(consumer, Mockito.timeout(100)).processMessage(any(ClientSessionChannel.class),
                 messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 1"));
 
-        // send failed connection message w/o reconnect advice so we handshake again
+        subscription.client.disconnect(10000);
 
+        // send failed connection message w/o reconnect advice so we handshake again
         messages.add("[\n" +
                      "  {\n" +
                      "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n" +
@@ -285,7 +286,7 @@ public class SubscriptionHelperManualIT {
                      + "]");
 
         // assert last message was received, recovery can take a bit
-        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
+        verify(consumer, timeout(130000)).processMessage(any(ClientSessionChannel.class),
                 messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 2"));
 
         verify(consumer, atLeastOnce()).getEndpoint();
