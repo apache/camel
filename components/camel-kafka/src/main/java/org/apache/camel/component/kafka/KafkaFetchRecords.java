@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
 import static java.rmi.registry.LocateRegistry.getRegistry;
 
 public class KafkaFetchRecords implements Runnable {
+
     /*
      This keeps track of the state the record fetcher is. Because the Kafka consumer is not thread safe, it may take
      some time between the pause or resume request is triggered and it is actually set.
@@ -707,18 +708,16 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     CountDownLatch fetchCommitRecords() {
-        commitRecords.clear();
-        commitRecordsRequested.set(true);
+        // use a latch to wait for commit records to be ready
+        // as the consumer thread must be calling Kafka brokers to get this information
+        // so this thread need to wait for that to be complete
         CountDownLatch answer = new CountDownLatch(1);
         latch.set(answer);
+        commitRecordsRequested.set(true);
         return answer;
     }
 
     List<KafkaTopicPosition> getCommitRecords() {
-        if (commitRecords != null) {
-            return Collections.unmodifiableList(commitRecords);
-        } else {
-            return null;
-        }
+        return Collections.unmodifiableList(commitRecords);
     }
 }
