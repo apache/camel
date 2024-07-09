@@ -101,7 +101,7 @@ public class KafkaDevConsole extends AbstractDevConsole {
         try {
             latch.await(timeout, TimeUnit.MILLISECONDS);
             var answer = task.getCommitRecords();
-            LOG.info("Fetching commit offsets took: {} ms", watch.taken());
+            LOG.debug("Fetching commit offsets took: {} ms", watch.taken());
             return answer;
         } catch (Exception e) {
             // ignore
