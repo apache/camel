@@ -158,6 +158,7 @@ public class ListKafka extends ProcessWatchCommand {
                                                         row.lastTopic = found.getString("topic");
                                                         row.lastPartition = found.getIntegerOrDefault("partition", 0);
                                                         row.committedOffset = found.getLongOrDefault("offset", 0);
+                                                        row.committedEpoch = found.getLongOrDefault("epoch", 0);
                                                     }
                                                 }
                                             }
@@ -193,7 +194,7 @@ public class ListKafka extends ProcessWatchCommand {
                     new Column().header("PARTITION").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastPartition),
                     new Column().header("OFFSET").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastOffset),
                     new Column().header("COMMITTED").visible(committed).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> "" + r.committedOffset),
+                            .with(this::getCommitted),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getUri),
@@ -250,6 +251,15 @@ public class ListKafka extends ProcessWatchCommand {
         return r.state.toLowerCase(Locale.ROOT);
     }
 
+    private String getCommitted(Row r) {
+        if (r.committedEpoch > 0) {
+            String age = TimeUtils.printSince(r.committedEpoch);
+            return r.committedOffset + " (" + age + ")";
+        } else {
+            return "" + r.committedOffset;
+        }
+    }
+
     private static class Row implements Cloneable {
         String pid;
         String name;
@@ -269,6 +279,7 @@ public class ListKafka extends ProcessWatchCommand {
         int lastPartition;
         long lastOffset;
         long committedOffset;
+        long committedEpoch;
 
         Row copy() {
             try {

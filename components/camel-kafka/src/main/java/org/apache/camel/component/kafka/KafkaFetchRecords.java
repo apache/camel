@@ -108,7 +108,7 @@ public class KafkaFetchRecords implements Runnable {
     record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {
     }
 
-    record KafkaTopicPosition(String topic, int partition, long offset) {
+    record KafkaTopicPosition(String topic, int partition, long offset, int epoch) {
     }
 
     private volatile GroupMetadata groupMetadata;
@@ -379,7 +379,7 @@ public class KafkaFetchRecords implements Runnable {
                         commitRecords.clear();
                         for (var e : commits.entrySet()) {
                             KafkaTopicPosition p
-                                    = new KafkaTopicPosition(e.getKey().topic(), e.getKey().partition(), e.getValue().offset());
+                                    = new KafkaTopicPosition(e.getKey().topic(), e.getKey().partition(), e.getValue().offset(), e.getValue().leaderEpoch().orElse(0));
                             commitRecords.add(p);
                         }
                         CountDownLatch count = latch.get();
@@ -402,7 +402,7 @@ public class KafkaFetchRecords implements Runnable {
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
                 if (result != null && result.getTopic() != null) {
-                    lastRecord = new KafkaTopicPosition(result.getTopic(), result.getPartition(), result.getOffset());
+                    lastRecord = new KafkaTopicPosition(result.getTopic(), result.getPartition(), result.getOffset(), 0);
                 }
                 updateTaskState();
 

@@ -26,9 +26,9 @@ import org.apache.camel.Route;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.kafka.shaded.io.opentelemetry.proto.collector.logs.v1.LogsServiceGrpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +82,10 @@ public class KafkaDevConsole extends AbstractDevConsole {
                                 sb.append(String.format("\n        Commit Topic: %s", r.topic()));
                                 sb.append(String.format("\n        Commit Partition: %s", r.partition()));
                                 sb.append(String.format("\n        Commit Offset: %s", r.offset()));
+                                if (r.epoch() > 0) {
+                                    long delta = System.currentTimeMillis() - r.epoch();
+                                    sb.append(String.format("\n        Commit Offset Since: %s", TimeUtils.printDuration(delta, true)));
+                                }
                             }
                         }
                     }
@@ -156,6 +160,7 @@ public class KafkaDevConsole extends AbstractDevConsole {
                                 cr.put("topic", r.topic());
                                 cr.put("partition", r.partition());
                                 cr.put("offset", r.offset());
+                                cr.put("epoch", r.epoch());
                                 ca.add(cr);
                             }
                             if (!ca.isEmpty()) {
