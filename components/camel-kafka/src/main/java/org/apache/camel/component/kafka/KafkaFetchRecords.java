@@ -379,7 +379,9 @@ public class KafkaFetchRecords implements Runnable {
                         commitRecords.clear();
                         for (var e : commits.entrySet()) {
                             KafkaTopicPosition p
-                                    = new KafkaTopicPosition(e.getKey().topic(), e.getKey().partition(), e.getValue().offset(), e.getValue().leaderEpoch().orElse(0));
+                                    = new KafkaTopicPosition(
+                                            e.getKey().topic(), e.getKey().partition(), e.getValue().offset(),
+                                            e.getValue().leaderEpoch().orElse(0));
                             commitRecords.add(p);
                         }
                         CountDownLatch count = latch.get();

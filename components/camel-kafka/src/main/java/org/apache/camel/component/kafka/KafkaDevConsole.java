@@ -84,7 +84,8 @@ public class KafkaDevConsole extends AbstractDevConsole {
                                 sb.append(String.format("\n        Commit Offset: %s", r.offset()));
                                 if (r.epoch() > 0) {
                                     long delta = System.currentTimeMillis() - r.epoch();
-                                    sb.append(String.format("\n        Commit Offset Since: %s", TimeUtils.printDuration(delta, true)));
+                                    sb.append(String.format("\n        Commit Offset Since: %s",
+                                            TimeUtils.printDuration(delta, true)));
                                 }
                             }
                         }
