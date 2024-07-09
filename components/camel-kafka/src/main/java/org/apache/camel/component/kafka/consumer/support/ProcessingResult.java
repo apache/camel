@@ -45,12 +45,14 @@ public final class ProcessingResult {
      *
      * @param breakOnErrorHit break on error hit setting
      * @param failed          whether processing has failed
+     * @param topic           the topic
+     * @param partition       the partition of the topic
+     * @param offset          the consumer offset
      */
     public ProcessingResult(boolean breakOnErrorHit, boolean failed, String topic, int partition, long offset) {
         this.breakOnErrorHit = breakOnErrorHit;
         this.failed = failed;
         this.topic = topic;
-        ;
         this.partition = partition;
         this.offset = offset;
     }
