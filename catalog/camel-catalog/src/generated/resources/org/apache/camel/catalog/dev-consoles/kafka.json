@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "kafka",
+    "title": "Kafka",
+    "description": "Apache Kafka",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.kafka.KafkaDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kafka",
+    "version": "4.7.0-SNAPSHOT"
+  }
+}
+
