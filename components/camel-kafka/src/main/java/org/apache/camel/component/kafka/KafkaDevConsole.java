@@ -40,9 +40,6 @@ public class KafkaDevConsole extends AbstractDevConsole {
             if (route.getConsumer() instanceof KafkaConsumer kc) {
                 sb.append(String.format("\n    Route Id: %s", route.getRouteId()));
                 sb.append(String.format("\n    From: %s", route.getEndpoint().getEndpointUri()));
-                sb.append(
-                        String.format("\n    State: %s", getCamelContext().getRouteController().getRouteStatus(route.getId())));
-                sb.append(String.format("\n    Uptime: %s", route.getUptime()));
                 for (KafkaFetchRecords t : kc.tasks()) {
                     sb.append(String.format("\n        Worked Thread: %s", t.getThreadId()));
                     sb.append(String.format("\n        Worker State: %s", t.getState()));
@@ -81,8 +78,6 @@ public class KafkaDevConsole extends AbstractDevConsole {
                 JsonObject jo = new JsonObject();
                 jo.put("routeId", route.getRouteId());
                 jo.put("uri", route.getEndpoint().getEndpointUri());
-                jo.put("state", getCamelContext().getRouteController().getRouteStatus(route.getId()));
-                jo.put("uptime", route.getUptime());
 
                 JsonArray arr = new JsonArray();
                 jo.put("workers", arr);
