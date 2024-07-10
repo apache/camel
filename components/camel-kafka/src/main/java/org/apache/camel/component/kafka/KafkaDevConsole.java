@@ -23,6 +23,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
+import org.apache.camel.component.kafka.consumer.devconsole.DefaultMetricsCollector;
+import org.apache.camel.component.kafka.consumer.devconsole.DevConsoleMetricsCollector;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StopWatch;
@@ -58,28 +60,29 @@ public class KafkaDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    Route Id: %s", route.getRouteId()));
                 sb.append(String.format("\n    From: %s", route.getEndpoint().getEndpointUri()));
                 for (KafkaFetchRecords t : kc.tasks()) {
-                    sb.append(String.format("\n        Worked Thread: %s", t.getThreadId()));
+                    final DevConsoleMetricsCollector metricsCollector = t.getMetricsCollector();
+                    sb.append(String.format("\n        Worked Thread: %s", metricsCollector.getThreadId()));
                     sb.append(String.format("\n        Worker State: %s", t.getState()));
                     TaskHealthState hs = t.healthState();
                     if (!hs.isReady()) {
                         sb.append(String.format("\n        Worker Last Error: %s", hs.buildStateMessage()));
                     }
-                    KafkaFetchRecords.GroupMetadata meta = t.getGroupMetadata();
+                    DefaultMetricsCollector.GroupMetadata meta = metricsCollector.getGroupMetadata();
                     if (meta != null) {
                         sb.append(String.format("\n        Group Id: %s", meta.groupId()));
                         sb.append(String.format("\n        Group Instance Id: %s", meta.groupInstanceId()));
                         sb.append(String.format("\n        Member Id: %s", meta.memberId()));
                         sb.append(String.format("\n        Generation Id: %d", meta.generationId()));
                     }
-                    if (t.getLastRecord() != null) {
-                        sb.append(String.format("\n        Last Topic: %s", t.getLastRecord().topic()));
-                        sb.append(String.format("\n        Last Partition: %d", t.getLastRecord().partition()));
-                        sb.append(String.format("\n        Last Offset: %d", t.getLastRecord().offset()));
+                    if (metricsCollector.getLastRecord() != null) {
+                        sb.append(String.format("\n        Last Topic: %s", metricsCollector.getLastRecord().topic()));
+                        sb.append(String.format("\n        Last Partition: %d", metricsCollector.getLastRecord().partition()));
+                        sb.append(String.format("\n        Last Offset: %d", metricsCollector.getLastRecord().offset()));
                     }
                     if (committed) {
-                        List<KafkaFetchRecords.KafkaTopicPosition> l = fetchCommitOffsets(kc, t);
+                        List<DefaultMetricsCollector.KafkaTopicPosition> l = fetchCommitOffsets(kc, metricsCollector);
                         if (l != null) {
-                            for (KafkaFetchRecords.KafkaTopicPosition r : l) {
+                            for (DefaultMetricsCollector.KafkaTopicPosition r : l) {
                                 sb.append(String.format("\n        Commit Topic: %s", r.topic()));
                                 sb.append(String.format("\n        Commit Partition: %s", r.partition()));
                                 sb.append(String.format("\n        Commit Offset: %s", r.offset()));
@@ -99,14 +102,15 @@ public class KafkaDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    private static List<KafkaFetchRecords.KafkaTopicPosition> fetchCommitOffsets(KafkaConsumer kc, KafkaFetchRecords task) {
+    private static List<DefaultMetricsCollector.KafkaTopicPosition> fetchCommitOffsets(
+            KafkaConsumer kc, DevConsoleMetricsCollector collector) {
         StopWatch watch = new StopWatch();
 
-        CountDownLatch latch = task.fetchCommitRecords();
+        CountDownLatch latch = collector.fetchCommitRecords();
         long timeout = Math.min(kc.getEndpoint().getConfiguration().getPollTimeoutMs(), COMMITTED_TIMEOUT);
         try {
             latch.await(timeout, TimeUnit.MILLISECONDS);
-            var answer = task.getCommitRecords();
+            var answer = collector.getCommitRecords();
             LOG.debug("Fetching commit offsets took: {} ms", watch.taken());
             return answer;
         } catch (Exception e) {
@@ -134,31 +138,33 @@ public class KafkaDevConsole extends AbstractDevConsole {
                 jo.put("workers", arr);
 
                 for (KafkaFetchRecords t : kc.tasks()) {
+                    final DevConsoleMetricsCollector metricsCollector = t.getMetricsCollector();
+
                     JsonObject wo = new JsonObject();
                     arr.add(wo);
-                    wo.put("threadId", t.getThreadId());
+                    wo.put("threadId", metricsCollector.getThreadId());
                     wo.put("state", t.getState());
                     TaskHealthState hs = t.healthState();
                     if (!hs.isReady()) {
                         wo.put("lastError", hs.buildStateMessage());
                     }
-                    KafkaFetchRecords.GroupMetadata meta = t.getGroupMetadata();
+                    DefaultMetricsCollector.GroupMetadata meta = metricsCollector.getGroupMetadata();
                     if (meta != null) {
                         wo.put("groupId", meta.groupId());
                         wo.put("groupInstanceId", meta.groupInstanceId());
                         wo.put("memberId", meta.memberId());
                         wo.put("generationId", meta.generationId());
                     }
-                    if (t.getLastRecord() != null) {
-                        wo.put("lastTopic", t.getLastRecord().topic());
-                        wo.put("lastPartition", t.getLastRecord().partition());
-                        wo.put("lastOffset", t.getLastRecord().offset());
+                    if (metricsCollector.getLastRecord() != null) {
+                        wo.put("lastTopic", metricsCollector.getLastRecord().topic());
+                        wo.put("lastPartition", metricsCollector.getLastRecord().partition());
+                        wo.put("lastOffset", metricsCollector.getLastRecord().offset());
                     }
                     if (committed) {
-                        List<KafkaFetchRecords.KafkaTopicPosition> l = fetchCommitOffsets(kc, t);
+                        List<DefaultMetricsCollector.KafkaTopicPosition> l = fetchCommitOffsets(kc, metricsCollector);
                         if (l != null) {
                             JsonArray ca = new JsonArray();
-                            for (KafkaFetchRecords.KafkaTopicPosition r : l) {
+                            for (DefaultMetricsCollector.KafkaTopicPosition r : l) {
                                 JsonObject cr = new JsonObject();
                                 cr.put("topic", r.topic());
                                 cr.put("partition", r.partition());

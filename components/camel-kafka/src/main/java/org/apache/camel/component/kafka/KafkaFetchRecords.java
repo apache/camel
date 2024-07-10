@@ -17,21 +17,17 @@
 package org.apache.camel.component.kafka;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManagers;
+import org.apache.camel.component.kafka.consumer.devconsole.DefaultMetricsCollector;
+import org.apache.camel.component.kafka.consumer.devconsole.DevConsoleMetricsCollector;
+import org.apache.camel.component.kafka.consumer.devconsole.NoopMetricsCollector;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaErrorStrategies;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
@@ -52,7 +48,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -62,8 +57,6 @@ import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.rmi.registry.LocateRegistry.getRegistry;
 
 public class KafkaFetchRecords implements Runnable {
 
@@ -105,19 +98,7 @@ public class KafkaFetchRecords implements Runnable {
     private volatile boolean connected; // this is the state (connected or not)
     private volatile State state = State.RUNNING;
 
-    // dev-console records and state
-    record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {
-    }
-
-    record KafkaTopicPosition(String topic, int partition, long offset, int epoch) {
-    }
-
-    private final boolean devConsoleEnabled;
-    private volatile GroupMetadata groupMetadata;
-    private volatile KafkaTopicPosition lastRecord;
-    private final List<KafkaTopicPosition> commitRecords = new ArrayList<>();
-    private final AtomicBoolean commitRecordsRequested = new AtomicBoolean();
-    private final AtomicReference<CountDownLatch> latch = new AtomicReference<>();
+    private final DevConsoleMetricsCollector metricsCollector;
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -129,7 +110,13 @@ public class KafkaFetchRecords implements Runnable {
         this.consumerListener = consumerListener;
         this.threadId = topicName + "-" + "Thread " + id;
         this.kafkaProps = kafkaProps;
-        this.devConsoleEnabled = kafkaConsumer.getEndpoint().getCamelContext().isDevConsole();
+        final boolean devConsoleEnabled = kafkaConsumer.getEndpoint().getCamelContext().isDevConsole();
+
+        if (devConsoleEnabled) {
+            metricsCollector = new DefaultMetricsCollector(threadId);
+        } else {
+            metricsCollector = new NoopMetricsCollector();
+        }
     }
 
     @Override
@@ -191,13 +178,8 @@ public class KafkaFetchRecords implements Runnable {
                 setConnected(true);
             }
 
-            if (devConsoleEnabled && isConnected()) {
-                // store metadata
-                ConsumerGroupMetadata meta = consumer.groupMetadata();
-                if (meta != null) {
-                    groupMetadata = new GroupMetadata(
-                            meta.groupId(), meta.groupInstanceId().orElse(""), meta.memberId(), meta.generationId());
-                }
+            if (isConnected()) {
+                metricsCollector.storeMetadata(consumer);
             }
 
             setLastError(null);
@@ -377,9 +359,7 @@ public class KafkaFetchRecords implements Runnable {
 
                 // if dev-console is in use then a request to fetch the commit offsets can be requested on-demand
                 // which must happen using this polling thread, so we use the commitRecordsRequested to trigger this
-                if (devConsoleEnabled) {
-                    collectCommitMetrics();
-                }
+                metricsCollector.collectCommitMetrics(consumer);
 
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
                 if (consumerListener != null) {
@@ -389,9 +369,8 @@ public class KafkaFetchRecords implements Runnable {
                 }
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
-                if (devConsoleEnabled && result != null && result.getTopic() != null) {
-                    // dev-console uses information from last processed record
-                    lastRecord = new KafkaTopicPosition(result.getTopic(), result.getPartition(), result.getOffset(), 0);
+                if (result != null && result.getTopic() != null) {
+                    metricsCollector.storeLastRecord(result);
                 }
                 updateTaskState();
 
@@ -445,31 +424,6 @@ public class KafkaFetchRecords implements Runnable {
                 safeConsumerClose();
             }
             lock.unlock();
-        }
-    }
-
-    private void collectCommitMetrics() {
-        if (commitRecordsRequested.compareAndSet(true, false)) {
-            try {
-                Map<TopicPartition, OffsetAndMetadata> commits = consumer.committed(consumer.assignment());
-                commitRecords.clear();
-                for (var e : commits.entrySet()) {
-                    KafkaTopicPosition p
-                            = new KafkaTopicPosition(
-                            e.getKey().topic(), e.getKey().partition(), e.getValue().offset(),
-                            e.getValue().leaderEpoch().orElse(0));
-                    commitRecords.add(p);
-                }
-                CountDownLatch count = latch.get();
-                if (count != null) {
-                    count.countDown();
-                }
-            } catch (Exception e) {
-                // ignore cannot get last commit details
-                LOG.debug(
-                        "Cannot get last offset committed from Kafka brokers due to: {}. This exception is ignored.",
-                        e.getMessage(), e);
-            }
         }
     }
 
@@ -701,36 +655,15 @@ public class KafkaFetchRecords implements Runnable {
         this.lastError = lastError;
     }
 
-    // dev console information
-    // ------------------------------------------------------------------------
-
-    GroupMetadata getGroupMetadata() {
-        return groupMetadata;
-    }
-
-    KafkaTopicPosition getLastRecord() {
-        return lastRecord;
-    }
-
-    String getThreadId() {
-        return threadId;
+    /**
+     * Gets the metrics collector for the dev console. Defaults to the {@link NoopMetricsCollector} unless the dev
+     * console is enabled
+     */
+    public DevConsoleMetricsCollector getMetricsCollector() {
+        return metricsCollector;
     }
 
     String getState() {
         return state.name();
-    }
-
-    List<KafkaTopicPosition> getCommitRecords() {
-        return Collections.unmodifiableList(commitRecords);
-    }
-
-    CountDownLatch fetchCommitRecords() {
-        // use a latch to wait for commit records to be ready
-        // as the consumer thread must be calling Kafka brokers to get this information
-        // so this thread need to wait for that to be complete
-        CountDownLatch answer = new CountDownLatch(1);
-        latch.set(answer);
-        commitRecordsRequested.set(true);
-        return answer;
     }
 }
