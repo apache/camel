@@ -161,6 +161,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private String oauth2ClientSecret;
     @UriParam(label = "producer,security", description = "OAuth2 Token endpoint")
     private String oauth2TokenEndpoint;
+    @UriParam(label = "producer,security", description = "OAuth2 scope")
+    private String oauth2Scope;
     @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
     private String authDomain;
     @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
@@ -832,4 +834,14 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
         this.oauth2TokenEndpoint = oauth2TokenEndpoint;
     }
 
+    public String getOauth2Scope() {
+        return oauth2Scope;
+    }
+
+    /**
+     * OAuth2 scope
+     */
+    public void setOauth2Scope(String oauth2Scope) {
+        this.oauth2Scope = oauth2Scope;
+    }
 }

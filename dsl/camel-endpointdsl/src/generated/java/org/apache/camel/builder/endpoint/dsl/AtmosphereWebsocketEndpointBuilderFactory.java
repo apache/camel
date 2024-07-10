@@ -1123,48 +1123,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
-        /**
-         * OAuth2 client id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param oauth2ClientId the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointProducerBuilder oauth2ClientId(String oauth2ClientId) {
-            doSetProperty("oauth2ClientId", oauth2ClientId);
-            return this;
-        }
-        /**
-         * OAuth2 client secret.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param oauth2ClientSecret the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointProducerBuilder oauth2ClientSecret(String oauth2ClientSecret) {
-            doSetProperty("oauth2ClientSecret", oauth2ClientSecret);
-            return this;
-        }
-        /**
-         * OAuth2 Token endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param oauth2TokenEndpoint the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointProducerBuilder oauth2TokenEndpoint(String oauth2TokenEndpoint) {
-            doSetProperty("oauth2TokenEndpoint", oauth2TokenEndpoint);
-            return this;
-        }
     }
 
     /**
