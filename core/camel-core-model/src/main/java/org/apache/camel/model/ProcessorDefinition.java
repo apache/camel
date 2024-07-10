@@ -4080,7 +4080,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * This enables pausable consumers, which allows the consumer to pause work until a certain condition allows it to
-     * resume operation
+     * resume operation. Please note that the check method is called only if the consumer has been paused due to an
+     * error on the routh.
      *
      * @param  consumerListener the consumer listener to use for consumer events
      * @return                  the builder
@@ -4095,7 +4096,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * This enables pausable consumers, which allows the consumer to pause work until a certain condition allows it to
-     * resume operation
+     * resume operation. Please note that the check method is called only if the consumer has been paused due to an
+     * error on the routh.
      *
      * @param  consumerListenerRef the resume strategy
      * @return                     the builder
@@ -4110,7 +4112,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * This enables pausable consumers, which allows the consumer to pause work until a certain condition allows it to
-     * resume operation
+     * resume operation. Please note that the check method is called only if the consumer has been paused due to an
+     * error on the routh.
      *
      * @param  consumerListenerRef the resume strategy
      * @return                     the builder

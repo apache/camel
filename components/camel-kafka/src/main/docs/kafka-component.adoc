@@ -439,8 +439,10 @@ from("kafka:topic")
 
 In this example, consuming messages can pause (by calling the Kafka's Consumer pause method) if the result from `canContinue` is false.
 
-The pausable EIP is meant to be used as a support mechanism when there is an exception somewhere in the route that prevents the exchange from being processed. More specifically,
+IMPORTANT: The pausable EIP is meant to be used as a support mechanism when *there is an exception* somewhere in the route that prevents the exchange from being processed. More specifically,
 the check called by the `pausable` EIP should be used to test for transient conditions preventing the exchange from being processed.
+
+NOTE: most users should prefer using the xref:manual::route-policy.adoc[RoutePolicy], which offers better control of the route.
 
 == Kafka Headers propagation
 
