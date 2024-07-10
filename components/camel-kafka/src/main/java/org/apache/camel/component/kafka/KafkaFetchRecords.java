@@ -116,6 +116,7 @@ public class KafkaFetchRecords implements Runnable {
     private final List<KafkaTopicPosition> commitRecords = new ArrayList<>();
     private final AtomicBoolean commitRecordsRequested = new AtomicBoolean();
     private final AtomicReference<CountDownLatch> latch = new AtomicReference<>();
+    private final boolean devConsoleEnabled;
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -127,6 +128,7 @@ public class KafkaFetchRecords implements Runnable {
         this.consumerListener = consumerListener;
         this.threadId = topicName + "-" + "Thread " + id;
         this.kafkaProps = kafkaProps;
+        this.devConsoleEnabled = kafkaConsumer.getEndpoint().getCamelContext().isDevConsole();
     }
 
     @Override
@@ -372,9 +374,10 @@ public class KafkaFetchRecords implements Runnable {
 
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
 
-                if (commitRecordsRequested.compareAndSet(true, false)) {
+                // if dev-console is in use then a request to fetch the commit offsets can be requested on-demand
+                // which must happen using this polling thread, so we use the commitRecordsRequested to trigger this
+                if (devConsoleEnabled && commitRecordsRequested.compareAndSet(true, false)) {
                     try {
-                        // we want to get details about last committed offsets (which MUST be done by this consumer thread)
                         Map<TopicPartition, OffsetAndMetadata> commits = consumer.committed(consumer.assignment());
                         commitRecords.clear();
                         for (var e : commits.entrySet()) {
