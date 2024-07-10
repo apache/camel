@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support.subcription;
 
 import org.apache.kafka.clients.consumer.Consumer;
@@ -24,6 +23,7 @@ import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
  * A pluggable adapter for handling custom subscriptions
  */
 public interface SubscribeAdapter {
+
     /**
      * Handle the subscription to a Kafka topic
      *

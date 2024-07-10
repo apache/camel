@@ -36,5 +36,8 @@ public interface PartitionAssignmentAdapter {
      */
     void setConsumer(Consumer<?, ?> consumer);
 
+    /**
+     * Callback for custom logic when partitions has been assigned.
+     */
     void handlePartitionAssignment();
 }

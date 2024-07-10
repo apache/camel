@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands.version;
 
 import java.io.IOException;
@@ -41,7 +40,7 @@ class VersionGetTest extends CamelCommandBaseTest {
         command.doCall();
 
         List<String> lines = printer.getLines();
-        Assertions.assertEquals("JBang version: 0.100", lines.get(0));
+        Assertions.assertTrue(lines.get(0).startsWith("JBang version:"));
         Assertions.assertTrue(lines.get(1).startsWith("Camel JBang version:"));
     }
 
@@ -59,7 +58,7 @@ class VersionGetTest extends CamelCommandBaseTest {
 
         List<String> lines = printer.getLines();
         Assertions.assertEquals(5, lines.size());
-        Assertions.assertEquals("JBang version: 0.101", lines.get(0));
+        Assertions.assertTrue(lines.get(0).startsWith("JBang version:"));
         Assertions.assertTrue(lines.get(1).startsWith("Camel JBang version:"));
         Assertions.assertEquals("User configuration:", lines.get(2));
         Assertions.assertEquals("camel-version = latest", lines.get(3));

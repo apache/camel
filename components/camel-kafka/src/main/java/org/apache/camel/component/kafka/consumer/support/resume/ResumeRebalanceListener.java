@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support.resume;
 
 import java.util.Collection;
@@ -29,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResumeRebalanceListener implements ConsumerRebalanceListener {
+
     private static final Logger LOG = LoggerFactory.getLogger(ResumeRebalanceListener.class);
 
     private final String threadId;

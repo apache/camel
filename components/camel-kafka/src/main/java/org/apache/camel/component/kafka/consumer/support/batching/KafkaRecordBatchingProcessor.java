@@ -147,7 +147,6 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         // None of the states provided by the processing result are relevant for batch processing. We can simply return the
         // default state
         return ProcessingResult.newUnprocessed();
-
     }
 
     private boolean hasExpiredRecords(ConsumerRecords<Object, Object> consumerRecords) {
