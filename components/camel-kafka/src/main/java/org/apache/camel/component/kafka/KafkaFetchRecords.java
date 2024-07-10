@@ -377,26 +377,8 @@ public class KafkaFetchRecords implements Runnable {
 
                 // if dev-console is in use then a request to fetch the commit offsets can be requested on-demand
                 // which must happen using this polling thread, so we use the commitRecordsRequested to trigger this
-                if (devConsoleEnabled && commitRecordsRequested.compareAndSet(true, false)) {
-                    try {
-                        Map<TopicPartition, OffsetAndMetadata> commits = consumer.committed(consumer.assignment());
-                        commitRecords.clear();
-                        for (var e : commits.entrySet()) {
-                            KafkaTopicPosition p
-                                    = new KafkaTopicPosition(
-                                            e.getKey().topic(), e.getKey().partition(), e.getValue().offset(),
-                                            e.getValue().leaderEpoch().orElse(0));
-                            commitRecords.add(p);
-                        }
-                        CountDownLatch count = latch.get();
-                        if (count != null) {
-                            count.countDown();
-                        }
-                    } catch (Exception e) {
-                        // ignore cannot get last commit details
-                        LOG.debug("Cannot get last offset committed from Kafka brokers due to: {}. This exception is ignored.",
-                                e.getMessage(), e);
-                    }
+                if (devConsoleEnabled) {
+                    collectCommitMetrics();
                 }
 
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
@@ -463,6 +445,31 @@ public class KafkaFetchRecords implements Runnable {
                 safeConsumerClose();
             }
             lock.unlock();
+        }
+    }
+
+    private void collectCommitMetrics() {
+        if (commitRecordsRequested.compareAndSet(true, false)) {
+            try {
+                Map<TopicPartition, OffsetAndMetadata> commits = consumer.committed(consumer.assignment());
+                commitRecords.clear();
+                for (var e : commits.entrySet()) {
+                    KafkaTopicPosition p
+                            = new KafkaTopicPosition(
+                            e.getKey().topic(), e.getKey().partition(), e.getValue().offset(),
+                            e.getValue().leaderEpoch().orElse(0));
+                    commitRecords.add(p);
+                }
+                CountDownLatch count = latch.get();
+                if (count != null) {
+                    count.countDown();
+                }
+            } catch (Exception e) {
+                // ignore cannot get last commit details
+                LOG.debug(
+                        "Cannot get last offset committed from Kafka brokers due to: {}. This exception is ignored.",
+                        e.getMessage(), e);
+            }
         }
     }
 
