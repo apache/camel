@@ -118,11 +118,11 @@ public class ListService extends ProcessWatchCommand {
                             .with(r -> r.name),
                     new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
                     new Column().header("DIR").dataAlign(HorizontalAlign.LEFT).with(r -> r.direction),
+                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
                     new Column().header("PROTOCOL").dataAlign(HorizontalAlign.LEFT).with(this::getProtocol),
                     new Column().header("SERVICE").dataAlign(HorizontalAlign.LEFT).with(this::getService),
                     new Column().header("METADATA").visible(metadata).dataAlign(HorizontalAlign.LEFT).with(this::getMetadata),
                     new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.hits),
-                    new Column().header("ID").dataAlign(HorizontalAlign.RIGHT).with(this::getRouteId),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getUri),
