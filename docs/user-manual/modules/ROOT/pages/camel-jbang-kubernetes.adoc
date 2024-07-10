@@ -454,15 +454,15 @@ camel kubernetes export Sample.java --config [key]=[value] --resource [key]=[val
 
 The options expect the following syntax:
 
-[cols="2m,1m,5a"]
+[cols="2m,5a"]
 |===
 |Option | Syntax
 
 | config
-| Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).
+| Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap\|secret]:name[/key], where name represents the configmap or secret name and key optionally represents the configmap or secret key to be filtered).
 
 | resource
-| Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).
+| Add a runtime resource from a Configmap or a Secret (syntax: [configmap\|secret]:name[/key][@path], where name represents the configmap or secret name, key optionally represents the configmap or secret key to be filtered and path represents the destination path).
 
 | volume
 | Mount a volume into the integration container, for instance "--volume pvcname:/container/path".
