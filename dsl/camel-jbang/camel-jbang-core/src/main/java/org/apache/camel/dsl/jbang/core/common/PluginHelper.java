@@ -90,7 +90,7 @@ public final class PluginHelper {
                 }
 
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
-                if (!firstVersion.isBlank()) {
+                if (!version.isBlank() && !firstVersion.isBlank()) {
                     versionCheck(main, version, firstVersion, command);
                 }
 

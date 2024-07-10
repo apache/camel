@@ -17,9 +17,6 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
@@ -28,7 +25,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
-import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,7 +97,4 @@ class KubernetesRunTest extends KubernetesBaseTest {
         return command;
     }
 
-    private InputStream getKubernetesManifestAsStream(String printerOutput) {
-        return new ByteArrayInputStream(StringHelper.after(printerOutput, "---").getBytes(StandardCharsets.UTF_8));
-    }
 }

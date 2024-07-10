@@ -23,7 +23,7 @@ import org.apache.camel.v1.Pipe;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class BindTest extends KubeBaseTest {
+class BindTest extends CamelKBaseTest {
 
     @Test
     public void shouldCreatePipe() throws Exception {
@@ -34,7 +34,7 @@ class BindTest extends KubeBaseTest {
         Assertions.assertEquals("Pipe timer-to-http created", printer.getOutput());
 
         Pipe created = kubernetesClient.resources(Pipe.class).withName("timer-to-http").get();
-        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL));
+        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(CamelKCommand.OPERATOR_ID_LABEL));
     }
 
     @Test
@@ -53,7 +53,7 @@ class BindTest extends KubeBaseTest {
         Assertions.assertEquals("Pipe timer-to-log updated", printer.getOutput());
 
         Pipe created = kubernetesClient.resources(Pipe.class).withName("timer-to-log").get();
-        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL));
+        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(CamelKCommand.OPERATOR_ID_LABEL));
     }
 
     @Test

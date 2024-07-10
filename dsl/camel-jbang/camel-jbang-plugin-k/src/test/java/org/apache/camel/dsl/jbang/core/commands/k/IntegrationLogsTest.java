@@ -26,7 +26,7 @@ import org.apache.camel.v1.Integration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class IntegrationLogsTest extends KubeBaseTest {
+class IntegrationLogsTest extends CamelKBaseTest {
 
     @Test
     public void shouldHandleIntegrationsNotFound() throws Exception {
@@ -45,7 +45,7 @@ class IntegrationLogsTest extends KubeBaseTest {
         Pod pod = new PodBuilder()
                 .withNewMetadata()
                 .withName(integration.getMetadata().getName())
-                .withLabels(Collections.singletonMap(KubeCommand.INTEGRATION_LABEL, integration.getMetadata().getName()))
+                .withLabels(Collections.singletonMap(CamelKCommand.INTEGRATION_LABEL, integration.getMetadata().getName()))
                 .endMetadata()
                 .withNewStatus()
                 .withPhase("Running")
