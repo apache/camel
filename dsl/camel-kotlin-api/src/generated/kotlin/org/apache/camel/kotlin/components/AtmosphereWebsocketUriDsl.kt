@@ -469,25 +469,4 @@ public class AtmosphereWebsocketUriDsl(
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
-
-  /**
-   * OAuth2 client id
-   */
-  public fun oauth2ClientId(oauth2ClientId: String) {
-    it.property("oauth2ClientId", oauth2ClientId)
-  }
-
-  /**
-   * OAuth2 client secret
-   */
-  public fun oauth2ClientSecret(oauth2ClientSecret: String) {
-    it.property("oauth2ClientSecret", oauth2ClientSecret)
-  }
-
-  /**
-   * OAuth2 Token endpoint
-   */
-  public fun oauth2TokenEndpoint(oauth2TokenEndpoint: String) {
-    it.property("oauth2TokenEndpoint", oauth2TokenEndpoint)
-  }
 }

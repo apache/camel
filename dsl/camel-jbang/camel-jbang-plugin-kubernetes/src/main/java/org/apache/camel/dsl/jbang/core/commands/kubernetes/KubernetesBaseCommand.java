@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.KubernetesResourceList;
@@ -30,10 +30,12 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
 /**
- * Bas command supports Kubernetes client related options such as namespace or custom kube config option. Automatically
+ * Base command supports Kubernetes client related options such as namespace or custom kube config option. Automatically
  * applies the options to the Kubernetes client instance that is being used to run commands.
  */
-abstract class KubeBaseCommand extends CamelCommand {
+public abstract class KubernetesBaseCommand extends CamelCommand {
+
+    static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
     @CommandLine.Option(names = { "--kube-config" },
                         description = "Path to the kube config file to initialize Kubernetes client")
@@ -44,7 +46,7 @@ abstract class KubeBaseCommand extends CamelCommand {
 
     private KubernetesClient kubernetesClient;
 
-    public KubeBaseCommand(CamelJBangMain main) {
+    public KubernetesBaseCommand(CamelJBangMain main) {
         super(main);
     }
 
@@ -101,7 +103,7 @@ abstract class KubeBaseCommand extends CamelCommand {
      *
      * @param kubernetesClient
      */
-    KubeBaseCommand withClient(KubernetesClient kubernetesClient) {
+    public KubernetesBaseCommand withClient(KubernetesClient kubernetesClient) {
         this.kubernetesClient = kubernetesClient;
         return this;
     }

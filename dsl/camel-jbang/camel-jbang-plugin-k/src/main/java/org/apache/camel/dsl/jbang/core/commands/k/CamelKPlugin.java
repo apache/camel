@@ -22,11 +22,11 @@ import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-k", firstVersion = "4.4.0")
-public class KubePlugin implements Plugin {
+public class CamelKPlugin implements Plugin {
 
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new picocli.CommandLine(new KubeCommand(main))
+        var cmd = new picocli.CommandLine(new CamelKCommand(main))
                 .addSubcommand(Agent.ID, new picocli.CommandLine(new Agent(main)))
                 .addSubcommand("get", new picocli.CommandLine(new IntegrationGet(main)))
                 .addSubcommand("run", new picocli.CommandLine(new IntegrationRun(main)))

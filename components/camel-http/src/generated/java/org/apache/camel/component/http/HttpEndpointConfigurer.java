@@ -89,6 +89,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "oauth2ClientId": target.setOauth2ClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2clientsecret":
         case "oauth2ClientSecret": target.setOauth2ClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2scope":
+        case "oauth2Scope": target.setOauth2Scope(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2tokenendpoint":
         case "oauth2TokenEndpoint": target.setOauth2TokenEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "okstatuscoderange":
@@ -202,6 +204,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "oauth2ClientId": return java.lang.String.class;
         case "oauth2clientsecret":
         case "oauth2ClientSecret": return java.lang.String.class;
+        case "oauth2scope":
+        case "oauth2Scope": return java.lang.String.class;
         case "oauth2tokenendpoint":
         case "oauth2TokenEndpoint": return java.lang.String.class;
         case "okstatuscoderange":
@@ -316,6 +320,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "oauth2ClientId": return target.getOauth2ClientId();
         case "oauth2clientsecret":
         case "oauth2ClientSecret": return target.getOauth2ClientSecret();
+        case "oauth2scope":
+        case "oauth2Scope": return target.getOauth2Scope();
         case "oauth2tokenendpoint":
         case "oauth2TokenEndpoint": return target.getOauth2TokenEndpoint();
         case "okstatuscoderange":

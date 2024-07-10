@@ -265,6 +265,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionTransformTask(root);
             } else if ("bean".equals(action)) {
                 doActionBeanTask(root);
+            } else if ("kafka".equals(action)) {
+                doActionKafkaTask();
             }
         } catch (Exception e) {
             // ignore
@@ -610,6 +612,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                                 .getMap("exception"));
                 IOHelper.writeText(jo.toJson(), outputFile);
             }
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -625,6 +629,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     Map.of("filter", filter, "limit", limit, "browse", browse));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -635,6 +641,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -646,6 +654,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stacktrace", stacktrace));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -661,6 +671,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                             Map.of("filter", filter, "format", format, "uriAsParameters", uriAsParameters));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -672,6 +684,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -682,6 +696,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -692,6 +708,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionKafkaTask() throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("kafka");
+        if (dc != null) {
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("committed", "true"));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -738,6 +768,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     Map.of("command", cmd, "breakpoint", bp, "history", history));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
         }
     }
 
@@ -1014,6 +1046,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     JsonObject json = (JsonObject) dc19.call(DevConsole.MediaType.JSON);
                     if (json != null && !json.isEmpty()) {
                         root.put("rests", json);
+                    }
+                }
+                DevConsole dc20 = dcr.resolveById("kafka");
+                if (dc20 != null) {
+                    JsonObject json = (JsonObject) dc20.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("kafka", json);
                     }
                 }
             }

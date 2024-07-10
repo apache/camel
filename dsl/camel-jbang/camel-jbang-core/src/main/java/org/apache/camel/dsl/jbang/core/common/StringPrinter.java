@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,8 +23,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.camel.dsl.jbang.core.common.Printer;
 
 public class StringPrinter implements Printer {
 

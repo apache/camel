@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -254,6 +255,10 @@ public class KafkaConsumer extends DefaultConsumer
     @ManagedAttribute(description = "Whether the Kafka client is currently paused")
     public boolean isKafkaPaused() {
         return tasks.stream().allMatch(KafkaFetchRecords::isPaused);
+    }
+
+    protected List<KafkaFetchRecords> tasks() {
+        return Collections.unmodifiableList(tasks);
     }
 
     @Override

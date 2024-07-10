@@ -20,8 +20,8 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,6 +54,9 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.Source;
+import org.apache.camel.dsl.jbang.core.common.SourceHelper;
+import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
@@ -895,7 +898,7 @@ public class Run extends CamelCommand {
         eq.files = this.files;
         eq.gav = this.gav;
         if (eq.gav == null) {
-            eq.gav = "org.apache.camel:jbang-run-dummy:1.0-SNAPSHOT";
+            eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
         if (eq.dependencies == null) {
@@ -963,7 +966,7 @@ public class Run extends CamelCommand {
         eq.files = this.files;
         eq.gav = this.gav;
         if (eq.gav == null) {
-            eq.gav = "org.apache.camel:jbang-run-dummy:1.0-SNAPSHOT";
+            eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
         if (eq.dependencies == null) {
@@ -1548,28 +1551,27 @@ public class Run extends CamelCommand {
 
         String ext2 = FileUtil.onlyExt(file, true);
         if (ext2 != null) {
-            boolean github = file.startsWith("github:") || file.startsWith("https://github.com/")
-                    || file.startsWith("https://gist.github.com/");
+            SourceScheme sourceScheme = SourceScheme.fromUri(file);
             // special for yaml or xml, as we need to check if they have camel or not
-            if (!github && ("xml".equals(ext2) || "yaml".equals(ext2))) {
+            if (!sourceScheme.isRemote() && ("xml".equals(ext2) || "yaml".equals(ext2))) {
                 // load content into memory
-                try (FileInputStream fis = new FileInputStream(file)) {
-                    if ("xml".equals(ext2)) {
-                        XmlStreamDetector detector = new XmlStreamDetector(fis);
-                        XmlStreamInfo info = detector.information();
-                        if (!info.isValid()) {
-                            return false;
-                        }
-                        return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
-                    } else {
-                        String data = IOHelper.loadText(fis);
-                        // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
-                        return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
-                                || data.contains("- rest:") || data.contains("- beans:")
-                                || data.contains("KameletBinding")
-                                || data.contains("Pipe")
-                                || data.contains("kind: Integration");
+                Source source = SourceHelper.resolveSource(file);
+                if ("xml".equals(ext2)) {
+                    XmlStreamDetector detector = new XmlStreamDetector(
+                            new ByteArrayInputStream(source.content().getBytes(StandardCharsets.UTF_8)));
+                    XmlStreamInfo info = detector.information();
+                    if (!info.isValid()) {
+                        return false;
                     }
+                    return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
+                } else {
+                    // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
+                    return source.content().contains("- from:") || source.content().contains("- route:")
+                            || source.content().contains("- route-configuration:")
+                            || source.content().contains("- rest:") || source.content().contains("- beans:")
+                            || source.content().contains("KameletBinding")
+                            || source.content().contains("Pipe")
+                            || source.content().contains("kind: Integration");
                 }
             }
             // if the ext is an accepted file then we include it as a potential route
@@ -1749,7 +1751,7 @@ public class Run extends CamelCommand {
         @Override
         public void onDownloadDependency(String groupId, String artifactId, String version) {
             String line = "mvn:" + groupId + ":" + artifactId;
-            if (version != null) {
+            if (ObjectHelper.isNotEmpty(version)) {
                 line += ":" + version;
             }
             if (!downloaded.contains(line)) {

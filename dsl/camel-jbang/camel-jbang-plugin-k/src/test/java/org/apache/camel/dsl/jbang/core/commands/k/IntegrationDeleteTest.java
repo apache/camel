@@ -23,7 +23,7 @@ import org.apache.camel.v1.Integration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class IntegrationDeleteTest extends KubeBaseTest {
+class IntegrationDeleteTest extends CamelKBaseTest {
 
     @Test
     public void shouldVerifyArguments() throws Exception {

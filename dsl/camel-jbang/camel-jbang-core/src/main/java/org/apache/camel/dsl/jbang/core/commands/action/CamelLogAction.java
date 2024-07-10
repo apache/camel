@@ -383,8 +383,13 @@ public class CamelLogAction extends ActionBaseCommand {
             }
         }
         if (find != null || grep != null) {
-            String before = StringHelper.before(line, "---");
-            String after = StringHelper.after(line, "---");
+            boolean dashes = line.contains(" --- ");
+            String before = null;
+            String after = line;
+            if (dashes) {
+                before = StringHelper.before(line, "---");
+                after = StringHelper.after(line, "---", line);
+            }
             if (find != null) {
                 for (String f : find) {
                     after = after.replaceAll("(?i)" + f, findAnsi);
@@ -395,7 +400,7 @@ public class CamelLogAction extends ActionBaseCommand {
                     after = after.replaceAll("(?i)" + g, findAnsi);
                 }
             }
-            line = before + "---" + after;
+            line = before != null ? before + "---" + after : after;
         }
         if (loggingColor) {
             AnsiConsole.out().println(line);
@@ -463,13 +468,14 @@ public class CamelLogAction extends ActionBaseCommand {
         // the log can be in color or not so we need to unescape always
         line = unescapeAnsi(line);
         String ts = StringHelper.before(line, "  ");
-
-        SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_MAIN);
-        try {
-            Date row = sdf.parse(ts);
-            return row.compareTo(limit) >= 0;
-        } catch (ParseException e) {
-            // ignore
+        if (ts != null && !ts.isBlank()) {
+            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_MAIN);
+            try {
+                Date row = sdf.parse(ts);
+                return row.compareTo(limit) >= 0;
+            } catch (ParseException e) {
+                // ignore
+            }
         }
         return false;
     }
@@ -480,7 +486,7 @@ public class CamelLogAction extends ActionBaseCommand {
         }
         // the log can be in color or not so we need to unescape always
         line = unescapeAnsi(line);
-        String after = StringHelper.after(line, "---");
+        String after = StringHelper.after(line, "---", line);
         for (String g : grep) {
             boolean m = Pattern.compile("(?i)" + g).matcher(after).find();
             if (m) {

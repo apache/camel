@@ -625,6 +625,20 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth2 scope.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2Scope the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2Scope(String oauth2Scope) {
+            doSetProperty("oauth2Scope", oauth2Scope);
+            return this;
+        }
+        /**
          * OAuth2 Token endpoint.
          * 
          * The option is a: <code>java.lang.String</code> type.

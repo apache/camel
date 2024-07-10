@@ -20,10 +20,13 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.Properties;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
+import org.apache.camel.util.FileUtil;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",
@@ -47,9 +50,9 @@ public class Export extends ExportBaseCommand {
             System.err.println("The runtime option must be specified");
             return 1;
         }
+
         if (gav == null) {
-            System.err.println("The gav option must be specified");
-            return 1;
+            gav = "org.example.project:%s:%s".formatted(getProjectName(), getVersion());
         }
 
         switch (runtime) {
@@ -144,6 +147,33 @@ public class Export extends ExportBaseCommand {
         cmd.ignoreLoadingError = this.ignoreLoadingError;
         // run export
         return cmd.export();
+    }
+
+    protected String getProjectName() {
+        if (gav != null) {
+            String[] ids = gav.split(":");
+            if (ids.length > 1) {
+                return ids[1]; // artifactId
+            }
+        }
+
+        if (!files.isEmpty()) {
+            return FileUtil.onlyName(SourceScheme.onlyName(files.get(0)));
+        }
+
+        throw new RuntimeCamelException(
+                "Failed to resolve project name - please provide --gav option or at least one source file");
+    }
+
+    protected String getVersion() {
+        if (gav != null) {
+            String[] ids = gav.split(":");
+            if (ids.length > 2) {
+                return ids[2]; // g:a:v version
+            }
+        }
+
+        return "1.0-SNAPSHOT";
     }
 
     public Comparator<MavenGav> mavenGavComparator() {

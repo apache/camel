@@ -25,7 +25,7 @@ import org.apache.camel.v1.Integration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class IntegrationRunTest extends KubeBaseTest {
+class IntegrationRunTest extends CamelKBaseTest {
 
     @Test
     public void shouldHandleMissingSourceFile() throws Exception {
@@ -43,7 +43,7 @@ class IntegrationRunTest extends KubeBaseTest {
         Assertions.assertEquals("Integration route created", printer.getOutput());
 
         Integration created = kubernetesClient.resources(Integration.class).withName("route").get();
-        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL));
+        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(CamelKCommand.OPERATOR_ID_LABEL));
     }
 
     @Test
@@ -58,7 +58,7 @@ class IntegrationRunTest extends KubeBaseTest {
         Assertions.assertEquals("Integration route updated", printer.getOutput());
 
         Integration created = kubernetesClient.resources(Integration.class).withName("route").get();
-        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL));
+        Assertions.assertEquals("camel-k", created.getMetadata().getAnnotations().get(CamelKCommand.OPERATOR_ID_LABEL));
     }
 
     @Test
@@ -135,7 +135,7 @@ class IntegrationRunTest extends KubeBaseTest {
         command.labels = new String[] { "custom-label=enabled" };
         command.annotations = new String[] { "custom-annotation=enabled" };
         command.repositories = new String[] { "http://custom-repository" };
-        command.profile = "knative";
+        command.traitProfile = "knative";
         command.output = "yaml";
         command.doCall();
 

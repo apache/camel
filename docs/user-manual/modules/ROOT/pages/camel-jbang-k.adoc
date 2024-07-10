@@ -1,14 +1,22 @@
-= Camel Integration with Kubernetes
+= Camel K plugin
 
 Please make sure to meet these prerequisites for running Camel integrations on Kubernetes:
 
 * Connect to namespace on a Kubernetes cluster where you want to run the integration
 * Camel K operator must be installed on the Kubernetes cluster (either installed on the same namespace or as global operator for the whole cluster)
 
+To set up a local Kubernetes cluster you have several options.
+Camel K JBang is able to interact with all of these Kubernetes platforms.
+
+* Kind
+* Minikube
+
+Of course, you may also connect to a remote Kubernetes cluster.
+
 Running Camel routes on Kubernetes is quite simple with Camel JBang.
 In fact, you can develop and test your Camel route locally with Camel JBang and then promote the same source to running it as an integration on Kubernetes.
 
-The Camel JBang Kubernetes functionality is provided as a command plugin.
+The Camel K JBang functionality is provided as a command plugin.
 This means you need to enable the `camel-k` plugin first to use the subcommands in Camel JBang.
 
 [source,bash]
@@ -16,11 +24,17 @@ This means you need to enable the `camel-k` plugin first to use the subcommands 
 camel plugin add camel-k
 ----
 
-You should see the `camel-k` plugin listed as installed plugin.
+You should see the `camel-k` plugin listed as an installed plugin.
 
 [source,bash]
 ----
 camel plugin get
+----
+
+[source,bash]
+----
+ NAME        COMMAND     DEPENDENCY                                      DESCRIPTION
+ camel-k     k           org.apache.camel:camel-jbang-plugin-k           Manage Camel integrations on Kubernetes
 ----
 
 Now Camel JBang is able to run the subcommands offered by the plugin.
@@ -58,10 +72,10 @@ The run command offers a lot more options that you may use to configure the Came
 |--image
 |An image built externally (for instance via CI/CD). Enabling it will skip the integration build phase.
 
-|--kit, -k
+|--kit
 |The kit used to run the integration.
 
-|--profile
+|--trait-profile
 |The trait profile to use for the deployment.
 
 |--service-account
@@ -73,10 +87,10 @@ The run command offers a lot more options that you may use to configure the Came
 |--operator-id
 |Operator id selected to manage this integration. (default=camel-k)
 
-|--dependency, -d
+|--dependency
 |Adds dependency that should be included, use "camel:" prefix for a Camel component, "mvn:org.my:app:1.0" for a Maven dependency.
 
-|--property, -p
+|--property
 |Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]).
 
 |--build-property
@@ -91,13 +105,13 @@ The run command offers a lot more options that you may use to configure the Came
 |--open-api
 |Add an OpenAPI spec (syntax: [configmap,file]:name).
 
-|--env, -e
+|--env
 |Set an environment variable in the integration container, for instance "-e MY_VAR=my-value".
 
-|--volume, -v
+|--volume
 |Mount a volume into the integration container, for instance "-v pvcname:/container/path".
 
-|--connect, -c
+|--connect
 |A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
 
 |--source
@@ -112,7 +126,7 @@ The run command offers a lot more options that you may use to configure the Came
 |--label
 |Add a label to the integration. Use name values pairs like "--label my.company=hello".
 
-|--traits, -t
+|--trait
 |Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
 
 |--use-flows
@@ -121,14 +135,14 @@ The run command offers a lot more options that you may use to configure the Came
 |--compression
 |Enable storage of sources and resources as a compressed binary blobs.
 
-|--wait, -w
+|--wait
 |Wait for the integration to become ready.
 
-|--logs, -l
+|--logs
 |Print logs after integration has been started.
 
-|--output, -o
-|Just output the generated integration custom resource (supports: yaml or json).
+|--output
+|Just output the generated integration custom resource (supports: yaml or json or k8s).
 |=======================================================================
 
 == List integrations
@@ -212,7 +226,7 @@ The Camel K bind command supports the following options:
 |--connect
 |A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
 
-|--traits
+|--trait
 |Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
 
 |--wait

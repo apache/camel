@@ -28,3 +28,4 @@ components/camel-cxf/activemq-data
 node_modules/
 mvnd.zip*
 .camel-jbang
+.camel-jbang-run

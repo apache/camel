@@ -25,10 +25,11 @@ import io.fabric8.kubernetes.client.server.mock.KubernetesCrudDispatcher;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.Context;
 import okhttp3.mockwebserver.MockWebServer;
-import org.apache.camel.dsl.jbang.core.commands.StringPrinter;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.v1.Integration;
 import org.apache.camel.v1.IntegrationSpec;
@@ -40,7 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class KubeBaseTest {
+public class CamelKBaseTest {
 
     protected static Integration integration;
     protected static Pipe pipe;
@@ -81,7 +82,7 @@ public class KubeBaseTest {
     protected Integration createIntegration(String name) throws IOException {
         if (integration == null) {
             integration = KubernetesHelper.yaml().loadAs(
-                    IOHelper.loadText(KubeBaseTest.class.getResourceAsStream("integration.yaml")), Integration.class);
+                    IOHelper.loadText(CamelKBaseTest.class.getResourceAsStream("integration.yaml")), Integration.class);
         }
 
         Integration created = new Integration();
@@ -100,7 +101,7 @@ public class KubeBaseTest {
     protected Pipe createPipe(String name) throws IOException {
         if (pipe == null) {
             pipe = KubernetesHelper.yaml().loadAs(
-                    IOHelper.loadText(KubeBaseTest.class.getResourceAsStream("pipe.yaml")), Pipe.class);
+                    IOHelper.loadText(CamelKBaseTest.class.getResourceAsStream("pipe.yaml")), Pipe.class);
         }
 
         Pipe created = new Pipe();

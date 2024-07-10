@@ -620,6 +620,13 @@ public class HttpUriDsl(
   }
 
   /**
+   * OAuth2 scope
+   */
+  public fun oauth2Scope(oauth2Scope: String) {
+    it.property("oauth2Scope", oauth2Scope)
+  }
+
+  /**
    * OAuth2 Token endpoint
    */
   public fun oauth2TokenEndpoint(oauth2TokenEndpoint: String) {

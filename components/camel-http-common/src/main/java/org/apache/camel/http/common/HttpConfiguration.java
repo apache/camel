@@ -39,6 +39,8 @@ public class HttpConfiguration implements Serializable {
     private String oauth2ClientSecret;
     @Metadata(label = "producer,security", description = "OAuth2 token endpoint")
     private String oauth2TokenEndpoint;
+    @Metadata(label = "producer,security", description = "OAuth2 scope")
+    private String oauth2Scope;
     @Metadata(label = "producer,security", description = "Authentication domain to use with NTML")
     private String authDomain;
     @Metadata(label = "producer,security", description = "Authentication host to use with NTML")
@@ -260,4 +262,14 @@ public class HttpConfiguration implements Serializable {
         this.oauth2TokenEndpoint = oauth2TokenEndpoint;
     }
 
+    public String getOauth2Scope() {
+        return oauth2Scope;
+    }
+
+    /**
+     * OAuth2 scope
+     */
+    public void setOauth2Scope(String oauth2Scope) {
+        this.oauth2Scope = oauth2Scope;
+    }
 }

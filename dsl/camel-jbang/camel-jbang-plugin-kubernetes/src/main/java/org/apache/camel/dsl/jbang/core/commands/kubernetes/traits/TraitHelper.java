@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,11 +25,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.traits.AddonsBuilder;
 import org.apache.camel.v1.integrationspec.traits.Builder;
 import org.apache.camel.v1.integrationspec.traits.Camel;
+import org.apache.camel.v1.integrationspec.traits.Container;
 import org.apache.camel.v1.integrationspec.traits.Environment;
 import org.apache.camel.v1.integrationspec.traits.Mount;
 import org.apache.camel.v1.integrationspec.traits.Openapi;
@@ -250,5 +252,29 @@ public final class TraitHelper {
         }
 
         traitsSpec.setMount(mountTrait);
+    }
+
+    public static void configureContainerImage(
+            Traits traitsSpec, String image, String imageRegistry, String imageGroup, String imageName, String version) {
+        Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+        if (image != null) {
+            containerTrait.setImage(image);
+            traitsSpec.setContainer(containerTrait);
+        } else if (containerTrait.getImage() == null) {
+            String resolvedRegistry = imageRegistry;
+            if ("minikube".equals(imageRegistry) || "minikube-registry".equals(imageRegistry)) {
+                resolvedRegistry = "localhost:5000";
+            } else if ("kind".equals(imageRegistry) || "kind-registry".equals(imageRegistry)) {
+                resolvedRegistry = "localhost:5001";
+            }
+
+            if (imageGroup != null) {
+                containerTrait.setImage("%s/%s/%s:%s".formatted(resolvedRegistry, imageGroup, imageName, version));
+            } else {
+                containerTrait.setImage("%s/%s:%s".formatted(resolvedRegistry, imageName, version));
+            }
+
+            traitsSpec.setContainer(containerTrait);
+        }
     }
 }
