@@ -70,7 +70,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
                         description = "An image built externally (for instance via CI/CD). Enabling it will skip the integration build phase.")
     String image;
 
-    @CommandLine.Option(names = { "--kit", "-k" }, description = "The kit used to run the integration.")
+    @CommandLine.Option(names = { "--kit" }, description = "The kit used to run the integration.")
     String kit;
 
     @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
@@ -86,15 +86,15 @@ public class IntegrationRun extends KubernetesBaseCommand {
                         description = "The path of the YAML file containing a PodSpec template to be used for the integration pods.")
     String podTemplate;
 
-    @CommandLine.Option(names = { "--operator-id", "-x" }, defaultValue = "camel-k",
+    @CommandLine.Option(names = { "--operator-id" }, defaultValue = "camel-k",
                         description = "Operator id selected to manage this integration.")
     String operatorId = "camel-k";
 
-    @CommandLine.Option(names = { "--dependency", "-d" },
+    @CommandLine.Option(names = { "--dependency" },
                         description = "Adds dependency that should be included, use \"camel:\" prefix for a Camel component, \"mvn:org.my:app:1.0\" for a Maven dependency.")
     String[] dependencies;
 
-    @CommandLine.Option(names = { "--property", "-p" },
+    @CommandLine.Option(names = { "--property" },
                         description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
     String[] properties;
 
@@ -113,15 +113,15 @@ public class IntegrationRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--open-api" }, description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
     String[] openApis;
 
-    @CommandLine.Option(names = { "--env", "-e" },
+    @CommandLine.Option(names = { "--env" },
                         description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
     String[] envVars;
 
-    @CommandLine.Option(names = { "--volume", "-v" },
+    @CommandLine.Option(names = { "--volume" },
                         description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
     String[] volumes;
 
-    @CommandLine.Option(names = { "--connect", "-c" },
+    @CommandLine.Option(names = { "--connect" },
                         description = "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
     String[] connects;
 
@@ -140,7 +140,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
                         description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
     String[] labels;
 
-    @CommandLine.Option(names = { "--traits", "-t" },
+    @CommandLine.Option(names = { "--trait" },
                         description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
     String[] traits;
 
@@ -152,13 +152,13 @@ public class IntegrationRun extends KubernetesBaseCommand {
                         description = "Enable storage of sources and resources as a compressed binary blobs.")
     boolean compression;
 
-    @CommandLine.Option(names = { "--wait", "-w" }, description = "Wait for the integration to become ready.")
+    @CommandLine.Option(names = { "--wait" }, description = "Wait for the integration to become ready.")
     boolean wait;
 
-    @CommandLine.Option(names = { "--logs", "-l" }, description = "Print logs after integration has been started.")
+    @CommandLine.Option(names = { "--logs" }, description = "Print logs after integration has been started.")
     boolean logs;
 
-    @CommandLine.Option(names = { "--output", "-o" },
+    @CommandLine.Option(names = { "--output" },
                         description = "Just output the generated integration custom resource (supports: yaml or json).")
     String output;
 
@@ -221,17 +221,18 @@ public class IntegrationRun extends KubernetesBaseCommand {
         }
 
         // --operator-id={id} is a syntax sugar for '--annotation camel.apache.org/operator.id={id}'
-        integration.getMetadata().getAnnotations().put(KubeCommand.OPERATOR_ID_LABEL, operatorId);
+        integration.getMetadata().getAnnotations().put(CamelKCommand.OPERATOR_ID_LABEL, operatorId);
 
         // --integration-profile={id} is a syntax sugar for '--annotation camel.apache.org/integration-profile.id={id}'
         if (integrationProfile != null) {
             if (integrationProfile.contains("/")) {
                 String[] namespacedName = integrationProfile.split("/", 2);
-                integration.getMetadata().getAnnotations().put(KubeCommand.INTEGRATION_PROFILE_NAMESPACE_ANNOTATION,
+                integration.getMetadata().getAnnotations().put(CamelKCommand.INTEGRATION_PROFILE_NAMESPACE_ANNOTATION,
                         namespacedName[0]);
-                integration.getMetadata().getAnnotations().put(KubeCommand.INTEGRATION_PROFILE_ANNOTATION, namespacedName[1]);
+                integration.getMetadata().getAnnotations().put(CamelKCommand.INTEGRATION_PROFILE_ANNOTATION, namespacedName[1]);
             } else {
-                integration.getMetadata().getAnnotations().put(KubeCommand.INTEGRATION_PROFILE_ANNOTATION, integrationProfile);
+                integration.getMetadata().getAnnotations().put(CamelKCommand.INTEGRATION_PROFILE_ANNOTATION,
+                        integrationProfile);
             }
         }
 

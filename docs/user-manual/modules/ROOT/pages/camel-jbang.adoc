@@ -3821,7 +3821,6 @@ camel config set camel-version=4.0.1
 camel run * --camel-version=4.3.0
 ----
 
-
 === Set and unset configuration
 
 Every Camel JBang option is added to the user configuration. For example, to export a simple project such as

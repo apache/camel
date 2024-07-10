@@ -133,10 +133,10 @@ public class Bind extends KubernetesBaseCommand {
 
         // --operator-id={id} is a syntax sugar for '--annotation camel.apache.org/operator.id={id}'
         if (annotations == null) {
-            annotations = new String[] { "%s=%s".formatted(KubeCommand.OPERATOR_ID_LABEL, operatorId) };
+            annotations = new String[] { "%s=%s".formatted(CamelKCommand.OPERATOR_ID_LABEL, operatorId) };
         } else {
             annotations = Arrays.copyOf(annotations, annotations.length + 1);
-            annotations[annotations.length - 1] = "%s=%s".formatted(KubeCommand.OPERATOR_ID_LABEL, operatorId);
+            annotations[annotations.length - 1] = "%s=%s".formatted(CamelKCommand.OPERATOR_ID_LABEL, operatorId);
         }
 
         String annotationsContext = "";

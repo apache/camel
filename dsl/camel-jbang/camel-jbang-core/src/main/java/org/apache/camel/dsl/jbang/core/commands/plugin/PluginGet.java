@@ -33,7 +33,7 @@ import picocli.CommandLine;
                      description = "Display available plugins.")
 public class PluginGet extends PluginBaseCommand {
 
-    @CommandLine.Option(names = { "--all", "-a" }, defaultValue = "false", description = "Display all available plugins.")
+    @CommandLine.Option(names = { "--all" }, defaultValue = "false", description = "Display all available plugins.")
     public boolean all;
 
     public PluginGet(CamelJBangMain main) {

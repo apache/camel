@@ -130,7 +130,7 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |--label
 |Add a label to the integration. Use name values pairs like "--label my.company=hello".
 
-|--traits
+|--trait
 |Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
 
 |--image

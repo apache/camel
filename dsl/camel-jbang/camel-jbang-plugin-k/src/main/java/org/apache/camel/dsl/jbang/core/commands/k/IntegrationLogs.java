@@ -43,8 +43,8 @@ public class IntegrationLogs extends PodLogs {
             return 1;
         }
 
-        label = "%s=%s".formatted(KubeCommand.INTEGRATION_LABEL, integrationName);
-        container = KubeCommand.INTEGRATION_CONTAINER_NAME;
+        label = "%s=%s".formatted(CamelKCommand.INTEGRATION_LABEL, integrationName);
+        container = CamelKCommand.INTEGRATION_CONTAINER_NAME;
 
         return super.doCall();
     }

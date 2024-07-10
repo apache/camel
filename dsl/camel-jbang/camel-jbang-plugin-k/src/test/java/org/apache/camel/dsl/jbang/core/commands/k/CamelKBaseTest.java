@@ -41,7 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class KubeBaseTest {
+public class CamelKBaseTest {
 
     protected static Integration integration;
     protected static Pipe pipe;
@@ -82,7 +82,7 @@ public class KubeBaseTest {
     protected Integration createIntegration(String name) throws IOException {
         if (integration == null) {
             integration = KubernetesHelper.yaml().loadAs(
-                    IOHelper.loadText(KubeBaseTest.class.getResourceAsStream("integration.yaml")), Integration.class);
+                    IOHelper.loadText(CamelKBaseTest.class.getResourceAsStream("integration.yaml")), Integration.class);
         }
 
         Integration created = new Integration();
@@ -101,7 +101,7 @@ public class KubeBaseTest {
     protected Pipe createPipe(String name) throws IOException {
         if (pipe == null) {
             pipe = KubernetesHelper.yaml().loadAs(
-                    IOHelper.loadText(KubeBaseTest.class.getResourceAsStream("pipe.yaml")), Pipe.class);
+                    IOHelper.loadText(CamelKBaseTest.class.getResourceAsStream("pipe.yaml")), Pipe.class);
         }
 
         Pipe created = new Pipe();

@@ -22,7 +22,7 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "k",
                      description = "Manage Camel integrations on Kubernetes (use k --help to see sub commands)")
-public class KubeCommand extends KubernetesBaseCommand {
+public class CamelKCommand extends KubernetesBaseCommand {
 
     static final String OPERATOR_ID_LABEL = "camel.apache.org/operator.id";
     static final String INTEGRATION_LABEL = "camel.apache.org/integration";
@@ -31,7 +31,7 @@ public class KubeCommand extends KubernetesBaseCommand {
     public static final String INTEGRATION_PROFILE_ANNOTATION = "camel.apache.org/integration-profile.id";
     public static final String INTEGRATION_PROFILE_NAMESPACE_ANNOTATION = "camel.apache.org/integration-profile.namespace";
 
-    public KubeCommand(CamelJBangMain main) {
+    public CamelKCommand(CamelJBangMain main) {
         super(main);
     }
 

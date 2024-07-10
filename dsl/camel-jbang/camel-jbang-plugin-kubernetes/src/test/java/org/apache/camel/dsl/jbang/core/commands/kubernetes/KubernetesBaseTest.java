@@ -17,6 +17,9 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -28,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +67,10 @@ public class KubernetesBaseTest {
     @AfterAll
     public void cleanup() {
         k8sServer.destroy();
+    }
+
+    protected InputStream getKubernetesManifestAsStream(String printerOutput) {
+        return new ByteArrayInputStream(StringHelper.after(printerOutput, "---").getBytes(StandardCharsets.UTF_8));
     }
 
 }

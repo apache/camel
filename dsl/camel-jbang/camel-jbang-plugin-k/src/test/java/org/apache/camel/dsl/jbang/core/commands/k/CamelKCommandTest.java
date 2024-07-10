@@ -33,7 +33,7 @@ import org.apache.camel.v1.Integration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class KubeCommandMainTest extends KubeBaseTest {
+class CamelKCommandTest extends CamelKBaseTest {
 
     @Test
     public void shouldDeleteIntegration() throws IOException {
@@ -65,11 +65,11 @@ class KubeCommandMainTest extends KubeBaseTest {
         Pod pod = new PodBuilder()
                 .withNewMetadata()
                 .withName(integration.getMetadata().getName())
-                .withLabels(Collections.singletonMap(KubeCommand.INTEGRATION_LABEL, integration.getMetadata().getName()))
+                .withLabels(Collections.singletonMap(CamelKCommand.INTEGRATION_LABEL, integration.getMetadata().getName()))
                 .endMetadata()
                 .withNewSpec()
                 .addToContainers(new ContainerBuilder()
-                        .withName(KubeCommand.INTEGRATION_CONTAINER_NAME)
+                        .withName(CamelKCommand.INTEGRATION_CONTAINER_NAME)
                         .build())
                 .endSpec()
                 .withNewStatus()
@@ -89,12 +89,12 @@ class KubeCommandMainTest extends KubeBaseTest {
 
         Integration integration = kubernetesClient.resources(Integration.class).withName("route").get();
         Assertions.assertNotNull(integration);
-        Assertions.assertEquals("camel-k", integration.getMetadata().getAnnotations().get(KubeCommand.OPERATOR_ID_LABEL));
+        Assertions.assertEquals("camel-k", integration.getMetadata().getAnnotations().get(CamelKCommand.OPERATOR_ID_LABEL));
     }
 
     @Test
     public void shouldPrintIntegration() {
-        CamelJBangMain.run(createMain(), "k", "run", "classpath:route.yaml", "-o", "yaml");
+        CamelJBangMain.run(createMain(), "k", "run", "classpath:route.yaml", "--output", "yaml");
 
         Assertions.assertEquals("""
                 apiVersion: camel.apache.org/v1
@@ -125,9 +125,8 @@ class KubeCommandMainTest extends KubeBaseTest {
         return new CamelJBangMain() {
             @Override
             public void quit(int exitCode) {
-                if (exitCode != 0) {
-                    Assertions.fail("Main finished with exit code %d".formatted(exitCode));
-                }
+                Assertions.assertEquals(0, exitCode,
+                        "Main finished with exit code %d:%n%s".formatted(exitCode, printer.getOutput()));
             }
         }.withPrinter(printer);
     }

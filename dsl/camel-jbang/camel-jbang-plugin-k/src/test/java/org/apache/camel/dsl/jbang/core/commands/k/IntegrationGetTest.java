@@ -28,7 +28,7 @@ import org.apache.camel.v1.integrationstatus.IntegrationKit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class IntegrationGetTest extends KubeBaseTest {
+class IntegrationGetTest extends CamelKBaseTest {
 
     @Test
     public void shouldListIntegrationsEmpty() throws Exception {

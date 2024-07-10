@@ -72,7 +72,7 @@ The run command offers a lot more options that you may use to configure the Came
 |--image
 |An image built externally (for instance via CI/CD). Enabling it will skip the integration build phase.
 
-|--kit, -k
+|--kit
 |The kit used to run the integration.
 
 |--trait-profile
@@ -87,10 +87,10 @@ The run command offers a lot more options that you may use to configure the Came
 |--operator-id
 |Operator id selected to manage this integration. (default=camel-k)
 
-|--dependency, -d
+|--dependency
 |Adds dependency that should be included, use "camel:" prefix for a Camel component, "mvn:org.my:app:1.0" for a Maven dependency.
 
-|--property, -p
+|--property
 |Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]).
 
 |--build-property
@@ -105,13 +105,13 @@ The run command offers a lot more options that you may use to configure the Came
 |--open-api
 |Add an OpenAPI spec (syntax: [configmap,file]:name).
 
-|--env, -e
+|--env
 |Set an environment variable in the integration container, for instance "-e MY_VAR=my-value".
 
-|--volume, -v
+|--volume
 |Mount a volume into the integration container, for instance "-v pvcname:/container/path".
 
-|--connect, -c
+|--connect
 |A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
 
 |--source
@@ -126,7 +126,7 @@ The run command offers a lot more options that you may use to configure the Came
 |--label
 |Add a label to the integration. Use name values pairs like "--label my.company=hello".
 
-|--traits, -t
+|--trait
 |Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
 
 |--use-flows
@@ -135,13 +135,13 @@ The run command offers a lot more options that you may use to configure the Came
 |--compression
 |Enable storage of sources and resources as a compressed binary blobs.
 
-|--wait, -w
+|--wait
 |Wait for the integration to become ready.
 
-|--logs, -l
+|--logs
 |Print logs after integration has been started.
 
-|--output, -o
+|--output
 |Just output the generated integration custom resource (supports: yaml or json or k8s).
 |=======================================================================
 
@@ -226,7 +226,7 @@ The Camel K bind command supports the following options:
 |--connect
 |A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
 
-|--traits
+|--trait
 |Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
 
 |--wait
