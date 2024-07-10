@@ -105,18 +105,17 @@ public class KafkaFetchRecords implements Runnable {
     private volatile boolean connected; // this is the state (connected or not)
     private volatile State state = State.RUNNING;
 
+    // dev-console records and state
     record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {
     }
-
     record KafkaTopicPosition(String topic, int partition, long offset, int epoch) {
     }
-
+    private final boolean devConsoleEnabled;
     private volatile GroupMetadata groupMetadata;
     private volatile KafkaTopicPosition lastRecord;
     private final List<KafkaTopicPosition> commitRecords = new ArrayList<>();
     private final AtomicBoolean commitRecordsRequested = new AtomicBoolean();
     private final AtomicReference<CountDownLatch> latch = new AtomicReference<>();
-    private final boolean devConsoleEnabled;
 
     KafkaFetchRecords(KafkaConsumer kafkaConsumer,
                       BridgeExceptionHandlerToErrorHandler bridge, String topicName, Pattern topicPattern, String id,
@@ -190,7 +189,7 @@ public class KafkaFetchRecords implements Runnable {
                 setConnected(true);
             }
 
-            if (isConnected()) {
+            if (devConsoleEnabled && isConnected()) {
                 // store metadata
                 ConsumerGroupMetadata meta = consumer.groupMetadata();
                 if (meta != null) {
@@ -406,7 +405,8 @@ public class KafkaFetchRecords implements Runnable {
                 }
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
-                if (result != null && result.getTopic() != null) {
+                if (devConsoleEnabled && result != null && result.getTopic() != null) {
+                    // dev-console uses information from last processed record
                     lastRecord = new KafkaTopicPosition(result.getTopic(), result.getPartition(), result.getOffset(), 0);
                 }
                 updateTaskState();
@@ -692,15 +692,14 @@ public class KafkaFetchRecords implements Runnable {
         this.lastError = lastError;
     }
 
-    Exception getLastError() {
-        return lastError;
-    }
+    // dev console information
+    // ------------------------------------------------------------------------
 
     GroupMetadata getGroupMetadata() {
         return groupMetadata;
     }
 
-    public KafkaTopicPosition getLastRecord() {
+    KafkaTopicPosition getLastRecord() {
         return lastRecord;
     }
 
@@ -712,6 +711,10 @@ public class KafkaFetchRecords implements Runnable {
         return state.name();
     }
 
+    List<KafkaTopicPosition> getCommitRecords() {
+        return Collections.unmodifiableList(commitRecords);
+    }
+
     CountDownLatch fetchCommitRecords() {
         // use a latch to wait for commit records to be ready
         // as the consumer thread must be calling Kafka brokers to get this information
@@ -720,9 +723,5 @@ public class KafkaFetchRecords implements Runnable {
         latch.set(answer);
         commitRecordsRequested.set(true);
         return answer;
-    }
-
-    List<KafkaTopicPosition> getCommitRecords() {
-        return Collections.unmodifiableList(commitRecords);
     }
 }
