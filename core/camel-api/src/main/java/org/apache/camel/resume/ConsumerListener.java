@@ -35,10 +35,10 @@ public interface ConsumerListener<C, P> {
     void setResumableCheck(Predicate<?> afterConsumeEval);
 
     /**
-     * This is an event that runs after data consumption.
+     * This is an event that runs after data consumption if and only if the consumer has been paused.
      *
      * @param  consumePayload the resume payload if any
-     * @return                true if the consumer should processing or false otherwise.
+     * @return                true if the consumer should continue processing or false otherwise.
      */
     boolean afterConsume(C consumePayload);
 
