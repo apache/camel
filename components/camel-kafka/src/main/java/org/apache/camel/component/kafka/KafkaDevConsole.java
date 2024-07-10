@@ -60,8 +60,9 @@ public class KafkaDevConsole extends AbstractDevConsole {
                 for (KafkaFetchRecords t : kc.tasks()) {
                     sb.append(String.format("\n        Worked Thread: %s", t.getThreadId()));
                     sb.append(String.format("\n        Worker State: %s", t.getState()));
-                    if (t.getLastError() != null) {
-                        sb.append(String.format("\n        Worker Last Error: %s", t.getLastError().getMessage()));
+                    TaskHealthState hs = t.healthState();
+                    if (!hs.isReady()) {
+                        sb.append(String.format("\n        Worker Last Error: %s", hs.buildStateMessage()));
                     }
                     KafkaFetchRecords.GroupMetadata meta = t.getGroupMetadata();
                     if (meta != null) {
@@ -137,8 +138,9 @@ public class KafkaDevConsole extends AbstractDevConsole {
                     arr.add(wo);
                     wo.put("threadId", t.getThreadId());
                     wo.put("state", t.getState());
-                    if (t.getLastError() != null) {
-                        wo.put("lastError", t.getLastError().getMessage());
+                    TaskHealthState hs = t.healthState();
+                    if (!hs.isReady()) {
+                        wo.put("lastError", hs.buildStateMessage());
                     }
                     KafkaFetchRecords.GroupMetadata meta = t.getGroupMetadata();
                     if (meta != null) {

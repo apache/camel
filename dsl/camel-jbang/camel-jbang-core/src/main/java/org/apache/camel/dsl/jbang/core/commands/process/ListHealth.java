@@ -132,26 +132,20 @@ public class ListHealth extends ProcessWatchCommand {
                                 String time = d.getString("invocation.time");
                                 if (time != null) {
                                     ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    if (zdt != null) {
-                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                        row.sinceLast = TimeUtils.printAge(delta);
-                                    }
+                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                                    row.sinceLast = TimeUtils.printAge(delta);
                                 }
                                 time = d.getString("success.start.time");
                                 if (time != null) {
                                     ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    if (zdt != null) {
-                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                        row.sinceStartSuccess = TimeUtils.printAge(delta);
-                                    }
+                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                                    row.sinceStartSuccess = TimeUtils.printAge(delta);
                                 }
                                 time = d.getString("failure.start.time");
                                 if (time != null) {
                                     ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    if (zdt != null) {
-                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                        row.sinceStartFailure = TimeUtils.printAge(delta);
-                                    }
+                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                                    row.sinceStartFailure = TimeUtils.printAge(delta);
                                 }
                                 for (Map.Entry<String, Object> entry : d.entrySet()) {
                                     String k = entry.getKey();

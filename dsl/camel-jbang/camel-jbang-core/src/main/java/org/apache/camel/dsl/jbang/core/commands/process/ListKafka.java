@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -33,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -195,6 +197,9 @@ public class ListKafka extends ProcessWatchCommand {
                     new Column().header("OFFSET").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastOffset),
                     new Column().header("COMMITTED").visible(committed).dataAlign(HorizontalAlign.RIGHT)
                             .with(this::getCommitted),
+                    new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(60, OverflowBehaviour.NEWLINE)
+                            .with(this::getLastError),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getUri),
@@ -232,6 +237,13 @@ public class ListKafka extends ProcessWatchCommand {
         return "";
     }
 
+    private String getLastError(Row r) {
+        if (r.lastError != null) {
+            return r.lastError;
+        }
+        return "";
+    }
+
     private String getUri(Row r) {
         String u = r.uri;
         if (shortUri) {
@@ -244,11 +256,24 @@ public class ListKafka extends ProcessWatchCommand {
     }
 
     private String getMetadata(Row r) {
-        return r.groupId + "/" + r.groupInstanceId + "/" + r.memberId + "/" + r.generationId;
+        StringJoiner sj = new StringJoiner(" ");
+        if (r.groupId != null && !r.groupId.isEmpty()) {
+            sj.add("groupId=" + r.groupId);
+        }
+        if (r.groupInstanceId != null && !r.groupInstanceId.isEmpty()) {
+            sj.add("groupInstanceId=" + r.groupInstanceId);
+        }
+        if (r.memberId != null && !r.memberId.isEmpty()) {
+            sj.add("memberId=" + r.memberId);
+        }
+        if (r.generationId > 0) {
+            sj.add("generationId=" + r.generationId);
+        }
+        return sj.toString();
     }
 
     private String getState(Row r) {
-        return r.state.toLowerCase(Locale.ROOT);
+        return StringHelper.capitalize(r.state.toLowerCase(Locale.ROOT));
     }
 
     private String getCommitted(Row r) {
