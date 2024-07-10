@@ -108,8 +108,10 @@ public class KafkaFetchRecords implements Runnable {
     // dev-console records and state
     record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {
     }
+
     record KafkaTopicPosition(String topic, int partition, long offset, int epoch) {
     }
+
     private final boolean devConsoleEnabled;
     private volatile GroupMetadata groupMetadata;
     private volatile KafkaTopicPosition lastRecord;
