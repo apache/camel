@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class FileKeepLastModifiedTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Test
     public void testKeepLastModified() throws Exception {
@@ -42,12 +45,12 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", "CamelFileName", "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", "CamelFileName", TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
-        long t2 = testFile("out/hello.txt").toFile().lastModified();
+        long t2 = testFile("out/" + TEST_FILE_NAME).toFile().lastModified();
 
         assertEquals(t1, t2, "Timestamp should have been kept");
     }
@@ -67,12 +70,12 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", "CamelFileName", "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", "CamelFileName", TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
-        long t2 = testFile("out/hello.txt").toFile().lastModified();
+        long t2 = testFile("out/" + TEST_FILE_NAME).toFile().lastModified();
 
         assertNotSame(t1, t2, "Timestamp should NOT have been kept");
     }
@@ -92,12 +95,12 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", "CamelFileName", "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", "CamelFileName", TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
-        long t2 = testFile("out/hello.txt").toFile().lastModified();
+        long t2 = testFile("out/" + TEST_FILE_NAME).toFile().lastModified();
 
         assertNotSame(t1, t2, "Timestamp should NOT have been kept");
     }

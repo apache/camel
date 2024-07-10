@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,13 +30,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerPreMoveTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Test
     public void testPreMove() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }
@@ -45,7 +47,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesWaitTime();
@@ -54,7 +56,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         mock.reset();
         mock.expectedBodiesReceived("Hello Again World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello Again World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello Again World", Exchange.FILE_NAME, TEST_FILE_NAME);
         assertMockEndpointsSatisfied();
     }
 
@@ -76,7 +78,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         public void process(Exchange exchange) {
             Path testDirectory = (Path) exchange.getContext().getRegistry()
                     .lookupByName("testDirectory");
-            Path file = testDirectory.resolve("work/work-hello.txt");
+            Path file = testDirectory.resolve("work/work-" + TEST_FILE_NAME);
             assertTrue(Files.exists(file), "Pre move file should exist");
         }
     }

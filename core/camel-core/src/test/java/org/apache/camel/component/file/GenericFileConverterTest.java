@@ -20,7 +20,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -31,8 +30,6 @@ import org.apache.camel.converter.stream.InputStreamCache;
 import org.junit.jupiter.api.Test;
 
 public class GenericFileConverterTest extends ContextTestSupport {
-
-    public static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -53,7 +50,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(File.class);
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -73,7 +70,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         mock.message(0).body().isInstanceOf(String.class);
         mock.message(0).body().isEqualTo("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -93,7 +90,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         mock.message(0).body().isInstanceOf(byte[].class);
         mock.message(0).body(String.class).isEqualTo("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -113,7 +110,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         mock.message(0).body().isInstanceOf(Serializable.class);
         mock.message(0).body(String.class).isEqualTo("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -133,7 +130,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         mock.message(0).body().isInstanceOf(InputStream.class);
         mock.message(0).body(String.class).isEqualTo("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -159,7 +156,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         mock.message(0).body().isInstanceOf(InputStreamCache.class);
         mock.message(0).body(String.class).isEqualTo("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -190,7 +187,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         mock.message(0).body().isInstanceOf(BufferedInputStream.class);
         mock.message(0).body(String.class).isEqualTo("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
