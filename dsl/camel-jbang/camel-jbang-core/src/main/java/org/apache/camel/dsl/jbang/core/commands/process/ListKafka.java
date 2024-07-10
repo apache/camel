@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -52,10 +51,6 @@ public class ListKafka extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
-
-    @CommandLine.Option(names = { "--metadata" },
-                        description = "Show group metadata")
-    boolean metadata;
 
     @CommandLine.Option(names = { "--committed" },
                         description = "Show committed offset (slower due to sync call to Kafka brokers)")
@@ -190,8 +185,8 @@ public class ListKafka extends ProcessWatchCommand {
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
-                    new Column().header("METADATA").visible(metadata).dataAlign(HorizontalAlign.LEFT).with(this::getMetadata),
                     new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(this::getState),
+                    new Column().header("GROUP-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.groupId),
                     new Column().header("TOPIC").dataAlign(HorizontalAlign.RIGHT).with(r -> r.lastTopic),
                     new Column().header("PARTITION").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastPartition),
                     new Column().header("OFFSET").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastOffset),
@@ -256,20 +251,7 @@ public class ListKafka extends ProcessWatchCommand {
     }
 
     private String getMetadata(Row r) {
-        StringJoiner sj = new StringJoiner(" ");
-        if (r.groupId != null && !r.groupId.isEmpty()) {
-            sj.add("groupId=" + r.groupId);
-        }
-        if (r.groupInstanceId != null && !r.groupInstanceId.isEmpty()) {
-            sj.add("groupInstanceId=" + r.groupInstanceId);
-        }
-        if (r.memberId != null && !r.memberId.isEmpty()) {
-            sj.add("memberId=" + r.memberId);
-        }
-        if (r.generationId > 0) {
-            sj.add("generationId=" + r.generationId);
-        }
-        return sj.toString();
+        return r.groupId;
     }
 
     private String getState(Row r) {
@@ -292,7 +274,6 @@ public class ListKafka extends ProcessWatchCommand {
         long uptime;
         String routeId;
         String uri;
-        // worker
         String threadId;
         String state;
         String lastError;
