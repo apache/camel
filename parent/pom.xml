@@ -2708,6 +2708,21 @@
                 <artifactId>camel-jbang-main</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-plugin-generate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-plugin-k</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-plugin-kubernetes</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- camel catalog -->
             <dependency>
