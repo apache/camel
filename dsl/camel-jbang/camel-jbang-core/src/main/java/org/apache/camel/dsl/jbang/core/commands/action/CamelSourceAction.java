@@ -35,8 +35,6 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
 @Command(name = "source", description = "Display Camel route source code", sortOptions = false)
 public class CamelSourceAction extends ActionBaseCommand {
 
-    // TODO: strip license header
-
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
