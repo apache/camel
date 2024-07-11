@@ -76,4 +76,21 @@ public class MainListenerTest {
             main.stop();
         }
     }
+
+    @Test
+    public void testCustomListener() {
+        Main main = new Main();
+        try {
+            main.configure().withMainListeners("org.apache.camel.main.MyMainListener");
+            main.setDefaultPropertyPlaceholderLocation("false");
+            main.setInitialProperties(propertiesOf(
+                    "camel.context.name", "my-ctx"));
+            main.start();
+
+            assertEquals("my-special-override", main.getCamelContext().getName());
+        } finally {
+            main.stop();
+        }
+    }
+
 }
