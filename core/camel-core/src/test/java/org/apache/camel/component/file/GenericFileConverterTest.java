@@ -171,6 +171,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
             public void configure() {
 
                 from(fileUri("?initialDelay=0&delay=10"))
+                        .streamCache(Boolean.toString(false))
                         .convertBodyTo(InputStream.class).process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
