@@ -49,10 +49,6 @@ class KubernetesExport extends Export {
     @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
     String traitProfile;
 
-    @CommandLine.Option(names = { "--dependency" },
-                        description = "Adds dependency that should be included, use \"camel:\" prefix for a Camel component, \"mvn:org.my:app:1.0\" for a Maven dependency.")
-    String[] dependencies;
-
     @CommandLine.Option(names = { "--property" },
                         description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
     String[] properties;
@@ -141,21 +137,25 @@ class KubernetesExport extends Export {
             runtime = RuntimeType.quarkus;
         }
 
-        List<String> exportDependencies = Optional.ofNullable(dependencies).map(Arrays::asList).orElseGet(ArrayList::new);
+        List<String> exportDependencies = new ArrayList<>();
+        if (dependencies != null) {
+            String[] deps = dependencies.split(",");
+            exportDependencies.addAll(Arrays.asList(deps));
+
+        }
         exportDependencies.add("camel:cli-connector");
         exportDependencies.add("io.quarkus:quarkus-kubernetes");
-        // TODO: make configurable to support builders other than quarkus-container-image-jib
-        exportDependencies.add("io.quarkus:quarkus-container-image-jib");
+
+        // Mutually exclusive image build plugins - use Jib by default
+        if (!exportDependencies.contains("io.quarkus:quarkus-container-image-docker")) {
+            exportDependencies.add("io.quarkus:quarkus-container-image-jib");
+        }
 
         // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
         // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
         exportDependencies.add("io.fabric8:kubernetes-client:6.13.1");
 
-        if (super.dependencies != null) {
-            super.dependencies += "," + String.join(",", exportDependencies);
-        } else {
-            super.dependencies = String.join(",", exportDependencies);
-        }
+        dependencies = String.join(",", exportDependencies);
 
         additionalProperties = Optional.ofNullable(additionalProperties).orElse("");
 

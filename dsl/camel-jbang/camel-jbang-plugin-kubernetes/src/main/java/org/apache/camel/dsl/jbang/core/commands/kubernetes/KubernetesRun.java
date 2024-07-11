@@ -52,10 +52,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
     String traitProfile;
 
-    @CommandLine.Option(names = { "--dependency" },
-                        description = "Adds dependency that should be included, use \"camel:\" prefix for a Camel component, \"mvn:org.my:app:1.0\" for a Maven dependency.")
-    String[] dependencies;
-
     @CommandLine.Option(names = { "--property" },
                         description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
     String[] properties;
@@ -186,7 +182,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.imageRegistry = imageRegistry;
         export.imageGroup = imageGroup;
         export.traitProfile = traitProfile;
-        export.dependencies = dependencies;
         export.properties = properties;
         export.configs = configs;
         export.resources = resources;
