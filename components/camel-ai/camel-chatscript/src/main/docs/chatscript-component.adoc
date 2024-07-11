@@ -8,6 +8,7 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
+:group: AI
 :camel-spring-boot-name: chatscript
 
 *Since Camel {since}*
