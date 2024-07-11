@@ -1,0 +1,11 @@
+= AI Components
+:doctitle: AI
+
+The Camel AI components are a group of components for applying Apache Camel to
+various AI-related technologies.
+
+== {doctitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]
