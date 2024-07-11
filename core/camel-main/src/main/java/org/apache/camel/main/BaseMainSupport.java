@@ -586,6 +586,21 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    protected void configureMainListener(CamelContext camelContext) throws Exception {
+        // any custom listener in registry
+        camelContext.getRegistry().findByType(MainListener.class).forEach(this::addMainListener);
+        // listener from configuration
+        mainConfigurationProperties.getMainListeners().forEach(this::addMainListener);
+        if (mainConfigurationProperties.getMainListenerClasses() != null) {
+            for (String fqn : mainConfigurationProperties.getMainListenerClasses().split(",")) {
+                fqn = fqn.trim();
+                Class<? extends MainListener> clazz
+                        = camelContext.getClassResolver().resolveMandatoryClass(fqn, MainListener.class);
+                addMainListener(camelContext.getInjector().newInstance(clazz));
+            }
+        }
+    }
+
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
         ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
@@ -668,6 +683,8 @@ public abstract class BaseMainSupport extends BaseService {
         configurePackageScan(camelContext);
         // configure to use our main routes loader
         configureRoutesLoader(camelContext);
+        // configure custom main listeners
+        configureMainListener(camelContext);
 
         // ensure camel context is build
         camelContext.build();
