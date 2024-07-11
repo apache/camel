@@ -80,7 +80,7 @@ You may also provide a header with the key `INDEX_SETTINGS` where the value is a
 |`DELETE_INDEX` | |Deletes the specified `indexName` and returns a `boolean` value as the message exchange body, indicating whether the operation was successful.
 You can set the name of the target index to create from the `indexName` URI parameter option, or by providing a message header with the key `INDEX_NAME`.
 
-|`SEARCH` |`Map (optional) |Search for content with either a `Map` of `String` keys & values of query criteria. Or a JSON string representation of the query. Matching documents are returned as a JSON string set on the message exchange body.
+|`SEARCH` |`Map` (optional) |Search for content with either a `Map` of `String` keys & values of query criteria. Or a JSON string representation of the query. Matching documents are returned as a JSON string set on the message exchange body.
 You can set the JSON query String by providing a message header with the key `SEARCH_QUERY`.
 You can set the message exchange body to a `Map` of `String` keys & values for the query criteria.
 
