@@ -16,8 +16,11 @@
  */
 package org.apache.camel.impl.console;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -92,6 +95,20 @@ public class RouteDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
             }
             sb.append(String.format("\n    State: %s", mrb.getState()));
+            if (mrb.getLastError() != null) {
+                String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
+                sb.append(String.format("\n    Error Phase: %s", phase));
+                Throwable cause = mrb.getLastError().getException();
+                if (cause != null) {
+                    sb.append(String.format("\n    Error Message: %s", cause.getMessage()));
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    cause.printStackTrace(pw);
+                    sb.append("\n\n");
+                    sb.append(sw);
+                    sb.append("\n\n");
+                }
+            }
             sb.append(String.format("\n    Uptime: %s", mrb.getUptime()));
             String coverage = calculateRouteCoverage(mrb, true);
             if (coverage != null) {
@@ -240,6 +257,23 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             jo.put("state", mrb.getState());
             jo.put("uptime", mrb.getUptime());
+            if (mrb.getLastError() != null) {
+                String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
+                JsonObject eo = new JsonObject();
+                eo.put("phase", phase);
+                Throwable cause = mrb.getLastError().getException();
+                if (cause != null) {
+                    eo.put("message", cause.getMessage());
+                    JsonArray arr2 = new JsonArray();
+                    StringWriter writer = new StringWriter();
+                    cause.printStackTrace(new PrintWriter(writer));
+                    writer.flush();
+                    String trace = writer.toString();
+                    eo.put("stackTrace", arr2);
+                    Collections.addAll(arr2, trace.split("\n"));
+                }
+                jo.put("lastError", eo);
+            }
             JsonObject stats = new JsonObject();
             String coverage = calculateRouteCoverage(mrb, false);
             if (coverage != null) {
