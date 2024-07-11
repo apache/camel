@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.internal.streaming;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
@@ -31,6 +32,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
+import org.cometd.bayeux.client.ClientSessionChannel.MessageListener;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +42,11 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperManualIT.MessageArgumentMatcher.messageForAccountCreationWithName;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.atLeastOnce;
@@ -138,15 +144,16 @@ public class SubscriptionHelperManualIT {
 
         server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect", messages);
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe", "[\n"
-                                                                                                     + "  {\n"
-                                                                                                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                                                                                                     + "    \"channel\": \"/meta/subscribe\",\n"
-                                                                                                     + "    \"id\": \"$id\",\n"
-                                                                                                     + "    \"subscription\": \"/topic/Account\",\n"
-                                                                                                     + "    \"successful\": true\n"
-                                                                                                     + "  }\n"
-                                                                                                     + "]");
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+                s -> s.contains("/topic/Account"), "[\n"
+                                                   + "  {\n"
+                                                   + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
+                                                   + "    \"channel\": \"/meta/subscribe\",\n"
+                                                   + "    \"id\": \"$id\",\n"
+                                                   + "    \"subscription\": \"/topic/Account\",\n"
+                                                   + "    \"successful\": true\n"
+                                                   + "  }\n"
+                                                   + "]");
 
         server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/unsubscribe", "[\n"
                                                                                                        + "  {\n"
@@ -286,12 +293,68 @@ public class SubscriptionHelperManualIT {
                      + "]");
 
         // assert last message was received, recovery can take a bit
-        verify(consumer, timeout(130000)).processMessage(any(ClientSessionChannel.class),
+        verify(consumer, timeout(15000)).processMessage(any(ClientSessionChannel.class),
                 messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 2"));
 
         verify(consumer, atLeastOnce()).getEndpoint();
         verify(consumer, atLeastOnce()).getTopicName();
         verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    void shouldResubscribeOnSubscriptionFailure() {
+        var subscribeAttempts = new AtomicInteger(0);
+        subscription.start();
+        subscription.client.getChannel("/meta/subscribe").addListener(
+                (MessageListener) (clientSessionChannel, message) -> subscribeAttempts.incrementAndGet());
+        var endpoint = mock(SalesforceEndpoint.class, "shouldResubscribeOnSubscriptionFailure:endpoint");
+        when(endpoint.getConfiguration()).thenReturn(config);
+        when(endpoint.getComponent()).thenReturn(salesforce);
+        when(endpoint.getTopicName()).thenReturn("Contact");
+        var consumer = toUnsubscribe = mock(StreamingApiConsumer.class, "shouldResubscribeOnSubscriptionFailure:consumer");
+        when(consumer.getTopicName()).thenReturn("Contact");
+        when(consumer.getEndpoint()).thenReturn(endpoint);
+
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+                s -> s.contains("/topic/Contact"),
+                """
+                        [
+                          {
+                            "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                            "channel": "/meta/subscribe",
+                            "id": "$id",
+                            "subscription": "/topic/Contact",
+                            "successful": false
+                          }
+                        ]""");
+        subscription.subscribe("Contact", consumer);
+        await().atMost(10, SECONDS).until(() -> subscribeAttempts.get() == 1);
+        assertThat(subscription.client.getChannel("/topic/Contact").getSubscribers(), hasSize(0));
+
+        server.reset();
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+                s -> s.contains("/topic/Contact"),
+                """
+                        [
+                          {
+                            "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                            "channel": "/meta/subscribe",
+                            "id": "$id",
+                            "subscription": "/topic/Contact",
+                            "successful": true
+                          }
+                        ]""");
+        messages.add("""
+                [
+                  {
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                    "channel": "/meta/connect",
+                    "id": "$id",
+                    "successful": true
+                  }
+                ]""");
+        await().atMost(10, SECONDS).until(() -> subscribeAttempts.get() == 2);
+        assertThat(subscription.client.getChannel("/topic/Contact").getSubscribers(), hasSize(1));
     }
 
     @Test

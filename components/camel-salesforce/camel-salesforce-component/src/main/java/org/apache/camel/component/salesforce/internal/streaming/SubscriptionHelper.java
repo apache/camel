@@ -165,7 +165,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 LOG.info("Subscribing to channels: {}", channelsToSubscribe);
                 for (var channelName : channelsToSubscribe) {
                     for (var consumer : channelToConsumers.get(channelName)) {
-                        subscribe(consumer.getTopicName(), consumer);
+                        subscribe(consumer.getTopicName(), consumer, true);
                     }
                 }
             }
@@ -417,14 +417,15 @@ public class SubscriptionHelper extends ServiceSupport {
         subscribe(topicName, consumer, false);
     }
 
-    public void subscribe(
+    private void subscribe(
             final String topicName, final StreamingApiConsumer consumer,
             final boolean skipReplayId) {
         // create subscription for consumer
         final String channelName = getChannelName(topicName);
         channelToConsumers.computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet()).add(consumer);
+        channelsToSubscribe.add(channelName);
 
-        if (channelsToSubscribe.isEmpty() && !skipReplayId) {
+        if (!skipReplayId) {
             setupReplay((SalesforceEndpoint) consumer.getEndpoint());
         }
 
