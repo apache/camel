@@ -29,6 +29,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -117,7 +118,21 @@ public final class MainSupportModelConfigurer {
                     IOHelper.close(is);
                 }
             }
-            repo.setVariable(key, value);
+            // digits should favour an int/long value true|false should be a boolean anything else is string
+            Object val;
+            if (StringHelper.isDigit(value)) {
+                val = camelContext.getTypeConverter().tryConvertTo(Integer.class, value);
+                if (val == null) {
+                    val = camelContext.getTypeConverter().tryConvertTo(Long.class, value);
+                }
+            } else {
+                val = camelContext.getTypeConverter().tryConvertTo(Boolean.class, value);
+            }
+            if (val == null) {
+                // it may refer to a bean or something
+                val = PropertyBindingSupport.resolveBean(camelContext, value);
+            }
+            repo.setVariable(key, val);
         }
         for (var e : variableProperties.entrySet()) {
             String loc = variableProperties.getLocation(e.getKey());

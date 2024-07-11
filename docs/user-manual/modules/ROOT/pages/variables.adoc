@@ -214,6 +214,33 @@ as shown below:
 camel.variable.user-template = resource:file:/etc/user.json
 ----
 
+Camel (*Camel 4.8*) will automatically convert the value to appropriate type:
+
+- all digits are converted to an int or long
+- true/false are converted to a boolean
+- otherwise string value
+
+There is also support for referring to other existing beans, using the `#bean:` syntax:
+
+[source,properties]
+----
+camel.variable.cheese = #bean:myCheeseBean
+----
+
+Or create a new bean via the `#class:` or `#type:` syntax:
+
+[source,properties]
+----
+camel.variable.cheese = #class:com.foo.MyClassName
+----
+
+Or if the value must be of a special type, you can specify this via `#valueAs` as follows:
+
+[source,properties]
+----
+camel.variable.amount = #valueAs(float):1.23
+----
+
 == Using Variables with EIPs
 
 The following commonly used EIPs for sending and receiving, and transforming messages, have

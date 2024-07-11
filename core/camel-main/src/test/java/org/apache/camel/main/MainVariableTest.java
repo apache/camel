@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MainVariableTest {
 
@@ -34,6 +35,7 @@ public class MainVariableTest {
         main.addInitialProperty("camel.variable.global.greeting", "Random number");
         // global is default
         main.addInitialProperty("camel.variable.random", "999");
+        main.addInitialProperty("camel.variable.gold", "true");
 
         main.start();
 
@@ -41,7 +43,8 @@ public class MainVariableTest {
         assertNotNull(context);
 
         assertEquals("Random number", context.getVariable("greeting"));
-        assertEquals("999", context.getVariable("random"));
+        assertEquals(999, context.getVariable("random"));
+        assertEquals(Boolean.TRUE, context.getVariable("gold"));
 
         main.stop();
     }
@@ -78,6 +81,38 @@ public class MainVariableTest {
 
         assertEquals("Random number", context.getVariable("greeting"));
         assertEquals(999, context.getVariable("random"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainVariableBean() {
+        Main main = new Main();
+
+        MyAddress adr = new MyAddress(90210, "somestreet 123");
+
+        main.addInitialProperty("camel.variable.global.greeting", "Random number");
+        // global is default
+        main.addInitialProperty("camel.variable.random", "999");
+        main.addInitialProperty("camel.variable.adr", "#bean:myAdr");
+        main.addInitialProperty("camel.variable.myFloat", "#valueAs(float):1.23");
+
+        main.addMainListener(new MainListenerSupport() {
+            @Override
+            public void beforeConfigure(BaseMainSupport main) {
+                main.getCamelContext().getRegistry().bind("myAdr", adr);
+            }
+        });
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        assertEquals("Random number", context.getVariable("greeting"));
+        assertEquals(999, context.getVariable("random"));
+        assertEquals(1.23f, context.getVariable("myFloat"));
+        assertSame(adr, context.getVariable("adr"));
 
         main.stop();
     }
