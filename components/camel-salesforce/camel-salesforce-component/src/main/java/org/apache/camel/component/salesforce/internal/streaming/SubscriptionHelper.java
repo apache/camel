@@ -348,14 +348,14 @@ public class SubscriptionHelper extends ServiceSupport {
         final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
         Map<String, Object> options = new HashMap<>();
-        if (component.getLongPollingTransportProperties() != null) {
-            options.putAll(component.getLongPollingTransportProperties());
-        }
         /*
         The timeout should be greater than 110 sec as per https://github.com/cometd/cometd/issues/1142#issuecomment-1048256297
         and https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming/using_streaming_api_timeouts.htm
         */
         options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, 120000);
+        if (component.getLongPollingTransportProperties() != null) {
+            options.putAll(component.getLongPollingTransportProperties());
+        }
 
         // check login access token
         if (session.getAccessToken() == null && !component.getLoginConfig().isLazyLogin()) {
