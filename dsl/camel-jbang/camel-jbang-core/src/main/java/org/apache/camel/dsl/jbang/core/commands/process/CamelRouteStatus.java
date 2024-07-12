@@ -114,6 +114,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             JsonObject eo = (JsonObject) o.get("lastError");
                             if (eo != null) {
                                 row.lastErrorPhase = eo.getString("phase");
+                                row.lastErrorTimestamp = eo.getLongOrDefault("timestamp", 0);
                                 row.lastErrorMessage = eo.getString("message");
                                 row.stackTrace = eo.getCollection("stackTrace");
                             }
@@ -219,7 +220,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
                         .with(this::getRemote),
-                new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
                         .with(this::getStatus),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("COVER").with(this::getCoverage),
@@ -248,10 +249,12 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
                         .with(this::getRemote),
-                new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
                         .with(this::getStatus),
-                new Column().header("PHASE").headerAlign(HorizontalAlign.CENTER)
+                new Column().header("PHASE").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.lastErrorPhase),
+                new Column().header("AGO").headerAlign(HorizontalAlign.CENTER)
+                        .with(this::getErrorAgo),
                 new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(r -> r.lastErrorMessage))));
@@ -284,6 +287,13 @@ public class CamelRouteStatus extends ProcessWatchCommand {
             default:
                 return 0;
         }
+    }
+
+    protected String getErrorAgo(Row r) {
+        if (r.lastErrorTimestamp > 0) {
+            return TimeUtils.printSince(r.lastErrorTimestamp);
+        }
+        return "";
     }
 
     protected String getFrom(Row r) {
@@ -378,6 +388,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         String load05;
         String load15;
         String lastErrorPhase;
+        long lastErrorTimestamp;
         String lastErrorMessage;
         List<String> stackTrace;
     }

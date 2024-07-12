@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Date;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.spi.RouteError;
@@ -24,6 +26,7 @@ public class DefaultRouteError implements RouteError {
     private final RouteError.Phase phase;
     private final Throwable throwable;
     private final boolean unhealthy;
+    private final Date date;
 
     public DefaultRouteError(Phase phase, Throwable throwable) {
         this(phase, throwable, false);
@@ -33,6 +36,7 @@ public class DefaultRouteError implements RouteError {
         this.phase = phase;
         this.throwable = throwable;
         this.unhealthy = unhealthy;
+        this.date = new Date();
     }
 
     @Override
@@ -48,6 +52,11 @@ public class DefaultRouteError implements RouteError {
     @Override
     public boolean isUnhealthy() {
         return unhealthy;
+    }
+
+    @Override
+    public Date getDate() {
+        return date;
     }
 
     // ***********************************

@@ -101,6 +101,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    State: %s", mrb.getState()));
             if (mrb.getLastError() != null) {
                 String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
+                String ago = TimeUtils.printSince(mrb.getLastError().getDate().getTime());
+                sb.append(String.format("\n    Error Ago: %s", ago));
                 sb.append(String.format("\n    Error Phase: %s", phase));
                 Throwable cause = mrb.getLastError().getException();
                 if (cause != null) {
@@ -265,6 +267,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
                 JsonObject eo = new JsonObject();
                 eo.put("phase", phase);
+                eo.put("timestamp", mrb.getLastError().getDate().getTime());
                 Throwable cause = mrb.getLastError().getException();
                 if (cause != null) {
                     eo.put("message", cause.getMessage());

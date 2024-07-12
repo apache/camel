@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -831,6 +832,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 @Override
                 public Throwable getException() {
                     return error.getException();
+                }
+
+                @Override
+                public Date getDate() {
+                    return error.getDate();
                 }
             };
         }
