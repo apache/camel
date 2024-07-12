@@ -24,10 +24,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.util.IOHelper;
@@ -184,6 +181,10 @@ public final class RuntimeUtil {
             deps = "";
         }
         return deps;
+    }
+
+    public static String[] getDependenciesAsArray(Properties properties) {
+        return getDependencies(properties).split(",");
     }
 
     public static String getPid() {

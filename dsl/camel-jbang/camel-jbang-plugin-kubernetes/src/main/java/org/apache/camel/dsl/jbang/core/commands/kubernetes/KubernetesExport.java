@@ -20,7 +20,6 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -137,38 +136,12 @@ class KubernetesExport extends Export {
             runtime = RuntimeType.quarkus;
         }
 
-        List<String> exportDependencies = new ArrayList<>();
-        if (dependencies != null) {
-            String[] deps = dependencies.split(",");
-            exportDependencies.addAll(Arrays.asList(deps));
-
-        }
-        exportDependencies.add("camel:cli-connector");
-        exportDependencies.add("io.quarkus:quarkus-kubernetes");
-
-        // Mutually exclusive image build plugins - use Jib by default
-        if (!exportDependencies.contains("io.quarkus:quarkus-container-image-docker")) {
-            exportDependencies.add("io.quarkus:quarkus-container-image-jib");
-        }
+        Map<String, String> exportProps = new HashMap<>();
+        String resolvedImageRegistry = resolveImageRegistry();
 
         // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
         // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
-        exportDependencies.add("io.fabric8:kubernetes-client:6.13.1");
-
-        dependencies = String.join(",", exportDependencies);
-
-        additionalProperties = Optional.ofNullable(additionalProperties).orElse("");
-
-        Map<String, String> exportProps = new HashMap<>();
-
-        String resolvedImageRegistry = resolveImageRegistry();
-        if (resolvedImageRegistry != null) {
-            exportProps.put("quarkus.container-image.registry", resolvedImageRegistry);
-
-            if (resolvedImageRegistry.startsWith("localhost")) {
-                exportProps.put("quarkus.container-image.insecure", "true");
-            }
-        }
+        addDependencies("camel:cli-connector", "io.fabric8:kubernetes-client:6.13.1");
 
         String resolvedImageGroup = null;
         if (image != null) {
@@ -177,10 +150,34 @@ class KubernetesExport extends Export {
             resolvedImageGroup = imageGroup;
         }
 
-        if (resolvedImageGroup != null) {
-            exportProps.put("quarkus.container-image.group", resolvedImageGroup);
+        if (runtime == RuntimeType.quarkus) {
+
+            // Quarkus specific dependencies
+            addDependencies("io.quarkus:quarkus-kubernetes");
+
+            // Mutually exclusive image build plugins - use Jib by default
+            if (!getDependenciesList().contains("io.quarkus:quarkus-container-image-docker")) {
+                addDependencies("io.quarkus:quarkus-container-image-jib");
+            }
+
+            // Quarkus specific properties
+            exportProps.put("quarkus.container-image.build", "true");
+
+            if (resolvedImageRegistry != null) {
+                exportProps.put("quarkus.container-image.registry", resolvedImageRegistry);
+                if (resolvedImageRegistry.startsWith("localhost")) {
+                    exportProps.put("quarkus.container-image.insecure", "true");
+                }
+            }
+
+            if (resolvedImageGroup != null) {
+                exportProps.put("quarkus.container-image.group", resolvedImageGroup);
+            }
+        } else {
+            printer().println("Kubernetes export for runtime '" + runtime + "' not supported");
         }
 
+        additionalProperties = Optional.ofNullable(additionalProperties).orElse("");
         if (additionalProperties.isEmpty()) {
             additionalProperties = exportProps.entrySet().stream()
                     .map(entry -> "%s=%s".formatted(entry.getKey(), entry.getValue())).collect(Collectors.joining(","));
