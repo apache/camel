@@ -305,15 +305,19 @@ public final class StringHelper {
     /**
      * Replaces the first from token in the given input string.
      * <p/>
-     * This implementation is not recursive, not does it check for tokens in the replacement string.
+     * This implementation is not recursive, not does it check for tokens in the replacement string. If from or to is
+     * null then the input string is returned as-is
      *
      * @param  input                    the input string
-     * @param  from                     the from string, must <b>not</b> be <tt>null</tt> or empty
-     * @param  to                       the replacement string, must <b>not</b> be empty
+     * @param  from                     the from string
+     * @param  to                       the replacement string
      * @return                          the replaced string, or the input string if no replacement was needed
      * @throws IllegalArgumentException if the input arguments is invalid
      */
     public static String replaceFirst(String input, String from, String to) {
+        if (from == null || to == null) {
+            return input;
+        }
         int pos = input.indexOf(from);
         if (pos != -1) {
             int len = from.length();
