@@ -19,34 +19,53 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import picocli.CommandLine;
 
 class KubernetesExportTest {
 
     private File workingDir;
+    private String[] defaultArgs;
 
     @BeforeEach
     public void setup() throws IOException {
         workingDir = Files.createTempDirectory("camel-k8s-export").toFile();
         workingDir.deleteOnExit();
+        defaultArgs = new String[] { "--dir=" + workingDir, "--quiet" };
+    }
+
+    @Test
+    public void shouldGenerateQuarkusProject() throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--gav=examples:route:1.0.0");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
     }
 
     @Test
     public void shouldGenerateKubernetesManifest() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--image-group=camel-test");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
-
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
@@ -61,14 +80,14 @@ class KubernetesExportTest {
 
     @Test
     public void shouldAddContainerSpec() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--gav=camel-test:route:1.0.0");
         command.traits = new String[] { "container.port=8088", "container.image-pull-policy=IfNotPresent" };
         command.doCall();
 
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
+        Assertions.assertEquals("quay.io/camel-test/route:1.0.0",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("IfNotPresent",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
@@ -81,7 +100,7 @@ class KubernetesExportTest {
 
     @Test
     public void shouldAddVolumes() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
         command.volumes = new String[] { "pvc-foo:/container/path/foo", "pvc-bar:/container/path/bar" };
         command.doCall();
 
@@ -109,7 +128,7 @@ class KubernetesExportTest {
 
     @Test
     public void shouldAddEnvVars() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
         command.envVars = new String[] { "CAMEL_FOO=bar", "MY_ENV=foo" };
         command.doCall();
 
@@ -129,7 +148,7 @@ class KubernetesExportTest {
 
     @Test
     public void shouldAddAnnotations() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
         command.annotations = new String[] { "foo=bar" };
         command.doCall();
 
@@ -141,19 +160,19 @@ class KubernetesExportTest {
 
     @Test
     public void shouldAddLabels() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
-        command.labels = new String[] { "foo=bar" };
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--label=foo=bar");
         command.doCall();
 
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(2, deployment.getMetadata().getLabels().size());
+        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get("camel.apache.org/integration"));
         Assertions.assertEquals("bar", deployment.getMetadata().getLabels().get("foo"));
     }
 
     @Test
     public void shouldAddConfigs() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
         command.configs = new String[] { "secret:foo", "configmap:bar" };
         command.doCall();
 
@@ -178,7 +197,7 @@ class KubernetesExportTest {
 
     @Test
     public void shouldAddResources() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
         command.resources = new String[] { "configmap:foo/file.txt" };
         command.doCall();
 
@@ -197,7 +216,7 @@ class KubernetesExportTest {
 
     @Test
     public void shouldAddOpenApis() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
         command.openApis = new String[] { "configmap:openapi/spec.yaml" };
         command.doCall();
 
@@ -216,7 +235,7 @@ class KubernetesExportTest {
 
     @Test
     public void shouldUseImage() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, workingDir.toString());
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
         command.image = "quay.io/camel/demo-app:1.0";
         command.doCall();
 
@@ -227,11 +246,12 @@ class KubernetesExportTest {
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
     }
 
-    private KubernetesExport createCommand(String[] files, String exportDir) {
-        KubernetesExport command = new KubernetesExport(
-                new CamelJBangMain(),
-                RuntimeType.quarkus, files, exportDir, true);
-        command.imageGroup = "camel-test";
+    private KubernetesExport createCommand(String[] files, String... args) {
+        var argsArr = Optional.ofNullable(args).orElse(new String[0]);
+        var argsLst = new ArrayList<>(Arrays.asList(argsArr));
+        argsLst.addAll(Arrays.asList(defaultArgs));
+        KubernetesExport command = new KubernetesExport(new CamelJBangMain(), files);
+        CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
         return command;
     }
 
@@ -239,5 +259,14 @@ class KubernetesExportTest {
         try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
             return KubernetesHelper.yaml().loadAs(fis, Deployment.class);
         }
+    }
+
+    private Model readMavenModel() throws Exception {
+        File f = workingDir.toPath().resolve("pom.xml").toFile();
+        Assertions.assertTrue(f.isFile(), "Not a pom.xml file: " + f);
+        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+        Model model = mavenReader.read(new FileReader(f));
+        model.setPomFile(f);
+        return model;
     }
 }
