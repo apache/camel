@@ -44,8 +44,11 @@ public class IntegrationExport extends KubernetesExport {
 
     public IntegrationExport(CamelJBangMain main, RuntimeType runtime, String[] files, String exportDir, String imageGroup,
                              boolean quiet) {
-        super(main, runtime, files, exportDir, quiet);
+        super(main, files);
+        this.runtime = runtime;
         this.imageGroup = imageGroup;
+        this.exportDir = exportDir;
+        this.quiet = quiet;
     }
 
     @Override
