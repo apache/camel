@@ -5,3 +5,5 @@ com.atlassian.platform
 com.atlassian.pom
 com.atlassian.sal
 io.atlassian.fugue
+com.atlassian.platform.dependencies
+com.atlassian.plugins.rest
