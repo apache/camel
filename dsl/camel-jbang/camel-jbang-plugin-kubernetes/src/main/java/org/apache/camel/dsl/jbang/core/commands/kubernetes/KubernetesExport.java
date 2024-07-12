@@ -103,13 +103,10 @@ public class KubernetesExport extends Export {
         super(main);
     }
 
-    public KubernetesExport(CamelJBangMain main, RuntimeType runtime, String[] files, String exportDir, boolean quiet) {
+    public KubernetesExport(CamelJBangMain main, String[] files) {
         super(main);
 
-        this.runtime = runtime;
         this.files = Arrays.asList(files);
-        this.exportDir = exportDir;
-        this.quiet = quiet;
     }
 
     public KubernetesExport(CamelJBangMain main, ExportConfigurer configurer) {
@@ -138,21 +135,25 @@ public class KubernetesExport extends Export {
         Map<String, String> exportProps = new HashMap<>();
         String resolvedImageRegistry = resolveImageRegistry();
 
-        // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
-        // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
-        addDependencies("camel:cli-connector", "io.fabric8:kubernetes-client:6.13.1");
-
         String resolvedImageGroup = null;
         if (image != null) {
             resolvedImageGroup = extractImageGroup(image);
         } else if (imageGroup != null) {
             resolvedImageGroup = imageGroup;
+        } else if (gav != null) {
+            var groupId = parseMavenGav(gav).getGroupId();
+            var dotToks = groupId.split("\\.");
+            resolvedImageGroup = dotToks[dotToks.length - 1];
         }
 
         if (runtime == RuntimeType.quarkus) {
 
             // Quarkus specific dependencies
-            addDependencies("io.quarkus:quarkus-kubernetes");
+            addDependencies("io.quarkus:quarkus-kubernetes", "camel:cli-connector");
+
+            // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
+            // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
+            addDependencies("io.fabric8:kubernetes-client:6.13.1");
 
             // Mutually exclusive image build plugins - use Jib by default
             if (!getDependenciesList().contains("io.quarkus:quarkus-container-image-docker")) {
@@ -172,8 +173,6 @@ public class KubernetesExport extends Export {
             if (resolvedImageGroup != null) {
                 exportProps.put("quarkus.container-image.group", resolvedImageGroup);
             }
-        } else {
-            printer().println("Kubernetes export for runtime '" + runtime + "' not supported");
         }
 
         additionalProperties = Optional.ofNullable(additionalProperties).orElse("");
