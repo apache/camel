@@ -36,6 +36,126 @@ To use the DJL component, Maven users will need to add the following dependency 
 djl:application
 ----
 
+Where `application` represents the https://javadoc.io/doc/ai.djl/api/latest/ai/djl/Application.html[application] in the context of DJL, the common functional signature for a group of deep learning models.
+
+=== Supported applications
+
+Currently, the following applications are supported by the component.
+
+[width="100%",cols="3,3,3",options="header"]
+|===
+| Application | Input types | Output type
+
+| `cv/image_classification`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `ai.djl.modality.Classifications`
+
+| `cv/object_detection`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `ai.djl.modality.cv.output.DetectedObjects`
+
+| `cv/semantic_segmentation`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `ai.djl.modality.cv.output.CategoryMask`
+
+| `cv/instance_segmentation`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `ai.djl.modality.cv.output.DetectedObjects`
+
+| `cv/pose_estimation`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `ai.djl.modality.cv.output.Joints`
+
+| `cv/action_recognition`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `ai.djl.modality.Classifications`
+
+| `cv/word_recognition`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `String`
+
+| `cv/image_generation`
+| `int[]`
+| `ai.djl.modality.cv.Image[]`
+
+| `cv/image_enhancement`
+| `ai.djl.modality.cv.Image +
+byte[] +
+InputStream +
+File`
+| `ai.djl.modality.cv.Image`
+
+| `nlp/fill_mask`
+| `String`
+| `String[]`
+
+| `nlp/question_answer`
+| `ai.djl.modality.nlp.qa.QAInput +
+String[]`
+| `String`
+
+| `nlp/text_classification`
+| `String`
+| `ai.djl.modality.Classifications`
+
+| `nlp/sentiment_analysis`
+| `String`
+| `ai.djl.modality.Classifications`
+
+| `nlp/token_classification`
+| `String`
+| `ai.djl.modality.Classifications`
+
+| `nlp/text_generation`
+| `String`
+| `String`
+
+| `nlp/machine_translation`
+| `String`
+| `String`
+
+| `nlp/multiple_choice`
+| `String`
+| `String`
+
+| `nlp/text_embedding`
+| `String`
+| `ai.djl.ndarray.NDArray`
+
+| `audio`
+| `ai.djl.modality.audio.Audio +
+byte[] +
+InputStream +
+File`
+| `String`
+
+| `timeseries/forecasting`
+| `ai.djl.timeseries.TimeSeriesData`
+| `ai.djl.timeseries.Forecast`
+
+|===
+
 // component-configure options: START
 
 // component-configure options: END
@@ -49,33 +169,267 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 == Model Zoo
 
-The following table contains supported models in the model zoo:
+The following tables contain supported models in the model zoos per application.
 
-[width="100%",cols="1,3,5,3,5,5",options="header"]
+NOTE: Those applications without a table mean that there are no pre-trained
+models found for them from the basic, PyTorch, TensorFlow or MXNet DJL model
+zoos. You may still find more models for an application from other model zoos
+such as Hugging Face, ONNX, etc.
+
+=== CV - Image Classification
+
+Application: `cv/image_classification`
+
+[width="100%",cols="2,5,5",options="header"]
 |===
-| Category | Application | Model family | Application path | Artifact ID | Options
+| Model family | Artifact ID | Options
 
-| CV | Image Classification | MLP | `cv/image_classification` | `ai.djl.zoo:mlp:0.0.2` | {dataset=mnist}
-| CV | Image Classification | MLP | `cv/image_classification` | `ai.djl.mxnet:mlp:0.0.1` | {dataset=mnist}
-| CV | Image Classification | Resnet | `cv/image_classification` | `ai.djl.zoo:resnet:0.0.1` | {layers=50, flavor=v1, dataset=cifar10}
-| CV | Image Classification | Resnet | `cv/image_classification` | `ai.djl.mxnet:resnet:0.0.1` | {layers=18, flavor=v1, dataset=imagenet}
-| CV | Image Classification | Resnet | `cv/image_classification` | `ai.djl.mxnet:resnet:0.0.1` | {layers=50, flavor=v2, dataset=imagenet}
-| CV | Image Classification | Resnet | `cv/image_classification` | `ai.djl.mxnet:resnet:0.0.1` | {layers=152, flavor=v1d, dataset=imagenet}
-| CV | Image Classification | Resnet | `cv/image_classification` | `ai.djl.mxnet:resnet:0.0.1` | {layers=50, flavor=v1, dataset=cifar10}
-| CV | Image Classification | Resnext | `cv/image_classification` | `ai.djl.mxnet:resnext:0.0.1` | {layers=101, flavor=64x4d, dataset=imagenet}
-| CV | Image Classification | Senet | `cv/image_classification` | `ai.djl.mxnet:senet:0.0.1` | {layers=154, dataset=imagenet}
-| CV | Image Classification | SeResnext | `cv/image_classification` | `ai.djl.mxnet:se_resnext:0.0.1` | {layers=101, flavor=32x4d, dataset=imagenet}
-| CV | Image Classification | SeResnext | `cv/image_classification` | `ai.djl.mxnet:se_resnext:0.0.1` | {layers=101, flavor=64x4d, dataset=imagenet}
-| CV | Image Classification | Squeezenet | `cv/image_classification` | `ai.djl.mxnet:squeezenet:0.0.1` | {flavor=1.0, dataset=imagenet}
+| MLP | `ai.djl.zoo:mlp:0.0.3` | {dataset=mnist}
+| MLP | `ai.djl.mxnet:mlp:0.0.1` | {dataset=mnist}
 
-| CV | Object Detection | SSD | `cv/object_detection` | `ai.djl.zoo:ssd:0.0.1` | {flavor=tiny, dataset=pikachu}
-| CV | Object Detection | SSD | `cv/object_detection` | `ai.djl.mxnet:ssd:0.0.1` | {size=512, backbone=resnet50, flavor=v1, dataset=voc}
-| CV | Object Detection | SSD | `cv/object_detection` | `ai.djl.mxnet:ssd:0.0.1` | {size=512, backbone=vgg16, flavor=atrous, dataset=coco}
-| CV | Object Detection | SSD | `cv/object_detection` | `ai.djl.mxnet:ssd:0.0.1` | {size=512, backbone=mobilenet1.0, dataset=voc}
-| CV | Object Detection | SSD | `cv/object_detection` | `ai.djl.mxnet:ssd:0.0.1` | {size=300, backbone=vgg16, flavor=atrous, dataset=voc}
+| ResNet | `ai.djl.zoo:resnet:0.0.2` | {layers=50, flavor=v1, dataset=cifar10}
+| ResNet | `ai.djl.pytorch:resnet:0.0.1` |
+{layers=50, dataset=imagenet} +
+{layers=18, dataset=imagenet} +
+{layers=101, dataset=imagenet}
+| ResNet | `ai.djl.tensorflow:resnet:0.0.1` | {flavor=v1, layers=50, dataset=imagenet}
+| ResNet | `ai.djl.mxnet:resnet:0.0.1` |
+{layers=18, flavor=v1, dataset=imagenet} +
+{layers=50, flavor=v2, dataset=imagenet} +
+{layers=101, dataset=imagenet} +
+{layers=152, flavor=v1d, dataset=imagenet} +
+{layers=50, flavor=v1, dataset=cifar10}
+
+| ResNet-18 | `ai.djl.pytorch:resnet18_embedding:0.0.1` | {}
+
+| SENet | `ai.djl.mxnet:senet:0.0.1` | {layers=154, dataset=imagenet}
+
+| SE-ResNeXt | `ai.djl.mxnet:se_resnext:0.0.1` |
+{layers=101, flavor=32x4d, dataset=imagenet} +
+{layers=101, flavor=64x4d, dataset=imagenet}
+
+| ResNeSt | `ai.djl.mxnet:resnest:0.0.1` |
+{layers=14, dataset=imagenet} +
+{layers=26, dataset=imagenet} +
+{layers=50, dataset=imagenet} +
+{layers=101, dataset=imagenet} +
+{layers=200, dataset=imagenet} +
+{layers=269, dataset=imagenet}
+
+| SqueezeNet | `ai.djl.mxnet:squeezenet:0.0.1` | {flavor=1.0, dataset=imagenet}
+
+| MobileNet | `ai.djl.tensorflow:mobilenet:0.0.1` | {flavor=v2, dataset=imagenet}
+| MobileNet | `ai.djl.mxnet:mobilenet:0.0.1` |
+{flavor=v1, multiplier=0.25, dataset=imagenet} +
+{flavor=v1, multiplier=0.5, dataset=imagenet} +
+{flavor=v1, multiplier=0.75, dataset=imagenet} +
+{flavor=v1, multiplier=1.0, dataset=imagenet} +
+{flavor=v2, multiplier=0.25, dataset=imagenet} +
+{flavor=v2, multiplier=0.5, dataset=imagenet} +
+{flavor=v2, multiplier=0.75, dataset=imagenet} +
+{flavor=v2, multiplier=1.0, dataset=imagenet} +
+{flavor=v3_small, multiplier=1.0, dataset=imagenet} +
+{flavor=v3_large, multiplier=1.0, dataset=imagenet}
+
+| GoogLeNet | `ai.djl.mxnet:googlenet:0.0.1` | {dataset=imagenet}
+
+| Darknet | `ai.djl.mxnet:darknet:0.0.1` | {layers=53, flavor=v3, dataset=imagenet}
+
+| Inception v3 | `ai.djl.mxnet:inceptionv3:0.0.1` | {dataset=imagenet}
+
+| AlexNet | `ai.djl.mxnet:alexnet:0.0.1` | {dataset=imagenet}
+
+| VGGNet | `ai.djl.mxnet:vgg:0.0.1` |
+{layers=11, dataset=imagenet} +
+{layers=13, dataset=imagenet} +
+{layers=16, dataset=imagenet} +
+{layers=19, dataset=imagenet} +
+{flavor=batch_norm, layers=11, dataset=imagenet} +
+{flavor=batch_norm, layers=13, dataset=imagenet} +
+{flavor=batch_norm, layers=16, dataset=imagenet} +
+{flavor=batch_norm, layers=19, dataset=imagenet}
+
+| DenseNet | `ai.djl.mxnet:densenet:0.0.1` |
+{layers=121, dataset=imagenet} +
+{layers=161, dataset=imagenet} +
+{layers=169, dataset=imagenet} +
+{layers=201, dataset=imagenet}
+
+| Xception | `ai.djl.mxnet:xception:0.0.1` | {flavor=65, dataset=imagenet}
+
+|===
+
+=== CV - Object Detection
+
+Application: `cv/object_detection`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| SSD | `ai.djl.zoo:ssd:0.0.2` | {flavor=tiny, dataset=pikachu}
+| SSD | `ai.djl.pytorch:ssd:0.0.1` | {size=300, backbone=resnet50, dataset=coco}
+| SSD | `ai.djl.tensorflow:ssd:0.0.1` | {backbone=mobilenet_v2, dataset=openimages_v4}
+| SSD | `ai.djl.mxnet:ssd:0.0.1` |
+{size=512, backbone=resnet50, flavor=v1, dataset=voc} +
+{size=512, backbone=vgg16, flavor=atrous, dataset=coco} +
+{size=512, backbone=mobilenet1.0, dataset=voc} +
+{size=300, backbone=vgg16, flavor=atrous, dataset=voc}
+
+| YOLO | `ai.djl.mxnet:yolo:0.0.1` |
+{dataset=voc, version=3, backbone=darknet53, imageSize=320} +
+{dataset=voc, version=3, backbone=darknet53, imageSize=416} +
+{dataset=voc, version=3, backbone=mobilenet1.0, imageSize=320} +
+{dataset=voc, version=3, backbone=mobilenet1.0, imageSize=416} +
+{dataset=coco, version=3, backbone=darknet53, imageSize=320} +
+{dataset=coco, version=3, backbone=darknet53, imageSize=416} +
+{dataset=coco, version=3, backbone=darknet53, imageSize=608} +
+{dataset=coco, version=3, backbone=mobilenet1.0, imageSize=320} +
+{dataset=coco, version=3, backbone=mobilenet1.0, imageSize=416} +
+{dataset=coco, version=3, backbone=mobilenet1.0, imageSize=608}
+| YOLOv5 | `ai.djl.pytorch:yolo5s:0.0.1` | {}
+| YOLOv8 | `ai.djl.pytorch:yolov8n:0.0.1` | {}
+
+|===
+
+=== CV - Semantic Segmentation
+
+Application: `cv/semantic_segmentation`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| DeepLabV3 | `ai.djl.pytorch:deeplabv3:0.0.1` | {backbone=resnet50, flavor=v1b, dataset=coco}
+
+|===
+
+=== CV - Instance Segmentation
+
+Application: `cv/instance_segmentation`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| Mask R-CNN | `ai.djl.mxnet:mask_rcnn:0.0.1` |
+{backbone=resnet18, flavor=v1b, dataset=coco} +
+{backbone=resnet101, flavor=v1d, dataset=coco}
+
+|===
+
+=== CV - Pose Estimation
+
+Application: `cv/pose_estimation`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| Simple Pose | `ai.djl.mxnet:simple_pose:0.0.1` |
+{backbone=resnet18, flavor=v1b, dataset=imagenet} +
+{backbone=resnet50, flavor=v1b, dataset=imagenet} +
+{backbone=resnet101, flavor=v1d, dataset=imagenet} +
+{backbone=resnet152, flavor=v1b, dataset=imagenet} +
+{backbone=resnet152, flavor=v1d, dataset=imagenet}
+
+|===
+
+=== CV - Action Recognition
+
+Application: `cv/action_recognition`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| Action Recognition | `ai.djl.mxnet:action_recognition:0.0.1` |
+{backbone=vgg16, dataset=ucf101} +
+{backbone=inceptionv3, dataset=ucf101}
+
+|===
+
+=== CV - Image Generation
+
+Application: `cv/image_generation`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| CycleGAN | `ai.djl.pytorch:cyclegan:0.0.1` |
+{artist=cezanne} +
+{artist=monet} +
+{artist=ukiyoe} +
+{artist=vangogh}
+| BigGAN | `ai.djl.pytorch:biggan-deep:0.0.1` |
+{layers=12, size=128, dataset=imagenet} +
+{layers=24, size=256, dataset=imagenet} +
+{layers=12, size=512, dataset=imagenet}
+
+|===
+
+=== NLP - Question Answer
+
+Application: `nlp/question_answer`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| BertQA | `ai.djl.pytorch:bertqa:0.0.1` |
+{modelType=distilbert, size=base, cased=false, dataset=SQuAD} +
+{modelType=distilbert, size=base, cased=true, dataset=SQuAD} +
+{backbone=bert, cased=false, dataset=SQuAD} +
+{backbone=bert, cased=true, dataset=SQuAD} +
+{backbone=distilbert, cased=true, dataset=SQuAD}
+| BertQA | `ai.djl.mxnet:bertqa:0.0.1` | {backbone=bert, dataset=book_corpus_wiki_en_uncased}
+
+|===
+
+=== NLP - Sentiment Analysis
+
+Application: `nlp/sentiment_analysis`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| DistilBERT | `ai.djl.pytorch:distilbert:0.0.1` | {backbone=distilbert, dataset=sst}
+
+|===
+
+=== NLP - Word Embedding
+
+Application: `nlp/word_embedding`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| GloVe | `ai.djl.mxnet:glove:0.0.2` | {dimensions=50}
+
+|===
+
+=== Time Series - Forecasting
+
+Application: `timeseries/forecasting`
+
+[width="100%",cols="2,5,5",options="header"]
+|===
+| Model family | Artifact ID | Options
+
+| DeepAR | `ai.djl.pytorch:deepar:0.0.1` | {dataset=m5forecast}
+| DeepAR | `ai.djl.mxnet:deepar:0.0.1` |
+{dataset=airpassengers} +
+{dataset=m5forecast}
+
 |===
 
 
