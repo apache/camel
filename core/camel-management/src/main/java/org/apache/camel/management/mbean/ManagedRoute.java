@@ -319,7 +319,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.getRouteController().startRoute(getRouteId());
+        try {
+            context.getRouteController().startRoute(getRouteId());
+        } catch (Exception e) {
+            LOG.warn("Error starting route: {} due to: {}. This exception is ignored.", getRouteId(), e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
@@ -327,7 +332,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.getRouteController().stopRoute(getRouteId());
+        try {
+            context.getRouteController().stopRoute(getRouteId());
+        } catch (Exception e) {
+            LOG.warn("Error stopping route: {} due to: {}. This exception is ignored.", getRouteId(), e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
@@ -355,6 +365,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return context.getRouteController().stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
     }
 
+    /**
+     * @deprecated not in use
+     */
+    @Deprecated(since = "4.8.0")
     public void shutdown() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -364,6 +378,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.removeRoute(routeId);
     }
 
+    /**
+     * @deprecated not in use
+     */
+    @Deprecated(since = "4.8.0")
     public void shutdown(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");

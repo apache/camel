@@ -222,6 +222,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     protected void actionTask() {
+        String action = null;
         try {
             JsonObject root = loadAction();
             if (root == null || root.isEmpty()) {
@@ -232,7 +233,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 LOG.debug("Action: {}", root);
             }
 
-            String action = root.getString("action");
+            action = root.getString("action");
             if ("route".equals(action)) {
                 doActionRouteTask(root);
             } else if ("logger".equals(action)) {
@@ -270,7 +271,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         } catch (Exception e) {
             // ignore
-            LOG.debug("Error executing action file: {} due to: {}. This exception is ignored.", actionFile, e.getMessage(),
+            LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : actionFile,
+                    e.getMessage(),
                     e);
         } finally {
             // action done so delete file
@@ -794,7 +796,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 LoggerHelper.changeLoggingLevel(logger, level);
             }
         } catch (Exception e) {
-            // ignore
+            LOG.warn("Error changing logging level due to {}. This exception is ignored.", e.getMessage(), e);
         }
     }
 
@@ -814,8 +816,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 })
                 .toList();
         for (String id : ids) {
+            String command = root.getString("command");
             try {
-                String command = root.getString("command");
                 if ("start".equals(command)) {
                     if ("*".equals(id)) {
                         camelContext.getRouteController().startAllRoutes();
@@ -846,7 +848,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     }
                 }
             } catch (Exception e) {
-                // ignore
+                LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
             }
         }
     }

@@ -42,9 +42,13 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @DevConsole(name = "route", description = "Route information")
 public class RouteDevConsole extends AbstractDevConsole {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RouteDevConsole.class);
 
     /**
      * Filters the routes matching by route id, route uri, and source location
@@ -550,7 +554,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                     }
                 }
             } catch (Exception e) {
-                // ignore
+                LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
             }
         }
     }
