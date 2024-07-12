@@ -27,8 +27,9 @@ public interface AWS2S3Constants {
     @Metadata(description = "The bucket Name (can be dynamic using the simple language in the producer) which this object will be stored or which will be used for the current operation or in which this object is contained.",
               javaType = "String")
     String BUCKET_NAME = "CamelAwsS3BucketName";
-    @Metadata(label = "producer", description = "The computed bucket name that was used by the producer such as to get or put an s3 object",
-            javaType = "String")
+    @Metadata(label = "producer",
+              description = "The computed bucket name that was used by the producer such as to get or put an s3 object",
+              javaType = "String")
     String PRODUCED_BUCKET_NAME = "CamelAwsS3ProducedBucketName";
     @Metadata(label = "producer", description = "The bucket Destination Name which will be used for the current operation",
               javaType = "String")
