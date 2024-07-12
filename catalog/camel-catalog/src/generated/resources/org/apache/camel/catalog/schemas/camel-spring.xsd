@@ -7104,7 +7104,12 @@ Sets the logging level. The default value is INFO. Default value: INFO
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the name of the logger.
+Sets the name of the logger. The name is default the routeId or the source:line if source location is enabled. You can
+also specify the name using tokens: ${class} - the logger class name (org.apache.camel.processor.LogProcessor)
+${contextId} - the camel context id ${routeId} - the route id ${groupId} - the route group id ${nodeId} - the node id
+${nodePrefixId} - the node prefix id ${source} - the source:line (source location must be enabled) ${source.name} - the
+source filename (source location must be enabled) ${source.line} - the source line number (source location must be
+enabled) For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}.
 ]]>
             </xs:documentation>
           </xs:annotation>

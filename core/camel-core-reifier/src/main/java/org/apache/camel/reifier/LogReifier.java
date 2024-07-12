@@ -72,9 +72,25 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
             if (name == null) {
                 name = camelContext.getGlobalOption(Exchange.LOG_EIP_NAME);
                 if (name != null) {
-                    LOG.debug("Using logName from CamelContext properties: {}", name);
+                    LOG.debug("Using logName from CamelContext global option: {}", name);
                 }
             }
+            // token based names (dynamic)
+            if (name != null) {
+                name = StringHelper.replaceFirst(name, "${class}", LogProcessor.class.getName());
+                name = StringHelper.replaceFirst(name, "${contextId}", camelContext.getName());
+                name = StringHelper.replaceFirst(name, "${routeId}", route.getRouteId());
+                name = StringHelper.replaceFirst(name, "${groupId}", route.getGroup());
+                name = StringHelper.replaceFirst(name, "${nodeId}", definition.getId());
+                name = StringHelper.replaceFirst(name, "${nodePrefixId}", definition.getNodePrefixId());
+                if (camelContext.isSourceLocationEnabled()) {
+                    String source = getLineNumberLoggerName(definition);
+                    name = StringHelper.replaceFirst(name, "${source}", source);
+                    name = StringHelper.replaceFirst(name, "${source.name}", StringHelper.before(source, ":", source));
+                    name = StringHelper.replaceFirst(name, "${source.line}", StringHelper.after(source, ":", ""));
+                }
+            }
+            // fallback to defaults
             if (name == null) {
                 if (camelContext.isSourceLocationEnabled()) {
                     name = getLineNumberLoggerName(definition);

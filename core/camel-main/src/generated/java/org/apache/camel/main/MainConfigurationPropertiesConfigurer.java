@@ -140,6 +140,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "logExhaustedMessageBody": target.setLogExhaustedMessageBody(property(camelContext, boolean.class, value)); return true;
         case "logmask":
         case "logMask": target.setLogMask(property(camelContext, boolean.class, value)); return true;
+        case "logname":
+        case "logName": target.setLogName(property(camelContext, java.lang.String.class, value)); return true;
         case "mainlistenerclasses":
         case "mainListenerClasses": target.setMainListenerClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "mainlisteners":
@@ -378,6 +380,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "logExhaustedMessageBody": return boolean.class;
         case "logmask":
         case "logMask": return boolean.class;
+        case "logname":
+        case "logName": return java.lang.String.class;
         case "mainlistenerclasses":
         case "mainListenerClasses": return java.lang.String.class;
         case "mainlisteners":
@@ -617,6 +621,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "logExhaustedMessageBody": return target.isLogExhaustedMessageBody();
         case "logmask":
         case "logMask": return target.isLogMask();
+        case "logname":
+        case "logName": return target.getLogName();
         case "mainlistenerclasses":
         case "mainListenerClasses": return target.getMainListenerClasses();
         case "mainlisteners":

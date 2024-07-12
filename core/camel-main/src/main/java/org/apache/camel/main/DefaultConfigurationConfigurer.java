@@ -247,6 +247,9 @@ public final class DefaultConfigurationConfigurer {
             LOG.warn("Using OffUuidGenerator (Only intended for development purposes)");
         }
 
+        if (config.getLogName() != null) {
+            camelContext.getGlobalOptions().put(Exchange.LOG_EIP_NAME, config.getLogName());
+        }
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());
