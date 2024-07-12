@@ -40,6 +40,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Collection Samples
 
 In the route below, we use the milvus component to create a collection named _test_ with the given parameters:

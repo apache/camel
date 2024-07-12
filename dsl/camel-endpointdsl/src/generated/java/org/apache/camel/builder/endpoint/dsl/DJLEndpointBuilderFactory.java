@@ -157,6 +157,20 @@ public interface DJLEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-djl
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DJLHeaderNameBuilder djl() {
+            return DJLHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Deep Java Library (camel-djl)
+         * Infer Deep Learning models from message exchanges data using Deep
+         * Java Library (DJL).
+         * 
+         * Category: ai
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-djl
+         * 
          * Syntax: <code>djl:application</code>
          * 
          * Path parameter: application (required)
@@ -191,6 +205,29 @@ public interface DJLEndpointBuilderFactory {
             return DJLEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Deep Java Library component.
+     */
+    public static class DJLHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DJLHeaderNameBuilder INSTANCE = new DJLHeaderNameBuilder();
+
+        /**
+         * The input data used for prediction.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DjlInput}.
+         */
+        public String djlInput() {
+            return "CamelDjlInput";
+        }
     }
     static DJLEndpointBuilder endpointBuilder(String componentName, String path) {
         class DJLEndpointBuilderImpl extends AbstractEndpointBuilder implements DJLEndpointBuilder, AdvancedDJLEndpointBuilder {
