@@ -8,7 +8,7 @@
     "firstVersion": "4.6.0",
     "label": "database,ai",
     "javaType": "org.apache.camel.component.pinecone.PineconeVectorDbComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pinecone",
     "version": "4.8.0-SNAPSHOT",
