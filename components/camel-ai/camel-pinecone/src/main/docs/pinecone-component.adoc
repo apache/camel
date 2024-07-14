@@ -4,7 +4,7 @@
 :artifactid: camel-pinecone
 :description: Perform operations on the Pinecone Vector Database.
 :since: 4.6
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
