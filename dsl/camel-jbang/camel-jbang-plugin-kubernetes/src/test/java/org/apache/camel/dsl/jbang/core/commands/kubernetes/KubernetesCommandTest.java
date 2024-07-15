@@ -17,6 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.util.List;
+
+import io.fabric8.kubernetes.api.model.HasMetadata;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.FactoryFinder;
@@ -32,4 +39,39 @@ class KubernetesCommandTest extends KubernetesBaseTest {
         Assertions.assertTrue(factoryFinder.newInstance("camel-jbang-plugin-kubernetes").isPresent());
     }
 
+    @Test
+    public void shouldPrintKubernetesManifest() {
+        CamelJBangMain.run(createMain(), "kubernetes", "run", "classpath:route.yaml", "--image-group", "camel-test", "--output",
+                "yaml");
+
+        List<HasMetadata> resources = kubernetesClient.load(getKubernetesManifestAsStream(printer.getOutput())).items();
+        Assertions.assertEquals(2, resources.size());
+
+        Deployment deployment = resources.stream()
+                .filter(it -> Deployment.class.isAssignableFrom(it.getClass()))
+                .map(Deployment.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
+
+        Assertions.assertEquals("route", deployment.getMetadata().getName());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
+        Assertions.assertEquals(3, deployment.getSpec().getSelector().getMatchLabels().size());
+        Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals("Always",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
+    }
+
+    private CamelJBangMain createMain() {
+        return new CamelJBangMain() {
+            @Override
+            public void quit(int exitCode) {
+                Assertions.assertEquals(0, exitCode,
+                        "Main finished with exit code %d:%n%s".formatted(exitCode, printer.getOutput()));
+            }
+        }.withPrinter(printer);
+    }
 }
