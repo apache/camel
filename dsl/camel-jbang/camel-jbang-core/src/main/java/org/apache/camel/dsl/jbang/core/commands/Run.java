@@ -152,9 +152,8 @@ public class Run extends CamelCommand {
             description = "Profile to run (dev, test, or prod).")
     String profile = "dev";
 
-    @Option(names = {
-            "--dep", "--deps" }, arity = "*", description = "Add additional dependencies")
-    private String[] _dependencies; // [TODO] make less protected when we ditch --deps
+    @Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
+    String[] dependencies;
 
     @Option(names = { "--repos" },
             description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
@@ -809,8 +808,8 @@ public class Run extends CamelCommand {
 
         // merge existing dependencies with --deps
         addDependencies(RuntimeUtil.getDependenciesAsArray(profileProperties));
-        if (dependencies().length > 0) {
-            var joined = String.join(",", dependencies());
+        if (dependencies.length > 0) {
+            var joined = String.join(",", dependencies);
             main.addInitialProperty("camel.jbang.dependencies", joined);
             writeSettings("camel.jbang.dependencies", joined);
         }
@@ -856,25 +855,15 @@ public class Run extends CamelCommand {
         }
     }
 
-    // [TODO] Remove when we ditch --deps
-    // For backward compatibility, we expands comma separated --deps
-    // https://issues.apache.org/jira/browse/CAMEL-20976
-    String[] dependencies() {
-        if (_dependencies != null && _dependencies.length == 1) {
-            String[] toks = _dependencies[0].split(",");
-            _dependencies = Arrays.stream(toks).map(String::trim).toArray(String[]::new);
-        }
-        return _dependencies;
-    }
-
     protected void addDependencies(String... deps) {
+        var depsArray = Optional.ofNullable(deps).orElse(new String[0]);
         var depsList = new ArrayList<>(getDependenciesList());
-        depsList.addAll(Arrays.asList(deps));
-        _dependencies = depsList.toArray(new String[0]);
+        depsList.addAll(Arrays.asList(depsArray));
+        dependencies = depsList.toArray(new String[0]);
     }
 
     protected List<String> getDependenciesList() {
-        var depsArray = Optional.ofNullable(dependencies()).orElse(new String[0]);
+        var depsArray = Optional.ofNullable(dependencies).orElse(new String[0]);
         return Arrays.asList(depsArray);
     }
 
@@ -901,7 +890,7 @@ public class Run extends CamelCommand {
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.addDependencies(this.dependencies());
+        eq.addDependencies(this.dependencies);
         eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
@@ -965,7 +954,7 @@ public class Run extends CamelCommand {
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.addDependencies(dependencies());
+        eq.addDependencies(dependencies);
         eq.addDependencies("camel:cli-connector");
         if (this.dev) {
             // hot-reload of spring-boot
