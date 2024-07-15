@@ -419,7 +419,7 @@
         <reactor-netty-version>1.1.20</reactor-netty-version>
         <redisson-version>3.32.0</redisson-version>
         <resilience4j-version>2.2.0</resilience4j-version>
-        <rest-assured-version>5.4.0</rest-assured-version>
+        <rest-assured-version>5.5.0</rest-assured-version>
         <roaster-version>2.29.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.2.0</rocketmq-version>
