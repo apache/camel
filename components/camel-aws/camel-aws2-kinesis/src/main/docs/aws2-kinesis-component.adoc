@@ -144,6 +144,8 @@ This feature will make possible to automatically checkpointing the Shard Iterati
 
 Everything will work out of the box, by simply using your AWS Credentials.
 
+NOTE: In the beginning the consumer will require 60/70 seconds for preparing everything, listing the shards, creating/querying the Lease table on Dynamo DB. Keep it in mind while working with the KCL consumer.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
