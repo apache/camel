@@ -43,6 +43,22 @@
     },
     {
       "type": "event",
+      "name": "example-broker-1",
+      "url": "http://broker-example/default/example-broker-1",
+      "metadata": {
+        "camel.endpoint.kind": "sink",
+        "knative.apiVersion": "eventing.knative.dev/v1",
+        "knative.kind": "Broker",
+        "knative.name": "example-broker-1"
+      },
+      "ceOverrides": {
+        "ce-type": "custom-type",
+        "ce-source": "custom-source",
+        "ce-subject": "custom-subject"
+      }
+    },
+    {
+      "type": "event",
       "name": "evt1",
       "path": "/events/evt1",
       "metadata": {

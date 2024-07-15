@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.knative;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeEnvironment;
@@ -61,7 +65,7 @@ public class KnativeComponentTest {
     void testLoadEnvironment(String resource) throws Exception {
         KnativeEnvironment env = mandatoryLoadFromResource(context, resource);
 
-        assertThat(env.stream()).hasSize(6);
+        assertThat(env.stream()).hasSize(7);
         assertThat(env.stream()).anyMatch(s -> s.getType() == Knative.Type.channel);
         assertThat(env.stream()).anyMatch(s -> s.getType() == Knative.Type.endpoint);
         assertThat(env.stream()).anyMatch(s -> s.getType() == Knative.Type.event);
@@ -114,9 +118,19 @@ public class KnativeComponentTest {
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:event/event", KnativeEndpoint.class);
             assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink)).isPresent();
+            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink)).isPresent();
             assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source)).isNotPresent();
             assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink)).isPresent().get()
                     .hasFieldOrPropertyWithValue("url", "http://broker-example/default/example-broker");
+            assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink)).isPresent().get()
+                    .hasFieldOrPropertyWithValue("ceOverrides", Collections.emptyMap());
+            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink)).isPresent().get()
+                    .hasFieldOrPropertyWithValue("url", "http://broker-example/default/example-broker-1");
+            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink)).isPresent().get()
+                    .hasFieldOrPropertyWithValue("ceOverrides",
+                            Stream.of("ce-source=custom-source", "ce-type=custom-type", "ce-subject=custom-subject")
+                                    .map(it -> it.split("="))
+                                    .collect(Collectors.toMap(it -> it[0], it -> it[1])));
         }
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:event/evt1", KnativeEndpoint.class);

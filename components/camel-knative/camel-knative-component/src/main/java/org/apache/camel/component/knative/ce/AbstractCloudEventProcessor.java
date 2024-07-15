@@ -29,6 +29,7 @@ import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.knative.KnativeEndpoint;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeResource;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +126,11 @@ abstract class AbstractCloudEventProcessor implements CloudEventProcessor {
                 return DateTimeFormatter.ISO_INSTANT.format(created);
             });
 
-            headers.putAll(service.getCeOverrides());
+            for (Map.Entry<String, String> ceOverride : service.getCeOverrides().entrySet()) {
+                // when using keys in YAML DSL camelCase is being used by default -convert to dash due to CloudEvents spec
+                headers.put(StringHelper.camelCaseToDash(ceOverride.getKey()),
+                        exchange.getContext().resolvePropertyPlaceholders(ceOverride.getValue()));
+            }
         };
     }
 
