@@ -25,9 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
+import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
+
+import static org.apache.camel.support.LanguageSupport.hasSimpleFunction;
 
 public final class AWS2S3Utils {
 
@@ -45,15 +48,17 @@ public final class AWS2S3Utils {
      */
     public static String determineBucketName(final Exchange exchange, AWS2S3Configuration configuration) {
         String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
-
         if (ObjectHelper.isEmpty(bucketName)) {
             bucketName = configuration.getBucketName();
         }
-
         if (bucketName == null) {
             throw new IllegalArgumentException("AWS S3 Bucket name header is missing or not configured.");
         }
-
+        // dynamic keys using built-in simple language
+        if (hasSimpleFunction(bucketName)) {
+            Language simple = exchange.getContext().resolveLanguage("simple");
+            bucketName = simple.createExpression(bucketName).evaluate(exchange, String.class);
+        }
         return bucketName;
     }
 
@@ -133,6 +138,11 @@ public final class AWS2S3Utils {
         }
         if (key == null) {
             throw new IllegalArgumentException("AWS S3 Key header missing.");
+        }
+        // dynamic keys using built-in simple language
+        if (hasSimpleFunction(key)) {
+            Language simple = exchange.getContext().resolveLanguage("simple");
+            key = simple.createExpression(key).evaluate(exchange, String.class);
         }
         return key;
     }

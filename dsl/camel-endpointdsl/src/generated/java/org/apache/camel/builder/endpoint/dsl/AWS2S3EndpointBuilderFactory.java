@@ -3487,8 +3487,9 @@ public interface AWS2S3EndpointBuilderFactory {
         private static final AWS2S3HeaderNameBuilder INSTANCE = new AWS2S3HeaderNameBuilder();
 
         /**
-         * The bucket Name which this object will be stored or which will be
-         * used for the current operation or in which this object is contained.
+         * The bucket Name (can be dynamic using the simple language in the
+         * producer) which this object will be stored or which will be used for
+         * the current operation or in which this object is contained.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3498,6 +3499,19 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         public String awsS3BucketName() {
             return "CamelAwsS3BucketName";
+        }
+        /**
+         * The computed bucket name that was used by the producer such as to get
+         * or put an s3 object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3ProducedBucketName}.
+         */
+        public String awsS3ProducedBucketName() {
+            return "CamelAwsS3ProducedBucketName";
         }
         /**
          * The bucket Destination Name which will be used for the current
@@ -3613,8 +3627,9 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3ETag";
         }
         /**
-         * The key under which this object is stored or will be stored or which
-         * will be used for the current operation.
+         * The key (can be dynamic using the simple language in the producer)
+         * under which this object is stored or will be stored or which will be
+         * used for the current operation.
          * 
          * The option is a: {@code String} type.
          * 
@@ -3624,6 +3639,18 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         public String awsS3Key() {
             return "CamelAwsS3Key";
+        }
+        /**
+         * The computed key that was used for retrieving this object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3ProducedKey}.
+         */
+        public String awsS3ProducedKey() {
+            return "CamelAwsS3ProducedKey";
         }
         /**
          * The Destination key which will be used for the current operation.
