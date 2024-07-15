@@ -93,9 +93,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repos;
 
-    @CommandLine.Option(names = {
-            "--dep", "--deps" }, arity = "*", description = "Add additional dependencies")
-    private String[] _dependencies; // [TODO] make less protected when we ditch --deps
+    @CommandLine.Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
+    protected String[] dependencies;
 
     @CommandLine.Option(names = { "--runtime" },
                         completionCandidates = RuntimeCompletionCandidates.class,
@@ -294,7 +293,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
-        run.addDependencies(dependencies());
+        run.addDependencies(dependencies);
         run.files = files;
         run.exclude = exclude;
         run.openapi = openapi;
@@ -307,25 +306,15 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return run.runExport(ignoreLoadingError);
     }
 
-    // [TODO] Remove when we ditch --deps
-    // For backward compatibility, we expands comma separated --deps
-    // https://issues.apache.org/jira/browse/CAMEL-20976
-    String[] dependencies() {
-        if (_dependencies != null && _dependencies.length == 1) {
-            String[] toks = _dependencies[0].split(",");
-            _dependencies = Arrays.stream(toks).map(String::trim).toArray(String[]::new);
-        }
-        return _dependencies;
-    }
-
     protected void addDependencies(String... deps) {
+        var depsArray = Optional.ofNullable(deps).orElse(new String[0]);
         var depsList = new ArrayList<>(getDependenciesList());
-        depsList.addAll(Arrays.asList(deps));
-        _dependencies = depsList.toArray(new String[0]);
+        depsList.addAll(Arrays.asList(depsArray));
+        dependencies = depsList.toArray(new String[0]);
     }
 
     protected List<String> getDependenciesList() {
-        var depsArray = Optional.ofNullable(dependencies()).orElse(new String[0]);
+        var depsArray = Optional.ofNullable(dependencies).orElse(new String[0]);
         return Arrays.asList(depsArray);
     }
 
@@ -347,7 +336,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // custom dependencies
-        for (String d : dependencies()) {
+        for (String d : getDependenciesList()) {
             answer.add(normalizeDependency(d));
         }
 
