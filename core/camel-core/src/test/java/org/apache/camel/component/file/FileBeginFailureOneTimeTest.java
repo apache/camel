@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBeginFailureOneTimeTest extends ContextTestSupport {
-
+    private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
     private final MyStrategy myStrategy = new MyStrategy();
 
     @Override
@@ -44,7 +45,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
 
@@ -68,7 +69,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
         @Override
         public void prepareOnStartup(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) {
+                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) { //noop
         }
 
         @Override
@@ -95,14 +96,14 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         public void commit(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile) {
+                GenericFile<File> fileGenericFile) { // noop - has to implement interface, but nothing to do
         }
 
         @Override
         public void rollback(
                 GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile) {
+                GenericFile<File> fileGenericFile) { //noop - has to implement interface, but nothing to do
         }
 
         public int getInvoked() {

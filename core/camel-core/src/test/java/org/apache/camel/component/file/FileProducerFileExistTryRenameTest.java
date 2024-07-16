@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,14 +28,15 @@ import org.junit.jupiter.api.condition.OS;
 
 @DisabledOnOs(OS.WINDOWS)
 public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testIgnore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists(testFile("hello.txt"), "Bye World");
+        mock.expectedFileExists(testFile(TEST_FILE_NAME), "Bye World");
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
         template.sendBodyAndHeader(fileUri("?fileExist=TryRename&tempPrefix=tmp"), "Bye World",
                 Exchange.FILE_NAME, "hello.txt");
 
@@ -47,7 +50,7 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).noAutoStartup().convertBodyTo(String.class)
+                from(fileUri("?noop=true&initialDelay=0&delay=10")).autoStartup(false).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

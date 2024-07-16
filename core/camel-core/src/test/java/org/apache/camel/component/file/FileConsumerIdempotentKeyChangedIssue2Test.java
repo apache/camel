@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +27,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     private Endpoint endpoint;
 
@@ -33,7 +35,7 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
     public void testFile() throws Exception {
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         context.getRouteController().startAllRoutes();
 
@@ -46,7 +48,7 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
         // wait a bit to allow the consumer to poll once and see a non-changed
         // file
         Awaitility.await().pollDelay(250, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-            template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
+            template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, TEST_FILE_NAME);
             assertMockEndpointsSatisfied();
         });
     }
@@ -59,7 +61,7 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
                 endpoint = endpoint(fileUri("?noop=true&initialDelay=0&delay=100"
                                             + "&idempotentKey=${file:name}-${file:size}-${file:modified}"));
 
-                from(endpoint).noAutoStartup().convertBodyTo(String.class).to("log:file").to("mock:file");
+                from(endpoint).autoStartup(false).convertBodyTo(String.class).to("log:file").to("mock:file");
             }
         };
     }
