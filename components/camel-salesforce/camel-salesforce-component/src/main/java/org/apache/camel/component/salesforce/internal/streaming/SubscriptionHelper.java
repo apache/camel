@@ -460,8 +460,6 @@ public class SubscriptionHelper extends ServiceSupport {
 
             final Long replayIdValue = replayId.get();
 
-            LOG.info("Set Replay extension to replay from `{}` for channel `{}`", replayIdValue, channelName);
-
             REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, replayIdValue);
         }
     }
