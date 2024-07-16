@@ -16,7 +16,6 @@
 
     <properties>
         <java.version>{{ .JavaVersion }}</java.version>
-{{ .jkubeProperties }}
 {{ .AdditionalProperties }}
     </properties>
 
@@ -75,26 +74,41 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:{{ .JavaVersion }}</image>
+                        <platforms>
+                            <platform>
+                                <architecture>amd64</architecture>
+                                <os>linux</os>
+                            </platform>
+                            <platform>
+                                <architecture>arm64</architecture>
+                                <os>linux</os>
+                            </platform>
+                        </platforms>
+                    </from>
+                    <to>
+                        <image>${camel.spring-boot.kubernetes.image-name}</image>
+                    </to>
+                    <allowInsecureRegistries>${camel.spring-boot.container-image.insecure}</allowInsecureRegistries>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>dockerBuild</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
-{{ .jkubeProfiles }}
-        <profile>
-            <id>camel.debug</id>
-            <activation>
-                <property>
-                    <name>camel.debug</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.camel.springboot</groupId>
-                    <artifactId>camel-debug-starter</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 
 </project>

@@ -22,13 +22,12 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
@@ -50,7 +49,17 @@ class KubernetesExportTest {
 
     @Test
     public void shouldGenerateQuarkusProject() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--gav=examples:route:1.0.0");
+        shouldGenerateProject(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldGenerateSpringBootProject() throws Exception {
+        shouldGenerateProject(RuntimeType.springBoot);
+    }
+
+    void shouldGenerateProject(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -61,8 +70,18 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldGenerateKubernetesManifest() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--image-group=camel-test");
+    public void shouldGenerateQuarkusKubernetesManifest() throws Exception {
+        shouldGenerateKubernetesManifest(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldGenerateSpringBootKubernetesManifest() throws Exception {
+        shouldGenerateKubernetesManifest(RuntimeType.springBoot);
+    }
+
+    void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -79,8 +98,18 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddContainerSpec() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--gav=camel-test:route:1.0.0");
+    public void shouldAddQuarkusContainerSpec() throws Exception {
+        shouldAddContainerSpec(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootContainerSpec() throws Exception {
+        shouldAddContainerSpec(RuntimeType.springBoot);
+    }
+
+    void shouldAddContainerSpec(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--gav=camel-test:route:1.0.0", "--runtime=" + rt.runtime());
         command.traits = new String[] { "container.port=8088", "container.image-pull-policy=IfNotPresent" };
         command.doCall();
 
@@ -99,8 +128,17 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddVolumes() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
+    public void shouldAddQuarkusVolumes() throws Exception {
+        shouldAddVolumes(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootVolumes() throws Exception {
+        shouldAddVolumes(RuntimeType.springBoot);
+    }
+
+    void shouldAddVolumes(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.volumes = new String[] { "pvc-foo:/container/path/foo", "pvc-bar:/container/path/bar" };
         command.doCall();
 
@@ -127,8 +165,17 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddEnvVars() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
+    public void shouldAddQuarkusEnvVars() throws Exception {
+        shouldAddEnvVars(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootEnvVars() throws Exception {
+        shouldAddEnvVars(RuntimeType.springBoot);
+    }
+
+    void shouldAddEnvVars(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.envVars = new String[] { "CAMEL_FOO=bar", "MY_ENV=foo" };
         command.doCall();
 
@@ -147,8 +194,17 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddAnnotations() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
+    public void shouldAddQuarkusAnnotations() throws Exception {
+        shouldAddAnnotations(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootAnnotations() throws Exception {
+        shouldAddAnnotations(RuntimeType.springBoot);
+    }
+
+    void shouldAddAnnotations(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.annotations = new String[] { "foo=bar" };
         command.doCall();
 
@@ -159,8 +215,18 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddLabels() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--label=foo=bar");
+    public void shouldAddQuarkusLabels() throws Exception {
+        shouldAddLabels(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootLabels() throws Exception {
+        shouldAddLabels(RuntimeType.springBoot);
+    }
+
+    void shouldAddLabels(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--label=foo=bar", "--runtime=" + rt.runtime());
         command.doCall();
 
         Deployment deployment = getDeployment(workingDir);
@@ -171,8 +237,17 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddConfigs() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
+    public void shouldAddQuarkusConfigs() throws Exception {
+        shouldAddConfigs(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootConfigs() throws Exception {
+        shouldAddConfigs(RuntimeType.springBoot);
+    }
+
+    void shouldAddConfigs(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.configs = new String[] { "secret:foo", "configmap:bar" };
         command.doCall();
 
@@ -196,8 +271,17 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddResources() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
+    public void shouldAddQuarkusResources() throws Exception {
+        shouldAddResources(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootResources() throws Exception {
+        shouldAddResources(RuntimeType.springBoot);
+    }
+
+    void shouldAddResources(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.resources = new String[] { "configmap:foo/file.txt" };
         command.doCall();
 
@@ -215,8 +299,17 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldAddOpenApis() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
+    public void shouldAddQuarkusOpenApis() throws Exception {
+        shouldAddOpenApis(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldAddSpringBootOpenApis() throws Exception {
+        shouldAddOpenApis(RuntimeType.springBoot);
+    }
+
+    void shouldAddOpenApis(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.openApis = new String[] { "configmap:openapi/spec.yaml" };
         command.doCall();
 
@@ -234,8 +327,17 @@ class KubernetesExportTest {
     }
 
     @Test
-    public void shouldUseImage() throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" });
+    public void shouldUseQuarkusImage() throws Exception {
+        shouldUseImage(RuntimeType.quarkus);
+    }
+
+    @Test
+    public void shouldUseSpringBootImage() throws Exception {
+        shouldUseImage(RuntimeType.springBoot);
+    }
+
+    public void shouldUseImage(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.image = "quay.io/camel/demo-app:1.0";
         command.doCall();
 

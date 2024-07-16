@@ -46,6 +46,7 @@ class ExportSpringBoot extends Export {
 
     public ExportSpringBoot(CamelJBangMain main) {
         super(main);
+        pomTemplateName = "spring-boot-pom.tmpl";
     }
 
     @Override
@@ -165,27 +166,27 @@ class ExportSpringBoot extends Export {
         // First try to load a specialized template from the catalog, if the catalog does not provide it
         // fallback to the template defined in camel-jbang-core
         String context;
-        InputStream template = catalog.loadResource("camel-jbang", "spring-boot-pom.tmpl");
+        InputStream template = catalog.loadResource("camel-jbang", pomTemplateName);
         if (template != null) {
             context = IOHelper.loadText(template);
         } else {
-            context = readResourceTemplate("templates/spring-boot-pom.tmpl");
+            context = readResourceTemplate("templates/" + pomTemplateName);
         }
 
         String camelVersion = catalog.getLoadedVersion();
 
-        context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
-        context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
-        context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
-        context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
-        context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
+        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
         if (camelSpringBootVersion != null) {
-            context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelSpringBootVersion);
+            context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}", camelSpringBootVersion);
         } else {
-            context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
+            context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
         }
-        if (additionalProperties != null) {
+        if (additionalProperties != null && !additionalProperties.isEmpty()) {
             String properties = Arrays.stream(additionalProperties.split(","))
                     .map(property -> {
                         String[] keyValueProperty = property.split("=");
