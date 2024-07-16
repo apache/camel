@@ -1,0 +1,119 @@
+= Tahu Edge Node / Device Component
+:doctitle: Tahu Edge Node / Device
+:shortname: tahu-edge
+:artifactid: camel-tahu
+:description: Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+:since: 4.8
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Tahu
+
+*Since Camel {since}*
+
+*{component-header}*
+
+== URI format
+
+Tahu Edge Nodes and Devices use the same URI scheme and Tahu Edge Component and Endpoint.
+
+.Edge Node endpoints, where `groupId` and `edgeNodeId` are the Sparkplug Group and Edge Node IDs describing the Edge Node.
+-----
+tahu-edge://groupId/edgeNodeId?options
+-----
+
+.Edge Node Producer for Group 'Basic' and Edge Node 'EdgeNode' using MQTT Client ID 'EdgeClient1' connecting to Host Application 'BasicHostApp'
+[caption="Example: "]
+------
+tahu-edge://Basic/EdgeNode?clientId=EdgeClient1&primaryHostId=BasicHostApp&deviceIds=D2,D3,D4
+------
+
+.Device endpoints, where `groupId`, `edgeNodeId`, and `deviceId` are the Sparkplug Group, Edge Node, and Device IDs describing the Device.
+-----
+tahu-edge://groupId/edgeNodeId/deviceId
+-----
+
+.Device Producers for Devices 'D2', 'D3', and 'D4' connected to Edge Node 'EdgeNode' in Group 'Basic', i.e. the Devices of the Edge Node in the example above
+[caption="Example: "]
+------
+tahu-edge://Basic/EdgeNode/D2
+tahu-edge://Basic/EdgeNode/D3
+tahu-edge://Basic/EdgeNode/D4
+------
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== Edge Node Endpoint Configuration
+
+Sparkplug Edge Nodes are identified by a unique combination of Group ID and 
+Edge Node ID, the Edge Node Descriptor. These two elements form the path
+of an Edge Node Endpoint URI. All other Edge Node Endpoint configuration
+properties use query string variables or are set via Endpoint property setters.
+
+If an Edge Node is tied to a particular Host Application, the `primaryHostId`
+query string variable can be set to enable the required Sparkplug behavior.
+
+Metric aliasing is handled automatically by the Eclipse Tahu library and
+enabled with the `useAliases` query string variable.
+
+==== Birth/Death Sequence Numbers
+
+The Sparkplug specification requires careful handling of NBIRTH/NDEATH sequence
+numbers for Host Applications to correlate Edge Nodes' session behavior with
+the metrics the Host Application receives.
+
+By default, each Edge Node Endpoint writes a local file to store the next sequence number
+that Edge Node should use when publishing its NBIRTH message and setting its NDEATH MQTT Will Message when establishing an MQTT Server connection. The local path for this file can be set using the `bdSeqNumPath` query string variable.
+
+Should another Sparkplug spec-compliant Eclipse Tahu `BdSeqManager` instance be
+required, use the `bdSeqManager` Endpoint property setter method.
+
+=== Device Endpoint Configuration
+
+Sparkplug Devices are identified by a unique combination of the Edge Node Descriptor
+to which the Device is connected and the Device's Device ID. These three elements
+form the path of a Device Endpoint URI. Since any Sparkplug Device is associated
+with exactly one Edge Node, an MQTT Server connection and its associated Sparkplug
+behavior is managed per Edge Node, not per Device. This means all Device Endpoint
+configuration must be completed prior to starting the Edge Node Producer for a given
+Device Endpoint.
+
+Device Endpoints inherit all MQTT Server connection information from their associated
+Edge Node Endpoint. Setting Component- or Endpoint-level configuration values on Device
+Components or Endpoints is unnecessary and should be avoided.
+
+=== Edge Node and Device Endpoint Interaction
+
+Sparkplug Edge Nodes are not required to have a Device hierarchy and physical
+devices may be represented directly as Edge Nodes--this decision is left to
+Sparkplug application developers.
+
+However if an Edge Node will be reporting Device-level metrics in addition to
+and Edge Node-level metrics, the Edge Node Endpoint is required to have a 
+`deviceIds` list configured to publish correct NBIRTH and DBIRTH payloads required
+by the Sparkplug specification.
+
+Additionally, a Tahu `SparkplugBPayloadMap` instance is required to be set
+on each Edge Node and Device Endpoint to populate the NBIRTH/DBIRTH message 
+with the required Sparkplug Metric names and data types. This is accomplished
+using the `metricDataTypePayloadMap` Endpoint property setter method.
+
+These requirements allow Sparkplug 3.0.0 compliant behavior.

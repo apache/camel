@@ -82,5 +82,6 @@
         <module>camel-test-infra-ollama</module>
         <module>camel-test-infra-milvus</module>
         <module>camel-test-infra-hazelcast</module>
+        <module>camel-test-infra-hivemq</module>
     </modules>
 </project>
