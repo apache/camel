@@ -857,6 +857,15 @@ Deprecated: null
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="langChain4j" type="tns:langChain4JTokenizerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Represents a tokenizer that uses LangChain4j for tokenization
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="language" type="tns:languageExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3622,6 +3631,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="parallelProcessing" type="xs:string">
@@ -4263,6 +4273,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -4373,6 +4384,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -4474,6 +4486,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -4558,6 +4571,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="configuration" type="xs:string">
@@ -5031,6 +5045,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="fallbackViaNetwork" type="xs:string">
@@ -6200,6 +6215,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="statusPropertyName" type="xs:string">
@@ -6291,6 +6307,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -6453,6 +6470,7 @@ Global option value.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="idempotentRepository" type="xs:string" use="required">
@@ -6614,6 +6632,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -6712,6 +6731,7 @@ intercepted.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="uri" type="xs:string" use="required">
@@ -6821,6 +6841,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
@@ -6921,6 +6942,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -7240,6 +7262,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="copy" type="xs:string">
@@ -10648,6 +10671,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="aggregationStrategy" type="xs:string">
@@ -10872,6 +10896,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="mode" type="xs:string">
@@ -11071,6 +11096,7 @@ its considered handled as well.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="redeliveryPolicyRef" type="xs:string">
@@ -11330,6 +11356,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -11411,6 +11438,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string" use="required">
@@ -12044,6 +12072,7 @@ Name of variable to remove.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -12394,6 +12423,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="autoStartup" type="xs:string">
@@ -12832,6 +12862,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="sagaService" type="xs:string">
@@ -13290,6 +13321,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="delimiter" type="xs:string">
@@ -13521,6 +13553,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -14061,6 +14094,13 @@ Whether to auto startup components when toD is starting up. Default value: true
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType abstract="true" name="tokenizerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="transactedDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -14137,6 +14177,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string">
@@ -14280,6 +14321,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -17237,6 +17279,40 @@ Sets the component name that this definition will apply to.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="langChain4JTokenizerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:tokenizerDefinition">
+        <xs:sequence/>
+        <xs:attribute name="maxTokens" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the maximum number of tokens on each segment. Default value: 1024
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxOverlap" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the maximum number of tokens that can overlap in each segment. Default value: 0
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="tokenizerType" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the tokenizer type. Default value: OPEN_AI
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="customTransformer">
     <xs:complexContent>
       <xs:extension base="tns:transformer">
@@ -18290,6 +18366,13 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="BOOLEAN"/>
       <xs:enumeration value="NODESET"/>
       <xs:enumeration value="NODE"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tokenizerType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OPEN_AI"/>
+      <xs:enumeration value="AZURE"/>
+      <xs:enumeration value="QWEN"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="springErrorHandlerType">

@@ -1,0 +1,119 @@
+= LangChain4j Tokenizer Component
+:doctitle: LangChain4j Tokenizer
+:shortname: langchain4j-tokenizer
+:artifactid: camel-langchain4j-tokenizer
+:description: LangChain4j Tokenizer
+:since: 4.8
+:supportlevel: Experimental
+:tabs-sync-option:
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: langchain4j-tokenizer
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The LangChain4j tokenizer component provides support to tokenize (chunk) larger blocks of texts into text segments
+that can be used when interacting with LLMs. Tokenization is particularly helpful when used with
+https://en.wikipedia.org/wiki/Vector_database[vector databases] to provide better and more contextual search results
+for https://en.wikipedia.org/wiki/Retrieval-augmented_generation[retrieval-augmented generation (RAG)].
+
+This component uses the https://docs.langchain4j.dev/tutorials/rag/#document-splitter[LangChain4j document splitter]
+to handle chunking.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-langchain4j-tokenizer</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Chunking DSL
+
+The tokenization process is done in route, using a DSL that handles the parameters of the tokenization:
+
+[tabs]
+====
+Java::
++
+[source,java]
+-------------------------------------------------------
+from("direct:start")
+    .tokenize(tokenizer()
+            .byParagraph()
+                .maxTokens(1024)
+                .maxOverlap(10)
+                .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
+                .end())
+    .split().body()
+    .to("mock:result");
+-------------------------------------------------------
+
+====
+
+The tokenization creates a composite message (i.e.: an array of Strings). This composite message, then can be split
+using the xref:eips:split-eip.adoc[Split EIP] so that each text segment is separately to an endpoint. Alternatively, the
+contents of the composite message may be passed through a processor so that invalid data is filtered.
+
+== Supported Splitters
+
+The following type of splitters is supported:
+
+* By paragraph: using the DSL `tokenizer().byParagraph()`
+* By sentence: using the DSL `tokenizer().bySentence()`
+* By word: using the DSL `tokenizer().byWord()`
+* By line: using the DSL `tokenizer().byLine()`
+* By character: using the DSL `tokenizer().byCharacter()`
+
+== Supported Tokenizers
+
+The following tokenizers are supported:
+
+* OpenAI: using `LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI`
+* Azure: using `LangChain4jTokenizerDefinition.TokenizerType.AZURE`
+* Qwen: using `LangChain4jTokenizerDefinition.TokenizerType.QWEN`
+
+The application must provide the specific implementation of the tokenizer from LangChain4j. At this moment, they are:
+
+[tabs]
+====
+Open AI::
++
+[source,xml]
+-------------------------------------------------------
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai</artifactId>
+    <version>${langchain4j-version}</version>
+</dependency>
+-------------------------------------------------------
+
+Azure::
++
+[source,xml]
+-------------------------------------------------------
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-azure-open-ai</artifactId>
+    <version>${langchain4j-version}</version>
+</dependency>
+-------------------------------------------------------
+
+Qwen::
++
+[source,xml]
+-------------------------------------------------------
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-dashscope</artifactId>
+    <version>${langchain4j-version}</version>
+</dependency>
+-------------------------------------------------------
+====

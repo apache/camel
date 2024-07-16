@@ -43,6 +43,7 @@
         <module>camel-milvus</module>
         <module>camel-pinecone</module>
         <module>camel-qdrant</module>
+        <module>camel-langchain4j-tokenizer</module>
     </modules>
 
 </project>

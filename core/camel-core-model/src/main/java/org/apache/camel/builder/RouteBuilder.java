@@ -769,6 +769,27 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         lifecycleInterceptors.remove(interceptor);
     }
 
+    /**
+     * A utility method allowing to build any tokenizer using a fluent syntax as shown in the next example:
+     *
+     * <pre>
+     * {@code
+     * from("jms:queue:orders")
+     *         .tokenize(
+     *                 tokenizer()
+     *                         .byParagraph()
+     *                         .maxTokens(1024)
+     *                         .end())
+     *         .to("qdrant:db");
+     * }
+     * </pre>
+     *
+     * @return an entry point to the builder of all supported tokenizers.
+     */
+    public TokenizerBuilderFactory tokenizer() {
+        return new TokenizerBuilderFactory();
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
