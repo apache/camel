@@ -21,6 +21,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.URI;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +166,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 LOG.info("Subscribing to channels: {}", channelsToSubscribe);
                 for (var channelName : channelsToSubscribe) {
                     for (var consumer : channelToConsumers.get(channelName)) {
-                        subscribe(consumer.getTopicName(), consumer, true);
+                        subscribe(consumer);
                     }
                 }
             }
@@ -219,7 +220,7 @@ public class SubscriptionHelper extends ServiceSupport {
                     LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
                     Thread.sleep(backoff);
                     for (var consumer : consumers) {
-                        subscribe(consumer.getTopicName(), consumer);
+                        subscribe(consumer);
                     }
                 } catch (InterruptedException e) {
                     LOG.warn("Aborting subscribe on interrupt!", e);
@@ -231,9 +232,9 @@ public class SubscriptionHelper extends ServiceSupport {
                     = ((SalesforceEndpoint) firstConsumer.getEndpoint()).getConfiguration().getFallBackReplayId();
             LOG.warn(error);
             LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
-            REPLAY_EXTENSION.addChannelReplayId(channelName, fallBackReplayId);
+            REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, fallBackReplayId);
             for (var consumer : consumers) {
-                subscribe(consumer.getTopicName(), consumer, true);
+                subscribe(consumer);
             }
         }
 
@@ -305,13 +306,13 @@ public class SubscriptionHelper extends ServiceSupport {
         return exception;
     }
 
-    private void closeChannel(final String name, MessageListener listener) {
+    private void closeChannel(final String name) {
         if (client == null) {
             return;
         }
 
         final ClientSessionChannel channel = client.getChannel(name);
-        if (listener != null) {
+        for (var listener : channel.getListeners()) {
             channel.removeListener(listener);
         }
         channel.release();
@@ -319,9 +320,9 @@ public class SubscriptionHelper extends ServiceSupport {
 
     @Override
     protected void doStop() throws Exception {
-        closeChannel(META_CONNECT, connectListener);
-        closeChannel(META_SUBSCRIBE, subscriptionListener);
-        closeChannel(META_HANDSHAKE, handshakeListener);
+        closeChannel(META_CONNECT);
+        closeChannel(META_SUBSCRIBE);
+        closeChannel(META_HANDSHAKE);
 
         if (client == null) {
             return;
@@ -413,21 +414,13 @@ public class SubscriptionHelper extends ServiceSupport {
         return client;
     }
 
-    public void subscribe(final String topicName, final StreamingApiConsumer consumer) {
-        subscribe(topicName, consumer, false);
-    }
-
-    private void subscribe(
-            final String topicName, final StreamingApiConsumer consumer,
-            final boolean skipReplayId) {
+    public synchronized void subscribe(StreamingApiConsumer consumer) {
         // create subscription for consumer
-        final String channelName = getChannelName(topicName);
+        final String channelName = getChannelName(consumer.getTopicName());
         channelToConsumers.computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet()).add(consumer);
         channelsToSubscribe.add(channelName);
 
-        if (!skipReplayId) {
-            setupReplay((SalesforceEndpoint) consumer.getEndpoint());
-        }
+        setReplayIdIfAbsent(consumer.getEndpoint());
 
         // channel message listener
         LOG.info("Subscribing to channel {}...", channelName);
@@ -459,7 +452,7 @@ public class SubscriptionHelper extends ServiceSupport {
         return failureReason;
     }
 
-    void setupReplay(final SalesforceEndpoint endpoint) {
+    private void setReplayIdIfAbsent(final SalesforceEndpoint endpoint) {
         final String topicName = endpoint.getTopicName();
 
         final Optional<Long> replayId = determineReplayIdFor(endpoint, topicName);
@@ -470,7 +463,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
             LOG.info("Set Replay extension to replay from `{}` for channel `{}`", replayIdValue, channelName);
 
-            REPLAY_EXTENSION.addChannelReplayId(channelName, replayIdValue);
+            REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, replayIdValue);
         }
     }
 
@@ -516,15 +509,17 @@ public class SubscriptionHelper extends ServiceSupport {
         return channelName.toString();
     }
 
-    public void unsubscribe(String topicName, StreamingApiConsumer consumer) {
-
+    public synchronized void unsubscribe(StreamingApiConsumer consumer) {
         // channel name
-        final String channelName = getChannelName(topicName);
+        final String channelName = getChannelName(consumer.getTopicName());
 
         // unsubscribe from channel
         var consumers = channelToConsumers.get(channelName);
         if (consumers != null) {
             consumers.remove(consumer);
+            if (consumers.isEmpty()) {
+                channelToConsumers.remove(channelName);
+            }
         }
         final ClientSessionChannel.MessageListener listener = consumerToListener.remove(consumer);
         if (listener != null) {
@@ -533,6 +528,7 @@ public class SubscriptionHelper extends ServiceSupport {
             // if there are other listeners on this channel, an unsubscribe message will not be sent,
             // so we're not going to listen for and expect an unsub response. Just unsub and move on.
             clientChannel.unsubscribe(listener);
+            clientChannel.release();
         }
     }
 

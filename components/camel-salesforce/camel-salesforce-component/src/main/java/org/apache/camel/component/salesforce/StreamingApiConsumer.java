@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.salesforce;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -292,8 +291,13 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
         // subscribe to topic
         ServiceHelper.startService(subscriptionHelper);
-        subscriptionHelper.subscribe(topicName, this);
+        subscriptionHelper.subscribe(this);
         subscribed = true;
+    }
+
+    @Override
+    public SalesforceEndpoint getEndpoint() {
+        return this.endpoint;
     }
 
     /**
@@ -324,7 +328,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
         if (subscribed) {
             subscribed = false;
             // unsubscribe from topic
-            subscriptionHelper.unsubscribe(topicName, this);
+            subscriptionHelper.unsubscribe( this);
         }
     }
 

@@ -52,8 +52,8 @@ class StubServer {
     class StubHandler extends Handler.Abstract {
 
         private StubResponse stubFor(final Request request, final String body) throws IOException {
-            final List<StubResponse> allResponses = new ArrayList<>(defaultStubs);
-            allResponses.addAll(stubs);
+            final List<StubResponse> allResponses = new ArrayList<>(stubs);
+            allResponses.addAll(defaultStubs);
 
             for (final StubResponse stub : allResponses) {
                 if (stub.matches(request, body)) {
