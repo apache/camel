@@ -96,6 +96,23 @@ public interface JsonValidatorComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use a custom ObjectMapper.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param objectMapper the value to set
+         * @return the dsl builder
+         */
+        default JsonValidatorComponentBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+            doSetProperty("objectMapper", objectMapper);
+            return this;
+        }
     }
 
     class JsonValidatorComponentBuilderImpl
@@ -113,6 +130,7 @@ public interface JsonValidatorComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((JsonValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JsonValidatorComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "objectMapper": ((JsonValidatorComponent) component).setObjectMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
             default: return false;
             }
         }

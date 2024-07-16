@@ -27,8 +27,15 @@ public class JsonValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "objectmapper":
+        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"objectMapper"};
     }
 
     @Override
@@ -38,6 +45,8 @@ public class JsonValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "objectmapper":
+        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
         default: return null;
         }
     }
@@ -50,6 +59,8 @@ public class JsonValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "objectmapper":
+        case "objectMapper": return target.getObjectMapper();
         default: return null;
         }
     }

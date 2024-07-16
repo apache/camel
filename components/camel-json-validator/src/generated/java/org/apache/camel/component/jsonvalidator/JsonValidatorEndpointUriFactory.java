@@ -23,7 +23,7 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(12);
         props.add("allowContextMapAll");
         props.add("contentCache");
         props.add("disabledDeserializationFeatures");
@@ -33,6 +33,7 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
         props.add("failOnNullHeader");
         props.add("headerName");
         props.add("lazyStartProducer");
+        props.add("objectMapper");
         props.add("resourceUri");
         props.add("uriSchemaLoader");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
