@@ -234,6 +234,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
             case "lzf": return new ModelDeserializers.LZFDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.LZFDataFormat": return new ModelDeserializers.LZFDataFormatDeserializer();
+            case "lang-chain4j": return new ModelDeserializers.LangChain4jTokenizerDefinitionDeserializer();
+            case "langChain4j": return new ModelDeserializers.LangChain4jTokenizerDefinitionDeserializer();
+            case "org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition": return new ModelDeserializers.LangChain4jTokenizerDefinitionDeserializer();
             case "language": return new ModelDeserializers.LanguageExpressionDeserializer();
             case "org.apache.camel.model.language.LanguageExpression": return new ModelDeserializers.LanguageExpressionDeserializer();
             case "load-balance": return new ModelDeserializers.LoadBalanceDefinitionDeserializer();

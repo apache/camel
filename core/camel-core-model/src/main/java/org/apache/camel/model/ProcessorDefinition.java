@@ -4126,6 +4126,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return asType();
     }
 
+    /**
+     * This enables tokenization/chunking of blocks of text so that the elements of a message are separated in text
+     * segments as a composite message
+     *
+     * @param  tokenizerDefinition The tokenizer
+     * @return                     the builder
+     */
+    public Type tokenize(TokenizerDefinition tokenizerDefinition) {
+        addOutput(tokenizerDefinition);
+        return asType();
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 

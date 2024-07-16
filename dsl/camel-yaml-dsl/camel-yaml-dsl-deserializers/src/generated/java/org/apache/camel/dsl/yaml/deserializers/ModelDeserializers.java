@@ -239,6 +239,7 @@ import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
@@ -8800,6 +8801,84 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "usingParallelCompression": {
                     String val = asText(node);
                     target.setUsingParallelCompression(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "lang-chain4j",
+                    "langChain4j"
+            },
+            types = org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "LangChain4J Tokenizer",
+            description = "Represents a tokenizer that uses LangChain4j for tokenization",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true, defaultValue = "0", description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true, defaultValue = "1024", description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", defaultValue = "OPEN_AI", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
+            }
+    )
+    public static class LangChain4jTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jTokenizerDefinition> {
+        public LangChain4jTokenizerDefinitionDeserializer() {
+            super(LangChain4jTokenizerDefinition.class);
+        }
+
+        @Override
+        protected LangChain4jTokenizerDefinition newInstance() {
+            return new LangChain4jTokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LangChain4jTokenizerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "maxOverlap": {
+                    String val = asText(node);
+                    target.setMaxOverlap(val);
+                    break;
+                }
+                case "maxTokens": {
+                    String val = asText(node);
+                    target.setMaxTokens(val);
+                    break;
+                }
+                case "tokenizerType": {
+                    String val = asText(node);
+                    target.setTokenizerType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
                     break;
                 }
                 default: {
