@@ -45,7 +45,7 @@
         <plexus-utils-version>4.0.1</plexus-utils-version>
         <plexus-xml-version>4.0.4</plexus-xml-version>
         <maven-archiver-version>3.6.2</maven-archiver-version>
-        <plexus-archiver-version>4.9.2</plexus-archiver-version>
+        <plexus-archiver-version>4.10.0</plexus-archiver-version>
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
     </properties>
 
