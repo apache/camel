@@ -220,7 +220,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
-    protected boolean symbolicLink; // copy source files using symbolic link
+    protected boolean symbolicLink;     // copy source files using symbolic link
+
+    public String pomTemplateName;   // support for specialised pom templates
 
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
@@ -362,45 +364,51 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
                 String deps = StringHelper.after(line, "camel.jbang.dependencies=");
-                for (String d : deps.split(",")) {
-                    answer.add(d.trim());
-                    if (kamelets && d.contains("org.apache.camel:camel-kamelet")) {
-                        // include yaml-dsl and kamelet catalog if we use kamelets
-                        answer.add("camel:yaml-dsl");
-                        answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                if (!deps.isEmpty()) {
+                    for (String d : deps.split(",")) {
+                        answer.add(d.trim());
+                        if (kamelets && d.contains("org.apache.camel:camel-kamelet")) {
+                            // include yaml-dsl and kamelet catalog if we use kamelets
+                            answer.add("camel:yaml-dsl");
+                            answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                        }
                     }
                 }
             } else if (line.startsWith("camel.jbang.classpathFiles")) {
                 String deps = StringHelper.after(line, "camel.jbang.classpathFiles=");
-                for (String d : deps.split(",")) {
-                    // special to include local JARs in export lib folder
-                    if (d.endsWith(".jar")) {
-                        answer.add("lib:" + d.trim());
+                if (!deps.isEmpty()) {
+                    for (String d : deps.split(",")) {
+                        // special to include local JARs in export lib folder
+                        if (d.endsWith(".jar")) {
+                            answer.add("lib:" + d.trim());
+                        }
                     }
                 }
             } else if (line.startsWith("camel.main.routesIncludePattern=")) {
                 String routes = StringHelper.after(line, "camel.main.routesIncludePattern=");
-                for (String r : routes.split(",")) {
-                    String ext = FileUtil.onlyExt(r, true);
-                    if (ext != null) {
-                        // java is moved into src/main/java and compiled during build
-                        // for the other DSLs we need to add dependencies
-                        if ("groovy".equals(ext)) {
-                            answer.add("mvn:org.apache.camel:camel-groovy-dsl");
-                        } else if ("js".equals(ext)) {
-                            answer.add("mvn:org.apache.camel:camel-js-dsl");
-                        } else if ("jsh".equals(ext)) {
-                            answer.add("mvn:org.apache.camel:camel-jsh-dsl");
-                        } else if ("kts".equals(ext)) {
-                            answer.add("mvn:org.apache.camel:camel-kotlin-dsl");
-                        } else if ("xml".equals(ext)) {
-                            answer.add("mvn:org.apache.camel:camel-xml-io-dsl");
-                        } else if ("yaml".equals(ext)) {
-                            answer.add("mvn:org.apache.camel:camel-yaml-dsl");
-                            // is it a kamelet?
-                            ext = FileUtil.onlyExt(r, false);
-                            if ("kamelet.yaml".equals(ext)) {
-                                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                if (!routes.isEmpty()) {
+                    for (String r : routes.split(",")) {
+                        String ext = FileUtil.onlyExt(r, true);
+                        if (ext != null) {
+                            // java is moved into src/main/java and compiled during build
+                            // for the other DSLs we need to add dependencies
+                            if ("groovy".equals(ext)) {
+                                answer.add("mvn:org.apache.camel:camel-groovy-dsl");
+                            } else if ("js".equals(ext)) {
+                                answer.add("mvn:org.apache.camel:camel-js-dsl");
+                            } else if ("jsh".equals(ext)) {
+                                answer.add("mvn:org.apache.camel:camel-jsh-dsl");
+                            } else if ("kts".equals(ext)) {
+                                answer.add("mvn:org.apache.camel:camel-kotlin-dsl");
+                            } else if ("xml".equals(ext)) {
+                                answer.add("mvn:org.apache.camel:camel-xml-io-dsl");
+                            } else if ("yaml".equals(ext)) {
+                                answer.add("mvn:org.apache.camel:camel-yaml-dsl");
+                                // is it a kamelet?
+                                ext = FileUtil.onlyExt(r, false);
+                                if ("kamelet.yaml".equals(ext)) {
+                                    answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                                }
                             }
                         }
                     }
