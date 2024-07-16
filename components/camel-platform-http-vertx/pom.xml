@@ -60,6 +60,11 @@
             <artifactId>vertx-auth-properties</artifactId>
             <version>${vertx-version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-jwt</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
 
         <!-- test dependencies -->
         <!-- jakarta mime types for upload support -->

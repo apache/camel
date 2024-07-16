@@ -23,6 +23,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authentication": target.setAuthentication(property(camelContext, org.apache.camel.main.HttpServerAuthenticationConfigurationProperties.class, value)); return true;
         case "devconsoleenabled":
         case "devConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
@@ -52,6 +53,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authentication": return org.apache.camel.main.HttpServerAuthenticationConfigurationProperties.class;
         case "devconsoleenabled":
         case "devConsoleEnabled": return boolean.class;
         case "enabled": return boolean.class;
@@ -82,6 +84,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authentication": return target.getAuthentication();
         case "devconsoleenabled":
         case "devConsoleEnabled": return target.isDevConsoleEnabled();
         case "enabled": return target.isEnabled();

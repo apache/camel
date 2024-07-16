@@ -21,6 +21,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.auth.impl.UserImpl;
+import io.vertx.ext.auth.properties.PropertyFileAuthentication;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,9 +67,15 @@ public class VertxPlatformHttpAuthenticationTest {
     }
 
     @Test
-    public void testDefaultAuthenticationConfig() throws Exception {
+    public void testBasicAuthenticationConfig() throws Exception {
         CamelContext context = createCamelContext(authenticationConfig -> {
             authenticationConfig.setEnabled(true);
+            AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
+            entry.setAuthenticationProviderFactory(
+                    vertx -> PropertyFileAuthentication.create(vertx, "camel-platform-http-vertx-auth.properties"));
+            entry.setAuthenticationHandlerFactory(BasicAuthHandler::create);
+            entry.setPath("/*");
+            authenticationConfig.getEntries().add(entry);
         });
 
         context.addRoutes(new RouteBuilder() {
@@ -106,7 +113,12 @@ public class VertxPlatformHttpAuthenticationTest {
     public void testAuthenticateSpecificPathOnly() throws Exception {
         CamelContext context = createCamelContext(authenticationConfig -> {
             authenticationConfig.setEnabled(true);
-            authenticationConfig.getEntries().get(0).setPath("/specific/path");
+            AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
+            entry.setAuthenticationProviderFactory(
+                    vertx -> PropertyFileAuthentication.create(vertx, "camel-platform-http-vertx-auth.properties"));
+            entry.setAuthenticationHandlerFactory(BasicAuthHandler::create);
+            entry.setPath("/specific/path");
+            authenticationConfig.getEntries().add(entry);
         });
 
         context.addRoutes(new RouteBuilder() {
@@ -168,29 +180,11 @@ public class VertxPlatformHttpAuthenticationTest {
             public void configure() {
                 from("platform-http:/custom/provider")
                         .setBody().constant("customProvider");
-
-                from("platform-http:/defaultAuth")
-                        .setBody().constant("defaultAuth");
             }
         });
 
         try {
             context.start();
-
-            given()
-                    .when()
-                    .get("/defaultAuth")
-                    .then()
-                    .statusCode(401)
-                    .body(equalTo("Unauthorized"));
-
-            given()
-                    .auth().basic("camel", "propertiesPass")
-                    .when()
-                    .get("/defaultAuth")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("defaultAuth"));
 
             given()
                     .when()
@@ -230,29 +224,11 @@ public class VertxPlatformHttpAuthenticationTest {
             public void configure() {
                 from("platform-http:/customProvider")
                         .setBody().constant("customProvider");
-
-                from("platform-http:/defaultAuth")
-                        .setBody().constant("defaultAuth");
             }
         });
 
         try {
             context.start();
-
-            given()
-                    .when()
-                    .get("/defaultAuth")
-                    .then()
-                    .statusCode(401)
-                    .body(equalTo("Unauthorized"));
-
-            given()
-                    .auth().basic("camel", "propertiesPass")
-                    .when()
-                    .get("/defaultAuth")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("defaultAuth"));
 
             given()
                     .when()

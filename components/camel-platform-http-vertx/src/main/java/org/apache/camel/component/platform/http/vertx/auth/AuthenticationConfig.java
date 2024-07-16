@@ -22,24 +22,16 @@ import java.util.List;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.ext.auth.authentication.AuthenticationProvider;
-import io.vertx.ext.auth.properties.PropertyFileAuthentication;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthenticationHandler;
-import io.vertx.ext.web.handler.BasicAuthHandler;
 
 public class AuthenticationConfig {
-    public static final String DEFAULT_VERTX_PROPERTIES_FILE = "camel-platform-http-vertx-auth.properties";
+
     private boolean authenticationEnabled;
     private final List<AuthenticationConfigEntry> entries;
 
     public AuthenticationConfig() {
-        AuthenticationConfigEntry defaultAuthConfig = new AuthenticationConfigEntry();
-        defaultAuthConfig.setPath("/*");
-        defaultAuthConfig.setAuthenticationProviderFactory(
-                vertx -> PropertyFileAuthentication.create(vertx, DEFAULT_VERTX_PROPERTIES_FILE));
-        defaultAuthConfig.setAuthenticationHandlerFactory(BasicAuthHandler::create);
         this.entries = new ArrayList<>();
-        this.entries.add(defaultAuthConfig);
     }
 
     public AuthenticationConfig(List<AuthenticationConfigEntry> authenticationConfigEntries) {
@@ -63,7 +55,7 @@ public class AuthenticationConfig {
     }
 
     public interface AuthenticationHandlerFactory {
-        AuthenticationHandler createAuthenticationHandler(AuthenticationProvider authenticationProvider);
+        <T extends AuthenticationProvider> AuthenticationHandler createAuthenticationHandler(T authenticationProvider);
     }
 
     public static class AuthenticationConfigEntry {
