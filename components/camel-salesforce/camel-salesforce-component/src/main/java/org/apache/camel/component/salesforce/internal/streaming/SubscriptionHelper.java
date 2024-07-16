@@ -21,7 +21,6 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.URI;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
