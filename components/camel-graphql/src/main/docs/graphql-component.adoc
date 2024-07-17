@@ -165,7 +165,7 @@ public JsonObject addBookMutationVariables() {
 }
 
 from("direct:start")
-    .to("graphql://http://example.com/graphql?graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
+    .to("graphql://http://example.com/graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
 ----
 
 

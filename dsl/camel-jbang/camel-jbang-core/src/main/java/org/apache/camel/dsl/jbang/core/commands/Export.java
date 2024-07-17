@@ -113,7 +113,7 @@ public class Export extends ExportBaseCommand {
         // copy properties from this to cmd
         cmd.files = this.files;
         cmd.repos = this.repos;
-        cmd.dependencies = this.dependencies;
+        cmd.addDependencies(this.dependencies);
         cmd.runtime = this.runtime;
         cmd.gav = this.gav;
         cmd.mavenSettings = this.mavenSettings;

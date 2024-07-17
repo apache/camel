@@ -46,8 +46,6 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private volatile JsonSchema schema;
 
-    private ObjectMapper mapper;
-
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
     @UriParam(defaultValue = "true")
@@ -67,6 +65,9 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
               description = "Comma-separated list of Jackson DeserializationFeature enum values which will be disabled for parsing exchange body")
     private String disabledDeserializationFeatures;
 
+    @UriParam(label = "advanced", description = "The used Jackson object mapper")
+    private ObjectMapper objectMapper;
+
     public JsonValidatorEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
     }
@@ -85,17 +86,19 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        mapper = new ObjectMapper();
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
         if (enabledDeserializationFeatures != null) {
             for (var featureName : enabledDeserializationFeatures.split(",")) {
                 var feature = DeserializationFeature.valueOf(featureName);
-                mapper.enable(feature);
+                objectMapper.enable(feature);
             }
         }
         if (disabledDeserializationFeatures != null) {
             for (var featureName : disabledDeserializationFeatures.split(",")) {
                 var feature = DeserializationFeature.valueOf(featureName);
-                mapper.disable(feature);
+                objectMapper.disable(feature);
             }
         }
     }
@@ -144,7 +147,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                 }
                 try (InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange,
                         cache != null ? cache : content)) {
-                    JsonNode node = mapper.readTree(is);
+                    JsonNode node = objectMapper.readTree(is);
                     if (node == null) {
                         throw new NoJsonBodyValidationException(exchange);
                     }
@@ -274,5 +277,13 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     public void setDisabledDeserializationFeatures(String disabledDeserializationFeatures) {
         this.disabledDeserializationFeatures = disabledDeserializationFeatures;
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 }

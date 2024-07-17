@@ -32,15 +32,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Stack;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -160,9 +152,8 @@ public class Run extends CamelCommand {
             description = "Profile to run (dev, test, or prod).")
     String profile = "dev";
 
-    @Option(names = {
-            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies)")
-    String dependencies;
+    @Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
+    String[] dependencies;
 
     @Option(names = { "--repos" },
             description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
@@ -633,17 +624,8 @@ public class Run extends CamelCommand {
             // find source files
             files = RunHelper.scanMavenOrGradleProject();
             // include extra dependencies from pom.xml
-            List<String> deps = RunHelper.scanMavenDependenciesFromPom();
-            for (String d : deps) {
-                if (dependencies == null) {
-                    dependencies = "";
-                }
-                if (dependencies.isBlank()) {
-                    dependencies = d;
-                } else {
-                    dependencies += "," + d;
-                }
-            }
+            var pomDependencies = RunHelper.scanMavenDependenciesFromPom();
+            addDependencies(pomDependencies.toArray(new String[0]));
         }
 
         if (profile != null) {
@@ -825,15 +807,11 @@ public class Run extends CamelCommand {
         }
 
         // merge existing dependencies with --deps
-        String deps = RuntimeUtil.getDependencies(profileProperties);
-        if (deps.isBlank()) {
-            deps = dependencies != null ? dependencies : "";
-        } else if (dependencies != null && !dependencies.equals(deps)) {
-            deps += "," + dependencies;
-        }
-        if (!deps.isBlank()) {
-            main.addInitialProperty("camel.jbang.dependencies", deps);
-            writeSettings("camel.jbang.dependencies", deps);
+        addDependencies(RuntimeUtil.getDependenciesAsArray(profileProperties));
+        if (dependencies.length > 0) {
+            var joined = String.join(",", dependencies);
+            main.addInitialProperty("camel.jbang.dependencies", joined);
+            writeSettings("camel.jbang.dependencies", joined);
         }
 
         // if we have a specific camel version then make sure we really need to switch
@@ -877,6 +855,18 @@ public class Run extends CamelCommand {
         }
     }
 
+    protected void addDependencies(String... deps) {
+        var depsArray = Optional.ofNullable(deps).orElse(new String[0]);
+        var depsList = new ArrayList<>(getDependenciesList());
+        depsList.addAll(Arrays.asList(depsArray));
+        dependencies = depsList.toArray(new String[0]);
+    }
+
+    protected List<String> getDependenciesList() {
+        var depsArray = Optional.ofNullable(dependencies).orElse(new String[0]);
+        return Arrays.asList(depsArray);
+    }
+
     protected int runQuarkus() throws Exception {
         // create temp run dir
         File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
@@ -900,12 +890,8 @@ public class Run extends CamelCommand {
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.dependencies = this.dependencies;
-        if (eq.dependencies == null) {
-            eq.dependencies = "camel:cli-connector";
-        } else {
-            eq.dependencies += ",camel:cli-connector";
-        }
+        eq.addDependencies(this.dependencies);
+        eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
         eq.quiet = true;
@@ -968,15 +954,11 @@ public class Run extends CamelCommand {
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.dependencies = this.dependencies;
-        if (eq.dependencies == null) {
-            eq.dependencies = "camel:cli-connector";
-        } else {
-            eq.dependencies += ",camel:cli-connector";
-        }
+        eq.addDependencies(dependencies);
+        eq.addDependencies("camel:cli-connector");
         if (this.dev) {
             // hot-reload of spring-boot
-            eq.dependencies += ",mvn:org.springframework.boot:spring-boot-devtools";
+            eq.addDependencies("mvn:org.springframework.boot:spring-boot-devtools");
         }
         eq.fresh = this.fresh;
         eq.download = this.download;

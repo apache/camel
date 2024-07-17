@@ -93,9 +93,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repos;
 
-    @CommandLine.Option(names = {
-            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
-    protected String dependencies;
+    @CommandLine.Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
+    protected String[] dependencies;
 
     @CommandLine.Option(names = { "--runtime" },
                         completionCandidates = RuntimeCompletionCandidates.class,
@@ -294,7 +293,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
-        run.dependencies = dependencies;
+        run.addDependencies(dependencies);
         run.files = files;
         run.exclude = exclude;
         run.openapi = openapi;
@@ -305,6 +304,18 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.kameletsVersion = kameletsVersion;
         run.localKameletDir = localKameletDir;
         return run.runExport(ignoreLoadingError);
+    }
+
+    protected void addDependencies(String... deps) {
+        var depsArray = Optional.ofNullable(deps).orElse(new String[0]);
+        var depsList = new ArrayList<>(getDependenciesList());
+        depsList.addAll(Arrays.asList(depsArray));
+        dependencies = depsList.toArray(new String[0]);
+    }
+
+    protected List<String> getDependenciesList() {
+        var depsArray = Optional.ofNullable(dependencies).orElse(new String[0]);
+        return Arrays.asList(depsArray);
     }
 
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
@@ -325,10 +336,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // custom dependencies
-        if (dependencies != null) {
-            for (String d : dependencies.split(",")) {
-                answer.add(normalizeDependency(d.trim()));
-            }
+        for (String d : getDependenciesList()) {
+            answer.add(normalizeDependency(d));
         }
 
         List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
@@ -409,11 +418,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         if (profile != null && profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
-            String deps = RuntimeUtil.getDependencies(prop);
-            if (!deps.isBlank()) {
-                for (String d : deps.split(",")) {
-                    answer.add(d.trim());
-                }
+            for (String d : RuntimeUtil.getDependenciesAsArray(prop)) {
+                answer.add(d.trim());
             }
         }
 
