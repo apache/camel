@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
@@ -69,11 +70,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receivePlainEDIMessageTest() throws Exception {
-        AS2ClientConnection clientConnection
-                = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
-                        HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
-                        null);
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
@@ -132,14 +129,19 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 "EDI message does not match");
     }
 
-    @Test
-    public void receiveMultipartSignedMessageTest() throws Exception {
-
+    private static AS2ClientConnection getAs2ClientConnection() throws IOException {
         AS2ClientConnection clientConnection
                 = new AS2ClientConnection(
                         AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
                         HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
                         null);
+        return clientConnection;
+    }
+
+    @Test
+    public void receiveMultipartSignedMessageTest() throws Exception {
+
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
@@ -217,11 +219,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     @Test
     public void receiveMultipartSignedXMLMessageTest() throws Exception {
 
-        AS2ClientConnection clientConnection
-                = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
-                        HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
-                        null);
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
@@ -299,11 +297,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     @Test
     public void receiveMultipartInvalidSignedMessageTest() throws Exception {
 
-        AS2ClientConnection clientConnection
-                = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
-                        HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
-                        null);
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
@@ -393,11 +387,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     // Verify that the payload is compressed before being signed.
     @Test
     public void receiveMultipartCompressedAndSignedMessageTest() throws Exception {
-        AS2ClientConnection clientConnection
-                = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
-                        HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
-                        null);
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.COMPRESSED_SIGNED,
@@ -433,11 +423,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void sendEditMessageToFailingProcessorTest() throws Exception {
-        AS2ClientConnection clientConnection
-                = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
-                        HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
-                        null);
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext context = clientManager.send(EDI_MESSAGE, "/process_error", SUBJECT, FROM, AS2_NAME, AS2_NAME,
@@ -461,11 +447,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void checkMDNTest() throws Exception {
-        AS2ClientConnection clientConnection
-                = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
-                        HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
-                        null);
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         //Testing MDN parameter defaults
