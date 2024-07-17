@@ -101,6 +101,17 @@ public final class KubernetesHelper {
         return YamlHelper.yaml();
     }
 
+    /**
+     * Creates new Yaml instance. The implementation provided by Snakeyaml is not thread-safe. It is better to create a
+     * fresh instance for every YAML stream. Uses the given class loader as base constructor. This is mandatory when
+     * additional classes have been downloaded via Maven for instance when loading a Camel JBang plugin.
+     *
+     * @return
+     */
+    public static Yaml yaml(ClassLoader classLoader) {
+        return YamlHelper.yaml(classLoader);
+    }
+
     public static ObjectMapper json() {
         return OBJECT_MAPPER;
     }
