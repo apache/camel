@@ -441,6 +441,9 @@
         <snakeyaml-version>2.2</snakeyaml-version>
         <snakeyaml-engine-version>2.7</snakeyaml-engine-version>
         <snmp4j-version>3.8.2</snmp4j-version>
+        <!-- solr version aligned with lucene -->
+        <solr-version>8.11.2</solr-version>
+        <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.1.2</spring-batch-version>

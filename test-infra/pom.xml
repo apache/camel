@@ -60,6 +60,7 @@
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-redis</module>
         <module>camel-test-infra-rocketmq</module>
+        <module>camel-test-infra-solr</module>
         <module>camel-test-infra-xmpp</module>
         <module>camel-test-infra-zookeeper</module>
         <module>camel-test-infra-postgres</module>
