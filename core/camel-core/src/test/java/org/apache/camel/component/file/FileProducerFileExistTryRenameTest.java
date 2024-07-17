@@ -23,10 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs(OS.WINDOWS)
 public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
@@ -38,8 +35,7 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
         template.sendBodyAndHeader(fileUri("?fileExist=TryRename&tempPrefix=tmp"), "Bye World",
-                Exchange.FILE_NAME, "hello.txt");
-
+                Exchange.FILE_NAME, TEST_FILE_NAME);
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
