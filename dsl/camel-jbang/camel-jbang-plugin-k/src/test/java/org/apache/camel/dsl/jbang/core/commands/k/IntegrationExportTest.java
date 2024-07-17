@@ -55,7 +55,9 @@ class IntegrationExportTest {
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("routes", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("routes", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
+        Assertions.assertEquals(3, deployment.getSpec().getSelector().getMatchLabels().size());
+        Assertions.assertEquals("routes",
+                deployment.getSpec().getSelector().getMatchLabels().get("app.kubernetes.io/name"));
         Assertions.assertEquals("routes",
                 deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("quay.io/camel-test/routes:1.0-SNAPSHOT",
@@ -80,7 +82,9 @@ class IntegrationExportTest {
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("timer-to-log", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("timer-to-log", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
+        Assertions.assertEquals(3, deployment.getSpec().getSelector().getMatchLabels().size());
+        Assertions.assertEquals("timer-to-log",
+                deployment.getSpec().getSelector().getMatchLabels().get("app.kubernetes.io/name"));
         Assertions.assertEquals("timer-to-log",
                 deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("quay.io/camel-test/timer-to-log:1.0-SNAPSHOT",

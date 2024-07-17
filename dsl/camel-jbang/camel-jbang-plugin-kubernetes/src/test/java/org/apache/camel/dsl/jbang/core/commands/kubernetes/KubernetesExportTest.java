@@ -24,7 +24,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
+import io.fabric8.kubernetes.api.model.Container;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentSpec;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -60,9 +63,8 @@ class KubernetesExportTest {
     void shouldGenerateProject(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
-        int exit = command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
-        Assertions.assertEquals(0, exit);
         Model model = readMavenModel();
         Assertions.assertEquals("examples", model.getGroupId());
         Assertions.assertEquals("route", model.getArtifactId());
@@ -82,19 +84,19 @@ class KubernetesExportTest {
     void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
-        int exit = command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
-        Assertions.assertEquals(0, exit);
         Deployment deployment = getDeployment(workingDir);
+        DeploymentSpec spec = deployment.getSpec();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals(1, spec.getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
-        Assertions.assertEquals("route",
-                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("route", spec.getTemplate().getSpec().getContainers().get(0).getName());
+        Assertions.assertEquals(3, spec.getSelector().getMatchLabels().size());
+        Assertions.assertEquals("route", spec.getSelector().getMatchLabels().get("app.kubernetes.io/name"));
+        Assertions.assertEquals("route", spec.getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+                spec.getTemplate().getSpec().getContainers().get(0).getImage());
     }
 
     @Test
@@ -111,7 +113,7 @@ class KubernetesExportTest {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--gav=camel-test:route:1.0.0", "--runtime=" + rt.runtime());
         command.traits = new String[] { "container.port=8088", "container.image-pull-policy=IfNotPresent" };
-        command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -140,7 +142,7 @@ class KubernetesExportTest {
     void shouldAddVolumes(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.volumes = new String[] { "pvc-foo:/container/path/foo", "pvc-bar:/container/path/bar" };
-        command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -177,7 +179,7 @@ class KubernetesExportTest {
     void shouldAddEnvVars(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.envVars = new String[] { "CAMEL_FOO=bar", "MY_ENV=foo" };
-        command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -206,7 +208,7 @@ class KubernetesExportTest {
     void shouldAddAnnotations(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.annotations = new String[] { "foo=bar" };
-        command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -227,13 +229,20 @@ class KubernetesExportTest {
     void shouldAddLabels(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--label=foo=bar", "--runtime=" + rt.runtime());
-        command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
         Deployment deployment = getDeployment(workingDir);
-        Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(2, deployment.getMetadata().getLabels().size());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get("camel.apache.org/integration"));
-        Assertions.assertEquals("bar", deployment.getMetadata().getLabels().get("foo"));
+        ObjectMeta metadata = deployment.getMetadata();
+        Assertions.assertEquals("route", metadata.getName());
+        Assertions.assertEquals("route", metadata.getLabels().get("camel.apache.org/integration"));
+        Assertions.assertEquals("bar", metadata.getLabels().get("foo"));
+        if (rt == RuntimeType.quarkus) {
+            Assertions.assertEquals(2, metadata.getLabels().size());
+        }
+        if (rt == RuntimeType.springBoot) {
+            Assertions.assertEquals(4, metadata.getLabels().size());
+            Assertions.assertEquals("route", metadata.getLabels().get("app.kubernetes.io/name"));
+        }
     }
 
     @Test
@@ -249,25 +258,20 @@ class KubernetesExportTest {
     void shouldAddConfigs(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.configs = new String[] { "secret:foo", "configmap:bar" };
-        command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
         Deployment deployment = getDeployment(workingDir);
+        DeploymentSpec spec = deployment.getSpec();
+        Container container = spec.getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals(2,
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().size());
-        Assertions.assertEquals("foo",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
-        Assertions.assertTrue(
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getReadOnly());
-        Assertions.assertEquals("bar",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getMountPath());
-        Assertions.assertTrue(
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getReadOnly());
+        Assertions.assertEquals(1, spec.getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals(2, container.getVolumeMounts().size());
+        Assertions.assertEquals("foo", container.getVolumeMounts().get(0).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo", container.getVolumeMounts().get(0).getMountPath());
+        Assertions.assertTrue(container.getVolumeMounts().get(0).getReadOnly());
+        Assertions.assertEquals("bar", container.getVolumeMounts().get(1).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar", container.getVolumeMounts().get(1).getMountPath());
+        Assertions.assertTrue(container.getVolumeMounts().get(1).getReadOnly());
     }
 
     @Test
@@ -283,19 +287,17 @@ class KubernetesExportTest {
     void shouldAddResources(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.resources = new String[] { "configmap:foo/file.txt" };
-        command.doCall();
+        Assertions.assertEquals(0, command.doCall());
 
         Deployment deployment = getDeployment(workingDir);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals(1,
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().size());
-        Assertions.assertEquals("file",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
+        Assertions.assertEquals(1, container.getVolumeMounts().size());
+        Assertions.assertEquals("file", container.getVolumeMounts().get(0).getName());
         Assertions.assertEquals("/etc/camel/resources.d/_configmaps/foo/file.txt",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
-        Assertions.assertEquals("/file.txt",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getSubPath());
+                container.getVolumeMounts().get(0).getMountPath());
+        Assertions.assertEquals("/file.txt", container.getVolumeMounts().get(0).getSubPath());
     }
 
     @Test
@@ -314,16 +316,14 @@ class KubernetesExportTest {
         command.doCall();
 
         Deployment deployment = getDeployment(workingDir);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals(1,
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().size());
-        Assertions.assertEquals("spec",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
+        Assertions.assertEquals(1, container.getVolumeMounts().size());
+        Assertions.assertEquals("spec", container.getVolumeMounts().get(0).getName());
         Assertions.assertEquals("/etc/camel/resources.d/_configmaps/openapi/spec.yaml",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
-        Assertions.assertEquals("/spec.yaml",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getSubPath());
+                container.getVolumeMounts().get(0).getMountPath());
+        Assertions.assertEquals("/spec.yaml", container.getVolumeMounts().get(0).getSubPath());
     }
 
     @Test
@@ -342,10 +342,10 @@ class KubernetesExportTest {
         command.doCall();
 
         Deployment deployment = getDeployment(workingDir);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("demo-app", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("quay.io/camel/demo-app:1.0",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals("quay.io/camel/demo-app:1.0", container.getImage());
     }
 
     private KubernetesExport createCommand(String[] files, String... args) {

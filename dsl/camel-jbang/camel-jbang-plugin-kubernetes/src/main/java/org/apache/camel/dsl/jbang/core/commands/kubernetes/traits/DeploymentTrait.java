@@ -17,9 +17,10 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-import java.util.Collections;
+import java.util.LinkedHashMap;
 
 import io.fabric8.kubernetes.api.model.LabelSelectorBuilder;
+import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import org.apache.camel.v1.integrationspec.Traits;
 
@@ -36,15 +37,17 @@ public class DeploymentTrait extends BaseTrait {
 
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
+        var labels = new LinkedHashMap<String, String>();
+        labels.put(INTEGRATION_LABEL, context.getName());
+        labels.put("app.kubernetes.io/name", context.getName());
+        labels.put("app.kubernetes.io/version", context.getVersion());
         context.add(new DeploymentBuilder()
                 .withNewMetadata()
                 .withName(context.getName())
                 .endMetadata()
                 .withNewSpec()
-                .withSelector(new LabelSelectorBuilder()
-                        .withMatchLabels(
-                                Collections.singletonMap(INTEGRATION_LABEL, context.getName()))
-                        .build())
+                .withSelector(new LabelSelectorBuilder().withMatchLabels(labels).build())
+                .withTemplate(new PodTemplateSpecBuilder().withNewMetadata().withLabels(labels).endMetadata().build())
                 .endSpec());
     }
 }

@@ -202,6 +202,12 @@ public class KubernetesExport extends Export {
                 .filter(parts -> parts.length == 2)
                 .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
 
+        // Provide additional labels
+        if (runtime == RuntimeType.springBoot) {
+            context.addLabels(Map.of("app.kubernetes.io/name", projectName));
+            context.addLabels(Map.of("app.kubernetes.io/version", getVersion()));
+        }
+
         if (traitProfile != null) {
             context.setProfile(TraitProfile.valueOf(traitProfile));
         }
