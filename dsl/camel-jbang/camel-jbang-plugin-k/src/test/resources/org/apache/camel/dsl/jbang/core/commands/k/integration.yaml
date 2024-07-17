@@ -30,5 +30,8 @@ spec:
               constant: Hello Camel !!!
           - to: log:info
   traits:
+    environment:
+      vars:
+        - MY_ENV_VAR=foo
     logging:
       level: DEBUG

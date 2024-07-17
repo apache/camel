@@ -21,6 +21,7 @@ metadata:
   name: timer-to-log
   annotations:
     camel.apache.org/operator.id: camel-k
+    trait.camel.apache.org/environment.vars: "MY_ENV_VAR=foo"
 spec:
   source:
     ref:

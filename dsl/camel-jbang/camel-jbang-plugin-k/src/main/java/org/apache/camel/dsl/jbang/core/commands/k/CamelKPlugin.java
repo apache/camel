@@ -31,6 +31,7 @@ public class CamelKPlugin implements Plugin {
                 .addSubcommand("get", new picocli.CommandLine(new IntegrationGet(main)))
                 .addSubcommand("run", new picocli.CommandLine(new IntegrationRun(main)))
                 .addSubcommand("bind", new picocli.CommandLine(new Bind(main)))
+                .addSubcommand("export", new picocli.CommandLine(new IntegrationExport(main)))
                 .addSubcommand("delete", new picocli.CommandLine(new IntegrationDelete(main)))
                 .addSubcommand("logs", new picocli.CommandLine(new IntegrationLogs(main)));
 

@@ -19,8 +19,16 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.apache.camel.v1.integrationspec.Traits;
+
+/**
+ * Catalog of traits that get applied to a trait context in order to generate a set of Kubernetes resources as a
+ * manifest. Traits may be filtered according to a given trait profile. The given trait specification holds the trait
+ * configuration for the applied traits.
+ */
 public class TraitCatalog {
 
     private final List<Trait> traits = new ArrayList<>();
@@ -45,5 +53,28 @@ public class TraitCatalog {
 
     public void register(Trait trait) {
         traits.add(trait);
+    }
+
+    /**
+     * Applies traits in this catalog for given profile or all traits if profile is not set.
+     *
+     * @param traitsSpec   the trait configuration spec.
+     * @param context      the trait context.
+     * @param traitProfile the optional trait profile to select traits.
+     */
+    public void apply(Traits traitsSpec, TraitContext context, String traitProfile) {
+        if (traitProfile != null) {
+            new TraitCatalog().traitsForProfile(TraitProfile.valueOf(traitProfile.toUpperCase(Locale.US))).forEach(t -> {
+                if (t.configure(traitsSpec, context)) {
+                    t.apply(traitsSpec, context);
+                }
+            });
+        } else {
+            new TraitCatalog().allTraits().forEach(t -> {
+                if (t.configure(traitsSpec, context)) {
+                    t.apply(traitsSpec, context);
+                }
+            });
+        }
     }
 }

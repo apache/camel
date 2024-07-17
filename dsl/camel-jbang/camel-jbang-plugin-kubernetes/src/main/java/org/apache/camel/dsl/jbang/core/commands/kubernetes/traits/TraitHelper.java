@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.util.StringHelper;
@@ -53,9 +55,37 @@ public final class TraitHelper {
      * @return
      */
     public static Traits parseTraits(String[] traits) {
+        if (traits == null || traits.length == 0) {
+            return new Traits();
+        }
+
+        return parseTraits(traits, null);
+    }
+
+    /**
+     * Parses given list of trait expressions to proper trait model object. Supports trait options in the form of
+     * key=value and trait annotation configuration.
+     *
+     * @param  traits      trait key-value-pairs.
+     * @param  annotations trait annotation configuration.
+     * @return
+     */
+    public static Traits parseTraits(String[] traits, String[] annotations) {
         Map<String, Map<String, Object>> traitConfigMap = new HashMap<>();
 
-        for (String traitExpression : traits) {
+        String[] traitExpressions;
+        if (annotations != null) {
+            Stream<String> annotationTraits = Stream.of(annotations)
+                    .filter(annotation -> annotation.startsWith("trait.camel.apache.org/"))
+                    .map(annotation -> StringHelper.after(annotation, "trait.camel.apache.org/"));
+
+            traitExpressions
+                    = Stream.concat(Stream.of(traits), annotationTraits).collect(Collectors.toSet()).toArray(String[]::new);
+        } else {
+            traitExpressions = traits;
+        }
+
+        for (String traitExpression : traitExpressions) {
             //traitName.key=value
             final String[] trait = traitExpression.split("\\.", 2);
             final String[] traitConfig = trait[1].split("=", 2);

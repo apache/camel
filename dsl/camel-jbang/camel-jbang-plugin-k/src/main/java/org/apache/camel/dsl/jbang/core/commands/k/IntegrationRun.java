@@ -244,12 +244,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
                     .collect(Collectors.toMap(it -> it[0].trim(), it -> it[1].trim())));
         }
 
-        Traits traitsSpec;
-        if (traits != null && traits.length > 0) {
-            traitsSpec = TraitHelper.parseTraits(traits);
-        } else {
-            traitsSpec = new Traits();
-        }
+        Traits traitsSpec = TraitHelper.parseTraits(traits);
 
         if (image != null) {
             TraitHelper.configureContainerImage(traitsSpec, image, null, null, null, null);
@@ -320,20 +315,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
                     TraitHelper.configureContainerImage(traitsSpec, image, "quay.io", null, integration.getMetadata().getName(),
                             "1.0-SNAPSHOT");
 
-                    if (traitProfile != null) {
-                        new TraitCatalog().traitsForProfile(TraitProfile.valueOf(traitProfile.toUpperCase(Locale.US)))
-                                .forEach(t -> {
-                                    if (t.configure(traitsSpec, context)) {
-                                        t.apply(traitsSpec, context);
-                                    }
-                                });
-                    } else {
-                        new TraitCatalog().allTraits().forEach(t -> {
-                            if (t.configure(traitsSpec, context)) {
-                                t.apply(traitsSpec, context);
-                            }
-                        });
-                    }
+                    new TraitCatalog().apply(traitsSpec, context, traitProfile);
 
                     printer().println(
                             context.buildItems().stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---")));
