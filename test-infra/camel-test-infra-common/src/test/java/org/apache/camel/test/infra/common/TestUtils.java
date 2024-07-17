@@ -114,14 +114,13 @@ public final class TestUtils {
         return TestcontainersConfiguration.getInstance().getEnvVarOrProperty("hub.image.name.prefix", "") + imageName;
     }
 
-
     /**
      * Logs service initialization failure
      *
-     * @param  clazz
-     * @param  <T>
+     * @param clazz
+     * @param <T>
      */
-    public static <T> void logInitializationFailure(ExtensionContext extensionContext, Class<T> clazz ) {
+    public static <T> void logInitializationFailure(ExtensionContext extensionContext, Class<T> clazz) {
         Logger log = LoggerFactory.getLogger(clazz);
 
         Optional<Object> testInstance = extensionContext.getTestInstance();

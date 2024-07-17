@@ -17,16 +17,11 @@
 
 package org.apache.camel.test.infra.smb.services;
 
-import java.util.Optional;
-
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.apache.camel.test.infra.common.TestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public interface SmbService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     String address();
