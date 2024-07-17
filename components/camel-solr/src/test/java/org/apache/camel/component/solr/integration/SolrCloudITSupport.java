@@ -25,7 +25,7 @@ import org.apache.camel.test.infra.solr.services.SolrLocalContainerService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -54,7 +54,7 @@ public class SolrCloudITSupport extends CamelTestSupport {
     }
 
     public void createCollection(String collection) throws SolrServerException, IOException {
-        SolrClient solrClient = new HttpSolrClient.Builder(service.getSolrBaseUrl()).build();
+        SolrClient solrClient = new HttpJdkSolrClient.Builder(service.getSolrBaseUrl()).build();
         CollectionAdminRequest.Create creator = CollectionAdminRequest.createCollection(collection, "_default", 1, 1);
         creator.process(solrClient);
     }

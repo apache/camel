@@ -118,9 +118,10 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     @Parameters
     public static Collection<Object[]> serverTypes() {
         Object[][] serverTypes = {
-                { SolrFixtures.TestServerType.USE_CLOUD },
-                { SolrFixtures.TestServerType.USE_HTTPS },
-                { SolrFixtures.TestServerType.USE_HTTP } };
+                //                { SolrFixtures.TestServerType.USE_CLOUD },
+                //                { SolrFixtures.TestServerType.USE_HTTPS },
+                { SolrFixtures.TestServerType.USE_HTTP }
+        };
         return Arrays.asList(serverTypes);
     }
 

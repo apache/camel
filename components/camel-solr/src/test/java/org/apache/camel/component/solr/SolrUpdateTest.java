@@ -40,14 +40,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SolrUpdateTest extends SolrComponentTestSupport {
+
     private SolrEndpoint solrEndpoint;
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    public void init() {
         solrEndpoint = getMandatoryEndpoint(solrRouteUri(), SolrEndpoint.class);
     }
+
+    //	@Override
+    //    @BeforeEach
+    //    public void setUp() {
+    //        super.setUp();
+    //        solrEndpoint = getMandatoryEndpoint(solrRouteUri(), SolrEndpoint.class);
+    //    }
 
     @Test
     public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() throws Exception {

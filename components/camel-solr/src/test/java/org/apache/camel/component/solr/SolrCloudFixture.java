@@ -28,11 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.embedded.JettySolrRunner;
+import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.cloud.MiniSolrCloudCluster;
@@ -42,6 +42,9 @@ import org.apache.solr.common.params.CollectionParams.CollectionAction;
 import org.apache.solr.common.params.CoreAdminParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.NamedList;
+import org.apache.solr.embedded.JettySolrRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SolrCloudFixture {
 
@@ -52,7 +55,7 @@ public class SolrCloudFixture {
      * Create a temp dir under the maven target folder
      */
     static {
-        LOG = Logger.getLogger(SolrCloudFixture.class);
+        LOG = LoggerFactory.getLogger(SolrCloudFixture.class);
         TEMP_DIR = Paths.get("target", "tmp");
         try {
             Files.createDirectories(TEMP_DIR);
@@ -85,13 +88,14 @@ public class SolrCloudFixture {
             }
         }
 
-        solrClient = new CloudSolrClient.Builder(Arrays.asList(zkAddr), Optional.empty()).build();
+        solrClient = new CloudHttp2SolrClient.Builder(Arrays.asList(zkAddr), Optional.empty())
+                .withDefaultCollection("collection1")
+                .build();
         solrClient.connect();
 
         createCollection(solrClient, "collection1", 1, 1, "conf1");
         Thread.sleep(1000); // takes some time to setup the collection...
                            // otherwise you'll get no live solr servers
-        solrClient.setDefaultCollection("collection1");
 
         SolrInputDocument doc = new SolrInputDocument();
         doc.setField("id", "1");
@@ -132,14 +136,16 @@ public class SolrCloudFixture {
 
         String destPath = "/configs/" + confName + "/" + destName;
         LOG.info("zk put " + file.getAbsolutePath() + " to " + destPath);
-        zkClient.makePath(destPath, file, false, true);
+        zkClient.makePath(destPath, file.toPath(), false, true);
     }
 
     // static to share with distrib test
     public void buildZooKeeper(String zkHost, String zkAddress, File solrhome, String config, String schema)
             throws Exception {
-        zkClient = new SolrZkClient(zkAddress, 60000);
-
+        zkClient = new SolrZkClient.Builder()
+                .withUrl(zkAddress)
+                .withTimeout(60000, TimeUnit.MILLISECONDS)
+                .build();
         Map<String, Object> props = new HashMap<>();
         props.put("configName", "conf1");
 

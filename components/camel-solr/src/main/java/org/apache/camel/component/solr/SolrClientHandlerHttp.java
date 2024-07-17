@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.solr;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 
 public class SolrClientHandlerHttp extends SolrClientHandler {
 
@@ -26,23 +28,17 @@ public class SolrClientHandlerHttp extends SolrClientHandler {
     }
 
     protected SolrClient getSolrClient() {
-        HttpSolrClient.Builder builder = new HttpSolrClient.Builder(getFirstUrlFromList());
+        Http2SolrClient.Builder builder = new Http2SolrClient.Builder(getFirstUrlFromList());
         if (solrConfiguration.getConnectionTimeout() != null) {
-            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
+            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         }
-        if (solrConfiguration.getSoTimeout() != null) {
-            builder.withSocketTimeout(solrConfiguration.getSoTimeout());
+        if (solrConfiguration.getIdleTimeout() != null) {
+            builder.withIdleTimeout(solrConfiguration.getIdleTimeout(), TimeUnit.MILLISECONDS);
         }
-        if (solrConfiguration.getHttpClient() != null) {
-            builder.withHttpClient(solrConfiguration.getHttpClient());
-        }
-        if (solrConfiguration.getAllowCompression() != null) {
-            builder.allowCompression(solrConfiguration.getAllowCompression());
-        }
-        HttpSolrClient httpSolrClient = builder.build();
         if (solrConfiguration.getFollowRedirects() != null) {
-            httpSolrClient.setFollowRedirects(solrConfiguration.getFollowRedirects());
+            builder.withFollowRedirects(solrConfiguration.getFollowRedirects());
         }
+        Http2SolrClient httpSolrClient = builder.build();
         return httpSolrClient;
     }
 

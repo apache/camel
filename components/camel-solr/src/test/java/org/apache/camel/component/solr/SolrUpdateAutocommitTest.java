@@ -32,7 +32,6 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.UpdateParams;
-import org.junit.jupiter.api.BeforeEach;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -40,14 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SolrUpdateAutocommitTest extends SolrComponentTestSupport {
-    private SolrEndpoint solrEndpoint;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        solrEndpoint = getMandatoryEndpoint(solrRouteAutocommitUri(), SolrEndpoint.class);
-    }
 
     @Test
     public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() throws Exception {
@@ -227,6 +218,7 @@ public class SolrUpdateAutocommitTest extends SolrComponentTestSupport {
 
     @Test
     public void indexDocumentsToCSVUpdateHandlerWithoutParameters() throws Exception {
+        SolrEndpoint solrEndpoint = getMandatoryEndpoint(solrRouteAutocommitUri(), SolrEndpoint.class);
         solrEndpoint.setRequestHandler("/update/csv");
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
@@ -246,6 +238,7 @@ public class SolrUpdateAutocommitTest extends SolrComponentTestSupport {
 
     @Test
     public void queryDocumentsToCSVUpdateHandlerWithoutParameters() {
+        SolrEndpoint solrEndpoint = getMandatoryEndpoint(solrRouteAutocommitUri(), SolrEndpoint.class);
         solrEndpoint.setRequestHandler("/update/csv");
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
@@ -265,6 +258,7 @@ public class SolrUpdateAutocommitTest extends SolrComponentTestSupport {
 
     @Test
     public void queryDocumentsToMap() throws Exception {
+        SolrEndpoint solrEndpoint = getMandatoryEndpoint(solrRouteAutocommitUri(), SolrEndpoint.class);
         solrEndpoint.setRequestHandler("/update/csv");
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
@@ -299,6 +293,7 @@ public class SolrUpdateAutocommitTest extends SolrComponentTestSupport {
 
     @Test
     public void indexDocumentsToCSVUpdateHandlerWithParameters() throws Exception {
+        SolrEndpoint solrEndpoint = getMandatoryEndpoint(solrRouteAutocommitUri(), SolrEndpoint.class);
         solrEndpoint.setRequestHandler("/update/csv");
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
@@ -320,6 +315,7 @@ public class SolrUpdateAutocommitTest extends SolrComponentTestSupport {
 
     @Test
     public void indexPDFDocumentToExtractingRequestHandler() throws Exception {
+        SolrEndpoint solrEndpoint = getMandatoryEndpoint(solrRouteAutocommitUri(), SolrEndpoint.class);
         solrEndpoint.setRequestHandler("/update/extract");
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/tutorial.pdf"));

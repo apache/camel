@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 
 public class SolrClientHandlerCloud extends SolrClientHandler {
 
@@ -31,22 +31,19 @@ public class SolrClientHandlerCloud extends SolrClientHandler {
     protected SolrClient getSolrClient() {
         Optional<String> zkChrootOptional = Optional.ofNullable(solrConfiguration.getZkChroot());
         List<String> urlList = getUrlListFrom(solrConfiguration);
-        CloudSolrClient.Builder builder = new CloudSolrClient.Builder(
+        CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(
                 urlList,
                 zkChrootOptional);
-        if (solrConfiguration.getConnectionTimeout() != null) {
-            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
-        }
-        if (solrConfiguration.getSoTimeout() != null) {
-            builder.withSocketTimeout(solrConfiguration.getSoTimeout());
-        }
-        if (solrConfiguration.getHttpClient() != null) {
-            builder.withHttpClient(solrConfiguration.getHttpClient());
-        }
-        CloudSolrClient cloudSolrClient = builder.build();
         if (solrConfiguration.getCollection() != null && !solrConfiguration.getCollection().isEmpty()) {
-            cloudSolrClient.setDefaultCollection(solrConfiguration.getCollection());
+            builder.withDefaultCollection(solrConfiguration.getCollection());
         }
+        //        if (solrConfiguration.getConnectionTimeout() != null) {
+        //        	builder.withConnConnectionTimeout(solrConfiguration.getConnectionTimeout());
+        //        }
+        //        if (solrConfiguration.getSoTimeout() != null) {
+        //        	builder.withSocketTimeout(solrConfiguration.getSoTimeout());
+        //        }
+        CloudHttp2SolrClient cloudSolrClient = builder.build();
         return cloudSolrClient;
     }
 

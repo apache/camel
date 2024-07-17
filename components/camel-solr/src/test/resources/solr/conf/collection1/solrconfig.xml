@@ -36,7 +36,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>7.2.1</luceneMatchVersion>
+  <luceneMatchVersion>LATEST</luceneMatchVersion>
 
   <!-- <lib/> directives can be used to instruct Solr to load an Jars
        identified and use them to resolve any "plugins" specified in
@@ -521,20 +521,20 @@
            autowarmCount - the number of entries to prepopulate from
                and old cache.  
       -->
-    <filterCache class="solr.FastLRUCache"
-                 size="512"
-                 initialSize="512"
-                 autowarmCount="0"/>
+<!--     <filterCache class="solr.FastLRUCache" -->
+<!--                  size="512" -->
+<!--                  initialSize="512" -->
+<!--                  autowarmCount="0"/> -->
 
     <!-- Query Result Cache
          
          Caches results of searches - ordered lists of document ids
          (DocList) based on a query, a sort, and the range of documents requested.  
       -->
-    <queryResultCache class="solr.LRUCache"
-                     size="512"
-                     initialSize="512"
-                     autowarmCount="0"/>
+<!--     <queryResultCache class="solr.LRUCache" -->
+<!--                      size="512" -->
+<!--                      initialSize="512" -->
+<!--                      autowarmCount="0"/> -->
    
     <!-- Document Cache
 
@@ -542,18 +542,18 @@
          document).  Since Lucene internal document ids are transient,
          this cache will not be autowarmed.  
       -->
-    <documentCache class="solr.LRUCache"
-                   size="512"
-                   initialSize="512"
-                   autowarmCount="0"/>
+<!--     <documentCache class="solr.LRUCache" -->
+<!--                    size="512" -->
+<!--                    initialSize="512" -->
+<!--                    autowarmCount="0"/> -->
     
     <!-- custom cache currently used by block join --> 
-    <cache name="perSegFilter"
-      class="solr.search.LRUCache"
-      size="10"
-      initialSize="0"
-      autowarmCount="10"
-      regenerator="solr.NoOpRegenerator" />
+<!--     <cache name="perSegFilter" -->
+<!--       class="solr.search.LRUCache" -->
+<!--       size="10" -->
+<!--       initialSize="0" -->
+<!--       autowarmCount="10" -->
+<!--       regenerator="solr.NoOpRegenerator" /> -->
 
     <!-- Field Value Cache
          
@@ -1068,17 +1068,35 @@
     -->
   <requestHandler name="/update/extract" 
                   startup="lazy"
-                  class="solr.extraction.ExtractingRequestHandler" >
+                  class="org.apache.solr.handler.extraction.ExtractingRequestHandler" >
     <lst name="defaults">
       <str name="lowernames">true</str>
       <str name="uprefix">ignored_</str>
 
-      <!-- capture link hrefs but ignore div attributes -->
+<!--       capture link hrefs but ignore div attributes -->
       <str name="captureAttr">true</str>
       <str name="fmap.a">links</str>
       <str name="fmap.div">ignored_</str>
     </lst>
   </requestHandler>
+
+<!--   <requestHandler name="/update/extract" class="org.apache.solr.handler.extraction.ExtractingRequestHandler"> -->
+<!--     <str name="parseContext.config">parseContext.xml</str> -->
+<!--   </requestHandler> -->
+
+<!--   <requestHandler name="/update/extract/lit-def" class="org.apache.solr.handler.extraction.ExtractingRequestHandler"> -->
+<!--     <lst name="defaults"> -->
+<!--       <str name="literal.foo_s">x</str> -->
+<!--     </lst> -->
+<!--     <lst name="appends"> -->
+<!--       <str name="literal.bar_s">y</str> -->
+<!--     </lst> -->
+<!--     <lst name="invariants"> -->
+<!--       <str name="literal.zot_s">z</str> -->
+<!--       <str name="uprefix">ignored_</str> -->
+<!--     </lst> -->
+<!--   </requestHandler> -->
+
 
 
   <!-- Field Analysis Request Handler
@@ -1808,9 +1826,9 @@
        in Solr's conf/xslt directory.  Changes to xslt files are checked for
        every xsltCacheLifetimeSeconds.  
     -->
-  <queryResponseWriter name="xslt" class="solr.XSLTResponseWriter">
-    <int name="xsltCacheLifetimeSeconds">5</int>
-  </queryResponseWriter>
+<!--   <queryResponseWriter name="xslt" class="solr.XSLTResponseWriter"> -->
+<!--     <int name="xsltCacheLifetimeSeconds">5</int> -->
+<!--   </queryResponseWriter> -->
 
   <!-- Query Parsers
 

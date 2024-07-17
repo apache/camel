@@ -36,7 +36,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>7.2.1</luceneMatchVersion>
+  <luceneMatchVersion>LATEST</luceneMatchVersion>
 
   <!-- an exact 'path' can be used instead of a 'dir' to specify a 
        specific jar file.  This will cause a serious error to be logged 
@@ -474,20 +474,20 @@
            autowarmCount - the number of entries to prepopulate from
                and old cache.  
       -->
-    <filterCache class="solr.FastLRUCache"
-                 size="512"
-                 initialSize="512"
-                 autowarmCount="0"/>
+<!--     <filterCache class="solr.FastLRUCache" -->
+<!--                  size="512" -->
+<!--                  initialSize="512" -->
+<!--                  autowarmCount="0"/> -->
 
     <!-- Query Result Cache
          
          Caches results of searches - ordered lists of document ids
          (DocList) based on a query, a sort, and the range of documents requested.  
       -->
-    <queryResultCache class="solr.LRUCache"
-                     size="512"
-                     initialSize="512"
-                     autowarmCount="0"/>
+<!--     <queryResultCache class="solr.LRUCache" -->
+<!--                      size="512" -->
+<!--                      initialSize="512" -->
+<!--                      autowarmCount="0"/> -->
    
     <!-- Document Cache
 
@@ -495,18 +495,18 @@
          document).  Since Lucene internal document ids are transient,
          this cache will not be autowarmed.  
       -->
-    <documentCache class="solr.LRUCache"
-                   size="512"
-                   initialSize="512"
-                   autowarmCount="0"/>
+<!--     <documentCache class="solr.LRUCache" -->
+<!--                    size="512" -->
+<!--                    initialSize="512" -->
+<!--                    autowarmCount="0"/> -->
     
     <!-- custom cache currently used by block join --> 
-    <cache name="perSegFilter"
-      class="solr.search.LRUCache"
-      size="10"
-      initialSize="0"
-      autowarmCount="10"
-      regenerator="solr.NoOpRegenerator" />
+<!--     <cache name="perSegFilter" -->
+<!--       class="solr.search.LRUCache" -->
+<!--       size="10" -->
+<!--       initialSize="0" -->
+<!--       autowarmCount="10" -->
+<!--       regenerator="solr.NoOpRegenerator" /> -->
 
     <!-- Field Value Cache
          
@@ -1021,7 +1021,7 @@
     -->
   <requestHandler name="/update/extract" 
                   startup="lazy"
-                  class="solr.extraction.ExtractingRequestHandler" >
+                  class="org.apache.solr.handler.extraction.ExtractingRequestHandler" >
     <lst name="defaults">
       <str name="lowernames">true</str>
       <str name="uprefix">ignored_</str>
@@ -1754,9 +1754,9 @@
        in Solr's conf/xslt directory.  Changes to xslt files are checked for
        every xsltCacheLifetimeSeconds.  
     -->
-  <queryResponseWriter name="xslt" class="solr.XSLTResponseWriter">
-    <int name="xsltCacheLifetimeSeconds">5</int>
-  </queryResponseWriter>
+<!--   <queryResponseWriter name="xslt" class="solr.XSLTResponseWriter"> -->
+<!--     <int name="xsltCacheLifetimeSeconds">5</int> -->
+<!--   </queryResponseWriter> -->
 
   <!-- Query Parsers
 

@@ -17,22 +17,24 @@
 package org.apache.camel.component.solr;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.embedded.JettySolrRunner;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.request.AbstractUpdateRequest.ACTION;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.embedded.JettySolrRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SolrFixtures {
-    static Logger log = Logger.getLogger(SolrFixtures.class);
+    static Logger log = LoggerFactory.getLogger(SolrFixtures.class);
 
     private static JettySolrRunner solrRunner;
     private static JettySolrRunner solrHttpsRunner;
-    private static HttpSolrClient solrServer;
-    private static HttpSolrClient solrHttpsServer;
+    private static Http2SolrClient solrServer;
+    private static Http2SolrClient solrHttpsServer;
     private static SolrCloudFixture cloudFixture;
 
     private static int port;
@@ -92,14 +94,14 @@ public class SolrFixtures {
         solrHttpsRunner = JettySolrFactory.createJettyTestFixture(true);
         httpsPort = solrHttpsRunner.getLocalPort();
         log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());
-        solrHttpsServer = new HttpSolrClient.Builder("https://127.0.0.1:" + httpsPort + "/solr")
-                .withConnectionTimeout(60000)
+        solrHttpsServer = new Http2SolrClient.Builder("https://127.0.0.1:" + httpsPort + "/solr")
+                .withConnectionTimeout(60000, TimeUnit.MILLISECONDS)
                 .build();
 
         solrRunner = JettySolrFactory.createJettyTestFixture(false);
         port = solrRunner.getLocalPort();
 
-        solrServer = new HttpSolrClient.Builder("http://localhost:" + port + "/solr").build();
+        solrServer = new Http2SolrClient.Builder("http://localhost:" + port + "/solr").build();
 
         log.info("Started Test Server: " + solrRunner.getBaseUrl());
         cloudFixture = new SolrCloudFixture("src/test/resources/solr");

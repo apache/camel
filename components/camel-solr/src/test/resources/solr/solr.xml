@@ -24,7 +24,6 @@
   sharedLib: path to a lib directory that will be shared across all cores
 -->
 <solr>
-
   <solrcloud>
     <str name="host">127.0.0.1</str>
     <str name="hostContext">${hostContext:solr}</str>
