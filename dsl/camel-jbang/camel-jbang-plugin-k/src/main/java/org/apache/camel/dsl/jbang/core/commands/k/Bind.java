@@ -186,7 +186,7 @@ public class Bind extends KubernetesBaseCommand {
             return delegate.dumpPipe(pipe);
         }
 
-        Pipe pipeResource = KubernetesHelper.yaml().loadAs(pipe, Pipe.class);
+        Pipe pipeResource = KubernetesHelper.yaml(this.getClass().getClassLoader()).loadAs(pipe, Pipe.class);
         final AtomicBoolean updated = new AtomicBoolean(false);
         client(Pipe.class).resource(pipeResource).createOr(it -> {
             updated.set(true);

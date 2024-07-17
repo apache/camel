@@ -20,7 +20,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -36,6 +38,15 @@ public final class YamlHelper {
      * fresh instance for every YAML stream.
      */
     public static Yaml yaml() {
+        return yaml(null);
+    }
+
+    /**
+     * Creates new Yaml instance. The implementation provided by Snakeyaml is not thread-safe. It is better to create a
+     * fresh instance for every YAML stream. Uses the given class loader as base constructor. This is mandatory when
+     * additional classes have been downloaded via Maven for instance when loading a Camel JBang plugin.
+     */
+    public static Yaml yaml(ClassLoader classLoader) {
         Representer representer = new Representer(new DumperOptions()) {
             @Override
             protected NodeTuple representJavaBeanProperty(
@@ -50,6 +61,11 @@ public final class YamlHelper {
             }
         };
         representer.getPropertyUtils().setSkipMissingProperties(true);
+
+        if (classLoader != null) {
+            return new Yaml(new CustomClassLoaderConstructor(classLoader, new LoaderOptions()), representer);
+        }
+
         return new Yaml(representer);
     }
 }
