@@ -18,7 +18,9 @@ package org.apache.camel.component.jsonvalidator;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -28,11 +30,25 @@ import org.apache.camel.support.DefaultComponent;
 @Component("json-validator")
 public class JsonValidatorComponent extends DefaultComponent {
 
+    @Metadata(label = "advanced", autowired = true)
+    private ObjectMapper objectMapper;
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JsonValidatorEndpoint endpoint = new JsonValidatorEndpoint(uri, this, remaining);
+        endpoint.setObjectMapper(objectMapper);
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
+    /**
+     * To use a custom {@link ObjectMapper}
+     */
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
 }

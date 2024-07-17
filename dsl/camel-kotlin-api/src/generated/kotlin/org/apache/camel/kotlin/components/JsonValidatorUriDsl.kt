@@ -171,6 +171,13 @@ public class JsonValidatorUriDsl(
   }
 
   /**
+   * The used Jackson object mapper
+   */
+  public fun objectMapper(objectMapper: String) {
+    it.property("objectMapper", objectMapper)
+  }
+
+  /**
    * To use a custom schema loader allowing for adding custom format validation. The default
    * implementation will create a schema loader that tries to determine the schema version from the
    * $schema property of the specified schema.

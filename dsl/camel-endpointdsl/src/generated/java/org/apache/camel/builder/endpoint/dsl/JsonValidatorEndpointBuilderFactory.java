@@ -307,6 +307,36 @@ public interface JsonValidatorEndpointBuilderFactory {
             return this;
         }
         /**
+         * The used Jackson object mapper.
+         * 
+         * The option is a:
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param objectMapper the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJsonValidatorEndpointBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+            doSetProperty("objectMapper", objectMapper);
+            return this;
+        }
+        /**
+         * The used Jackson object mapper.
+         * 
+         * The option will be converted to a
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param objectMapper the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJsonValidatorEndpointBuilder objectMapper(String objectMapper) {
+            doSetProperty("objectMapper", objectMapper);
+            return this;
+        }
+        /**
          * To use a custom schema loader allowing for adding custom format
          * validation. The default implementation will create a schema loader
          * that tries to determine the schema version from the $schema property
