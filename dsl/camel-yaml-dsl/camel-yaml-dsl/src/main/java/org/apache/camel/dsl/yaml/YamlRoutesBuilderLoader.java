@@ -422,7 +422,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         // if there are trait configuration then include them early
         configuration = nodeAt(root, "/traits/camel");
         if (configuration != null) {
-            var list = preConfigureTraitConfiguration(ctx.getResource(), configuration);
+            var list = preConfigureTraitCamel(ctx.getResource(), configuration);
             answer.addAll(list);
         }
         // if there are trait environment then include them early
@@ -513,10 +513,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         return answer;
     }
 
-    private List<CamelContextCustomizer> preConfigureTraitConfiguration(Resource resource, Node node) {
+    private List<CamelContextCustomizer> preConfigureTraitCamel(Resource resource, Node node) {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
-        Node target = nodeAt(node, "configuration/properties/");
+        Node target;
+        if (nodeAt(node, "/configuration") != null) {
+            // legacy trait configuration parameters
+            target = nodeAt(node, "/configuration/properties");
+        } else {
+            target = nodeAt(node, "/properties");
+        }
+
         final List<String> lines = asStringList(target);
         if (lines == null || lines.isEmpty()) {
             return answer;
@@ -538,7 +545,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                     lines.forEach(ps::parseConfigurationValue);
                 } catch (Exception e) {
-                    throw new RuntimeCamelException("Error adding properties from spec/traits/camel/configuration", e);
+                    throw new RuntimeCamelException("Error adding properties from spec/traits/camel", e);
                 }
             }
         });
@@ -549,7 +556,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     private List<CamelContextCustomizer> preConfigureTraitEnvironment(Resource resource, Node node) {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
-        Node target = nodeAt(node, "configuration/vars/");
+        Node target;
+        if (nodeAt(node, "/configuration") != null) {
+            // legacy trait configuration parameters
+            target = nodeAt(node, "/configuration/vars");
+        } else {
+            target = nodeAt(node, "/vars");
+        }
+
         final List<String> lines = asStringList(target);
         if (lines == null || lines.isEmpty()) {
             return answer;
@@ -571,7 +585,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                     lines.forEach(ps::parseConfigurationValue);
                 } catch (Exception e) {
-                    throw new RuntimeCamelException("Error adding properties from spec/traits/environment/configuration", e);
+                    throw new RuntimeCamelException("Error adding properties from spec/traits/environment", e);
                 }
             }
         });

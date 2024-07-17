@@ -48,13 +48,11 @@ class KameletBindingLoaderIntegrationSpecTest extends YamlTestSupport {
                     - "camel:cloudevents"
                     traits:
                       camel:
-                        configuration:
-                          properties:
+                        properties:
                           - "foo=howdy"
                           - "bar=123"
                       environment:
-                        configuration:
-                          vars:
+                        vars:
                           - "MY_ENV=cheese"   
                   source:
                     ref:

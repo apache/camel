@@ -64,10 +64,9 @@ class IntegrationLoaderTest extends YamlTestSupport {
                 spec:
                   traits:
                     camel:
-                      configuration:
-                        properties:
-                          - camel.component.seda.queueSize = 456
-                          - camel.component.seda.default-block-when-full = true
+                      properties:
+                        - camel.component.seda.queueSize = 456
+                        - camel.component.seda.default-block-when-full = true
                   flows:
                     - from:
                         uri: "seda:foo"
@@ -96,14 +95,12 @@ class IntegrationLoaderTest extends YamlTestSupport {
                 spec:
                   traits:
                     camel:
-                      configuration:
-                        properties:
-                          - camel.component.seda.queueSize = 456
-                          - camel.component.seda.default-block-when-full = true
+                      properties:
+                        - camel.component.seda.queueSize = 456
+                        - camel.component.seda.default-block-when-full = true
                     environment:
-                      configuration:
-                        vars:
-                          - TEST_MESSAGE = Hello World    
+                      vars:
+                        - TEST_MESSAGE = Hello World    
                   flows:
                     - from:
                         uri: "seda:foo"
