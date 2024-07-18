@@ -125,8 +125,8 @@
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <couchbase-client-version>3.7.0</couchbase-client-version>
         <curator-version>5.7.0</curator-version>
-        <cxf-version>4.0.4</cxf-version>
-        <cxf-codegen-plugin-version>4.0.4</cxf-codegen-plugin-version>
+        <cxf-version>4.0.5</cxf-version>
+        <cxf-codegen-plugin-version>4.0.5</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.1</cxf-xjc-utils-version>
@@ -365,7 +365,7 @@
         <mockito-version>5.12.0</mockito-version>
         <mongo-java-driver-version>4.11.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
-        <msal4j-version>1.16.0</msal4j-version>
+        <msal4j-version>1.16.1</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.16</mybatis-version>
@@ -418,12 +418,12 @@
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.6.8</reactor-version>
         <reactor-netty-version>1.1.20</reactor-netty-version>
-        <redisson-version>3.32.0</redisson-version>
+        <redisson-version>3.33.0</redisson-version>
         <resilience4j-version>2.2.0</resilience4j-version>
         <rest-assured-version>5.5.0</rest-assured-version>
         <roaster-version>2.29.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
-        <rocketmq-version>5.2.0</rocketmq-version>
+        <rocketmq-version>5.3.0</rocketmq-version>
         <rome-version>2.1.0</rome-version>
         <rssreader-version>3.7.0</rssreader-version>
         <rxjava2-version>2.2.21</rxjava2-version>
@@ -466,7 +466,7 @@
         <swagger-request-validator-version>2.41.0</swagger-request-validator-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
-        <testcontainers-version>1.19.8</testcontainers-version>
+        <testcontainers-version>1.20.0</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.2</tika-version>
         <twilio-version>10.4.1</twilio-version>
