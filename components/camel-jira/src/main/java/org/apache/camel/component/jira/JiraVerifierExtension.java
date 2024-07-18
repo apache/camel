@@ -46,7 +46,7 @@ public class JiraVerifierExtension extends DefaultComponentVerifierExtension {
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-                .error(ResultErrorHelper.requiresOption(JIRA_URL, parameters))
+                .error(ResultErrorHelper.requiresOption(parameters, JIRA_URL))
                 .errors(ResultErrorHelper.requiresAny(parameters,
                         OptionsGroup.withName("basic_authentication")
                                 .options("username", "password", "!requestToken", "!privateKey", "!consumerKey",
