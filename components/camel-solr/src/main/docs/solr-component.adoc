@@ -163,7 +163,7 @@ The components provide a producer operation to query Solr.
 
 For more information:
 
-https://solr.apache.org/guide/8_8/the-standard-query-parser.html[Solr Query Syntax]
+https://solr.apache.org/guide/solr/latest/query-guide/standard-query-parser.html[Solr Query Syntax]
 
 
 

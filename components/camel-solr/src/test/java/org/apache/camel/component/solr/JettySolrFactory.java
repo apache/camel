@@ -62,7 +62,7 @@ public final class JettySolrFactory {
         SSLContextBuilder builder = new SSLContextBuilder();
         builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
 
-        // // Create a trust manager that does not validate certificate chains
+        // Create a trust manager that does not validate certificate chains
         final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
             @Override
             public void checkClientTrusted(final X509Certificate[] chain, final String authType) {
@@ -80,15 +80,6 @@ public final class JettySolrFactory {
         final SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
         SSLContext.setDefault(sslContext);
-
-        // // Install the all-trusting trust manager
-        // final SSLContext sslContext = SSLContext.getInstance( "SSL" );
-        // sslContext.init( null, trustAllCerts, new
-        // java.security.SecureRandom() );
-        // // Create an ssl socket factory with our all-trusting manager
-        // final SSLSocketFactory sslSocketFactory =
-        // sslContext.getSocketFactory();
-        // HttpsURLConnection.setDefaultSSLSocketFactory(sslSocketFactory);
     }
 
     private static JettySolrRunner createJetty(

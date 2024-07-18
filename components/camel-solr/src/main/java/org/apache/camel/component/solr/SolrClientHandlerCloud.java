@@ -18,9 +18,11 @@ package org.apache.camel.component.solr;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 
 public class SolrClientHandlerCloud extends SolrClientHandler {
 
@@ -37,12 +39,18 @@ public class SolrClientHandlerCloud extends SolrClientHandler {
         if (solrConfiguration.getCollection() != null && !solrConfiguration.getCollection().isEmpty()) {
             builder.withDefaultCollection(solrConfiguration.getCollection());
         }
-        //        if (solrConfiguration.getConnectionTimeout() != null) {
-        //        	builder.withConnConnectionTimeout(solrConfiguration.getConnectionTimeout());
-        //        }
-        //        if (solrConfiguration.getSoTimeout() != null) {
-        //        	builder.withSocketTimeout(solrConfiguration.getSoTimeout());
-        //        }
+
+        if (solrConfiguration.getConnectionTimeout() != null || solrConfiguration.getIdleTimeout() != null) {
+            Http2SolrClient.Builder internalClientBuilder = new Http2SolrClient.Builder();
+            if (solrConfiguration.getConnectionTimeout() != null) {
+                internalClientBuilder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+            }
+            if (solrConfiguration.getIdleTimeout() != null) {
+                internalClientBuilder.withIdleTimeout(solrConfiguration.getIdleTimeout(), TimeUnit.MILLISECONDS);
+            }
+
+            builder.withInternalClientBuilder(internalClientBuilder);
+        }
         CloudHttp2SolrClient cloudSolrClient = builder.build();
         return cloudSolrClient;
     }

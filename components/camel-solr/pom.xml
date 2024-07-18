@@ -30,10 +30,6 @@
     <name>Camel :: Solr</name>
     <description>Camel Solr Support</description>
 
-    <properties>
-        <java.awt.headless>true</java.awt.headless>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -46,7 +42,7 @@
         <dependency>
             <groupId>org.eclipse.angus</groupId>
             <artifactId>angus-mail</artifactId>
-            <version>2.0.3</version>
+            <version>${angus-mail-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
