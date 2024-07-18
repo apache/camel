@@ -41,7 +41,7 @@ public class WatcherProducer extends DefaultProducer {
         String watchersRemove = exchange.getIn().getHeader(ISSUE_WATCHERS_REMOVE, String.class);
         if (issueKey == null) {
             throw new IllegalArgumentException(
-                    "Missing exchange input header named \'IssueKey\', it should specify the issue key to add/remove watchers to.");
+                    "Missing exchange input header named 'IssueKey', it should specify the issue key to add/remove watchers to.");
         }
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
         boolean hasWatchersToAdd = ObjectHelper.isNotEmpty(watchersAdd);
@@ -53,7 +53,7 @@ public class WatcherProducer extends DefaultProducer {
                 String[] watArr = watchersAdd.split(",");
                 for (String s : watArr) {
                     String watcher = s.trim();
-                    if (watcher.length() > 0) {
+                    if (!watcher.isEmpty()) {
                         issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
                     }
                 }
@@ -62,7 +62,7 @@ public class WatcherProducer extends DefaultProducer {
                 String[] watArr = watchersRemove.split(",");
                 for (String s : watArr) {
                     String watcher = s.trim();
-                    if (watcher.length() > 0) {
+                    if (!watcher.isEmpty()) {
                         issueClient.removeWatcher(issue.getWatchers().getSelf(), watcher);
                     }
                 }

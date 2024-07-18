@@ -75,7 +75,7 @@ public interface JiraEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Jira server url, example: http://my_jira.com:8081.
+         * The Jira server url, for example http://my_jira.com:8081.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -450,7 +450,7 @@ public interface JiraEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Jira server url, example: http://my_jira.com:8081.
+         * The Jira server url, for example http://my_jira.com:8081.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -657,7 +657,7 @@ public interface JiraEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Jira server url, example: http://my_jira.com:8081.
+         * The Jira server url, for example http://my_jira.com:8081.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

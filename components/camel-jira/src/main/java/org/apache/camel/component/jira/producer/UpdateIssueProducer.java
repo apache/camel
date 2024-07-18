@@ -54,7 +54,7 @@ public class UpdateIssueProducer extends DefaultProducer {
         String issueKey = exchange.getIn().getHeader(ISSUE_KEY, String.class);
         if (issueKey == null) {
             throw new IllegalArgumentException(
-                    "Missing exchange input header named \'IssueKey\', it should specify the issue key.");
+                    "Missing exchange input header named 'IssueKey', it should specify the issue key.");
         }
         Long issueTypeId = exchange.getIn().getHeader(ISSUE_TYPE_ID, Long.class);
         String issueTypeName = exchange.getIn().getHeader(ISSUE_TYPE_NAME, String.class);

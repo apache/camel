@@ -16,14 +16,17 @@
  */
 package org.apache.camel.component.jira.consumer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.domain.Comment;
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jira.JiraEndpoint;
+import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,15 +50,8 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
 
     @Override
     protected int doPoll() throws Exception {
-        List<Comment> newComments = getComments();
-        int max = newComments.size() - 1;
-        // retrieve from last to first item LIFO
-        for (int i = max; i > -1; i--) {
-            Comment newComment = newComments.get(i);
-            Exchange e = createExchange(true);
-            e.getIn().setBody(newComment);
-            getProcessor().process(e);
-        }
+        Queue<Comment> newComments = getComments();
+        processBatch(CastUtils.cast(newComments));
         return newComments.size();
     }
 
@@ -68,23 +64,19 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
 
     // In the end, we want *new* comments oldest to newest.
     @SuppressWarnings("ConstantConditions")
-    private List<Comment> getComments() {
+    private Queue<Comment> getComments() {
         LOG.debug("Start: Jira NewCommentsConsumer: retrieving issue comments. Last comment id: {}", lastCommentId);
-        List<Comment> newComments = new ArrayList<>();
-        List<Issue> issues = getIssues();
-        for (Issue issue : issues) {
-            Issue fullIssue = client().getIssueClient().getIssue(issue.getKey()).claim();
-            for (Comment comment : fullIssue.getComments()) {
-                if (comment.getId() > lastCommentId) {
-                    newComments.add(comment);
-                }
-            }
-        }
-        for (Comment c : newComments) {
-            if (c.getId() > lastCommentId) {
-                lastCommentId = c.getId();
-            }
-        }
+        IssueRestClient client = getEndpoint().getClient().getIssueClient();
+
+        LinkedList<Comment> newComments = getIssues().stream()
+                .map(issue -> client.getIssue(issue.getKey()).claim())
+                .flatMap(issue -> StreamSupport.stream(issue.getComments().spliterator(), false))
+                .filter(comment -> comment.getId() > lastCommentId)
+                .collect(Collectors.toCollection(LinkedList::new));
+
+        Collections.reverse(newComments);
+
+        lastCommentId = newComments.stream().mapToLong(Comment::getId).max().orElse(lastCommentId);
         LOG.debug("End: Jira NewCommentsConsumer: retrieving issue comments. {} new comments since last run.",
                 newComments.size());
         return newComments;
