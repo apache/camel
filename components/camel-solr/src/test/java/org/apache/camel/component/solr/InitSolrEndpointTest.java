@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.solr;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.stream.Stream;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudLegacySolrClient;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpClientUtil;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
@@ -36,6 +31,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InitSolrEndpointTest extends SolrTestSupport {
 
@@ -82,7 +81,7 @@ public class InitSolrEndpointTest extends SolrTestSupport {
         SolrClient solrClient = solrEndpoint.getComponent().getSolrClient(
                 (SolrProducer) solrEndpoint.createProducer(),
                 solrEndpoint.getSolrConfiguration());
-        HttpClient httpClient1 = solrClient instanceof CloudSolrClient
+        HttpClient httpClient1 = solrClient instanceof CloudLegacySolrClient
                 ? ((CloudLegacySolrClient) solrClient).getHttpClient() : ((HttpSolrClient) solrClient).getHttpClient();
         assertNotNull(httpClient1);
         assertEquals(httpClient, httpClient1);
@@ -113,17 +112,17 @@ public class InitSolrEndpointTest extends SolrTestSupport {
                 Arguments.of("solr:localhost:8983/solr", HttpSolrClient.class, null),
                 Arguments.of("solr://localhost:8983/solr", HttpSolrClient.class, null),
                 // note: zkChroot will not be used but we can't get it from the client directly, so we need to set it
-                Arguments.of("solr://localhost:2181/solr?zkChroot=/mytest", CloudSolrClient.class, "/mytest"),
+                Arguments.of("solr://localhost:2181/solr?zkChroot=/mytest", CloudLegacySolrClient.class, "/mytest"),
                 Arguments.of("solr://localhost:8983/solr,localhost:8984/solr,localhost:8985/solr", LBHttpSolrClient.class,
                         null),
-                Arguments.of("solr://localhost:8983/solr?zkHost=zk1:2181", CloudSolrClient.class, null),
+                Arguments.of("solr://localhost:8983/solr?zkHost=zk1:2181", CloudLegacySolrClient.class, null),
                 Arguments.of("solr://localhost:8983/solr?zkHost=zk1:2181,zk2:2181,zk3:2181/mytest", CloudLegacySolrClient.class,
                         "/mytest"),
                 Arguments.of("solr://localhost:8983/solr?zkHost=zk1:2181,zk2:2181,zk3:2181/mytest&zkChroot=/myZkChroot",
-                        CloudSolrClient.class, "/myZkChroot"),
-                Arguments.of("solrCloud:zk1:2181,zk2:2181,zk3:2181", CloudSolrClient.class, null),
-                Arguments.of("solrCloud:zk1:2181,zk2:2181,zk3:2181/myZkChroot", CloudSolrClient.class, "/myZkChroot"),
-                Arguments.of("solrCloud:zk1,zk2,zk3/myZkChroot", CloudSolrClient.class, "/myZkChroot"));
+                        CloudLegacySolrClient.class, "/myZkChroot"),
+                Arguments.of("solrCloud:zk1:2181,zk2:2181,zk3:2181", CloudLegacySolrClient.class, null),
+                Arguments.of("solrCloud:zk1:2181,zk2:2181,zk3:2181/myZkChroot", CloudLegacySolrClient.class, "/myZkChroot"),
+                Arguments.of("solrCloud:zk1,zk2,zk3/myZkChroot", CloudLegacySolrClient.class, "/myZkChroot"));
     }
 
     private String getFullOptions() {

@@ -40,7 +40,7 @@ public class SolrClientHandlerLbHttp extends SolrClientHandler {
         if (!ObjectHelper.isEmpty(solrConfiguration.getHttpClient())) {
             builder.withHttpClient(solrConfiguration.getHttpClient());
         }
-        return builder.build();   	
+        return builder.build();
     }
 
 }

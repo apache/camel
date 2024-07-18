@@ -27,7 +27,7 @@ public class SolrClientHandlerConcurrentUpdate extends SolrClientHandler {
     }
 
     protected SolrClient getSolrClient() {
-    	
+
         ConcurrentUpdateSolrClient.Builder builder = new ConcurrentUpdateSolrClient.Builder(
                 getFirstUrlFromList());
         if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {

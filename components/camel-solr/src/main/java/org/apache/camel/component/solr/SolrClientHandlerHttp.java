@@ -31,7 +31,7 @@ public class SolrClientHandlerHttp extends SolrClientHandler {
         if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
             builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
         }
-        if (!ObjectHelper.isEmpty(solrConfiguration.getSoTimeout() != null)) {
+        if (!ObjectHelper.isEmpty(solrConfiguration.getSoTimeout())) {
             builder.withSocketTimeout(solrConfiguration.getSoTimeout());
         }
         if (!ObjectHelper.isEmpty(solrConfiguration.getHttpClient())) {

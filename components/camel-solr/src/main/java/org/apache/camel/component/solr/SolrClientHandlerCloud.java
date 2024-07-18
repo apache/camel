@@ -39,14 +39,14 @@ public class SolrClientHandlerCloud extends SolrClientHandler {
             builder.withDefaultCollection(solrConfiguration.getCollection());
         }
         if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
-        	builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
+            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
         }
         if (!ObjectHelper.isEmpty(solrConfiguration.getSoTimeout())) {
             builder.withSocketTimeout(solrConfiguration.getSoTimeout());
         }
         if (!ObjectHelper.isEmpty(solrConfiguration.getHttpClient())) {
-        	builder.withHttpClient(solrConfiguration.getHttpClient());
-    	}
+            builder.withHttpClient(solrConfiguration.getHttpClient());
+        }
 
         return builder.build();
     }

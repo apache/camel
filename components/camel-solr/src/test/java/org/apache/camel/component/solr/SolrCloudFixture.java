@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.solr.client.solrj.impl.CloudLegacySolrClient;
-import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.cloud.MiniSolrCloudCluster;
 import org.apache.solr.common.SolrInputDocument;
@@ -109,7 +108,7 @@ public class SolrCloudFixture {
     }
 
     protected NamedList<Object> createCollection(
-            CloudSolrClient server, String name, int numShards,
+            CloudLegacySolrClient server, String name, int numShards,
             int replicationFactor, String configName)
             throws Exception {
         ModifiableSolrParams modParams = new ModifiableSolrParams();
