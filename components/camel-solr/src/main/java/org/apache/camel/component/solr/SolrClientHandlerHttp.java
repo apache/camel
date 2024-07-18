@@ -18,7 +18,6 @@ package org.apache.camel.component.solr;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
 
 public class SolrClientHandlerHttp extends SolrClientHandler {
@@ -27,7 +26,7 @@ public class SolrClientHandlerHttp extends SolrClientHandler {
         super(solrConfiguration);
     }
 
-    protected SolrClient getSolrClient() {
+    protected Http2SolrClient getSolrClient() {
         Http2SolrClient.Builder builder = new Http2SolrClient.Builder(getFirstUrlFromList());
         if (solrConfiguration.getConnectionTimeout() != null) {
             builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);

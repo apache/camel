@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.solr;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateHttp2SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
@@ -29,23 +27,14 @@ public class SolrClientHandlerConcurrentUpdate extends SolrClientHandler {
     }
 
     protected SolrClient getSolrClient() {
-        Http2SolrClient.Builder builder = new Http2SolrClient.Builder(getFirstUrlFromList());
-        if (solrConfiguration.getConnectionTimeout() != null) {
-            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
-        }
-        if (solrConfiguration.getIdleTimeout() != null) {
-            builder.withIdleTimeout(solrConfiguration.getIdleTimeout(), TimeUnit.MILLISECONDS);
-        }
-        if (solrConfiguration.getFollowRedirects() != null) {
-            builder.withFollowRedirects(solrConfiguration.getFollowRedirects());
-        }
-        Http2SolrClient httpSolrClient = builder.build();
+        SolrClientHandlerHttp solrClientHandlerHttp = new SolrClientHandlerHttp(solrConfiguration);
+        Http2SolrClient httpSolrClient = solrClientHandlerHttp.getSolrClient();
 
         ConcurrentUpdateHttp2SolrClient.Builder concurrentBuilder = new ConcurrentUpdateHttp2SolrClient.Builder(
                 getFirstUrlFromList(), httpSolrClient);
         concurrentBuilder.withQueueSize(solrConfiguration.getStreamingQueueSize());
         concurrentBuilder.withThreadCount(solrConfiguration.getStreamingThreadCount());
-        return builder.build();
+        return concurrentBuilder.build();
     }
 
 }

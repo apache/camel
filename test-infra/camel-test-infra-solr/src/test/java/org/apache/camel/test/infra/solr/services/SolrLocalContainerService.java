@@ -27,11 +27,7 @@ public class SolrLocalContainerService implements SolrService, ContainerService<
     private final SolrContainer container;
 
     public SolrLocalContainerService() {
-        container = new SolrContainer();
-    }
-
-    public SolrLocalContainerService(String imageName) {
-        container = SolrContainer.initContainer(imageName, SolrContainer.CONTAINER_NAME, isCloudMode());
+        container = SolrContainer.initContainer(SolrContainer.CONTAINER_NAME, isCloudMode());
     }
 
     @Override

@@ -28,7 +28,7 @@ import org.testcontainers.utility.DockerImageName;
 
 public class SolrContainer extends GenericContainer<SolrContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(SolrContainer.class);
-
+	
     public static final String CONTAINER_NAME = "solr";
 
     public SolrContainer() {
@@ -43,13 +43,13 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
         super(DockerImageName.parse(imageName));
     }
 
-    public static SolrContainer initContainer(String imageName, String networkAlias, boolean cloudMode) {
-        return new SolrContainer(imageName)
+    public static SolrContainer initContainer(String networkAlias, boolean cloudMode) {
+        return new SolrContainer()
                 .withNetworkAliases(networkAlias)
                 .withExposedPorts(SolrProperties.DEFAULT_PORT)
                 .withLogConsumer(new Slf4jLogConsumer(LOG).withPrefix(CONTAINER_NAME))
                 .waitingFor(Wait.forLogMessage(".*Server.*Started.*", 1))
                 .withCommand(cloudMode ? "-c" : "");
     }
-
+    
 }
