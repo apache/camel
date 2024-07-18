@@ -43,6 +43,7 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 
 import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
+import static org.apache.camel.maven.packaging.MojoHelper.annotationValueFromMap;
 import static org.apache.camel.maven.packaging.MojoHelper.getType;
 
 /**
@@ -174,7 +175,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 model.setClassName(ci.name().toString());
                 model.setDeprecated(deprecated);
                 model.setDescription(annotationValue(a, "description"));
-                model.setInterfaceName(annotationValue(a, "annotations", "interfaceName"));
+                model.setInterfaceName(annotationValueFromMap(a, "annotations", "interfaceName"));
                 if (model.getInterfaceName() == null) {
                     // try to discover the interface
                     model.setInterfaceName(interfaceName(index, ci));

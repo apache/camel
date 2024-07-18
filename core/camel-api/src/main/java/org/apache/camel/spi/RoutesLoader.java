@@ -54,13 +54,11 @@ public interface RoutesLoader extends CamelContextAware {
     RoutesBuilderLoader getRoutesLoader(String extension) throws Exception;
 
     /**
-     * Loads {@link RoutesBuilder} from the give list of {@link Resource} into the current
-     * {@link org.apache.camel.CamelContext}.
+     * Loads routes from the given list of {@link RoutesBuilder} into the current {@link org.apache.camel.CamelContext}.
      *
-     * @param resources the resources to be loaded.
+     * @param builders the builders to be loaded.
      */
-    default void loadRoutes(Collection<Resource> resources) throws Exception {
-        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+    default void loadRoutesWithRoutesBuilders(Collection<RoutesBuilder> builders) throws Exception {
         // add configuration first before the routes
         for (RoutesBuilder builder : builders) {
             if (builder instanceof RouteConfigurationsBuilder) {
@@ -81,20 +79,19 @@ public interface RoutesLoader extends CamelContextAware {
      *
      * @param resources the resources to be loaded.
      */
+    default void loadRoutes(Collection<Resource> resources) throws Exception {
+        loadRoutesWithRoutesBuilders(findRoutesBuilders(resources));
+
+    }
+
+    /**
+     * Loads {@link RoutesBuilder} from the give list of {@link Resource} into the current
+     * {@link org.apache.camel.CamelContext}.
+     *
+     * @param resources the resources to be loaded.
+     */
     default void loadRoutes(Resource... resources) throws Exception {
-        Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
-        // add configuration first before the routes
-        for (RoutesBuilder builder : builders) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                getCamelContext().addRoutesConfigurations((RouteConfigurationsBuilder) builder);
-            }
-        }
-        for (RoutesBuilder builder : builders) {
-            getCamelContext().addRoutes(builder);
-        }
-        for (RoutesBuilder builder : builders) {
-            getCamelContext().addTemplatedRoutes(builder);
-        }
+        loadRoutesWithRoutesBuilders(findRoutesBuilders(resources));
     }
 
     /**

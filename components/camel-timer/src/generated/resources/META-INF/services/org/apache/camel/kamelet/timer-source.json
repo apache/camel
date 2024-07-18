@@ -1,0 +1,44 @@
+{
+  "kamelet": {
+    "kind": "kamelet",
+    "name": "timer-source",
+    "title": "Timer Source",
+    "description": "Produces periodic events with a custom payload.",
+    "provider": "Apache Software Foundation",
+    "supportLevel": "STABLE",
+    "namespace": "Scheduling",
+    "dependencies": "camel:core,camel:timer,camel:kamelet",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.timer.kamelet.TimerSource",
+    "properties": [
+      {
+        "name": "period",
+        "title": "Period",
+        "description": "The interval between two events in milliseconds.",
+        "type": "integer",
+        "required": false,
+        "defaultValue": "1000"
+      },
+      {
+        "name": "message",
+        "title": "Message",
+        "description": "The message to generate.",
+        "type": "string",
+        "required": true,
+        "example": "hello world"
+      },
+      {
+        "name": "contentType",
+        "title": "Content Type",
+        "description": "The content type of the message being generated.",
+        "type": "string",
+        "required": false,
+        "defaultValue": "text\/plain"
+      }
+    ],
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-timer",
+    "version": "4.8.0-SNAPSHOT"
+  }
+}
+

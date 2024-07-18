@@ -29,28 +29,7 @@ import java.util.function.Function;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.model.BeanFactoryDefinition;
-import org.apache.camel.model.BeanModelHelper;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.DefaultRouteTemplateContext;
-import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.ModelLifecycleStrategy;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.Resilience4jConfigurationDefinition;
-import org.apache.camel.model.RouteConfigurationDefinition;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
-import org.apache.camel.model.RouteFilters;
-import org.apache.camel.model.RouteTemplateDefinition;
-import org.apache.camel.model.RouteTemplateParameterDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.TemplatedRouteDefinition;
-import org.apache.camel.model.TemplatedRouteParameterDefinition;
-import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.*;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -416,13 +395,11 @@ public class DefaultModel implements Model {
             RouteTemplateContext routeTemplateContext)
             throws Exception {
 
-        RouteTemplateDefinition target = null;
-        for (RouteTemplateDefinition def : routeTemplateDefinitions) {
-            if (routeTemplateId.equals(def.getId())) {
-                target = def;
-                break;
-            }
-        }
+        RouteTemplateDefinition target = routeTemplateDefinitions.stream()
+                .filter(def -> routeTemplateId.equals(def.getId()))
+                .findFirst()
+                .orElse(null);
+
         if (target == null) {
             // if the route template has a location parameter, then try to load route templates from the location
             // and look up again
@@ -433,13 +410,20 @@ public class DefaultModel implements Model {
                 RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), listener, routeTemplateId,
                         location.toString());
             }
-            for (RouteTemplateDefinition def : routeTemplateDefinitions) {
-                if (routeTemplateId.equals(def.getId())) {
-                    target = def;
-                    break;
-                }
-            }
+            target = routeTemplateDefinitions.stream()
+                    .filter(def -> routeTemplateId.equals(def.getId()))
+                    .findFirst()
+                    .orElse(null);
         }
+
+        if (target == null) {
+            RouteTemplateHelper.loadRouteTemplate(getCamelContext(), routeTemplateId);
+            target = routeTemplateDefinitions.stream()
+                        .filter(def -> routeTemplateId.equals(def.getId()))
+                        .findFirst()
+                        .orElse(null);
+        }
+
         if (target == null) {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }

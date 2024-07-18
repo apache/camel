@@ -284,6 +284,38 @@ class KameletLoaderTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "kamelet spi discovery"() {
+        setup:
+            def payload = "Camel is an Open Source integration framework that empowers you to quickly and easily " +
+                    "integrate various systems."
+
+            loadRoutes """
+                - from:
+                    uri: "kamelet:explain-camel-source?language=en"
+                    steps:
+                      - to: "mock:result"
+            """
+
+            withMock('mock:result') {
+                expectedMessageCount 1
+                expectedBodiesReceived payload
+            }
+        when:
+            context.start()
+
+            withTemplate {
+                to('direct:start').withBody(payload).send()
+            }
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with (context.routeTemplateDefinitions[0]) {
+                id == 'explain-camel-source'
+            }
+
+            MockEndpoint.assertIsSatisfied(context)
+    }
+
     def "kamelet with filter and flow"() {
         setup:
             loadKamelets '''
