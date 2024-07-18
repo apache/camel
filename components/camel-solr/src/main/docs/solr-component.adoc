@@ -3,8 +3,8 @@
 :shortname: solr
 :artifactid: camel-solr
 :description: Perform operations against Apache Lucene Solr.
-:since: 4.8.0
-:supportlevel: Stable
+:since: 4.8
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
