@@ -28,7 +28,7 @@ import org.testcontainers.utility.DockerImageName;
 
 public class SolrContainer extends GenericContainer<SolrContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(SolrContainer.class);
-	
+
     public static final String CONTAINER_NAME = "solr";
 
     public SolrContainer() {
