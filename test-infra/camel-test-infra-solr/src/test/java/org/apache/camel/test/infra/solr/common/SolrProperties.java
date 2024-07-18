@@ -21,6 +21,7 @@ public final class SolrProperties {
     public static final String SERVICE_ADDRESS = "solr.service.address";
     public static final String SOLR_CONTAINER = "solr.container";
     public static final String SOLR_MODE = "SOLR_MODE";
+    public static final int DEFAULT_PORT = 8983;
 
     private SolrProperties() {
 

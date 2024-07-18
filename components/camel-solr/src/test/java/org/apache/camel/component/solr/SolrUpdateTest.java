@@ -48,13 +48,6 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         solrEndpoint = getMandatoryEndpoint(solrRouteUri(), SolrEndpoint.class);
     }
 
-    //	@Override
-    //    @BeforeEach
-    //    public void setUp() {
-    //        super.setUp();
-    //        solrEndpoint = getMandatoryEndpoint(solrRouteUri(), SolrEndpoint.class);
-    //    }
-
     @Test
     public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() throws Exception {
 

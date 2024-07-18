@@ -59,9 +59,9 @@ public class SolrCloudFixture {
         TEMP_DIR = Paths.get("target", "tmp");
         try {
             Files.createDirectories(TEMP_DIR);
-            LOG.info("Created: " + TEMP_DIR);
+            LOG.info("Created: {}", TEMP_DIR);
         } catch (IOException e) {
-            LOG.error("Unable to create " + TEMP_DIR, e);
+            LOG.error("Unable to create {}", TEMP_DIR, e);
         }
 
     }
@@ -84,7 +84,7 @@ public class SolrCloudFixture {
             if (!jetty.isRunning()) {
                 LOG.warn("JETTY NOT RUNNING!");
             } else {
-                LOG.info("JETTY RUNNING AT " + jetty.getBaseUrl() + " PORT " + jetty.getLocalPort());
+                LOG.info("JETTY RUNNING AT {}:{}", jetty.getBaseUrl(), jetty.getLocalPort());
             }
         }
 
@@ -130,12 +130,12 @@ public class SolrCloudFixture {
             throws Exception {
         File file = new File(solrhome, "collection1" + File.separator + "conf" + File.separator + srcName);
         if (!file.exists()) {
-            LOG.info("zk skipping " + file.getAbsolutePath() + " because it doesn't exist");
+            LOG.info("zk skipping {} because it doesn't exist", file.getAbsolutePath());
             return;
         }
 
         String destPath = "/configs/" + confName + "/" + destName;
-        LOG.info("zk put " + file.getAbsolutePath() + " to " + destPath);
+        LOG.info("zk put {} to {}", file.getAbsolutePath(), destPath);
         zkClient.makePath(destPath, file.toPath(), false, true);
     }
 

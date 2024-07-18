@@ -24,7 +24,7 @@ public final class SolrServiceFactory {
     }
 
     public static SimpleTestServiceBuilder<SolrService> builder() {
-        return new SimpleTestServiceBuilder<>(SolrLocalContainerService.CONTAINER_NAME);
+        return new SimpleTestServiceBuilder<>(SolrContainer.CONTAINER_NAME);
     }
 
     public static SolrService createService() {

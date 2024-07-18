@@ -93,7 +93,7 @@ public class SolrFixtures {
     static void createSolrFixtures() throws Exception {
         solrHttpsRunner = JettySolrFactory.createJettyTestFixture(true);
         httpsPort = solrHttpsRunner.getLocalPort();
-        log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());
+        log.info("Started Https Test Server: {}", solrHttpsRunner.getBaseUrl());
         solrHttpsServer = new Http2SolrClient.Builder("https://127.0.0.1:" + httpsPort + "/solr")
                 .withConnectionTimeout(60000, TimeUnit.MILLISECONDS)
                 .build();
@@ -103,7 +103,7 @@ public class SolrFixtures {
 
         solrServer = new Http2SolrClient.Builder("http://localhost:" + port + "/solr").build();
 
-        log.info("Started Test Server: " + solrRunner.getBaseUrl());
+        log.info("Started Test Server: {}", solrRunner.getBaseUrl());
         cloudFixture = new SolrCloudFixture("src/test/resources/solr");
     }
 

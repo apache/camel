@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
@@ -40,12 +41,14 @@ public class SolrClientHandlerCloud extends SolrClientHandler {
             builder.withDefaultCollection(solrConfiguration.getCollection());
         }
 
-        if (solrConfiguration.getConnectionTimeout() != null || solrConfiguration.getIdleTimeout() != null) {
+        if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout()) ||
+                !ObjectHelper.isEmpty(solrConfiguration.getIdleTimeout())) {
+
             Http2SolrClient.Builder internalClientBuilder = new Http2SolrClient.Builder();
-            if (solrConfiguration.getConnectionTimeout() != null) {
+            if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
                 internalClientBuilder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
             }
-            if (solrConfiguration.getIdleTimeout() != null) {
+            if (ObjectHelper.isEmpty(solrConfiguration.getIdleTimeout())) {
                 internalClientBuilder.withIdleTimeout(solrConfiguration.getIdleTimeout(), TimeUnit.MILLISECONDS);
             }
 

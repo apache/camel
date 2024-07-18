@@ -344,11 +344,8 @@ public class SolrConfiguration implements Cloneable {
         try {
             return (SolrConfiguration) this.clone();
         } catch (CloneNotSupportedException e) {
-            LOG.error(
-                    String.format(
-                            "Could not generate new configuration based on configuration of existing endpoint %s",
-                            getSolrEndpoint()),
-                    e);
+            LOG.error("Could not generate new configuration based on configuration of existing endpoint {}",
+                    getSolrEndpoint(), e);
         }
         return null;
     }

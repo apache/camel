@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import jakarta.activation.MimetypesFileTypeMap;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -54,9 +55,9 @@ public class SolrProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        String operation = (String) exchange.getIn().getHeader(SolrConstants.OPERATION);
+        String operation = exchange.getIn().getHeader(SolrConstants.OPERATION, String.class);
         if (operation == null) {
-            throw new IllegalArgumentException(SolrConstants.OPERATION + " header is missing");
+            throw new NoSuchHeaderException(exchange, SolrConstants.OPERATION, String.class);
         }
 
         // solr configuration
@@ -174,13 +175,13 @@ public class SolrProducer extends DefaultProducer {
 
     private void query(
             Exchange exchange, SolrClient solrClient, SolrConfiguration solrConfiguration, ModifiableSolrParams solrParams)
-            throws SolrServerException, IOException {
+            throws SolrServerException, IOException, NoSuchHeaderException {
         String solrCollection = exchange.getIn().getHeader(SolrConstants.COLLECTION, String.class);
         SolrQuery solrQuery = new SolrQuery();
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(SolrConstants.QUERY_STRING))) {
             solrQuery.setQuery(exchange.getMessage().getHeader(SolrConstants.QUERY_STRING, String.class));
         } else {
-            throw new IllegalArgumentException("Query String needs to be set as header while querying Solr");
+            throw new NoSuchHeaderException(exchange, SolrConstants.QUERY_STRING, String.class);
         }
         solrQuery.add(solrParams);
         QueryRequest queryRequest = new QueryRequest(solrQuery);

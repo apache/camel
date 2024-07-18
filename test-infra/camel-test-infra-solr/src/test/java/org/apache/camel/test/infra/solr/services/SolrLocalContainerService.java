@@ -20,33 +20,18 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.solr.common.SolrProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.containers.wait.strategy.Wait;
 
-public class SolrLocalContainerService implements SolrService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "solr:9.6.1";
-    public static final String CONTAINER_NAME = "solr";
-    private static final int PORT = 8983;
+public class SolrLocalContainerService implements SolrService, ContainerService<SolrContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrLocalContainerService.class);
-    private final GenericContainer container;
+    private final SolrContainer container;
 
     public SolrLocalContainerService() {
-        this(System.getProperty(SolrProperties.SOLR_CONTAINER, CONTAINER_IMAGE));
+        container = new SolrContainer();
     }
 
     public SolrLocalContainerService(String imageName) {
-        container = initContainer(imageName, CONTAINER_NAME);
-    }
-
-    protected GenericContainer initContainer(String imageName, String containerName) {
-        return new GenericContainer<>(imageName)
-                .withNetworkAliases(containerName)
-                .withExposedPorts(PORT)
-                .withLogConsumer(new Slf4jLogConsumer(LOG).withPrefix(SolrLocalContainerService.CONTAINER_IMAGE))
-                .waitingFor(Wait.forLogMessage(".*Server.*Started.*", 1))
-                .withCommand(isCloudMode() ? "-c" : "");
+        container = SolrContainer.initContainer(imageName, SolrContainer.CONTAINER_NAME, isCloudMode());
     }
 
     @Override
@@ -56,21 +41,21 @@ public class SolrLocalContainerService implements SolrService, ContainerService<
 
     @Override
     public void initialize() {
-        LOG.info("Trying to start the {} container", CONTAINER_IMAGE);
+        LOG.info("Trying to start solr container");
         container.start();
 
         registerProperties();
-        LOG.info("{} instance running at {}", CONTAINER_IMAGE, getSolrBaseUrl());
+        LOG.info("Solr instance running at {}", getSolrBaseUrl());
     }
 
     @Override
     public void shutdown() {
-        LOG.info("Stopping the {} container", CONTAINER_IMAGE);
+        LOG.info("Stopping the Solr container");
         container.stop();
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public SolrContainer getContainer() {
         return container;
     }
 
@@ -79,7 +64,7 @@ public class SolrLocalContainerService implements SolrService, ContainerService<
     }
 
     protected int getPort() {
-        return container.getMappedPort(PORT);
+        return container.getMappedPort(SolrProperties.DEFAULT_PORT);
     }
 
     @Override

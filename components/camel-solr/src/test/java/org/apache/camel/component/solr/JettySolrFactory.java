@@ -99,6 +99,7 @@ public final class JettySolrFactory {
 
         // Instruct Solr to keep the index in memory, for faster testing.
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
+        System.setProperty("solr.lock.type", "single");
 
         SSLConfig sslConfig = buildSSLConfig(ssl, false);
 
