@@ -25,6 +25,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.jira.consumer.AbstractJiraConsumer;
 import org.apache.camel.component.jira.consumer.NewCommentsConsumer;
 import org.apache.camel.component.jira.consumer.NewIssuesConsumer;
 import org.apache.camel.component.jira.consumer.WatchUpdatesConsumer;
@@ -178,37 +179,25 @@ public class JiraEndpoint extends DefaultEndpoint implements EndpointServiceLoca
 
     @Override
     public Producer createProducer() {
-        switch (type) {
-            case ADDISSUE:
-                return new AddIssueProducer(this);
-            case ATTACH:
-                return new AttachFileProducer(this);
-            case ADDCOMMENT:
-                return new AddCommentProducer(this);
-            case WATCHERS:
-                return new WatcherProducer(this);
-            case DELETEISSUE:
-                return new DeleteIssueProducer(this);
-            case UPDATEISSUE:
-                return new UpdateIssueProducer(this);
-            case TRANSITIONISSUE:
-                return new TransitionIssueProducer(this);
-            case ADDISSUELINK:
-                return new AddIssueLinkProducer(this);
-            case ADDWORKLOG:
-                return new AddWorkLogProducer(this);
-            case FETCHISSUE:
-                return new FetchIssueProducer(this);
-            case FETCHCOMMENTS:
-                return new FetchCommentsProducer(this);
-            default:
-                throw new IllegalArgumentException("Producer does not support type: " + type);
-        }
+        return switch (type) {
+            case ADDISSUE -> new AddIssueProducer(this);
+            case ATTACH -> new AttachFileProducer(this);
+            case ADDCOMMENT -> new AddCommentProducer(this);
+            case WATCHERS -> new WatcherProducer(this);
+            case DELETEISSUE -> new DeleteIssueProducer(this);
+            case UPDATEISSUE -> new UpdateIssueProducer(this);
+            case TRANSITIONISSUE -> new TransitionIssueProducer(this);
+            case ADDISSUELINK -> new AddIssueLinkProducer(this);
+            case ADDWORKLOG -> new AddWorkLogProducer(this);
+            case FETCHISSUE -> new FetchIssueProducer(this);
+            case FETCHCOMMENTS -> new FetchCommentsProducer(this);
+            default -> throw new IllegalArgumentException("Producer does not support type: " + type);
+        };
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer consumer;
+        AbstractJiraConsumer consumer;
         if (type == JiraType.NEWCOMMENTS) {
             consumer = new NewCommentsConsumer(this, processor);
         } else if (type == JiraType.NEWISSUES) {
@@ -218,6 +207,7 @@ public class JiraEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         } else {
             throw new IllegalArgumentException("Consumer does not support type: " + type);
         }
+        consumer.setMaxMessagesPerPoll(getMaxResults());
         configureConsumer(consumer);
         return consumer;
     }
