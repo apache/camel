@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.solr;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateHttp2SolrClient;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
 
 public class SolrClientHandlerConcurrentUpdate extends SolrClientHandler {
 
@@ -27,14 +27,21 @@ public class SolrClientHandlerConcurrentUpdate extends SolrClientHandler {
     }
 
     protected SolrClient getSolrClient() {
-        SolrClientHandlerHttp solrClientHandlerHttp = new SolrClientHandlerHttp(solrConfiguration);
-        Http2SolrClient httpSolrClient = solrClientHandlerHttp.getSolrClient();
-
-        ConcurrentUpdateHttp2SolrClient.Builder concurrentBuilder = new ConcurrentUpdateHttp2SolrClient.Builder(
-                getFirstUrlFromList(), httpSolrClient);
-        concurrentBuilder.withQueueSize(solrConfiguration.getStreamingQueueSize());
-        concurrentBuilder.withThreadCount(solrConfiguration.getStreamingThreadCount());
-        return concurrentBuilder.build();
+    	
+        ConcurrentUpdateSolrClient.Builder builder = new ConcurrentUpdateSolrClient.Builder(
+                getFirstUrlFromList());
+        if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
+            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
+        }
+        if (!ObjectHelper.isEmpty(solrConfiguration.getSoTimeout())) {
+            builder.withSocketTimeout(solrConfiguration.getSoTimeout());
+        }
+        if (!ObjectHelper.isEmpty(solrConfiguration.getHttpClient())) {
+            builder.withHttpClient(solrConfiguration.getHttpClient());
+        }
+        builder.withQueueSize(solrConfiguration.getStreamingQueueSize());
+        builder.withThreadCount(solrConfiguration.getStreamingThreadCount());
+        return builder.build();
     }
 
 }

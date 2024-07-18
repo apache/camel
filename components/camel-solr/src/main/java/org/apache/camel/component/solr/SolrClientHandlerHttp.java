@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.solr;
 
-import java.util.concurrent.TimeUnit;
-
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 public class SolrClientHandlerHttp extends SolrClientHandler {
 
@@ -26,18 +26,24 @@ public class SolrClientHandlerHttp extends SolrClientHandler {
         super(solrConfiguration);
     }
 
-    protected Http2SolrClient getSolrClient() {
-        Http2SolrClient.Builder builder = new Http2SolrClient.Builder(getFirstUrlFromList());
-        if (solrConfiguration.getConnectionTimeout() != null) {
-            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+    protected SolrClient getSolrClient() {
+        HttpSolrClient.Builder builder = new HttpSolrClient.Builder(getFirstUrlFromList());
+        if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
+            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
         }
-        if (solrConfiguration.getIdleTimeout() != null) {
-            builder.withIdleTimeout(solrConfiguration.getIdleTimeout(), TimeUnit.MILLISECONDS);
+        if (!ObjectHelper.isEmpty(solrConfiguration.getSoTimeout() != null)) {
+            builder.withSocketTimeout(solrConfiguration.getSoTimeout());
         }
-        if (solrConfiguration.getFollowRedirects() != null) {
+        if (!ObjectHelper.isEmpty(solrConfiguration.getHttpClient())) {
+            builder.withHttpClient(solrConfiguration.getHttpClient());
+        }
+        if (!ObjectHelper.isEmpty(solrConfiguration.getAllowCompression())) {
+            builder.allowCompression(solrConfiguration.getAllowCompression());
+        }
+        if (!ObjectHelper.isEmpty(solrConfiguration.getFollowRedirects())) {
             builder.withFollowRedirects(solrConfiguration.getFollowRedirects());
         }
-        Http2SolrClient httpSolrClient = builder.build();
+        HttpSolrClient httpSolrClient = builder.build();
         return httpSolrClient;
     }
 

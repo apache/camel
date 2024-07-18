@@ -104,20 +104,6 @@ public class SolrUriDsl(
   }
 
   /**
-   * Sets the idle timeout on the SolrClient
-   */
-  public fun idleTimeout(idleTimeout: String) {
-    it.property("idleTimeout", idleTimeout)
-  }
-
-  /**
-   * Sets the idle timeout on the SolrClient
-   */
-  public fun idleTimeout(idleTimeout: Int) {
-    it.property("idleTimeout", idleTimeout.toString())
-  }
-
-  /**
    * Maximum number of retries to attempt in the event of transient errors
    */
   public fun maxRetries(maxRetries: String) {
@@ -164,6 +150,20 @@ public class SolrUriDsl(
    */
   public fun solrClient(solrClient: String) {
     it.property("solrClient", solrClient)
+  }
+
+  /**
+   * Sets the socket timeout on the SolrClient
+   */
+  public fun soTimeout(soTimeout: String) {
+    it.property("soTimeout", soTimeout)
+  }
+
+  /**
+   * Sets the socket timeout on the SolrClient
+   */
+  public fun soTimeout(soTimeout: Int) {
+    it.property("soTimeout", soTimeout.toString())
   }
 
   /**

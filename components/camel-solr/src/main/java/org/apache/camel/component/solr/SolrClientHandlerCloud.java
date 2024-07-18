@@ -18,12 +18,10 @@ package org.apache.camel.component.solr;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
+import org.apache.solr.client.solrj.impl.CloudLegacySolrClient;
 
 public class SolrClientHandlerCloud extends SolrClientHandler {
 
@@ -34,28 +32,23 @@ public class SolrClientHandlerCloud extends SolrClientHandler {
     protected SolrClient getSolrClient() {
         Optional<String> zkChrootOptional = Optional.ofNullable(solrConfiguration.getZkChroot());
         List<String> urlList = getUrlListFrom(solrConfiguration);
-        CloudHttp2SolrClient.Builder builder = new CloudHttp2SolrClient.Builder(
+        CloudLegacySolrClient.Builder builder = new CloudLegacySolrClient.Builder(
                 urlList,
                 zkChrootOptional);
-        if (solrConfiguration.getCollection() != null && !solrConfiguration.getCollection().isEmpty()) {
+        if (!ObjectHelper.isEmpty(solrConfiguration.getCollection())) {
             builder.withDefaultCollection(solrConfiguration.getCollection());
         }
-
-        if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout()) ||
-                !ObjectHelper.isEmpty(solrConfiguration.getIdleTimeout())) {
-
-            Http2SolrClient.Builder internalClientBuilder = new Http2SolrClient.Builder();
-            if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
-                internalClientBuilder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
-            }
-            if (ObjectHelper.isEmpty(solrConfiguration.getIdleTimeout())) {
-                internalClientBuilder.withIdleTimeout(solrConfiguration.getIdleTimeout(), TimeUnit.MILLISECONDS);
-            }
-
-            builder.withInternalClientBuilder(internalClientBuilder);
+        if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
+        	builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
         }
-        CloudHttp2SolrClient cloudSolrClient = builder.build();
-        return cloudSolrClient;
+        if (!ObjectHelper.isEmpty(solrConfiguration.getSoTimeout())) {
+            builder.withSocketTimeout(solrConfiguration.getSoTimeout());
+        }
+        if (!ObjectHelper.isEmpty(solrConfiguration.getHttpClient())) {
+        	builder.withHttpClient(solrConfiguration.getHttpClient());
+    	}
+
+        return builder.build();
     }
 
 }

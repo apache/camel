@@ -32,12 +32,12 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("defaultMaxConnectionsPerHost");
         props.add("followRedirects");
         props.add("httpClient");
-        props.add("idleTimeout");
         props.add("lazyStartProducer");
         props.add("maxRetries");
         props.add("maxTotalConnections");
         props.add("password");
         props.add("requestHandler");
+        props.add("soTimeout");
         props.add("solrClient");
         props.add("streamingQueueSize");
         props.add("streamingThreadCount");

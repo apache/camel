@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.solr;
 
-import java.util.concurrent.TimeUnit;
-
+import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.Http2SolrClient;
-import org.apache.solr.client.solrj.impl.LBHttp2SolrClient;
+import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
 
 public class SolrClientHandlerLbHttp extends SolrClientHandler {
 
@@ -29,17 +27,20 @@ public class SolrClientHandlerLbHttp extends SolrClientHandler {
     }
 
     protected SolrClient getSolrClient() {
-        Http2SolrClient.Builder solrClientBuilder = new Http2SolrClient.Builder();
-        if (solrConfiguration.getConnectionTimeout() != null) {
-            solrClientBuilder.withConnectionTimeout(solrConfiguration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+        LBHttpSolrClient.Builder builder = new LBHttpSolrClient.Builder();
+        for (String serverUrl : getUrlListFrom(solrConfiguration)) {
+            builder.withBaseSolrUrl(serverUrl);
         }
-        if (solrConfiguration.getIdleTimeout() != null) {
-            solrClientBuilder.withIdleTimeout(solrConfiguration.getIdleTimeout(), TimeUnit.MILLISECONDS);
+        if (!ObjectHelper.isEmpty(solrConfiguration.getConnectionTimeout())) {
+            builder.withConnectionTimeout(solrConfiguration.getConnectionTimeout());
         }
-
-        LBHttp2SolrClient.Builder builder = new LBHttp2SolrClient.Builder(
-                solrClientBuilder.build(), getUrlListFrom(solrConfiguration).toArray(new String[0]));
-        return builder.build();
+        if (!ObjectHelper.isEmpty(solrConfiguration.getSoTimeout())) {
+            builder.withSocketTimeout(solrConfiguration.getSoTimeout());
+        }
+        if (!ObjectHelper.isEmpty(solrConfiguration.getHttpClient())) {
+            builder.withHttpClient(solrConfiguration.getHttpClient());
+        }
+        return builder.build();   	
     }
 
 }

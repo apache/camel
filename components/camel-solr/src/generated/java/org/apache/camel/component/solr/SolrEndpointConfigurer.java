@@ -36,8 +36,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "followRedirects": target.getSolrConfiguration().setFollowRedirects(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "httpclient":
         case "httpClient": target.getSolrConfiguration().setHttpClient(property(camelContext, org.apache.http.client.HttpClient.class, value)); return true;
-        case "idletimeout":
-        case "idleTimeout": target.getSolrConfiguration().setIdleTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxretries":
@@ -47,6 +45,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "password": target.getSolrConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "requesthandler":
         case "requestHandler": target.getSolrConfiguration().setRequestHandler(property(camelContext, java.lang.String.class, value)); return true;
+        case "sotimeout":
+        case "soTimeout": target.getSolrConfiguration().setSoTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "solrclient":
         case "solrClient": target.getSolrConfiguration().setSolrClient(property(camelContext, org.apache.solr.client.solrj.SolrClient.class, value)); return true;
         case "streamingqueuesize":
@@ -78,8 +78,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "followRedirects": return java.lang.Boolean.class;
         case "httpclient":
         case "httpClient": return org.apache.http.client.HttpClient.class;
-        case "idletimeout":
-        case "idleTimeout": return java.lang.Integer.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxretries":
@@ -89,6 +87,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "password": return java.lang.String.class;
         case "requesthandler":
         case "requestHandler": return java.lang.String.class;
+        case "sotimeout":
+        case "soTimeout": return java.lang.Integer.class;
         case "solrclient":
         case "solrClient": return org.apache.solr.client.solrj.SolrClient.class;
         case "streamingqueuesize":
@@ -121,8 +121,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "followRedirects": return target.getSolrConfiguration().getFollowRedirects();
         case "httpclient":
         case "httpClient": return target.getSolrConfiguration().getHttpClient();
-        case "idletimeout":
-        case "idleTimeout": return target.getSolrConfiguration().getIdleTimeout();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxretries":
@@ -132,6 +130,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "password": return target.getSolrConfiguration().getPassword();
         case "requesthandler":
         case "requestHandler": return target.getSolrConfiguration().getRequestHandler();
+        case "sotimeout":
+        case "soTimeout": return target.getSolrConfiguration().getSoTimeout();
         case "solrclient":
         case "solrClient": return target.getSolrConfiguration().getSolrClient();
         case "streamingqueuesize":

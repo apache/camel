@@ -46,7 +46,7 @@ public class SolrConfiguration implements Cloneable {
     @UriParam(defaultValue = "" + SolrConstants.DEFAULT_STREAMING_THREAD_COUNT)
     private int streamingThreadCount = SolrConstants.DEFAULT_STREAMING_THREAD_COUNT;
     @UriParam
-    private Integer idleTimeout;
+    private Integer soTimeout;
     @UriParam
     private Integer connectionTimeout;
     @UriParam(label = "HttpSolrClient")
@@ -143,15 +143,15 @@ public class SolrConfiguration implements Cloneable {
         this.maxRetries = maxRetries;
     }
 
-    public Integer getIdleTimeout() {
-        return idleTimeout;
+    public Integer getSoTimeout() {
+        return soTimeout;
     }
 
     /**
-     * Sets the idle timeout on the SolrClient
+     * Sets the socket timeout on the SolrClient
      */
-    public void setIdleTimeout(Integer idleTimeout) {
-        this.idleTimeout = idleTimeout;
+    public void setSoTimeout(Integer soTimeout) {
+        this.soTimeout = soTimeout;
     }
 
     public Integer getConnectionTimeout() {

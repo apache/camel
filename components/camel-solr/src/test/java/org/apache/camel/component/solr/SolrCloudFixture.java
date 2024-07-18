@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
+import org.apache.solr.client.solrj.impl.CloudLegacySolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.cloud.MiniSolrCloudCluster;
@@ -70,7 +70,7 @@ public class SolrCloudFixture {
     File testDir;
     SolrZkClient zkClient;
 
-    CloudSolrClient solrClient;
+    CloudLegacySolrClient solrClient;
 
     public SolrCloudFixture(String solrHome) throws Exception {
         String xml = IOHelper.loadText(new FileInputStream(new File(solrHome, "solr-no-core.xml")));
@@ -88,14 +88,13 @@ public class SolrCloudFixture {
             }
         }
 
-        solrClient = new CloudHttp2SolrClient.Builder(Arrays.asList(zkAddr), Optional.empty())
-                .withDefaultCollection("collection1")
-                .build();
+        solrClient = new CloudLegacySolrClient.Builder(Arrays.asList(zkAddr), Optional.empty()).build();
         solrClient.connect();
 
         createCollection(solrClient, "collection1", 1, 1, "conf1");
         Thread.sleep(1000); // takes some time to setup the collection...
                            // otherwise you'll get no live solr servers
+        solrClient.setDefaultCollection("collection1");
 
         SolrInputDocument doc = new SolrInputDocument();
         doc.setField("id", "1");
