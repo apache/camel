@@ -28,14 +28,15 @@ import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.
 import org.apache.camel.main.HttpServerAuthenticationConfigurationProperties;
 import org.apache.camel.main.HttpServerJWTAuthenticationConfigurationProperties;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+
 public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer {
     @Override
     public void configureAuthentication(
             AuthenticationConfig authenticationConfig,
             HttpServerAuthenticationConfigurationProperties authenticationProperties) {
         HttpServerJWTAuthenticationConfigurationProperties properties = authenticationProperties.getJWT();
-        String path = authenticationProperties.getPath() != null && !"".equals(authenticationProperties.getPath())
-                ? authenticationProperties.getPath() : "/*";
+        String path = isEmpty(authenticationProperties.getPath()) ? authenticationProperties.getPath() : "/*";
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);

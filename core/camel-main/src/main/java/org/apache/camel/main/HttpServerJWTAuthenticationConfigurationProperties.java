@@ -19,6 +19,8 @@ package org.apache.camel.main;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * JWT HTTP authentication for embedded server.
  */
@@ -102,9 +104,6 @@ public class HttpServerJWTAuthenticationConfigurationProperties
 
     @Override
     public boolean areMandatoryFieldsFilled() {
-        boolean keyStoreTypeNotEmpty = keystoreType != null && !"".equals(keystoreType);
-        boolean keystorePathNotEmpty = keystorePath != null && !"".equals(keystorePath);
-        boolean keystorePasswordNotEmpty = keystorePassword != null && !"".equals(keystorePassword);
-        return keyStoreTypeNotEmpty && keystorePathNotEmpty && keystorePasswordNotEmpty;
+        return isNotEmpty(keystoreType) && isNotEmpty(keystorePath) && isNotEmpty(keystorePassword);
     }
 }

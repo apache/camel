@@ -23,6 +23,8 @@ import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.
 import org.apache.camel.main.HttpServerAuthenticationConfigurationProperties;
 import org.apache.camel.main.HttpServerBasicAuthenticationConfigurationProperties;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+
 public class BasicAuthenticationConfigurer implements MainAuthenticationConfigurer {
     @Override
     public void configureAuthentication(
@@ -30,8 +32,7 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
             HttpServerAuthenticationConfigurationProperties authenticationProperties) {
         HttpServerBasicAuthenticationConfigurationProperties properties = authenticationProperties.getBasic();
         String authPropertiesFileName = properties.getAuthenticationPropertiesFile();
-        String path = authenticationProperties.getPath() != null && !"".equals(authenticationProperties.getPath())
-                ? authenticationProperties.getPath() : "/*";
+        String path = isEmpty(authenticationProperties.getPath()) ? authenticationProperties.getPath() : "/*";
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);

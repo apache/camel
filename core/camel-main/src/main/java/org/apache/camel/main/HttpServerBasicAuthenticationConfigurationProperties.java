@@ -19,6 +19,8 @@ package org.apache.camel.main;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * Basic HTTP authentication for embedded server.
  */
@@ -63,6 +65,6 @@ public class HttpServerBasicAuthenticationConfigurationProperties
 
     @Override
     public boolean areMandatoryFieldsFilled() {
-        return authenticationPropertiesFile != null && !"".equals(authenticationPropertiesFile);
+        return isNotEmpty(authenticationPropertiesFile);
     }
 }
