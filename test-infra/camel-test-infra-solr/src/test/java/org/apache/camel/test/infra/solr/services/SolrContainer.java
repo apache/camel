@@ -51,5 +51,5 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
                 .waitingFor(Wait.forLogMessage(".*Server.*Started.*", 1))
                 .withCommand(cloudMode ? "-c" : "");
     }
-    
+
 }
