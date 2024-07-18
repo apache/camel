@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations against Apache Lucene Solr.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true,
+@UriEndpoint(firstVersion = "4.8.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true,
              category = { Category.MONITORING, Category.SEARCH }, headersClass = SolrConstants.class)
 public class SolrEndpoint extends DefaultEndpoint {
 
