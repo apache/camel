@@ -28,6 +28,8 @@ public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "model": target.setModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "showprogress":
+        case "showProgress": target.setShowProgress(property(camelContext, boolean.class, value)); return true;
         case "translator": target.setTranslator(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -41,6 +43,8 @@ public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "model": return java.lang.String.class;
+        case "showprogress":
+        case "showProgress": return boolean.class;
         case "translator": return java.lang.String.class;
         default: return null;
         }
@@ -55,6 +59,8 @@ public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "model": return target.getModel();
+        case "showprogress":
+        case "showProgress": return target.isShowProgress();
         case "translator": return target.getTranslator();
         default: return null;
         }

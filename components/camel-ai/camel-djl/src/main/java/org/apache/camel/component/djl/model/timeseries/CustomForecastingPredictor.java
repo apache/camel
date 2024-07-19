@@ -25,6 +25,7 @@ import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 
 public class CustomForecastingPredictor extends AbstractPredictor {
@@ -32,9 +33,10 @@ public class CustomForecastingPredictor extends AbstractPredictor {
     protected final String modelName;
     protected final String translatorName;
 
-    public CustomForecastingPredictor(String modelName, String translatorName) {
-        this.modelName = modelName;
-        this.translatorName = translatorName;
+    public CustomForecastingPredictor(DJLEndpoint endpoint) {
+        super(endpoint);
+        this.modelName = endpoint.getModel();
+        this.translatorName = endpoint.getTranslator();
     }
 
     @Override

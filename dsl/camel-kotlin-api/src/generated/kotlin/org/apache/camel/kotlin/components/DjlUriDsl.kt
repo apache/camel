@@ -65,6 +65,20 @@ public class DjlUriDsl(
   }
 
   /**
+   * Show progress while loading zoo models. This parameter takes effect only with zoo models
+   */
+  public fun showProgress(showProgress: String) {
+    it.property("showProgress", showProgress)
+  }
+
+  /**
+   * Show progress while loading zoo models. This parameter takes effect only with zoo models
+   */
+  public fun showProgress(showProgress: Boolean) {
+    it.property("showProgress", showProgress.toString())
+  }
+
+  /**
    * Translator
    */
   public fun translator(translator: String) {

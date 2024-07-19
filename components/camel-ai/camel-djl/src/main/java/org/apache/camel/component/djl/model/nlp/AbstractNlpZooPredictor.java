@@ -22,11 +22,16 @@ import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 
 public abstract class AbstractNlpZooPredictor<T> extends AbstractPredictor {
 
     protected ZooModel<String, T> model;
+
+    public AbstractNlpZooPredictor(DJLEndpoint endpoint) {
+        super(endpoint);
+    }
 
     @Override
     public void process(Exchange exchange) {

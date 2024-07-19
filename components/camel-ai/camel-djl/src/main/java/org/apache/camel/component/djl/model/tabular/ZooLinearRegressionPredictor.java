@@ -17,11 +17,12 @@
 package org.apache.camel.component.djl.model.tabular;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 
 public class ZooLinearRegressionPredictor extends AbstractPredictor {
-    public ZooLinearRegressionPredictor(String artifactId) {
-        super();
+    public ZooLinearRegressionPredictor(DJLEndpoint endpoint) {
+        super(endpoint);
     }
 
     @Override

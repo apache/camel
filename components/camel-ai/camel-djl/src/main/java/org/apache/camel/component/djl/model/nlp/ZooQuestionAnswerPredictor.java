@@ -31,19 +31,26 @@ import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 
 public class ZooQuestionAnswerPredictor extends AbstractPredictor {
 
     private final ZooModel<QAInput, String> model;
 
-    public ZooQuestionAnswerPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException, IOException {
-        Criteria<QAInput, String> criteria = Criteria.builder()
+    public ZooQuestionAnswerPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
+                                                            IOException {
+        super(endpoint);
+
+        Criteria.Builder<QAInput, String> builder = Criteria.builder()
                 .optApplication(Application.NLP.QUESTION_ANSWER)
                 .setTypes(QAInput.class, String.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<QAInput, String> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 

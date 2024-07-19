@@ -26,17 +26,23 @@ import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.training.util.ProgressBar;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public class ZooWordEmbeddingPredictor extends AbstractNlpZooPredictor<NDList> {
 
-    public ZooWordEmbeddingPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
-                                                        IOException {
-        Criteria<String, NDList> criteria = Criteria.builder()
+    public ZooWordEmbeddingPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
+                                                           IOException {
+        super(endpoint);
+
+        Criteria.Builder<String, NDList> builder = Criteria.builder()
                 .optApplication(Application.NLP.WORD_EMBEDDING)
                 .setTypes(String.class, NDList.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<String, NDList> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 

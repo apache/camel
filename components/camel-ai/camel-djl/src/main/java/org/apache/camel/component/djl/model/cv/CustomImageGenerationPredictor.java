@@ -24,6 +24,7 @@ import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 
 public class CustomImageGenerationPredictor extends AbstractPredictor {
@@ -31,9 +32,10 @@ public class CustomImageGenerationPredictor extends AbstractPredictor {
     private final String modelName;
     private final String translatorName;
 
-    public CustomImageGenerationPredictor(String modelName, String translatorName) {
-        this.modelName = modelName;
-        this.translatorName = translatorName;
+    public CustomImageGenerationPredictor(DJLEndpoint endpoint) {
+        super(endpoint);
+        this.modelName = endpoint.getModel();
+        this.translatorName = endpoint.getTranslator();
     }
 
     @Override

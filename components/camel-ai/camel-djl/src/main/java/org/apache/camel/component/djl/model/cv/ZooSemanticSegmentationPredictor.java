@@ -26,17 +26,23 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.training.util.ProgressBar;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public class ZooSemanticSegmentationPredictor extends AbstractCvZooPredictor<CategoryMask> {
 
-    public ZooSemanticSegmentationPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
-                                                               IOException {
-        Criteria<Image, CategoryMask> criteria = Criteria.builder()
+    public ZooSemanticSegmentationPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
+                                                                  IOException {
+        super(endpoint);
+
+        Criteria.Builder<Image, CategoryMask> builder = Criteria.builder()
                 .optApplication(Application.CV.SEMANTIC_SEGMENTATION)
                 .setTypes(Image.class, CategoryMask.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<Image, CategoryMask> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 }

@@ -24,17 +24,23 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.training.util.ProgressBar;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public class ZooMultipleChoicePredictor extends AbstractNlpZooPredictor<String> {
 
-    public ZooMultipleChoicePredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
-                                                         IOException {
-        Criteria<String, String> criteria = Criteria.builder()
+    public ZooMultipleChoicePredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
+                                                            IOException {
+        super(endpoint);
+
+        Criteria.Builder<String, String> builder = Criteria.builder()
                 .optApplication(Application.NLP.MULTIPLE_CHOICE)
                 .setTypes(String.class, String.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<String, String> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 }

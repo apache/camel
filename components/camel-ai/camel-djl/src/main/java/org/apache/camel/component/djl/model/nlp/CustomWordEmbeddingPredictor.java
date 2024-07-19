@@ -18,11 +18,12 @@ package org.apache.camel.component.djl.model.nlp;
 
 import ai.djl.ndarray.NDList;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public class CustomWordEmbeddingPredictor extends CustomNlpPredictor<NDList> {
 
-    public CustomWordEmbeddingPredictor(String modelName, String translatorName) {
-        super(modelName, translatorName);
+    public CustomWordEmbeddingPredictor(DJLEndpoint endpoint) {
+        super(endpoint);
     }
 
     @Override

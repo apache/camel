@@ -26,17 +26,23 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.training.util.ProgressBar;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public class ZooImageClassificationPredictor extends AbstractCvZooPredictor<Classifications> {
 
-    public ZooImageClassificationPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
-                                                              IOException {
-        Criteria<Image, Classifications> criteria = Criteria.builder()
+    public ZooImageClassificationPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
+                                                                 IOException {
+        super(endpoint);
+
+        Criteria.Builder<Image, Classifications> builder = Criteria.builder()
                 .optApplication(Application.CV.IMAGE_CLASSIFICATION)
                 .setTypes(Image.class, Classifications.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<Image, Classifications> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 }

@@ -31,6 +31,7 @@ import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,10 @@ public class CustomAudioPredictor extends AbstractPredictor {
     protected final String modelName;
     protected final String translatorName;
 
-    public CustomAudioPredictor(String modelName, String translatorName) {
-        this.modelName = modelName;
-        this.translatorName = translatorName;
+    public CustomAudioPredictor(DJLEndpoint endpoint) {
+        super(endpoint);
+        this.modelName = endpoint.getModel();
+        this.translatorName = endpoint.getTranslator();
     }
 
     @Override

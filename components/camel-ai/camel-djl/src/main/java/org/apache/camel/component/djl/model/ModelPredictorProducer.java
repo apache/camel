@@ -28,6 +28,7 @@ import ai.djl.modality.cv.output.Joints;
 import ai.djl.ndarray.NDArray;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.audio.CustomAudioPredictor;
 import org.apache.camel.component.djl.model.audio.ZooAudioPredictor;
 import org.apache.camel.component.djl.model.cv.CustomCvPredictor;
@@ -89,132 +90,136 @@ public final class ModelPredictorProducer {
         // No-op; won't be called
     }
 
-    public static AbstractPredictor getZooPredictor(String applicationPath, String artifactId)
+    public static AbstractPredictor getZooPredictor(DJLEndpoint endpoint)
             throws ModelNotFoundException, MalformedModelException, IOException {
+        String applicationPath = endpoint.getApplication();
+
         // CV
         if (IMAGE_CLASSIFICATION.getPath().equals(applicationPath)) {
-            return new ZooImageClassificationPredictor(artifactId);
+            return new ZooImageClassificationPredictor(endpoint);
         } else if (OBJECT_DETECTION.getPath().equals(applicationPath)) {
-            return new ZooObjectDetectionPredictor(artifactId);
+            return new ZooObjectDetectionPredictor(endpoint);
         } else if (SEMANTIC_SEGMENTATION.getPath().equals(applicationPath)) {
-            return new ZooSemanticSegmentationPredictor(artifactId);
+            return new ZooSemanticSegmentationPredictor(endpoint);
         } else if (INSTANCE_SEGMENTATION.getPath().equals(applicationPath)) {
-            return new ZooInstanceSegmentationPredictor(artifactId);
+            return new ZooInstanceSegmentationPredictor(endpoint);
         } else if (POSE_ESTIMATION.getPath().equals(applicationPath)) {
-            return new ZooPoseEstimationPredictor(artifactId);
+            return new ZooPoseEstimationPredictor(endpoint);
         } else if (ACTION_RECOGNITION.getPath().equals(applicationPath)) {
-            return new ZooActionRecognitionPredictor(artifactId);
+            return new ZooActionRecognitionPredictor(endpoint);
         } else if (WORD_RECOGNITION.getPath().equals(applicationPath)) {
-            return new ZooWordRecognitionPredictor(artifactId);
+            return new ZooWordRecognitionPredictor(endpoint);
         } else if (IMAGE_GENERATION.getPath().equals(applicationPath)) {
-            return new ZooImageGenerationPredictor(artifactId);
+            return new ZooImageGenerationPredictor(endpoint);
         } else if (IMAGE_ENHANCEMENT.getPath().equals(applicationPath)) {
-            return new ZooImageEnhancementPredictor(artifactId);
+            return new ZooImageEnhancementPredictor(endpoint);
         }
 
         // NLP
         if (FILL_MASK.getPath().equals(applicationPath)) {
-            return new ZooFillMaskPredictor(artifactId);
+            return new ZooFillMaskPredictor(endpoint);
         } else if (QUESTION_ANSWER.getPath().equals(applicationPath)) {
-            return new ZooQuestionAnswerPredictor(artifactId);
+            return new ZooQuestionAnswerPredictor(endpoint);
         } else if (TEXT_CLASSIFICATION.getPath().equals(applicationPath)) {
-            return new ZooTextClassificationPredictor(artifactId);
+            return new ZooTextClassificationPredictor(endpoint);
         } else if (SENTIMENT_ANALYSIS.getPath().equals(applicationPath)) {
-            return new ZooSentimentAnalysisPredictor(artifactId);
+            return new ZooSentimentAnalysisPredictor(endpoint);
         } else if (TOKEN_CLASSIFICATION.getPath().equals(applicationPath)) {
-            return new ZooTokenClassificationPredictor(artifactId);
+            return new ZooTokenClassificationPredictor(endpoint);
         } else if (WORD_EMBEDDING.getPath().equals(applicationPath)) {
-            return new ZooWordEmbeddingPredictor(artifactId);
+            return new ZooWordEmbeddingPredictor(endpoint);
         } else if (TEXT_GENERATION.getPath().equals(applicationPath)) {
-            return new ZooTextGenerationPredictor(artifactId);
+            return new ZooTextGenerationPredictor(endpoint);
         } else if (MACHINE_TRANSLATION.getPath().equals(applicationPath)) {
-            return new ZooMachineTranslationPredictor(artifactId);
+            return new ZooMachineTranslationPredictor(endpoint);
         } else if (MULTIPLE_CHOICE.getPath().equals(applicationPath)) {
-            return new ZooMultipleChoicePredictor(artifactId);
+            return new ZooMultipleChoicePredictor(endpoint);
         } else if (TEXT_EMBEDDING.getPath().equals(applicationPath)) {
-            return new ZooTextEmbeddingPredictor(artifactId);
+            return new ZooTextEmbeddingPredictor(endpoint);
         }
 
         // Tabular
         if (LINEAR_REGRESSION.getPath().equals(applicationPath)) {
-            return new ZooLinearRegressionPredictor(artifactId);
+            return new ZooLinearRegressionPredictor(endpoint);
         } else if (SOFTMAX_REGRESSION.getPath().equals(applicationPath)) {
-            return new ZooSoftmaxRegressionPredictor(artifactId);
+            return new ZooSoftmaxRegressionPredictor(endpoint);
         }
 
         // Audio
         if (Application.Audio.ANY.getPath().equals(applicationPath)) {
-            return new ZooAudioPredictor(artifactId);
+            return new ZooAudioPredictor(endpoint);
         }
 
         // Time Series
         if (FORECASTING.getPath().equals(applicationPath)) {
-            return new ZooForecastingPredictor(artifactId);
+            return new ZooForecastingPredictor(endpoint);
         }
 
         throw new RuntimeCamelException("Application not supported: " + applicationPath);
     }
 
-    public static AbstractPredictor getCustomPredictor(String applicationPath, String model, String translator) {
+    public static AbstractPredictor getCustomPredictor(DJLEndpoint endpoint) {
+        String applicationPath = endpoint.getApplication();
+
         // CV
         if (applicationPath.equals(IMAGE_CLASSIFICATION.getPath())) {
-            return new CustomCvPredictor<Classifications>(model, translator);
+            return new CustomCvPredictor<Classifications>(endpoint);
         } else if (applicationPath.equals(OBJECT_DETECTION.getPath())) {
-            return new CustomCvPredictor<DetectedObjects>(model, translator);
+            return new CustomCvPredictor<DetectedObjects>(endpoint);
         } else if (SEMANTIC_SEGMENTATION.getPath().equals(applicationPath)) {
-            return new CustomCvPredictor<CategoryMask>(model, translator);
+            return new CustomCvPredictor<CategoryMask>(endpoint);
         } else if (INSTANCE_SEGMENTATION.getPath().equals(applicationPath)) {
-            return new CustomCvPredictor<DetectedObjects>(model, translator);
+            return new CustomCvPredictor<DetectedObjects>(endpoint);
         } else if (POSE_ESTIMATION.getPath().equals(applicationPath)) {
-            return new CustomCvPredictor<Joints>(model, translator);
+            return new CustomCvPredictor<Joints>(endpoint);
         } else if (ACTION_RECOGNITION.getPath().equals(applicationPath)) {
-            return new CustomCvPredictor<Classifications>(model, translator);
+            return new CustomCvPredictor<Classifications>(endpoint);
         } else if (WORD_RECOGNITION.getPath().equals(applicationPath)) {
-            return new CustomCvPredictor<String>(model, translator);
+            return new CustomCvPredictor<String>(endpoint);
         } else if (IMAGE_GENERATION.getPath().equals(applicationPath)) {
-            return new CustomImageGenerationPredictor(model, translator);
+            return new CustomImageGenerationPredictor(endpoint);
         } else if (IMAGE_ENHANCEMENT.getPath().equals(applicationPath)) {
-            return new CustomCvPredictor<Image>(model, translator);
+            return new CustomCvPredictor<Image>(endpoint);
         }
 
         // NLP
         if (FILL_MASK.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<String[]>(model, translator);
+            return new CustomNlpPredictor<String[]>(endpoint);
         } else if (QUESTION_ANSWER.getPath().equals(applicationPath)) {
-            return new CustomQuestionAnswerPredictor(model, translator);
+            return new CustomQuestionAnswerPredictor(endpoint);
         } else if (TEXT_CLASSIFICATION.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<Classifications>(model, translator);
+            return new CustomNlpPredictor<Classifications>(endpoint);
         } else if (SENTIMENT_ANALYSIS.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<Classifications>(model, translator);
+            return new CustomNlpPredictor<Classifications>(endpoint);
         } else if (TOKEN_CLASSIFICATION.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<Classifications>(model, translator);
+            return new CustomNlpPredictor<Classifications>(endpoint);
         } else if (WORD_EMBEDDING.getPath().equals(applicationPath)) {
-            return new CustomWordEmbeddingPredictor(model, translator);
+            return new CustomWordEmbeddingPredictor(endpoint);
         } else if (TEXT_GENERATION.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<String>(model, translator);
+            return new CustomNlpPredictor<String>(endpoint);
         } else if (MACHINE_TRANSLATION.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<String>(model, translator);
+            return new CustomNlpPredictor<String>(endpoint);
         } else if (MULTIPLE_CHOICE.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<String>(model, translator);
+            return new CustomNlpPredictor<String>(endpoint);
         } else if (TEXT_EMBEDDING.getPath().equals(applicationPath)) {
-            return new CustomNlpPredictor<NDArray>(model, translator);
+            return new CustomNlpPredictor<NDArray>(endpoint);
         }
 
         // Tabular
         if (LINEAR_REGRESSION.getPath().equals(applicationPath)) {
-            return new CustomTabularPredictor(model, translator);
+            return new CustomTabularPredictor(endpoint);
         } else if (SOFTMAX_REGRESSION.getPath().equals(applicationPath)) {
-            return new CustomTabularPredictor(model, translator);
+            return new CustomTabularPredictor(endpoint);
         }
 
         // Audio
         if (Application.Audio.ANY.getPath().equals(applicationPath)) {
-            return new CustomAudioPredictor(model, translator);
+            return new CustomAudioPredictor(endpoint);
         }
 
         // Time Series
         if (FORECASTING.getPath().equals(applicationPath)) {
-            return new CustomForecastingPredictor(model, translator);
+            return new CustomForecastingPredictor(endpoint);
         }
 
         throw new RuntimeCamelException("Application not supported: " + applicationPath);

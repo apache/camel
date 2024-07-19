@@ -25,17 +25,23 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.training.util.ProgressBar;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public class ZooWordRecognitionPredictor extends AbstractCvZooPredictor<String> {
 
-    public ZooWordRecognitionPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
-                                                          IOException {
-        Criteria<Image, String> criteria = Criteria.builder()
+    public ZooWordRecognitionPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
+                                                             IOException {
+        super(endpoint);
+
+        Criteria.Builder<Image, String> builder = Criteria.builder()
                 .optApplication(Application.CV.WORD_RECOGNITION)
                 .setTypes(Image.class, String.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<Image, String> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 }

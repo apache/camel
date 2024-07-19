@@ -24,16 +24,22 @@ import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.training.util.ProgressBar;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public class ZooFillMaskPredictor extends AbstractNlpZooPredictor<String[]> {
 
-    public ZooFillMaskPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException, IOException {
-        Criteria<String, String[]> criteria = Criteria.builder()
+    public ZooFillMaskPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException, IOException {
+        super(endpoint);
+
+        Criteria.Builder<String, String[]> builder = Criteria.builder()
                 .optApplication(Application.NLP.FILL_MASK)
                 .setTypes(String.class, String[].class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<String, String[]> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 }
