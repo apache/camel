@@ -50,8 +50,10 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
         return new RouteBuilder() {
             public void configure() {
                 String endpoint = "google-storage://myCamelBucket?autoCreateBucket=true";
+                String endpointWithObjectName = "google-storage://myCamelBucket?autoCreateBucket=true&objectName=" + FILE_NAME;
 
                 from("direct:fromFile").to(endpoint);
+                from("direct:fromFileWithObjectNameInConfig").to(endpointWithObjectName);
             }
         };
     }
@@ -99,20 +101,34 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
 
     @Test
     public void testStoreFromstream() {
-        final String fileName = "FromStream.txt";
         byte[] payload = "Hi, How are you ?".getBytes();
         ByteArrayInputStream bais = new ByteArrayInputStream(payload);
         Exchange storeFileExchange = template.request("direct:fromFile", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
             exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, "text/plain");
             exchange.getIn().setBody(bais);
         });
         assertNotNull(storeFileExchange);
         Blob fileBlob = storeFileExchange.getMessage().getBody(Blob.class);
         assertNotNull(fileBlob);
-        assertEquals(fileName, fileBlob.getName());
+        assertEquals(FILE_NAME, fileBlob.getName());
         assertEquals(payload.length, Integer.valueOf(fileBlob.getMetadata().get("Content-Length")));
         byte[] blobContents = fileBlob.getContent();
         assertTrue(Arrays.equals(payload, blobContents));
+    }
+
+    @Test
+    public void objectNameConfigurationPrioritizedOverHeader() {
+        byte[] payload = "Hi, How are you ?".getBytes();
+        ByteArrayInputStream bais = new ByteArrayInputStream(payload);
+        Exchange storeFileExchange = template.request("direct:fromFileWithObjectNameInConfig", exchange -> {
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, "text/plain");
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "ShouldNotUseThisName.txt");
+            exchange.getIn().setBody(bais);
+        });
+        assertNotNull(storeFileExchange);
+        Blob fileBlob = storeFileExchange.getMessage().getBody(Blob.class);
+        assertNotNull(fileBlob);
+        assertEquals(FILE_NAME, fileBlob.getName());
     }
 }
