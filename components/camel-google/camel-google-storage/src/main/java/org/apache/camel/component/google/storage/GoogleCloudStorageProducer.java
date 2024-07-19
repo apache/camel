@@ -354,9 +354,9 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private String determineObjectName(Exchange exchange) {
-        String key = exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class);
+        String key = getConfiguration().getObjectName();
         if (ObjectHelper.isEmpty(key)) {
-            key = getConfiguration().getObjectName();
+            key = exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class);
         }
         if (key == null) {
             throw new IllegalArgumentException("Google Cloud Storage object name header missing.");
