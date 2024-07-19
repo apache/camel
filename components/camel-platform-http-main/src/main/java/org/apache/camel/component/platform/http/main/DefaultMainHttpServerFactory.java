@@ -83,7 +83,8 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         authenticationConfigurer.ifPresentOrElse(
                 (configurer -> configurer.configureAuthentication(authenticationConfig, authenticationProperties)),
                 (() -> {
-                    throw new RuntimeException("Authentication for camel-platform-http-main is enabled but no complete authentication configuration is found.");
+                    throw new RuntimeException(
+                            "Authentication for camel-platform-http-main is enabled but no complete authentication configuration is found.");
                 }));
     }
 
@@ -99,7 +100,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
                                 "Cannot configure authentication for MainHttpServer as more than one authentication configuration is present");
                     }
                     String configurerQualifiedName = MainAuthenticationConfigurer.class.getPackageName() + "."
-                            + authenticationTypeName + "AuthenticationConfigurer";
+                                                     + authenticationTypeName + "AuthenticationConfigurer";
                     result = (MainAuthenticationConfigurer) Class
                             .forName(configurerQualifiedName)
                             .getDeclaredConstructor()
@@ -119,8 +120,8 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         try {
             ConfigurationPropertiesWithMandatoryFields propertiesForAuthenticationType
                     = (ConfigurationPropertiesWithMandatoryFields) HttpServerAuthenticationConfigurationProperties.class
-                    .getMethod("get" + authenticationTypeName)
-                    .invoke(authenticationProperties);
+                            .getMethod("get" + authenticationTypeName)
+                            .invoke(authenticationProperties);
             return propertiesForAuthenticationType.areMandatoryFieldsFilled();
         } catch (NoSuchMethodException noSuchMethodException) {
             throw new RuntimeException(
