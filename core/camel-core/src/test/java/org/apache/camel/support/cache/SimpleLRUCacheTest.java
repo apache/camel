@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
@@ -330,6 +331,7 @@ class SimpleLRUCacheTest {
         int totalKeysPerThread = 1_000;
         AtomicInteger counter = new AtomicInteger();
         SimpleLRUCache<String, String> cache = new SimpleLRUCache<>(16, maximumCacheSize, v -> counter.incrementAndGet());
+
         CountDownLatch latch = new CountDownLatch(threads);
         for (int i = 0; i < threads; i++) {
             int threadId = i;
@@ -343,7 +345,7 @@ class SimpleLRUCacheTest {
                 }
             }).start();
         }
-        latch.await();
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "Should have completed within a reasonable timeframe");
         assertEquals(maximumCacheSize, cache.size());
         assertEquals(totalKeysPerThread * threads - maximumCacheSize, counter.get());
     }
@@ -367,7 +369,7 @@ class SimpleLRUCacheTest {
                 }
             }).start();
         }
-        latch.await();
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "Should have completed within a reasonable timeframe");
         assertEquals(maximumCacheSize, cache.size());
         counter.set(0);
         for (int j = 0; j < maximumCacheSize; j++) {
