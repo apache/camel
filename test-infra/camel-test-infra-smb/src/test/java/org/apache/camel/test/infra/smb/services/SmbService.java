@@ -17,12 +17,11 @@
 
 package org.apache.camel.test.infra.smb.services;
 
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public interface SmbService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     String address();
@@ -38,11 +37,7 @@ public interface SmbService extends TestService, BeforeTestExecutionCallback, Af
         try {
             initialize();
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(SmbService.class);
-
-            final Object o = extensionContext.getTestInstance().get();
-            log.error("Failed to initialize service {} for test {} on ({})", this.getClass().getSimpleName(),
-                    extensionContext.getDisplayName(), o.getClass().getName());
+            TestUtils.logInitializationFailure(extensionContext, SmbService.class);
 
             throw e;
         }
