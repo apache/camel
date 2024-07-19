@@ -36,12 +36,16 @@ public class DJLEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true, description = "Application name")
     private String application;
+
     @UriParam(description = "Model Artifact")
     private String artifactId;
     @UriParam(description = "Model")
     private String model;
     @UriParam(description = "Translator")
     private String translator;
+    @UriParam(description = "Show progress while loading zoo models. This parameter takes effect only with zoo models",
+              defaultValue = "false")
+    private boolean showProgress;
 
     public DJLEndpoint(String uri, DJLComponent component, String application) {
         super(uri, component);
@@ -57,7 +61,7 @@ public class DJLEndpoint extends DefaultEndpoint {
         return new DJLProducer(this);
     }
 
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 
@@ -91,5 +95,13 @@ public class DJLEndpoint extends DefaultEndpoint {
 
     public void setTranslator(String translator) {
         this.translator = translator;
+    }
+
+    public boolean isShowProgress() {
+        return showProgress;
+    }
+
+    public void setShowProgress(boolean showProgress) {
+        this.showProgress = showProgress;
     }
 }

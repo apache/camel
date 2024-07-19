@@ -31,20 +31,26 @@ import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 
 public class ZooImageGenerationPredictor extends AbstractPredictor {
 
     protected ZooModel<int[], Image[]> model;
 
-    public ZooImageGenerationPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException,
-                                                          IOException {
-        Criteria<int[], Image[]> criteria = Criteria.builder()
+    public ZooImageGenerationPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException,
+                                                             IOException {
+        super(endpoint);
+
+        Criteria.Builder<int[], Image[]> builder = Criteria.builder()
                 .optApplication(Application.CV.IMAGE_GENERATION)
                 .setTypes(int[].class, Image[].class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<int[], Image[]> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 

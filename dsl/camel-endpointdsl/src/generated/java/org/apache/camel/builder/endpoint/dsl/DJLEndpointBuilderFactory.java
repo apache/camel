@@ -74,6 +74,38 @@ public interface DJLEndpointBuilderFactory {
             return this;
         }
         /**
+         * Show progress while loading zoo models. This parameter takes effect
+         * only with zoo models.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param showProgress the value to set
+         * @return the dsl builder
+         */
+        default DJLEndpointBuilder showProgress(boolean showProgress) {
+            doSetProperty("showProgress", showProgress);
+            return this;
+        }
+        /**
+         * Show progress while loading zoo models. This parameter takes effect
+         * only with zoo models.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param showProgress the value to set
+         * @return the dsl builder
+         */
+        default DJLEndpointBuilder showProgress(String showProgress) {
+            doSetProperty("showProgress", showProgress);
+            return this;
+        }
+        /**
          * Translator.
          * 
          * The option is a: <code>java.lang.String</code> type.

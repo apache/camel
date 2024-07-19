@@ -30,6 +30,7 @@ import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,10 @@ public abstract class AbstractCvZooPredictor<T> extends AbstractPredictor {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCvZooPredictor.class);
 
     protected ZooModel<Image, T> model;
+
+    public AbstractCvZooPredictor(DJLEndpoint endpoint) {
+        super(endpoint);
+    }
 
     @Override
     public void process(Exchange exchange) {

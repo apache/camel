@@ -32,18 +32,25 @@ import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 
 public class ZooForecastingPredictor extends AbstractPredictor {
 
     private final ZooModel<TimeSeriesData, Forecast> model;
 
-    public ZooForecastingPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException, IOException {
-        Criteria<TimeSeriesData, Forecast> criteria = Criteria.builder()
+    public ZooForecastingPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException, IOException {
+        super(endpoint);
+
+        Criteria.Builder<TimeSeriesData, Forecast> builder = Criteria.builder()
                 .optApplication(Application.TimeSeries.FORECASTING)
                 .setTypes(TimeSeriesData.class, Forecast.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<TimeSeriesData, Forecast> criteria = builder
                 .build();
         this.model = ModelZoo.loadModel(criteria);
     }

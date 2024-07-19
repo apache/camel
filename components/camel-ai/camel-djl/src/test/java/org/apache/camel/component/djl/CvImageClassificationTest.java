@@ -43,7 +43,7 @@ public class CvImageClassificationTest extends CamelTestSupport {
             public void configure() {
                 from("file:src/test/resources/data/mnist?recursive=true&noop=true")
                         .convertBodyTo(byte[].class)
-                        .to("djl:cv/image_classification?artifactId=ai.djl.zoo:mlp:0.0.3")
+                        .to("djl:cv/image_classification?artifactId=ai.djl.zoo:mlp:0.0.3&showProgress=true")
                         .log("${header.CamelFileName} = ${body.best.className}")
                         .to("mock:result");
             }

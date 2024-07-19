@@ -23,11 +23,12 @@ public class DJLEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(6);
         props.add("application");
         props.add("artifactId");
         props.add("lazyStartProducer");
         props.add("model");
+        props.add("showProgress");
         props.add("translator");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

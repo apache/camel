@@ -36,6 +36,7 @@ import ai.djl.translate.TranslateException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.djl.DJLConstants;
+import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +47,18 @@ public class ZooAudioPredictor extends AbstractPredictor {
 
     private final ZooModel<Audio, String> model;
 
-    public ZooAudioPredictor(String artifactId) throws ModelNotFoundException, MalformedModelException, IOException {
-        Criteria<Audio, String> criteria = Criteria.builder()
+    public ZooAudioPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException, IOException {
+        super(endpoint);
+
+        Criteria.Builder<Audio, String> builder = Criteria.builder()
                 .optApplication(Application.Audio.ANY)
                 .setTypes(Audio.class, String.class)
-                .optArtifactId(artifactId)
-                .optProgress(new ProgressBar())
-                .build();
+                .optArtifactId(endpoint.getArtifactId());
+        if (endpoint.isShowProgress()) {
+            builder.optProgress(new ProgressBar());
+        }
+
+        Criteria<Audio, String> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 

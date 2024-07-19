@@ -17,11 +17,21 @@
 package org.apache.camel.component.djl.model;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.djl.DJLEndpoint;
 
 public abstract class AbstractPredictor {
 
     protected static final String FAILED_TO_TRANSFORM_MESSAGE = "Couldn't transform input into a BufferedImage";
 
+    private final DJLEndpoint endpoint;
+
+    public AbstractPredictor(DJLEndpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+
     public abstract void process(Exchange exchange) throws Exception;
 
+    protected DJLEndpoint getEndpoint() {
+        return endpoint;
+    }
 }
