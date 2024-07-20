@@ -90,7 +90,7 @@ public class CamelWebSocketHandler implements HttpHandler {
      * Send the given {@code message} to the given {@code channel} and report the outcome to the given {@code callback}
      * within the given {@code timeoutMillis}.
      *
-     * @param  channel       the channel to sent the {@code message} to
+     * @param  channel       the channel to send the {@code message} to
      * @param  message       the message to send
      * @param  callback      where to report the outcome
      * @param  timeoutMillis the timeout in milliseconds
@@ -238,7 +238,7 @@ public class CamelWebSocketHandler implements HttpHandler {
         }
 
         /**
-         * {@link #finish()} should be called only inside a <code>synchronized(lock) { ... }</code> block to prevent
+         * This method should be called only inside a <code>synchronized(lock) { ... }</code> block to prevent
          * concurrent access to {@link #errors}.
          */
         private void finish() {

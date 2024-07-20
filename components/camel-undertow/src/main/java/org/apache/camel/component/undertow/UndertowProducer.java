@@ -56,7 +56,7 @@ import org.xnio.ssl.XnioSsl;
  *
  * The implementation of Producer is considered as experimental. The Undertow client classes are not thread safe, their
  * purpose is for the reverse proxy usage inside Undertow itself. This may change in the future versions and general
- * purpose HTTP client wrapper will be added. Therefore this Producer may be changed too.
+ * purpose HTTP client wrapper will be added. Therefore, this producer may be changed too.
  */
 public class UndertowProducer extends DefaultAsyncProducer {
 
