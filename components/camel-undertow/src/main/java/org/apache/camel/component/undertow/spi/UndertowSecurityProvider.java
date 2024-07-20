@@ -35,7 +35,7 @@ public interface UndertowSecurityProvider {
 
     /**
      * Provider can add headers into Camel's exchange. Method is called right after creation of Camel's exchange.
-     * Typical usage is to add authentication information into message (eg. authenticated principal)
+     * Typical usage is to add authentication information into message (e.g. authenticated principal)
      *
      * @param consumer     BiConsumer is the only way how to add parameter into exchange (it accepts pair String,
      *                     Object)
@@ -58,8 +58,8 @@ public interface UndertowSecurityProvider {
      * should be tested here, if it is meant for this securityProvider and provider should initialize its state from it.
      * If configuration is not acceptable, return false.
      *
-     * @param  configuration Object which contain connfiguration passed to camel-undertow
-     * @param  endpointUri   Uri of endpoint (could be important for intialization)
+     * @param  configuration Object which contain configuration passed to camel-undertow
+     * @param  endpointUri   Uri of endpoint (could be important for initialization)
      * @return               True if securityProvider is initialized from data and is able to authenticate requests.
      */
     boolean acceptConfiguration(Object configuration, String endpointUri) throws Exception;
