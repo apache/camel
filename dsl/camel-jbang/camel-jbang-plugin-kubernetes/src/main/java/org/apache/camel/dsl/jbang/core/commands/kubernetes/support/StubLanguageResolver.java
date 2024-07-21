@@ -15,34 +15,33 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k.support;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.support;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.DefaultTransformerResolver;
-import org.apache.camel.main.stub.StubTransformer;
-import org.apache.camel.spi.Transformer;
-import org.apache.camel.spi.TransformerKey;
+import org.apache.camel.impl.engine.DefaultLanguageResolver;
+import org.apache.camel.main.stub.StubLanguage;
+import org.apache.camel.spi.Language;
 
-public final class StubTransformerResolver extends DefaultTransformerResolver {
+public final class StubLanguageResolver extends DefaultLanguageResolver {
     private final Set<String> names;
     private final String stubPattern;
     private final boolean silent;
 
-    public StubTransformerResolver(String stubPattern, boolean silent) {
+    public StubLanguageResolver(String stubPattern, boolean silent) {
         this.names = new TreeSet<>();
         this.stubPattern = stubPattern;
         this.silent = silent;
     }
 
     @Override
-    public Transformer resolve(TransformerKey key, CamelContext context) {
-        final boolean accept = accept(key.toString());
-        final Transformer answer = accept ? super.resolve(key, context) : new StubTransformer();
+    public Language resolveLanguage(String name, CamelContext context) {
+        final boolean accept = accept(name);
+        final Language answer = accept ? super.resolveLanguage(name, context) : new StubLanguage();
 
-        this.names.add(key.toString());
+        this.names.add(name);
 
         return answer;
     }

@@ -46,7 +46,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
 
         Assertions.assertEquals(1, exit);
 
-        Assertions.assertTrue(printer.getOutput().contains("Project export failed!"));
+        Assertions.assertTrue(printer.getOutput().contains("Project export failed"));
     }
 
     @Test

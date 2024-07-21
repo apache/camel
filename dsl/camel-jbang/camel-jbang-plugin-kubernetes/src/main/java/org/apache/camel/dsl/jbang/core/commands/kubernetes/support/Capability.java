@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k.support;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.support;
 
 import java.util.Objects;
 

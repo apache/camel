@@ -35,6 +35,7 @@ public class TraitCatalog {
 
     public TraitCatalog() {
         register(new DeploymentTrait());
+        register(new ServiceTrait());
         register(new ContainerTrait());
         register(new EnvTrait());
         register(new MountTrait());

@@ -15,43 +15,34 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k.support;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.support;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.component.stub.StubComponent;
-import org.apache.camel.impl.engine.DefaultComponentResolver;
+import org.apache.camel.impl.engine.DefaultTransformerResolver;
+import org.apache.camel.main.stub.StubTransformer;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 
-public final class StubComponentResolver extends DefaultComponentResolver {
-    private static final Set<String> ACCEPTED_STUB_NAMES = Set.of(
-            "stub", "bean", "class", "direct", "kamelet", "log", "rest", "rest-api", "seda", "vrtx-http");
-
+public final class StubTransformerResolver extends DefaultTransformerResolver {
     private final Set<String> names;
     private final String stubPattern;
     private final boolean silent;
 
-    public StubComponentResolver(String stubPattern, boolean silent) {
+    public StubTransformerResolver(String stubPattern, boolean silent) {
         this.names = new TreeSet<>();
         this.stubPattern = stubPattern;
         this.silent = silent;
     }
 
     @Override
-    public Component resolveComponent(String name, CamelContext context) {
-        final boolean accept = accept(name);
-        final Component answer = super.resolveComponent(accept ? name : "stub", context);
+    public Transformer resolve(TransformerKey key, CamelContext context) {
+        final boolean accept = accept(key.toString());
+        final Transformer answer = accept ? super.resolve(key, context) : new StubTransformer();
 
-        if ((silent || stubPattern != null) && answer instanceof StubComponent) {
-            StubComponent sc = (StubComponent) answer;
-            // enable shadow mode on stub component
-            sc.setShadow(true);
-            sc.setShadowPattern(stubPattern);
-        }
-
-        this.names.add(name);
+        this.names.add(key.toString());
 
         return answer;
     }
@@ -61,11 +52,10 @@ public final class StubComponentResolver extends DefaultComponentResolver {
             return true;
         }
 
-        // we are stubbing but need to accept the following
-        return ACCEPTED_STUB_NAMES.contains(name);
+        return false;
     }
 
     public Set<String> getNames() {
-        return Set.copyOf(names);
+        return Set.copyOf(this.names);
     }
 }

@@ -24,6 +24,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Auto downloaded needed DSL JARs.
@@ -31,15 +32,17 @@ import org.apache.camel.support.service.ServiceHelper;
 public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
 
     private final DependencyDownloader downloader;
+    private final String camelVersion;
     private final String kameletsVersion;
 
     public DependencyDownloaderRoutesLoader(CamelContext camelContext) {
-        this(camelContext, null);
+        this(camelContext, null, null);
     }
 
-    public DependencyDownloaderRoutesLoader(CamelContext camelContext, String kameletsVersion) {
+    public DependencyDownloaderRoutesLoader(CamelContext camelContext, String camelVersion, String kameletsVersion) {
         setCamelContext(camelContext);
         this.downloader = camelContext.hasService(DependencyDownloader.class);
+        this.camelVersion = camelVersion;
         this.kameletsVersion = kameletsVersion;
     }
 
@@ -95,10 +98,13 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
     }
 
     private void downloadLoader(String artifactId) {
-        if (!downloader.alreadyOnClasspath("org.apache.camel", artifactId,
-                getCamelContext().getVersion())) {
-            downloader.downloadDependency("org.apache.camel", artifactId,
-                    getCamelContext().getVersion());
+        String resolvedCamelVersion = getCamelContext().getVersion();
+        if (ObjectHelper.isEmpty(resolvedCamelVersion)) {
+            resolvedCamelVersion = camelVersion;
+        }
+
+        if (!downloader.alreadyOnClasspath("org.apache.camel", artifactId, resolvedCamelVersion)) {
+            downloader.downloadDependency("org.apache.camel", artifactId, resolvedCamelVersion);
         }
     }
 
