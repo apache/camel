@@ -842,6 +842,32 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.newEmptyExpression(value);
         }
 
+        // iif function
+        remainder = ifStartsWithReturnRemainder("iif(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueCondition,falseCondition} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueCondition,falseCondition)} was: " + function, token.getIndex());
+            }
+            String predicate = tokens[0];
+            String trueCondition = tokens[1];
+            String falseCondition = tokens[2];
+            if (tokens.length > 1) {
+                falseCondition = tokens[1];
+            }
+            trueCondition = trueCondition.trim();
+            falseCondition = falseCondition.trim();
+            return SimpleExpressionBuilder.iifExpression(ObjectHelper.evaluateValuePredicate(predicate), trueCondition,
+                    falseCondition);
+        }
+
         return null;
     }
 
@@ -1678,7 +1704,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
             if (tokens.length > 2) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${replace(num,num)} was: " + function, token.getIndex());
+                        "Valid syntax: ${substring(num,num)} was: " + function, token.getIndex());
             }
             String num1 = tokens[0];
             String num2 = "0";
@@ -1788,6 +1814,22 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             value = StringQuoteHelper.doubleQuote(value);
             return "empty(exchange, " + value + ")";
+        }
+
+        // iif function
+        remainder = ifStartsWithReturnRemainder("iif(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            if (tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+            }
+            return "iif(exchange, " + values + ")";
         }
 
         return null;

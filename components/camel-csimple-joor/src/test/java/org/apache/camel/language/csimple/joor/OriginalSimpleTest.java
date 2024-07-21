@@ -2086,6 +2086,12 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         }
     }
 
+    @Test
+    public void testIif() {
+        assertExpression("${iif(true, \"yes\", \"no\")}", "yes");
+        assertExpression("${iif(false, \"yes\", \"no\")}", "no");
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";

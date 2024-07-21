@@ -60,7 +60,7 @@ public class CSimpleCodeGenerator {
 
     private CSimpleGeneratedCode generateCode(String fqn, String script, boolean predicate) {
         String text = script;
-        // text should be single line and trimmed as it can be multi lined
+        // text should be single line and trimmed as it can be multi-lined
         text = text.replaceAll("\n", "");
         text = text.trim();
 
@@ -111,7 +111,7 @@ public class CSimpleCodeGenerator {
         sb.append("    public String getText() {\n");
         // \ should be escaped
         String escaped = text.replace("\\", "\\\\");
-        // we need to escape all " so its a single literal string
+        // we need to escape all " so it's a single literal string
         escaped = escaped.replace("\"", "\\\"");
         sb.append("        return \"").append(escaped).append("\";\n");
         sb.append("    }\n");
@@ -136,7 +136,7 @@ public class CSimpleCodeGenerator {
             CSimpleExpressionParser parser = new CSimpleExpressionParser();
             script = parser.parseExpression(script);
             if (script.isBlank()) {
-                // an expression can be whitespace but then we need to wrap this in quotes
+                // an expression can be whitespace, but then we need to wrap this in quotes
                 script = "\"" + script + "\"";
             }
         }

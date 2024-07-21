@@ -391,7 +391,7 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns a uuid string based on the given generator (default, classic, short, simple)
+     * Returns an uuid string based on the given generator (default, classic, short, simple)
      */
     public static Expression uuidExpression(final String generator) {
         return new ExpressionAdapter() {
@@ -1110,7 +1110,7 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges exception invoking methods defined in a simple OGNL notation
+     * Returns the expression for the exchange's exception invoking methods defined in a simple OGNL notation
      *
      * @param ognl methods to invoke on the body in a simple OGNL syntax
      */
@@ -1146,6 +1146,18 @@ public final class SimpleExpressionBuilder {
                 return "exchangeExceptionOgnl(" + ognl + ")";
             }
         };
+    }
+
+    /**
+     * Returns the expression for the exchange's exception invoking methods defined in a simple OGNL notation
+     *
+     * @param  predicate
+     * @param  trueExpression
+     * @param  falseExpression
+     * @return
+     */
+    public static Expression iifExpression(final boolean predicate, final Object trueExpression, final Object falseExpression) {
+        return null;
     }
 
     /**

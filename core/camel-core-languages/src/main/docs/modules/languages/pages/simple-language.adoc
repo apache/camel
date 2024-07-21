@@ -314,6 +314,9 @@ For _input_ you can choose `header:key`, `exchangeProperty:key` or `variable:key
 
 |pretty(exp) | String | Converts the inlined expression to a String, and attempts to pretty print if JSon or XML, otherwise the expression is returned as the String value.
 
+|iif(predicate, trueExp, falseExp) | Object | Evaluates the `predicate` expression and returns the value of `trueExp` if the predicate is
+true, otherwise the value of `falseExp` is returned.
+
 |=======================================================================
 
 == OGNL expression support
