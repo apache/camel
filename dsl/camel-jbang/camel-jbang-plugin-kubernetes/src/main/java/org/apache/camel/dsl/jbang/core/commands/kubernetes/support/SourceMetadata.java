@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k.support;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.support;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.camel.tooling.model.EntityRef;
 
 @JsonPropertyOrder(alphabetic = true)
 public class SourceMetadata {
@@ -34,7 +33,7 @@ public class SourceMetadata {
     @JsonProperty
     public final Endpoints endpoints = new Endpoints();
     @JsonProperty
-    public final Map<Capability, EntityRef> capabilities = new TreeMap<>();
+    public final List<Capability> capabilities = new ArrayList<>();
     @JsonProperty
     public final Set<String> dependencies = new TreeSet<>();
 

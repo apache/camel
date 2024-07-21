@@ -15,31 +15,41 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k.support;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.support;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.DefaultDataFormatResolver;
-import org.apache.camel.main.stub.StubDataFormat;
-import org.apache.camel.spi.DataFormat;
+import org.apache.camel.Component;
+import org.apache.camel.component.stub.StubComponent;
+import org.apache.camel.impl.engine.DefaultComponentResolver;
 
-public final class StubDataFormatResolver extends DefaultDataFormatResolver {
+public final class StubComponentResolver extends DefaultComponentResolver {
+    private static final Set<String> ACCEPTED_STUB_NAMES = Set.of(
+            "stub", "bean", "class", "direct", "kamelet", "log", "rest", "rest-api", "seda", "vrtx-http");
+
     private final Set<String> names;
     private final String stubPattern;
     private final boolean silent;
 
-    public StubDataFormatResolver(String stubPattern, boolean silent) {
+    public StubComponentResolver(String stubPattern, boolean silent) {
         this.names = new TreeSet<>();
         this.stubPattern = stubPattern;
         this.silent = silent;
     }
 
     @Override
-    public DataFormat createDataFormat(String name, CamelContext context) {
+    public Component resolveComponent(String name, CamelContext context) {
         final boolean accept = accept(name);
-        final DataFormat answer = accept ? super.createDataFormat(name, context) : new StubDataFormat();
+        final Component answer = super.resolveComponent(accept ? name : "stub", context);
+
+        if ((silent || stubPattern != null) && answer instanceof StubComponent) {
+            StubComponent sc = (StubComponent) answer;
+            // enable shadow mode on stub component
+            sc.setShadow(true);
+            sc.setShadowPattern(stubPattern);
+        }
 
         this.names.add(name);
 
@@ -51,11 +61,11 @@ public final class StubDataFormatResolver extends DefaultDataFormatResolver {
             return true;
         }
 
-        return false;
+        // we are stubbing but need to accept the following
+        return ACCEPTED_STUB_NAMES.contains(name);
     }
 
     public Set<String> getNames() {
-        return Set.copyOf(this.names);
+        return Set.copyOf(names);
     }
-
 }

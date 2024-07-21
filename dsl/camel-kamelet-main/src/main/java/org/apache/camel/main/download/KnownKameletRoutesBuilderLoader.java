@@ -55,7 +55,7 @@ public class KnownKameletRoutesBuilderLoader extends KameletRoutesBuilderLoader 
 
     private List<String> findKameletNames() {
         // download kamelet catalog for the correct version
-        if (kameletsVersion == null) {
+        if (kameletsVersion == null || kameletsVersion.isBlank()) {
             kameletsVersion = VersionHelper.extractKameletsVersion();
         }
 

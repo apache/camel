@@ -15,31 +15,31 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dsl.jbang.core.commands.k.support;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.support;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.DefaultLanguageResolver;
-import org.apache.camel.main.stub.StubLanguage;
-import org.apache.camel.spi.Language;
+import org.apache.camel.impl.engine.DefaultDataFormatResolver;
+import org.apache.camel.main.stub.StubDataFormat;
+import org.apache.camel.spi.DataFormat;
 
-public final class StubLanguageResolver extends DefaultLanguageResolver {
+public final class StubDataFormatResolver extends DefaultDataFormatResolver {
     private final Set<String> names;
     private final String stubPattern;
     private final boolean silent;
 
-    public StubLanguageResolver(String stubPattern, boolean silent) {
+    public StubDataFormatResolver(String stubPattern, boolean silent) {
         this.names = new TreeSet<>();
         this.stubPattern = stubPattern;
         this.silent = silent;
     }
 
     @Override
-    public Language resolveLanguage(String name, CamelContext context) {
+    public DataFormat createDataFormat(String name, CamelContext context) {
         final boolean accept = accept(name);
-        final Language answer = accept ? super.resolveLanguage(name, context) : new StubLanguage();
+        final DataFormat answer = accept ? super.createDataFormat(name, context) : new StubDataFormat();
 
         this.names.add(name);
 
@@ -57,4 +57,5 @@ public final class StubLanguageResolver extends DefaultLanguageResolver {
     public Set<String> getNames() {
         return Set.copyOf(this.names);
     }
+
 }

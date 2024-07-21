@@ -197,7 +197,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         int exit = export.export();
         if (exit != 0) {
-            printer().println("Project export failed!");
+            printer().println("Project export failed");
             return exit;
         }
 

@@ -18,6 +18,7 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,12 @@ import io.fabric8.kubernetes.api.model.KubernetesResource;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.CronJobBuilder;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.CatalogHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.Source;
 
 public class TraitContext {
 
@@ -43,9 +50,30 @@ public class TraitContext {
     private final String name;
     private final String version;
 
-    public TraitContext(String name, String version) {
+    private CamelCatalog catalog;
+
+    private final Printer printer;
+
+    private final List<Source> sources;
+
+    public TraitContext(String name, String version, Printer printer, Source... sources) {
+        this(name, version, printer, null, sources);
+    }
+
+    public TraitContext(String name, String version, Printer printer, List<Source> sources) {
+        this(name, version, printer, null, sources);
+    }
+
+    public TraitContext(String name, String version, Printer printer, CamelCatalog catalog, Source... sources) {
+        this(name, version, printer, catalog, Arrays.asList(sources));
+    }
+
+    public TraitContext(String name, String version, Printer printer, CamelCatalog catalog, List<Source> sources) {
         this.name = name;
         this.version = version;
+        this.printer = printer;
+        this.catalog = catalog;
+        this.sources = sources;
     }
 
     /**
@@ -121,5 +149,25 @@ public class TraitContext {
 
     public Map<String, String> getAnnotations() {
         return annotations;
+    }
+
+    public CamelCatalog getCatalog() {
+        if (catalog == null) {
+            try {
+                catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.QUARKUS_VERSION);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Failed to create default Quarkus Camel catalog", e);
+            }
+        }
+
+        return catalog;
+    }
+
+    public Printer printer() {
+        return printer;
+    }
+
+    public Source[] getSources() {
+        return sources.toArray(Source[]::new);
     }
 }

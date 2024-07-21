@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
 import org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand;
@@ -36,6 +37,8 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitProfile;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.Source;
+import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.traits.Container;
@@ -188,7 +191,19 @@ public class KubernetesExport extends Export {
                 .map(entry -> "%s=%s".formatted(entry.getKey(), entry.getValue())).collect(Collectors.joining(","));
 
         String projectName = getProjectName();
-        TraitContext context = new TraitContext(projectName, getVersion());
+        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtime.version());
+
+        List<Source> sources;
+        try {
+            sources = SourceHelper.resolveSources(files);
+        } catch (Exception e) {
+            if (!quiet) {
+                printer().printf("Project export failed - %s%n", e.getMessage());
+            }
+            return 1;
+        }
+
+        TraitContext context = new TraitContext(projectName, getVersion(), printer(), catalog, sources);
         if (annotations != null) {
             context.addAnnotations(Arrays.stream(annotations)
                     .map(item -> item.split("="))

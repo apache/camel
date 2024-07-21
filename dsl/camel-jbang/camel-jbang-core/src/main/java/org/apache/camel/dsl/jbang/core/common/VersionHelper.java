@@ -119,7 +119,15 @@ public final class VersionHelper {
         return s.compareTo(t);
     }
 
+    public static String extractCamelVersion() {
+        return org.apache.camel.main.util.VersionHelper.extractCamelVersion();
+    }
+
     public static String extractKameletsVersion() {
         return org.apache.camel.main.util.VersionHelper.extractKameletsVersion();
+    }
+
+    public static void setCamelVersion(String version) {
+        org.apache.camel.main.util.VersionHelper.setCamelVersion(version);
     }
 }

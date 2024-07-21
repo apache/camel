@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import org.w3c.dom.Document;
@@ -758,9 +759,13 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         DependencyDownloaderRoutesLoader routesLoader;
+        Object camelVersion = getInitialProperties().get("camel.jbang.camelVersion");
         Object kameletsVersion = getInitialProperties().get("camel.jbang.kameletsVersion");
-        if (kameletsVersion != null) {
-            routesLoader = new DependencyDownloaderRoutesLoader(camelContext, kameletsVersion.toString());
+        if (camelVersion != null || kameletsVersion != null) {
+            routesLoader = new DependencyDownloaderRoutesLoader(
+                    camelContext,
+                    Optional.ofNullable(camelVersion).map(Object::toString).orElse(""),
+                    Optional.ofNullable(kameletsVersion).map(Object::toString).orElse(""));
         } else {
             routesLoader = new DependencyDownloaderRoutesLoader(camelContext);
         }

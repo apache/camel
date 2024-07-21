@@ -16,8 +16,7 @@
 #
 
 - from:
-    uri: timer:tick
+    uri: 'platform-http:/roll-dice'
     steps:
-      - setBody:
-          constant: Hello Camel !!!
-      - to: log:info
+      - set-body:
+          simple: 'roll: $simple{random(1,6)}'
