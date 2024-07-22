@@ -190,6 +190,22 @@ The container trait is able to customize the container specification with follow
 | PullPolicy
 | The pull policy: Always\|Never\|IfNotPresent
 
+| container.request-cpu
+| string
+| The minimum amount of CPU required.
+
+| container.request-memory
+| string
+| The minimum amount of memory required.
+
+| container.limit-cpu
+| string
+| The maximum amount of CPU required.
+
+| container.limit-memory
+| string
+| The maximum amount of memory required.
+
 |===
 
 The syntax to specify container trait options is as follows:
@@ -203,7 +219,7 @@ You may specify these options with the export command to customize the container
 
 [source,bash]
 ----
-camel kubernetes export Sample.java --trait container.name=my-container --trait container.port=8088 --trait container.imagePullPolicy=IfNotPresent
+camel kubernetes export Sample.java --trait container.name=my-container --trait container.port=8088 --trait container.imagePullPolicy=IfNotPresent --trait container.request-cpu=0.005 --trait container.request-memory=100Mi
 ----
 
 This results in the following container specification in the Deployment resource.
@@ -233,6 +249,10 @@ spec:
         - containerPort: 8088 #<4>
           name: http
           protocol: TCP
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: '0.005'
 ----
 <1> Container image running the application
 <2> Customized image pull policy

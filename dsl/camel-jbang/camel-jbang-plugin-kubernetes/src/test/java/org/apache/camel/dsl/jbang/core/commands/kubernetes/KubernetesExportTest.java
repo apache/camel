@@ -143,7 +143,11 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "container.port-name=custom",
                 "container.service-port-name=custom-port",
                 "container.image-pull-policy=IfNotPresent",
-                "container.service-port=443" };
+                "container.service-port=443",
+                "container.request-cpu=5m",
+                "container.request-memory=100Mi",
+                "container.limit-cpu=0.5",
+                "container.limit-memory=512Mi" };
         command.doCall();
 
         Assertions.assertTrue(hasService(workingDir));
@@ -160,6 +164,18 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0).getName());
         Assertions.assertEquals(8088,
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0).getContainerPort());
+        Assertions.assertEquals("5m",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getRequests().get("cpu")
+                        .toString());
+        Assertions.assertEquals("100Mi",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getRequests().get("memory")
+                        .toString());
+        Assertions.assertEquals("0.5",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getLimits().get("cpu")
+                        .toString());
+        Assertions.assertEquals("512Mi",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getLimits().get("memory")
+                        .toString());
 
         Service service = getService(workingDir);
         Assertions.assertEquals("route-service", service.getMetadata().getName());
