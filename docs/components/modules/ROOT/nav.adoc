@@ -295,6 +295,7 @@
 ** xref:smooks-component.adoc[Smooks]
 ** xref:smpp-component.adoc[SMPP]
 ** xref:snmp-component.adoc[SNMP]
+** xref:solr-component.adoc[Solr]
 ** xref:splunk-component.adoc[Splunk]
 ** xref:splunk-hec-component.adoc[Splunk HEC]
 ** xref:spring-summary.adoc[Spring]

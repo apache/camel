@@ -13254,6 +13254,92 @@ public class StaticEndpointBuilders {
         return SnmpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solr:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String path) {
+        return solr("solr", path);
+    }
+    /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solr:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String componentName, String path) {
+        return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solrCloud:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solrCloud(String path) {
+        return solr("solrCloud", path);
+    }
+    /**
+     * Solr (Secure) (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solrs:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solrs(String path) {
+        return solr("solrs", path);
+    }
+    /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 
