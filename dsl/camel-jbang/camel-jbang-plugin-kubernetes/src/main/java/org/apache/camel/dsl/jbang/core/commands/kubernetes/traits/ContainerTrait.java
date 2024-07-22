@@ -21,6 +21,8 @@ import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
+import io.fabric8.kubernetes.api.model.Quantity;
+import io.fabric8.kubernetes.api.model.ResourceRequirementsBuilder;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.traits.Container;
 
@@ -58,6 +60,21 @@ public class ContainerTrait extends BaseTrait {
                     .withProtocol("TCP")
                     .build());
         }
+
+        ResourceRequirementsBuilder resourceRequirementsBuilder = new ResourceRequirementsBuilder();
+        if (containerTrait.getRequestMemory() != null) {
+            resourceRequirementsBuilder.addToRequests("memory", new Quantity(containerTrait.getRequestMemory()));
+        }
+        if (containerTrait.getRequestCPU() != null) {
+            resourceRequirementsBuilder.addToRequests("cpu", new Quantity(containerTrait.getRequestCPU()));
+        }
+        if (containerTrait.getLimitMemory() != null) {
+            resourceRequirementsBuilder.addToLimits("memory", new Quantity(containerTrait.getLimitMemory()));
+        }
+        if (containerTrait.getLimitCPU() != null) {
+            resourceRequirementsBuilder.addToLimits("cpu", new Quantity(containerTrait.getLimitCPU()));
+        }
+        container.withResources(resourceRequirementsBuilder.build());
 
         context.doWithDeployments(d -> d.editOrNewSpec()
                 .editOrNewTemplate()
