@@ -50,6 +50,8 @@ public class TraitContext {
     private final String name;
     private final String version;
 
+    private String serviceAccount;
+
     private CamelCatalog catalog;
 
     private final Printer printer;
@@ -93,11 +95,12 @@ public class TraitContext {
         this.profile = profile;
     }
 
-    /**
-     * @param visitor
-     */
     public void doWithServices(Visitor<ServiceBuilder> visitor) {
         resourceRegistry.forEach(r -> r.accept(ServiceBuilder.class, visitor));
+    }
+
+    public void doWithKnativeServices(Visitor<io.fabric8.knative.serving.v1.ServiceBuilder> visitor) {
+        resourceRegistry.forEach(r -> r.accept(io.fabric8.knative.serving.v1.ServiceBuilder.class, visitor));
     }
 
     public void doWithDeployments(Visitor<DeploymentBuilder> visitor) {
@@ -119,6 +122,13 @@ public class TraitContext {
         return resourceRegistry.stream()
                 .filter(it -> it.getClass().isAssignableFrom(ServiceBuilder.class))
                 .map(it -> (ServiceBuilder) it)
+                .findFirst();
+    }
+
+    public Optional<io.fabric8.knative.serving.v1.ServiceBuilder> getKnativeService() {
+        return resourceRegistry.stream()
+                .filter(it -> it.getClass().isAssignableFrom(io.fabric8.knative.serving.v1.ServiceBuilder.class))
+                .map(it -> (io.fabric8.knative.serving.v1.ServiceBuilder) it)
                 .findFirst();
     }
 
@@ -169,5 +179,13 @@ public class TraitContext {
 
     public Source[] getSources() {
         return sources.toArray(Source[]::new);
+    }
+
+    public void setServiceAccount(String serviceAccount) {
+        this.serviceAccount = serviceAccount;
+    }
+
+    public String getServiceAccount() {
+        return serviceAccount;
     }
 }
