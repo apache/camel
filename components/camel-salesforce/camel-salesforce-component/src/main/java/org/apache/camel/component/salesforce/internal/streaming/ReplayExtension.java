@@ -48,8 +48,8 @@ public class ReplayExtension implements Extension {
     private final ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
     private final AtomicBoolean supported = new AtomicBoolean();
 
-    public void addChannelReplayId(final String channelName, final long replayId) {
-        dataMap.put(channelName, replayId);
+    public void setReplayIdIfAbsent(final String channelName, final long replayId) {
+        dataMap.putIfAbsent(channelName, replayId);
     }
 
     @Override
