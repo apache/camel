@@ -135,7 +135,7 @@ It's also possible to subscribe to multiple topics giving a pattern as the topic
 
 [source,java]
 ----
-from("kafka:test*?brokers=localhost:9092&topicIsPattern=true")
+from("kafka:test.*?brokers=localhost:9092&topicIsPattern=true")
     .log("Message received from Kafka : ${body}")
     .log("    on the topic ${headers[kafka.TOPIC]}")
     .log("    on the partition ${headers[kafka.PARTITION]}")
