@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * The test class for {@link SimpleLRUCache}.
  */
+@Isolated("Some of these tests creates a lot of threads")
 class SimpleLRUCacheTest {
 
     private final List<String> consumed = new ArrayList<>();
