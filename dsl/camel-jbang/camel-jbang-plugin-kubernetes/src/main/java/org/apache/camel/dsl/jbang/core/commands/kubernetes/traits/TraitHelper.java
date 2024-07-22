@@ -27,7 +27,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.MetadataHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
+import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.traits.AddonsBuilder;
@@ -305,6 +309,33 @@ public final class TraitHelper {
             }
 
             traitsSpec.setContainer(containerTrait);
+        }
+    }
+
+    /**
+     * Inspect sources in context to retrieve routes that expose a Http service as an endpoint.
+     *
+     * @param  context the trait context holding all route sources.
+     * @return         true when routes expose a Http service, false otherwise.
+     */
+    public static boolean exposesHttpService(TraitContext context) {
+        try {
+            boolean exposesHttpServices = false;
+            CamelCatalog catalog = context.getCatalog();
+            if (context.getSources() != null) {
+                for (Source source : context.getSources()) {
+                    SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
+                    if (MetadataHelper.exposesHttpServices(catalog, metadata)) {
+                        exposesHttpServices = true;
+                        break;
+                    }
+                }
+            }
+
+            return exposesHttpServices;
+        } catch (Exception e) {
+            context.printer().printf("Failed to apply service trait %s%n", e.getMessage());
+            return false;
         }
     }
 }

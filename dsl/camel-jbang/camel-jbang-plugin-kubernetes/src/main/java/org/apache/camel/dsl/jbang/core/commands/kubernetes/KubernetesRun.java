@@ -52,6 +52,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
     String traitProfile;
 
+    @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
+    String serviceAccount;
+
     @CommandLine.Option(names = { "--property" },
                         description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
     String[] properties;
@@ -182,6 +185,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.imageRegistry = imageRegistry;
         export.imageGroup = imageGroup;
         export.traitProfile = traitProfile;
+        export.serviceAccount = serviceAccount;
         export.properties = properties;
         export.configs = configs;
         export.resources = resources;

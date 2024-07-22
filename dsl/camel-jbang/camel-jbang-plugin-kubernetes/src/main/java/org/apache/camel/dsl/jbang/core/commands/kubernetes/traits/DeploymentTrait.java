@@ -36,7 +36,7 @@ public class DeploymentTrait extends BaseTrait {
 
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
-        context.add(new DeploymentBuilder()
+        DeploymentBuilder deployment = new DeploymentBuilder()
                 .withNewMetadata()
                 .withName(context.getName())
                 .endMetadata()
@@ -45,6 +45,18 @@ public class DeploymentTrait extends BaseTrait {
                         .withMatchLabels(
                                 Collections.singletonMap(INTEGRATION_LABEL, context.getName()))
                         .build())
-                .endSpec());
+                .endSpec();
+
+        if (context.getServiceAccount() != null) {
+            deployment.editSpec()
+                    .editOrNewTemplate()
+                    .editOrNewSpec()
+                    .withServiceAccountName(context.getServiceAccount())
+                    .endSpec()
+                    .endTemplate()
+                    .endSpec();
+        }
+
+        context.add(deployment);
     }
 }

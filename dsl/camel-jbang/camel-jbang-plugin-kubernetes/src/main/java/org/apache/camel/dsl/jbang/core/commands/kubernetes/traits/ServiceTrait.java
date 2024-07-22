@@ -23,23 +23,21 @@ import java.util.Optional;
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServicePortBuilder;
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.MetadataHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
-import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.traits.Container;
 import org.apache.camel.v1.integrationspec.traits.Service;
 
 public class ServiceTrait extends BaseTrait {
 
+    public static final int SERVICE_TRAIT_ORDER = 1500;
+
     public ServiceTrait() {
-        super("service", 1500);
+        super("service", SERVICE_TRAIT_ORDER);
     }
 
     @Override
     public boolean configure(Traits traitConfig, TraitContext context) {
-        if (context.getService().isPresent()) {
+        if (context.getService().isPresent() || context.getKnativeService().isPresent()) {
             return false;
         }
 
@@ -48,31 +46,14 @@ public class ServiceTrait extends BaseTrait {
             return traitConfig.getService().getEnabled();
         }
 
-        try {
-            boolean exposesHttpServices = false;
-            CamelCatalog catalog = context.getCatalog();
-            if (context.getSources() != null) {
-                for (Source source : context.getSources()) {
-                    SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
-                    if (MetadataHelper.exposesHttpServices(catalog, metadata)) {
-                        exposesHttpServices = true;
-                        break;
-                    }
-                }
-            }
-
-            return exposesHttpServices;
-        } catch (Exception e) {
-            context.printer().printf("Failed to apply service trait %s%n", e.getMessage());
-            return false;
-        }
+        return TraitHelper.exposesHttpService(context);
     }
 
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
         Service serviceTrait = Optional.ofNullable(traitConfig.getService()).orElseGet(Service::new);
         String serviceType = Optional.ofNullable(serviceTrait.getType()).map(Service.Type::getValue)
-                .orElse(Service.Type.NODEPORT.getValue());
+                .orElse(Service.Type.CLUSTERIP.getValue());
 
         Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
 

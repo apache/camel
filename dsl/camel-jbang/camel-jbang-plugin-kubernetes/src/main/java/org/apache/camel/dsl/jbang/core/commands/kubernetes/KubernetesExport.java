@@ -52,6 +52,9 @@ public class KubernetesExport extends Export {
     @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
     protected String traitProfile;
 
+    @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
+    protected String serviceAccount;
+
     @CommandLine.Option(names = { "--property" },
                         description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
     protected String[] properties;
@@ -219,6 +222,10 @@ public class KubernetesExport extends Export {
 
         if (traitProfile != null) {
             context.setProfile(TraitProfile.valueOf(traitProfile));
+        }
+
+        if (serviceAccount != null) {
+            context.setServiceAccount(serviceAccount);
         }
 
         Traits traitsSpec = getTraitSpec();

@@ -53,7 +53,7 @@ public class ContainerTrait extends BaseTrait {
             container.withImagePullPolicy(containerTrait.getImagePullPolicy().getValue());
         }
 
-        if (containerTrait.getPort() != null || context.getService().isPresent()) {
+        if (containerTrait.getPort() != null || context.getService().isPresent() || context.getKnativeService().isPresent()) {
             container.addToPorts(new ContainerPortBuilder()
                     .withName(Optional.ofNullable(containerTrait.getPortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
                     .withContainerPort(Optional.ofNullable(containerTrait.getPort()).map(Long::intValue).orElse(8080))

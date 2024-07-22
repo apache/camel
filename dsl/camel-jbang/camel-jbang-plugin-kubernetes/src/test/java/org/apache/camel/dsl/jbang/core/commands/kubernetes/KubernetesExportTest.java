@@ -103,6 +103,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 
         Assertions.assertFalse(hasService(workingDir));
+        Assertions.assertFalse(hasKnativeService(workingDir));
     }
 
     @ParameterizedTest
@@ -113,6 +114,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.doCall();
 
         Assertions.assertTrue(hasService(workingDir));
+        Assertions.assertFalse(hasKnativeService(workingDir));
 
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
@@ -183,6 +185,52 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals("custom-port", service.getSpec().getPorts().get(0).getName());
         Assertions.assertEquals(443, service.getSpec().getPorts().get(0).getPort());
         Assertions.assertEquals("custom", service.getSpec().getPorts().get(0).getTargetPort().getStrVal());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddKnativeServiceSpec(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
+
+        command.traits = new String[] {
+                "knative-service.enabled=true",
+                "knative-service.class=hpa.autoscaling.knative.dev",
+                "knative-service.autoscaling-metric=cpu",
+                "knative-service.autoscaling-target=80",
+                "knative-service.min-scale=1",
+                "knative-service.max-scale=10",
+                "knative-service.rollout-duration=60",
+                "knative-service.visibility=cluster-local" };
+        command.doCall();
+
+        Assertions.assertFalse(hasService(workingDir));
+        Assertions.assertTrue(hasKnativeService(workingDir));
+
+        io.fabric8.knative.serving.v1.Service service = getResource(workingDir, io.fabric8.knative.serving.v1.Service.class)
+                .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
+
+        Assertions.assertEquals("route-service", service.getMetadata().getName());
+        Assertions.assertEquals(3, service.getMetadata().getLabels().size());
+        Assertions.assertEquals("route-service", service.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("true", service.getMetadata().getLabels().get("bindings.knative.dev/include"));
+        Assertions.assertEquals("cluster-local", service.getMetadata().getLabels().get("networking.knative.dev/visibility"));
+        Assertions.assertEquals(1, service.getMetadata().getAnnotations().size());
+        Assertions.assertEquals("60", service.getMetadata().getAnnotations().get("serving.knative.dev/rolloutDuration"));
+        Assertions.assertEquals(1, service.getSpec().getTemplate().getMetadata().getLabels().size());
+        Assertions.assertEquals("route-service",
+                service.getSpec().getTemplate().getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals(5, service.getSpec().getTemplate().getMetadata().getAnnotations().size());
+        Assertions.assertEquals("cpu",
+                service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/metric"));
+        Assertions.assertEquals("hpa.autoscaling.knative.dev",
+                service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/class"));
+        Assertions.assertEquals("80",
+                service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/target"));
+        Assertions.assertEquals("1",
+                service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/minScale"));
+        Assertions.assertEquals("10",
+                service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/maxScale"));
     }
 
     @ParameterizedTest
@@ -363,6 +411,10 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
     private boolean hasService(File workingDir) throws IOException {
         return getResource(workingDir, Service.class).isPresent();
+    }
+
+    private boolean hasKnativeService(File workingDir) throws IOException {
+        return getResource(workingDir, io.fabric8.knative.serving.v1.Service.class).isPresent();
     }
 
     private <T extends HasMetadata> Optional<T> getResource(File workingDir, Class<T> type) throws IOException {

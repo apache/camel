@@ -40,5 +40,9 @@ public class AnnotationTrait extends BaseTrait {
                 s -> s.editOrNewMetadata()
                         .addToAnnotations(context.getAnnotations())
                         .endMetadata());
+        context.doWithKnativeServices(
+                s -> s.editOrNewMetadata()
+                        .addToAnnotations(context.getAnnotations())
+                        .endMetadata());
     }
 }

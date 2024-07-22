@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative.KnativeServiceTrait;
 import org.apache.camel.v1.integrationspec.Traits;
 
 /**
@@ -35,6 +36,7 @@ public class TraitCatalog {
 
     public TraitCatalog() {
         register(new DeploymentTrait());
+        register(new KnativeServiceTrait());
         register(new ServiceTrait());
         register(new ContainerTrait());
         register(new EnvTrait());
