@@ -89,7 +89,7 @@ public class ValidateMojo extends AbstractMojo {
     private boolean skip;
 
     /**
-     * Whether to fail if invalid Camel endpoints was found. By default, the plugin logs the errors at WARN level
+     * Whether to fail if invalid Camel endpoints were found. By default, the plugin logs the errors at WARN level
      */
     @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
@@ -134,15 +134,15 @@ public class ValidateMojo extends AbstractMojo {
     private boolean includeTest;
 
     /**
-     * To filter the names of java and xml files to only include files matching any of the given list of patterns
+     * To filter the names of java and XML files to only include files matching any of the given list of patterns
      * (wildcard and regular expression). Multiple values can be separated by comma.
      */
     @Parameter(property = "camel.includes")
     private String includes;
 
     /**
-     * To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard
-     * and regular expression). Multiple values can be separated by comma.
+     * To filter the names of java and XML files to exclude files matching any of the given pattern in the list
+     * (wildcard and regular expression). Multiple values can be separated by comma.
      */
     @Parameter(property = "camel.excludes")
     private String excludes;
@@ -166,9 +166,9 @@ public class ValidateMojo extends AbstractMojo {
     private boolean ignoreDeprecated;
 
     /**
-     * Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter
+     * Whether to ignore components that use lenient properties. When this is true, then the uri validation is stricter
      * but would fail on properties that are not part of the component but in the uri because of using lenient
-     * properties. For example using the HTTP components to provide query parameters in the endpoint uri.
+     * properties. For example, using the HTTP components to provide query parameters in the endpoint uri.
      */
     @Parameter(property = "camel.ignoreLenientProperties", defaultValue = "true")
     private boolean ignoreLenientProperties;
@@ -180,24 +180,24 @@ public class ValidateMojo extends AbstractMojo {
     private boolean showAll;
 
     /**
-     * Whether to allow downloading Camel catalog version from the internet. This is needed if the project uses a
-     * different Camel version than this plugin is using by default.
+     * Whether to allow downloading a Camel catalog version from the internet. This is needed if the project uses a
+     * different Camel version than this plugin is used by default.
      */
     @Parameter(property = "camel.downloadVersion", defaultValue = "true")
     private boolean downloadVersion;
 
     /**
-     * Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates then Camel
-     * will fail to startup.
+     * Whether to validate for duplicate route ids. Route ids should be unique, and if there are duplicates, then Camel
+     * will fail to start up.
      */
     @Parameter(property = "camel.duplicateRouteId", defaultValue = "true")
     private boolean duplicateRouteId;
 
     /**
-     * Whether to validate direct/seda endpoints sending to non-existing consumers.
+     * Whether to validate direct/seda/disruptor endpoints sending to non-existing consumers.
      */
-    @Parameter(property = "camel.directOrSedaPairCheck", defaultValue = "true")
-    private boolean directOrSedaPairCheck;
+    @Parameter(property = "camel.internalContextPairCheck", alias = "camel.directOrSedaPairCheck", defaultValue = "true")
+    private boolean internalContextPairCheck;
 
     /**
      * When sourcesArtifacts are declared, choose to download transitive artifacts or not carefully enable this flag
@@ -224,7 +224,7 @@ public class ValidateMojo extends AbstractMojo {
      */
     private static final Set<File> javaFiles = new LinkedHashSet<>();
     /**
-     * xmlFiles in memory cache, useful for multi modules maven project
+     * xmlFiles in memory cache, useful for multi modules maven projects
      */
     private static final Set<File> xmlFiles = new LinkedHashSet<>();
 
@@ -240,7 +240,7 @@ public class ValidateMojo extends AbstractMojo {
         downloadExtraSources();
 
         CamelCatalog catalog = new DefaultCamelCatalog();
-        // add activemq as known component
+        // add activemq as a known component
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
         // enable did you mean
         catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
@@ -285,7 +285,7 @@ public class ValidateMojo extends AbstractMojo {
     }
 
     /**
-     * Download extra sources only if artifacts sources are defined and the current project is not a parent project
+     * Download extra sources only if artifact sources are defined and the current project is not a parent project
      */
     private void downloadExtraSources() throws MojoExecutionException {
         if (!"pom".equals(project.getPackaging()) && sourcesArtifacts != null && sourcesArtifacts.length > 0) {
@@ -601,14 +601,19 @@ public class ValidateMojo extends AbstractMojo {
         logErrorSummary(simpleErrors, simpleSummary);
 
         // endpoint pairs
-        int sedaDirectErrors = 0;
-        String sedaDirectSummary = "";
-        if (directOrSedaPairCheck) {
-            long sedaDirectEndpoints
-                    = (long) countEndpointPairs(endpoints, "direct") + (long) countEndpointPairs(endpoints, "seda");
-            sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
-            sedaDirectSummary = getSedaDirectSummary(sedaDirectErrors, sedaDirectEndpoints);
-            logErrorSummary(sedaDirectErrors, sedaDirectSummary);
+        int endpointsWithError = 0;
+        String logErrorSummary = "";
+        if (internalContextPairCheck) {
+            long numberOfEndpoints = (long) countEndpointPairs(endpoints, "direct")
+                                     + (long) countEndpointPairs(endpoints, "seda")
+                                     + (long) countEndpointPairs(endpoints, "disruptor")
+                                     + (long) countEndpointPairs(endpoints, "disruptor-vm");
+            endpointsWithError += validateEndpointPairs(endpoints, "direct")
+                                  + validateEndpointPairs(endpoints, "seda")
+                                  + validateEndpointPairs(endpoints, "disruptor")
+                                  + validateEndpointPairs(endpoints, "disruptor-vm");
+            logErrorSummary = getSedaDirectSummary(endpointsWithError, numberOfEndpoints);
+            logErrorSummary(endpointsWithError, logErrorSummary);
         }
 
         // route id
@@ -619,9 +624,9 @@ public class ValidateMojo extends AbstractMojo {
         }
 
         if (failOnError && hasErrors(validationComputedResult.getEndpointErrors(), simpleErrors, duplicateRouteIdErrors)
-                || sedaDirectErrors > 0) {
+                || endpointsWithError > 0) {
             throw new MojoExecutionException(
-                    endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
+                    endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + logErrorSummary);
         }
     }
 
@@ -689,7 +694,7 @@ public class ValidateMojo extends AbstractMojo {
             String incapable, int deprecatedCount) {
         boolean validationPassed = success && !hasWarning;
         if (!validationPassed && ignoreUnknownComponent && unknownComponent != null) {
-            // if we failed due unknown component then be okay if we should ignore that
+            // if we failed due unknown component, then be okay if we should ignore that
             validationComputedResult.incrementUnknownComponents();
             validationPassed = true;
         }
@@ -704,16 +709,17 @@ public class ValidateMojo extends AbstractMojo {
         return validationPassed;
     }
 
-    private static String getSedaDirectSummary(int sedaDirectErrors, long sedaDirectEndpoints) {
-        String sedaDirectSummary;
-        if (sedaDirectErrors == 0) {
-            sedaDirectSummary
-                    = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
+    private static String getSedaDirectSummary(int endpointErrors, long totalPairs) {
+        String summary;
+        if (endpointErrors == 0) {
+            summary = String.format("Endpoint pair (seda/direct/disruptor/disruptor-vm) validation success: (%s = pairs)",
+                    totalPairs);
         } else {
-            sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)",
-                    sedaDirectEndpoints, sedaDirectErrors);
+            summary = String.format(
+                    "Endpoint pair (seda/direct/disruptor/disruptor-vm) validation error: (%s = pairs, %s = non-pairs)",
+                    totalPairs, endpointErrors);
         }
-        return sedaDirectSummary;
+        return summary;
     }
 
     private static int countDeprecated(Set<String> result) {
@@ -800,7 +806,7 @@ public class ValidateMojo extends AbstractMojo {
             List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
             List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
 
-            // parse the xml source code and find Camel routes
+            // parse the XML source code and find Camel routes
             String fqn = file.getPath();
             String baseDir = ".";
 
@@ -1120,7 +1126,7 @@ public class ValidateMojo extends AbstractMojo {
         }
     }
 
-    private class ValidationComputedResult {
+    private static class ValidationComputedResult {
         private int endpointErrors = 0;
         private int configurationErrors = 0;
         private int unknownComponents = 0;
