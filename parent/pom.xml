@@ -272,6 +272,7 @@
         <jedis-client-version>5.1.3</jedis-client-version>
         <jetcd-version>0.8.2</jetcd-version>
         <jetty-version>12.0.10</jetty-version>
+		<jetty-for-solr-version>10.0.20</jetty-for-solr-version>        
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
@@ -441,6 +442,8 @@
         <snakeyaml-version>2.2</snakeyaml-version>
         <snakeyaml-engine-version>2.7</snakeyaml-engine-version>
         <snmp4j-version>3.8.2</snmp4j-version>
+        <solr-version>9.6.1</solr-version>
+        <solr-zookeeper-version>3.9.1</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.1.2</spring-batch-version>
@@ -2242,6 +2245,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-soap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-solr</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
