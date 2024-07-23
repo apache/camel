@@ -41,7 +41,6 @@ public class CvSemanticSegmentationTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/resources/data/detect?recursive=true&noop=true")
-                        .convertBodyTo(byte[].class)
                         .to("djl:cv/semantic_segmentation?artifactId=ai.djl.pytorch:deeplabv3:0.0.1")
                         .log("${header.CamelFileName} = ${body}")
                         .to("mock:result");

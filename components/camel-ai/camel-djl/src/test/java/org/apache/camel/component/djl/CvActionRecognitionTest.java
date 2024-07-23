@@ -41,7 +41,6 @@ public class CvActionRecognitionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/resources/data/action?recursive=true&noop=true")
-                        .convertBodyTo(byte[].class)
                         .to("djl:cv/action_recognition?artifactId=ai.djl.mxnet:action_recognition:0.0.1")
                         .log("${header.CamelFileName} = ${body}")
                         .to("mock:result");

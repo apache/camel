@@ -73,7 +73,6 @@ public class CvImageClassificationLocalTest extends CamelTestSupport {
             public void configure() {
                 from("file:src/test/resources/data/mnist?recursive=true&noop=true")
                         .routeId("infer").autoStartup(false)
-                        .convertBodyTo(byte[].class)
                         .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator")
                         .log("${header.CamelFileName} = ${body}")
                         .process(exchange -> {

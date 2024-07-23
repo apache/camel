@@ -71,7 +71,6 @@ public class CvImageEnhancementLocalTest extends CamelTestSupport {
             public void configure() {
                 from("file:src/test/resources/data/enhance?recursive=true&noop=true")
                         .routeId("image_enhancement").autoStartup(false)
-                        .convertBodyTo(byte[].class)
                         .to("djl:cv/image_enhancement?model=MyModel&translator=MyTranslator")
                         .log("${header.CamelFileName} = ${body}")
                         .process(exchange -> {
