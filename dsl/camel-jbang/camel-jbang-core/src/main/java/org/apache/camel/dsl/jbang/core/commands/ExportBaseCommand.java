@@ -619,6 +619,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // noop
     }
 
+    protected Properties mapToProperties(Map<String, Object> map) {
+        var result = new Properties();
+        if (map != null) {
+            map.forEach((key, value) -> result.setProperty(key, value.toString()));
+        }
+        return result;
+    }
+
     protected void copyMavenWrapper() throws Exception {
         File wrapper = new File(BUILD_DIR, ".mvn/wrapper");
         wrapper.mkdirs();
@@ -739,18 +747,20 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return answer != null ? answer : "3.4.3";
     }
 
-    protected static String jkubeMavenPluginVersion(File settings, Properties prop) {
+    protected static String jkubeMavenPluginVersion(File settings, Properties props) {
         String answer = null;
-        if (prop != null) {
-            answer = prop.getProperty("camel.jbang.jkube-maven-plugin-version");
+        if (props != null) {
+            answer = props.getProperty("camel.jbang.jkube-maven-plugin-version");
         }
-        try {
-            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-            answer = lines.stream()
-                    .filter(l -> l.startsWith("camel.jbang.jkube-maven-plugin-version=") || l.startsWith("jkube.version="))
-                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
-        } catch (Exception e) {
-            // ignore
+        if (answer == null) {
+            try {
+                List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+                answer = lines.stream()
+                        .filter(l -> l.startsWith("camel.jbang.jkube-maven-plugin-version=") || l.startsWith("jkube.version="))
+                        .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
+            } catch (Exception e) {
+                // ignore
+            }
         }
         return answer != null ? answer : "1.16.2";
     }

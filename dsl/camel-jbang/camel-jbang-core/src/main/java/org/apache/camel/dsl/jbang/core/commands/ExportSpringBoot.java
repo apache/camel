@@ -200,19 +200,6 @@ class ExportSpringBoot extends Export {
             context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), "");
         }
 
-        // Convert jkube properties to maven properties
-        Properties allProps = new CamelCaseOrderedProperties();
-        if (profile != null && profile.exists()) {
-            RuntimeUtil.loadProperties(allProps, profile);
-        }
-        StringBuilder sbJKube = new StringBuilder();
-        allProps.stringPropertyNames().stream().filter(p -> p.startsWith("jkube")).forEach(key -> {
-            String value = allProps.getProperty(key);
-            sbJKube.append("        <").append(key).append(">").append(value).append("</").append(key).append(">\n");
-        });
-        context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"),
-                Matcher.quoteReplacement(sbJKube.toString()));
-
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
@@ -274,13 +261,6 @@ class ExportSpringBoot extends Export {
             sb.append("        </dependency>\n");
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
-
-        // add jkube profiles if there is jkube version property
-        String jkubeProfiles = "";
-        if (allProps.getProperty("jkube.version") != null) {
-            jkubeProfiles = readResourceTemplate("templates/jkube-profiles.tmpl");
-        }
-        context = context.replaceFirst(Pattern.quote("{{ .jkubeProfiles }}"), Matcher.quoteReplacement(jkubeProfiles));
 
         IOHelper.writeText(context, new FileOutputStream(pom, false));
     }
