@@ -29,6 +29,7 @@ import org.apache.camel.v1.integrationspec.traits.Container;
 public class ContainerTrait extends BaseTrait {
 
     public static final int CONTAINER_TRAIT_ORDER = 1600;
+    public static final long DEFAULT_CONTAINER_PORT = 8080;
     public static final String DEFAULT_CONTAINER_PORT_NAME = "http";
 
     public ContainerTrait() {
