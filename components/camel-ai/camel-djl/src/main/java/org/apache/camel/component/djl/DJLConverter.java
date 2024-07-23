@@ -17,6 +17,7 @@
 package org.apache.camel.component.djl;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import ai.djl.modality.cv.output.DetectedObjects;
 import ai.djl.modality.cv.output.Rectangle;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConversionException;
 
 /**
  * Converter methods to convert from / to DJL types.
@@ -79,6 +81,21 @@ public class DJLConverter {
         return detectedObjects.<DetectedObjects.DetectedObject> items().stream()
                 .map(obj -> toImage(obj, exchange))
                 .toArray(Image[]::new);
+    }
+
+    @Converter
+    public static byte[] toBytes(Image image, Exchange exchange) throws IOException {
+        if (exchange == null || exchange.getMessage() == null
+                || exchange.getMessage().getHeader(DJLConstants.FILE_TYPE) == null) {
+            throw new TypeConversionException(
+                    image, Image.class,
+                    new IllegalStateException("File type must be provided via " + DJLConstants.FILE_TYPE + " header"));
+        }
+
+        String fileType = exchange.getMessage().getHeader(DJLConstants.FILE_TYPE, String.class);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        image.save(os, fileType);
+        return os.toByteArray();
     }
 
     @Converter
