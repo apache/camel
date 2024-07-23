@@ -135,8 +135,6 @@ public final class KubernetesHelper {
 
     /**
      * Overwrites the kubernetes client. Typically used by unit tests.
-     *
-     * @param kubernetesClient
      */
     public static void setKubernetesClient(KubernetesClient kubernetesClient) {
         KubernetesHelper.kubernetesClient = kubernetesClient;
@@ -145,11 +143,12 @@ public final class KubernetesHelper {
     /**
      * Dump given domain model object as YAML. Uses Json conversion to generic map as intermediate step. This makes sure
      * to properly write Json additional properties.
-     *
-     * @param  model
-     * @return
      */
     public static String dumpYaml(Object model) {
         return yaml().dumpAsMap(json().convertValue(model, Map.class));
+    }
+
+    public static Map<String, Object> toJsonMap(Object model) {
+        return json().convertValue(model, Map.class);
     }
 }

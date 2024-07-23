@@ -16,7 +16,6 @@
 
     <properties>
         <java.version>{{ .JavaVersion }}</java.version>
-{{ .jkubeProperties }}
 {{ .AdditionalProperties }}
     </properties>
 
@@ -79,7 +78,6 @@
     </build>
 
     <profiles>
-{{ .jkubeProfiles }}
         <profile>
             <id>camel.debug</id>
             <activation>

@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -91,7 +92,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
@@ -102,8 +103,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 
-        Assertions.assertFalse(hasService(workingDir));
-        Assertions.assertFalse(hasKnativeService(workingDir));
+        Assertions.assertFalse(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
     }
 
     @ParameterizedTest
@@ -113,10 +114,10 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertTrue(hasService(workingDir));
-        Assertions.assertFalse(hasKnativeService(workingDir));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("camel-test/route-service:1.0-SNAPSHOT",
@@ -127,7 +128,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals(8080,
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0).getContainerPort());
 
-        Service service = getService(workingDir);
+        Service service = getService(rt);
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals(1, service.getSpec().getPorts().size());
         Assertions.assertEquals("http", service.getSpec().getPorts().get(0).getName());
@@ -152,9 +153,9 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "container.limit-memory=512Mi" };
         command.doCall();
 
-        Assertions.assertTrue(hasService(workingDir));
+        Assertions.assertTrue(hasService(rt));
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("camel-test/route-service:1.0.0",
@@ -179,7 +180,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getLimits().get("memory")
                         .toString());
 
-        Service service = getService(workingDir);
+        Service service = getService(rt);
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals(1, service.getSpec().getPorts().size());
         Assertions.assertEquals("custom-port", service.getSpec().getPorts().get(0).getName());
@@ -204,10 +205,10 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "knative-service.visibility=cluster-local" };
         command.doCall();
 
-        Assertions.assertFalse(hasService(workingDir));
-        Assertions.assertTrue(hasKnativeService(workingDir));
+        Assertions.assertFalse(hasService(rt));
+        Assertions.assertTrue(hasKnativeService(rt));
 
-        io.fabric8.knative.serving.v1.Service service = getResource(workingDir, io.fabric8.knative.serving.v1.Service.class)
+        io.fabric8.knative.serving.v1.Service service = getResource(rt, io.fabric8.knative.serving.v1.Service.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
 
         Assertions.assertEquals("route-service", service.getMetadata().getName());
@@ -240,7 +241,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.volumes = new String[] { "pvc-foo:/container/path/foo", "pvc-bar:/container/path/bar" };
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2,
@@ -269,7 +270,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.envVars = new String[] { "CAMEL_FOO=bar", "MY_ENV=foo" };
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
@@ -290,7 +291,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.annotations = new String[] { "foo=bar" };
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getMetadata().getAnnotations().size());
         Assertions.assertEquals("bar", deployment.getMetadata().getAnnotations().get("foo"));
@@ -303,11 +304,13 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "--label=foo=bar", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
+        Map<String, String> labels = deployment.getMetadata().getLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(2, deployment.getMetadata().getLabels().size());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get("camel.apache.org/integration"));
-        Assertions.assertEquals("bar", deployment.getMetadata().getLabels().get("foo"));
+        Assertions.assertEquals(3, labels.size());
+        Assertions.assertEquals("camel", labels.get("app.kubernetes.io/runtime"));
+        Assertions.assertEquals("route", labels.get("camel.apache.org/integration"));
+        Assertions.assertEquals("bar", labels.get("foo"));
     }
 
     @ParameterizedTest
@@ -317,7 +320,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.configs = new String[] { "secret:foo", "configmap:bar" };
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2,
@@ -343,7 +346,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.resources = new String[] { "configmap:foo/file.txt" };
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(1,
@@ -363,7 +366,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.openApis = new String[] { "configmap:openapi/spec.yaml" };
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(1,
@@ -383,7 +386,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.image = "quay.io/camel/demo-app:1.0";
         command.doCall();
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("demo-app", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("quay.io/camel/demo-app:1.0",
@@ -399,32 +402,48 @@ class KubernetesExportTest extends KubernetesBaseTest {
         return command;
     }
 
-    private Deployment getDeployment(File workingDir) throws IOException {
-        return getResource(workingDir, Deployment.class)
-                .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
+    private Deployment getDeployment(RuntimeType rt) throws IOException {
+        return getResource(rt, Deployment.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
     }
 
-    private Service getService(File workingDir) throws IOException {
-        return getResource(workingDir, Service.class)
-                .orElseThrow(() -> new RuntimeCamelException("Missing service in Kubernetes manifest"));
+    private Service getService(RuntimeType rt) throws IOException {
+        return getResource(rt, Service.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find service for: %s".formatted(rt.runtime())));
     }
 
-    private boolean hasService(File workingDir) throws IOException {
-        return getResource(workingDir, Service.class).isPresent();
+    private boolean hasService(RuntimeType rt) throws IOException {
+        return getResource(rt, Service.class).isPresent();
     }
 
-    private boolean hasKnativeService(File workingDir) throws IOException {
-        return getResource(workingDir, io.fabric8.knative.serving.v1.Service.class).isPresent();
+    private boolean hasKnativeService(RuntimeType rt) throws IOException {
+        return getResource(rt, io.fabric8.knative.serving.v1.Service.class).isPresent();
     }
 
-    private <T extends HasMetadata> Optional<T> getResource(File workingDir, Class<T> type) throws IOException {
-        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
-            List<HasMetadata> resources = kubernetesClient.load(fis).items();
-            return resources.stream()
-                    .filter(it -> type.isAssignableFrom(it.getClass()))
-                    .map(type::cast)
-                    .findFirst();
+    private <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
+        if (rt == RuntimeType.quarkus) {
+            try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
+                List<HasMetadata> resources = kubernetesClient.load(fis).items();
+                return resources.stream()
+                        .filter(it -> type.isAssignableFrom(it.getClass()))
+                        .map(type::cast)
+                        .findFirst();
+            }
         }
+        if (rt == RuntimeType.springBoot) {
+            var kind = type.getSimpleName().toLowerCase();
+            File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
+            if (file.isFile()) {
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    List<HasMetadata> resources = kubernetesClient.load(fis).items();
+                    return resources.stream()
+                            .filter(it -> type.isAssignableFrom(it.getClass()))
+                            .map(type::cast)
+                            .findFirst();
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private Model readMavenModel() throws Exception {
