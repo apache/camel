@@ -24,4 +24,7 @@ import org.apache.camel.spi.Metadata;
 public interface DJLConstants {
     @Metadata(description = "The input data used for prediction")
     String INPUT = "CamelDjlInput";
+
+    @Metadata(description = "The file type of the message body data. It is used when the body is converted to bytes.")
+    String FILE_TYPE = "CamelDjlFileType";
 }

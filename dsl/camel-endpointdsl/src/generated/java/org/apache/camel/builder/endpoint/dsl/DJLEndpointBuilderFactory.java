@@ -260,6 +260,19 @@ public interface DJLEndpointBuilderFactory {
         public String djlInput() {
             return "CamelDjlInput";
         }
+        /**
+         * The file type of the message body data. It is used when the body is
+         * converted to bytes.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DjlFileType}.
+         */
+        public String djlFileType() {
+            return "CamelDjlFileType";
+        }
     }
     static DJLEndpointBuilder endpointBuilder(String componentName, String path) {
         class DJLEndpointBuilderImpl extends AbstractEndpointBuilder implements DJLEndpointBuilder, AdvancedDJLEndpointBuilder {

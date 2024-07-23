@@ -64,6 +64,8 @@ public final class DJLConverterLoader implements TypeConverterLoader, CamelConte
             (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImage((java.nio.file.Path) value));
         addTypeConverter(registry, ai.djl.modality.cv.Image[].class, ai.djl.modality.cv.output.DetectedObjects.class, false,
             (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImages((ai.djl.modality.cv.output.DetectedObjects) value, exchange));
+        addTypeConverter(registry, byte[].class, ai.djl.modality.cv.Image.class, false,
+            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toBytes((ai.djl.modality.cv.Image) value, exchange));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
