@@ -505,7 +505,6 @@ More information about https://docs.djl.ai/engines/mxnet/index.html[MXNet engine
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
-    .convertBodyTo(byte[].class)
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
 
@@ -513,7 +512,6 @@ from("file:/data/mnist/0/10.png")
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
-    .convertBodyTo(byte[].class)
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
 
@@ -537,7 +535,6 @@ context.getRegistry().bind("MyModel", model);
 context.getRegistry().bind("MyTranslator", translator);
 
 from("file:/data/mnist/0/10.png")
-    .convertBodyTo(byte[].class)
     .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator");
 ----
 

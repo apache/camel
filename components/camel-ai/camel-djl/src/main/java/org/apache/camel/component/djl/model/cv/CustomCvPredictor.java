@@ -16,20 +16,14 @@
  */
 package org.apache.camel.component.djl.model.cv;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.cv.Image;
-import ai.djl.modality.cv.ImageFactory;
 import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.djl.DJLConstants;
 import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
@@ -51,38 +45,13 @@ public class CustomCvPredictor<T> extends AbstractPredictor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object body = exchange.getIn().getBody();
-        T result;
-        if (body instanceof byte[]) {
-            byte[] bytes = exchange.getIn().getBody(byte[].class);
-            result = predict(exchange, new ByteArrayInputStream(bytes));
-        } else if (body instanceof File) {
-            result = predict(exchange, exchange.getIn().getBody(File.class));
-        } else if (body instanceof InputStream) {
-            result = predict(exchange, exchange.getIn().getBody(InputStream.class));
-        } else {
-            throw new RuntimeCamelException("Data type is not supported. Body should be byte[], InputStream or File");
-        }
-        exchange.getIn().setBody(result);
-    }
-
-    protected T predict(Exchange exchange, File input) {
-        try (InputStream fileInputStream = new FileInputStream(input)) {
-            Image image = ImageFactory.getInstance().fromInputStream(fileInputStream);
-            return predict(exchange, image);
-        } catch (IOException e) {
-            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
-            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
-        }
-    }
-
-    protected T predict(Exchange exchange, InputStream input) {
         try {
-            Image image = ImageFactory.getInstance().fromInputStream(input);
-            return predict(exchange, image);
-        } catch (IOException e) {
-            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
-            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
+            Image image = exchange.getIn().getBody(Image.class);
+            T result = predict(exchange, image);
+            exchange.getIn().setBody(result);
+        } catch (TypeConversionException e) {
+            throw new RuntimeCamelException(
+                    "Data type is not supported. Body should be ai.djl.modality.cv.Image, byte[], InputStream or File");
         }
     }
 
