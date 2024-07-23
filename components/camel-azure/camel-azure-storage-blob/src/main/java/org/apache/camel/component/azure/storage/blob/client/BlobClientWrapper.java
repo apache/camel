@@ -124,7 +124,7 @@ public class BlobClientWrapper {
             final Map<String, String> metadata, AccessTier tier, final byte[] contentMd5,
             final BlobRequestConditions requestConditions,
             final Duration timeout) {
-        Flux<ByteBuffer> dataBuffer = Utility.convertStreamToByteBuffer(data, length, 4194304, false);
+        Flux<ByteBuffer> dataBuffer = Utility.convertStreamToByteBuffer(data, length, 4194304, data.markSupported());
         BlockBlobSimpleUploadOptions uploadOptions = new BlockBlobSimpleUploadOptions(dataBuffer, length).setHeaders(headers)
                 .setMetadata(metadata).setTier(tier).setContentMd5(contentMd5).setRequestConditions(requestConditions);
         return getBlockBlobClient().uploadWithResponse(uploadOptions, timeout, Context.NONE);
