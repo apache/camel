@@ -55,16 +55,6 @@
             <artifactId>vertx-web</artifactId>
             <version>${vertx-version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-auth-properties</artifactId>
-            <version>${vertx-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-auth-jwt</artifactId>
-            <version>${vertx-version}</version>
-        </dependency>
 
         <!-- test dependencies -->
         <!-- jakarta mime types for upload support -->
@@ -115,6 +105,18 @@
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
             <version>${wiremock-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-properties</artifactId>
+            <version>${vertx-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-jwt</artifactId>
+            <version>${vertx-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
