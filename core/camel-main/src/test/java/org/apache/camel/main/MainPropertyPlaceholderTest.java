@@ -21,7 +21,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Isolated
 public class MainPropertyPlaceholderTest {
@@ -32,10 +32,19 @@ public class MainPropertyPlaceholderTest {
         try {
             main.setDefaultPropertyPlaceholderLocation("false");
             main.start();
-            main.getCamelContext().resolvePropertyPlaceholders("{{hello}}");
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // ok
+            assertThrows(IllegalArgumentException.class, () -> main.getCamelContext().resolvePropertyPlaceholders("{{hello}}"));
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testDefaultPropertyPlaceholderLocationDisabledWithAdditionalLocations() {
+        Main main = new Main();
+        try {
+            main.setDefaultPropertyPlaceholderLocation("classpath:additional-config.properties,false");
+            main.start();
+            assertThrows(IllegalArgumentException.class, () -> main.getCamelContext().resolvePropertyPlaceholders("{{hello}}"));
         } finally {
             main.stop();
         }

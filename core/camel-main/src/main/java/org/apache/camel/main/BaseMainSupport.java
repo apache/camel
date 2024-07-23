@@ -27,7 +27,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -395,7 +394,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (locations != null) {
                 locations = locations.trim();
             }
-            if (!Objects.equals(locations, "false")) {
+            if (ObjectHelper.isNotEmpty(locations) && !locations.endsWith("false")) {
                 pc.addLocation(locations);
                 if (defaultPropertyPlaceholderLocation.equals(locations)) {
                     LOG.debug("Properties location: {}", locations);
