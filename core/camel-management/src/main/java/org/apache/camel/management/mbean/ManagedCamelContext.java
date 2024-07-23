@@ -678,7 +678,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                         getExchangesTotal(), getTotalProcessingTime()))
                 .append(">\n");
 
-        String xml = dumpRoutesAsXml(false, false);
+        String xml = dumpRoutesAsXml();
         if (xml != null) {
             // use the coverage xml parser to dump the routes and enrich with coverage stats
             Document dom = RouteCoverageXmlParser.parseXml(context, new ByteArrayInputStream(xml.getBytes()));
