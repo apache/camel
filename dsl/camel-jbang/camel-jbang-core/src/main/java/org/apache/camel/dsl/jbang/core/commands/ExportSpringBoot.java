@@ -188,8 +188,9 @@ class ExportSpringBoot extends Export {
         }
         if (additionalProperties != null && !additionalProperties.isEmpty()) {
             String properties = Arrays.stream(additionalProperties.split(","))
-                    .map(property -> {
-                        String[] keyValueProperty = property.split("=");
+                    .filter(item -> !item.isEmpty())
+                    .map(item -> {
+                        String[] keyValueProperty = item.split("=");
                         return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
                                 keyValueProperty[0]);
                     })

@@ -99,9 +99,8 @@ public class KubernetesExport extends Export {
     protected String image;
 
     @CommandLine.Option(names = { "--image-registry" },
-                        defaultValue = "quay.io",
                         description = "The image registry to hold the app container image.")
-    protected String imageRegistry = "quay.io";
+    protected String imageRegistry;
 
     @CommandLine.Option(names = { "--image-group" },
                         description = "The image registry group used to push images to.")
@@ -248,14 +247,16 @@ public class KubernetesExport extends Export {
             additionalProperties += ",%s.kubernetes.image-name=%s".formatted(propPrefix, container.getImage());
         }
         if (container.getPort() != null) {
-            additionalProperties += ",%s.kubernetes.ports.%s.container-port=%s".formatted(propPrefix,
-                    Optional.ofNullable(container.getPortName()).orElse(
-                            ContainerTrait.DEFAULT_CONTAINER_PORT_NAME),
+            additionalProperties += "%s.kubernetes.ports.%s.container-port=%s".formatted(propPrefix,
+                    Optional.ofNullable(container.getPortName()).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME),
                     container.getPort());
         }
         if (container.getImagePullPolicy() != null) {
-            additionalProperties += ",%s.kubernetes.image-pull-policy=%s"
-                    .formatted(propPrefix, StringHelper.camelCaseToDash(container.getImagePullPolicy().getValue()));
+            var imagePullPolicy = container.getImagePullPolicy().getValue();
+            if (runtime == RuntimeType.quarkus) {
+                imagePullPolicy = StringHelper.camelCaseToDash(imagePullPolicy);
+            }
+            additionalProperties += ",%s.kubernetes.image-pull-policy=%s".formatted(propPrefix, imagePullPolicy);
         }
 
         // run export

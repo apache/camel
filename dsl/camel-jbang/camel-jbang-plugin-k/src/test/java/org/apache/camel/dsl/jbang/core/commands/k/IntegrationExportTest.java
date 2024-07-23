@@ -58,7 +58,7 @@ class IntegrationExportTest {
         Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
         Assertions.assertEquals("routes",
                 deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/routes:1.0-SNAPSHOT",
+        Assertions.assertEquals("camel-test/routes:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
         Assertions.assertEquals("MY_ENV_VAR",
@@ -83,7 +83,7 @@ class IntegrationExportTest {
         Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
         Assertions.assertEquals("timer-to-log",
                 deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/timer-to-log:1.0-SNAPSHOT",
+        Assertions.assertEquals("camel-test/timer-to-log:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
         Assertions.assertEquals("MY_ENV_VAR",
