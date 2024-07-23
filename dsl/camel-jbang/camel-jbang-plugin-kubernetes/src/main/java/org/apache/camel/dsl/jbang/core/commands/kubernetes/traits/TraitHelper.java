@@ -295,17 +295,20 @@ public final class TraitHelper {
             containerTrait.setImage(image);
             traitsSpec.setContainer(containerTrait);
         } else if (containerTrait.getImage() == null) {
-            String resolvedRegistry = imageRegistry;
+            String registryPrefix = "";
             if ("minikube".equals(imageRegistry) || "minikube-registry".equals(imageRegistry)) {
-                resolvedRegistry = "localhost:5000";
+                registryPrefix = "localhost:5000/";
             } else if ("kind".equals(imageRegistry) || "kind-registry".equals(imageRegistry)) {
-                resolvedRegistry = "localhost:5001";
+                registryPrefix = "localhost:5001/";
+            } else if (imageRegistry != null && !imageRegistry.isEmpty()) {
+                registryPrefix = imageRegistry + "/";
             }
 
-            if (imageGroup != null) {
-                containerTrait.setImage("%s/%s/%s:%s".formatted(resolvedRegistry, imageGroup, imageName, version));
+            imageGroup = Optional.ofNullable(imageGroup).orElse("");
+            if (!imageGroup.isEmpty()) {
+                containerTrait.setImage("%s%s/%s:%s".formatted(registryPrefix, imageGroup, imageName, version));
             } else {
-                containerTrait.setImage("%s/%s:%s".formatted(resolvedRegistry, imageName, version));
+                containerTrait.setImage("%s%s:%s".formatted(registryPrefix, imageName, version));
             }
 
             traitsSpec.setContainer(containerTrait);

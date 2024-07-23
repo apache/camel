@@ -87,7 +87,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
     @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
-                "--image-group=camel-test", "--runtime=" + rt.runtime());
+                "--image-registry=quay.io", "--image-group=camel-test", "--runtime=" + rt.runtime());
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -119,7 +119,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("quay.io/camel-test/route-service:1.0-SNAPSHOT",
+        Assertions.assertEquals("camel-test/route-service:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().size());
         Assertions.assertEquals("http",
@@ -157,7 +157,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Deployment deployment = getDeployment(workingDir);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("quay.io/camel-test/route-service:1.0.0",
+        Assertions.assertEquals("camel-test/route-service:1.0.0",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("IfNotPresent",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
