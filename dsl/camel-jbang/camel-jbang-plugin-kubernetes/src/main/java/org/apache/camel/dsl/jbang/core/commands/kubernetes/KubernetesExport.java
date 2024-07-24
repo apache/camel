@@ -143,6 +143,10 @@ public class KubernetesExport extends Export {
             runtime = RuntimeType.quarkus;
         }
 
+        if (!buildTool.equals("maven")) {
+            printer().printf("--build-tool=%s is not yet supported%n", buildTool);
+        }
+
         // Init export properties
         Map<String, Object> exportProps = new LinkedHashMap<>();
         if (additionalProperties != null) {
@@ -157,6 +161,8 @@ public class KubernetesExport extends Export {
         String propPrefix;
         if (runtime == RuntimeType.springBoot) {
             propPrefix = "camel.springboot";
+        } else if (runtime == RuntimeType.main) {
+            propPrefix = "camel.main";
         } else {
             propPrefix = runtime.runtime();
         }
@@ -278,12 +284,12 @@ public class KubernetesExport extends Export {
         }
 
         // SpringBoot Runtime specific
-        if (runtime == RuntimeType.springBoot) {
+        if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
             Properties props = mapToProperties(exportProps);
             File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
 
             var jkubeVersion = jkubeMavenPluginVersion(settings, props);
-            exportProps.put("camel.springboot.jkube.version", jkubeVersion);
+            exportProps.put("%s.jkube.version".formatted(propPrefix), jkubeVersion);
         }
 
         // Setup additional properties
@@ -318,7 +324,7 @@ public class KubernetesExport extends Export {
         }
 
         // SpringBoot: dump each fragment to its respective kind
-        if (runtime == RuntimeType.springBoot) {
+        if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
             for (var map : kubeFragments) {
                 var ymlFragment = KubernetesHelper.dumpYaml(map);
                 var kind = map.get("kind").toString().toLowerCase();
@@ -338,6 +344,9 @@ public class KubernetesExport extends Export {
     protected Integer export(ExportBaseCommand cmd) throws Exception {
         if (runtime == RuntimeType.springBoot) {
             cmd.pomTemplateName = "spring-boot-kubernetes-pom.tmpl";
+        }
+        if (runtime == RuntimeType.main) {
+            cmd.pomTemplateName = "main-kubernetes-pom.tmpl";
         }
         return super.export(cmd);
     }

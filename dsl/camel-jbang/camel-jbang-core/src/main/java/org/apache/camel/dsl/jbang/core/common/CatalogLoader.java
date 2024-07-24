@@ -50,8 +50,7 @@ public final class CatalogLoader {
 
     public static CamelCatalog loadCatalog(String repos, String version) throws Exception {
         CamelCatalog answer = new DefaultCamelCatalog();
-        if (version == null) {
-            answer = new DefaultCamelCatalog();
+        if (version == null || version.isEmpty() || version.equals(answer.getCatalogVersion())) {
             answer.enableCache();
             return answer;
         }

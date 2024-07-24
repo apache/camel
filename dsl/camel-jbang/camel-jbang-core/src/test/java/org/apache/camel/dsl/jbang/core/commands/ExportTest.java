@@ -22,15 +22,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
-class SpringBootExportTest {
+class ExportTest {
 
     private File workingDir;
 
@@ -40,9 +44,17 @@ class SpringBootExportTest {
         workingDir.deleteOnExit();
     }
 
-    @Test
-    public void shouldGenerateSpringBootProject() throws Exception {
-        ExportSpringBoot command = createCommand(new String[] { "classpath:route.yaml" },
+    private static Stream<Arguments> runtimeProvider() {
+        return Stream.of(
+                Arguments.of(RuntimeType.quarkus),
+                Arguments.of(RuntimeType.springBoot),
+                Arguments.of(RuntimeType.main));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateSpringBootProject(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
 
@@ -53,10 +65,10 @@ class SpringBootExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
     }
 
-    private ExportSpringBoot createCommand(String[] files, String... args) {
-        ExportSpringBoot command = new ExportSpringBoot(new CamelJBangMain());
+    private Export createCommand(RuntimeType rt, String[] files, String... args) {
+        Export command = new ExportSpringBoot(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                "--runtime=spring-boot");
+                "--runtime=%s".formatted(rt.runtime()));
         command.files = Arrays.asList(files);
         return command;
     }
