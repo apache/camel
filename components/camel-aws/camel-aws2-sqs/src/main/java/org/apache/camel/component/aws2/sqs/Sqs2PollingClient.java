@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Comparator.comparing;
-
 import java.io.IOException;
 import java.time.Clock;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
@@ -31,22 +29,23 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.commons.io.function.IOConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName;
 import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+
+import static java.util.Collections.emptyList;
 
 final class Sqs2PollingClient {
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2PollingClient.class);
@@ -85,11 +84,13 @@ final class Sqs2PollingClient {
 
     @SuppressWarnings("resource")
     Sqs2PollingClient(Sqs2Endpoint endpoint) {
-        this(endpoint.getClient(), endpoint.getMaxMessagesPerPoll(), endpoint.getConfiguration(), endpoint::createQueue, Clock.systemUTC());
+        this(endpoint.getClient(), endpoint.getMaxMessagesPerPoll(), endpoint.getConfiguration(), endpoint::createQueue,
+             Clock.systemUTC(), endpoint.getCamelContext().getExecutorServiceManager());
     }
 
     Sqs2PollingClient(SqsClient sqsClient, int maxNumberOfMessages, Sqs2Configuration configuration,
-                      IOConsumer<SqsClient> createQueueOperation, Clock clock) {
+                      IOConsumer<SqsClient> createQueueOperation, Clock clock,
+                      ExecutorServiceManager executorServiceManager) {
         this.sqsClient = sqsClient;
         this.createQueueOperation = createQueueOperation;
         this.clock = clock;
@@ -105,7 +106,8 @@ final class Sqs2PollingClient {
         numberOfRequestsPerPoll = (int) Math.ceil((double) this.maxNumberOfMessages / MAX_NUMBER_OF_MESSAGES_PER_REQUEST);
         queueAutoCreationEnabled = configuration.isAutoCreateQueue();
 
-        executor = Executors.newFixedThreadPool(numberOfRequestsPerPoll);
+        executor = executorServiceManager.newFixedThreadPool(this, "Sqs2PollingClient[%s]".formatted(queueName),
+                this.maxNumberOfMessages);
     }
 
     void shutdown() {
@@ -125,8 +127,9 @@ final class Sqs2PollingClient {
                 context.rethrowIfFirstErrorIsRuntimeException();
                 throw new IOException("Error while polling", context.firstError());
             }
-            throw new IOException(("Error while polling - all %s requests resulted in an error, "
-                + "please check the logs for more details").formatted(numberOfRequestsPerPoll));
+            throw new IOException(
+                    ("Error while polling - all %s requests resulted in an error, "
+                     + "please check the logs for more details").formatted(numberOfRequestsPerPoll));
         }
         return messages;
     }
@@ -140,7 +143,8 @@ final class Sqs2PollingClient {
             CompletableFuture<List<Message>> future = CompletableFuture.completedFuture(emptyList());
             while (remaining > 0) {
                 int numberOfMessages = Math.min(remaining, MAX_NUMBER_OF_MESSAGES_PER_REQUEST);
-                future = mergeResults(future, CompletableFuture.supplyAsync(() -> poll(numberOfMessages, pollContext), executor));
+                future = mergeResults(future,
+                        CompletableFuture.supplyAsync(() -> poll(numberOfMessages, pollContext), executor));
                 remaining -= MAX_NUMBER_OF_MESSAGES_PER_REQUEST;
             }
             return future.thenApply(this::sortBySequenceNumber).get();
@@ -247,18 +251,15 @@ final class Sqs2PollingClient {
         return true;
     }
 
-    private void scheduleQueueAutoCreation()
-    {
-        queueAutoCreationScheduleTime.set(clock.millis() +  RECENTLY_DELETED_QUEUE_BACKOFF_TIME_MS);
+    private void scheduleQueueAutoCreation() {
+        queueAutoCreationScheduleTime.set(clock.millis() + RECENTLY_DELETED_QUEUE_BACKOFF_TIME_MS);
     }
 
-    private void cancelScheduledQueueAutoCreation()
-    {
+    private void cancelScheduledQueueAutoCreation() {
         queueAutoCreationScheduleTime.set(0);
     }
 
-    private boolean isClosed()
-    {
+    private boolean isClosed() {
         return closed.get();
     }
 
@@ -266,7 +267,7 @@ final class Sqs2PollingClient {
         if (value == null || value.isEmpty()) {
             return emptyList();
         }
-        return asList(COMMA_SEPARATED_PATTERN.split(value));
+        return Arrays.asList(COMMA_SEPARATED_PATTERN.split(value));
     }
 
     private static CompletableFuture<List<Message>> mergeResults(
@@ -279,16 +280,17 @@ final class Sqs2PollingClient {
     }
 
     /**
-     * Sorts the list of messages by the sequence number attribute.
-     * The sorting is applied when multiple receive requests are sent asynchronously and merged together.
-     * This in consequence should allow messages to be processed in the correct order.
+     * Sorts the list of messages by the sequence number attribute. The sorting is applied when multiple receive
+     * requests are sent asynchronously and merged together. This in consequence should allow messages to be processed
+     * in the correct order.
      */
     private List<Message> sortBySequenceNumber(List<Message> messages) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Received {} messages in {} requests", messages.size(), numberOfRequestsPerPoll);
         }
         return messages.stream()
-                .sorted(comparing(message -> message.attributes().getOrDefault(MessageSystemAttributeName.SEQUENCE_NUMBER, "")))
+                .sorted(Comparator.comparing(
+                        message -> message.attributes().getOrDefault(MessageSystemAttributeName.SEQUENCE_NUMBER, "")))
                 .toList();
     }
 

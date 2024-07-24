@@ -16,6 +16,29 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import java.io.IOException;
+import java.time.Clock;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.commons.io.function.IOConsumer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName;
+import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
+import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import software.amazon.awssdk.services.sqs.model.SqsException;
+
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,31 +51,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 
-import java.io.IOException;
-import java.time.Clock;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.commons.io.function.IOConsumer;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.Message;
-import software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName;
-import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
-import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
-import software.amazon.awssdk.services.sqs.model.SqsException;
-
 @ExtendWith(MockitoExtension.class)
-class Sqs2PollingClientTest {
+class Sqs2PollingClientTest extends CamelTestSupport {
     @Mock
     private SqsClient sqsClient;
     @Mock
@@ -88,10 +88,10 @@ class Sqs2PollingClientTest {
         assertEquals(emptyList(), polledMessages);
 
         var expectedRequest = expectedReceiveRequestBuilder()
-            .messageSystemAttributeNamesWithStrings((List<String>) null)
-            .messageAttributeNames((List<String>) null)
-            .maxNumberOfMessages(1)
-            .build();
+                .messageSystemAttributeNamesWithStrings((List<String>) null)
+                .messageAttributeNames((List<String>) null)
+                .maxNumberOfMessages(1)
+                .build();
         BDDMockito.then(sqsClient).should(times(1)).receiveMessage(expectedRequest);
         BDDMockito.then(createQueueOperation).shouldHaveNoInteractions();
     }
@@ -113,10 +113,10 @@ class Sqs2PollingClientTest {
         assertEquals(emptyList(), polledMessages);
 
         var expectedRequest = expectedReceiveRequestBuilder()
-            .messageSystemAttributeNamesWithStrings((List<String>) null)
-            .messageAttributeNames((List<String>) null)
-            .maxNumberOfMessages(9)
-            .build();
+                .messageSystemAttributeNamesWithStrings((List<String>) null)
+                .messageAttributeNames((List<String>) null)
+                .maxNumberOfMessages(9)
+                .build();
         BDDMockito.then(sqsClient).should(times(1)).receiveMessage(expectedRequest);
         BDDMockito.then(createQueueOperation).shouldHaveNoInteractions();
     }
@@ -166,21 +166,20 @@ class Sqs2PollingClientTest {
         var tested = createPollingClient(20);
 
         doReturn(
-            responseOf(message("1"), message("4")),
-            responseOf(message("2"), message("3")))
-            .when(sqsClient)
-            .receiveMessage(expectedReceiveRequest(10));
-
+                responseOf(message("1"), message("4")),
+                responseOf(message("2"), message("3")))
+                .when(sqsClient)
+                .receiveMessage(expectedReceiveRequest(10));
 
         // when
         var polledMessages = tested.poll();
 
         // then
         var expectedMessages = List.of(
-            message("1"),
-            message("2"),
-            message("3"),
-            message("4"));
+                message("1"),
+                message("2"),
+                message("3"),
+                message("4"));
         assertEquals(expectedMessages, polledMessages);
 
         BDDMockito.then(sqsClient).should(times(2)).receiveMessage(expectedReceiveRequest(10));
@@ -192,12 +191,12 @@ class Sqs2PollingClientTest {
     void shouldRequestUpTo11MessagesSplitWith2RequestsAndSortedBySequenceNumber() throws IOException {
         // given
         doReturn(
-            responseOf(message("1"), message("2"), message("5")))
-            .when(sqsClient)
-            .receiveMessage(expectedReceiveRequest(10));
+                responseOf(message("1"), message("2"), message("5")))
+                .when(sqsClient)
+                .receiveMessage(expectedReceiveRequest(10));
         doReturn(responseOf(message("3"), message("4")))
-            .when(sqsClient)
-            .receiveMessage(expectedReceiveRequest(1));
+                .when(sqsClient)
+                .receiveMessage(expectedReceiveRequest(1));
 
         var tested = createPollingClient(11);
 
@@ -206,11 +205,11 @@ class Sqs2PollingClientTest {
 
         // then
         var expected = List.of(
-            message("1"),
-            message("2"),
-            message("3"),
-            message("4"),
-            message("5"));
+                message("1"),
+                message("2"),
+                message("3"),
+                message("4"),
+                message("5"));
         assertEquals(expected, polledMessages);
 
         BDDMockito.then(sqsClient).should(times(1)).receiveMessage(expectedReceiveRequest(10));
@@ -223,14 +222,14 @@ class Sqs2PollingClientTest {
     void shouldRequestUpTo33MessagesSplitWith4RequestsAndSortedBySequenceNumber() throws IOException {
         // given
         doReturn(
-            responseOf(message("1"), message("5"), message("7")),
-            responseOf(message("2"), message("4")),
-            responseOf(message("3")))
-            .when(sqsClient)
-            .receiveMessage(expectedReceiveRequest(10));
+                responseOf(message("1"), message("5"), message("7")),
+                responseOf(message("2"), message("4")),
+                responseOf(message("3")))
+                .when(sqsClient)
+                .receiveMessage(expectedReceiveRequest(10));
         doReturn(responseOf(message("6"), message("8")))
-            .when(sqsClient)
-            .receiveMessage(expectedReceiveRequest(3));
+                .when(sqsClient)
+                .receiveMessage(expectedReceiveRequest(3));
 
         var tested = createPollingClient(33);
 
@@ -239,14 +238,14 @@ class Sqs2PollingClientTest {
 
         // then
         var expected = List.of(
-            message("1"),
-            message("2"),
-            message("3"),
-            message("4"),
-            message("5"),
-            message("6"),
-            message("7"),
-            message("8"));
+                message("1"),
+                message("2"),
+                message("3"),
+                message("4"),
+                message("5"),
+                message("6"),
+                message("7"),
+                message("8"));
         assertEquals(expected, polledMessages);
 
         BDDMockito.then(sqsClient).should(times(3)).receiveMessage(expectedReceiveRequest(10));
@@ -259,14 +258,14 @@ class Sqs2PollingClientTest {
     void shouldRequestUpTo18MessagesSplitWith2RequestsWithSortingIgnored() throws IOException {
         // given
         doReturn(responseOf(
-            Message.builder().messageId("id1").build(),
-            Message.builder().messageId("id2").build()))
-            .when(sqsClient)
-            .receiveMessage(expectedReceiveRequest(10));
+                Message.builder().messageId("id1").build(),
+                Message.builder().messageId("id2").build()))
+                .when(sqsClient)
+                .receiveMessage(expectedReceiveRequest(10));
         doReturn(responseOf(
-            Message.builder().messageId("id3").build()))
-            .when(sqsClient)
-            .receiveMessage(expectedReceiveRequest(8));
+                Message.builder().messageId("id3").build()))
+                .when(sqsClient)
+                .receiveMessage(expectedReceiveRequest(8));
 
         var tested = createPollingClient(18);
 
@@ -275,9 +274,9 @@ class Sqs2PollingClientTest {
 
         // then
         var expected = List.of(
-            Message.builder().messageId("id1").build(),
-            Message.builder().messageId("id2").build(),
-            Message.builder().messageId("id3").build());
+                Message.builder().messageId("id1").build(),
+                Message.builder().messageId("id2").build(),
+                Message.builder().messageId("id3").build());
         assertEquals(expected, polledMessages);
 
         BDDMockito.then(sqsClient).should(times(1)).receiveMessage(expectedReceiveRequest(10));
@@ -286,7 +285,7 @@ class Sqs2PollingClientTest {
     }
 
     @Test
-    void shouldIgnorePollingAfterShutdown( )throws IOException {
+    void shouldIgnorePollingAfterShutdown() throws IOException {
         // given
         var tested = createPollingClient(100);
         tested.shutdown();
@@ -433,7 +432,8 @@ class Sqs2PollingClientTest {
         var caughtException = assertThrows(IOException.class, () -> tested.poll());
 
         // then
-        var expectedMessage = "Error while polling - all 3 requests resulted in an error, please check the logs for more details";
+        var expectedMessage
+                = "Error while polling - all 3 requests resulted in an error, please check the logs for more details";
         assertEquals(expectedMessage, caughtException.getMessage());
 
         BDDMockito.then(sqsClient).should(times(2)).receiveMessage(expectedReceiveRequest(10));
@@ -459,23 +459,26 @@ class Sqs2PollingClientTest {
         BDDMockito.then(createQueueOperation).shouldHaveNoInteractions();
     }
 
+    @SuppressWarnings("resource")
     private Sqs2PollingClient createPollingClient(int maxNumberOfMessages) {
-        return new Sqs2PollingClient(sqsClient, maxNumberOfMessages, configuration, createQueueOperation, clock);
+        return new Sqs2PollingClient(
+                sqsClient, maxNumberOfMessages, configuration, createQueueOperation, clock,
+                context().getExecutorServiceManager());
     }
 
     private ReceiveMessageRequest.Builder expectedReceiveRequestBuilder() {
         return ReceiveMessageRequest.builder()
-            .queueUrl(configuration.getQueueUrl())
-            .waitTimeSeconds(configuration.getWaitTimeSeconds())
-            .visibilityTimeout(configuration.getVisibilityTimeout())
-            .messageAttributeNames(List.of("foo", "bar", "bazz"))
-            .messageSystemAttributeNamesWithStrings(List.of("fuzz", "wazz"));
+                .queueUrl(configuration.getQueueUrl())
+                .waitTimeSeconds(configuration.getWaitTimeSeconds())
+                .visibilityTimeout(configuration.getVisibilityTimeout())
+                .messageAttributeNames(List.of("foo", "bar", "bazz"))
+                .messageSystemAttributeNamesWithStrings(List.of("fuzz", "wazz"));
     }
 
     private ReceiveMessageRequest expectedReceiveRequest(int maxNumberOfMessages) {
         return expectedReceiveRequestBuilder()
-            .maxNumberOfMessages(maxNumberOfMessages)
-            .build();
+                .maxNumberOfMessages(maxNumberOfMessages)
+                .build();
     }
 
     private static ReceiveMessageResponse responseOf(Message... messages) {
@@ -486,7 +489,7 @@ class Sqs2PollingClientTest {
 
     private static Message message(String sequenceNumber) {
         return Message.builder()
-            .attributes(Map.of(MessageSystemAttributeName.SEQUENCE_NUMBER, sequenceNumber))
-            .build();
+                .attributes(Map.of(MessageSystemAttributeName.SEQUENCE_NUMBER, sequenceNumber))
+                .build();
     }
 }
