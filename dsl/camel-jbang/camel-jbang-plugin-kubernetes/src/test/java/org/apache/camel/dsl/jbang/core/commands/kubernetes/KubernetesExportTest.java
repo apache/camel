@@ -17,18 +17,24 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Stream;
 
+import io.fabric8.knative.eventing.v1.Trigger;
+import io.fabric8.knative.messaging.v1.Subscription;
+import io.fabric8.knative.sources.v1.SinkBinding;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
@@ -36,6 +42,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
@@ -106,6 +113,36 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
         Assertions.assertFalse(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddApplicationProperties(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.traits = new String[] {
+                "camel.properties=[foo=bar, bar=baz]" };
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Deployment deployment = getDeployment(rt);
+        Assertions.assertEquals("route", deployment.getMetadata().getName());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
+        Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
+        Assertions.assertEquals("route",
+                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+
+        Assertions.assertFalse(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+
+        Assertions.assertEquals("bar", applicationProperties.get("foo"));
+        Assertions.assertEquals("baz", applicationProperties.get("bar"));
     }
 
     @ParameterizedTest
@@ -233,6 +270,206 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/minScale"));
         Assertions.assertEquals("10",
                 service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/maxScale"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddKnativeTrigger(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:knative-event-source.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        Trigger trigger = getResource(rt, Trigger.class)
+                .orElseThrow(() -> new RuntimeCamelException("Missing Knative trigger in Kubernetes manifest"));
+
+        Assertions.assertEquals("my-broker-knative-event-source-camel-event", trigger.getMetadata().getName());
+        Assertions.assertEquals("my-broker", trigger.getSpec().getBroker());
+        Assertions.assertEquals(1, trigger.getSpec().getFilter().getAttributes().size());
+        Assertions.assertEquals("camel-event", trigger.getSpec().getFilter().getAttributes().get("type"));
+        Assertions.assertEquals("knative-event-source", trigger.getSpec().getSubscriber().getRef().getName());
+        Assertions.assertEquals("Service", trigger.getSpec().getSubscriber().getRef().getKind());
+        Assertions.assertEquals("v1", trigger.getSpec().getSubscriber().getRef().getApiVersion());
+        Assertions.assertEquals("/events/camel-event", trigger.getSpec().getSubscriber().getUri());
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals("classpath:knative.json", applicationProperties.get("camel.component.knative.environmentPath"));
+
+        Assertions.assertEquals("""
+                {
+                  "resources" : [ {
+                    "name" : "camel-event",
+                    "type" : "event",
+                    "endpointKind" : "source",
+                    "path" : "/events/camel-event",
+                    "objectApiVersion" : "eventing.knative.dev/v1",
+                    "objectKind" : "Broker",
+                    "objectName" : "my-broker",
+                    "reply" : false
+                  } ]
+                }
+                """, getKnativeResourceConfiguration(workingDir));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddKnativeSubscription(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:knative-channel-source.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        Subscription subscription = getResource(rt, Subscription.class)
+                .orElseThrow(() -> new RuntimeCamelException("Missing Knative subscription in Kubernetes manifest"));
+
+        Assertions.assertEquals("my-channel-knative-channel-source", subscription.getMetadata().getName());
+        Assertions.assertEquals("my-channel", subscription.getSpec().getChannel().getName());
+        Assertions.assertEquals("knative-channel-source", subscription.getSpec().getSubscriber().getRef().getName());
+        Assertions.assertEquals("Service", subscription.getSpec().getSubscriber().getRef().getKind());
+        Assertions.assertEquals("v1", subscription.getSpec().getSubscriber().getRef().getApiVersion());
+        Assertions.assertEquals("/channels/my-channel", subscription.getSpec().getSubscriber().getUri());
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals("classpath:knative.json", applicationProperties.get("camel.component.knative.environmentPath"));
+
+        Assertions.assertEquals("""
+                {
+                  "resources" : [ {
+                    "name" : "my-channel",
+                    "type" : "channel",
+                    "endpointKind" : "source",
+                    "path" : "/channels/my-channel",
+                    "objectApiVersion" : "messaging.knative.dev/v1",
+                    "objectKind" : "Channel",
+                    "objectName" : "my-channel",
+                    "reply" : false
+                  } ]
+                }
+                """, getKnativeResourceConfiguration(workingDir));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddKnativeBrokerSinkBinding(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:knative-event-sink.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertFalse(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+                .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
+
+        Assertions.assertEquals("knative-event-sink", sinkBinding.getMetadata().getName());
+        Assertions.assertEquals("my-broker", sinkBinding.getSpec().getSink().getRef().getName());
+        Assertions.assertEquals("Broker", sinkBinding.getSpec().getSink().getRef().getKind());
+        Assertions.assertEquals("eventing.knative.dev/v1", sinkBinding.getSpec().getSink().getRef().getApiVersion());
+        Assertions.assertEquals("knative-event-sink", sinkBinding.getSpec().getSubject().getName());
+        Assertions.assertEquals("Deployment", sinkBinding.getSpec().getSubject().getKind());
+        Assertions.assertEquals("apps/v1", sinkBinding.getSpec().getSubject().getApiVersion());
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals("classpath:knative.json", applicationProperties.get("camel.component.knative.environmentPath"));
+
+        Assertions.assertEquals("""
+                {
+                  "resources" : [ {
+                    "name" : "my-broker",
+                    "type" : "event",
+                    "endpointKind" : "sink",
+                    "url" : "{{k.sink:http://localhost:8080}}",
+                    "objectApiVersion" : "eventing.knative.dev/v1",
+                    "objectKind" : "Broker",
+                    "objectName" : "my-broker",
+                    "reply" : false
+                  } ]
+                }
+                """, getKnativeResourceConfiguration(workingDir));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddKnativeChannelSinkBinding(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:knative-channel-sink.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertFalse(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+                .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
+
+        Assertions.assertEquals("knative-channel-sink", sinkBinding.getMetadata().getName());
+        Assertions.assertEquals("my-channel", sinkBinding.getSpec().getSink().getRef().getName());
+        Assertions.assertEquals("Channel", sinkBinding.getSpec().getSink().getRef().getKind());
+        Assertions.assertEquals("messaging.knative.dev/v1", sinkBinding.getSpec().getSink().getRef().getApiVersion());
+        Assertions.assertEquals("knative-channel-sink", sinkBinding.getSpec().getSubject().getName());
+        Assertions.assertEquals("Deployment", sinkBinding.getSpec().getSubject().getKind());
+        Assertions.assertEquals("apps/v1", sinkBinding.getSpec().getSubject().getApiVersion());
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals("classpath:knative.json", applicationProperties.get("camel.component.knative.environmentPath"));
+
+        Assertions.assertEquals("""
+                {
+                  "resources" : [ {
+                    "name" : "my-channel",
+                    "type" : "channel",
+                    "endpointKind" : "sink",
+                    "url" : "{{k.sink:http://localhost:8080}}",
+                    "objectApiVersion" : "messaging.knative.dev/v1",
+                    "objectKind" : "Channel",
+                    "objectName" : "my-channel",
+                    "reply" : false
+                  } ]
+                }
+                """, getKnativeResourceConfiguration(workingDir));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddKnativeEndpointSinkBinding(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:knative-endpoint-sink.yaml" },
+                "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertFalse(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+                .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
+
+        Assertions.assertEquals("knative-endpoint-sink", sinkBinding.getMetadata().getName());
+        Assertions.assertEquals("my-endpoint", sinkBinding.getSpec().getSink().getRef().getName());
+        Assertions.assertEquals("Service", sinkBinding.getSpec().getSink().getRef().getKind());
+        Assertions.assertEquals("serving.knative.dev/v1", sinkBinding.getSpec().getSink().getRef().getApiVersion());
+        Assertions.assertEquals("knative-endpoint-sink", sinkBinding.getSpec().getSubject().getName());
+        Assertions.assertEquals("Deployment", sinkBinding.getSpec().getSubject().getKind());
+        Assertions.assertEquals("apps/v1", sinkBinding.getSpec().getSubject().getApiVersion());
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals("classpath:knative.json", applicationProperties.get("camel.component.knative.environmentPath"));
+
+        Assertions.assertEquals("""
+                {
+                  "resources" : [ {
+                    "name" : "my-endpoint",
+                    "type" : "endpoint",
+                    "endpointKind" : "sink",
+                    "url" : "{{k.sink:http://localhost:8080}}",
+                    "objectApiVersion" : "serving.knative.dev/v1",
+                    "objectKind" : "Service",
+                    "objectName" : "my-endpoint",
+                    "reply" : false
+                  } ]
+                }
+                """, getKnativeResourceConfiguration(workingDir));
     }
 
     @ParameterizedTest
@@ -445,6 +682,23 @@ class KubernetesExportTest extends KubernetesBaseTest {
             }
         }
         return Optional.empty();
+    }
+
+    private String readResource(File workingDir, String path) throws IOException {
+        try (FileInputStream fis = new FileInputStream(workingDir.toPath().resolve(path).toFile())) {
+            return IOHelper.loadText(fis);
+        }
+    }
+
+    private Properties getApplicationProperties(File workingDir) throws IOException {
+        String content = readResource(workingDir, "src/main/resources/application.properties");
+        Properties applicationProperties = new Properties();
+        applicationProperties.load(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+        return applicationProperties;
+    }
+
+    private String getKnativeResourceConfiguration(File workingDir) throws IOException {
+        return readResource(workingDir, "src/main/resources/knative.json");
     }
 
     private Model readMavenModel() throws Exception {

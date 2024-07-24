@@ -20,6 +20,8 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -109,6 +111,8 @@ public class KubernetesExport extends Export {
     @CommandLine.Option(names = { "--image-group" },
                         description = "The image registry group used to push images to.")
     protected String imageGroup;
+
+    private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";
 
     public KubernetesExport(CamelJBangMain main) {
         super(main);
@@ -333,6 +337,22 @@ public class KubernetesExport extends Export {
 
             }
         }
+
+        context.doWithConfigurationResources((fileName, content) -> {
+            try {
+                File target = new File(exportDir + SRC_MAIN_RESOURCES + fileName);
+                if (target.exists()) {
+                    Files.writeString(target.toPath(), "%n%s".formatted(content), StandardOpenOption.APPEND);
+                } else {
+                    safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), target);
+                }
+            } catch (Exception e) {
+                if (!quiet) {
+                    printer().printf("Failed to create configuration resource %s - %s%n",
+                            exportDir + SRC_MAIN_RESOURCES + fileName, e.getMessage());
+                }
+            }
+        });
 
         if (!quiet) {
             printer().println("Project export successful!");

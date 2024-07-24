@@ -327,7 +327,7 @@ public final class TraitHelper {
             CamelCatalog catalog = context.getCatalog();
             if (context.getSources() != null) {
                 for (Source source : context.getSources()) {
-                    SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
+                    SourceMetadata metadata = context.inspectMetaData(source);
                     if (MetadataHelper.exposesHttpServices(catalog, metadata)) {
                         exposesHttpServices = true;
                         break;

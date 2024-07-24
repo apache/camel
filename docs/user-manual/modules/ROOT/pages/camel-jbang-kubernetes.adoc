@@ -474,6 +474,250 @@ Refer to the Knative documentation for more information.
 
 |===
 
+=== Connecting to Knative
+
+The previous section described how the exported Apache Camel application can leverage the Knative service resource with auto-scaling as part of the deployment to Kubernetes.
+
+Apache Camel also provides a Knative component that makes you easily interact with https://knative.dev/docs/eventing/[Knative eventing] and https://knative.dev/docs/serving/[Knative serving].
+
+The Knative component enables you to exchange data with the Knative eventing broker and other Knative services deployed on Kubernetes.
+The Camel JBang Kubernetes plugin provides some autoconfiguration options when connecting with the Knative component.
+The export command assists you in configuring both the Knative component and the Kubernetes manifest for connecting to Knative resources on the Kubenretes cluster.
+
+=== Knative trigger
+
+The concept of a Knative trigger allows you to consume events from the https://knative.dev/docs/eventing/[Knative eventing] broker.
+In case your Camel route uses the Knative component as a consumer you may need to create a trigger in Kubernetes in order
+to connect your Camel application with the Knative broker.
+
+The Camel JBang Kubernetes plugin is able to automatically create this trigger for you.
+
+The following Camel route uses the Knative event component and references a Knative broker by its name.
+The plugin inspects the code and automatically generates the Knative trigger as part of the Kubernetes manifest that is used
+to run the Camel application on Kubernetes.
+
+[source,yaml]
+----
+- from:
+    uri: knative:event/camel.evt.type?name=my-broker
+    steps:
+      - to: log:info
+----
+
+The route consumes Knative events of type `camel.evt.type`.
+If you export this route with the Camel JBang Kubernetes plugin you will see a Knative trigger being generated as part of the Kubernetes manifest (kubernetes.yml).
+
+[source,bash]
+----
+camel kubernetes export knative-route.yaml
+----
+
+The generated export project can be deployed to Kubernetes and as part of the deployment the trigger is automatically created so the application can start consuming events.
+
+The generated trigger looks as follows:
+
+[source,yaml]
+----
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: my-broker-knative-route-camel-evt-type
+spec:
+  broker: my-broker
+  filter:
+    attributes:
+      type: camel.evt.type
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: knative-route
+    uri: /events/camel-evt-type
+----
+
+The trigger uses a default filter on the event type CloudEvents attribute and calls the Camel application via the exposed Kubernetes service resource.
+
+The Camel application is automatically configured to expose an Http service so incoming events are handed over to the Camel route.
+You can review the Knative service resource configuration that makes Camel configure the Knative component.
+The configuration has been automatically created in `src/main/resources/knative.json` in the exported project.
+
+Here is an example of the generated `knative.json` file:
+
+[source,json]
+----
+{
+  "resources" : [ {
+    "name" : "camel-event",
+    "type" : "event",
+    "endpointKind" : "source",
+    "path" : "/events/camel-event",
+    "objectApiVersion" : "eventing.knative.dev/v1",
+    "objectKind" : "Broker",
+    "objectName" : "my-broker",
+    "reply" : false
+  } ]
+}
+----
+
+The exported project has everything configured to run the application on Kubernetes.
+Of course, you need Knative eventing installed on your target cluster, and you need to have a Knative broker named `my-broker` available in the target namespace.
+
+Now you can just deploy the application using the Kubernetes manifest and see the Camel route consuming events from the broker.
+
+=== Knative channel subscription
+
+Knative channels represent another form of producing and consuming events from the Knative broker.
+Instead of using a trigger you can create a subscription for a Knative channel to consume events.
+
+The Camel route that connects to a Knative channel in order to receive events looks like this:
+
+[source,yaml]
+----
+- from:
+    uri: knative:channel/my-channel
+    steps:
+      - to: log:info
+----
+
+The Knative channel is referenced by its name.
+The Camel JBang Kubernetes plugin will inspect your code to automatically create a channel subscription as part of the Kubernetes manifest.
+You just need to export the Camel route as usual.
+
+[source,bash]
+----
+camel kubernetes export knative-route.yaml
+----
+
+The code inspection recognizes the Knative component that references the Knative channel and the subscription automatically becomes part of the exported Kubernetes manifest.
+
+Here is an example subscription that has been generated during the export:
+
+[source,yaml]
+----
+apiVersion: messaging.knative.dev/v1
+kind: Subscription
+metadata:
+  name: my-channel-knative-route
+spec:
+  channel:
+    apiVersion: messaging.knative.dev/v1
+    kind: Channel
+    name: my-channel
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: knative-route
+    uri: /channels/my-channel
+----
+
+The subscription connects the Camel application with the channel so each event on the channel is sent to the Kubernetes service resource that also has been created as part of the Kubernetes manifest.
+
+The Camel Knative component uses a service resource configuration internally to create the proper Http service.
+You can review the Knative service resource configuration that makes Camel configure the Knative component.
+The configuration has been automatically created in `src/main/resources/knative.json` in the exported project.
+
+Here is an example of the generated `knative.json` file:
+
+[source,json]
+----
+{
+  "resources" : [ {
+    "name" : "my-channel",
+    "type" : "channel",
+    "endpointKind" : "source",
+    "path" : "/channels/my-channel",
+    "objectApiVersion" : "messaging.knative.dev/v1",
+    "objectKind" : "Channel",
+    "objectName" : "my-channel",
+    "reply" : false
+  } ]
+}
+----
+
+Assuming that you have Knative eventing installed on your cluster and that you have setup the Knative channel `my-channel` you can start consuming events right away.
+The deployment of the exported project uses the Kubernetes manifest to create all required resources including the Knative subscription.
+
+=== Knative sink binding
+
+When connecting to a Knative resource (Broker, Channel, Service) in order to produce events for Knative eventing you probably want to use a `SinkBinding` that resolves the URL to the Knative resource for you.
+The sink binding is a Kubernetes resource that makes Knative eventing automatically inject the resource URL into your Camel application on startup.
+The Knative URL injection uses environment variables (`K_SINK`, `K_CE_OVERRIDES`) on your deployment.
+The Knative eventing operator will automatically resolve the Knative resource (e.g. a Knative broker URL) and inject the value so your application does not need to know the actual URL when deploying.
+
+The Camel JBang Kubernetes plugin leverages the sink binding concept for all routes that use the Knative component as an output.
+
+The following route produces events on a Knative broker:
+
+[source, yaml]
+----
+- from:
+    uri: timer:tick
+    steps:
+      - setBody:
+          constant: Hello Camel !!!
+      - to: knative:event/camel.evt.type?name=my-broker
+----
+
+The route produces events of type `camel.evt.type` and pushes the events to the broker named `my-broker`.
+At this point the actual Knative broker URL is unknown.
+The sink binding is going to resolve the URL and inject its value at deployment time using the `K_SINK` environment variable.
+
+The Camel JBang Kubernetes plugin export automatically inspects such a route and automatically creates the sink binding resource for us.
+The sink binding is part of the exported Kubernetes manifest and is created on the cluster as part of the deployment.
+
+A sink binding resource that is created by the export command looks like follows:
+
+[source,bash]
+----
+camel kubernetes export knative-route.yaml
+----
+
+[source,yaml]
+----
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  finalizers:
+    - sinkbindings.sources.knative.dev
+  name: knative-route
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: my-broker
+  subject:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: knative-route
+----
+
+In addition to creating the sink binding the Camel JBang plugin also takes care of configuring the Knative Camel component.
+The Knative component uses a configuration file that you can find in `src/main/resources/knative.json`.
+As you can see the configuration uses the `K_SINK` injected property placeholder as a broker URL.
+
+[source,json]
+----
+{
+  "resources" : [ {
+    "name" : "camel-evt-type",
+    "type" : "event",
+    "endpointKind" : "sink",
+    "url" : "{{k.sink}}",
+    "objectApiVersion" : "eventing.knative.dev/v1",
+    "objectKind" : "Broker",
+    "objectName" : "my-broker",
+    "reply" : false
+  } ]
+}
+----
+
+As soon as the Kubernetes deployment for the exported project has started the sink binding will inject the `K_SINK` environment variable so that the Camel applicaiton is ready to send events to the Knative broker.
+
+The sink binding concept works for Knative Broker, Channel and Service resources.
+You just reference the resource by its name in your Camel route when sending data to the Knative component as an output of the route (`to("knative:event|channel|endpoint/<resource-name>")`).
+
 === Mount trait options
 
 The mount trait is able to configure volume mounts on the Deployment resource in order to inject data from Kubernetes resources such as config maps or secrets.
