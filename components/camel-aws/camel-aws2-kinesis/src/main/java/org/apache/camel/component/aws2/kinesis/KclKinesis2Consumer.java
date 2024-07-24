@@ -81,7 +81,7 @@ public class KclKinesis2Consumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         LOG.debug("Starting KCL Consumer");
-        DynamoDbAsyncClient dynamoByAsyncClient = null;
+        DynamoDbAsyncClient dynamoDbAsyncClient = null;
         CloudWatchAsyncClient cloudWatchAsyncClient = null;
         KinesisAsyncClient kinesisAsyncClient = getEndpoint().getAsyncClient();
         Kinesis2Configuration configuration = getEndpoint().getConfiguration();
@@ -105,8 +105,10 @@ public class KclKinesis2Consumer extends DefaultConsumer {
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
             }
-            dynamoByAsyncClient
+            dynamoDbAsyncClient
                     = clientBuilder.build();
+        } else {
+            dynamoDbAsyncClient = getEndpoint().getConfiguration().getDynamoDbAsyncClient();
         }
         if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getCloudWatchAsyncClient())) {
             CloudWatchAsyncClientBuilder clientBuilder = CloudWatchAsyncClient.builder();
@@ -129,10 +131,12 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                 clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
             }
             cloudWatchAsyncClient = clientBuilder.build();
+        } else {
+            cloudWatchAsyncClient = getEndpoint().getConfiguration().getCloudWatchAsyncClient();
         }
         this.executor = this.getEndpoint().createExecutor();
         this.executor.submit(new KclKinesisConsumingTask(
-                configuration.getStreamName(), kinesisAsyncClient, dynamoByAsyncClient, cloudWatchAsyncClient));
+                configuration.getStreamName(), kinesisAsyncClient, dynamoDbAsyncClient, cloudWatchAsyncClient));
     }
 
     @Override
