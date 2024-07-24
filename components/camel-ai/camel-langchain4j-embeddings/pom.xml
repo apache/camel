@@ -30,7 +30,7 @@
 
     <artifactId>camel-langchain4j-embeddings</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: LangChain4j :: Embedding</name>
+    <name>Camel :: AI :: LangChain4j :: Embedding</name>
     <description>LangChain4j Embedding</description>
 
     <properties>

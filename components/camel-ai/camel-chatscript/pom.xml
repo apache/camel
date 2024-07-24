@@ -28,7 +28,7 @@
 
     <artifactId>camel-chatscript</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: ChatScript</name>
+    <name>Camel :: AI :: ChatScript</name>
     <description>Camel support for ChatScript</description>
 
     <properties>

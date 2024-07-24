@@ -29,7 +29,7 @@
 
     <artifactId>camel-milvus</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Milvus</name>
+    <name>Camel :: AI :: Milvus</name>
     <description>Camel Milvus support</description>
 
     <properties>

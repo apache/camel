@@ -28,7 +28,7 @@
 
     <artifactId>camel-qdrant</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Qdrant</name>
+    <name>Camel :: AI :: Qdrant</name>
     <description>Camel Qdrant support</description>
 
     <properties>
