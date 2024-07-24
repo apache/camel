@@ -107,6 +107,8 @@ public class KclKinesis2Consumer extends DefaultConsumer {
             }
             dynamoByAsyncClient
                     = clientBuilder.build();
+        } else {
+            dynamoByAsyncClient = getEndpoint().getConfiguration().getDynamoDbAsyncClient();
         }
         if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getCloudWatchAsyncClient())) {
             CloudWatchAsyncClientBuilder clientBuilder = CloudWatchAsyncClient.builder();
@@ -129,6 +131,8 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                 clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
             }
             cloudWatchAsyncClient = clientBuilder.build();
+        } else {
+            cloudWatchAsyncClient = getEndpoint().getConfiguration().getCloudWatchAsyncClient();
         }
         this.executor = this.getEndpoint().createExecutor();
         this.executor.submit(new KclKinesisConsumingTask(
