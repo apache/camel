@@ -42,6 +42,7 @@ class ExportCamelMain extends Export {
 
     public ExportCamelMain(CamelJBangMain main) {
         super(main);
+        pomTemplateName = "main-pom.tmpl";
     }
 
     @Override
@@ -160,7 +161,7 @@ class ExportCamelMain extends Export {
     private void createMavenPom(File settings, File profile, File pom, Set<String> deps, String packageName) throws Exception {
         String[] ids = gav.split(":");
 
-        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-pom.tmpl");
+        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/" + pomTemplateName);
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
@@ -169,10 +170,10 @@ class ExportCamelMain extends Export {
             camelVersion = catalog.getCatalogVersion();
         }
 
-        context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
-        context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
-        context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
-        context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
         if (packageName != null) {
             context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);

@@ -67,7 +67,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
     private static Stream<Arguments> runtimeProvider() {
         return Stream.of(
                 Arguments.of(RuntimeType.quarkus),
-                Arguments.of(RuntimeType.springBoot));
+                Arguments.of(RuntimeType.springBoot),
+                Arguments.of(RuntimeType.main));
     }
 
     @ParameterizedTest
@@ -430,7 +431,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
                         .findFirst();
             }
         }
-        if (rt == RuntimeType.springBoot) {
+        if (rt == RuntimeType.springBoot || rt == RuntimeType.main) {
             var kind = type.getSimpleName().toLowerCase();
             File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
             if (file.isFile()) {
