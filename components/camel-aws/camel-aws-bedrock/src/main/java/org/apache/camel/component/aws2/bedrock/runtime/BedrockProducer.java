@@ -234,7 +234,8 @@ public class BedrockProducer extends DefaultProducer {
 
     protected void setResponseText(InvokeModelResponse result, Message message) {
         switch (getConfiguration().getModelId()) {
-            case "amazon.titan-text-express-v1", "amazon.titan-text-lite-v1", "amazon.titan-text-premier-v1:0" ->
+            case "amazon.titan-text-express-v1", "amazon.titan-text-lite-v1", "amazon.titan-text-premier-v1:0",
+                    "amazon.titan-embed-text-v2:0" ->
                 setTitanText(result, message);
             case "ai21.j2-ultra-v1", "ai21.j2-mid-v1" -> {
                 try {
