@@ -462,6 +462,24 @@ class BedrockProducerIT extends CamelTestSupport {
     }
 
     @Test
+    public void testInvokeTitanTextEmbeddingsV2Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_titan_text_embeddings_v2", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("inputText",
+                    new TextNode("A Sci-fi camel running in the desert"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "*/*");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
     public void testInvokeTitanPremierModel() throws InterruptedException {
 
         result.expectedMessageCount(1);
@@ -520,6 +538,11 @@ class BedrockProducerIT extends CamelTestSupport {
                 from("direct:send_titan_multimodal_embeddings")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeEmbeddingsModel&modelId="
                             + BedrockModels.TITAN_MULTIMODAL_EMBEDDINGS_G1.model)
+                        .to(result);
+
+                from("direct:send_titan_text_embeddings_v2")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}}&region=us-east-1&operation=invokeEmbeddingsModel&modelId="
+                            + BedrockModels.TITAN_TEXT_EMBEDDINGS_V2.model)
                         .to(result);
 
                 from("direct:send_titan_premier")
