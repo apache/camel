@@ -20,6 +20,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
@@ -64,6 +65,7 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.TransformerResolver;
@@ -72,6 +74,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.util.URISupport;
 
 public class MetadataHelper {
 
@@ -199,6 +202,23 @@ public class MetadataHelper {
                 // TODO: maybe the camel context should keep track of those ?
                 return dataFormatResolver.getNames();
             }
+
+            @Override
+            public PropertiesComponent getPropertiesComponent() {
+                return new org.apache.camel.component.properties.PropertiesComponent() {
+                    @Override
+                    public Optional<String> resolveProperty(String key) {
+                        // properties may not be resolvable in this stubbed context, just use the key as a value
+                        return Optional.of(key);
+                    }
+
+                    @Override
+                    public String parseUri(String uri, boolean keepUnresolvedOptional) {
+                        // we are not interested in the query part of endpoint uris, remove it to avoid unresolvable properties
+                        return URISupport.stripQuery(uri);
+                    }
+                };
+            }
         };
 
         final ExtendedCamelContext ec = context.getCamelContextExtension();
@@ -262,6 +282,10 @@ public class MetadataHelper {
             if (componentName != null) {
                 // TODO: improve retrieval of Http component nature
                 if (catalog.componentModel(componentName).isConsumerOnly() && componentName.contains("http")) {
+                    return true;
+                }
+
+                if (componentName.equals("knative")) {
                     return true;
                 }
             }
