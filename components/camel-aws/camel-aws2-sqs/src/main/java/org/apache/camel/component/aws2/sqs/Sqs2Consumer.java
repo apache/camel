@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,11 +51,7 @@ import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchReq
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.MessageNotInflightException;
-import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
-import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiptHandleIsInvalidException;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
 /**
@@ -72,20 +66,11 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     private ScheduledFuture<?> scheduledFuture;
     private ScheduledExecutorService scheduledExecutor;
     private transient String sqsConsumerToString;
-    private Collection<String> attributeNames;
-    private Collection<String> messageAttributeNames;
+    private Sqs2PollingClient pollingClient;
 
     public Sqs2Consumer(Sqs2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
-        if (getConfiguration().getAttributeNames() != null) {
-            String[] names = getConfiguration().getAttributeNames().split(",");
-            attributeNames = Arrays.asList(names);
-        }
-        if (getConfiguration().getMessageAttributeNames() != null) {
-            String[] names = getConfiguration().getMessageAttributeNames().split(",");
-            messageAttributeNames = Arrays.asList(names);
-        }
+        pollingClient = new Sqs2PollingClient(endpoint);
     }
 
     @Override
@@ -94,60 +79,12 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        ReceiveMessageRequest.Builder request = ReceiveMessageRequest.builder().queueUrl(getQueueUrl());
-        request.maxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
-        request.visibilityTimeout(getConfiguration().getVisibilityTimeout());
-        request.waitTimeSeconds(getConfiguration().getWaitTimeSeconds());
-
-        if (attributeNames != null) {
-            request.attributeNamesWithStrings(attributeNames);
-        }
-        if (messageAttributeNames != null) {
-            request.messageAttributeNames(messageAttributeNames);
-        }
-
-        LOG.trace("Receiving messages with request [{}]...", request);
-
-        ReceiveMessageResponse messageResult;
-        ReceiveMessageRequest requestBuild = request.build();
-        try {
-            messageResult = getClient().receiveMessage(requestBuild);
-        } catch (QueueDoesNotExistException e) {
-            LOG.info("Queue does not exist....recreating now...");
-            reConnectToQueue();
-            messageResult = getClient().receiveMessage(requestBuild);
-        }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received {} messages", messageResult.messages().size());
-        }
-
+        List<software.amazon.awssdk.services.sqs.model.Message> messages = pollingClient.poll();
         // okay we have some response from aws so lets mark the consumer as ready
         forceConsumerAsReady();
 
-        Queue<Exchange> exchanges = createExchanges(messageResult.messages());
+        Queue<Exchange> exchanges = createExchanges(messages);
         return processBatch(CastUtils.cast(exchanges));
-    }
-
-    public void reConnectToQueue() {
-        try {
-            if (getEndpoint().getConfiguration().isAutoCreateQueue()) {
-                getEndpoint().createQueue(getClient());
-            }
-        } catch (QueueDeletedRecentlyException qdr) {
-            LOG.debug("Queue recently deleted, will retry in 30 seconds.");
-            try {
-                Thread.sleep(30000);
-                getEndpoint().createQueue(getClient());
-            } catch (InterruptedException e) {
-                LOG.warn("Interrupted while retrying queue connection.", e);
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                LOG.warn("failed to retry queue connection.", e);
-            }
-        } catch (Exception e) {
-            LOG.warn("Could not connect to queue in amazon.", e);
-        }
     }
 
     protected Queue<Exchange> createExchanges(List<software.amazon.awssdk.services.sqs.model.Message> messages) {
@@ -380,6 +317,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         if (scheduledExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
+        }
+        if (pollingClient != null) {
+            pollingClient.shutdown();
+            pollingClient = null;
         }
 
         super.doShutdown();
