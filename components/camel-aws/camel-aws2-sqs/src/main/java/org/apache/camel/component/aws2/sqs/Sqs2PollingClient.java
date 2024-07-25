@@ -17,11 +17,9 @@
 package org.apache.camel.component.aws2.sqs;
 
 import java.io.IOException;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
@@ -34,6 +32,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
+import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.commons.io.function.IOConsumer;
 import org.slf4j.Logger;
@@ -46,6 +45,7 @@ import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparing;
 
 final class Sqs2PollingClient {
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2PollingClient.class);
@@ -70,6 +70,7 @@ final class Sqs2PollingClient {
     private final IOConsumer<SqsClient> createQueueOperation;
     private final ExecutorService executor;
     private final Clock clock;
+    private final ExecutorServiceManager executorServiceManager;
 
     private final String queueName;
     private final String queueUrl;
@@ -85,7 +86,7 @@ final class Sqs2PollingClient {
     @SuppressWarnings("resource")
     Sqs2PollingClient(Sqs2Endpoint endpoint) {
         this(endpoint.getClient(), endpoint.getMaxMessagesPerPoll(), endpoint.getConfiguration(), endpoint::createQueue,
-             Clock.systemUTC(), endpoint.getCamelContext().getExecutorServiceManager());
+             endpoint.getCamelContext().getClock(), endpoint.getCamelContext().getExecutorServiceManager());
     }
 
     Sqs2PollingClient(SqsClient sqsClient, int maxNumberOfMessages, Sqs2Configuration configuration,
@@ -94,6 +95,7 @@ final class Sqs2PollingClient {
         this.sqsClient = sqsClient;
         this.createQueueOperation = createQueueOperation;
         this.clock = clock;
+        this.executorServiceManager = executorServiceManager;
 
         this.maxNumberOfMessages = Math.max(1, maxNumberOfMessages);
         queueName = configuration.getQueueName();
@@ -112,7 +114,7 @@ final class Sqs2PollingClient {
 
     void shutdown() {
         closed.set(true);
-        executor.shutdown();
+        executorServiceManager.shutdownNow(executor);
     }
 
     List<Message> poll() throws IOException {
@@ -120,7 +122,7 @@ final class Sqs2PollingClient {
             return emptyList();
         }
 
-        final PollContext context = PollContext.create();
+        final PollContext context = new PollContext();
         final List<Message> messages = poll(context);
         if (context.errorCount() == numberOfRequestsPerPoll) {
             if (context.errorCount() == 1) {
@@ -236,12 +238,12 @@ final class Sqs2PollingClient {
             // queue creation is not scheduled - ignoring
             return false;
         }
-        long currentTimeMillis = clock.millis();
-        if (scheduleTimeMs > currentTimeMillis) {
-            LOG.debug("{}ms remaining until queue auto-creation is triggered", scheduleTimeMs - currentTimeMillis);
+        long elapsedTimeMillis = clock.elapsed();
+        if (scheduleTimeMs > elapsedTimeMillis) {
+            LOG.debug("{}ms remaining until queue auto-creation is triggered", scheduleTimeMs - elapsedTimeMillis);
             return true;
         }
-        final PollContext context = PollContext.create();
+        final PollContext context = new PollContext();
         createQueue(UUID.randomUUID(), context);
         if (context.hasErrors()) {
             context.rethrowIfFirstErrorIsRuntimeException();
@@ -252,7 +254,7 @@ final class Sqs2PollingClient {
     }
 
     private void scheduleQueueAutoCreation() {
-        queueAutoCreationScheduleTime.set(clock.millis() + RECENTLY_DELETED_QUEUE_BACKOFF_TIME_MS);
+        queueAutoCreationScheduleTime.set(clock.elapsed() + RECENTLY_DELETED_QUEUE_BACKOFF_TIME_MS);
     }
 
     private void cancelScheduledQueueAutoCreation() {
@@ -289,17 +291,13 @@ final class Sqs2PollingClient {
             LOG.trace("Received {} messages in {} requests", messages.size(), numberOfRequestsPerPoll);
         }
         return messages.stream()
-                .sorted(Comparator.comparing(
-                        message -> message.attributes().getOrDefault(MessageSystemAttributeName.SEQUENCE_NUMBER, "")))
+                .sorted(comparing(message -> message.attributes().getOrDefault(MessageSystemAttributeName.SEQUENCE_NUMBER, "")))
                 .toList();
     }
 
-    private static final class PollContext {
-        private final AtomicReference<UUID> missingQueueHandlerRequestId = new AtomicReference<>();
-        private final Queue<Exception> errors = new ConcurrentLinkedQueue<>();
-
-        private static PollContext create() {
-            return new PollContext();
+    private record PollContext(AtomicReference<UUID> missingQueueHandlerRequestId, Queue<Exception> errors) {
+        private PollContext() {
+            this(new AtomicReference<>(), new ConcurrentLinkedQueue<>());
         }
 
         private void fireQueueMissing(UUID requestId) {
