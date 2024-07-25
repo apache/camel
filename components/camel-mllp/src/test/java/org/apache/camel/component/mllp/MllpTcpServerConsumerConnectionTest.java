@@ -28,6 +28,7 @@ import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -83,13 +84,11 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         for (int i = 1; i <= connectionCount; ++i) {
             mllpClient.connect();
-            Thread.sleep(connectionMillis);
             mllpClient.close();
         }
 
         // Connect one more time and allow a client thread to start
         mllpClient.connect();
-        Thread.sleep(1000);
         mllpClient.close();
 
         MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
@@ -107,13 +106,11 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         for (int i = 1; i <= connectionCount; ++i) {
             mllpClient.connect();
-            Thread.sleep(connectionMillis);
             mllpClient.reset();
         }
 
         // Connect one more time and allow a client thread to start
         mllpClient.connect();
-        Thread.sleep(1000);
         mllpClient.reset();
 
         MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
@@ -136,17 +133,18 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         mllpClient.connect();
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
-        Thread.sleep(idleTimeout + RECEIVE_TIMEOUT);
 
-        try {
-            mllpClient.checkConnection();
-            fail("The MllpClientResource should have thrown an exception when writing to the reset socket");
-        } catch (MllpJUnitResourceException expectedEx) {
-            assertEquals("checkConnection failed - read() returned END_OF_STREAM", expectedEx.getMessage());
-            assertNull(expectedEx.getCause());
-        }
+        Awaitility.await().untilAsserted(() -> {
+            try {
+                mllpClient.checkConnection();
+                fail("The MllpClientResource should have thrown an exception when writing to the reset socket");
+            } catch (MllpJUnitResourceException expectedEx) {
+                assertEquals("checkConnection failed - read() returned END_OF_STREAM", expectedEx.getMessage());
+                assertNull(expectedEx.getCause());
+            }
 
-        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
+            MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
+        });
     }
 
     void addTestRouteWithIdleTimeout(final int idleTimeout) throws Exception {

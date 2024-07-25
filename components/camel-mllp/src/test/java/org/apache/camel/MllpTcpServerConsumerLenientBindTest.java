@@ -18,6 +18,7 @@ package org.apache.camel;
 
 import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,6 +29,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
@@ -86,10 +88,10 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
             assertIsInstanceOf(SocketTimeoutException.class, expectedEx.getCause());
         }
         mllpClient.reset();
-
         portBlocker.close();
-        Thread.sleep(2000);
-        assertEquals(ServiceStatus.Started, context.getStatus());
+
+        Awaitility.await().pollDelay(2000, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(ServiceStatus.Started, context.getStatus()));
 
         mllpClient.connect();
         String acknowledgement
