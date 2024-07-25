@@ -184,7 +184,8 @@ public final class RuntimeUtil {
     }
 
     public static String[] getDependenciesAsArray(Properties properties) {
-        return getDependencies(properties).split(",");
+        String deps = getDependencies(properties);
+        return deps.isEmpty() ? new String[0] : deps.split(",");
     }
 
     public static String getPid() {

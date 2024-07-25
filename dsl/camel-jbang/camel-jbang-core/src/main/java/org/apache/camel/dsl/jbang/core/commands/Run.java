@@ -153,7 +153,7 @@ public class Run extends CamelCommand {
     String profile = "dev";
 
     @Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
-    String[] dependencies;
+    List<String> dependencies = new ArrayList<>();
 
     @Option(names = { "--repos" },
             description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
@@ -808,7 +808,7 @@ public class Run extends CamelCommand {
 
         // merge existing dependencies with --deps
         addDependencies(RuntimeUtil.getDependenciesAsArray(profileProperties));
-        if (dependencies.length > 0) {
+        if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
             main.addInitialProperty("camel.jbang.dependencies", joined);
             writeSettings("camel.jbang.dependencies", joined);
@@ -857,14 +857,8 @@ public class Run extends CamelCommand {
 
     protected void addDependencies(String... deps) {
         var depsArray = Optional.ofNullable(deps).orElse(new String[0]);
-        var depsList = new ArrayList<>(getDependenciesList());
-        depsList.addAll(Arrays.asList(depsArray));
-        dependencies = depsList.toArray(new String[0]);
-    }
-
-    protected List<String> getDependenciesList() {
-        var depsArray = Optional.ofNullable(dependencies).orElse(new String[0]);
-        return Arrays.asList(depsArray);
+        var depsList = Arrays.stream(depsArray).filter(tok -> !tok.isEmpty()).toList();
+        dependencies.addAll(depsList);
     }
 
     protected int runQuarkus() throws Exception {
@@ -890,7 +884,7 @@ public class Run extends CamelCommand {
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.addDependencies(this.dependencies);
+        eq.dependencies = this.dependencies;
         eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
@@ -954,7 +948,7 @@ public class Run extends CamelCommand {
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.addDependencies(dependencies);
+        eq.dependencies.addAll(dependencies);
         eq.addDependencies("camel:cli-connector");
         if (this.dev) {
             // hot-reload of spring-boot

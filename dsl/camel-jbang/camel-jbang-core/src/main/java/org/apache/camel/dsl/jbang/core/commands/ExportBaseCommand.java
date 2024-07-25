@@ -94,7 +94,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String repos;
 
     @CommandLine.Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
-    protected String[] dependencies;
+    protected List<String> dependencies = new ArrayList<>();
 
     @CommandLine.Option(names = { "--runtime" },
                         completionCandidates = RuntimeCompletionCandidates.class,
@@ -204,9 +204,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     protected boolean download = true;
 
-    @CommandLine.Option(names = { "--additional-properties" },
-                        description = "Additional maven properties, ex. --additional-properties=prop1=foo,prop2=bar")
-    protected String additionalProperties;
+    @CommandLine.Option(names = { "--build-property" }, arity = "*",
+                        description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
+    protected List<String> buildProperties = new ArrayList<>();
 
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
@@ -295,7 +295,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
-        run.addDependencies(dependencies);
+        run.dependencies = dependencies;
         run.files = files;
         run.exclude = exclude;
         run.openapi = openapi;
@@ -310,14 +310,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected void addDependencies(String... deps) {
         var depsArray = Optional.ofNullable(deps).orElse(new String[0]);
-        var depsList = new ArrayList<>(getDependenciesList());
-        depsList.addAll(Arrays.asList(depsArray));
-        dependencies = depsList.toArray(new String[0]);
+        dependencies.addAll(Arrays.asList(depsArray));
     }
 
-    protected List<String> getDependenciesList() {
-        var depsArray = Optional.ofNullable(dependencies).orElse(new String[0]);
-        return Arrays.asList(depsArray);
+    protected String replaceBuildProperties(String context) {
+        String properties = buildProperties.stream()
+                .filter(item -> !item.isEmpty())
+                .map(item -> {
+                    String[] keyValueProperty = item.split("=");
+                    return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
+                            keyValueProperty[0]);
+                })
+                .collect(Collectors.joining(System.lineSeparator()));
+        if (!properties.isEmpty()) {
+            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), Matcher.quoteReplacement(properties));
+        } else {
+            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), "");
+        }
+        return context;
     }
 
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
@@ -338,7 +348,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // custom dependencies
-        for (String d : getDependenciesList()) {
+        for (String d : dependencies) {
             answer.add(normalizeDependency(d));
         }
 
@@ -619,12 +629,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // noop
     }
 
-    protected Properties mapToProperties(Map<String, Object> map) {
-        var result = new Properties();
-        if (map != null) {
-            map.forEach((key, value) -> result.setProperty(key, value.toString()));
-        }
-        return result;
+    protected Properties mapBuildProperties() {
+        var answer = new Properties();
+        buildProperties.stream().map(item -> item.split("=")).forEach(toks -> answer.setProperty(toks[0], toks[1]));
+        return answer;
     }
 
     protected void copyMavenWrapper() throws Exception {
