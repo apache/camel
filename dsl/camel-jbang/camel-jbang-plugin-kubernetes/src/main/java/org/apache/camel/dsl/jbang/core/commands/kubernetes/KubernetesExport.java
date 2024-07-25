@@ -109,6 +109,14 @@ public class KubernetesExport extends Export {
                         description = "The image registry group used to push images to.")
     protected String imageGroup;
 
+    @CommandLine.Option(names = { "--image-builder" },
+                        description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
+    protected String imageBuilder;
+
+    @CommandLine.Option(names = { "--cluster-type" },
+                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
+    protected String clusterType;
+
     private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";
 
     public KubernetesExport(CamelJBangMain main) {
@@ -158,23 +166,12 @@ public class KubernetesExport extends Export {
         }
 
         // Resolve image group and registry
-        String resolvedImageGroup = null;
-        if (image != null) {
-            resolvedImageGroup = extractImageGroup(image);
-        } else if (imageGroup != null) {
-            resolvedImageGroup = imageGroup;
-        } else if (gav != null) {
-            var groupId = parseMavenGav(gav).getGroupId();
-            var dotToks = groupId.split("\\.");
-            resolvedImageGroup = dotToks[dotToks.length - 1];
-        }
-
-        String resolvedImageRegistry = resolveImageRegistry();
-
+        String resolvedImageGroup = resolveImageGroup();
         if (resolvedImageGroup != null) {
             buildProperties.add("%s.container-image.group=%s".formatted(propPrefix, resolvedImageGroup));
         }
 
+        String resolvedImageRegistry = resolveImageRegistry();
         if (resolvedImageRegistry != null) {
             var allowInsecure = resolvedImageRegistry.startsWith("localhost");
             buildProperties.add("%s.container-image.registry=%s".formatted(propPrefix, resolvedImageRegistry));
@@ -258,19 +255,33 @@ public class KubernetesExport extends Export {
         if (runtime == RuntimeType.quarkus) {
 
             // Quarkus specific dependencies
-            addDependencies("io.quarkus:quarkus-kubernetes", "camel:cli-connector");
+            if (clusterType != null && clusterType.equals("openshift")) {
+                addDependencies("io.quarkus:quarkus-openshift");
+                if (imageBuilder == null) {
+                    // use s2i image builder as a default on OpenShift
+                    imageBuilder = "s2i";
+                }
+            } else {
+                addDependencies("io.quarkus:quarkus-kubernetes");
+            }
 
             // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
             // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
             addDependencies("io.fabric8:kubernetes-client:6.13.1");
 
-            // Mutually exclusive image build plugins - use Jib by default
-            if (!dependencies.contains("io.quarkus:quarkus-container-image-docker")) {
+            // Configure image builder - use Jib by default
+            if (imageBuilder == null) {
                 addDependencies("io.quarkus:quarkus-container-image-jib");
+            } else if (imageBuilder.equals("s2i")) {
+                addDependencies("io.quarkus:quarkus-container-image-openshift");
+            } else {
+                addDependencies("io.quarkus:quarkus-container-image-%s".formatted(imageBuilder));
             }
 
             // Quarkus specific properties
             buildProperties.add("quarkus.container-image.build=true");
+            buildProperties
+                    .add("quarkus.container-image.builder=%s".formatted(Optional.ofNullable(imageBuilder).orElse("jib")));
         }
 
         // SpringBoot Runtime specific
@@ -370,20 +381,48 @@ public class KubernetesExport extends Export {
         labels = labelList.toArray(new String[0]);
     }
 
-    private String resolveImageRegistry() {
-        String resolvedImageRegistry = null;
+    private String resolveImageGroup() {
         if (image != null) {
-            resolvedImageRegistry = extractImageRegistry(image);
-        } else if (imageRegistry != null) {
+            return extractImageGroup(image);
+        }
+
+        if (imageGroup != null) {
+            return imageGroup;
+        }
+
+        if (gav != null) {
+            var groupId = parseMavenGav(gav).getGroupId();
+            var dotToks = groupId.split("\\.");
+            return dotToks[dotToks.length - 1];
+        }
+
+        return null;
+    }
+
+    private String resolveImageRegistry() {
+        if (image != null) {
+            return extractImageRegistry(image);
+        }
+
+        if (imageRegistry != null) {
             if (imageRegistry.equals("kind") || imageRegistry.equals("kind-registry")) {
-                resolvedImageRegistry = "localhost:5001";
+                return "localhost:5001";
             } else if (imageRegistry.equals("minikube") || imageRegistry.equals("minikube-registry")) {
-                resolvedImageRegistry = "localhost:5000";
+                return "localhost:5000";
             } else {
-                resolvedImageRegistry = imageRegistry;
+                return imageRegistry;
             }
         }
-        return resolvedImageRegistry;
+
+        if (clusterType != null) {
+            if (clusterType.equals("kind")) {
+                return "localhost:5001";
+            } else if (clusterType.equals("minikube")) {
+                return "localhost:5000";
+            }
+        }
+
+        return null;
     }
 
     private String extractImageGroup(String image) {
