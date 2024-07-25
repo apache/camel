@@ -59,7 +59,7 @@ class KubernetesCommandTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
         Assertions.assertEquals(3, deployment.getSpec().getSelector().getMatchLabels().size());
         Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
+        Assertions.assertEquals("docker.io/camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("Always",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
