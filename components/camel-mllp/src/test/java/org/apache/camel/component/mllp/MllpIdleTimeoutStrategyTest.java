@@ -37,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -146,10 +147,12 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
 
     private void sendHl7Message(ProducerTemplate template) throws Exception {
         target.expectedMessageCount(1);
-        // Need to send one message to get the connection established
+
         template.sendBody(Hl7TestMessageGenerator.generateMessage());
-        Thread.sleep(IDLE_TIMEOUT * 3);
-        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
+
+        // Need to send one message to get the connection established
+        Awaitility.await().pollDelay(IDLE_TIMEOUT * 3, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS));
     }
 
     @Test
