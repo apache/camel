@@ -16,16 +16,30 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -33,6 +47,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.clock.Clock;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.Synchronization;
@@ -42,6 +58,7 @@ import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.io.function.IOConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.exception.SdkException;
@@ -51,8 +68,15 @@ import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchReq
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.MessageNotInflightException;
+import software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName;
+import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
+import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiptHandleIsInvalidException;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
+
+import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparing;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Queue Service <a href="http://aws.amazon.com/sqs/">AWS
@@ -65,12 +89,13 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     private TimeoutExtender timeoutExtender;
     private ScheduledFuture<?> scheduledFuture;
     private ScheduledExecutorService scheduledExecutor;
-    private transient String sqsConsumerToString;
-    private Sqs2PollingClient pollingClient;
+    private PollingTask pollingTask;
+    private final String sqsConsumerToString;
 
     public Sqs2Consumer(Sqs2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        pollingClient = new Sqs2PollingClient(endpoint);
+        pollingTask = new PollingTask(endpoint);
+        sqsConsumerToString = "SqsConsumer[%s]".formatted(URISupport.sanitizeUri(endpoint.getEndpointUri()));
     }
 
     @Override
@@ -79,7 +104,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        List<software.amazon.awssdk.services.sqs.model.Message> messages = pollingClient.poll();
+        List<software.amazon.awssdk.services.sqs.model.Message> messages = pollingTask.call();
         // okay we have some response from aws so lets mark the consumer as ready
         forceConsumerAsReady();
 
@@ -178,7 +203,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         return getConfiguration().isDeleteAfterRead() || shouldDeleteByFilter;
     }
 
-    private boolean passedThroughFilter(Exchange exchange) {
+    private static boolean passedThroughFilter(Exchange exchange) {
         return exchange.getProperty(Sqs2Constants.SQS_DELETE_FILTERED, false, Boolean.class);
     }
 
@@ -245,21 +270,18 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public String toString() {
-        if (sqsConsumerToString == null) {
-            sqsConsumerToString = "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
-        }
         return sqsConsumerToString;
     }
 
     @Override
     protected void afterConfigureScheduler(ScheduledPollConsumerScheduler scheduler, boolean newScheduler) {
-        if (newScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler) {
-            DefaultScheduledPollConsumerScheduler ds = (DefaultScheduledPollConsumerScheduler) scheduler;
-            ds.setConcurrentConsumers(getConfiguration().getConcurrentConsumers());
+        if (newScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler defaultScheduledPollConsumerScheduler) {
+            defaultScheduledPollConsumerScheduler.setConcurrentConsumers(getConfiguration().getConcurrentConsumers());
             // if using concurrent consumers then resize pool to be at least
             // same size
-            int ps = Math.max(ds.getPoolSize(), getConfiguration().getConcurrentConsumers());
-            ds.setPoolSize(ps);
+            int poolSize = Math.max(defaultScheduledPollConsumerScheduler.getPoolSize(),
+                    getConfiguration().getConcurrentConsumers());
+            defaultScheduledPollConsumerScheduler.setPoolSize(poolSize);
         }
     }
 
@@ -318,9 +340,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
         }
-        if (pollingClient != null) {
-            pollingClient.shutdown();
-            pollingClient = null;
+        if (pollingTask != null) {
+            pollingTask.close();
+            pollingTask = null;
         }
 
         super.doShutdown();
@@ -414,4 +436,310 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
     }
 
+    private static class PollingTask implements Callable<List<software.amazon.awssdk.services.sqs.model.Message>> {
+        /**
+         * The maximum number of messages that can be requested in a single request to AWS SQS.
+         */
+        private static final int MAX_NUMBER_OF_MESSAGES_PER_REQUEST = 10;
+
+        /**
+         * The time to wait before re-creating recently deleted queue.
+         */
+        private static final long RECENTLY_DELETED_QUEUE_BACKOFF_TIME_MS = 30_000L;
+
+        private static final Pattern COMMA_SEPARATED_PATTERN = Pattern.compile(",");
+
+        private final AtomicLong queueAutoCreationScheduleTime = new AtomicLong(0L);
+        private final Object mutex = new Object();
+        private final AtomicBoolean closed = new AtomicBoolean();
+
+        private final Clock clock;
+        private final SqsClient sqsClient;
+        private final ExecutorService executor;
+        private final ExecutorServiceManager executorServiceManager;
+        private final IOConsumer<SqsClient> createQueueOperation;
+
+        private final String queueName;
+        private final String queueUrl;
+        private final int maxNumberOfMessages;
+        private final Integer visibilityTimeout;
+        private final Integer waitTimeSeconds;
+        private final Collection<String> attributeNames;
+        private final Collection<String> messageAttributeNames;
+        private final int numberOfRequestsPerPoll;
+        private final boolean queueAutoCreationEnabled;
+
+        @SuppressWarnings("resource")
+        private PollingTask(Sqs2Endpoint endpoint) {
+            this(endpoint.getCamelContext().getClock(),
+                 endpoint.getClient(),
+                 endpoint.getCamelContext().getExecutorServiceManager(),
+                 endpoint.getConfiguration(),
+                 endpoint::createQueue,
+                 endpoint.getMaxMessagesPerPoll());
+        }
+
+        private PollingTask(Clock clock,
+                            SqsClient sqsClient,
+                            ExecutorServiceManager executorServiceManager,
+                            Sqs2Configuration configuration,
+                            IOConsumer<SqsClient> createQueueOperation,
+                            int maxNumberOfMessages) {
+            this.clock = clock;
+            this.sqsClient = sqsClient;
+            this.executorServiceManager = executorServiceManager;
+            this.createQueueOperation = createQueueOperation;
+
+            this.maxNumberOfMessages = Math.max(1, maxNumberOfMessages);
+            queueName = configuration.getQueueName();
+            queueUrl = configuration.getQueueUrl();
+            visibilityTimeout = configuration.getVisibilityTimeout();
+            waitTimeSeconds = configuration.getWaitTimeSeconds();
+            messageAttributeNames = splitCommaSeparatedValues(configuration.getMessageAttributeNames());
+            attributeNames = splitCommaSeparatedValues(configuration.getAttributeNames());
+
+            numberOfRequestsPerPoll = (int) Math.ceil((double) this.maxNumberOfMessages / MAX_NUMBER_OF_MESSAGES_PER_REQUEST);
+            queueAutoCreationEnabled = configuration.isAutoCreateQueue();
+
+            executor = executorServiceManager.newFixedThreadPool(this,
+                    "%s[%s]".formatted(getClass().getSimpleName(), queueName),
+                    this.maxNumberOfMessages);
+        }
+
+        private void close() {
+            closed.set(true);
+            executorServiceManager.shutdownNow(executor);
+        }
+
+        @Override
+        public List<software.amazon.awssdk.services.sqs.model.Message> call() throws IOException {
+            if (isClosed() || processScheduledQueueAutoCreation()) {
+                return emptyList();
+            }
+
+            final PollingContext context = new PollingContext();
+            final List<software.amazon.awssdk.services.sqs.model.Message> messages = poll(context);
+            if (context.errorCount() == numberOfRequestsPerPoll) {
+                if (context.errorCount() == 1) {
+                    context.rethrowIfFirstErrorIsRuntimeException();
+                    throw new IOException("Error while polling", context.firstError());
+                }
+                throw new IOException(
+                        ("Error while polling - all %s requests resulted in an error, "
+                         + "please check the logs for more details").formatted(numberOfRequestsPerPoll));
+            }
+            return messages;
+        }
+
+        private List<software.amazon.awssdk.services.sqs.model.Message> poll(final PollingContext pollContext)
+                throws IOException {
+            if (numberOfRequestsPerPoll == 1) {
+                return poll(maxNumberOfMessages, pollContext);
+            }
+            int remaining = maxNumberOfMessages;
+            try {
+                CompletableFuture<List<software.amazon.awssdk.services.sqs.model.Message>> future
+                        = CompletableFuture.completedFuture(emptyList());
+                while (remaining > 0) {
+                    int numberOfMessages = Math.min(remaining, MAX_NUMBER_OF_MESSAGES_PER_REQUEST);
+                    future = mergeResults(future,
+                            CompletableFuture.supplyAsync(() -> poll(numberOfMessages, pollContext), executor));
+                    remaining -= MAX_NUMBER_OF_MESSAGES_PER_REQUEST;
+                }
+                return future.thenApply(this::sortBySequenceNumber).get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOG.debug("Polling interrupted", e);
+                return emptyList();
+            } catch (ExecutionException e) {
+                throw new IOException("Error while polling", e.getCause());
+            }
+        }
+
+        private List<software.amazon.awssdk.services.sqs.model.Message> poll(int maxNumberOfMessages, PollingContext context) {
+            if (context.isQueueMissing()) {
+                // if one of the request encountered a missing queue error the remaining requests
+                // should be ignored, even if the queue is automatically created it will be empty
+                // so there is no reason for immediate polling after creation
+                return emptyList();
+            }
+            try {
+                return sqsClient.receiveMessage(createReceiveRequest(maxNumberOfMessages)).messages();
+            } catch (QueueDoesNotExistException e) {
+                return handleMissingQueueError(context, e);
+            } catch (Exception e) {
+                LOG.error("Error while polling", e);
+                context.firePollingError(e);
+                return emptyList();
+            }
+        }
+
+        private List<software.amazon.awssdk.services.sqs.model.Message> handleMissingQueueError(
+                PollingContext context, QueueDoesNotExistException error) {
+            if (context.isQueueMissing()) {
+                // if the context is flagged with missing queue
+                // it means another thread is handling the error
+                return emptyList();
+            }
+            final UUID requestId = UUID.randomUUID();
+            context.fireQueueMissing(requestId);
+            if (queueAutoCreationEnabled) {
+                createQueue(requestId, context);
+                return emptyList();
+            }
+            LOG.error("Error while polling {} queue does not exists", queueName, error);
+            context.firePollingError(error);
+            return emptyList();
+        }
+
+        private ReceiveMessageRequest createReceiveRequest(int maxNumberOfMessages) {
+            ReceiveMessageRequest.Builder requestBuilder = ReceiveMessageRequest.builder()
+                    .queueUrl(queueUrl)
+                    .maxNumberOfMessages(maxNumberOfMessages)
+                    .visibilityTimeout(visibilityTimeout)
+                    .waitTimeSeconds(waitTimeSeconds);
+            if (!attributeNames.isEmpty()) {
+                requestBuilder.messageSystemAttributeNamesWithStrings(attributeNames);
+            }
+            if (!messageAttributeNames.isEmpty()) {
+                requestBuilder.messageAttributeNames(messageAttributeNames);
+            }
+            LOG.trace("Receiving messages with request [{}]...", requestBuilder);
+            return requestBuilder.build();
+        }
+
+        private void createQueue(UUID requestId, PollingContext context) {
+            synchronized (mutex) {
+                if (isClosed() || context.isMissingQueueHandledInAnotherRequest(requestId)) {
+                    // the missing queue error can be thrown by multiple threads
+                    // the first thread that is handling the error should prevent other threads
+                    // from repeating the logic
+                    // as the operation is synchronized, the other threads should wait and then
+                    // check if it wasn't handled already
+                    return;
+                }
+                try {
+                    createQueueOperation.accept(sqsClient);
+                } catch (QueueDeletedRecentlyException e) {
+                    LOG.debug("Queue recently deleted, will retry after at least 30 seconds on next polling request.", e);
+                    scheduleQueueAutoCreation();
+                } catch (Exception e) {
+                    LOG.error("Error while creating queue.", e);
+                    context.firePollingError(e);
+                }
+            }
+        }
+
+        private boolean processScheduledQueueAutoCreation() throws IOException {
+            long scheduleTimeMs = queueAutoCreationScheduleTime.get();
+            if (scheduleTimeMs == 0) {
+                // queue creation is not scheduled - ignoring
+                return false;
+            }
+            long elapsedTimeMillis = clock.elapsed();
+            if (scheduleTimeMs > elapsedTimeMillis) {
+                LOG.debug("{}ms remaining until queue auto-creation is triggered", scheduleTimeMs - elapsedTimeMillis);
+                return true;
+            }
+            final PollingContext context = new PollingContext();
+            createQueue(UUID.randomUUID(), context);
+            if (context.hasErrors()) {
+                context.rethrowIfFirstErrorIsRuntimeException();
+                throw new IOException("Error while creating %s queue".formatted(queueName), context.firstError());
+            }
+            cancelScheduledQueueAutoCreation();
+            return true;
+        }
+
+        private void scheduleQueueAutoCreation() {
+            queueAutoCreationScheduleTime.set(clock.elapsed() + RECENTLY_DELETED_QUEUE_BACKOFF_TIME_MS);
+        }
+
+        private void cancelScheduledQueueAutoCreation() {
+            queueAutoCreationScheduleTime.set(0);
+        }
+
+        private boolean isClosed() {
+            return closed.get();
+        }
+
+        private static List<String> splitCommaSeparatedValues(String value) {
+            if (value == null || value.isEmpty()) {
+                return emptyList();
+            }
+            return Arrays.asList(COMMA_SEPARATED_PATTERN.split(value));
+        }
+
+        private static <T> CompletableFuture<List<T>> mergeResults(
+                CompletableFuture<List<T>> future1, CompletableFuture<List<T>> future2) {
+            return future1.thenCombine(future2, (messages1, messages2) -> {
+                final List<T> allMessages = new ArrayList<>(messages1);
+                allMessages.addAll(messages2);
+                return allMessages;
+            });
+        }
+
+        /**
+         * Sorts the list of messages by the sequence number attribute. The sorting is applied when multiple receive
+         * requests are sent asynchronously and merged together. This in consequence should allow messages to be
+         * processed in the correct order.
+         */
+        private List<software.amazon.awssdk.services.sqs.model.Message> sortBySequenceNumber(
+                List<software.amazon.awssdk.services.sqs.model.Message> messages) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Received {} messages in {} requests", messages.size(), numberOfRequestsPerPoll);
+            }
+            return messages.stream()
+                    .sorted(comparing(
+                            message -> message.attributes().getOrDefault(MessageSystemAttributeName.SEQUENCE_NUMBER, "")))
+                    .toList();
+        }
+
+    }
+
+    private record PollingContext(AtomicReference<UUID> missingQueueHandlerRequestId, Queue<Exception> errors) {
+        private PollingContext() {
+            this(new AtomicReference<>(), new ConcurrentLinkedQueue<>());
+        }
+
+        PollingContext {
+            Objects.requireNonNull(missingQueueHandlerRequestId);
+            Objects.requireNonNull(errors);
+        }
+
+        private void fireQueueMissing(UUID requestId) {
+            missingQueueHandlerRequestId.compareAndSet(null, requestId);
+        }
+
+        private void firePollingError(Exception error) {
+            errors.offer(error);
+        }
+
+        private boolean isQueueMissing() {
+            return missingQueueHandlerRequestId.get() != null;
+        }
+
+        private boolean isMissingQueueHandledInAnotherRequest(UUID requestId) {
+            UUID handlingRequestId = missingQueueHandlerRequestId.get();
+            return handlingRequestId != null && !requestId.equals(handlingRequestId);
+        }
+
+        private boolean hasErrors() {
+            return !errors.isEmpty();
+        }
+
+        private int errorCount() {
+            return errors.size();
+        }
+
+        private Exception firstError() {
+            return errors.peek();
+        }
+
+        private void rethrowIfFirstErrorIsRuntimeException() {
+            if (firstError() instanceof RuntimeException runtimeError) {
+                throw runtimeError;
+            }
+        }
+    }
 }
