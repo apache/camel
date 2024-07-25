@@ -547,6 +547,7 @@ And if you have `jq` installed which can format and output the JSon data in colo
 curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
 ----
 
+[#_using_profiles]
 === Using profiles
 
 *Available from Camel 4.5*

@@ -150,6 +150,9 @@ The Camel JBang Kubernetes export command provides several options to customize 
 
 |--cluster-type
 |The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.
+
+|--profile
+|The developer xref:manual::camel-jbang.adoc#_using_profiles[profile] to use a specific configuration in configuration files using the naming style `application-<profile>.properties`.
 |=======================================================================
 
 == Kubernetes manifest options
@@ -160,6 +163,13 @@ The manifest usually holds the deployment, a service definition, config maps and
 You can use several options on the `export` command to customize this manifest with the traits.
 The trait concept was born out of Camel K and the Camel K operator uses the traits to configure the Kubernetes resources that are managed by an integration.
 You can use the same options to also customize the Kubernetes manifest that is generated as part of the project export.
+
+The configuration of the traits are used by the given order:
+
+1. Use the `--trait` command options values
+2. Any annotation starting with the prefix `trait.camel.apache.org/*`
+3. Any properties from the specific configuration `application-<profile>.properties` for the profile defined by the command option `--profile` with the prefix `camel.jbang.trait.*`
+4. Any properties from the default configuration `application.properties` with the prefix `camel.jbang.trait.*`
 
 === Container trait options
 
