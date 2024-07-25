@@ -22,13 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
@@ -186,19 +182,8 @@ class ExportSpringBoot extends Export {
         } else {
             context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
         }
-        if (additionalProperties != null && !additionalProperties.isEmpty()) {
-            String properties = Arrays.stream(additionalProperties.split(","))
-                    .filter(item -> !item.isEmpty())
-                    .map(item -> {
-                        String[] keyValueProperty = item.split("=");
-                        return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
-                                keyValueProperty[0]);
-                    })
-                    .collect(Collectors.joining(System.lineSeparator()));
-            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), Matcher.quoteReplacement(properties));
-        } else {
-            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), "");
-        }
+
+        context = replaceBuildProperties(context);
 
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");

@@ -113,7 +113,7 @@ public class Export extends ExportBaseCommand {
         // copy properties from this to cmd
         cmd.files = this.files;
         cmd.repos = this.repos;
-        cmd.addDependencies(this.dependencies);
+        cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
         cmd.gav = this.gav;
         cmd.mavenSettings = this.mavenSettings;
@@ -140,7 +140,7 @@ public class Export extends ExportBaseCommand {
         cmd.gradleWrapper = this.gradleWrapper;
         cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
-        cmd.additionalProperties = this.additionalProperties;
+        cmd.buildProperties = this.buildProperties;
         cmd.openapi = this.openapi;
         cmd.packageName = this.packageName;
         cmd.exclude = this.exclude;
