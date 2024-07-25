@@ -20,9 +20,11 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,40 +55,20 @@ public final class TraitHelper {
     }
 
     /**
-     * Parses given list of trait expressions to proper trait model object.
+     * Parses given list of trait expressions to proper trait model object. Supports trait options in the form of
+     * key=value.
      *
+     * @param  traits trait key-value-pairs.
+     * @return
      */
     public static Traits parseTraits(String[] traits) {
         if (traits == null || traits.length == 0) {
             return new Traits();
         }
 
-        return parseTraits(traits, null);
-    }
-
-    /**
-     * Parses given list of trait expressions to proper trait model object. Supports trait options in the form of
-     * key=value and trait annotation configuration.
-     *
-     * @param traits      trait key-value-pairs.
-     * @param annotations trait annotation configuration.
-     */
-    public static Traits parseTraits(String[] traits, String[] annotations) {
         Map<String, Map<String, Object>> traitConfigMap = new HashMap<>();
 
-        String[] traitExpressions;
-        if (annotations != null) {
-            Stream<String> annotationTraits = Stream.of(annotations)
-                    .filter(annotation -> annotation.startsWith("trait.camel.apache.org/"))
-                    .map(annotation -> StringHelper.after(annotation, "trait.camel.apache.org/"));
-
-            traitExpressions
-                    = Stream.concat(Stream.of(traits), annotationTraits).collect(Collectors.toSet()).toArray(String[]::new);
-        } else {
-            traitExpressions = traits;
-        }
-
-        for (String traitExpression : traitExpressions) {
+        for (String traitExpression : traits) {
             //traitName.key=value
             final String[] trait = traitExpression.split("\\.", 2);
             final String[] traitConfig = trait[1].split("=", 2);
@@ -341,5 +323,71 @@ public final class TraitHelper {
             context.printer().printf("Failed to apply service trait %s%n", e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Extract properties traits (camel.jbang.trait.key=value) and transform them into regular trait form (key=value)
+     *
+     * @param  properties properties
+     * @return            traits
+     */
+    public static String[] extractTraitsFromProperties(Properties properties) {
+        if (properties != null && !properties.isEmpty()) {
+            Stream<String> propertyTraits = properties.entrySet().stream()
+                    .filter(property -> property.getKey().toString().startsWith("camel.jbang.trait"))
+                    .map(property -> StringHelper.after(property.getKey().toString(), "camel.jbang.trait.") + "="
+                                     + properties.get(property.getKey()).toString());
+            return propertyTraits.collect(Collectors.toSet()).toArray(String[]::new);
+        }
+        return new String[0];
+    }
+
+    /**
+     * Extract annotation traits (trait.camel.apache.org/key=value) and transform them into regular trait form
+     * (key=value)
+     *
+     * @param  annotations annotations
+     * @return             traits
+     */
+    public static String[] extractTraitsFromAnnotations(String[] annotations) {
+        if (annotations != null && annotations.length > 0) {
+            Stream<String> annotationTraits = Stream.of(annotations)
+                    .filter(annotation -> annotation.startsWith("trait.camel.apache.org/"))
+                    .map(annotation -> StringHelper.after(annotation, "trait.camel.apache.org/"));
+            return annotationTraits.collect(Collectors.toSet()).toArray(String[]::new);
+        }
+        return new String[0];
+    }
+
+    /**
+     * Merge all the traits from multiple sources in one keeping overrides priority by its position in the list. A trait
+     * property value in the array 0 will have priority on the value of the same trait property in an array 1. Supports
+     * trait options in the form of key=value.
+     *
+     * @param  traitsBySource traits grouped by source
+     * @return                the traits merged
+     */
+    public static String[] mergeTraits(String[]... traitsBySource) {
+        if (traitsBySource == null || traitsBySource.length == 0) {
+            return new String[0];
+        }
+        Set<String> existingKeys = new HashSet<>();
+        List<String> mergedTraits = new ArrayList<>();
+        for (String[] traits : traitsBySource) {
+            if (traits != null && traits.length > 0) {
+                for (String trait : traits) {
+                    final String[] traitConfig = trait.split("=", 2);
+                    if (!existingKeys.contains(traitConfig[0])) {
+                        mergedTraits.add(trait);
+                    }
+                }
+                existingKeys.clear();
+                for (String trait : mergedTraits) {
+                    final String[] traitConfig = trait.split("=", 2);
+                    existingKeys.add(traitConfig[0]);
+                }
+            }
+        }
+        return mergedTraits.toArray(new String[0]);
     }
 }

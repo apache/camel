@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -40,8 +41,10 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitProfile;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
+import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.traits.Container;
@@ -219,7 +222,17 @@ public class KubernetesExport extends Export {
             context.setServiceAccount(serviceAccount);
         }
 
-        Traits traitsSpec = getTraitSpec();
+        // application.properties
+        String[] applicationProperties = extractPropertiesTraits(new File("application.properties"));
+
+        // application-{profile}.properties
+        String[] applicationProfileProperties = null;
+        if (this.profile != null) {
+            // override from profile specific configuration
+            applicationProfileProperties = extractPropertiesTraits(new File("application-" + profile + ".properties"));
+        }
+
+        Traits traitsSpec = getTraitSpec(applicationProperties, applicationProfileProperties);
 
         TraitHelper.configureMountTrait(traitsSpec, configs, resources, volumes);
         if (openapi != null && openapi.startsWith("configmap:")) {
@@ -363,12 +376,17 @@ public class KubernetesExport extends Export {
         return super.export(cmd);
     }
 
-    protected Traits getTraitSpec() {
+    protected Traits getTraitSpec(String[] applicationProperties, String[] applicationProfileProperties) {
+
+        // annotation traits
+        String[] annotationsTraits = TraitHelper.extractTraitsFromAnnotations(this.annotations);
+
+        String[] allTraits
+                = TraitHelper.mergeTraits(traits, annotationsTraits, applicationProfileProperties, applicationProperties);
+
         Traits traitsSpec;
-        if (traits != null && traits.length > 0) {
-            traitsSpec = TraitHelper.parseTraits(traits, annotations);
-        } else if (annotations != null && annotations.length > 0) {
-            traitsSpec = TraitHelper.parseTraits(new String[0], annotations);
+        if (allTraits != null && allTraits.length > 0) {
+            traitsSpec = TraitHelper.parseTraits(allTraits);
         } else {
             traitsSpec = new Traits();
         }
@@ -445,6 +463,16 @@ public class KubernetesExport extends Export {
         }
 
         return imageRegistry;
+    }
+
+    protected String[] extractPropertiesTraits(File file) throws Exception {
+        if (file.exists()) {
+            Properties prop = new CamelCaseOrderedProperties();
+            RuntimeUtil.loadProperties(prop, file);
+            return TraitHelper.extractTraitsFromProperties(prop);
+        } else {
+            return null;
+        }
     }
 
     protected String getProjectName() {
