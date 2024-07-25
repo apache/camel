@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -436,7 +437,33 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    private static class PollingTask implements Callable<List<software.amazon.awssdk.services.sqs.model.Message>> {
+    /**
+     * Task responsible for polling the messages from Amazon SQS server.
+     *
+     * Depending on the configuration, the polling may involve sending one or more receive requests in a single task
+     * call. The number of send requests depends on the {@link Sqs2Endpoint#getMaxMessagesPerPoll()} configuration. The
+     * Amazon SQS receive API has upper limit of maximum
+     *
+     * <pre>
+     * 10
+     * </pre>
+     *
+     * messages that can be fetched with a single request. To enable handling greater number of messages fetched per
+     * poll, multiple requests are being send asynchronously and then joined together. To preserver the ordering, the
+     * messages are sorted by the sequence number attribute.
+     *
+     * In addition to that, the task is also responsible for handling auto-creation of the SQS queue, when its missing.
+     * The queue is created when receive request returns an error about the missing queue and the
+     * {@link Sqs2Configuration#isAutoCreateQueue()} is enabled. In such case, the queue will be created and the task
+     * will return empty list of messages.
+     *
+     * If the queue creation fails with an error related to recently deleted queue, the queue creation will be postponed
+     * for at least 30 seconds. To prevent task from blocking the consumer thread, the 30 second timeout is being
+     * checked in each task call. If the scheduled time for queue auto-creation was not reached yet, the task will
+     * simply return empty list of messages. Once the scheduled time is reached, another queue creation attempt will be
+     * made.
+     */
+    private static class PollingTask implements Callable<List<software.amazon.awssdk.services.sqs.model.Message>>, Closeable {
         /**
          * The maximum number of messages that can be requested in a single request to AWS SQS.
          */
@@ -449,19 +476,28 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         private static final Pattern COMMA_SEPARATED_PATTERN = Pattern.compile(",");
 
+        /**
+         * A scheduled time for queue auto-creation, measured with {@link Clock#elapsed()} value. The value of
+         *
+         * <pre>
+         * 0
+         * </pre>
+         *
+         * means there is no schedule.
+         */
         private final AtomicLong queueAutoCreationScheduleTime = new AtomicLong(0L);
         private final Object mutex = new Object();
         private final AtomicBoolean closed = new AtomicBoolean();
 
         private final Clock clock;
         private final SqsClient sqsClient;
-        private final ExecutorService executor;
+        private final ExecutorService requestExecutor;
         private final ExecutorServiceManager executorServiceManager;
         private final IOConsumer<SqsClient> createQueueOperation;
 
         private final String queueName;
         private final String queueUrl;
-        private final int maxNumberOfMessages;
+        private final int maxMessagesPerPoll;
         private final Integer visibilityTimeout;
         private final Integer waitTimeSeconds;
         private final Collection<String> attributeNames;
@@ -484,31 +520,31 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             ExecutorServiceManager executorServiceManager,
                             Sqs2Configuration configuration,
                             IOConsumer<SqsClient> createQueueOperation,
-                            int maxNumberOfMessages) {
+                            int maxMessagesPerPoll) {
             this.clock = clock;
             this.sqsClient = sqsClient;
             this.executorServiceManager = executorServiceManager;
             this.createQueueOperation = createQueueOperation;
 
-            this.maxNumberOfMessages = Math.max(1, maxNumberOfMessages);
             queueName = configuration.getQueueName();
             queueUrl = configuration.getQueueUrl();
             visibilityTimeout = configuration.getVisibilityTimeout();
             waitTimeSeconds = configuration.getWaitTimeSeconds();
             messageAttributeNames = splitCommaSeparatedValues(configuration.getMessageAttributeNames());
             attributeNames = splitCommaSeparatedValues(configuration.getAttributeNames());
-
-            numberOfRequestsPerPoll = (int) Math.ceil((double) this.maxNumberOfMessages / MAX_NUMBER_OF_MESSAGES_PER_REQUEST);
             queueAutoCreationEnabled = configuration.isAutoCreateQueue();
+            this.maxMessagesPerPoll = Math.max(1, maxMessagesPerPoll);
+            numberOfRequestsPerPoll = computeNumberOfRequestPerPoll(maxMessagesPerPoll);
 
-            executor = executorServiceManager.newFixedThreadPool(this,
+            requestExecutor = executorServiceManager.newFixedThreadPool(this,
                     "%s[%s]".formatted(getClass().getSimpleName(), queueName),
-                    this.maxNumberOfMessages);
+                    numberOfRequestsPerPoll);
         }
 
-        private void close() {
+        @Override
+        public void close() {
             closed.set(true);
-            executorServiceManager.shutdownNow(executor);
+            executorServiceManager.shutdownNow(requestExecutor);
         }
 
         @Override
@@ -534,16 +570,16 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         private List<software.amazon.awssdk.services.sqs.model.Message> poll(final PollingContext pollContext)
                 throws IOException {
             if (numberOfRequestsPerPoll == 1) {
-                return poll(maxNumberOfMessages, pollContext);
+                return poll(maxMessagesPerPoll, pollContext);
             }
-            int remaining = maxNumberOfMessages;
+            int remaining = maxMessagesPerPoll;
             try {
                 CompletableFuture<List<software.amazon.awssdk.services.sqs.model.Message>> future
                         = CompletableFuture.completedFuture(emptyList());
                 while (remaining > 0) {
                     int numberOfMessages = Math.min(remaining, MAX_NUMBER_OF_MESSAGES_PER_REQUEST);
                     future = mergeResults(future,
-                            CompletableFuture.supplyAsync(() -> poll(numberOfMessages, pollContext), executor));
+                            CompletableFuture.supplyAsync(() -> poll(numberOfMessages, pollContext), requestExecutor));
                     remaining -= MAX_NUMBER_OF_MESSAGES_PER_REQUEST;
                 }
                 return future.thenApply(this::sortBySequenceNumber).get();
@@ -668,6 +704,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 return emptyList();
             }
             return Arrays.asList(COMMA_SEPARATED_PATTERN.split(value));
+        }
+
+        private static int computeNumberOfRequestPerPoll(int maxMessagesPerPoll) {
+            return (int) Math.ceil((double) Math.max(1, maxMessagesPerPoll) / MAX_NUMBER_OF_MESSAGES_PER_REQUEST);
         }
 
         private static <T> CompletableFuture<List<T>> mergeResults(
