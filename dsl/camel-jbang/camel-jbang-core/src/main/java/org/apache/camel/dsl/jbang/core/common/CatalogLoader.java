@@ -58,7 +58,7 @@ public final class CatalogLoader {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(null);
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
         downloader.setClassLoader(cl);
-        downloader.setRepos(repos);
+        downloader.setRepositories(repos);
         try {
             downloader.start();
 
@@ -96,7 +96,7 @@ public final class CatalogLoader {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
         downloader.setClassLoader(cl);
-        downloader.setRepos(repos);
+        downloader.setRepositories(repos);
         try {
             downloader.start();
 
@@ -161,7 +161,7 @@ public final class CatalogLoader {
 
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setRepos(repos);
+        downloader.setRepositories(repos);
         downloader.setClassLoader(cl);
         try {
             downloader.start();

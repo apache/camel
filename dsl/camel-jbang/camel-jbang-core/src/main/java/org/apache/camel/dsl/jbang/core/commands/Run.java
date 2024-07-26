@@ -155,9 +155,8 @@ public class Run extends CamelCommand {
     @Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
     List<String> dependencies = new ArrayList<>();
 
-    @Option(names = { "--repos" },
-            description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
+    @CommandLine.Option(names = { "--repository" }, arity = "*", description = "Additional maven repositories")
+    List<String> repositories = new ArrayList<>();
 
     @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
     String gav;
@@ -194,9 +193,8 @@ public class Run extends CamelCommand {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
-    @Option(names = { "--exclude" },
-            description = "Exclude files by name or pattern. Multiple names can be separated by comma.")
-    String exclude;
+    @CommandLine.Option(names = { "--exclude" }, arity = "*", description = "Exclude files by name or pattern")
+    List<String> excludes = new ArrayList<>();
 
     @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
     boolean logging = true;
@@ -485,7 +483,7 @@ public class Run extends CamelCommand {
 
         final KameletMain main = createMainInstance();
         main.setProfile(profile);
-        main.setRepos(repos);
+        main.setRepositories(String.join(",", repositories));
         main.setDownload(download);
         main.setFresh(fresh);
         main.setMavenSettings(mavenSettings);
@@ -542,7 +540,7 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
         }
         writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
-        writeSetting(main, profileProperties, "camel.jbang.repos", repos);
+        writeSetting(main, profileProperties, "camel.jbang.repositories", String.join(",", repositories));
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
@@ -877,7 +875,7 @@ public class Run extends CamelCommand {
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
-        eq.exclude = this.exclude;
+        eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.gav = this.gav;
@@ -941,7 +939,7 @@ public class Run extends CamelCommand {
         eq.camelSpringBootVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
-        eq.exclude = this.exclude;
+        eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.gav = this.gav;
@@ -1089,7 +1087,7 @@ public class Run extends CamelCommand {
                     = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
             loggingJson
                     = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            repos = answer.getProperty("camel.jbang.repos", repos);
+            repositories = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, "camel.jbang.repositories", repositories);
             mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
             mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
             mavenCentralEnabled = "true"
@@ -1106,7 +1104,7 @@ public class Run extends CamelCommand {
             quarkusVersion = answer.getProperty("camel.jbang.quarkusVersion", quarkusVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
             stub = answer.getProperty("camel.jbang.stub", stub);
-            exclude = answer.getProperty("camel.jbang.exclude", exclude);
+            excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, "camel.jbang.excludes", excludes);
         }
 
         return answer;
@@ -1173,8 +1171,8 @@ public class Run extends CamelCommand {
             cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
         }
 
-        if (repos != null) {
-            jbangArgs.add("--repos=" + repos);
+        if (repositories != null) {
+            jbangArgs.add("--repos=" + repositories);
         }
         jbangArgs.add("camel@apache/camel");
         jbangArgs.addAll(cmds);
@@ -1237,8 +1235,8 @@ public class Run extends CamelCommand {
         IOHelper.close(is);
 
         content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "17");
-        if (repos != null) {
-            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repos);
+        if (repositories != null) {
+            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repositories);
         } else {
             content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         }
@@ -1277,10 +1275,10 @@ public class Run extends CamelCommand {
             cmds.remove("--background=true");
             cmds.remove("--background");
         }
-        if (repos != null) {
+        if (repositories != null) {
             if (!VersionHelper.isGE(v, "3.18.1")) {
                 // --repos is not supported in 3.18.0 or older, so remove
-                cmds.remove("--repos=" + repos);
+                cmds.remove("--repos=" + repositories);
             }
         }
 
@@ -1597,7 +1595,7 @@ public class Run extends CamelCommand {
         }
 
         // is the file excluded?
-        if (isExcluded(name, exclude)) {
+        if (isExcluded(name, excludes)) {
             return true;
         }
 
@@ -1620,9 +1618,9 @@ public class Run extends CamelCommand {
         return false;
     }
 
-    private static boolean isExcluded(String name, String exclude) {
-        if (exclude != null) {
-            for (String pattern : exclude.split(",")) {
+    private static boolean isExcluded(String name, List<String> excludes) {
+        if (excludes != null) {
+            for (String pattern : excludes) {
                 pattern = pattern.trim();
                 if (AntPathMatcher.INSTANCE.match(pattern, name)) {
                     return true;

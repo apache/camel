@@ -155,7 +155,7 @@ class ExportSpringBoot extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = getMavenRepos(settings, prop, camelSpringBootVersion);
+        String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
         CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
 
@@ -257,7 +257,7 @@ class ExportSpringBoot extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = getMavenRepos(settings, prop, camelSpringBootVersion);
+        String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
         CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
         String camelVersion = catalog.getLoadedVersion();
