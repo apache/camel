@@ -33,6 +33,9 @@ public class JsonataComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
+        JsonataFrameBindings frameBinding
+            = resolveAndRemoveReferenceParameter(parameters, "frameBinding", JsonataFrameBindings.class);
+
         JsonataEndpoint answer = new JsonataEndpoint(uri, this, remaining);
         answer.setContentCache(cache);
 

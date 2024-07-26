@@ -53,6 +53,9 @@ public class JsonataEndpoint extends ResourceEndpoint {
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType inputType;
 
+    @UriParam(label = "advanced", description = "To configure the Jsonata frame binding.")
+    private JsonataFrameBinding frameBinding;
+
     public JsonataEndpoint() {
     }
 
@@ -97,6 +100,13 @@ public class JsonataEndpoint extends ResourceEndpoint {
         this.inputType = inputType;
     }
 
+    /**
+     * Specifies the custom framebinding.
+     */
+    public void setFrameBinding(JsonataFrameBindings frameBinding) { this.frameBinding = frameBinding; }
+
+    public JsonataFrameBindings getFrameBinding() { return frameBinding; }
+
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
@@ -122,7 +132,11 @@ public class JsonataEndpoint extends ResourceEndpoint {
                     .collect(Collectors.joining("\n"));
             expression = jsonata(spec);
         }
-        output = expression.evaluate(input);
+
+        Jsonata.Frame frame = expression.createFrame();
+        if(frameBinding != null)
+            frameBinding.bindToFrame(frame);
+        output = expression.evaluate(input, frame);
 
         // now lets output the results to the exchange
         Object body = output;
