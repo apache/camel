@@ -600,8 +600,9 @@ class KubernetesExportTest extends KubernetesBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldAddOpenApis(RuntimeType rt) throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
-        command.openApis = new String[] { "configmap:openapi/spec.yaml" };
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--runtime=" + rt.runtime(),
+                "--open-api=configmap:openapi/spec.yaml");
         command.doCall();
 
         Deployment deployment = getDeployment(rt);
