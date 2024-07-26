@@ -61,14 +61,15 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     @BeforeEach
     void setup() {
         sqsClientMock = new AmazonSQSClientMock();
+        sqsClientMock.setQueueName("test");
 
         configuration = new Sqs2Configuration();
         configuration.setMessageAttributeNames("foo,bar,bazz");
         configuration.setAttributeNames("fuzz,wazz");
         configuration.setWaitTimeSeconds(13);
         configuration.setVisibilityTimeout(512);
-        configuration.setQueueUrl("sqs://queue");
-        configuration.setQueueName("foo");
+        configuration.setQueueUrl("/test");
+        configuration.setQueueName("test");
         configuration.setUseDefaultCredentialsProvider(true);
 
         receivedExchanges.clear();
@@ -225,6 +226,26 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldRequest3001MessagesWithThreehoundredAndOneReceiveRequest() throws Exception {
+        // given
+        var expectedMessages = IntStream.range(0, 3001).mapToObj(Integer::toString).toList();
+        expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
+
+        try (var tested = createConsumer(3001)) {
+
+            // when
+            var polledMessagesCount = tested.poll();
+
+            // then
+            assertThat(polledMessagesCount).isEqualTo(3001);
+            assertThat(receiveMessageBodies()).isEqualTo(expectedMessages);
+            assertThat(sqsClientMock.getReceiveRequests()).hasSize(301);
+            assertThat(sqsClientMock.getReceiveRequests()).contains(expectedReceiveRequest(1));
+            assertThat(sqsClientMock.getQueues()).isEmpty();
+        }
+    }
+
+    @Test
     void shouldRequest10MessagesWithSingleReceiveRequestAndIgnoredSequenceNumberSorting() throws Exception {
         // given
         generateSequenceNumber = false;
@@ -351,7 +372,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             // then
             assertThat(polledMessagesCount).isZero();
             assertThat(receivedExchanges).isEmpty();
-            assertThat(sqsClientMock.getReceiveRequests()).hasSize(156);
+            // the request execution will be ignored once non-existing queue is detected
+            assertThat(sqsClientMock.getReceiveRequests()).hasSizeLessThanOrEqualTo(156);
             assertThat(sqsClientMock.getQueueUrlRequests()).containsExactly(GetQueueUrlRequest.builder()
                     .queueName(configuration.getQueueName())
                     .build());

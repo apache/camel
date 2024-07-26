@@ -95,7 +95,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     public Sqs2Consumer(Sqs2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        pollingTask = new PollingTask(endpoint);
         sqsConsumerToString = "SqsConsumer[%s]".formatted(URISupport.sanitizeUri(endpoint.getEndpointUri()));
     }
 
@@ -288,6 +287,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        pollingTask = new PollingTask(getEndpoint());
         // start scheduler first
         if (getConfiguration().isExtendMessageVisibility() && scheduledExecutor == null) {
             ThreadPoolProfile profile = new ThreadPoolProfile("SqsTimeoutExtender");
@@ -470,6 +470,11 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         private static final int MAX_NUMBER_OF_MESSAGES_PER_REQUEST = 10;
 
         /**
+         * The maximum number of threads used for receive requests.
+         */
+        private static final int MAX_NUMBER_OF_CONCURRENT_REQUESTS = 50;
+
+        /**
          * The time to wait before re-creating recently deleted queue.
          */
         private static final long RECENTLY_DELETED_QUEUE_BACKOFF_TIME_MS = 30_000L;
@@ -507,38 +512,23 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         @SuppressWarnings("resource")
         private PollingTask(Sqs2Endpoint endpoint) {
-            this(endpoint.getCamelContext().getClock(),
-                 endpoint.getClient(),
-                 endpoint.getCamelContext().getExecutorServiceManager(),
-                 endpoint.getConfiguration(),
-                 endpoint::createQueue,
-                 endpoint.getMaxMessagesPerPoll());
-        }
+            clock = endpoint.getCamelContext().getClock();
+            sqsClient = endpoint.getClient();
+            executorServiceManager = endpoint.getCamelContext().getExecutorServiceManager();
+            createQueueOperation = endpoint::createQueue;
 
-        private PollingTask(Clock clock,
-                            SqsClient sqsClient,
-                            ExecutorServiceManager executorServiceManager,
-                            Sqs2Configuration configuration,
-                            IOConsumer<SqsClient> createQueueOperation,
-                            int maxMessagesPerPoll) {
-            this.clock = clock;
-            this.sqsClient = sqsClient;
-            this.executorServiceManager = executorServiceManager;
-            this.createQueueOperation = createQueueOperation;
-
-            queueName = configuration.getQueueName();
-            queueUrl = configuration.getQueueUrl();
-            visibilityTimeout = configuration.getVisibilityTimeout();
-            waitTimeSeconds = configuration.getWaitTimeSeconds();
-            messageAttributeNames = splitCommaSeparatedValues(configuration.getMessageAttributeNames());
-            attributeNames = splitCommaSeparatedValues(configuration.getAttributeNames());
-            queueAutoCreationEnabled = configuration.isAutoCreateQueue();
-            this.maxMessagesPerPoll = Math.max(1, maxMessagesPerPoll);
+            queueName = endpoint.getConfiguration().getQueueName();
+            queueUrl = endpoint.getQueueUrl();
+            visibilityTimeout = endpoint.getConfiguration().getVisibilityTimeout();
+            waitTimeSeconds = endpoint.getConfiguration().getWaitTimeSeconds();
+            messageAttributeNames = splitCommaSeparatedValues(endpoint.getConfiguration().getMessageAttributeNames());
+            attributeNames = splitCommaSeparatedValues(endpoint.getConfiguration().getAttributeNames());
+            queueAutoCreationEnabled = endpoint.getConfiguration().isAutoCreateQueue();
+            maxMessagesPerPoll = Math.max(1, endpoint.getMaxMessagesPerPoll());
             numberOfRequestsPerPoll = computeNumberOfRequestPerPoll(maxMessagesPerPoll);
-
             requestExecutor = executorServiceManager.newFixedThreadPool(this,
                     "%s[%s]".formatted(getClass().getSimpleName(), queueName),
-                    numberOfRequestsPerPoll);
+                    Math.min(numberOfRequestsPerPoll, MAX_NUMBER_OF_CONCURRENT_REQUESTS));
         }
 
         @Override
