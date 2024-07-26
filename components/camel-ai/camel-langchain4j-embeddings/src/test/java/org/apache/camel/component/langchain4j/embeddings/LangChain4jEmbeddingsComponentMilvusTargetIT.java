@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import dev.langchain4j.model.embedding.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.DataType;
 import io.milvus.param.IndexType;
