@@ -244,8 +244,8 @@ public final class TraitHelper {
         traitsSpec.setCamel(camelTrait);
     }
 
-    public static void configureOpenApiSpec(Traits traitsSpec, String[] openApis) {
-        if (openApis == null || openApis.length == 0) {
+    public static void configureOpenApiSpec(Traits traitsSpec, String openApi) {
+        if (openApi == null || !openApi.startsWith("configmap:")) {
             return;
         }
 
@@ -253,7 +253,7 @@ public final class TraitHelper {
         if (openapiTrait.getConfigmaps() == null) {
             openapiTrait.setConfigmaps(new ArrayList<>());
         }
-        openapiTrait.getConfigmaps().addAll(List.of(openApis));
+        openapiTrait.getConfigmaps().add(openApi);
         traitsSpec.setOpenapi(openapiTrait);
     }
 

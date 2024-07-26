@@ -68,7 +68,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String[] resources;
 
     @CommandLine.Option(names = { "--open-api" }, description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
-    String[] openApis;
+    String openApi;
 
     @CommandLine.Option(names = { "--env" },
                         description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
@@ -182,6 +182,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         workingDir,
                         List.of(filePaths),
                         gav,
+                        openApi,
                         true,
                         true,
                         true,
@@ -198,7 +199,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.properties = properties;
         export.configs = configs;
         export.resources = resources;
-        export.openApis = openApis;
         export.envVars = envVars;
         export.volumes = volumes;
         export.connects = connects;

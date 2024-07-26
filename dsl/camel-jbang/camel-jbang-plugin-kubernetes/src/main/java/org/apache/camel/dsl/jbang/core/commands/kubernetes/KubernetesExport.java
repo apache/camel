@@ -70,9 +70,6 @@ public class KubernetesExport extends Export {
                         description = "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
     protected String[] resources;
 
-    @CommandLine.Option(names = { "--open-api-spec" }, description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
-    protected String[] openApis;
-
     @CommandLine.Option(names = { "--env" },
                         description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
     protected String[] envVars;
@@ -140,6 +137,7 @@ public class KubernetesExport extends Export {
         exportDir = configurer.exportDir;
         files = configurer.files;
         gav = configurer.gav;
+        openapi = configurer.openapi;
         fresh = configurer.fresh;
         download = configurer.download;
         quiet = configurer.quiet;
@@ -224,7 +222,11 @@ public class KubernetesExport extends Export {
         Traits traitsSpec = getTraitSpec();
 
         TraitHelper.configureMountTrait(traitsSpec, configs, resources, volumes);
-        TraitHelper.configureOpenApiSpec(traitsSpec, openApis);
+        if (openapi != null && openapi.startsWith("configmap:")) {
+            TraitHelper.configureOpenApiSpec(traitsSpec, openapi);
+            // Remove OpenAPI spec option to avoid duplicate handling by parent export command
+            openapi = null;
+        }
         TraitHelper.configureProperties(traitsSpec, properties);
         TraitHelper.configureContainerImage(traitsSpec, image,
                 resolvedImageRegistry, resolvedImageGroup, projectName, getVersion());
@@ -472,6 +474,7 @@ public class KubernetesExport extends Export {
             String exportDir,
             List<String> files,
             String gav,
+            String openapi,
             boolean fresh,
             boolean download,
             boolean quiet,

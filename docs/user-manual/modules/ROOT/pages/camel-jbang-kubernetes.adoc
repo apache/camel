@@ -112,7 +112,7 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |--resource
 |Add a runtime resource from a Configmap or a Secret (syntax: [configmap,secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).
 
-|--open-api-spec
+|--open-api
 |Add an OpenAPI spec (syntax: [configmap,file]:name).
 
 |--env
@@ -921,17 +921,17 @@ The syntax to specify openapi trait options is as follows:
 camel kubernetes export Sample.java --trait openapi.[key]=[value]
 ----
 
-TIP: There is also a shortcut option `--open-api-spec=configmap:my-configmap`.
-
-[source,bash]
-----
-camel kubernetes export Sample.java --open-api-spec configmap:[value]
-----
-
 .Example
 [source,bash]
 ----
 camel kubernetes export Sample.java --trait openapi.configmaps=configmap:my-spec
+----
+
+TIP: There is also a shortcut option `--open-api=configmap:my-configmap`.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --open-api configmap:[name-of-configmap]
 ----
 
 This results in the following container specification in the Deployment resource.
