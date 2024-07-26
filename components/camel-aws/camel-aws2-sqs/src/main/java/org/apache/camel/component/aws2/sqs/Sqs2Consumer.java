@@ -19,13 +19,13 @@ package org.apache.camel.component.aws2.sqs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -77,6 +77,7 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Comparator.comparing;
 
 /**
@@ -442,15 +443,12 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
      *
      * Depending on the configuration, the polling may involve sending one or more receive requests in a single task
      * call. The number of send requests depends on the {@link Sqs2Endpoint#getMaxMessagesPerPoll()} configuration. The
-     * Amazon SQS receive API has upper limit of maximum
+     * Amazon SQS receive API has upper limit of maximum 10 messages that can be fetched with a single request. To
+     * enable handling greater number of messages fetched per poll, multiple requests are being send asynchronously and
+     * then joined together.
      *
-     * <pre>
-     * 10
-     * </pre>
-     *
-     * messages that can be fetched with a single request. To enable handling greater number of messages fetched per
-     * poll, multiple requests are being send asynchronously and then joined together. To preserver the ordering, the
-     * messages are sorted by the sequence number attribute.
+     * To preserver the ordering, an optional {@link Sqs2Configuration#getSortAttributeName()} can be configured. When
+     * specified, all messages collected from the concurrent requests are being sorted using this attribute.
      *
      * In addition to that, the task is also responsible for handling auto-creation of the SQS queue, when its missing.
      * The queue is created when receive request returns an error about the missing queue and the
@@ -468,11 +466,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
          * The maximum number of messages that can be requested in a single request to AWS SQS.
          */
         private static final int MAX_NUMBER_OF_MESSAGES_PER_REQUEST = 10;
-
-        /**
-         * The maximum number of threads used for receive requests.
-         */
-        private static final int MAX_NUMBER_OF_CONCURRENT_REQUESTS = 50;
 
         /**
          * The time to wait before re-creating recently deleted queue.
@@ -505,10 +498,11 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         private final int maxMessagesPerPoll;
         private final Integer visibilityTimeout;
         private final Integer waitTimeSeconds;
-        private final Collection<String> attributeNames;
+        private final Collection<MessageSystemAttributeName> attributeNames;
         private final Collection<String> messageAttributeNames;
         private final int numberOfRequestsPerPoll;
         private final boolean queueAutoCreationEnabled;
+        private final MessageSystemAttributeName sortAttributeName;
 
         @SuppressWarnings("resource")
         private PollingTask(Sqs2Endpoint endpoint) {
@@ -522,13 +516,14 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             visibilityTimeout = endpoint.getConfiguration().getVisibilityTimeout();
             waitTimeSeconds = endpoint.getConfiguration().getWaitTimeSeconds();
             messageAttributeNames = splitCommaSeparatedValues(endpoint.getConfiguration().getMessageAttributeNames());
-            attributeNames = splitCommaSeparatedValues(endpoint.getConfiguration().getAttributeNames());
+            sortAttributeName = getSortAttributeName(endpoint.getConfiguration());
+            attributeNames = getAttributeNames(endpoint.getConfiguration(), sortAttributeName);
             queueAutoCreationEnabled = endpoint.getConfiguration().isAutoCreateQueue();
             maxMessagesPerPoll = Math.max(1, endpoint.getMaxMessagesPerPoll());
             numberOfRequestsPerPoll = computeNumberOfRequestPerPoll(maxMessagesPerPoll);
             requestExecutor = executorServiceManager.newFixedThreadPool(this,
                     "%s[%s]".formatted(getClass().getSimpleName(), queueName),
-                    Math.min(numberOfRequestsPerPoll, MAX_NUMBER_OF_CONCURRENT_REQUESTS));
+                    Math.min(numberOfRequestsPerPoll, Math.max(1, endpoint.getConfiguration().getConcurrentRequestLimit())));
         }
 
         @Override
@@ -572,7 +567,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                             CompletableFuture.supplyAsync(() -> poll(numberOfMessages, pollContext), requestExecutor));
                     remaining -= MAX_NUMBER_OF_MESSAGES_PER_REQUEST;
                 }
-                return future.thenApply(this::sortBySequenceNumber).get();
+                return future.thenApply(this::sortIfNeeded).get();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 LOG.debug("Polling interrupted", e);
@@ -625,7 +620,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                     .visibilityTimeout(visibilityTimeout)
                     .waitTimeSeconds(waitTimeSeconds);
             if (!attributeNames.isEmpty()) {
-                requestBuilder.messageSystemAttributeNamesWithStrings(attributeNames);
+                requestBuilder.messageSystemAttributeNames(attributeNames);
             }
             if (!messageAttributeNames.isEmpty()) {
                 requestBuilder.messageAttributeNames(messageAttributeNames);
@@ -693,7 +688,47 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             if (value == null || value.isEmpty()) {
                 return emptyList();
             }
-            return Arrays.asList(COMMA_SEPARATED_PATTERN.split(value));
+            return COMMA_SEPARATED_PATTERN.splitAsStream(value).map(String::trim).filter(it -> !it.isEmpty()).toList();
+        }
+
+        private static Optional<MessageSystemAttributeName> parseMessageSystemAttributeName(String attribute) {
+            if (attribute == null || attribute.isEmpty()) {
+                return Optional.empty();
+            }
+            MessageSystemAttributeName result = MessageSystemAttributeName.fromValue(attribute);
+            if (result == MessageSystemAttributeName.UNKNOWN_TO_SDK_VERSION) {
+                LOG.warn("Unsupported attribute name '{}' use one of {}", attribute, MessageSystemAttributeName.knownValues());
+                return Optional.empty();
+            }
+            return Optional.of(result);
+        }
+
+        private static MessageSystemAttributeName getSortAttributeName(Sqs2Configuration configuration) {
+            return parseMessageSystemAttributeName(configuration.getSortAttributeName())
+                    .filter(attribute -> {
+                        if (attribute == MessageSystemAttributeName.ALL) {
+                            LOG.warn("The {} attribute cannot be used for sorting the received messages",
+                                    MessageSystemAttributeName.ALL);
+                            return false;
+                        }
+                        return true;
+                    })
+                    .orElse(null);
+        }
+
+        private static List<MessageSystemAttributeName> getAttributeNames(
+                Sqs2Configuration configuration, MessageSystemAttributeName sortAttributeName) {
+            List<MessageSystemAttributeName> result = new ArrayList<>();
+            for (String attributeName : splitCommaSeparatedValues(configuration.getAttributeNames())) {
+                parseMessageSystemAttributeName(attributeName)
+                        .filter(it -> !result.contains(it))
+                        .ifPresent(result::add);
+            }
+            if (sortAttributeName != null && !result.contains(MessageSystemAttributeName.ALL)
+                    && !result.contains(sortAttributeName)) {
+                result.add(sortAttributeName);
+            }
+            return unmodifiableList(result);
         }
 
         private static int computeNumberOfRequestPerPoll(int maxMessagesPerPoll) {
@@ -709,20 +744,17 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             });
         }
 
-        /**
-         * Sorts the list of messages by the sequence number attribute. The sorting is applied when multiple receive
-         * requests are sent asynchronously and merged together. This in consequence should allow messages to be
-         * processed in the correct order.
-         */
-        private List<software.amazon.awssdk.services.sqs.model.Message> sortBySequenceNumber(
+        private List<software.amazon.awssdk.services.sqs.model.Message> sortIfNeeded(
                 List<software.amazon.awssdk.services.sqs.model.Message> messages) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Received {} messages in {} requests", messages.size(), numberOfRequestsPerPoll);
             }
-            return messages.stream()
-                    .sorted(comparing(
-                            message -> message.attributes().getOrDefault(MessageSystemAttributeName.SEQUENCE_NUMBER, "")))
-                    .toList();
+            if (sortAttributeName != null) {
+                return messages.stream()
+                        .sorted(comparing(message -> message.attributes().getOrDefault(sortAttributeName, "")))
+                        .toList();
+            }
+            return messages;
         }
 
     }

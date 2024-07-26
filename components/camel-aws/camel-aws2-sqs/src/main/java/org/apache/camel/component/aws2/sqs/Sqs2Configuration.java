@@ -87,6 +87,10 @@ public class Sqs2Configuration implements Cloneable {
     private boolean serverSideEncryptionEnabled;
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
+    @UriParam(label = "consumer", defaultValue = "50")
+    private int concurrentRequestLimit = 50;
+    @UriParam(label = "consumer")
+    private String sortAttributeName;
 
     // producer properties
     @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
@@ -412,6 +416,31 @@ public class Sqs2Configuration implements Cloneable {
      */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public int getConcurrentRequestLimit() {
+        return concurrentRequestLimit;
+    }
+
+    /**
+     * The maximum number of concurrent receive request send to AWS in single consumer polling.
+     */
+    public void setConcurrentRequestLimit(int concurrentRequestLimit) {
+        this.concurrentRequestLimit = concurrentRequestLimit;
+    }
+
+    public String getSortAttributeName() {
+        return sortAttributeName;
+    }
+
+    /**
+     * The name of the message attribute used for sorting the messages. When specified, the messages polled by the
+     * consumer will be sorted by this attribute. This configuration may be of importance when you configure
+     * maxMessagesPerPoll parameter exceeding 10. In such cases, the messages will be fetched concurrently so the
+     * ordering is not guaranteed.
+     */
+    public void setSortAttributeName(String sortAttributeName) {
+        this.sortAttributeName = sortAttributeName;
     }
 
     public String getQueueUrl() {

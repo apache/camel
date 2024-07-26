@@ -46,6 +46,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.ALL;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.MESSAGE_GROUP_ID;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SENT_TIMESTAMP;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SEQUENCE_NUMBER;
 
 @ExtendWith(MockitoExtension.class)
 class Sqs2ConsumerTest extends CamelTestSupport {
@@ -62,14 +66,15 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     void setup() {
         sqsClientMock = new AmazonSQSClientMock();
         sqsClientMock.setQueueName("test");
-
         configuration = new Sqs2Configuration();
         configuration.setMessageAttributeNames("foo,bar,bazz");
-        configuration.setAttributeNames("fuzz,wazz");
+        configuration.setAttributeNames("SentTimestamp, MessageGroupId");
+        configuration.setSortAttributeName("SequenceNumber");
         configuration.setWaitTimeSeconds(13);
         configuration.setVisibilityTimeout(512);
         configuration.setQueueUrl("/test");
         configuration.setQueueName("test");
+        configuration.setConcurrentRequestLimit(15);
         configuration.setUseDefaultCredentialsProvider(true);
 
         receivedExchanges.clear();
@@ -82,13 +87,14 @@ class Sqs2ConsumerTest extends CamelTestSupport {
         // given
         configuration.setAttributeNames(null);
         configuration.setMessageAttributeNames(null);
+        configuration.setSortAttributeName(null);
         try (var tested = createConsumer(-1)) {
             // when
             var polledMessagesCount = tested.poll();
 
             // then
             var expectedRequest = expectedReceiveRequestBuilder()
-                    .messageSystemAttributeNamesWithStrings((List<String>) null)
+                    .messageSystemAttributeNames((List<MessageSystemAttributeName>) null)
                     .messageAttributeNames((List<String>) null)
                     .maxNumberOfMessages(1)
                     .build();
@@ -104,6 +110,7 @@ class Sqs2ConsumerTest extends CamelTestSupport {
         // given
         configuration.setAttributeNames("");
         configuration.setMessageAttributeNames("");
+        configuration.setSortAttributeName("");
         try (var tested = createConsumer(9)) {
 
             // when
@@ -111,9 +118,69 @@ class Sqs2ConsumerTest extends CamelTestSupport {
 
             // then
             var expectedRequest = expectedReceiveRequestBuilder()
-                    .messageSystemAttributeNamesWithStrings((List<String>) null)
+                    .messageSystemAttributeNames((List<MessageSystemAttributeName>) null)
                     .messageAttributeNames((List<String>) null)
                     .maxNumberOfMessages(9)
+                    .build();
+            assertThat(polledMessagesCount).isZero();
+            assertThat(receivedExchanges).isEmpty();
+            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(expectedRequest);
+            assertThat(sqsClientMock.getQueues()).isEmpty();
+        }
+    }
+
+    @Test
+    void shouldInnoreUnsupportedAttributeNames() throws Exception {
+        // given
+        configuration.setAttributeNames("foo, bar");
+        try (var tested = createConsumer(-1)) {
+            // when
+            var polledMessagesCount = tested.poll();
+
+            // then
+            var expectedRequest = expectedReceiveRequestBuilder()
+                    .messageSystemAttributeNames(List.of(SEQUENCE_NUMBER))
+                    .maxNumberOfMessages(1)
+                    .build();
+            assertThat(polledMessagesCount).isZero();
+            assertThat(receivedExchanges).isEmpty();
+            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(expectedRequest);
+            assertThat(sqsClientMock.getQueues()).isEmpty();
+        }
+    }
+
+    @Test
+    void shouldIgnoreSortingByAllAttribute() throws Exception {
+        // given
+        configuration.setSortAttributeName("All");
+        try (var tested = createConsumer(-1)) {
+            // when
+            var polledMessagesCount = tested.poll();
+
+            // then
+            var expectedRequest = expectedReceiveRequestBuilder()
+                    .messageSystemAttributeNames(List.of(SENT_TIMESTAMP, MESSAGE_GROUP_ID))
+                    .maxNumberOfMessages(1)
+                    .build();
+            assertThat(polledMessagesCount).isZero();
+            assertThat(receivedExchanges).isEmpty();
+            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(expectedRequest);
+            assertThat(sqsClientMock.getQueues()).isEmpty();
+        }
+    }
+
+    @Test
+    void shouldIgnoreAddingSortAttributeWhenAllAttributesAreRequested() throws Exception {
+        // given
+        configuration.setAttributeNames("All");
+        try (var tested = createConsumer(-1)) {
+            // when
+            var polledMessagesCount = tested.poll();
+
+            // then
+            var expectedRequest = expectedReceiveRequestBuilder()
+                    .messageSystemAttributeNames(List.of(ALL))
+                    .maxNumberOfMessages(1)
                     .build();
             assertThat(polledMessagesCount).isZero();
             assertThat(receivedExchanges).isEmpty();
@@ -266,7 +333,7 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldRequest18MessagesWitTwoReceiveRequestAndIgnoredSequenceNumberSorting() throws Exception {
+    void shouldRequest18MessagesWithTwoReceiveRequestWithoutSorting() throws Exception {
         // given
         generateSequenceNumber = false;
         var expectedMessages = IntStream.range(0, 18).mapToObj(Integer::toString).toList();
@@ -283,6 +350,38 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
                     expectedReceiveRequest(10),
                     expectedReceiveRequest(8));
+            assertThat(sqsClientMock.getQueues()).isEmpty();
+        }
+    }
+
+    @Test
+    void shouldRequest66MessagesWithSevenReceiveRequestSortedBySenderId() throws Exception {
+        // given
+        generateSequenceNumber = false;
+        var expectedMessages = IntStream.range(0, 66)
+                .mapToObj(i -> Message.builder()
+                        .body(Integer.toString(i))
+                        .attributes(Map.of(MessageSystemAttributeName.SENDER_ID, "%02d".formatted(i)))
+                        .build())
+                .toList();
+        expectedMessages.forEach(sqsClientMock::addMessage);
+
+        try (var tested = createConsumer(66)) {
+
+            // when
+            var polledMessagesCount = tested.poll();
+
+            // then
+            assertThat(polledMessagesCount).isEqualTo(66);
+            assertThat(receiveMessageBodies()).containsExactly(expectedMessages.stream().map(Message::body).toArray());
+            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
+                    expectedReceiveRequest(10),
+                    expectedReceiveRequest(10),
+                    expectedReceiveRequest(10),
+                    expectedReceiveRequest(10),
+                    expectedReceiveRequest(10),
+                    expectedReceiveRequest(10),
+                    expectedReceiveRequest(6));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -535,7 +634,7 @@ class Sqs2ConsumerTest extends CamelTestSupport {
                 .waitTimeSeconds(configuration.getWaitTimeSeconds())
                 .visibilityTimeout(configuration.getVisibilityTimeout())
                 .messageAttributeNames(List.of("foo", "bar", "bazz"))
-                .messageSystemAttributeNamesWithStrings(List.of("fuzz", "wazz"));
+                .messageSystemAttributeNames(List.of(SENT_TIMESTAMP, MESSAGE_GROUP_ID, SEQUENCE_NUMBER));
     }
 
     private ReceiveMessageRequest expectedReceiveRequest(int maxNumberOfMessages) {

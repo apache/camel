@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
+import software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 
@@ -34,6 +35,7 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 class SqsConsumerLocalstackIT extends Aws2SQSBaseTest {
     private static final int MAX_MESSAGES_PER_POLL = 50;
+    private static final MessageSystemAttributeName SORT_ATTRIBUTE = MessageSystemAttributeName.SENT_TIMESTAMP;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -62,7 +64,7 @@ class SqsConsumerLocalstackIT extends Aws2SQSBaseTest {
         // then
         await().atMost(5, SECONDS).untilAsserted(() -> {
             assertThat(result.getReceivedExchanges()).hasSize(MAX_MESSAGES_PER_POLL);
-            assertThat(result.getReceivedExchanges().stream().map(it -> it.getIn().getBody())).containsExactlyInAnyOrder(
+            assertThat(result.getReceivedExchanges().stream().map(it -> it.getIn().getBody())).containsExactly(
                     messages.stream().map(SendMessageBatchRequestEntry::messageBody).toArray());
         });
     }
@@ -81,8 +83,9 @@ class SqsConsumerLocalstackIT extends Aws2SQSBaseTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final var sqsEndpointUri = "aws2-sqs://%s?autoCreateQueue=true&maxMessagesPerPoll=%s"
-                .formatted(sharedNameGenerator.getName(), MAX_MESSAGES_PER_POLL);
+        final var sqsEndpointUri
+                = "aws2-sqs://%s?autoCreateQueue=true&maxMessagesPerPoll=%s&attributeNames=All&sortAttributeName=%s"
+                        .formatted(sharedNameGenerator.getName(), MAX_MESSAGES_PER_POLL, SORT_ATTRIBUTE);
         return new RouteBuilder() {
             @Override
             public void configure() {

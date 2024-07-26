@@ -48,6 +48,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": getOrCreateConfiguration(target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "concurrentrequestlimit":
+        case "concurrentRequestLimit": getOrCreateConfiguration(target).setConcurrentRequestLimit(property(camelContext, int.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Configuration.class, value)); return true;
         case "defaultvisibilitytimeout":
         case "defaultVisibilityTimeout": getOrCreateConfiguration(target).setDefaultVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -111,6 +113,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "sessiontoken":
         case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "sortattributename":
+        case "sortAttributeName": getOrCreateConfiguration(target).setSortAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -155,6 +159,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
         case "concurrentConsumers": return int.class;
+        case "concurrentrequestlimit":
+        case "concurrentRequestLimit": return int.class;
         case "configuration": return org.apache.camel.component.aws2.sqs.Sqs2Configuration.class;
         case "defaultvisibilitytimeout":
         case "defaultVisibilityTimeout": return java.lang.Integer.class;
@@ -218,6 +224,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return boolean.class;
         case "sessiontoken":
         case "sessionToken": return java.lang.String.class;
+        case "sortattributename":
+        case "sortAttributeName": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -258,6 +266,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
         case "concurrentConsumers": return getOrCreateConfiguration(target).getConcurrentConsumers();
+        case "concurrentrequestlimit":
+        case "concurrentRequestLimit": return getOrCreateConfiguration(target).getConcurrentRequestLimit();
         case "configuration": return target.getConfiguration();
         case "defaultvisibilitytimeout":
         case "defaultVisibilityTimeout": return getOrCreateConfiguration(target).getDefaultVisibilityTimeout();
@@ -321,6 +331,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
         case "sessiontoken":
         case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
+        case "sortattributename":
+        case "sortAttributeName": return getOrCreateConfiguration(target).getSortAttributeName();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":
