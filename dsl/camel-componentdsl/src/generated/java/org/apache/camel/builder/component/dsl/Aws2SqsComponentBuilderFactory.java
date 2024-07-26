@@ -247,6 +247,24 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The maximum number of concurrent receive request send to AWS in
+         * single consumer polling.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 50
+         * Group: consumer
+         * 
+         * @param concurrentRequestLimit the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder concurrentRequestLimit(int concurrentRequestLimit) {
+            doSetProperty("concurrentRequestLimit", concurrentRequestLimit);
+            return this;
+        }
+    
         /**
          * The default visibility timeout (in seconds).
          * 
@@ -386,6 +404,26 @@ public interface Aws2SqsComponentBuilderFactory {
         }
     
         /**
+         * The name of the message attribute used for sorting the messages. When
+         * specified, the messages polled by the consumer will be sorted by this
+         * attribute. This configuration may be of importance when you configure
+         * maxMessagesPerPoll parameter exceeding 10. In such cases, the
+         * messages will be fetched concurrently so the ordering is not
+         * guaranteed.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param sortAttributeName the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder sortAttributeName(java.lang.String sortAttributeName) {
+            doSetProperty("sortAttributeName", sortAttributeName);
+            return this;
+        }
+    
+        /**
          * The duration (in seconds) that the received messages are hidden from
          * subsequent retrieve requests after being retrieved by a
          * ReceiveMessage request to set in the
@@ -407,7 +445,8 @@ public interface Aws2SqsComponentBuilderFactory {
     
         /**
          * Duration in seconds (0 to 20) that the ReceiveMessage action call
-         * will wait until a message is in the queue to include in the response.
+         * will wait until a message is in the queue to include in the
+         * response.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -970,6 +1009,7 @@ public interface Aws2SqsComponentBuilderFactory {
             case "attributeNames": getOrCreateConfiguration((Sqs2Component) component).setAttributeNames((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Sqs2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((Sqs2Component) component).setConcurrentConsumers((int) value); return true;
+            case "concurrentRequestLimit": getOrCreateConfiguration((Sqs2Component) component).setConcurrentRequestLimit((int) value); return true;
             case "defaultVisibilityTimeout": getOrCreateConfiguration((Sqs2Component) component).setDefaultVisibilityTimeout((java.lang.Integer) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((Sqs2Component) component).setDeleteAfterRead((boolean) value); return true;
             case "deleteIfFiltered": getOrCreateConfiguration((Sqs2Component) component).setDeleteIfFiltered((boolean) value); return true;
@@ -978,6 +1018,7 @@ public interface Aws2SqsComponentBuilderFactory {
             case "kmsMasterKeyId": getOrCreateConfiguration((Sqs2Component) component).setKmsMasterKeyId((java.lang.String) value); return true;
             case "messageAttributeNames": getOrCreateConfiguration((Sqs2Component) component).setMessageAttributeNames((java.lang.String) value); return true;
             case "serverSideEncryptionEnabled": getOrCreateConfiguration((Sqs2Component) component).setServerSideEncryptionEnabled((boolean) value); return true;
+            case "sortAttributeName": getOrCreateConfiguration((Sqs2Component) component).setSortAttributeName((java.lang.String) value); return true;
             case "visibilityTimeout": getOrCreateConfiguration((Sqs2Component) component).setVisibilityTimeout((java.lang.Integer) value); return true;
             case "waitTimeSeconds": getOrCreateConfiguration((Sqs2Component) component).setWaitTimeSeconds((java.lang.Integer) value); return true;
             case "batchSeparator": getOrCreateConfiguration((Sqs2Component) component).setBatchSeparator((java.lang.String) value); return true;
