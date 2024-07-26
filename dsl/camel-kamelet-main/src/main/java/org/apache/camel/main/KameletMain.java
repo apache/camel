@@ -107,7 +107,7 @@ public class KameletMain extends MainCommandLineSupport {
     protected final MainRegistry registry = new MainRegistry();
     private String profile = "dev";
     private boolean download = true;
-    private String repos;
+    private String repositories;
     private boolean fresh;
     private boolean verbose;
     private String mavenSettings;
@@ -207,15 +207,15 @@ public class KameletMain extends MainCommandLineSupport {
         this.download = download;
     }
 
-    public String getRepos() {
-        return repos;
+    public String getRepositories() {
+        return repositories;
     }
 
     /**
      * Additional maven repositories for download on-demand (Use commas to separate multiple repositories).
      */
-    public void setRepos(String repos) {
-        this.repos = repos;
+    public void setRepositories(String repositories) {
+        this.repositories = repositories;
     }
 
     public boolean isFresh() {
@@ -344,7 +344,7 @@ public class KameletMain extends MainCommandLineSupport {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 if (arg.equals("-repos")) {
-                    setRepos(parameter);
+                    setRepositories(parameter);
                 }
             }
         });
@@ -422,7 +422,7 @@ public class KameletMain extends MainCommandLineSupport {
         downloader.setClassLoader(dynamicCL);
         downloader.setCamelContext(answer);
         downloader.setVerbose(verbose);
-        downloader.setRepos(repos);
+        downloader.setRepositories(repositories);
         downloader.setFresh(fresh);
         downloader.setMavenSettings(mavenSettings);
         downloader.setMavenSettingsSecurity(mavenSettingsSecurity);

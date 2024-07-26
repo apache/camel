@@ -246,7 +246,7 @@ class ExportQuarkus extends Export {
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
         // quarkus controls the camel version
-        String repos = getMavenRepos(settings, prop, quarkusVersion);
+        String repos = getMavenRepositories(settings, prop, quarkusVersion);
 
         CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
         if (camelVersion == null) {
@@ -357,7 +357,7 @@ class ExportQuarkus extends Export {
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
         // quarkus controls the camel version
-        String repos = getMavenRepos(settings, prop, quarkusVersion);
+        String repos = getMavenRepositories(settings, prop, quarkusVersion);
 
         CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
         if (camelVersion == null) {

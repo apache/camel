@@ -49,12 +49,12 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      */
     void addArtifactDownloadListener(ArtifactDownloadListener downloadListener);
 
-    String getRepos();
+    String getRepositories();
 
     /**
      * Additional maven repositories for download on-demand (Use commas to separate multiple repositories).
      */
-    void setRepos(String repos);
+    void setRepositories(String repositories);
 
     /**
      * Whether downloading from remote Maven repositories is enabled

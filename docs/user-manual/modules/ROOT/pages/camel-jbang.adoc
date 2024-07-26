@@ -648,11 +648,11 @@ camel run foo.java --repos=https://packages.atlassian.com/maven-external
 TIP: Multiple repositories can be separated by comma
 
 The configuration for the 3rd-party Maven repositories can also be configured in `application.properties`
-with the key `camel.jbang.repos` as shown:
+with the key `camel.jbang.repositories` as shown:
 
 [source,properties]
 ----
-camel.jbang.repos=https://packages.atlassian.com/maven-external
+camel.jbang.repositories=https://packages.atlassian.com/maven-external
 ----
 
 And when running Camel then `application.properties` is automatically loaded:
@@ -3615,7 +3615,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.dependencies`
 |Additional dependencies (Use commas to separate multiple dependencies). See more details at xref:_adding_custom_jars[].
 
-|`camel.jbang.exclude`
+|`camel.jbang.excludes`
 |Exclude files by name or pattern. Multiple names can be separated by comma.
 
 |`camel.jbang.classpathFiles`
@@ -3657,7 +3657,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.buildTool`
 |Build tool to use (maven or gradle)
 
-|`camel.jbang.repos`
+|`camel.jbang.repositories`
 |Additional maven repositories for download on-demand (Use commas to separate multiple repositories)
 
 |`camel.jbang.mavenSettings`
