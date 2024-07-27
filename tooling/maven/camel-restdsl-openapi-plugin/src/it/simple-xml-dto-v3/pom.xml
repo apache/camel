@@ -81,6 +81,7 @@
             </goals>
             <configuration>
               <blueprint>true</blueprint>
+              <modelPackage>org.openapi.model</modelPackage>
               <filterOperation>find*,deletePet,updatePet</filterOperation>
               <configOptions>
                 <dateLibrary>java8</dateLibrary>
