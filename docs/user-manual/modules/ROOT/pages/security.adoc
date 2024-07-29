@@ -590,13 +590,13 @@ The only requirement is adding the camel-aws-secrets-manager jar to your Camel a
 
 ==== Automatic Camel context reloading on Secret Refresh while using AWS Secrets Manager with Eventbridge and AWS SQS Services
 
-There is also the possibility of using AWS Eventbridge in combination with AWS SQS Service.
+Another option is to use AWS EventBridge in conjunction with the AWS SQS service.
 
-The needed bits on the AWS side are the following:
+On the AWS side, the following resources need to be created:
 
-- You need to create an AWS Cloudtrail trail
-- You need to create an AWS SQS Queue
-- You need to create an Eventbridge rule of this kind
+- an AWS Couldtrail trail
+- an AWS SQS Queue
+- an Eventbridge rule of the following kind
 
 [source,json]
 ----
