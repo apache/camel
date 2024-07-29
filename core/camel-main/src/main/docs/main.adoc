@@ -325,7 +325,7 @@ The camel.rest supports 29 options, which are listed below.
 
 
 === Camel AWS Vault configurations
-The camel.vault.aws supports 9 options, which are listed below.
+The camel.vault.aws supports 11 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -339,6 +339,8 @@ The camel.vault.aws supports 9 options, which are listed below.
 | *camel.vault.aws.region* | The AWS region |  | String
 | *camel.vault.aws.secretKey* | The AWS secret key |  | String
 | *camel.vault.aws.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
+| *camel.vault.aws.sqsQueueName* | In case of usage of SQS notification this field will specified the Queue name to use |  | String
+| *camel.vault.aws.useSqs{zwsp}Notification* | Whether to use AWS SQS for secrets updates notification, this will require setting up Eventbridge/Cloudtrail/SQS communication | false | boolean
 |===
 
 
