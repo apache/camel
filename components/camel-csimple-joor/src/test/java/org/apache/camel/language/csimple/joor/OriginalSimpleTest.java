@@ -63,11 +63,13 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
+    @SuppressWarnings("unused")
     @BindToRegistry
-    private Animal myAnimal = new Animal("Donkey", 17);
+    private final Animal myAnimal = new Animal("Donkey", 17);
 
+    @SuppressWarnings("unused")
     @BindToRegistry
-    private Greeter greeter = new Greeter();
+    private final Greeter greeter = new Greeter();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -2090,6 +2092,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testIif() {
         assertExpression("${iif(true, \"yes\", \"no\")}", "yes");
         assertExpression("${iif(false, \"yes\", \"no\")}", "no");
+
+        // above assertion fails
+        //exchange.setVariable("cheese", "gauda");
+        //exchange.getMessage().setHeader("counter", 3);
+        //assertExpression("${iif(true, ${variableAs('cheese', 'String')}, ${headerAs('counter', 'Integer')})}", "no");
     }
 
     @Override

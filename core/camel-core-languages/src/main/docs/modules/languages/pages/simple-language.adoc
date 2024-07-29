@@ -18,10 +18,10 @@ being a very small and simple language for evaluating
 `Expression` or `Predicate` without requiring any new dependencies
 or knowledge of other scripting languages such as Groovy.
 
-The simple language is designed to intend to cover almost all the common use cases
+The simple language is designed to cover almost all the common use cases
 when little need for scripting in your Camel routes.
 
-However, for much more complex use cases, then a more powerful language is recommended such as:
+However, for much more complex use cases, a more powerful language is recommended such as:
 
 * xref:groovy-language.adoc[Groovy]
 * xref:mvel-language.adoc[MVEL]
@@ -46,8 +46,7 @@ See also the xref:csimple-language.adoc[CSimple] language which is *compiled*.
 *Alternative syntax* 
 
 You can also use the alternative syntax which uses `$simple{ }` as placeholders.
-This can be used in situations to avoid clashes when using, for example,
-Spring property placeholder together with Camel.
+This approach is helpful in avoiding conflicts, such as when you are using Spring property placeholders alongside with Camel.
 ====
 
 == Simple Language options
@@ -159,20 +158,16 @@ converted message can be null.
 
 |env.foo |String |refer to the system environment variable
 
-|exception |Object |refer to the exception object on the exchange, is *null* if
-no exception set on exchange. Will fall back and grab caught exceptions
-(`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
+|exception |Object |refer to the exception object on the exchange, which will be *null* if no exception is set on exchange; when no exception is found, it will fall back to retrieve any caught exceptions (`Exchange.EXCEPTION_CAUGHT`) present on the Exchange.
 
 |exception.*OGNL* |Object |refer to the exchange exception invoked using a Camel OGNL
 expression object
 
-|exception.message |String |refer to the `exception.message` on the exchange, is *null* if no
-exception set on exchange. Will fall back and grab caught exceptions
-(`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
+|exception.message |String |refer to the message of the exception on the exchange, which will be *null* if no exception is set on exchange;
+when no exception is found, it will fall back to retrieve any (`Exchange.EXCEPTION_CAUGHT`) present on the Exchange.
 
-|exception.stacktrace |String |refer to the `exception.stracktrace` on the exchange, is
-*null* if no exception set on exchange. Will fall back and grab caught
-exceptions (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
+|exception.stacktrace |String |refer to the stack trace object of the exchange, which will be *null* if no exception is set on exchange;
+when no exception is found, it will fall back to retrieve any caught exceptions (`Exchange.EXCEPTION_CAUGHT`) present on the Exchange.
 
 |date:_command_ |Date |evaluates to a Date object.
 Supported commands are: *now* for current timestamp,
@@ -190,8 +185,8 @@ Command accepts offsets such as: *now-24h* or *header.xxx+1h* or even *now+1h30m
 |bean:_bean expression_ |Object |Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language.
 Specifying a method name you must use dot as separator. We also support
 the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean]
-component. Camel will by default lookup a bean by the given name. However if you need to refer
-to a bean class (such as calling a static method) then you can prefix with type, such as `bean:type:fqnClassName`.
+component. Camel will by default lookup a bean by the given name. However, if you need to refer
+to a bean class (such as calling a static method) then you can prefix with the type, such as `bean:type:fqnClassName`.
 
 |properties:key:default |String |Lookup a property with the given key. If the key does
 not exists or has no value, then an optional default value can be
