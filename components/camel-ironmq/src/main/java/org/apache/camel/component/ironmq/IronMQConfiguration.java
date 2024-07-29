@@ -149,7 +149,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Number of messages to poll pr. call. Maximum is 100.
+     * Number of messages to poll per call. Maximum is 100.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
@@ -185,7 +185,7 @@ public class IronMQConfiguration {
 
     /**
      * Should messages be deleted in one batch. This will limit the number of api requests since messages are deleted in
-     * one request, instead of one pr. exchange. If enabled care should be taken that the consumer is idempotent when
+     * one request, instead of one per exchange. If enabled care should be taken that the consumer is idempotent when
      * processing exchanges.
      */
     public void setBatchDelete(boolean batchDelete) {
