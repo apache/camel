@@ -45,7 +45,6 @@ import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.ALL;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.MESSAGE_GROUP_ID;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SENT_TIMESTAMP;
@@ -608,15 +607,13 @@ class Sqs2ConsumerTest extends CamelTestSupport {
 
     @SuppressWarnings("resource")
     private Sqs2Consumer createConsumer(int maxNumberOfMessages) throws Exception {
-        var spyContext = spy(context);
-        doReturn(clock).when(spyContext).getClock();
-
-        var component = new Sqs2Component(spyContext);
+        var component = new Sqs2Component(context());
         component.setConfiguration(configuration);
 
         var endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://%s?maxMessagesPerPoll=%s"
                 .formatted(configuration.getQueueName(), maxNumberOfMessages));
         endpoint.setClient(sqsClientMock);
+        endpoint.setClock(clock);
 
         var consumer = new Sqs2Consumer(endpoint, receivedExchanges::add);
         consumer.setStartScheduler(false);

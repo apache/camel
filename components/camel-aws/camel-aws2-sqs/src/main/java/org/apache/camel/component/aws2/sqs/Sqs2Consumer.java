@@ -506,7 +506,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         @SuppressWarnings("resource")
         private PollingTask(Sqs2Endpoint endpoint) {
-            clock = endpoint.getCamelContext().getClock();
+            clock = endpoint.getClock();
             sqsClient = endpoint.getClient();
             executorServiceManager = endpoint.getCamelContext().getExecutorServiceManager();
             createQueueOperation = endpoint::createQueue;
