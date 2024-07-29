@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "langchain4j-chat",
-    "title": "langChain4j Chat",
+    "title": "LangChain4j Chat",
     "description": "LangChain4j Chat component",
     "deprecated": false,
     "firstVersion": "4.5.0",
