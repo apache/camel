@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.github.consumer;
 
+import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
-import java.util.ArrayDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Exchange;
