@@ -87,7 +87,7 @@ public class IronmqUriDsl(
 
   /**
    * Should messages be deleted in one batch. This will limit the number of api requests since
-   * messages are deleted in one request, instead of one pr. exchange. If enabled care should be taken
+   * messages are deleted in one request, instead of one per exchange. If enabled care should be taken
    * that the consumer is idempotent when processing exchanges.
    */
   public fun batchDelete(batchDelete: String) {
@@ -96,7 +96,7 @@ public class IronmqUriDsl(
 
   /**
    * Should messages be deleted in one batch. This will limit the number of api requests since
-   * messages are deleted in one request, instead of one pr. exchange. If enabled care should be taken
+   * messages are deleted in one request, instead of one per exchange. If enabled care should be taken
    * that the consumer is idempotent when processing exchanges.
    */
   public fun batchDelete(batchDelete: Boolean) {
@@ -118,14 +118,14 @@ public class IronmqUriDsl(
   }
 
   /**
-   * Number of messages to poll pr. call. Maximum is 100.
+   * Number of messages to poll per call. Maximum is 100.
    */
   public fun maxMessagesPerPoll(maxMessagesPerPoll: String) {
     it.property("maxMessagesPerPoll", maxMessagesPerPoll)
   }
 
   /**
-   * Number of messages to poll pr. call. Maximum is 100.
+   * Number of messages to poll per call. Maximum is 100.
    */
   public fun maxMessagesPerPoll(maxMessagesPerPoll: Int) {
     it.property("maxMessagesPerPoll", maxMessagesPerPoll.toString())
