@@ -82,7 +82,7 @@ public class MainVaultTest {
         main.addInitialProperty("camel.vault.aws.defaultCredentialsProvider", "false");
         main.addInitialProperty("camel.vault.aws.profileCredentialsProvider", "true");
         main.addInitialProperty("camel.vault.aws.profileName", "jack");
-        main.addInitialProperty("camel.vault.aws.sqsQueueName", "http://sqs-2");
+        main.addInitialProperty("camel.vault.aws.sqsQueueUrl", "http://sqs-2");
         main.addInitialProperty("camel.vault.aws.useSqsNotification", "true");
 
         main.start();
