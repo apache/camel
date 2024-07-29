@@ -9303,7 +9303,7 @@ public class StaticEndpointBuilders {
         return KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
@@ -9322,7 +9322,7 @@ public class StaticEndpointBuilders {
         return langchain4jChat("langchain4j-chat", path);
     }
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
