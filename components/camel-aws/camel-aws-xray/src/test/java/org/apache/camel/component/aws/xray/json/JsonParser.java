@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.aws.xray.json;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +32,7 @@ public final class JsonParser {
     public static JsonStructure parse(final String jsonString) {
         String json = jsonString.replace("\n", "");
 
-        Stack<JsonStructure> stack = new Stack<>();
+        ArrayDeque<JsonStructure> stack = new ArrayDeque<>();
 
         JsonStructure ret = null;
         List<String> doNotIncludeSymbols = Arrays.asList(",", ":", "\"");
@@ -105,8 +105,7 @@ public final class JsonParser {
                         break;
                     }
                 default:
-                    if (('"' == c && curToken.isEmpty())
-                            || ('"' == c && !curToken.isEmpty() && curToken.charAt(curToken.length() - 1) != '\\')) {
+                    if ('"' == c && (curToken.isEmpty() || curToken.charAt(curToken.length() - 1) != '\\')) {
                         inWord = !inWord;
                     }
                     if (!inWord && !doNotIncludeSymbols.contains(String.valueOf(c))) {
@@ -119,7 +118,7 @@ public final class JsonParser {
         return ret;
     }
 
-    private static void addJson(JsonStructure element, String key, Stack<JsonStructure> stack) {
+    private static void addJson(JsonStructure element, String key, ArrayDeque<JsonStructure> stack) {
         if (!stack.isEmpty()) {
             JsonStructure json = stack.peek();
             if (json instanceof JsonObject && key != null) {

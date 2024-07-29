@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.github.consumer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -46,7 +46,7 @@ public class TagConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         List<RepositoryTag> tags = getRepositoryService().getTags(getRepository());
         // In the end, we want tags oldest to newest.
-        Stack<RepositoryTag> newTags = new Stack<>();
+        ArrayDeque<RepositoryTag> newTags = new ArrayDeque<>();
         for (RepositoryTag tag : tags) {
             if (!tagNames.contains(tag.getName())) {
                 newTags.push(tag);
@@ -54,12 +54,14 @@ public class TagConsumer extends AbstractGitHubConsumer {
             }
         }
 
-        while (!newTags.empty()) {
+        int counter = 0;
+        while (!newTags.isEmpty()) {
             RepositoryTag newTag = newTags.pop();
             Exchange e = createExchange(true);
             e.getIn().setBody(newTag);
             getProcessor().process(e);
+            counter++;
         }
-        return newTags.size();
+        return counter;
     }
 }
