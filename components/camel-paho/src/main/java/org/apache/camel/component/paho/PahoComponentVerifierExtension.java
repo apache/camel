@@ -44,7 +44,7 @@ public class PahoComponentVerifierExtension extends DefaultComponentVerifierExte
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
         return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-                .error(ResultErrorHelper.requiresOption("brokerUrl", parameters))
+                .error(ResultErrorHelper.requiresOption(parameters, "brokerUrl"))
                 .build();
     }
 
