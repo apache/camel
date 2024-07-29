@@ -308,47 +308,53 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                         e.getMessage(), e);
             }
         } else {
-            ReceiveMessageRequest.Builder request = ReceiveMessageRequest.builder().queueUrl(queueUrl);
-
-            LOG.trace("Receiving messages with request [{}]...", request);
-
-            ReceiveMessageResponse messageResult = null;
-            ReceiveMessageRequest requestBuild = request.build();
             try {
-                messageResult = sqsClient.receiveMessage(requestBuild);
-            } catch (QueueDoesNotExistException e) {
-                LOG.info("Queue does not exist.");
-            }
+                ReceiveMessageRequest.Builder request = ReceiveMessageRequest.builder().queueUrl(queueUrl);
 
-            for (Message message : messageResult.messages()) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode event = null;
+                LOG.trace("Receiving messages with request [{}]...", request);
+
+                ReceiveMessageResponse messageResult = null;
+                ReceiveMessageRequest requestBuild = request.build();
                 try {
-                    event = mapper.readTree(message.body());
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+                    messageResult = sqsClient.receiveMessage(requestBuild);
+                } catch (QueueDoesNotExistException e) {
+                    LOG.info("Queue does not exist.");
                 }
-                if (event.get("detail").get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                    if (event.get("detail").get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)) {
-                        String name = event.get("detail").get("requestParameters").get("secretId").asText();
-                        if (matchSecret(name)) {
-                            updates.put(name, Instant.parse(event.get("detail").get("eventTime").asText()));
-                            if (isReloadEnabled()) {
-                                LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
-                                triggerReloading = true;
-                                message.receiptHandle();
-                                DeleteMessageRequest.Builder deleteRequest
-                                        = DeleteMessageRequest.builder().queueUrl(queueUrl)
-                                                .receiptHandle(message.receiptHandle());
 
-                                LOG.trace("Deleting message with receipt handle {}...", message.receiptHandle());
+                for (Message message : messageResult.messages()) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode event = null;
+                    try {
+                        event = mapper.readTree(message.body());
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (event.get("detail").get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
+                        if (event.get("detail").get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)) {
+                            String name = event.get("detail").get("requestParameters").get("secretId").asText();
+                            if (matchSecret(name)) {
+                                updates.put(name, Instant.parse(event.get("detail").get("eventTime").asText()));
+                                if (isReloadEnabled()) {
+                                    LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
+                                    triggerReloading = true;
+                                    message.receiptHandle();
+                                    DeleteMessageRequest.Builder deleteRequest
+                                            = DeleteMessageRequest.builder().queueUrl(queueUrl)
+                                                    .receiptHandle(message.receiptHandle());
 
-                                sqsClient.deleteMessage(deleteRequest.build());
+                                    LOG.trace("Deleting message with receipt handle {}...", message.receiptHandle());
+
+                                    sqsClient.deleteMessage(deleteRequest.build());
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
+            } catch (Exception e) {
+                LOG.warn(
+                        "Error during AWS Secrets Refresh Task due to {}. This exception is ignored. Will try again on next run.",
+                        e.getMessage(), e);
             }
         }
 
