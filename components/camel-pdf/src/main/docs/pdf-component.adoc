@@ -60,4 +60,24 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 
+== Type converter
+
+Since Camel 4.8, the component is capable of doing simple document conversions. For instance,
+suppose you are receiving a PDF byte as a byte array:
+
+
+[source,java]
+----
+from("direct:start")
+    .to("pdf:extractText")
+    .to("mock:result");
+----
+
+
+It is now possible to get the body as a PD Document by using `PDDocument doc = exchange.getIn().getBody(PDDocument.class);`,
+which saves the trouble of converting the byte-array to a document.
+
+NOTE: this only works for unprotected PDF files. For password-protected, the files still need to be converted
+manually.
+
 include::spring-boot:partial$starter.adoc[]
