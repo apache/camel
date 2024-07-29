@@ -47,6 +47,10 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "sqsqueuename":
+        case "sqsQueueName": target.setSqsQueueName(property(camelContext, java.lang.String.class, value)); return true;
+        case "usesqsnotification":
+        case "useSqsNotification": target.setUseSqsNotification(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -78,6 +82,10 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "secrets": return java.lang.String.class;
+        case "sqsqueuename":
+        case "sqsQueueName": return java.lang.String.class;
+        case "usesqsnotification":
+        case "useSqsNotification": return boolean.class;
         default: return null;
         }
     }
@@ -110,6 +118,10 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secretkey":
         case "secretKey": return target.getSecretKey();
         case "secrets": return target.getSecrets();
+        case "sqsqueuename":
+        case "sqsQueueName": return target.getSqsQueueName();
+        case "usesqsnotification":
+        case "useSqsNotification": return target.isUseSqsNotification();
         default: return null;
         }
     }

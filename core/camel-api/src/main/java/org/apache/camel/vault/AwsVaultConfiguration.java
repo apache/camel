@@ -41,6 +41,10 @@ public class AwsVaultConfiguration extends VaultConfiguration {
     private long refreshPeriod = 30000;
     @Metadata
     private String secrets;
+    @Metadata
+    private boolean useSqsNotification;
+    @Metadata
+    private String sqsQueueName;
 
     public String getAccessKey() {
         return accessKey;
@@ -139,5 +143,28 @@ public class AwsVaultConfiguration extends VaultConfiguration {
      */
     public void setSecrets(String secrets) {
         this.secrets = secrets;
+    }
+
+    public boolean isUseSqsNotification() {
+        return useSqsNotification;
+    }
+
+    /**
+     * Whether to use AWS SQS for secrets updates notification, this will require setting up Eventbridge/Cloudtrail/SQS
+     * communication
+     */
+    public void setUseSqsNotification(boolean useSqsNotification) {
+        this.useSqsNotification = useSqsNotification;
+    }
+
+    public String getSqsQueueName() {
+        return sqsQueueName;
+    }
+
+    /**
+     * In case of usage of SQS notification this field will specified the Queue name to use
+     */
+    public void setSqsQueueName(String sqsQueueName) {
+        this.sqsQueueName = sqsQueueName;
     }
 }
