@@ -1149,18 +1149,6 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchange's exception invoking methods defined in a simple OGNL notation
-     *
-     * @param  predicate
-     * @param  trueExpression
-     * @param  falseExpression
-     * @return
-     */
-    public static Expression iifExpression(final boolean predicate, final Object trueExpression, final Object falseExpression) {
-        return null;
-    }
-
-    /**
      * Expression adapter for OGNL expression from Message Header or Exchange property
      */
     public static class KeyedOgnlExpressionAdapter extends ExpressionAdapter {
