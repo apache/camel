@@ -44,7 +44,7 @@ public class AwsVaultConfiguration extends VaultConfiguration {
     @Metadata
     private boolean useSqsNotification;
     @Metadata
-    private String sqsQueueName;
+    private String sqsQueueUrl;
 
     public String getAccessKey() {
         return accessKey;
@@ -157,14 +157,14 @@ public class AwsVaultConfiguration extends VaultConfiguration {
         this.useSqsNotification = useSqsNotification;
     }
 
-    public String getSqsQueueName() {
-        return sqsQueueName;
+    public String getSqsQueueUrl() {
+        return sqsQueueUrl;
     }
 
     /**
-     * In case of usage of SQS notification this field will specified the Queue name to use
+     * In case of usage of SQS notification this field will specified the Queue URL to use
      */
-    public void setSqsQueueName(String sqsQueueName) {
-        this.sqsQueueName = sqsQueueName;
+    public void setSqsQueueUrl(String sqsQueueUrl) {
+        this.sqsQueueUrl = sqsQueueUrl;
     }
 }

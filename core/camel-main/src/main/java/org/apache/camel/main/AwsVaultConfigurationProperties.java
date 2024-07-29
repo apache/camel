@@ -131,10 +131,10 @@ public class AwsVaultConfigurationProperties extends AwsVaultConfiguration imple
     }
 
     /**
-     * In case of usage of SQS notification this field will specified the Queue name to use
+     * In case of usage of SQS notification this field will specified the Queue URL to use
      */
-    public AwsVaultConfigurationProperties withSqsQueueName(String sqsQueueName) {
-        setSqsQueueName(sqsQueueName);
+    public AwsVaultConfigurationProperties withSqsQueueName(String sqsQueueUrl) {
+        setSqsQueueUrl(sqsQueueUrl);
         return this;
     }
 
