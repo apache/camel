@@ -82,7 +82,7 @@ public class MainVaultTest {
         main.addInitialProperty("camel.vault.aws.defaultCredentialsProvider", "false");
         main.addInitialProperty("camel.vault.aws.profileCredentialsProvider", "true");
         main.addInitialProperty("camel.vault.aws.profileName", "jack");
-        main.addInitialProperty("camel.vault.aws.sqsQueueName", "sqs-2");
+        main.addInitialProperty("camel.vault.aws.sqsQueueName", "http://sqs-2");
         main.addInitialProperty("camel.vault.aws.useSqsNotification", "true");
 
         main.start();
@@ -105,7 +105,7 @@ public class MainVaultTest {
         Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
         Assertions.assertTrue(cfg.isProfileCredentialsProvider());
         Assertions.assertEquals("jack", cfg.getProfileName());
-        Assertions.assertEquals("sqs-2", cfg.getSqsQueueName());
+        Assertions.assertEquals("http://sqs-2", cfg.getSqsQueueUrl());
         Assertions.assertTrue(cfg.isUseSqsNotification());
 
         main.stop();
