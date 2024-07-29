@@ -23,7 +23,7 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(47);
         props.add("app");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -70,6 +70,7 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
         props.add("useFixedDelay");
         props.add("useSunHttpsHandler");
         props.add("username");
+        props.add("validateCertificates");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
         secretProps.add("password");
