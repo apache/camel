@@ -16,6 +16,9 @@
  */
 package org.apache.camel.support.service;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.slf4j.Logger;
@@ -49,12 +52,13 @@ public abstract class BaseService {
     protected static final byte SHUTDOWN = 11;
     protected static final byte FAILED = 12;
 
-    protected final Object lock = new Object();
+    protected final Lock lock = new ReentrantLock();
     protected volatile byte status = NEW;
 
     public void build() {
         if (status == NEW) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 if (status == NEW) {
                     try (AutoCloseable ignored = doLifecycleChange()) {
                         doBuild();
@@ -63,6 +67,8 @@ public abstract class BaseService {
                     }
                     status = BUILT;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -70,7 +76,8 @@ public abstract class BaseService {
     public void init() {
         // allow to initialize again if stopped or failed
         if (status <= BUILT || status >= STOPPED) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 if (status <= BUILT || status >= STOPPED) {
                     build();
                     try (AutoCloseable ignored = doLifecycleChange()) {
@@ -82,6 +89,8 @@ public abstract class BaseService {
                         fail(e);
                     }
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -93,7 +102,8 @@ public abstract class BaseService {
      * invoke the operation in a safe manner.
      */
     public void start() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status == STARTED) {
                 logger().trace("Service: {} already started", this);
                 return;
@@ -125,6 +135,8 @@ public abstract class BaseService {
                 logger().trace("Error while starting service: {}", this, e);
                 fail(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -135,7 +147,8 @@ public abstract class BaseService {
      * invoke the operation in a safe manner.
      */
     public void stop() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status == FAILED) {
                 logger().trace("Service: {} failed and regarded as already stopped", this);
                 return;
@@ -158,6 +171,8 @@ public abstract class BaseService {
                 logger().trace("Error while stopping service: {}", this, e);
                 fail(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -168,7 +183,8 @@ public abstract class BaseService {
      * invoke the operation in a safe manner.
      */
     public void suspend() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status == SUSPENDED) {
                 logger().trace("Service: {} already suspended", this);
                 return;
@@ -187,6 +203,8 @@ public abstract class BaseService {
                 logger().trace("Error while suspending service: {}", this, e);
                 fail(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -197,7 +215,8 @@ public abstract class BaseService {
      * invoke the operation in a safe manner.
      */
     public void resume() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status != SUSPENDED) {
                 logger().trace("Service is not suspended: {}", this);
                 return;
@@ -212,6 +231,8 @@ public abstract class BaseService {
                 logger().trace("Error while resuming service: {}", this, e);
                 fail(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -222,7 +243,8 @@ public abstract class BaseService {
      * invoke the operation in a safe manner.
      */
     public void shutdown() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status == SHUTDOWN) {
                 logger().trace("Service: {} already shutdown", this);
                 return;
@@ -242,6 +264,8 @@ public abstract class BaseService {
                 logger().trace("Error shutting down service: {}", this, e);
                 fail(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 

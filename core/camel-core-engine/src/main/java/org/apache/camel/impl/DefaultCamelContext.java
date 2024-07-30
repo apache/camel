@@ -552,14 +552,19 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
-        if (model != null) {
-            RouteDefinition rd = model.getRouteDefinition(routeService.getId());
-            if (rd != null) {
-                model.getRouteDefinitions().remove(rd);
+    protected void shutdownRouteService(RouteService routeService) throws Exception {
+        getLock().lock();
+        try {
+            if (model != null) {
+                RouteDefinition rd = model.getRouteDefinition(routeService.getId());
+                if (rd != null) {
+                    model.getRouteDefinitions().remove(rd);
+                }
             }
+            super.shutdownRouteService(routeService);
+        } finally {
+            getLock().unlock();
         }
-        super.shutdownRouteService(routeService);
     }
 
     @Override
@@ -793,7 +798,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     protected boolean removeRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
         // synchronize on model first to avoid deadlock with concurrent 'addRoutes' calls:
         synchronized (model) {
-            synchronized (this) {
+            getLock().lock();
+            try {
                 boolean removed = super.removeRoute(routeId, loggingLevel);
                 if (removed) {
                     // must also remove the route definition
@@ -803,6 +809,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     }
                 }
                 return removed;
+            } finally {
+                getLock().unlock();
             }
         }
     }

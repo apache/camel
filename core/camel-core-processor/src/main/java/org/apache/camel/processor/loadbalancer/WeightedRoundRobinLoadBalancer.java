@@ -30,19 +30,24 @@ public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
     }
 
     @Override
-    protected synchronized AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
-        int counter = this.counter;
-        List<DistributionRatio> ratios = getRatios();
-        while (true) {
-            if (++counter >= ratios.size()) {
-                counter = 0;
+    protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
+        lock.lock();
+        try {
+            int counter = this.counter;
+            List<DistributionRatio> ratios = getRatios();
+            while (true) {
+                if (++counter >= ratios.size()) {
+                    counter = 0;
+                }
+                DistributionRatio ratio = ratios.get(counter);
+                if (ratio.decrement()) {
+                    this.counter = lastIndex = counter;
+                    decrementSum();
+                    return processors[counter];
+                }
             }
-            DistributionRatio ratio = ratios.get(counter);
-            if (ratio.decrement()) {
-                this.counter = lastIndex = counter;
-                decrementSum();
-                return processors[counter];
-            }
+        } finally {
+            lock.unlock();
         }
     }
 

@@ -153,6 +153,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     protected final Processor onPrepare;
     protected final ProcessorExchangeFactory processorExchangeFactory;
+    private final Lock lock = new ReentrantLock();
     private final AsyncProcessorAwaitManager awaitManager;
     private final CamelContext camelContext;
     private final InternalProcessorFactory internalProcessorFactory;
@@ -913,9 +914,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param exchange      the exchange to be added to the result
      * @param inputExchange the input exchange that was sent as input to this EIP
      */
-    private synchronized void doAggregateSync(
+    private void doAggregateSync(
             AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange, Exchange inputExchange) {
-        doAggregateInternal(strategy, result, exchange, inputExchange);
+        lock.lock();
+        try {
+            doAggregateInternal(strategy, result, exchange, inputExchange);
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -1163,9 +1169,14 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param  name the suggested name for the background thread
      * @return      the thread pool
      */
-    protected synchronized ExecutorService createAggregateExecutorService(String name) {
-        // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
-        return camelContext.getExecutorServiceManager().newScheduledThreadPool(this, name, 0);
+    protected ExecutorService createAggregateExecutorService(String name) {
+        lock.lock();
+        try {
+            // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
+            return camelContext.getExecutorServiceManager().newScheduledThreadPool(this, name, 0);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

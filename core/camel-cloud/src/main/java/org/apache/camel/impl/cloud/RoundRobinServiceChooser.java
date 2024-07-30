@@ -17,6 +17,8 @@
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDefinition;
@@ -28,20 +30,26 @@ import org.apache.camel.util.ObjectHelper;
 @Deprecated(since = "4.7")
 public class RoundRobinServiceChooser implements ServiceChooser {
     private int counter = -1;
+    private final Lock lock = new ReentrantLock();
 
     @Override
-    public synchronized ServiceDefinition choose(List<ServiceDefinition> definitions) {
-        // Fail if the service definition list is null or empty
-        if (ObjectHelper.isEmpty(definitions)) {
-            throw new IllegalArgumentException("The ServiceDefinition list should not be empty");
-        }
+    public ServiceDefinition choose(List<ServiceDefinition> definitions) {
+        lock.lock();
+        try {
+            // Fail if the service definition list is null or empty
+            if (ObjectHelper.isEmpty(definitions)) {
+                throw new IllegalArgumentException("The ServiceDefinition list should not be empty");
+            }
 
-        int size = definitions.size();
-        if (size == 1 || ++counter >= size) {
-            counter = 0;
-        }
+            int size = definitions.size();
+            if (size == 1 || ++counter >= size) {
+                counter = 0;
+            }
 
-        return definitions.get(counter);
+            return definitions.get(counter);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

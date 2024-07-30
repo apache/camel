@@ -18,6 +18,8 @@ package org.apache.camel.support;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 
@@ -25,6 +27,7 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
 
     private final int maxCapacity;
     private final Map<String, Long> map;
+    private final Lock lock = new ReentrantLock();
 
     public DefaultEndpointUtilizationStatistics(int maxCapacity) {
         this.map = LRUCacheFactory.newLRUCache(16, maxCapacity, false);
@@ -42,14 +45,19 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
     }
 
     @Override
-    public synchronized void onHit(String uri) {
-        map.compute(uri, (key, current) -> {
-            if (current == null) {
-                return 1L;
-            } else {
-                return ++current;
-            }
-        });
+    public void onHit(String uri) {
+        lock.lock();
+        try {
+            map.compute(uri, (key, current) -> {
+                if (current == null) {
+                    return 1L;
+                } else {
+                    return ++current;
+                }
+            });
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

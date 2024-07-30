@@ -40,7 +40,8 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
         try {
             // create and start producer lazy
             if (delegate == null) {
-                synchronized (lock) {
+                lock.lock();
+                try {
                     if (delegate == null) {
                         AsyncProducer newDelegate = AsyncProcessorConverterHelper.convert(getEndpoint().createProducer());
                         if (!ServiceHelper.isStarted(newDelegate)) {
@@ -48,6 +49,8 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
                         }
                         delegate = newDelegate;
                     }
+                } finally {
+                    lock.unlock();
                 }
             }
         } catch (Exception e) {

@@ -17,6 +17,8 @@
 package org.apache.camel.builder;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -37,6 +39,7 @@ import org.apache.camel.support.builder.Namespaces;
  */
 public class ExpressionClause<T> implements Expression, Predicate {
     private final ExpressionClauseSupport<T> delegate;
+    private final Lock lock = new ReentrantLock();
     private volatile Expression expr;
     private volatile Predicate pred;
 
@@ -1022,7 +1025,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     @Override
     public void init(CamelContext context) {
         if (expr == null) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (expr == null) {
                     Expression newExpression = getExpressionValue();
                     if (newExpression == null) {
@@ -1031,6 +1035,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
                     newExpression.init(context);
                     expr = newExpression;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -1038,7 +1044,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
     @Override
     public void initPredicate(CamelContext context) {
         if (pred == null) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (pred == null) {
                     Expression newExpression = getExpressionValue();
                     Predicate newPredicate;
@@ -1050,6 +1057,8 @@ public class ExpressionClause<T> implements Expression, Predicate {
                     newPredicate.initPredicate(context);
                     pred = newPredicate;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
