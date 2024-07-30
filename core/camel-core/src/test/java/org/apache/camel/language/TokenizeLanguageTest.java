@@ -46,8 +46,8 @@ class TokenizeLanguageTest extends AbstractSingleInputTypedLanguageTest<Tokenize
 
     @Override
     protected void assertBodyReceived(Object expected, Object body) {
-        // uses an scanner, so we need to walk it to get the body
-        if (body instanceof Iterator it) {
+        // uses a scanner, so we need to walk it to get the body
+        if (body instanceof Iterator<?> it) {
             body = it.next();
         }
         super.assertBodyReceived(expected, body);
