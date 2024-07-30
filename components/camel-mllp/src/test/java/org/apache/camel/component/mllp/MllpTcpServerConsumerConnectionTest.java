@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
+import static org.apache.camel.test.junit5.ThrottlingExecutor.slowly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -82,10 +83,10 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         addTestRouteWithIdleTimeout(-1);
 
-        for (int i = 1; i <= connectionCount; ++i) {
-            mllpClient.connect();
-            mllpClient.close();
-        }
+        slowly().repeat(connectionCount).awaiting(connectionMillis, TimeUnit.MILLISECONDS)
+                .beforeEach((i) -> mllpClient.connect())
+                .afterEach((i) -> mllpClient.reset())
+                .execute();
 
         // Connect one more time and allow a client thread to start
         mllpClient.connect();
@@ -104,10 +105,10 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         addTestRouteWithIdleTimeout(-1);
 
-        for (int i = 1; i <= connectionCount; ++i) {
-            mllpClient.connect();
-            mllpClient.reset();
-        }
+        slowly().repeat(connectionCount).awaiting(connectionMillis, TimeUnit.MILLISECONDS)
+                .beforeEach((i) -> mllpClient.connect())
+                .afterEach((i) -> mllpClient.reset())
+                .execute();
 
         // Connect one more time and allow a client thread to start
         mllpClient.connect();
@@ -134,7 +135,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         mllpClient.connect();
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
 
-        Awaitility.await().untilAsserted(() -> {
+        Awaitility.await().atMost(idleTimeout + RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS).untilAsserted(() -> {
             try {
                 mllpClient.checkConnection();
                 fail("The MllpClientResource should have thrown an exception when writing to the reset socket");
