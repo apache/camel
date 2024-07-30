@@ -856,6 +856,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex, int group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
+        expression.setRegex(Boolean.toString(regex));
         expression.setSkipFirst(Boolean.toString(skipFirst));
         expression.setGroup(Integer.toString(group));
         expression.setSkipFirst(Boolean.toString(skipFirst));
@@ -875,6 +876,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex, String group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
+        expression.setRegex(Boolean.toString(regex));
         expression.setSkipFirst(Boolean.toString(skipFirst));
         expression.setGroup(group);
         expression.setSkipFirst(Boolean.toString(skipFirst));
@@ -1198,9 +1200,4 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         }
         return getExpressionValue();
     }
-
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        // noop
-    }
-
 }
