@@ -151,7 +151,7 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
         template.sendBody(Hl7TestMessageGenerator.generateMessage());
 
         // Need to send one message to get the connection established
-        Awaitility.await().pollDelay(IDLE_TIMEOUT * 3, TimeUnit.MILLISECONDS)
+        Awaitility.await().atMost(IDLE_TIMEOUT * 3, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS));
     }
 

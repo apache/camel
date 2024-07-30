@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -285,7 +286,7 @@ public class JavaSocketManualTests {
             log.info("Client Socket read() timed-out before close");
         }
         clientSocket.getOutputStream().write(27);
-        Awaitility.await().untilAsserted(() -> {
+        Awaitility.await().atMost(1000, TimeUnit.MILLISECONDS).untilAsserted(() -> {
             log.info("Client Socket available() returned {} after close", clientSocket.getInputStream().available());
             log.info("Client Socket read() returned {} after close", clientSocket.getInputStream().read());
             // Javadoc for Socket says closing the InputStream will close the connection

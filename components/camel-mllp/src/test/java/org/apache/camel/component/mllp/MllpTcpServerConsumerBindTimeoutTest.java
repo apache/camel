@@ -90,20 +90,17 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
     public void testReceiveSingleMessage() throws Exception {
         result.expectedMessageCount(1);
 
-        Thread tmpThread = new Thread() {
-            public void run() {
-                try {
-                    ServerSocket tmpSocket = new ServerSocket(mllpClient.getMllpPort());
-                    Awaitility.await().untilAsserted(() -> {
-                        tmpSocket.close();
-                        Assertions.assertTrue(tmpSocket.isClosed());
-                    });
-                } catch (Exception ex) {
-                    throw new RuntimeCamelException("Exception caught in dummy listener", ex);
-                }
+        Thread tmpThread = new Thread(() -> {
+            try {
+                ServerSocket tmpSocket = new ServerSocket(mllpClient.getMllpPort());
+                Awaitility.await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
+                    tmpSocket.close();
+                    Assertions.assertTrue(tmpSocket.isClosed());
+                });
+            } catch (Exception ex) {
+                throw new RuntimeCamelException("Exception caught in dummy listener", ex);
             }
-
-        };
+        });
 
         tmpThread.start();
 

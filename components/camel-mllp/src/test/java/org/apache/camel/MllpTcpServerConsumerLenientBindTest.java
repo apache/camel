@@ -90,7 +90,7 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
         mllpClient.reset();
         portBlocker.close();
 
-        Awaitility.await().pollDelay(2000, TimeUnit.MILLISECONDS)
+        Awaitility.await().atMost(2000, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(ServiceStatus.Started, context.getStatus()));
 
         mllpClient.connect();
