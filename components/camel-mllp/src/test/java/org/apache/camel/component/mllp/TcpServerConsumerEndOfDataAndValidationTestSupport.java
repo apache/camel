@@ -241,7 +241,8 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         log.info("Sending first message");
         mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage(10001));
 
-        Awaitility.await().pollDelay(RECEIVE_TIMEOUT * 5, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+        Awaitility.await().atMost(RECEIVE_TIMEOUT * 5, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
             mllpClient.setSendEndOfBlock(true);
             mllpClient.setSendEndOfData(true);
 
