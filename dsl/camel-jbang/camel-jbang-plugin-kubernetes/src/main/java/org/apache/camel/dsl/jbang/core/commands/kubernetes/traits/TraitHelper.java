@@ -55,8 +55,6 @@ public final class TraitHelper {
     /**
      * Parses given list of trait expressions to proper trait model object.
      *
-     * @param  traits
-     * @return
      */
     public static Traits parseTraits(String[] traits) {
         if (traits == null || traits.length == 0) {
@@ -70,9 +68,8 @@ public final class TraitHelper {
      * Parses given list of trait expressions to proper trait model object. Supports trait options in the form of
      * key=value and trait annotation configuration.
      *
-     * @param  traits      trait key-value-pairs.
-     * @param  annotations trait annotation configuration.
-     * @return
+     * @param traits      trait key-value-pairs.
+     * @param annotations trait annotation configuration.
      */
     public static Traits parseTraits(String[] traits, String[] annotations) {
         Map<String, Map<String, Object>> traitConfigMap = new HashMap<>();
@@ -150,9 +147,6 @@ public final class TraitHelper {
      * Resolve trait value with automatic type conversion. Some trait keys (like enabled, verbose) need to be converted
      * to boolean type.
      *
-     * @param  traitKey
-     * @param  value
-     * @return
      */
     private static Object resolveTraitValue(String traitKey, String value) {
         if (traitKey.equalsIgnoreCase("enabled") ||
@@ -309,6 +303,13 @@ public final class TraitHelper {
                 containerTrait.setImage("%s%s/%s:%s".formatted(registryPrefix, imageGroup, imageName, version));
             } else {
                 containerTrait.setImage("%s%s:%s".formatted(registryPrefix, imageName, version));
+            }
+
+            // Plain export command always exposes a health endpoint on 8080.
+            // Skip this, when we decide that the health endpoint can be disabled.
+            if (containerTrait.getPort() == null) {
+                containerTrait.setPortName(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME);
+                containerTrait.setPort((long) ContainerTrait.DEFAULT_CONTAINER_PORT);
             }
 
             traitsSpec.setContainer(containerTrait);

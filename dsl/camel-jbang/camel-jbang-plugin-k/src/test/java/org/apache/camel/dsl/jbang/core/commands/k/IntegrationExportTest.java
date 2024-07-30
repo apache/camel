@@ -21,22 +21,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.Optional;
 
+import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class IntegrationExportTest {
+class IntegrationExportTest extends CamelKBaseTest {
 
     private File workingDir;
 
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() throws Exception {
         workingDir = Files.createTempDirectory("camel-k-integration-export").toFile();
         workingDir.deleteOnExit();
     }
@@ -50,7 +53,7 @@ class IntegrationExportTest {
 
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(RuntimeType.quarkus);
         Assertions.assertEquals("routes", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("routes", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
@@ -75,7 +78,7 @@ class IntegrationExportTest {
 
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(workingDir);
+        Deployment deployment = getDeployment(RuntimeType.quarkus);
         Assertions.assertEquals("timer-to-log", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("timer-to-log", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
@@ -98,10 +101,18 @@ class IntegrationExportTest {
                 RuntimeType.quarkus, files, exportDir, "camel-test", false);
     }
 
-    private Deployment getDeployment(File workingDir) throws IOException {
-        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
-            return KubernetesHelper.yaml().loadAs(fis, Deployment.class);
-        }
+    private Deployment getDeployment(RuntimeType rt) throws IOException {
+        return getResource(rt, Deployment.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
     }
 
+    private <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
+        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
+            List<HasMetadata> resources = kubernetesClient.load(fis).items();
+            return resources.stream()
+                    .filter(it -> type.isAssignableFrom(it.getClass()))
+                    .map(type::cast)
+                    .findFirst();
+        }
+    }
 }

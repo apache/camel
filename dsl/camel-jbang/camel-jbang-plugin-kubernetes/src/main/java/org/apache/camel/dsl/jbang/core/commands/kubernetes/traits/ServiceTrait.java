@@ -30,6 +30,7 @@ import org.apache.camel.v1.integrationspec.traits.Service;
 public class ServiceTrait extends BaseTrait {
 
     public static final int SERVICE_TRAIT_ORDER = 1500;
+    public static final int DEFAULT_SERVICE_PORT = 80;
 
     public ServiceTrait() {
         super("service", SERVICE_TRAIT_ORDER);
@@ -44,6 +45,10 @@ public class ServiceTrait extends BaseTrait {
         if (traitConfig.getService() != null && traitConfig.getService().getEnabled() != null) {
             // either explicitly enabled or disabled
             return traitConfig.getService().getEnabled();
+        }
+
+        if (traitConfig.getContainer().getPort() != null) {
+            return true;
         }
 
         return TraitHelper.exposesHttpService(context);
@@ -67,7 +72,8 @@ public class ServiceTrait extends BaseTrait {
                 .addToPorts(new ServicePortBuilder()
                         .withName(Optional.ofNullable(containerTrait.getServicePortName())
                                 .orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME))
-                        .withPort(Optional.ofNullable(containerTrait.getServicePort()).map(Long::intValue).orElse(80))
+                        .withPort(Optional.ofNullable(containerTrait.getServicePort()).map(Long::intValue)
+                                .orElse(DEFAULT_SERVICE_PORT))
                         .withTargetPort(
                                 new IntOrString(
                                         Optional.ofNullable(containerTrait.getPortName())
