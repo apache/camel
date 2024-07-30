@@ -714,7 +714,7 @@ public final class PropertyBindingSupport {
             obj = ((PropertyConfigurerGetter) configurer).getOptionValue(target, undashKey, ignoreCase);
         }
         if (obj == null) {
-            // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
+            // it was supposed to be a list or map, but its null, so let's create a new list or map and set it automatically
             Class<?> returnType = null;
             if (configurer instanceof PropertyConfigurerGetter) {
                 returnType = ((PropertyConfigurerGetter) configurer).getOptionType(undashKey, true);
@@ -734,6 +734,9 @@ public final class PropertyBindingSupport {
                                                        + " as either a Map/List/array because target bean is not a Map, List or array type: "
                                                        + target);
                 }
+
+                // get the fresh created and configured option value, because the target instance may have created a new list or map as part of the setter
+                obj = ((PropertyConfigurerGetter) configurer).getOptionValue(target, undashKey, ignoreCase);
                 target = obj;
             }
         }
