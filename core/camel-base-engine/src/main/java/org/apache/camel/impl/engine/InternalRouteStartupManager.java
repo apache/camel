@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -54,6 +56,7 @@ final class InternalRouteStartupManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(InternalRouteStartupManager.class);
 
+    private final Lock lock = new ReentrantLock();
     private final ThreadLocal<Route> setupRoute = new ThreadLocal<>();
     private final CamelLogger routeLogger = new CamelLogger(LOG);
     private int defaultRouteStartupOrder = 1000;
@@ -168,82 +171,92 @@ final class InternalRouteStartupManager {
      * @param  routeServices  the routes
      * @throws Exception      is thrown if error starting the routes
      */
-    private synchronized void safelyStartRouteServices(
+    private void safelyStartRouteServices(
             AbstractCamelContext camelContext,
             boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
             Collection<RouteService> routeServices)
             throws Exception {
-        // list of inputs to start when all the routes have been prepared for
-        // starting
-        // we use a tree map so the routes will be ordered according to startup
-        // order defined on the route
-        Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<>();
+        lock.lock();
+        try {
+            // list of inputs to start when all the routes have been prepared for
+            // starting
+            // we use a tree map so the routes will be ordered according to startup
+            // order defined on the route
+            Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<>();
 
-        // figure out the order in which the routes should be started
-        for (RouteService routeService : routeServices) {
-            DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(camelContext, routeService);
-            // check for clash before we add it as input
-            if (checkClash) {
-                doCheckStartupOrderClash(camelContext, order, inputs);
+            // figure out the order in which the routes should be started
+            for (RouteService routeService : routeServices) {
+                DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(camelContext, routeService);
+                // check for clash before we add it as input
+                if (checkClash) {
+                    doCheckStartupOrderClash(camelContext, order, inputs);
+                }
+                inputs.put(order.getStartupOrder(), order);
             }
-            inputs.put(order.getStartupOrder(), order);
-        }
 
-        // warm up routes before we start them
-        doWarmUpRoutes(camelContext, inputs, startConsumer);
+            // warm up routes before we start them
+            doWarmUpRoutes(camelContext, inputs, startConsumer);
 
-        // sort the startup listeners so they are started in the right order
-        camelContext.getStartupListeners().sort(OrderedComparator.get());
-        // now call the startup listeners where the routes has been warmed up
-        // (only the actual route consumer has not yet been started)
-        for (StartupListener startup : camelContext.getStartupListeners()) {
-            startup.onCamelContextStarted(camelContext.getCamelContextReference(), camelContext.isStarted());
-        }
-        // because the consumers may also register startup listeners we need to
-        // reset
-        // the already started listeners
-        List<StartupListener> backup = new ArrayList<>(camelContext.getStartupListeners());
-        camelContext.getStartupListeners().clear();
-
-        // now start the consumers
-        if (startConsumer) {
-            if (resumeConsumer) {
-                // and now resume the routes
-                doResumeRouteConsumers(camelContext, inputs, addingRoutes);
-            } else {
-                // and now start the routes
-                // and check for clash with multiple consumers of the same
-                // endpoints which is not allowed
-                doStartRouteConsumers(camelContext, inputs, addingRoutes);
+            // sort the startup listeners so they are started in the right order
+            camelContext.getStartupListeners().sort(OrderedComparator.get());
+            // now call the startup listeners where the routes has been warmed up
+            // (only the actual route consumer has not yet been started)
+            for (StartupListener startup : camelContext.getStartupListeners()) {
+                startup.onCamelContextStarted(camelContext.getCamelContextReference(), camelContext.isStarted());
             }
-        }
+            // because the consumers may also register startup listeners we need to
+            // reset
+            // the already started listeners
+            List<StartupListener> backup = new ArrayList<>(camelContext.getStartupListeners());
+            camelContext.getStartupListeners().clear();
 
-        // sort the startup listeners so they are started in the right order
-        camelContext.getStartupListeners().sort(OrderedComparator.get());
-        // now the consumers that was just started may also add new
-        // StartupListeners (such as timer)
-        // so we need to ensure they get started as well
-        for (StartupListener startup : camelContext.getStartupListeners()) {
-            startup.onCamelContextStarted(camelContext.getCamelContextReference(), camelContext.isStarted());
-        }
-        // and add the previous started startup listeners to the list so we have
-        // them all
-        camelContext.getStartupListeners().addAll(0, backup);
+            // now start the consumers
+            if (startConsumer) {
+                if (resumeConsumer) {
+                    // and now resume the routes
+                    doResumeRouteConsumers(camelContext, inputs, addingRoutes);
+                } else {
+                    // and now start the routes
+                    // and check for clash with multiple consumers of the same
+                    // endpoints which is not allowed
+                    doStartRouteConsumers(camelContext, inputs, addingRoutes);
+                }
+            }
 
-        // inputs no longer needed
-        inputs.clear();
+            // sort the startup listeners so they are started in the right order
+            camelContext.getStartupListeners().sort(OrderedComparator.get());
+            // now the consumers that was just started may also add new
+            // StartupListeners (such as timer)
+            // so we need to ensure they get started as well
+            for (StartupListener startup : camelContext.getStartupListeners()) {
+                startup.onCamelContextStarted(camelContext.getCamelContextReference(), camelContext.isStarted());
+            }
+            // and add the previous started startup listeners to the list so we have
+            // them all
+            camelContext.getStartupListeners().addAll(0, backup);
+
+            // inputs no longer needed
+            inputs.clear();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * @see #safelyStartRouteServices(AbstractCamelContext, boolean, boolean, boolean, boolean, Collection)
      */
-    public synchronized void safelyStartRouteServices(
+    public void safelyStartRouteServices(
             AbstractCamelContext camelContext,
             boolean forceAutoStart, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
             RouteService... routeServices)
             throws Exception {
-        safelyStartRouteServices(camelContext, checkClash, startConsumer, resumeConsumer, addingRoutes,
-                Arrays.asList(routeServices));
+        lock.lock();
+        try {
+            safelyStartRouteServices(camelContext, checkClash, startConsumer, resumeConsumer, addingRoutes,
+                    Arrays.asList(routeServices));
+        } finally {
+            lock.unlock();
+        }
     }
 
     DefaultRouteStartupOrder doPrepareRouteToBeStarted(AbstractCamelContext camelContext, RouteService routeService) {

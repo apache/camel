@@ -18,6 +18,8 @@ package org.apache.camel.reifier.errorhandler;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
@@ -53,6 +55,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
             = new HashMap<>(0);
 
     protected final T definition;
+
+    protected final Lock lock = new ReentrantLock();
 
     /**
      * Utility classes should not have a public constructor.

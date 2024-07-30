@@ -372,17 +372,22 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     @Override
-    public synchronized void purge() {
+    public void purge() {
+        lock.lock();
         try {
-            if (producers != null) {
-                producers.stop();
-                producers.start();
+            try {
+                if (producers != null) {
+                    producers.stop();
+                    producers.start();
+                }
+            } catch (Exception e) {
+                LOG.debug("Error restarting producers", e);
             }
-        } catch (Exception e) {
-            LOG.debug("Error restarting producers", e);
-        }
-        if (statistics != null) {
-            statistics.clear();
+            if (statistics != null) {
+                statistics.clear();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

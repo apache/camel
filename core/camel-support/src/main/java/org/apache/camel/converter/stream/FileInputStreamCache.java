@@ -28,6 +28,8 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -54,6 +56,7 @@ import org.slf4j.LoggerFactory;
  * <a href="https://camel.apache.org/manual/stream-caching.html">stream-caching</a> functionality.
  */
 public final class FileInputStreamCache extends InputStream implements StreamCache {
+    private final Lock lock = new ReentrantLock();
     private InputStream stream;
     private final long length;
     private final FileInputStreamCache.TempFileManager tempFileManager;
@@ -82,14 +85,19 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     }
 
     @Override
-    public synchronized void reset() {
-        // reset by closing and creating a new stream based on the file
-        close();
-        // reset by creating a new stream based on the file
-        stream = null;
+    public void reset() {
+        lock.lock();
+        try {
+            // reset by closing and creating a new stream based on the file
+            close();
+            // reset by creating a new stream based on the file
+            stream = null;
 
-        if (!file.exists()) {
-            throw new RuntimeCamelException("Cannot reset stream from file " + file);
+            if (!file.exists()) {
+                throw new RuntimeCamelException("Cannot reset stream from file " + file);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -208,6 +216,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
          * Indicator whether the file input stream caches are closed on completion of the exchanges.
          */
         private final boolean closedOnCompletion;
+        private final Lock lock = new ReentrantLock();
         private final AtomicInteger exchangeCounter = new AtomicInteger();
         private File tempFile;
         private OutputStream outputStream; // file output stream
@@ -231,11 +240,16 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
          * <p>
          * Must be synchronized, because can be accessed by several threads.
          */
-        synchronized void add(FileInputStreamCache fileInputStreamCache) {
-            if (fileInputStreamCaches == null) {
-                fileInputStreamCaches = new ArrayList<>(3);
+        void add(FileInputStreamCache fileInputStreamCache) {
+            lock.lock();
+            try {
+                if (fileInputStreamCaches == null) {
+                    fileInputStreamCaches = new ArrayList<>(3);
+                }
+                fileInputStreamCaches.add(fileInputStreamCache);
+            } finally {
+                lock.unlock();
             }
-            fileInputStreamCaches.add(fileInputStreamCache);
         }
 
         void addExchange(Exchange exchange) {

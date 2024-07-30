@@ -86,16 +86,26 @@ public final class OrderedLocationProperties extends BaseOrderedProperties {
     }
 
     @Override
-    public synchronized void clear() {
-        locations.clear();
-        defaultValues.clear();
-        super.clear();
+    public void clear() {
+        lock.lock();
+        try {
+            locations.clear();
+            defaultValues.clear();
+            super.clear();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized Object remove(Object key) {
-        locations.remove(key);
-        defaultValues.remove(key);
-        return super.remove(key);
+    public Object remove(Object key) {
+        lock.lock();
+        try {
+            locations.remove(key);
+            defaultValues.remove(key);
+            return super.remove(key);
+        } finally {
+            lock.unlock();
+        }
     }
 }

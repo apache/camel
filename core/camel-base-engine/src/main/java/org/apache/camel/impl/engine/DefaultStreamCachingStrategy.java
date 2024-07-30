@@ -24,6 +24,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -554,64 +557,76 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
      */
     private static final class UtilizationStatistics implements Statistics {
 
+        private final Lock lock = new ReentrantLock();
         private boolean statisticsEnabled;
-        private volatile long memoryCounter;
-        private volatile long memorySize;
-        private volatile long memoryAverageSize;
-        private volatile long spoolCounter;
-        private volatile long spoolSize;
-        private volatile long spoolAverageSize;
+        private final AtomicLong memoryCounter = new AtomicLong();
+        private final AtomicLong memorySize = new AtomicLong();
+        private final AtomicLong memoryAverageSize = new AtomicLong();
+        private final AtomicLong spoolCounter = new AtomicLong();
+        private final AtomicLong spoolSize = new AtomicLong();
+        private final AtomicLong spoolAverageSize = new AtomicLong();
 
-        synchronized void updateMemory(long size) {
-            memoryCounter++;
-            memorySize += size;
-            memoryAverageSize = memorySize / memoryCounter;
+        void updateMemory(long size) {
+            lock.lock();
+            try {
+                memoryAverageSize.set(memorySize.addAndGet(size) / memoryCounter.incrementAndGet());
+            } finally {
+                lock.unlock();
+            }
         }
 
-        synchronized void updateSpool(long size) {
-            spoolCounter++;
-            spoolSize += size;
-            spoolAverageSize = spoolSize / spoolCounter;
+        void updateSpool(long size) {
+            lock.lock();
+            try {
+                spoolAverageSize.set(spoolSize.addAndGet(size) / spoolCounter.incrementAndGet());
+            } finally {
+                lock.lock();
+            }
         }
 
         @Override
         public long getCacheMemoryCounter() {
-            return memoryCounter;
+            return memoryCounter.get();
         }
 
         @Override
         public long getCacheMemorySize() {
-            return memorySize;
+            return memorySize.get();
         }
 
         @Override
         public long getCacheMemoryAverageSize() {
-            return memoryAverageSize;
+            return memoryAverageSize.get();
         }
 
         @Override
         public long getCacheSpoolCounter() {
-            return spoolCounter;
+            return spoolCounter.get();
         }
 
         @Override
         public long getCacheSpoolSize() {
-            return spoolSize;
+            return spoolSize.get();
         }
 
         @Override
         public long getCacheSpoolAverageSize() {
-            return spoolAverageSize;
+            return spoolAverageSize.get();
         }
 
         @Override
-        public synchronized void reset() {
-            memoryCounter = 0;
-            memorySize = 0;
-            memoryAverageSize = 0;
-            spoolCounter = 0;
-            spoolSize = 0;
-            spoolAverageSize = 0;
+        public void reset() {
+            lock.lock();
+            try {
+                memoryCounter.set(0);
+                memorySize.set(0);
+                memoryAverageSize.set(0);
+                spoolCounter.set(0);
+                spoolSize.set(0);
+                spoolAverageSize.set(0);
+            } finally {
+                lock.unlock();
+            }
         }
 
         @Override

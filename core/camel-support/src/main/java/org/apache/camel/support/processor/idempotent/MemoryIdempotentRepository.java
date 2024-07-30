@@ -17,6 +17,8 @@
 package org.apache.camel.support.processor.idempotent;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -44,7 +46,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     private static final int MAX_CACHE_SIZE = 1000;
 
     private Map<String, Object> cache;
-    private final Object cacheAndStoreLock = new Object();
+    private final Lock cacheAndStoreLock = new ReentrantLock();
 
     @Metadata(description = "Maximum elements that can be stored in-memory", defaultValue = "" + MAX_CACHE_SIZE)
     private int cacheSize;
@@ -89,29 +91,38 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             if (cache.containsKey(key)) {
                 return false;
             } else {
                 cache.put(key, key);
                 return true;
             }
+        } finally {
+            cacheAndStoreLock.unlock();
         }
     }
 
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             return cache.containsKey(key);
+        } finally {
+            cacheAndStoreLock.unlock();
         }
     }
 
     @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             return cache.remove(key) != null;
+        } finally {
+            cacheAndStoreLock.unlock();
         }
     }
 
@@ -124,8 +135,11 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             cache.clear();
+        } finally {
+            cacheAndStoreLock.unlock();
         }
     }
 

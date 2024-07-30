@@ -16,6 +16,9 @@
  */
 package org.apache.camel.xml.jaxb;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 
@@ -29,15 +32,19 @@ import org.apache.camel.spi.annotations.JdkService;
 @JdkService(ModelJAXBContextFactory.FACTORY)
 public class DefaultModelJAXBContextFactory implements ModelJAXBContextFactory {
 
+    private final Lock lock = new ReentrantLock();
     private volatile JAXBContext context;
 
     @Override
     public JAXBContext newJAXBContext() throws JAXBException {
         if (context == null) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (context == null) {
                     context = JAXBContext.newInstance(getPackages(), getClassLoader());
                 }
+            } finally {
+                lock.unlock();
             }
         }
         return context;
