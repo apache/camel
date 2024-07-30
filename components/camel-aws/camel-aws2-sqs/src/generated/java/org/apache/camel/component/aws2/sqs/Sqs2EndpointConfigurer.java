@@ -45,6 +45,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "concurrentrequestlimit":
+        case "concurrentRequestLimit": target.getConfiguration().setConcurrentRequestLimit(property(camelContext, int.class, value)); return true;
         case "defaultvisibilitytimeout":
         case "defaultVisibilityTimeout": target.getConfiguration().setDefaultVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -128,6 +130,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverSideEncryptionEnabled": target.getConfiguration().setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "sessiontoken":
         case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "sortattributename":
+        case "sortAttributeName": target.getConfiguration().setSortAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -182,6 +186,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
         case "concurrentConsumers": return int.class;
+        case "concurrentrequestlimit":
+        case "concurrentRequestLimit": return int.class;
         case "defaultvisibilitytimeout":
         case "defaultVisibilityTimeout": return java.lang.Integer.class;
         case "delay": return long.class;
@@ -265,6 +271,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverSideEncryptionEnabled": return boolean.class;
         case "sessiontoken":
         case "sessionToken": return java.lang.String.class;
+        case "sortattributename":
+        case "sortAttributeName": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -315,6 +323,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
         case "concurrentConsumers": return target.getConfiguration().getConcurrentConsumers();
+        case "concurrentrequestlimit":
+        case "concurrentRequestLimit": return target.getConfiguration().getConcurrentRequestLimit();
         case "defaultvisibilitytimeout":
         case "defaultVisibilityTimeout": return target.getConfiguration().getDefaultVisibilityTimeout();
         case "delay": return target.getDelay();
@@ -398,6 +408,8 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "serverSideEncryptionEnabled": return target.getConfiguration().isServerSideEncryptionEnabled();
         case "sessiontoken":
         case "sessionToken": return target.getConfiguration().getSessionToken();
+        case "sortattributename":
+        case "sortAttributeName": return target.getConfiguration().getSortAttributeName();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":

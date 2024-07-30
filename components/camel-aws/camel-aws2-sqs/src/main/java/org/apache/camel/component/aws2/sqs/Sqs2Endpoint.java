@@ -22,13 +22,16 @@ import java.nio.charset.Charset;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.clock.Clock;
 import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.spi.*;
+import org.apache.camel.support.MonotonicClock;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.FileUtil;
@@ -62,6 +65,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     private SqsClient client;
     private String queueUrl;
     private boolean queueUrlInitialized;
+    private Clock clock = new MonotonicClock();
 
     @UriPath(description = "Queue name or ARN")
     @Metadata(required = true)
@@ -427,5 +431,13 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             metadata.put("queueName", configuration.getQueueName());
         }
         return metadata;
+    }
+
+    Clock getClock() {
+        return clock;
+    }
+
+    void setClock(Clock clock) {
+        this.clock = Objects.requireNonNull(clock);
     }
 }
