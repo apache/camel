@@ -35,8 +35,10 @@ import java.util.stream.Stream;
 import io.fabric8.knative.eventing.v1.Trigger;
 import io.fabric8.knative.messaging.v1.Subscription;
 import io.fabric8.knative.sources.v1.SinkBinding;
+import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -111,7 +113,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 
-        Assertions.assertFalse(hasService(rt));
+        Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
     }
 
@@ -136,7 +138,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 
-        Assertions.assertFalse(hasService(rt));
+        Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
         Properties applicationProperties = getApplicationProperties(workingDir);
@@ -147,31 +149,62 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
-    public void shouldAddServiceSpec(RuntimeType rt) throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
-                "--image-group=camel-test", "--runtime=" + rt.runtime());
+    public void shouldAddDefaultServiceSpec(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--trait", "service.type=NodePort",
+                "--runtime=" + rt.runtime());
         command.doCall();
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
         Deployment deployment = getDeployment(rt);
-        Assertions.assertEquals("route-service", deployment.getMetadata().getName());
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("camel-test/route-service:1.0-SNAPSHOT",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().size());
-        Assertions.assertEquals("http",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0).getName());
-        Assertions.assertEquals(8080,
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0).getContainerPort());
+        Assertions.assertEquals("route:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertEquals(1, container.getPorts().size());
+        Assertions.assertEquals("http", container.getPorts().get(0).getName());
+        Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
         Service service = getService(rt);
+        List<ServicePort> ports = service.getSpec().getPorts();
+        Assertions.assertEquals("route", service.getMetadata().getName());
+        Assertions.assertEquals("NodePort", service.getSpec().getType());
+        Assertions.assertEquals(1, ports.size());
+        Assertions.assertEquals("http", ports.get(0).getName());
+        Assertions.assertEquals(80, ports.get(0).getPort());
+        Assertions.assertEquals("http", ports.get(0).getTargetPort().getStrVal());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddServiceSpec(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "service.type=NodePort",
+                "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        Deployment deployment = getDeployment(rt);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("route-service", deployment.getMetadata().getName());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertEquals(1, container.getPorts().size());
+        Assertions.assertEquals("http", container.getPorts().get(0).getName());
+        Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        Service service = getService(rt);
+        List<ServicePort> ports = service.getSpec().getPorts();
         Assertions.assertEquals("route-service", service.getMetadata().getName());
-        Assertions.assertEquals(1, service.getSpec().getPorts().size());
-        Assertions.assertEquals("http", service.getSpec().getPorts().get(0).getName());
-        Assertions.assertEquals(80, service.getSpec().getPorts().get(0).getPort());
-        Assertions.assertEquals("http", service.getSpec().getPorts().get(0).getTargetPort().getStrVal());
+        Assertions.assertEquals("NodePort", service.getSpec().getType());
+        Assertions.assertEquals(1, ports.size());
+        Assertions.assertEquals("http", ports.get(0).getName());
+        Assertions.assertEquals(80, ports.get(0).getPort());
+        Assertions.assertEquals("http", ports.get(0).getTargetPort().getStrVal());
     }
 
     @ParameterizedTest
@@ -359,7 +392,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertFalse(hasService(rt));
+        Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
         SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
@@ -399,7 +432,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertFalse(hasService(rt));
+        Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
         SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
@@ -439,7 +472,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertFalse(hasService(rt));
+        Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
         SinkBinding sinkBinding = getResource(rt, SinkBinding.class)

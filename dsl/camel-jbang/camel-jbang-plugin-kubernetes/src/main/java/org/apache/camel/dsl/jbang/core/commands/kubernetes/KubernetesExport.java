@@ -238,7 +238,7 @@ public class KubernetesExport extends Export {
         buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, container.getImage()));
         buildProperties.add("%s.kubernetes.ports.%s.container-port=%d".formatted(propPrefix,
                 Optional.ofNullable(container.getPortName()).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME),
-                Optional.ofNullable(container.getPort()).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT)));
+                Optional.ofNullable(container.getPort()).map(Long::intValue).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT)));
 
         // Need to set quarkus.container properties, otherwise these settings get overwritten by Quarkus
         if (container.getName() != null && !container.getName().equals(projectName)) {
