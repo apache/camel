@@ -139,6 +139,21 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>camel.debug</id>
+            <activation>
+                <property>
+                    <name>camel.debug</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-debug</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
 </project>
