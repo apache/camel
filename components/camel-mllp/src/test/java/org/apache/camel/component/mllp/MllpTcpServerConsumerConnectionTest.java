@@ -28,7 +28,7 @@ import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.org.awaitility.Awaitility;
+import org.awaitility.Awaitility;
 
 import static org.apache.camel.test.junit5.ThrottlingExecutor.slowly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
