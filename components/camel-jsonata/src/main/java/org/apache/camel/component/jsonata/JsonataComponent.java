@@ -27,7 +27,7 @@ import org.apache.camel.support.ResourceHelper;
 @Component("jsonata")
 public class JsonataComponent extends DefaultComponent {
     @Metadata(label = "advanced",
-        description = "To configure custom frame bindings and inject user functions.")
+              description = "To configure custom frame bindings and inject user functions.")
     protected JsonataFrameBinding frameBinding;
 
     public JsonataComponent() {
@@ -37,7 +37,8 @@ public class JsonataComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
-        JsonataFrameBinding frameBinding = resolveAndRemoveReferenceParameter(parameters, "frameBinding", JsonataFrameBinding.class);
+        JsonataFrameBinding frameBinding
+                = resolveAndRemoveReferenceParameter(parameters, "frameBinding", JsonataFrameBinding.class);
         if (frameBinding == null) {
             // fallback to component configured
             frameBinding = getFrameBinding();

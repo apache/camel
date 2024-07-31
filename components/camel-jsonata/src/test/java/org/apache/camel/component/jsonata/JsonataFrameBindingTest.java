@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.jsonata;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.Processor;
+import com.dashjoin.jsonata.Jsonata;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
-import com.dashjoin.jsonata.Jsonata;
 
 /**
  * Unit test based on the first sample test from the JSONata project.
