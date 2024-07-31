@@ -26,14 +26,14 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.awaitility.Awaitility;
 
 import static org.apache.camel.test.junit5.ThrottlingExecutor.slowly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
@@ -135,14 +135,14 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         mllpClient.connect();
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
 
-        Awaitility.await().atMost(idleTimeout + RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-            try {
-                mllpClient.checkConnection();
-                fail("The MllpClientResource should have thrown an exception when writing to the reset socket");
-            } catch (MllpJUnitResourceException expectedEx) {
-                assertEquals("checkConnection failed - read() returned END_OF_STREAM", expectedEx.getMessage());
-                assertNull(expectedEx.getCause());
-            }
+        Awaitility.await().untilAsserted(() -> {
+
+            MllpJUnitResourceException ex = assertThrows(MllpJUnitResourceException.class, () ->
+                    mllpClient.checkConnection(),
+                    "The MllpClientResource should have thrown an exception when writing to the reset socket");
+
+            assertEquals("checkConnection failed - read() returned END_OF_STREAM", ex.getMessage());
+            assertNull(ex.getCause());
 
             MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
         });

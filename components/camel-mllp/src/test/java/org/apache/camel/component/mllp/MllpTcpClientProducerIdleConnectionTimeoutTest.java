@@ -31,15 +31,14 @@ import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSupport {
 
@@ -146,13 +145,11 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
             assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
         });
 
-        Awaitility.await().atMost((long) (IDLE_TIMEOUT * 1.1), TimeUnit.MILLISECONDS).untilAsserted(() -> {
-            try {
-                mllpServer.checkClientConnections();
-                fail("Should receive and exception for the closed connection");
-            } catch (MllpJUnitResourceException expectedEx) {
-                // Eat this
-            }
+        Awaitility.await().untilAsserted(() -> {
+            assertThrows(MllpJUnitResourceException.class, () ->
+                    mllpServer.checkClientConnections(),
+                    "Should receive and exception for the closed connection");
+
 
             source.sendBody(Hl7TestMessageGenerator.generateMessage());
 
