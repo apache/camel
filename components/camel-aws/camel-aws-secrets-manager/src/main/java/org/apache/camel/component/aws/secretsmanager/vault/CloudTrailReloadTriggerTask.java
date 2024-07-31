@@ -329,24 +329,27 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
-                    if (event.get("detail").get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                        if (event.get("detail").get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)) {
-                            String name = event.get("detail").get("requestParameters").get("secretId").asText();
-                            if (matchSecret(name)) {
-                                updates.put(name, Instant.parse(event.get("detail").get("eventTime").asText()));
-                                if (isReloadEnabled()) {
-                                    LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
-                                    triggerReloading = true;
-                                    message.receiptHandle();
-                                    DeleteMessageRequest.Builder deleteRequest
-                                            = DeleteMessageRequest.builder().queueUrl(queueUrl)
-                                                    .receiptHandle(message.receiptHandle());
+                    if (ObjectHelper.isNotEmpty(event.get("detail"))) {
+                        JsonNode innerDetail = event.get("detail");
+                        if (innerDetail.get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
+                            if (innerDetail.get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)) {
+                                String name = innerDetail.get("requestParameters").get("secretId").asText();
+                                if (matchSecret(name)) {
+                                    updates.put(name, Instant.parse(innerDetail.get("eventTime").asText()));
+                                    if (isReloadEnabled()) {
+                                        LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
+                                        triggerReloading = true;
+                                        message.receiptHandle();
+                                        DeleteMessageRequest.Builder deleteRequest
+                                                = DeleteMessageRequest.builder().queueUrl(queueUrl)
+                                                        .receiptHandle(message.receiptHandle());
 
-                                    LOG.trace("Deleting message with receipt handle {}...", message.receiptHandle());
+                                        LOG.trace("Deleting message with receipt handle {}...", message.receiptHandle());
 
-                                    sqsClient.deleteMessage(deleteRequest.build());
+                                        sqsClient.deleteMessage(deleteRequest.build());
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
