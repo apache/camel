@@ -68,15 +68,54 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("age", "33");
         prop.put("{{committer}}", "true");
         prop.put("gold-customer", "true");
+        prop.put("products[foo]", "bar");
+        prop.put("products[bar]", "baz");
 
         myConfigurer.reset();
         PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
-        assertEquals(3, myConfigurer.getCounter());
+        assertEquals(7, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
         assertTrue(bar.isRider());
         assertTrue(bar.isGoldCustomer());
         assertNull(bar.getWork());
+        assertNotNull(bar.getProducts());
+        assertEquals(2, bar.getProducts().size());
+        assertEquals("bar", bar.getProducts().get("foo"));
+        assertEquals("baz", bar.getProducts().get("bar"));
+
+        assertTrue(prop.isEmpty(), "Should bind all properties");
+
+        // should not use reflection
+        assertEquals(0, bi.getInvokedCounter());
+    }
+
+    @Test
+    public void testFreshMapInstance() {
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
+        bi.setExtendedStatistics(true);
+        bi.setLoggingLevel(LoggingLevel.WARN);
+
+        Bar bar = new Bar() {
+            @Override
+            public void setProducts(Map<String, String> products) {
+                // force setter to create a new map instance - configurer should grab this new instance before putting values
+                super.setProducts(new HashMap<>(products));
+            }
+        };
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("products[foo]", "bar");
+        prop.put("products[bar]", "baz");
+
+        myConfigurer.reset();
+        PropertyBindingSupport.build().withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        assertEquals(4, myConfigurer.getCounter());
+
+        assertNotNull(bar.getProducts());
+        assertEquals(2, bar.getProducts().size());
+        assertEquals("bar", bar.getProducts().get("foo"));
+        assertEquals("baz", bar.getProducts().get("bar"));
 
         assertTrue(prop.isEmpty(), "Should bind all properties");
 
@@ -232,17 +271,20 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("gold-customer", "true");
         prop.put("work.id", "123");
         prop.put("work.name", "{{companyName}}");
+        prop.put("products[foo]", "bar");
 
         myConfigurer.reset();
         PropertyBindingSupport.build().withReflection(false).withConfigurer(myConfigurer).withIgnoreCase(true).bind(context,
                 bar, prop);
-        assertEquals(6, myConfigurer.getCounter());
+        assertEquals(9, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
         assertTrue(bar.isRider());
         assertTrue(bar.isGoldCustomer());
         assertEquals(0, bar.getWork().getId());
         assertNull(bar.getWork().getName());
+
+        assertEquals("bar", bar.getProducts().get("foo"));
 
         assertEquals(2, prop.size());
         assertEquals("123", prop.get("work.id"));
@@ -283,6 +325,8 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
                              // create one if there is a setter
         private boolean goldCustomer;
 
+        private Map<String, String> products; // no default value - should auto-create this via the setter
+
         public int getAge() {
             return age;
         }
@@ -297,6 +341,14 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         public boolean isGoldCustomer() {
             return goldCustomer;
+        }
+
+        public Map<String, String> getProducts() {
+            return products;
+        }
+
+        public void setProducts(Map<String, String> products) {
+            this.products = products;
         }
 
         // this has no setter but only builders
@@ -347,6 +399,10 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
                     bar.work((Company) value);
                     counter++;
                     return true;
+                } else if ("products".equals(name)) {
+                    bar.setProducts((Map<String, String>) value);
+                    counter++;
+                    return true;
                 } else if ("goldCustomer".equals(name) || "goldcustomer".equals(name)) {
                     bar.goldCustomer(Boolean.parseBoolean(value.toString()));
                     counter++;
@@ -372,6 +428,8 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
                 return boolean.class;
             } else if ("work".equals(name)) {
                 return Company.class;
+            } else if ("products".equals(name)) {
+                return Map.class;
             } else if ("goldCustomer".equals(name) || "goldcustomer".equals(name)) {
                 return boolean.class;
             }
@@ -394,6 +452,9 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
                 } else if ("work".equals(name)) {
                     counter++;
                     return bar.getWork();
+                } else if ("products".equals(name)) {
+                    counter++;
+                    return bar.getProducts();
                 } else if ("goldCustomer".equals(name) || "goldcustomer".equals(name)) {
                     counter++;
                     return bar.isGoldCustomer();

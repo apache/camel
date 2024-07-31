@@ -18,12 +18,12 @@ package org.apache.camel.parser.helper;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -121,7 +121,7 @@ public final class XmlLineNumberParser {
             final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
             doc = docBuilder.newDocument();
 
-            final Stack<Element> elementStack = new Stack<>();
+            final ArrayDeque<Element> elementStack = new ArrayDeque<>();
             final StringBuilder textBuffer = new StringBuilder();
             final DefaultHandler handler = getDefaultHandler(rootNames, forceNamespace, doc, elementStack, textBuffer);
             parser.parse(is, handler);
@@ -133,7 +133,7 @@ public final class XmlLineNumberParser {
     }
 
     private static DefaultHandler getDefaultHandler(
-            String rootNames, String forceNamespace, Document doc, Stack<Element> elementStack, StringBuilder textBuffer) {
+            String rootNames, String forceNamespace, Document doc, ArrayDeque<Element> elementStack, StringBuilder textBuffer) {
         return new DefaultHandler() {
             private Locator locator;
             private boolean found;

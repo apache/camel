@@ -82,9 +82,33 @@ public class MainVaultTest {
         main.addInitialProperty("camel.vault.aws.defaultCredentialsProvider", "false");
         main.addInitialProperty("camel.vault.aws.profileCredentialsProvider", "true");
         main.addInitialProperty("camel.vault.aws.profileName", "jack");
+        main.addInitialProperty("camel.vault.aws.sqsQueueUrl", "http://sqs-2");
+        main.addInitialProperty("camel.vault.aws.useSqsNotification", "true");
 
         main.start();
         return main;
+    }
+
+    @Test
+    public void testUseSqsNotification() {
+        final Main main = getMain();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        AwsVaultConfiguration cfg = context.getVaultConfiguration().aws();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("myKey", cfg.getAccessKey());
+        Assertions.assertEquals("mySecret", cfg.getSecretKey());
+        Assertions.assertEquals("myRegion", cfg.getRegion());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
+        Assertions.assertTrue(cfg.isProfileCredentialsProvider());
+        Assertions.assertEquals("jack", cfg.getProfileName());
+        Assertions.assertEquals("http://sqs-2", cfg.getSqsQueueUrl());
+        Assertions.assertTrue(cfg.isUseSqsNotification());
+
+        main.stop();
     }
 
     @Test

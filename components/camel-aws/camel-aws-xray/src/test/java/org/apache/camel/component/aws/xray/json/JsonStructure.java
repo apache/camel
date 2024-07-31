@@ -16,6 +16,6 @@
  */
 package org.apache.camel.component.aws.xray.json;
 
-interface JsonStructure {
+public interface JsonStructure {
 
 }

@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BinaryOperator;
@@ -67,7 +67,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
 
     public class GeneratorUtility {
 
-        private Stack<String> stack;
+        private ArrayDeque<String> stack;
         private final Map<String, AtomicInteger> varNames = new HashMap<>();
         private final BeanIntrospection bi = new DefaultBeanIntrospection();
 
@@ -277,7 +277,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
         }
 
         public void start(final String initial) {
-            stack = new Stack<>();
+            stack = new ArrayDeque<>();
             stack.push(initial);
             varNames.clear();
         }

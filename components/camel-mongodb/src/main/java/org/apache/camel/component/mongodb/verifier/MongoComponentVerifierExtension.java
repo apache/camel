@@ -49,9 +49,9 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
     @Override
     public Result verifyParameters(Map<String, Object> parameters) {
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-                .error(ResultErrorHelper.requiresOption("host", parameters))
-                .error(ResultErrorHelper.requiresOption("user", parameters))
-                .error(ResultErrorHelper.requiresOption("password", parameters));
+                .error(ResultErrorHelper.requiresOption(parameters, "host"))
+                .error(ResultErrorHelper.requiresOption(parameters, "user"))
+                .error(ResultErrorHelper.requiresOption(parameters, "password"));
         return builder.build();
     }
 

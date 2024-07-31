@@ -35,7 +35,7 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // we use a delay of 60 minutes (eg. once pr. hour we poll the
+                // we use a delay of 60 minutes (eg. once per hour we poll the
                 // FTP server
                 long delay = 3600000;
 

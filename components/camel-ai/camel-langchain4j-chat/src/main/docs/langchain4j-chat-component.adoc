@@ -1,5 +1,5 @@
-= langChain4j Chat Component
-:doctitle: langChain4j Chat
+= LangChain4j Chat Component
+:doctitle: LangChain4j Chat
 :shortname: langchain4j-chat
 :artifactid: camel-langchain4j-chat
 :description: LangChain4j Chat component

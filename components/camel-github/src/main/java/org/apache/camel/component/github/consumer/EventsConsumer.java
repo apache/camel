@@ -72,6 +72,7 @@ public class EventsConsumer extends AbstractGitHubConsumer {
             }
         }
 
+        int counter = 0;
         if (!newEvents.isEmpty()) {
             newEvents.sort((e1, e2) -> Long.valueOf(e1.getId()).compareTo(Long.parseLong(e2.getId())));
             Event latestEvent = newEvents.get(newEvents.size() - 1);
@@ -82,10 +83,11 @@ public class EventsConsumer extends AbstractGitHubConsumer {
                 exchange.getMessage().setBody(event.getType());
                 exchange.getMessage().setHeader(GitHubConstants.GITHUB_EVENT_PAYLOAD, event.getPayload());
                 getProcessor().process(exchange);
+                counter++;
             }
         }
 
-        return newEvents.size();
+        return counter;
     }
 
     /**

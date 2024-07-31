@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.github.consumer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -88,7 +88,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
 
         List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
         // In the end, we want comments oldest to newest.
-        Stack<Comment> newComments = new Stack<>();
+        ArrayDeque<Comment> newComments = new ArrayDeque<>();
         for (PullRequest pullRequest : pullRequests) {
             List<CommitComment> commitComments = pullRequestService.getComments(getRepository(), pullRequest.getNumber());
             for (Comment comment : commitComments) {
@@ -108,7 +108,8 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
             }
         }
 
-        while (!newComments.empty()) {
+        int counter = 0;
+        while (!newComments.isEmpty()) {
             Comment newComment = newComments.pop();
             Exchange e = createExchange(true);
             e.getIn().setBody(newComment);
@@ -117,7 +118,8 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
             e.getIn().setHeader(GitHubConstants.GITHUB_PULLREQUEST, commentIdToPullRequest.get(newComment.getId()));
 
             getProcessor().process(e);
+            counter++;
         }
-        return newComments.size();
+        return counter;
     }
 }

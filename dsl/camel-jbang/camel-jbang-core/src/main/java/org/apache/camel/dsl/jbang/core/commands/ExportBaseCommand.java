@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -89,9 +88,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    protected String repos;
+    @CommandLine.Option(names = { "--repository" }, arity = "*", description = "Additional maven repositories")
+    protected List<String> repositories = new ArrayList<>();
 
     @CommandLine.Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
     protected List<String> dependencies = new ArrayList<>();
@@ -105,9 +103,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
-    @CommandLine.Option(names = { "--exclude" },
-                        description = "Exclude files by name or pattern. Multiple names can be separated by comma.")
-    String exclude;
+    @CommandLine.Option(names = { "--exclude" }, arity = "*", description = "Exclude files by name or pattern")
+    List<String> excludes = new ArrayList<>();
 
     @CommandLine.Option(names = { "--maven-settings" },
                         description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
@@ -248,35 +245,39 @@ public abstract class ExportBaseCommand extends CamelCommand {
         StringBuilder sb = new StringBuilder();
         int i = 1;
         sb.append("    <repositories>\n");
-        for (String repo : repos.split(",")) {
-            sb.append("        <repository>\n");
-            sb.append("            <id>custom").append(i++).append("</id>\n");
-            sb.append("            <url>").append(repo).append("</url>\n");
-            if (repo.contains("snapshots")) {
-                sb.append("            <releases>\n");
-                sb.append("                <enabled>false</enabled>\n");
-                sb.append("            </releases>\n");
-                sb.append("            <snapshots>\n");
-                sb.append("                <enabled>true</enabled>\n");
-                sb.append("            </snapshots>\n");
+        if (!repos.isEmpty()) {
+            for (String repo : repos.split(",")) {
+                sb.append("        <repository>\n");
+                sb.append("            <id>custom").append(i++).append("</id>\n");
+                sb.append("            <url>").append(repo).append("</url>\n");
+                if (repo.contains("snapshots")) {
+                    sb.append("            <releases>\n");
+                    sb.append("                <enabled>false</enabled>\n");
+                    sb.append("            </releases>\n");
+                    sb.append("            <snapshots>\n");
+                    sb.append("                <enabled>true</enabled>\n");
+                    sb.append("            </snapshots>\n");
+                }
+                sb.append("        </repository>\n");
             }
-            sb.append("        </repository>\n");
         }
         sb.append("    </repositories>\n");
         sb.append("    <pluginRepositories>\n");
-        for (String repo : repos.split(",")) {
-            sb.append("        <pluginRepository>\n");
-            sb.append("            <id>custom").append(i++).append("</id>\n");
-            sb.append("            <url>").append(repo).append("</url>\n");
-            if (repo.contains("snapshots")) {
-                sb.append("            <releases>\n");
-                sb.append("                <enabled>false</enabled>\n");
-                sb.append("            </releases>\n");
-                sb.append("            <snapshots>\n");
-                sb.append("                <enabled>true</enabled>\n");
-                sb.append("            </snapshots>\n");
+        if (!repos.isEmpty()) {
+            for (String repo : repos.split(",")) {
+                sb.append("        <pluginRepository>\n");
+                sb.append("            <id>custom").append(i++).append("</id>\n");
+                sb.append("            <url>").append(repo).append("</url>\n");
+                if (repo.contains("snapshots")) {
+                    sb.append("            <releases>\n");
+                    sb.append("                <enabled>false</enabled>\n");
+                    sb.append("            </releases>\n");
+                    sb.append("            <snapshots>\n");
+                    sb.append("                <enabled>true</enabled>\n");
+                    sb.append("            </snapshots>\n");
+                }
+                sb.append("        </pluginRepository>\n");
             }
-            sb.append("        </pluginRepository>\n");
         }
         sb.append("    </pluginRepositories>\n");
         return sb.toString();
@@ -297,7 +298,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // need to declare the profile to use for run
         run.dependencies = dependencies;
         run.files = files;
-        run.exclude = exclude;
+        run.excludes = excludes;
         run.openapi = openapi;
         run.download = download;
         run.camelVersion = camelVersion;
@@ -684,12 +685,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
      * @param  camelVersion the camel version
      * @return              repositories or null if none are in use
      */
-    protected String getMavenRepos(File settings, Properties prop, String camelVersion) throws Exception {
+    protected String getMavenRepositories(File settings, Properties prop, String camelVersion) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
 
-        String propRepos = prop.getProperty("camel.jbang.repos");
-        if (propRepos != null) {
-            answer.add(propRepos);
+        String propRepositories = prop.getProperty("camel.jbang.repositories");
+        if (propRepositories != null) {
+            answer.add(propRepositories);
         }
 
         if (camelVersion == null) {
@@ -709,11 +710,13 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
-        if (this.repos != null) {
-            Collections.addAll(answer, this.repos.split(","));
+        if (!repositories.isEmpty()) {
+            answer.addAll(repositories);
         }
 
-        return String.join(",", answer);
+        return answer.stream()
+                .filter(item -> !item.isEmpty())
+                .collect(Collectors.joining(","));
     }
 
     protected static boolean hasModeline(File settings) {
