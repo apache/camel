@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -91,12 +92,36 @@ public final class TraitHelper {
                         } else {
                             values.add(traitValue.toString());
                         }
+                    } else if (existingValue instanceof Map) {
+                        Map<String, String> values = (Map<String, String>) existingValue;
+                        if (traitValue instanceof Map) {
+                            Map<String, String> traitValueList = (Map<String, String>) traitValue;
+                            values.putAll(traitValueList);
+                        } else {
+                            final String[] traitValueConfig = traitValue.toString().split("=", 2);
+                            values.put(traitValueConfig[0], traitValueConfig[1]);
+                        }
                     } else if (traitValue instanceof List) {
                         List<String> traitValueList = (List<String>) traitValue;
                         traitValueList.add(0, existingValue.toString());
                         config.put(traitKey, traitValueList);
+                    } else if (traitValue instanceof Map) {
+                        Map<String, String> traitValueMap = (Map<String, String>) traitValue;
+                        final String[] existingValueConfig = existingValue.toString().split("=", 2);
+                        traitValueMap.put(existingValueConfig[0], existingValueConfig[1]);
+                        config.put(traitKey, traitValueMap);
                     } else {
-                        config.put(traitKey, Arrays.asList(existingValue.toString(), traitValue));
+                        if (traitKey.endsWith("annotations")) {
+                            System.out.println("annotations");
+                            Map<String, String> map = new LinkedHashMap<>();
+                            final String[] traitValueConfig = traitValue.toString().split("=", 2);
+                            final String[] existingValueConfig = existingValue.toString().split("=", 2);
+                            map.put(traitValueConfig[0], traitValueConfig[1]);
+                            map.put(existingValueConfig[0], existingValueConfig[1]);
+                            config.put(traitKey, map);
+                        } else {
+                            config.put(traitKey, Arrays.asList(existingValue.toString(), traitValue));
+                        }
                     }
                 } else {
                     config.put(traitKey, traitValue);
