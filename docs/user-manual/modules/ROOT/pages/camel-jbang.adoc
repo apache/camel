@@ -3622,7 +3622,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 |Additional files to add to classpath (Use commas to separate multiple files). See more details at xref:_adding_custom_jars[].
 
 |`camel.jbang.jkubeFiles`
-|Resource fragments for Kubernetes (Use commas to separate multiple files). See more details at xref:_exporting_to_camel_main_for_kubernetes[].
+|Resource fragments for Kubernetes (Use commas to separate multiple files). 
 
 |`camel.jbang.javaVersion`
 |Java version (17 or 21). Java 17 is default.
