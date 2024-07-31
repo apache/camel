@@ -27,6 +27,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "framebinding":
+        case "frameBinding": target.setFrameBinding(property(camelContext, org.apache.camel.component.jsonata.JsonataFrameBinding.class, value)); return true;
         case "inputtype":
         case "inputType": target.setInputType(property(camelContext, org.apache.camel.component.jsonata.JsonataInputOutputType.class, value)); return true;
         case "lazystartproducer":
@@ -44,6 +46,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "allowContextMapAll": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
+        case "framebinding":
+        case "frameBinding": return org.apache.camel.component.jsonata.JsonataFrameBinding.class;
         case "inputtype":
         case "inputType": return org.apache.camel.component.jsonata.JsonataInputOutputType.class;
         case "lazystartproducer":
@@ -62,6 +66,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "allowContextMapAll": return target.isAllowContextMapAll();
         case "contentcache":
         case "contentCache": return target.isContentCache();
+        case "framebinding":
+        case "frameBinding": return target.getFrameBinding();
         case "inputtype":
         case "inputType": return target.getInputType();
         case "lazystartproducer":
