@@ -908,6 +908,95 @@ spec:
 
 The trait volume mounts follow some best practices in specifying the mount paths in the container. Configurations and resources, secrets and configmaps do use different paths in the container. The Camel application is automatically configured to read these paths as resource folders, so you can use the mounted data in the Camel routes via classpath reference for instance.
 
+=== Ingress trait options
+
+The ingress trait enhance the Kubernetes manifest with an Ingress resource to expose the application to the outside world. This requires the presence in the Kubernetes manifest of a Service Resource.
+
+The Camel JBang plugin automatically creates an Ingress Resource if the Service Resource is generated for the Camel route's service trait application.
+
+The ingress trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| ingress.enabled
+| bool
+| Can be used to enable or disable a trait. All traits share this common property (default `true`).
+
+| ingress.annotations
+| map[string]string
+| The annotations added to the ingress. This can be used to set controller specific annotations, e.g., when using the https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md[NGINX Ingress controller].
+
+| ingress.host
+| string
+| To configure the host exposed by the ingress.
+
+| ingress.path
+| string
+| To configure the path exposed by the ingress (default `/`).
+
+| ingress.pathType
+| string
+| To configure the https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types[path type] exposed by the ingress. One of Exact, Prefix, ImplementationSpecific (default to Prefix).
+
+| ingress.auto
+| bool
+| To automatically add an Ingress Resource whenever the route uses an HTTP endpoint consumer (default `true`).
+
+|===
+
+he syntax to specify container trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait ingress.[key]=[value]
+----
+
+You may specify these options with the export command to customize the Ingress Resource specification.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait ingress.host=example.com --trait ingress.path=/sample(/|$)(.*) --trait ingress.pathType=ImplementationSpecific --trait ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/\$2 --trait ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true
+----
+
+
+This results in the following container specification in the Ingress resource.
+
+[source,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations: #<1>
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app.kubernetes.io/name: sample
+  name: sample
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: route-service
+            port:
+              name: http #<2>
+        path: /sample(/|$)(.*) #<3>
+        pathType: ImplementationSpecific #<4>
+
+
+----
+<1> Custom annotations configuration for ingress behavior
+<2> Service port name
+<3> Custom ingress backend path
+<4> Custom ingress backend path type
+
+
+
 === OpenApi specifications
 
 You can mount OpenAPI specifications to the application container with this trait.
