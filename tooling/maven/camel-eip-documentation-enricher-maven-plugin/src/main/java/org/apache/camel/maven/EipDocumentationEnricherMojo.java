@@ -167,10 +167,15 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
 
         // include schema files from camel-core-model, camel-core-xml and from camel-spring
         Set<File> files = new HashSet<>();
-        PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files);
-        PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
+
+        // Do not include the model/app/bean.json file for enhancement (there are two bean.json)
+        Predicate<File> beanFilter = f -> !(f.getName().equals("bean.json") && f.getParentFile().getName().equals("app"));
+        PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files, beanFilter);
+        PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files, beanFilter);
+
         // spring/blueprint should not include SpringErrorHandlerDefinition (duplicates a file from camel-core-model)
         Predicate<File> filter = f -> !f.getName().equals("errorHandler.json");
+
         if (blueprint) {
             PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files, filter);
         } else {
