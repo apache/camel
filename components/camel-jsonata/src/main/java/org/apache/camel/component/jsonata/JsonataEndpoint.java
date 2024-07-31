@@ -53,14 +53,15 @@ public class JsonataEndpoint extends ResourceEndpoint {
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType inputType;
 
-    @UriParam(label = "advanced", description = "To configure the Jsonata frame binding.")
+    @UriParam(label = "advanced", description = "To configure the Jsonata frame binding. Allows custom functions to be added.")
     private JsonataFrameBinding frameBinding;
 
     public JsonataEndpoint() {
     }
 
-    public JsonataEndpoint(String uri, JsonataComponent component, String resourceUri) {
+    public JsonataEndpoint(String uri, JsonataComponent component, String resourceUri, JsonataFrameBinding frameBinding) {
         super(uri, component, resourceUri);
+        this.frameBinding = frameBinding;
     }
 
     @Override
@@ -103,9 +104,13 @@ public class JsonataEndpoint extends ResourceEndpoint {
     /**
      * Specifies the custom framebinding.
      */
-    public void setFrameBinding(JsonataFrameBindings frameBinding) { this.frameBinding = frameBinding; }
+    public void setFrameBinding(JsonataFrameBinding frameBinding) {
+        this.frameBinding = frameBinding;
+    }
 
-    public JsonataFrameBindings getFrameBinding() { return frameBinding; }
+    public JsonataFrameBinding getFrameBinding() {
+        return frameBinding;
+    }
 
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
@@ -134,7 +139,7 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
 
         Jsonata.Frame frame = expression.createFrame();
-        if(frameBinding != null)
+        if (frameBinding != null)
             frameBinding.bindToFrame(frame);
         output = expression.evaluate(input, frame);
 
