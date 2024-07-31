@@ -36,7 +36,15 @@ class JsonataFrameBindingTest extends CamelTestSupport {
     private JsonataFrameBinding frameBinding = new JsonataFrameBinding() {
         @Override
         public void bindToFrame(Jsonata.Frame clientBuilder) {
-            clientBuilder.bind("fixed", (String s) -> s);
+            clientBuilder.bind("reverse", (String originalStr) -> {
+                String reversedStr = "";
+
+                for (int i = 0; i < originalStr.length(); i++) {
+                    reversedStr = originalStr.charAt(i) + reversedStr;
+                }
+
+                return reversedStr;
+            });
         }
     };
 
