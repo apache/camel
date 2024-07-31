@@ -30,10 +30,8 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.awaitility.Awaitility;
 
 public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
 
@@ -93,10 +91,8 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
         Thread tmpThread = new Thread(() -> {
             try {
                 ServerSocket tmpSocket = new ServerSocket(mllpClient.getMllpPort());
-                Awaitility.await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
-                    tmpSocket.close();
-                    Assertions.assertTrue(tmpSocket.isClosed());
-                });
+                Thread.sleep(15000);
+                tmpSocket.close();
             } catch (Exception ex) {
                 throw new RuntimeCamelException("Exception caught in dummy listener", ex);
             }
