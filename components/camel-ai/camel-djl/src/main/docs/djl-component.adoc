@@ -40,7 +40,7 @@ Where `application` represents the https://javadoc.io/doc/ai.djl/api/latest/ai/d
 
 === Supported applications
 
-Currently, the following applications are supported by the component.
+Currently, the component supports the following applications.
 
 [width="100%",cols="3,3,3",options="header"]
 |===
@@ -453,7 +453,7 @@ You can pull the PyTorch engine from the central Maven repository by including t
 </dependency>
 ----
 
-By default, DJL will download the PyTorch native libraries into https://docs.djl.ai/docs/development/cache_management.html[cache folder] the first time you run DJL.
+By default, DJL will download the PyTorch native libraries into the https://docs.djl.ai/docs/development/cache_management.html[cache folder] the first time you run DJL.
 It will automatically determine the appropriate jars for your system based on the platform and GPU support.
 
 More information about https://docs.djl.ai/engines/pytorch/index.html[PyTorch engine installation]
