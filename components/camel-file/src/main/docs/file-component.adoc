@@ -585,7 +585,6 @@ with the specified `id`.
 Camel will log at `DEBUG` level if it skips a file because it has been
 consumed before:
 
-[source]
 ----
 DEBUG FileConsumer is idempotent and the file has been consumed before. Will skip this file: target\idempotent\report.txt
 ----
@@ -773,7 +772,7 @@ Camel supports pluggable sorting strategies. This strategy uses the
 xref:languages:file-language.adoc[File Language] to configure the sorting. The
 `sortBy` option is configured as follows:
 
-[source]
+
 ----
 sortBy=group 1;group 2;group 3;...
 ----
@@ -966,7 +965,7 @@ Copy the contents to the `outputdir` and delete the file in the
 files in the same directory structure in the `outputdir` as the
 `inputdir`, including any subdirectories.
 
-[source]
+
 ----
 inputdir/foo.txt
 inputdir/sub/bar.txt

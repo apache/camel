@@ -19,7 +19,6 @@ The LangChain4j embeddings component provides support for compute embeddings usi
 
 == URI format
 
-[source]
 ----
 langchain4j-embeddings:embeddingId[?options]
 ----

@@ -32,7 +32,6 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 == URI format
 
-[source]
 ----
 langchain4j-web-search:searchId[?options]
 ----

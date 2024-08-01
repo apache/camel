@@ -100,7 +100,6 @@ from("direct:start")
 For basic JSon transformation where you have a fixed structure, you can represent with a combination of using
 Camel simple and JQ language as:
 
-[source]
 ----
 {
   "company": "${jq(.customer.name)}",

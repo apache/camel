@@ -219,7 +219,6 @@ interval) defaults to 30 seconds.
 
 === Minimal Initiator Configuration Example
 
-[source]
 ----
 [SESSION]
 ConnectionType=initiator
