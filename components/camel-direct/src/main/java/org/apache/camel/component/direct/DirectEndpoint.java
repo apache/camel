@@ -88,11 +88,11 @@ public class DirectEndpoint extends DefaultEndpoint {
     /**
      * Whether synchronous processing is forced.
      *
-     * If enabled then the producer thread, will be forced to wait until the message has been completed before the same
+     * If enabled, then the producer thread will be forced to wait until the message has been completed before the same
      * thread will continue processing.
      *
-     * If disabled (default) then the producer thread may be freed and can do other work while the message is continued
-     * processed by other threads (reactive).
+     * If disabled, the default, then the producer thread may be freed and can do other work while the message is
+     * continued processed by other threads (reactive).
      */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;

@@ -53,9 +53,9 @@ public class DisruptorUriDsl(
 
   /**
    * The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest
-   * power of two. Notice: Mind if you use this option, then its the first endpoint being created with
-   * the queue name, that determines the size. To make sure all endpoints use same size, then configure
-   * the size option on all of them, or the first endpoint being created.
+   * power of two. Notice: Mind if you use this option, then it's the first endpoint being created with
+   * the queue name that determines the size. To make sure all endpoints use the same size, then
+   * configure the size option on all of them, or the first endpoint being created.
    */
   public fun size(size: String) {
     it.property("size", size)
@@ -63,9 +63,9 @@ public class DisruptorUriDsl(
 
   /**
    * The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest
-   * power of two. Notice: Mind if you use this option, then its the first endpoint being created with
-   * the queue name, that determines the size. To make sure all endpoints use same size, then configure
-   * the size option on all of them, or the first endpoint being created.
+   * power of two. Notice: Mind if you use this option, then it's the first endpoint being created with
+   * the queue name that determines the size. To make sure all endpoints use the same size, then
+   * configure the size option on all of them, or the first endpoint being created.
    */
   public fun size(size: Int) {
     it.property("size", size.toString())

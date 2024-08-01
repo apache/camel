@@ -52,7 +52,7 @@ public interface ElasticsearchComponentBuilderFactory {
     
         
         /**
-         * The time in ms to wait before connection will timeout.
+         * The time in ms to wait before connection will time out.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -72,7 +72,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * Indicates whether the body of the message contains only documents. By
          * default, it is set to false to be able to do the same requests as
          * what the Document API supports (see
-         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode especially if your routes do update operations.
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode, especially if your routes do update operations.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -148,7 +148,7 @@ public interface ElasticsearchComponentBuilderFactory {
     
         
         /**
-         * The timeout in ms to wait before the socket will timeout.
+         * The timeout in ms to wait before the socket will time out.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -187,7 +187,7 @@ public interface ElasticsearchComponentBuilderFactory {
     
         /**
          * To use an existing configured Elasticsearch client, instead of
-         * creating a client per endpoint. This allow to customize the client
+         * creating a client per endpoint. This allows customizing the client
          * with specific settings.
          * 
          * The option is a:
@@ -206,7 +206,7 @@ public interface ElasticsearchComponentBuilderFactory {
         
         /**
          * Enable automatically discover nodes from a running Elasticsearch
-         * cluster. If this option is used in conjunction with Spring Boot then
+         * cluster. If this option is used in conjunction with Spring Boot, then
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 
@@ -294,7 +294,7 @@ public interface ElasticsearchComponentBuilderFactory {
         }
     
         /**
-         * Password for authenticate.
+         * Password for authenticating.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

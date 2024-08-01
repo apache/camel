@@ -45,7 +45,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
 
         /**
-         * The time in ms to wait before connection will timeout.
+         * The time in ms to wait before connection will time out.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -60,7 +60,7 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The time in ms to wait before connection will timeout.
+         * The time in ms to wait before connection will time out.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -108,7 +108,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Indicates whether the body of the message contains only documents. By
          * default, it is set to false to be able to do the same requests as
          * what the Document API supports (see
-         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode especially if your routes do update operations.
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode, especially if your routes do update operations.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -126,7 +126,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Indicates whether the body of the message contains only documents. By
          * default, it is set to false to be able to do the same requests as
          * what the Document API supports (see
-         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode especially if your routes do update operations.
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode, especially if your routes do update operations.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -320,7 +320,7 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout in ms to wait before the socket will timeout.
+         * The timeout in ms to wait before the socket will time out.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -335,7 +335,7 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout in ms to wait before the socket will timeout.
+         * The timeout in ms to wait before the socket will time out.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -552,7 +552,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable automatically discover nodes from a running Elasticsearch
-         * cluster. If this option is used in conjunction with Spring Boot then
+         * cluster. If this option is used in conjunction with Spring Boot, then
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 
@@ -570,7 +570,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable automatically discover nodes from a running Elasticsearch
-         * cluster. If this option is used in conjunction with Spring Boot then
+         * cluster. If this option is used in conjunction with Spring Boot, then
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 

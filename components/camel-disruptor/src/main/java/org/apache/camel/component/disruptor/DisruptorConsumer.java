@@ -157,7 +157,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             final Exchange result = prepareExchange(exchange);
 
             // We need to be notified when the exchange processing is complete to synchronize the original exchange
-            // This is however the last part of the processing of this exchange and as such can't be done
+            // This is however, the last part of the processing of this exchange and as such can't be done
             // in the AsyncCallback as that is called *AFTER* processing is considered to be done
             // (see org.apache.camel.processor.CamelInternalProcessor.InternalCallback#done).
             // To solve this problem, a new synchronization is set on the exchange that is to be

@@ -53,7 +53,7 @@ public class JpaUriDsl(
 
   /**
    * The camel-jpa component will join transaction by default. You can use this option to turn this
-   * off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA
+   * off, for example, if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA
    * provider. This option can also be set globally on the JpaComponent, instead of having to set it on
    * all endpoints.
    */
@@ -63,7 +63,7 @@ public class JpaUriDsl(
 
   /**
    * The camel-jpa component will join transaction by default. You can use this option to turn this
-   * off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA
+   * off, for example, if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA
    * provider. This option can also be set globally on the JpaComponent, instead of having to set it on
    * all endpoints.
    */
@@ -118,7 +118,7 @@ public class JpaUriDsl(
    * Defines the type of the returned payload (we will call
    * entityManager.createNativeQuery(nativeQuery, resultClass) instead of
    * entityManager.createNativeQuery(nativeQuery)). Without this option, we will return an object
-   * array. Only has an affect when using in conjunction with native query when consuming data.
+   * array. Only has an effect when using in conjunction with a native query when consuming data.
    */
   public fun resultClass(resultClass: String) {
     it.property("resultClass", resultClass)
@@ -139,16 +139,16 @@ public class JpaUriDsl(
   }
 
   /**
-   * Specifies whether or not to set an exclusive lock on each entity bean while processing the
-   * results from polling.
+   * Specifies whether to set an exclusive lock on each entity bean while processing the results
+   * from polling.
    */
   public fun consumeLockEntity(consumeLockEntity: String) {
     it.property("consumeLockEntity", consumeLockEntity)
   }
 
   /**
-   * Specifies whether or not to set an exclusive lock on each entity bean while processing the
-   * results from polling.
+   * Specifies whether to set an exclusive lock on each entity bean while processing the results
+   * from polling.
    */
   public fun consumeLockEntity(consumeLockEntity: Boolean) {
     it.property("consumeLockEntity", consumeLockEntity.toString())
@@ -171,7 +171,7 @@ public class JpaUriDsl(
 
   /**
    * An integer value to define the maximum number of messages to gather per poll. By default, no
-   * maximum is set. Can be used to avoid polling many thousands of messages when starting up the
+   * maximum is set. It can be used to avoid polling many thousands of messages when starting up the
    * server. Set a value of 0 or negative to disable.
    */
   public fun maxMessagesPerPoll(maxMessagesPerPoll: String) {
@@ -180,7 +180,7 @@ public class JpaUriDsl(
 
   /**
    * An integer value to define the maximum number of messages to gather per poll. By default, no
-   * maximum is set. Can be used to avoid polling many thousands of messages when starting up the
+   * maximum is set. It can be used to avoid polling many thousands of messages when starting up the
    * server. Set a value of 0 or negative to disable.
    */
   public fun maxMessagesPerPoll(maxMessagesPerPoll: Int) {
@@ -227,7 +227,7 @@ public class JpaUriDsl(
   /**
    * Whether to run the consumer in transacted mode, by which all messages will either commit or
    * rollback, when the entire batch has been processed. The default behavior (false) is to commit all
-   * the previously successfully processed messages, and only rollback the last failed message.
+   * the previously successfully processed messages, and only roll back the last failed message.
    */
   public fun transacted(transacted: String) {
     it.property("transacted", transacted)
@@ -236,7 +236,7 @@ public class JpaUriDsl(
   /**
    * Whether to run the consumer in transacted mode, by which all messages will either commit or
    * rollback, when the entire batch has been processed. The default behavior (false) is to commit all
-   * the previously successfully processed messages, and only rollback the last failed message.
+   * the previously successfully processed messages, and only roll back the last failed message.
    */
   public fun transacted(transacted: Boolean) {
     it.property("transacted", transacted.toString())
@@ -309,7 +309,7 @@ public class JpaUriDsl(
   }
 
   /**
-   * If enabled then the producer will find a single entity by using the message body as key and
+   * If enabled, then the producer will find a single entity by using the message body as a key and
    * entityType as the class type. This can be used instead of a query to find a single entity.
    */
   public fun findEntity(findEntity: String) {
@@ -317,7 +317,7 @@ public class JpaUriDsl(
   }
 
   /**
-   * If enabled then the producer will find a single entity by using the message body as key and
+   * If enabled, then the producer will find a single entity by using the message body as a key and
    * entityType as the class type. This can be used instead of a query to find a single entity.
    */
   public fun findEntity(findEntity: Boolean) {
@@ -393,7 +393,7 @@ public class JpaUriDsl(
 
   /**
    * To configure whether to use executeUpdate() when producer executes a query. When you use
-   * INSERT, UPDATE or DELETE statement as a named query, you need to specify this option to 'true'.
+   * INSERT, UPDATE or a DELETE statement as a named query, you need to specify this option to 'true'.
    */
   public fun useExecuteUpdate(useExecuteUpdate: String) {
     it.property("useExecuteUpdate", useExecuteUpdate)
@@ -401,7 +401,7 @@ public class JpaUriDsl(
 
   /**
    * To configure whether to use executeUpdate() when producer executes a query. When you use
-   * INSERT, UPDATE or DELETE statement as a named query, you need to specify this option to 'true'.
+   * INSERT, UPDATE or a DELETE statement as a named query, you need to specify this option to 'true'.
    */
   public fun useExecuteUpdate(useExecuteUpdate: Boolean) {
     it.property("useExecuteUpdate", useExecuteUpdate.toString())
@@ -475,7 +475,7 @@ public class JpaUriDsl(
   }
 
   /**
-   * Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases
+   * Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases,
    * joinTransaction should be set to false as this is not an EXTENDED EntityManager.
    */
   public fun sharedEntityManager(sharedEntityManager: String) {
@@ -483,7 +483,7 @@ public class JpaUriDsl(
   }
 
   /**
-   * Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases
+   * Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases,
    * joinTransaction should be set to false as this is not an EXTENDED EntityManager.
    */
   public fun sharedEntityManager(sharedEntityManager: Boolean) {

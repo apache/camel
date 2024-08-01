@@ -67,15 +67,15 @@ public class FtpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers are inclusive, eg
-     * 10000-19999 to include all 1xxxx ports.
+     * Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers are inclusive,
+     * e.g., 10000-19999 to include all 1xxxx ports.
      */
     public void setActivePortRange(String activePortRange) {
         this.activePortRange = activePortRange;
     }
 
     /**
-     * Allows you to set chmod on the stored file. For example chmod=640.
+     * Allows you to set chmod on the stored file. For example, chmod=640.
      */
     public void setChmod(String chmod) {
         this.chmod = chmod;
@@ -91,8 +91,8 @@ public class FtpConfiguration extends RemoteFileConfiguration {
 
     /**
      * Allows you to set how the consumer will handle subfolders and files in the path if the directory parser results
-     * in with absolute paths The reason for this is that some FTP servers may return file names with absolute paths,
-     * and if so then the FTP component needs to handle this by converting the returned path into a relative path.
+     * in with absolute paths. The reason for this is that some FTP servers may return file names with absolute paths,
+     * and if so, then the FTP component needs to handle this by converting the returned path into a relative path.
      */
     public void setHandleDirectoryParserAbsoluteResult(boolean handleDirectoryParserAbsoluteResult) {
         this.handleDirectoryParserAbsoluteResult = handleDirectoryParserAbsoluteResult;

@@ -52,14 +52,14 @@ public class ElasticsearchUriDsl(
   }
 
   /**
-   * The time in ms to wait before connection will timeout.
+   * The time in ms to wait before connection will time out.
    */
   public fun connectionTimeout(connectionTimeout: String) {
     it.property("connectionTimeout", connectionTimeout)
   }
 
   /**
-   * The time in ms to wait before connection will timeout.
+   * The time in ms to wait before connection will time out.
    */
   public fun connectionTimeout(connectionTimeout: Int) {
     it.property("connectionTimeout", connectionTimeout.toString())
@@ -84,7 +84,7 @@ public class ElasticsearchUriDsl(
    * false to be able to do the same requests as what the Document API supports (see
    * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To
    * ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should
-   * consider enabling the mode especially if your routes do update operations.
+   * consider enabling the mode, especially if your routes do update operations.
    */
   public fun enableDocumentOnlyMode(enableDocumentOnlyMode: String) {
     it.property("enableDocumentOnlyMode", enableDocumentOnlyMode)
@@ -95,7 +95,7 @@ public class ElasticsearchUriDsl(
    * false to be able to do the same requests as what the Document API supports (see
    * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To
    * ease the migration of routes based on the legacy component camel-elasticsearch-rest, you should
-   * consider enabling the mode especially if your routes do update operations.
+   * consider enabling the mode, especially if your routes do update operations.
    */
   public fun enableDocumentOnlyMode(enableDocumentOnlyMode: Boolean) {
     it.property("enableDocumentOnlyMode", enableDocumentOnlyMode.toString())
@@ -179,14 +179,14 @@ public class ElasticsearchUriDsl(
   }
 
   /**
-   * The timeout in ms to wait before the socket will timeout.
+   * The timeout in ms to wait before the socket will time out.
    */
   public fun socketTimeout(socketTimeout: String) {
     it.property("socketTimeout", socketTimeout)
   }
 
   /**
-   * The timeout in ms to wait before the socket will timeout.
+   * The timeout in ms to wait before the socket will time out.
    */
   public fun socketTimeout(socketTimeout: Int) {
     it.property("socketTimeout", socketTimeout.toString())
@@ -253,7 +253,7 @@ public class ElasticsearchUriDsl(
 
   /**
    * Enable automatically discover nodes from a running Elasticsearch cluster. If this option is
-   * used in conjunction with Spring Boot then it's managed by the Spring Boot configuration (see:
+   * used in conjunction with Spring Boot, then it's managed by the Spring Boot configuration (see:
    * Disable Sniffer in Spring Boot).
    */
   public fun enableSniffer(enableSniffer: String) {
@@ -262,7 +262,7 @@ public class ElasticsearchUriDsl(
 
   /**
    * Enable automatically discover nodes from a running Elasticsearch cluster. If this option is
-   * used in conjunction with Spring Boot then it's managed by the Spring Boot configuration (see:
+   * used in conjunction with Spring Boot, then it's managed by the Spring Boot configuration (see:
    * Disable Sniffer in Spring Boot).
    */
   public fun enableSniffer(enableSniffer: Boolean) {

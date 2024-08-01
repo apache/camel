@@ -96,18 +96,18 @@ public class TimerUriDsl(
   }
 
   /**
-   * Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire
-   * once. If you set it to 5, it will only fire five times. A value of zero or negative means fire
-   * forever.
+   * Specifies a maximum limit for the number of fires. Therefore, if you set it to 1, the timer
+   * will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative
+   * means fire forever.
    */
   public fun repeatCount(repeatCount: String) {
     it.property("repeatCount", repeatCount)
   }
 
   /**
-   * Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire
-   * once. If you set it to 5, it will only fire five times. A value of zero or negative means fire
-   * forever.
+   * Specifies a maximum limit for the number of fires. Therefore, if you set it to 1, the timer
+   * will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative
+   * means fire forever.
    */
   public fun repeatCount(repeatCount: Int) {
     it.property("repeatCount", repeatCount.toString())
@@ -160,16 +160,16 @@ public class TimerUriDsl(
   }
 
   /**
-   * Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The
-   * default value is true.
+   * Specifies whether the thread associated with the timer endpoint runs as a daemon. The default
+   * value is true.
    */
   public fun daemon(daemon: String) {
     it.property("daemon", daemon)
   }
 
   /**
-   * Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The
-   * default value is true.
+   * Specifies whether the thread associated with the timer endpoint runs as a daemon. The default
+   * value is true.
    */
   public fun daemon(daemon: Boolean) {
     it.property("daemon", daemon.toString())

@@ -67,8 +67,8 @@ public class AzureCosmosdbUriDsl(
   /**
    * Sets the flag to enable client telemetry which will periodically collect database operations
    * aggregation statistics, system information like cpu/memory and send it to cosmos monitoring
-   * service, which will be helpful during debugging. DEFAULT value is false indicating this is opt in
-   * feature, by default no telemetry collection.
+   * service, which will be helpful during debugging. DEFAULT value is false indicating this is an
+   * opt-in feature, by default no telemetry collection.
    */
   public fun clientTelemetryEnabled(clientTelemetryEnabled: String) {
     it.property("clientTelemetryEnabled", clientTelemetryEnabled)
@@ -77,8 +77,8 @@ public class AzureCosmosdbUriDsl(
   /**
    * Sets the flag to enable client telemetry which will periodically collect database operations
    * aggregation statistics, system information like cpu/memory and send it to cosmos monitoring
-   * service, which will be helpful during debugging. DEFAULT value is false indicating this is opt in
-   * feature, by default no telemetry collection.
+   * service, which will be helpful during debugging. DEFAULT value is false indicating this is an
+   * opt-in feature, by default no telemetry collection.
    */
   public fun clientTelemetryEnabled(clientTelemetryEnabled: Boolean) {
     it.property("clientTelemetryEnabled", clientTelemetryEnabled.toString())
@@ -86,7 +86,7 @@ public class AzureCosmosdbUriDsl(
 
   /**
    * Enables connections sharing across multiple Cosmos Clients. The default is false. When you have
-   * multiple instances of Cosmos Client in the same JVM interacting to multiple Cosmos accounts,
+   * multiple instances of Cosmos Client in the same JVM interacting with multiple Cosmos accounts,
    * enabling this allows connection sharing in Direct mode if possible between instances of Cosmos
    * Client. Please note, when setting this option, the connection configuration (e.g., socket timeout
    * config, idle timeout config) of the first instantiated client will be used for all other client
@@ -98,7 +98,7 @@ public class AzureCosmosdbUriDsl(
 
   /**
    * Enables connections sharing across multiple Cosmos Clients. The default is false. When you have
-   * multiple instances of Cosmos Client in the same JVM interacting to multiple Cosmos accounts,
+   * multiple instances of Cosmos Client in the same JVM interacting with multiple Cosmos accounts,
    * enabling this allows connection sharing in Direct mode if possible between instances of Cosmos
    * Client. Please note, when setting this option, the connection configuration (e.g., socket timeout
    * config, idle timeout config) of the first instantiated client will be used for all other client
@@ -130,8 +130,8 @@ public class AzureCosmosdbUriDsl(
   /**
    * Sets the boolean to only return the headers and status code in Cosmos DB response in case of
    * Create, Update and Delete operations on CosmosItem. In Consumer, it is enabled by default because
-   * of the ChangeFeed in the consumer that needs this flag to be enabled and thus is shouldn't be
-   * overridden. In Producer, it advised to disable it since it reduces the network overhead
+   * of the ChangeFeed in the consumer that needs this flag to be enabled, and thus it shouldn't be
+   * overridden. In Producer, it is advised to disable it since it reduces the network overhead
    */
   public fun contentResponseOnWriteEnabled(contentResponseOnWriteEnabled: String) {
     it.property("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled)
@@ -140,8 +140,8 @@ public class AzureCosmosdbUriDsl(
   /**
    * Sets the boolean to only return the headers and status code in Cosmos DB response in case of
    * Create, Update and Delete operations on CosmosItem. In Consumer, it is enabled by default because
-   * of the ChangeFeed in the consumer that needs this flag to be enabled and thus is shouldn't be
-   * overridden. In Producer, it advised to disable it since it reduces the network overhead
+   * of the ChangeFeed in the consumer that needs this flag to be enabled, and thus it shouldn't be
+   * overridden. In Producer, it is advised to disable it since it reduces the network overhead
    */
   public fun contentResponseOnWriteEnabled(contentResponseOnWriteEnabled: Boolean) {
     it.property("contentResponseOnWriteEnabled", contentResponseOnWriteEnabled.toString())
@@ -157,32 +157,32 @@ public class AzureCosmosdbUriDsl(
   }
 
   /**
-   * Sets if the component should create Cosmos container automatically in case it doesn't exist in
-   * Cosmos database
+   * Sets if the component should create the Cosmos container automatically in case it doesn't exist
+   * in the Cosmos database
    */
   public fun createContainerIfNotExists(createContainerIfNotExists: String) {
     it.property("createContainerIfNotExists", createContainerIfNotExists)
   }
 
   /**
-   * Sets if the component should create Cosmos container automatically in case it doesn't exist in
-   * Cosmos database
+   * Sets if the component should create the Cosmos container automatically in case it doesn't exist
+   * in the Cosmos database
    */
   public fun createContainerIfNotExists(createContainerIfNotExists: Boolean) {
     it.property("createContainerIfNotExists", createContainerIfNotExists.toString())
   }
 
   /**
-   * Sets if the component should create Cosmos database automatically in case it doesn't exist in
-   * Cosmos account
+   * Sets if the component should create the Cosmos database automatically in case it doesn't exist
+   * in the Cosmos account
    */
   public fun createDatabaseIfNotExists(createDatabaseIfNotExists: String) {
     it.property("createDatabaseIfNotExists", createDatabaseIfNotExists)
   }
 
   /**
-   * Sets if the component should create Cosmos database automatically in case it doesn't exist in
-   * Cosmos account
+   * Sets if the component should create the Cosmos database automatically in case it doesn't exist
+   * in the Cosmos account
    */
   public fun createDatabaseIfNotExists(createDatabaseIfNotExists: Boolean) {
     it.property("createDatabaseIfNotExists", createDatabaseIfNotExists.toString())
@@ -285,16 +285,16 @@ public class AzureCosmosdbUriDsl(
   }
 
   /**
-   * Sets if the component should create Cosmos lease database for the consumer automatically in
-   * case it doesn't exist in Cosmos account
+   * Sets if the component should create the Cosmos lease database for the consumer automatically in
+   * case it doesn't exist in the Cosmos account
    */
   public fun createLeaseDatabaseIfNotExists(createLeaseDatabaseIfNotExists: String) {
     it.property("createLeaseDatabaseIfNotExists", createLeaseDatabaseIfNotExists)
   }
 
   /**
-   * Sets if the component should create Cosmos lease database for the consumer automatically in
-   * case it doesn't exist in Cosmos account
+   * Sets if the component should create the Cosmos lease database for the consumer automatically in
+   * case it doesn't exist in the Cosmos account
    */
   public fun createLeaseDatabaseIfNotExists(createLeaseDatabaseIfNotExists: Boolean) {
     it.property("createLeaseDatabaseIfNotExists", createLeaseDatabaseIfNotExists.toString())
@@ -313,7 +313,7 @@ public class AzureCosmosdbUriDsl(
   /**
    * Sets the lease container which acts as a state storage and coordinates processing the change
    * feed across multiple workers. The lease container can be stored in the same account as the
-   * monitored container or in a separate account. It will be auto created if
+   * monitored container or in a separate account. It will be auto-created if
    * createLeaseContainerIfNotExists is set to true.
    */
   public fun leaseContainerName(leaseContainerName: String) {
@@ -323,7 +323,7 @@ public class AzureCosmosdbUriDsl(
   /**
    * Sets the lease database where the leaseContainerName will be stored. If it is not specified,
    * this component will store the lease container in the same database that is specified in
-   * databaseName. It will be auto created if createLeaseDatabaseIfNotExists is set to true.
+   * databaseName. It will be auto-created if createLeaseDatabaseIfNotExists is set to true.
    */
   public fun leaseDatabaseName(leaseDatabaseName: String) {
     it.property("leaseDatabaseName", leaseDatabaseName)

@@ -53,7 +53,7 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
     }
 
     /**
-     * Use a custom Jackson mapper and and unmarshal type
+     * Use a custom Jackson mapper and an unmarshal type
      *
      * @param mapper        the custom mapper
      * @param unmarshalType the custom unmarshal type

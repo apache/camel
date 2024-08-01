@@ -153,9 +153,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected int maxTotalConnections = 200;
     @Metadata(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     protected int connectionsPerRoute = 20;
-    // It's MILLISECONDS, the default value is always keep alive
+    // It's MILLISECONDS, the default value is always keepAlive
     @Metadata(label = "advanced",
-              description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
+              description = "The time for connection to live, the time unit is millisecond, the default value is always keepAlive.")
     protected long connectionTimeToLive = -1;
     @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
     protected boolean useGlobalSslContextParameters;
@@ -208,7 +208,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * Creates the HttpClientConfigurer based on the given parameters
      *
      * @param  parameters the map of parameters
-     * @param  secure     whether the endpoint is secure (eg https)
+     * @param  secure     whether the endpoint is secure (e.g., https)
      * @return            the configurer
      * @throws Exception  is thrown if error creating configurer
      */
@@ -315,7 +315,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         Map<String, Object> httpClientParameters = new HashMap<>(parameters);
         final Map<String, Object> httpClientOptions = new HashMap<>();
 
-        // timeout values can be configured on both component and endpoint level, where endpoint take priority
+        // timeout values can be configured on both component and endpoint level, where endpoint takes priority
         Timeout valConnectionRequestTimeout
                 = getAndRemoveParameter(parameters, "connectionRequestTimeout", Timeout.class, connectionRequestTimeout);
         if (!Timeout.ofMinutes(3).equals(valConnectionRequestTimeout)) {
@@ -364,16 +364,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         boolean secure = HttpHelper.isSecureConnection(secureProtocol) || sslContextParameters != null;
 
-        // remaining part should be without protocol as that was how this component was originally created
+        // the remaining part should be without protocol as that was how this component was originally created
         remaining = org.apache.camel.component.http.HttpUtil.removeHttpOrHttpsProtocol(remaining);
 
-        // need to set scheme on address uri depending on if its secure or not
+        // need to set the scheme on address uri depending on if it's secure or not
         String addressUri = (secure ? "https://" : "http://") + remaining;
 
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI uriHttpUriAddress = new URI(addressUri);
 
-        // the endpoint uri should use the component name as scheme, so we need to re-create it once more
+        // the endpoint uri should use the component name as the scheme, so we need to re-create it once more
         String scheme = StringHelper.before(uri, "://");
 
         // uri part should be without protocol as that was how this component was originally created
@@ -423,7 +423,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // configure the endpoint
         setProperties(endpoint, parameters);
 
-        // we can not change the port of an URI, we must create a new one with an explicit port value
+        // we cannot change the port of an URI, we must create a new one with an explicit port value
         URI httpUri = URISupport.createRemainingURI(
                 new URI(
                         uriHttpUriAddress.getScheme(),
@@ -559,7 +559,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected HttpClientConnectionManager createConnectionManager(
             Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute,
             SocketConfig defaultSocketConfig) {
-        // setup the connection live time
+        // set up the connection live time
         PoolingHttpClientConnectionManager answer = new PoolingHttpClientConnectionManager(
                 registry, PoolConcurrencyPolicy.STRICT, TimeValue.ofMilliseconds(getConnectionTimeToLive()), null);
         int localMaxTotalConnections = maxTotalConnections;
@@ -665,7 +665,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then
+     * To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured, then
      * this is always used for all endpoints created by this component.
      */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
@@ -689,8 +689,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     /**
      * To configure security using SSLContextParameters. Important: Only one instance of
-     * org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more
-     * different instances, you need to define a new HttpComponent per instance you need.
+     * org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use two or more
+     * different instances, you need to define a new HttpComponent per instance.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -747,7 +747,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * The time for connection to live, the time unit is millisecond, the default value is always keep alive.
+     * The time for connection to live, the time unit is millisecond; the default value is always keepAlive.
      */
     public void setConnectionTimeToLive(long connectionTimeToLive) {
         this.connectionTimeToLive = connectionTimeToLive;
@@ -758,9 +758,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore
+     * To use a custom org.apache.http.client.CookieStore. By default, the org.apache.http.impl.client.BasicCookieStore
      * is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to
-     * be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy).
+     * be a noop cookie store as cookie shouldn't be stored as we are just bridging (e.g., acting as a proxy).
      */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
@@ -789,7 +789,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     /**
      * Determines the timeout until a new connection is fully established. This may also include transport security
-     * negotiation exchanges such as {@code SSL} or {@code TLS} protocol negotiation).
+     * negotiation exchanges such as {@code SSL} or {@code TLS} protocol negotiation.
      * <p>
      * A timeout value of zero is interpreted as an infinite timeout.
      * </p>

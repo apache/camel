@@ -52,14 +52,14 @@ public class OpensearchUriDsl(
   }
 
   /**
-   * The time in ms to wait before connection will timeout.
+   * The time in ms to wait before connection will time out.
    */
   public fun connectionTimeout(connectionTimeout: String) {
     it.property("connectionTimeout", connectionTimeout)
   }
 
   /**
-   * The time in ms to wait before connection will timeout.
+   * The time in ms to wait before connection will time out.
    */
   public fun connectionTimeout(connectionTimeout: Int) {
     it.property("connectionTimeout", connectionTimeout.toString())
@@ -157,14 +157,14 @@ public class OpensearchUriDsl(
   }
 
   /**
-   * The timeout in ms to wait before the socket will timeout.
+   * The timeout in ms to wait before the socket will time out.
    */
   public fun socketTimeout(socketTimeout: String) {
     it.property("socketTimeout", socketTimeout)
   }
 
   /**
-   * The timeout in ms to wait before the socket will timeout.
+   * The timeout in ms to wait before the socket will time out.
    */
   public fun socketTimeout(socketTimeout: Int) {
     it.property("socketTimeout", socketTimeout.toString())
@@ -231,7 +231,7 @@ public class OpensearchUriDsl(
 
   /**
    * Enable automatically discover nodes from a running OpenSearch cluster. If this option is used
-   * in conjunction with Spring Boot then it's managed by the Spring Boot configuration (see: Disable
+   * in conjunction with Spring Boot, then it's managed by the Spring Boot configuration (see: Disable
    * Sniffer in Spring Boot).
    */
   public fun enableSniffer(enableSniffer: String) {
@@ -240,7 +240,7 @@ public class OpensearchUriDsl(
 
   /**
    * Enable automatically discover nodes from a running OpenSearch cluster. If this option is used
-   * in conjunction with Spring Boot then it's managed by the Spring Boot configuration (see: Disable
+   * in conjunction with Spring Boot, then it's managed by the Spring Boot configuration (see: Disable
    * Sniffer in Spring Boot).
    */
   public fun enableSniffer(enableSniffer: Boolean) {
