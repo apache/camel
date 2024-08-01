@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.jira.consumer;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.Issue;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jira.JiraEndpoint;
+import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +57,10 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         // read the actual issues, the next poll outputs only the new issues added after the route start
         // grab only the top
         try {
-            List<Issue> issues = getIssues(jql, 0, 1, 1);
+            Queue<Issue> issues = getIssues(jql, 1);
             if (!issues.isEmpty()) {
                 // Issues returned are ordered descendant so this is the newest issue
-                return issues.get(0).getId();
+                return issues.peek().getId();
             }
         } catch (Exception e) {
             // ignore
@@ -72,17 +72,13 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
     protected int doPoll() throws Exception {
         // it may happen the poll() is called while the route is doing the initial load,
         // this way we need to wait for the latestIssueId being associated to the last indexed issue id
-        List<Issue> newIssues = getNewIssues();
+        Queue<Issue> newIssues = getNewIssues();
         // In the end, we want only *new* issues oldest to newest. New issues returned are ordered descendant already.
-        for (Issue newIssue : newIssues) {
-            Exchange e = createExchange(true);
-            e.getIn().setBody(newIssue);
-            getProcessor().process(e);
-        }
+        processBatch(CastUtils.cast(newIssues));
         return newIssues.size();
     }
 
-    private List<Issue> getNewIssues() {
+    private Queue<Issue> getNewIssues() {
         String jqlFilter;
         if (latestIssueId > -1) {
             // search only for issues created after the latest id
@@ -91,9 +87,9 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
             jqlFilter = jql;
         }
         // the last issue may be deleted, so to recover we re-find it and go from there
-        List<Issue> issues;
+        Queue<Issue> issues;
         try {
-            issues = getIssues(jqlFilter, 0, 50, getEndpoint().getMaxResults());
+            issues = getIssues(jqlFilter);
         } catch (RestClientException e) {
             if (e.getStatusCode().isPresent()) {
                 int code = e.getStatusCode().get();
@@ -104,7 +100,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
                                  + " Will recover by fetching last issue id from JIRA and try again on next poll",
                                 latestIssueId);
                         latestIssueId = findLatestIssueId();
-                        return Collections.emptyList();
+                        return new LinkedList<>();
                     }
                 }
             }
@@ -114,7 +110,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         if (!issues.isEmpty()) {
             // remember last id we have processed
             // issues are ordered descendant so save the first issue in the list as the newest
-            latestIssueId = issues.get(0).getId();
+            latestIssueId = issues.element().getId();
         }
         return issues;
     }

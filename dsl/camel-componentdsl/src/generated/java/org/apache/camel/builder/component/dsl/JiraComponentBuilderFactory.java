@@ -68,7 +68,7 @@ public interface JiraComponentBuilderFactory {
         }
     
         /**
-         * The Jira server url, example: http://my_jira.com:8081.
+         * The Jira server url, for example http://my_jira.com:8081.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

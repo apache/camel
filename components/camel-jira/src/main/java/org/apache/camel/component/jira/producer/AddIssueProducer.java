@@ -98,7 +98,7 @@ public class AddIssueProducer extends DefaultProducer {
             List<String> comps = new ArrayList<>(compArr.length);
             for (String s : compArr) {
                 String c = s.trim();
-                if (c.length() > 0) {
+                if (!c.isEmpty()) {
                     comps.add(c);
                 }
             }
@@ -121,7 +121,7 @@ public class AddIssueProducer extends DefaultProducer {
             String[] watArr = watchers.split(",");
             for (String s : watArr) {
                 String watcher = s.trim();
-                if (watcher.length() > 0) {
+                if (!watcher.isEmpty()) {
                     issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
                 }
             }

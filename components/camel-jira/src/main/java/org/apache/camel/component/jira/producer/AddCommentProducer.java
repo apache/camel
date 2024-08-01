@@ -41,7 +41,7 @@ public class AddCommentProducer extends DefaultProducer {
         String commentStr = exchange.getIn().getBody(String.class);
         if (issueKey == null) {
             throw new IllegalArgumentException(
-                    "Missing exchange input header named \'IssueKey\', it should specify the issue key to add the comment to.");
+                    "Missing exchange input header named 'IssueKey', it should specify the issue key to add the comment to.");
         }
         if (commentStr == null) {
             throw new IllegalArgumentException("Missing exchange body, it should specify the string comment.");

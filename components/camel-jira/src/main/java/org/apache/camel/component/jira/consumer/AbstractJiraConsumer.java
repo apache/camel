@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.jira.consumer;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -26,14 +26,20 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jira.JiraEndpoint;
-import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.support.EmptyAsyncCallback;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
+public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer {
+
+    protected static final int SEARCH_START_AT = 0;
+    protected static final int SEARCH_MAX_PER_QUERY = 50;
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractJiraConsumer.class);
 
@@ -73,12 +79,42 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
         }
     }
 
-    protected List<Issue> getIssues() {
-        return getIssues(endpoint.getJql(), 0, 50, endpoint.getMaxResults());
+    @Override
+    public int processBatch(Queue<Object> objects) throws Exception {
+        int total = objects.size();
+
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
+            // only loop if we are started (allowed to run)
+            Object body = objects.poll();
+            final Exchange exchange = createExchange(true);
+            exchange.getIn().setBody(body);
+            // add current index and total as properties
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
+
+            // update pending number of exchanges
+            pendingExchanges = total - index - 1;
+
+            getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
+        }
+        return total;
+    }
+
+    protected Queue<Issue> getIssues() {
+        return getIssues(endpoint.getJql());
+    }
+
+    protected Queue<Issue> getIssues(String jql) {
+        return getIssues(jql, endpoint.getMaxResults());
+    }
+
+    protected Queue<Issue> getIssues(String jql, int maxResults) {
+        return getIssues(jql, SEARCH_START_AT, SEARCH_MAX_PER_QUERY, maxResults);
     }
 
     // Ignore maxResults if it's <= 0.
-    protected List<Issue> getIssues(String jql, int start, int maxPerQuery, int maxResults) {
+    protected Queue<Issue> getIssues(String jql, int start, int maxPerQuery, int maxResults) {
         LOG.debug("Start indexing current JIRA issues...");
 
         if (maxResults < maxPerQuery) {
@@ -107,7 +143,7 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
             start += maxPerQuery;
         }
         LOG.debug("End indexing current JIRA issues. {} issues indexed.", issues.size());
-        return new ArrayList<>(issues);
+        return new LinkedList<>(issues);
     }
 
     protected JiraRestClient client() {
