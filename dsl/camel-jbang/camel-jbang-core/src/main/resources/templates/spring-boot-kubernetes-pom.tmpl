@@ -77,10 +77,9 @@
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
                 <artifactId>kubernetes-maven-plugin</artifactId>
-                <version>${camel.springboot.jkube.version}</version>
+                <version>${jkube.version}</version>
                 <configuration>
                     <imagePullPolicy>${camel.springboot.kubernetes.image-pull-policy}</imagePullPolicy>
-                    <buildStrategy>docker</buildStrategy>
                     <images>
                         <image>
                             <name>${camel.springboot.kubernetes.image-name}</name>
@@ -117,6 +116,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

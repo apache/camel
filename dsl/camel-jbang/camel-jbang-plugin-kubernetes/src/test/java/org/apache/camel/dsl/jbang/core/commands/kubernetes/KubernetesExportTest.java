@@ -279,7 +279,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertFalse(hasService(rt));
         Assertions.assertTrue(hasKnativeService(rt));
 
-        io.fabric8.knative.serving.v1.Service service = getResource(rt, io.fabric8.knative.serving.v1.Service.class)
+        io.fabric8.knative.serving.v1.Service service = getResource(io.fabric8.knative.serving.v1.Service.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
 
         Assertions.assertEquals("route-service", service.getMetadata().getName());
@@ -315,7 +315,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
-        Trigger trigger = getResource(rt, Trigger.class)
+        Trigger trigger = getResource(Trigger.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative trigger in Kubernetes manifest"));
 
         Assertions.assertEquals("my-broker-knative-event-source-camel-event", trigger.getMetadata().getName());
@@ -356,7 +356,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
-        Subscription subscription = getResource(rt, Subscription.class)
+        Subscription subscription = getResource(Subscription.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative subscription in Kubernetes manifest"));
 
         Assertions.assertEquals("my-channel-knative-channel-source", subscription.getMetadata().getName());
@@ -395,7 +395,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
-        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-event-sink", sinkBinding.getMetadata().getName());
@@ -435,7 +435,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
-        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-channel-sink", sinkBinding.getMetadata().getName());
@@ -475,7 +475,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
 
-        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-endpoint-sink", sinkBinding.getMetadata().getName());
@@ -675,44 +675,33 @@ class KubernetesExportTest extends KubernetesBaseTest {
     }
 
     private Deployment getDeployment(RuntimeType rt) throws IOException {
-        return getResource(rt, Deployment.class)
+        return getResource(Deployment.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
     }
 
     private Service getService(RuntimeType rt) throws IOException {
-        return getResource(rt, Service.class)
+        return getResource(Service.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find service for: %s".formatted(rt.runtime())));
     }
 
     private boolean hasService(RuntimeType rt) throws IOException {
-        return getResource(rt, Service.class).isPresent();
+        return getResource(Service.class).isPresent();
     }
 
     private boolean hasKnativeService(RuntimeType rt) throws IOException {
-        return getResource(rt, io.fabric8.knative.serving.v1.Service.class).isPresent();
+        return getResource(io.fabric8.knative.serving.v1.Service.class).isPresent();
     }
 
-    private <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
-        if (rt == RuntimeType.quarkus) {
-            try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
+    private <T extends HasMetadata> Optional<T> getResource(Class<T> type) throws IOException {
+        var kind = type.getSimpleName().toLowerCase();
+        File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
+        if (file.isFile()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
                 List<HasMetadata> resources = kubernetesClient.load(fis).items();
                 return resources.stream()
                         .filter(it -> type.isAssignableFrom(it.getClass()))
                         .map(type::cast)
                         .findFirst();
-            }
-        }
-        if (rt == RuntimeType.springBoot || rt == RuntimeType.main) {
-            var kind = type.getSimpleName().toLowerCase();
-            File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
-            if (file.isFile()) {
-                try (FileInputStream fis = new FileInputStream(file)) {
-                    List<HasMetadata> resources = kubernetesClient.load(fis).items();
-                    return resources.stream()
-                            .filter(it -> type.isAssignableFrom(it.getClass()))
-                            .map(type::cast)
-                            .findFirst();
-                }
             }
         }
         return Optional.empty();
