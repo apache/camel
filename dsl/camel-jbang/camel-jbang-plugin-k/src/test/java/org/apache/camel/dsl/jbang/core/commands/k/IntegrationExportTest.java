@@ -102,17 +102,22 @@ class IntegrationExportTest extends CamelKBaseTest {
     }
 
     private Deployment getDeployment(RuntimeType rt) throws IOException {
-        return getResource(rt, Deployment.class)
+        return getResource(Deployment.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
     }
 
-    private <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
-        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
-            List<HasMetadata> resources = kubernetesClient.load(fis).items();
-            return resources.stream()
-                    .filter(it -> type.isAssignableFrom(it.getClass()))
-                    .map(type::cast)
-                    .findFirst();
+    private <T extends HasMetadata> Optional<T> getResource(Class<T> type) throws IOException {
+        var kind = type.getSimpleName().toLowerCase();
+        File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
+        if (file.isFile()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                List<HasMetadata> resources = kubernetesClient.load(fis).items();
+                return resources.stream()
+                        .filter(it -> type.isAssignableFrom(it.getClass()))
+                        .map(type::cast)
+                        .findFirst();
+            }
         }
+        return Optional.empty();
     }
 }
