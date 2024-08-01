@@ -127,7 +127,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "The image registry group used to push images to.")
     String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" },
+    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "docker",
                         description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
     String imageBuilder;
 
@@ -135,29 +135,28 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
     String clusterType;
 
-    @CommandLine.Option(names = { "--image-build" },
-                        defaultValue = "true",
-                        description = "Weather to build container image as part of the run.")
+    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",
+                        description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
-    @CommandLine.Option(names = { "--image-push" },
-                        defaultValue = "true",
-                        description = "Weather to push image to given image registry as part of the run.")
-    boolean imagePush = true;
+    @CommandLine.Option(names = { "--image-push" }, defaultValue = "false",
+                        description = "Whether to push image to given image registry as part of the run.")
+    boolean imagePush = false;
 
+    /* [TODO] Currently hard-coded in the pom template and not part of the export cmd
     @CommandLine.Option(names = { "--image-platforms" },
                         description = "List of target platforms. Each platform is defined using the pattern.")
     String imagePlatforms;
+    */
 
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     String gav;
 
     @CommandLine.Option(names = { "--runtime" },
                         completionCandidates = RuntimeCompletionCandidates.class,
-                        defaultValue = "quarkus",
                         converter = RuntimeTypeConverter.class,
                         description = "Runtime (${COMPLETION-CANDIDATES})")
-    RuntimeType runtime = RuntimeType.quarkus;
+    RuntimeType runtime;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
                         defaultValue = RuntimeType.QUARKUS_VERSION)
@@ -215,11 +214,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (output != null) {
-            if (RuntimeType.quarkus == runtime) {
-                exit = buildQuarkus(workingDir);
-            } else if (RuntimeType.springBoot == runtime) {
-                exit = buildSpringBoot(workingDir);
-            }
+
+            exit = buildProject(workingDir);
 
             if (exit != 0) {
                 printer().println("Project build failed!");
@@ -243,11 +239,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             return 0;
         }
 
-        if (RuntimeType.quarkus == runtime) {
-            exit = deployQuarkus(workingDir);
-        } else if (RuntimeType.springBoot == runtime) {
-            exit = deploySpringBoot(workingDir);
-        }
+        exit = deployProject(workingDir);
 
         if (exit != 0) {
             printer().println("Deployment to Kubernetes failed!");
@@ -265,6 +257,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (dev || wait || logs) {
+
+            String kubectlCmd = "kubectl get pod";
+            if (namespace != null) {
+                kubectlCmd += " -n %s".formatted(namespace);
+            }
+            kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            printer().println(kubectlCmd);
+
             client(Pod.class).withLabel(BaseTrait.INTEGRATION_LABEL, projectName)
                     .waitUntilCondition(it -> "Running".equals(it.getStatus().getPhase()), 10, TimeUnit.MINUTES);
         }
@@ -295,10 +295,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         Runtime.getRuntime().addShutdownHook(task);
     }
 
-    private Integer buildQuarkus(String workingDir) throws IOException, InterruptedException {
-        printer().println("Building Quarkus application ...");
+    private Integer buildProject(String workingDir) throws IOException, InterruptedException {
+        printer().println("Building Camel application ...");
 
-        // Run Quarkus build via Maven
+        // Run build via Maven
         String mvnw = "/mvnw";
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
@@ -325,7 +325,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return 0;
     }
 
-    private Integer deployQuarkus(String workingDir) throws IOException, InterruptedException {
+    private Integer deployProject(String workingDir) throws IOException, InterruptedException {
         printer().println("Deploying to Kubernetes ...");
 
         // Run Quarkus build via Maven
@@ -341,25 +341,20 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add("--file");
         args.add(workingDir);
 
-        if (imagePlatforms != null) {
-            args.add("-Dquarkus.jib.platforms=%s".formatted(imagePlatforms));
-        }
-
-        if (imageBuild) {
-            args.add("-Dquarkus.container-image.build=true");
-        }
-
         if (imagePush) {
-            args.add("-Dquarkus.container-image.push=true");
+            args.add("-Djkube.%s.push=true".formatted(imageBuilder));
         }
 
-        args.add("-Dquarkus.kubernetes.deploy=true");
+        if (!imageBuild) {
+            args.add("-Djkube.skip.build=true");
+        }
 
         if (namespace != null) {
-            args.add("-Dquarkus.kubernetes.namespace=%s".formatted(namespace));
+            args.add("-Djkube.namespace=%s".formatted(namespace));
         }
 
         args.add("package");
+        args.add("k8s:deploy");
         pb.command(args.toArray(String[]::new));
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -371,20 +366,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
             return exit;
         }
 
-        return 0;
-    }
-
-    private Integer buildSpringBoot(String workingDir) {
-        printer().println("Building Spring Boot application ...");
-
-        // TODO: implement SpringBoot project build
-        return 0;
-    }
-
-    private Integer deploySpringBoot(String workingDir) {
-        printer().println("Deploying to Kubernetes ...");
-
-        // TODO: implement SpringBoot Kubernetes deployment
         return 0;
     }
 
@@ -406,11 +387,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
             int refresh = export.export();
             if (refresh == 0) {
-                if (RuntimeType.quarkus == runtime) {
-                    deployQuarkus(workingDir);
-                } else if (RuntimeType.springBoot == runtime) {
-                    deploySpringBoot(workingDir);
-                }
+                deployProject(workingDir);
             }
         });
         if (filter != null) {

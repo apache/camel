@@ -109,7 +109,7 @@ public class KubernetesExport extends Export {
                         description = "The image registry group used to push images to.")
     protected String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" },
+    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "docker",
                         description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
     protected String imageBuilder;
 
@@ -260,51 +260,28 @@ public class KubernetesExport extends Export {
 
         if (container.getImagePullPolicy() != null) {
             var imagePullPolicy = container.getImagePullPolicy().getValue();
-            if (runtime == RuntimeType.quarkus) {
-                imagePullPolicy = StringHelper.camelCaseToDash(imagePullPolicy);
-            }
             buildProperties.add("%s.kubernetes.image-pull-policy=%s".formatted(propPrefix, imagePullPolicy));
         }
 
-        // Quarkus Runtime specific
-        if (runtime == RuntimeType.quarkus) {
+        if (imageBuilder != null) {
+            buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
+        }
 
-            // Quarkus specific dependencies
-            if (clusterType != null && clusterType.equals("openshift")) {
-                addDependencies("io.quarkus:quarkus-openshift");
-                if (imageBuilder == null) {
-                    // use s2i image builder as a default on OpenShift
-                    imageBuilder = "s2i";
-                }
-            } else {
-                addDependencies("io.quarkus:quarkus-kubernetes");
-            }
+        // Set the push policy
+        boolean allowPush = imageRegistry != null;
+        buildProperties.add("jkube.%s.push=%b".formatted(imageBuilder, allowPush));
+
+        // Runtime specific for Quarkus
+        if (runtime == RuntimeType.quarkus) {
 
             // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
             // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
             addDependencies("io.fabric8:kubernetes-client:6.13.1");
-
-            // Configure image builder - use Jib by default
-            if (imageBuilder == null) {
-                addDependencies("io.quarkus:quarkus-container-image-jib");
-            } else if (imageBuilder.equals("s2i")) {
-                addDependencies("io.quarkus:quarkus-container-image-openshift");
-            } else {
-                addDependencies("io.quarkus:quarkus-container-image-%s".formatted(imageBuilder));
-            }
-
-            // Quarkus specific properties
-            buildProperties.add("quarkus.container-image.build=true");
-            buildProperties
-                    .add("quarkus.container-image.builder=%s".formatted(Optional.ofNullable(imageBuilder).orElse("jib")));
         }
 
-        // SpringBoot Runtime specific
-        if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
-            File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
-            var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
-            buildProperties.add("%s.jkube.version=%s".formatted(propPrefix, jkubeVersion));
-        }
+        File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
+        var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
+        buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
         // Run export
         int exit = super.export();
@@ -325,22 +302,12 @@ public class KubernetesExport extends Export {
 
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
 
-        // Quarkus: dump joined fragments to kubernetes.yml
-        if (runtime == RuntimeType.quarkus) {
-            var kubeManifest = kubeFragments.stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---\n"));
-            safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)),
-                    new File(exportDir + "/src/main/kubernetes/kubernetes.yml"));
-        }
+        for (var map : kubeFragments) {
+            var ymlFragment = KubernetesHelper.dumpYaml(map);
+            var kind = map.get("kind").toString().toLowerCase();
+            safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
+                    new File(exportDir + "/src/main/jkube/%s.yml".formatted(kind)));
 
-        // SpringBoot: dump each fragment to its respective kind
-        if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
-            for (var map : kubeFragments) {
-                var ymlFragment = KubernetesHelper.dumpYaml(map);
-                var kind = map.get("kind").toString().toLowerCase();
-                safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
-                        new File(exportDir + "/src/main/jkube/%s.yml".formatted(kind)));
-
-            }
         }
 
         context.doWithConfigurationResources((fileName, content) -> {
@@ -367,6 +334,9 @@ public class KubernetesExport extends Export {
     }
 
     protected Integer export(ExportBaseCommand cmd) throws Exception {
+        if (runtime == RuntimeType.quarkus) {
+            cmd.pomTemplateName = "quarkus-kubernetes-pom.tmpl";
+        }
         if (runtime == RuntimeType.springBoot) {
             cmd.pomTemplateName = "spring-boot-kubernetes-pom.tmpl";
         }

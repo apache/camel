@@ -18,16 +18,22 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.util.List;
+import java.util.stream.Stream;
 
+import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class KubernetesRunTest extends KubernetesBaseTest {
 
@@ -36,6 +42,13 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @BeforeEach
     public void setup() {
         printer = new StringPrinter();
+    }
+
+    private static Stream<Arguments> runtimeProvider() {
+        return Stream.of(
+                Arguments.of(RuntimeType.main),
+                Arguments.of(RuntimeType.quarkus),
+                Arguments.of(RuntimeType.springBoot));
     }
 
     @Test
@@ -49,8 +62,9 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertTrue(printer.getOutput().contains("Project export failed"));
     }
 
-    @Test
-    public void shouldGenerateKubernetesManifest() throws Exception {
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
         KubernetesRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
         int exit = command.doCall();
@@ -66,16 +80,15 @@ class KubernetesRunTest extends KubernetesBaseTest {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
 
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(3, deployment.getSpec().getSelector().getMatchLabels().size());
+        Assertions.assertEquals("route", container.getName());
+        Assertions.assertEquals(7, deployment.getSpec().getSelector().getMatchLabels().size());
         Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("docker.io/camel-test/route:1.0-SNAPSHOT",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
-        Assertions.assertEquals("Always",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertEquals("IfNotPresent", container.getImagePullPolicy());
     }
 
     @Test
