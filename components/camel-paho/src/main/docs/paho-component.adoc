@@ -34,7 +34,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 paho:topic[?options]
 ----

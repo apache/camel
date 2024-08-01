@@ -365,7 +365,6 @@ This unit test shows how this can be done to use Saxon instead:
 Camel will log at `INFO` level if it uses a non-default `XPathFactory`
 such as:
 
-[source]
 ----
 XPathBuilder  INFO  Using system property javax.xml.xpath.XPathFactory:http://saxon.sf.net/jaxp/xpath/om with value:
                     net.sf.saxon.xpath.XPathFactoryImpl when creating XPathFactory
@@ -373,7 +372,7 @@ XPathBuilder  INFO  Using system property javax.xml.xpath.XPathFactory:http://sa
 
 To use Apache Xerces, you can configure the system property
 
-[source]
+
 ----
 -Djavax.xml.xpath.XPathFactory=org.apache.xpath.jaxp.XPathFactoryImpl
 ----
@@ -495,7 +494,7 @@ The result of the auditing will be appeared at the INFO level under the
 `org.apache.camel.language.xpath.XPathBuilder` logger and will look like
 the following:
 
-[source]
+
 ----
 2012-01-16 13:23:45,878 [stSaxonWithFlag] INFO  XPathBuilder  - Namespaces discovered in message: 
 {xmlns:a=[http://apache.org/camel], DEFAULT=[http://apache.org/default], 

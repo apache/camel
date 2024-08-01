@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 langchain4j-chat:chatIdId[?options]
 ----

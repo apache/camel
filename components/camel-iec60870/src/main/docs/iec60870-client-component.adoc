@@ -34,7 +34,6 @@ for this component:
 
 The URI syntax of the endpoint is:
 
-[source]
 ----
 iec60870-client:host:port/00-01-02-03-04
 ----

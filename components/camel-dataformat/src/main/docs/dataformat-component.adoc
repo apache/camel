@@ -19,7 +19,6 @@ The Data Format component allows using xref:manual::data-format.adoc[Data Format
 
 == URI format
 
-[source]
 ----
 dataformat:name:(marshal|unmarshal)[?options]
 ----

@@ -19,7 +19,6 @@ The Pionecone Component provides support for interacting with the https://pineco
 
 == URI format
 
-[source]
 ----
 pinecone:collection[?options]
 ----

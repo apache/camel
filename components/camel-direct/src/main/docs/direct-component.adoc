@@ -30,7 +30,6 @@ any consumers when a producer sends a message exchange.
 
 == URI format
 
-[source]
 ----
 direct:someId[?options]
 ----
