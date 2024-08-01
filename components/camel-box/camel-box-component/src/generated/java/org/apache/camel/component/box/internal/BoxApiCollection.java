@@ -30,8 +30,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class BoxApiCollection extends ApiCollection<BoxApiName, BoxConfiguration> {
 
-    private static BoxApiCollection collection;
-
     private BoxApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<BoxApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(BoxApiName.class);
@@ -206,10 +204,11 @@ public final class BoxApiCollection extends ApiCollection<BoxApiName, BoxConfigu
         return result;
     }
 
-    public static synchronized BoxApiCollection getCollection() {
-        if (collection == null) {
-            collection = new BoxApiCollection();
-        }
-        return collection;
+    public static BoxApiCollection getCollection() {
+        return BoxApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class BoxApiCollectionHolder {
+        private static final BoxApiCollection INSTANCE = new BoxApiCollection();
     }
 }

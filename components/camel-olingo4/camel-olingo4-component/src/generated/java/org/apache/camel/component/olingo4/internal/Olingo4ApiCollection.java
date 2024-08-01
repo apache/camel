@@ -21,8 +21,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class Olingo4ApiCollection extends ApiCollection<Olingo4ApiName, Olingo4Configuration> {
 
-    private static Olingo4ApiCollection collection;
-
     private Olingo4ApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<Olingo4ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(Olingo4ApiName.class);
@@ -49,10 +47,11 @@ public final class Olingo4ApiCollection extends ApiCollection<Olingo4ApiName, Ol
         return result;
     }
 
-    public static synchronized Olingo4ApiCollection getCollection() {
-        if (collection == null) {
-            collection = new Olingo4ApiCollection();
-        }
-        return collection;
+    public static Olingo4ApiCollection getCollection() {
+        return Olingo4ApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class Olingo4ApiCollectionHolder {
+        private static final Olingo4ApiCollection INSTANCE = new Olingo4ApiCollection();
     }
 }
