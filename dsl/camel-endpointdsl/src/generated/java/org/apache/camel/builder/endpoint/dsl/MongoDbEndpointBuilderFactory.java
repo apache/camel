@@ -87,8 +87,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Create collection during initialisation if it doesn't exist. Default
-         * is true.
+         * Create the collection during initialisation if it doesn't exist.
+         * Default is true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -103,8 +103,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Create collection during initialisation if it doesn't exist. Default
-         * is true.
+         * Create the collection during initialisation if it doesn't exist.
+         * Default is true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -133,10 +133,10 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host address of mongodb server in host:port format. It's possible
-         * also use more than one address, as comma separated list of hosts:
-         * host1:port1,host2:port2. If the hosts parameter is specified, the
-         * provided connectionBean is ignored.
+         * Host address of mongodb server in host:port format. It's possible to
+         * also use more than one address, as a comma separated list of hosts:
+         * host1:port1,host2:port2. If this parameter is specified, the provided
+         * connectionBean is ignored.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -213,10 +213,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Convert the output of the producer to the selected type :
-         * DocumentList Document or MongoIterable. DocumentList or MongoIterable
-         * applies to findAll and aggregate. Document applies to all other
-         * operations.
+         * Convert the output of the producer to the selected type: DocumentList
+         * Document or MongoIterable. DocumentList or MongoIterable applies to
+         * findAll and aggregate. Document applies to all other operations.
          * 
          * The option is a:
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
@@ -232,10 +231,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Convert the output of the producer to the selected type :
-         * DocumentList Document or MongoIterable. DocumentList or MongoIterable
-         * applies to findAll and aggregate. Document applies to all other
-         * operations.
+         * Convert the output of the producer to the selected type: DocumentList
+         * Document or MongoIterable. DocumentList or MongoIterable applies to
+         * findAll and aggregate. Document applies to all other operations.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
@@ -427,8 +425,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * Indicates what database the tail tracking mechanism will persist to.
          * If not specified, the current database will be picked by default.
-         * Dynamicity will not be taken into account even if enabled, i.e. the
-         * tail tracking database will not vary past endpoint initialisation.
+         * Dynamicity will not be taken into account even if enabled, i.e., the
+         * tail tracking database will not vary past endpoint initialization.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -794,7 +792,7 @@ public interface MongoDbEndpointBuilderFactory {
          * MongoDB deployment. Specify the interval (in milliseconds) between
          * checks, counted from the end of the previous check until the
          * beginning of the next one. Default: Single-threaded drivers: 60
-         * seconds. Multi-threaded drivers: 10 seconds.
+         * seconds. Multithreaded drivers: 10 seconds.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -812,7 +810,7 @@ public interface MongoDbEndpointBuilderFactory {
          * MongoDB deployment. Specify the interval (in milliseconds) between
          * checks, counted from the end of the previous check until the
          * beginning of the next one. Default: Single-threaded drivers: 60
-         * seconds. Multi-threaded drivers: 10 seconds.
+         * seconds. Multithreaded drivers: 10 seconds.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1129,8 +1127,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * A representation of a tag set as a comma-separated list of
          * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
-         * stripped from beginning and end of all keys and values. To specify a
-         * list of tag sets, using multiple readPreferenceTags, e.g.
+         * stripped from the beginning and end of all keys and values. To
+         * specify a list of tag sets, using multiple readPreferenceTags, e.g.,
          * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1589,8 +1587,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Create collection during initialisation if it doesn't exist. Default
-         * is true.
+         * Create the collection during initialisation if it doesn't exist.
+         * Default is true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1605,8 +1603,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Create collection during initialisation if it doesn't exist. Default
-         * is true.
+         * Create the collection during initialisation if it doesn't exist.
+         * Default is true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1635,10 +1633,10 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host address of mongodb server in host:port format. It's possible
-         * also use more than one address, as comma separated list of hosts:
-         * host1:port1,host2:port2. If the hosts parameter is specified, the
-         * provided connectionBean is ignored.
+         * Host address of mongodb server in host:port format. It's possible to
+         * also use more than one address, as a comma separated list of hosts:
+         * host1:port1,host2:port2. If this parameter is specified, the provided
+         * connectionBean is ignored.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1715,10 +1713,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Convert the output of the producer to the selected type :
-         * DocumentList Document or MongoIterable. DocumentList or MongoIterable
-         * applies to findAll and aggregate. Document applies to all other
-         * operations.
+         * Convert the output of the producer to the selected type: DocumentList
+         * Document or MongoIterable. DocumentList or MongoIterable applies to
+         * findAll and aggregate. Document applies to all other operations.
          * 
          * The option is a:
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
@@ -1734,10 +1731,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Convert the output of the producer to the selected type :
-         * DocumentList Document or MongoIterable. DocumentList or MongoIterable
-         * applies to findAll and aggregate. Document applies to all other
-         * operations.
+         * Convert the output of the producer to the selected type: DocumentList
+         * Document or MongoIterable. DocumentList or MongoIterable applies to
+         * findAll and aggregate. Document applies to all other operations.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
@@ -2040,7 +2036,7 @@ public interface MongoDbEndpointBuilderFactory {
          * MongoDB deployment. Specify the interval (in milliseconds) between
          * checks, counted from the end of the previous check until the
          * beginning of the next one. Default: Single-threaded drivers: 60
-         * seconds. Multi-threaded drivers: 10 seconds.
+         * seconds. Multithreaded drivers: 10 seconds.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -2058,7 +2054,7 @@ public interface MongoDbEndpointBuilderFactory {
          * MongoDB deployment. Specify the interval (in milliseconds) between
          * checks, counted from the end of the previous check until the
          * beginning of the next one. Default: Single-threaded drivers: 60
-         * seconds. Multi-threaded drivers: 10 seconds.
+         * seconds. Multithreaded drivers: 10 seconds.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -2375,8 +2371,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * A representation of a tag set as a comma-separated list of
          * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
-         * stripped from beginning and end of all keys and values. To specify a
-         * list of tag sets, using multiple readPreferenceTags, e.g.
+         * stripped from the beginning and end of all keys and values. To
+         * specify a list of tag sets, using multiple readPreferenceTags, e.g.,
          * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2836,8 +2832,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Create collection during initialisation if it doesn't exist. Default
-         * is true.
+         * Create the collection during initialisation if it doesn't exist.
+         * Default is true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2852,8 +2848,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Create collection during initialisation if it doesn't exist. Default
-         * is true.
+         * Create the collection during initialisation if it doesn't exist.
+         * Default is true.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2882,10 +2878,10 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host address of mongodb server in host:port format. It's possible
-         * also use more than one address, as comma separated list of hosts:
-         * host1:port1,host2:port2. If the hosts parameter is specified, the
-         * provided connectionBean is ignored.
+         * Host address of mongodb server in host:port format. It's possible to
+         * also use more than one address, as a comma separated list of hosts:
+         * host1:port1,host2:port2. If this parameter is specified, the provided
+         * connectionBean is ignored.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2962,10 +2958,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Convert the output of the producer to the selected type :
-         * DocumentList Document or MongoIterable. DocumentList or MongoIterable
-         * applies to findAll and aggregate. Document applies to all other
-         * operations.
+         * Convert the output of the producer to the selected type: DocumentList
+         * Document or MongoIterable. DocumentList or MongoIterable applies to
+         * findAll and aggregate. Document applies to all other operations.
          * 
          * The option is a:
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
@@ -2981,10 +2976,9 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Convert the output of the producer to the selected type :
-         * DocumentList Document or MongoIterable. DocumentList or MongoIterable
-         * applies to findAll and aggregate. Document applies to all other
-         * operations.
+         * Convert the output of the producer to the selected type: DocumentList
+         * Document or MongoIterable. DocumentList or MongoIterable applies to
+         * findAll and aggregate. Document applies to all other operations.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
@@ -3244,7 +3238,7 @@ public interface MongoDbEndpointBuilderFactory {
          * MongoDB deployment. Specify the interval (in milliseconds) between
          * checks, counted from the end of the previous check until the
          * beginning of the next one. Default: Single-threaded drivers: 60
-         * seconds. Multi-threaded drivers: 10 seconds.
+         * seconds. Multithreaded drivers: 10 seconds.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3262,7 +3256,7 @@ public interface MongoDbEndpointBuilderFactory {
          * MongoDB deployment. Specify the interval (in milliseconds) between
          * checks, counted from the end of the previous check until the
          * beginning of the next one. Default: Single-threaded drivers: 60
-         * seconds. Multi-threaded drivers: 10 seconds.
+         * seconds. Multithreaded drivers: 10 seconds.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3579,8 +3573,8 @@ public interface MongoDbEndpointBuilderFactory {
         /**
          * A representation of a tag set as a comma-separated list of
          * colon-separated key-value pairs, e.g. dc:ny,rack:1. Spaces are
-         * stripped from beginning and end of all keys and values. To specify a
-         * list of tag sets, using multiple readPreferenceTags, e.g.
+         * stripped from the beginning and end of all keys and values. To
+         * specify a list of tag sets, using multiple readPreferenceTags, e.g.,
          * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value for the last one, which means match any secondary as a last resort. Order matters when using multiple readPreferenceTags.
          * 
          * The option is a: <code>java.lang.String</code> type.

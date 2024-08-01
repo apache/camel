@@ -45,7 +45,7 @@ public interface OpensearchEndpointBuilderFactory {
         }
 
         /**
-         * The time in ms to wait before connection will timeout.
+         * The time in ms to wait before connection will time out.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -60,7 +60,7 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The time in ms to wait before connection will timeout.
+         * The time in ms to wait before connection will time out.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -282,7 +282,7 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout in ms to wait before the socket will timeout.
+         * The timeout in ms to wait before the socket will time out.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -297,7 +297,7 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The timeout in ms to wait before the socket will timeout.
+         * The timeout in ms to wait before the socket will time out.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -514,7 +514,7 @@ public interface OpensearchEndpointBuilderFactory {
         }
         /**
          * Enable automatically discover nodes from a running OpenSearch
-         * cluster. If this option is used in conjunction with Spring Boot then
+         * cluster. If this option is used in conjunction with Spring Boot, then
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 
@@ -532,7 +532,7 @@ public interface OpensearchEndpointBuilderFactory {
         }
         /**
          * Enable automatically discover nodes from a running OpenSearch
-         * cluster. If this option is used in conjunction with Spring Boot then
+         * cluster. If this option is used in conjunction with Spring Boot, then
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 

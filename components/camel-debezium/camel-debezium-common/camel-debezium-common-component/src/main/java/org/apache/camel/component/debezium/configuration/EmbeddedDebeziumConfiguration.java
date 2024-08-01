@@ -119,7 +119,7 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
     }
 
     /**
-     * Configure the Debezium connector class that is supported by Debezium
+     * Configure the Debezium connector class supported by Debezium
      *
      * @return {@link Class}
      */
@@ -391,8 +391,8 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
 
     /**
      * Sets additional properties for debezium components in case they can't be set directly on the camel configurations
-     * (e.g: setting Kafka Connect properties needed by Debezium engine, for example setting KafkaOffsetBackingStore),
-     * the properties have to be prefixed with `additionalProperties.`. E.g:
+     * (e.g: setting Kafka Connect properties needed by Debezium engine, for example, setting KafkaOffsetBackingStore),
+     * the properties have to be prefixed with `additionalProperties.`. E.g.:
      * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
      */
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {

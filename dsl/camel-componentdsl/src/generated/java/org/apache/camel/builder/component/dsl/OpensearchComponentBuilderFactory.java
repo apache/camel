@@ -167,7 +167,7 @@ public interface OpensearchComponentBuilderFactory {
     
         /**
          * To use an existing configured OpenSearch client, instead of creating
-         * a client per endpoint. This allows to customize the client with
+         * a client per endpoint. This allows customizing the client with
          * specific settings.
          * 
          * The option is a:
@@ -186,7 +186,7 @@ public interface OpensearchComponentBuilderFactory {
         
         /**
          * Enable automatically discover nodes from a running OpenSearch
-         * cluster. If this option is used in conjunction with Spring Boot then
+         * cluster. If this option is used in conjunction with Spring Boot, then
          * it's managed by the Spring Boot configuration (see: Disable Sniffer
          * in Spring Boot).
          * 
@@ -258,7 +258,7 @@ public interface OpensearchComponentBuilderFactory {
         }
     
         /**
-         * Password for authenticate.
+         * Password for authenticating.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

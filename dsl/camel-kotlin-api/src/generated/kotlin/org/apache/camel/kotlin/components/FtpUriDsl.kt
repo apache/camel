@@ -177,7 +177,7 @@ public class FtpUriDsl(
 
   /**
    * Configures the interval in seconds to use when logging the progress of upload and download
-   * operations that are in-flight. This is used for logging progress when operations takes longer
+   * operations that are in-flight. This is used for logging progress when operations take a longer
    * time.
    */
   public fun transferLoggingIntervalSeconds(transferLoggingIntervalSeconds: String) {
@@ -186,7 +186,7 @@ public class FtpUriDsl(
 
   /**
    * Configures the interval in seconds to use when logging the progress of upload and download
-   * operations that are in-flight. This is used for logging progress when operations takes longer
+   * operations that are in-flight. This is used for logging progress when operations take a longer
    * time.
    */
   public fun transferLoggingIntervalSeconds(transferLoggingIntervalSeconds: Int) {
@@ -201,7 +201,7 @@ public class FtpUriDsl(
   }
 
   /**
-   * Configures whether the perform verbose (fine grained) logging of the progress of upload and
+   * Configures whether perform verbose (fine-grained) logging of the progress of upload and
    * download operations.
    */
   public fun transferLoggingVerbose(transferLoggingVerbose: String) {
@@ -209,7 +209,7 @@ public class FtpUriDsl(
   }
 
   /**
-   * Configures whether the perform verbose (fine grained) logging of the progress of upload and
+   * Configures whether perform verbose (fine-grained) logging of the progress of upload and
    * download operations.
    */
   public fun transferLoggingVerbose(transferLoggingVerbose: Boolean) {
@@ -324,7 +324,7 @@ public class FtpUriDsl(
 
   /**
    * Configures whether resume download is enabled. This must be supported by the FTP server (almost
-   * all FTP servers support it). In addition the options localWorkDirectory must be configured so
+   * all FTP servers support it). In addition, the options localWorkDirectory must be configured so
    * downloaded files are stored in a local directory, and the option binary must be enabled, which is
    * required to support resuming of downloads.
    */
@@ -334,7 +334,7 @@ public class FtpUriDsl(
 
   /**
    * Configures whether resume download is enabled. This must be supported by the FTP server (almost
-   * all FTP servers support it). In addition the options localWorkDirectory must be configured so
+   * all FTP servers support it). In addition, the options localWorkDirectory must be configured so
    * downloaded files are stored in a local directory, and the option binary must be enabled, which is
    * required to support resuming of downloads.
    */
@@ -444,8 +444,8 @@ public class FtpUriDsl(
 
   /**
    * Allows you to set how the consumer will handle subfolders and files in the path if the
-   * directory parser results in with absolute paths The reason for this is that some FTP servers may
-   * return file names with absolute paths, and if so then the FTP component needs to handle this by
+   * directory parser results in with absolute paths. The reason for this is that some FTP servers may
+   * return file names with absolute paths, and if so, then the FTP component needs to handle this by
    * converting the returned path into a relative path.
    */
   public fun handleDirectoryParserAbsoluteResult(handleDirectoryParserAbsoluteResult: String) {
@@ -454,8 +454,8 @@ public class FtpUriDsl(
 
   /**
    * Allows you to set how the consumer will handle subfolders and files in the path if the
-   * directory parser results in with absolute paths The reason for this is that some FTP servers may
-   * return file names with absolute paths, and if so then the FTP component needs to handle this by
+   * directory parser results in with absolute paths. The reason for this is that some FTP servers may
+   * return file names with absolute paths, and if so, then the FTP component needs to handle this by
    * converting the returned path into a relative path.
    */
   public fun handleDirectoryParserAbsoluteResult(handleDirectoryParserAbsoluteResult: Boolean) {
@@ -676,7 +676,7 @@ public class FtpUriDsl(
   }
 
   /**
-   * Allows you to set chmod on the stored file. For example chmod=640.
+   * Allows you to set chmod on the stored file. For example, chmod=640.
    */
   public fun chmod(chmod: String) {
     it.property("chmod", chmod)
@@ -805,7 +805,7 @@ public class FtpUriDsl(
 
   /**
    * Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers
-   * are inclusive, eg 10000-19999 to include all 1xxxx ports.
+   * are inclusive, e.g., 10000-19999 to include all 1xxxx ports.
    */
   public fun activePortRange(activePortRange: String) {
     it.property("activePortRange", activePortRange)

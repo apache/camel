@@ -57,7 +57,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * collect database operations aggregation statistics, system
          * information like cpu/memory and send it to cosmos monitoring service,
          * which will be helpful during debugging. DEFAULT value is false
-         * indicating this is opt in feature, by default no telemetry
+         * indicating this is an opt-in feature, by default no telemetry
          * collection.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -93,7 +93,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
         /**
          * Enables connections sharing across multiple Cosmos Clients. The
          * default is false. When you have multiple instances of Cosmos Client
-         * in the same JVM interacting to multiple Cosmos accounts, enabling
+         * in the same JVM interacting with multiple Cosmos accounts, enabling
          * this allows connection sharing in Direct mode if possible between
          * instances of Cosmos Client. Please note, when setting this option,
          * the connection configuration (e.g., socket timeout config, idle
@@ -157,9 +157,9 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * Sets the boolean to only return the headers and status code in Cosmos
          * DB response in case of Create, Update and Delete operations on
          * CosmosItem. In Consumer, it is enabled by default because of the
-         * ChangeFeed in the consumer that needs this flag to be enabled and
-         * thus is shouldn't be overridden. In Producer, it advised to disable
-         * it since it reduces the network overhead.
+         * ChangeFeed in the consumer that needs this flag to be enabled, and
+         * thus it shouldn't be overridden. In Producer, it is advised to
+         * disable it since it reduces the network overhead.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -195,8 +195,8 @@ public interface AzureCosmosdbComponentBuilderFactory {
     
         
         /**
-         * Sets if the component should create Cosmos container automatically in
-         * case it doesn't exist in Cosmos database.
+         * Sets if the component should create the Cosmos container
+         * automatically in case it doesn't exist in the Cosmos database.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -213,8 +213,8 @@ public interface AzureCosmosdbComponentBuilderFactory {
     
         
         /**
-         * Sets if the component should create Cosmos database automatically in
-         * case it doesn't exist in Cosmos account.
+         * Sets if the component should create the Cosmos database automatically
+         * in case it doesn't exist in the Cosmos account.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -396,8 +396,9 @@ public interface AzureCosmosdbComponentBuilderFactory {
     
         
         /**
-         * Sets if the component should create Cosmos lease database for the
-         * consumer automatically in case it doesn't exist in Cosmos account.
+         * Sets if the component should create the Cosmos lease database for the
+         * consumer automatically in case it doesn't exist in the Cosmos
+         * account.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -436,7 +437,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * Sets the lease container which acts as a state storage and
          * coordinates processing the change feed across multiple workers. The
          * lease container can be stored in the same account as the monitored
-         * container or in a separate account. It will be auto created if
+         * container or in a separate account. It will be auto-created if
          * createLeaseContainerIfNotExists is set to true.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -456,7 +457,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * Sets the lease database where the leaseContainerName will be stored.
          * If it is not specified, this component will store the lease container
          * in the same database that is specified in databaseName. It will be
-         * auto created if createLeaseDatabaseIfNotExists is set to true.
+         * auto-created if createLeaseDatabaseIfNotExists is set to true.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

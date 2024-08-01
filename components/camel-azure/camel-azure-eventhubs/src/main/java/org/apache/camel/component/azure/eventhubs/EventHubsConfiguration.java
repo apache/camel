@@ -131,10 +131,10 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Instead of supplying namespace, sharedAccessKey, sharedAccessName ... etc, you can just supply the connection
-     * string for your eventHub. The connection string for EventHubs already include all the necessary information to
-     * connection to your EventHub. To learn on how to generate the connection string, take a look at this
-     * documentation: https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string
+     * Instead of supplying namespace, sharedAccessKey, sharedAccessName, etc, you can supply the connection string for
+     * your eventHub. The connection string for EventHubs already includes all the necessary information to connection
+     * to your EventHub. To learn how to generate the connection string, take a look at this documentation:
+     * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string
      */
     public String getConnectionString() {
         return connectionString;
@@ -261,7 +261,7 @@ public class EventHubsConfiguration implements Cloneable {
      * checkpoint information.
      * </p>
      *
-     * By default it set to use {@link com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore} which
+     * By default, it's set to use {@link com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore} which
      * stores all checkpoint offsets into Azure Blob Storage.
      */
     public CheckpointStore getCheckpointStore() {
@@ -339,7 +339,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the batch size between each checkpoint updates. Works jointly with {@link #checkpointBatchTimeout}.
+     * Sets the batch size between each checkpoint update. Works jointly with {@link #checkpointBatchTimeout}.
      */
     public void setCheckpointBatchSize(int checkpointBatchSize) {
         this.checkpointBatchSize = checkpointBatchSize;
@@ -350,7 +350,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the batch timeout between each checkpoint updates. Works jointly with {@link #checkpointBatchSize}.
+     * Sets the batch timeout between each checkpoint update. Works jointly with {@link #checkpointBatchSize}.
      */
     public void setCheckpointBatchTimeout(int checkpointBatchTimeout) {
         this.checkpointBatchTimeout = checkpointBatchTimeout;

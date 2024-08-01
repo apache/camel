@@ -120,8 +120,8 @@ public class ElasticsearchComponent extends DefaultComponent {
     }
 
     /**
-     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to
-     * customize the client with specific settings.
+     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allows
+     * customizing the client with specific settings.
      */
     public void setClient(RestClient client) {
         this.client = client;
@@ -140,7 +140,7 @@ public class ElasticsearchComponent extends DefaultComponent {
     }
 
     /**
-     * The timeout in ms to wait before the socket will timeout.
+     * The timeout in ms to wait before the socket will time out.
      */
     public int getSocketTimeout() {
         return socketTimeout;
@@ -151,7 +151,7 @@ public class ElasticsearchComponent extends DefaultComponent {
     }
 
     /**
-     * The time in ms to wait before connection will timeout.
+     * The time in ms to wait before connection will time out.
      */
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -173,7 +173,7 @@ public class ElasticsearchComponent extends DefaultComponent {
     }
 
     /**
-     * Password for authenticate
+     * Password for authenticating
      */
     public String getPassword() {
         return password;
@@ -209,8 +209,8 @@ public class ElasticsearchComponent extends DefaultComponent {
      * Indicates whether the body of the message contains only documents. By default, it is set to false to be able to
      * do the same requests as what the Document API supports (see
      * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html for more details). To ease the
-     * migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the mode
-     * especially if your routes do update operations.
+     * migration of routes based on the legacy component camel-elasticsearch-rest, you should consider enabling the
+     * mode, especially if your routes do update operations.
      */
     public boolean isEnableDocumentOnlyMode() {
         return enableDocumentOnlyMode;
@@ -237,7 +237,7 @@ public class ElasticsearchComponent extends DefaultComponent {
 
     /**
      * Enable automatically discover nodes from a running Elasticsearch cluster. If this option is used in conjunction
-     * with Spring Boot then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
+     * with Spring Boot, then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
      */
     public void setEnableSniffer(boolean enableSniffer) {
         this.enableSniffer = enableSniffer;

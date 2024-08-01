@@ -145,9 +145,9 @@ public class CaffeineConfiguration implements Cloneable {
      * limit is exceeded or temporarily exceed the threshold while evicting. As the cache size grows close to the
      * maximum, the cache evicts entries that are less likely to be used again. For example, the cache may evict an
      * entry because it hasn't been used recently or very often. When size is zero, elements will be evicted immediately
-     * after being loaded into the cache. This can be useful in testing, or to disable caching temporarily without a
-     * code change. As eviction is scheduled on the configured executor, tests may instead prefer to configure the cache
-     * to execute tasks directly on the same thread.
+     * after being loaded into the cache. This can be useful in testing or to disable caching temporarily without a code
+     * change. As eviction is scheduled on the configured executor, tests may instead prefer to configure the cache to
+     * execute tasks directly on the same thread.
      */
     public void setMaximumSize(Integer maximumSize) {
         this.maximumSize = maximumSize;

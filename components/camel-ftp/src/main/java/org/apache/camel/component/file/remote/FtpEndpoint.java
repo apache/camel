@@ -188,7 +188,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             if (timeout != null) {
                 soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
             }
-            // and we want to keep data timeout so we can log it later
+            // and we want to keep data timeout, so we can log it later
             timeout = localParameters.remove("dataTimeout");
             if (timeout != null) {
                 dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
@@ -197,7 +197,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
 
         if (ftpClientConfigParameters != null) {
-            // client config is optional so create a new one if we have
+            // client config is optional, so create a new one if we have
             // parameter for it
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
@@ -347,7 +347,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     /**
      * Configures the interval in seconds to use when logging the progress of upload and download operations that are
-     * in-flight. This is used for logging progress when operations takes longer time.
+     * in-flight. This is used for logging progress when operations take a longer time.
      */
     @ManagedAttribute(description = "Interval in seconds to use when logging the progress of upload and download operations that are in-flight")
     public void setTransferLoggingIntervalSeconds(int transferLoggingIntervalSeconds) {
@@ -360,7 +360,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Configures whether the perform verbose (fine grained) logging of the progress of upload and download operations.
+     * Configures whether perform verbose (fine-grained) logging of the progress of upload and download operations.
      */
     @ManagedAttribute(description = "Whether the perform verbose (fine grained) logging of the progress of upload and download operations")
     public void setTransferLoggingVerbose(boolean transferLoggingVerbose) {
@@ -373,7 +373,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     /**
      * Configures whether resume download is enabled. This must be supported by the FTP server (almost all FTP servers
-     * support it). In addition the options <tt>localWorkDirectory</tt> must be configured so downloaded files are
+     * support it). In addition, the options <tt>localWorkDirectory</tt> must be configured so downloaded files are
      * stored in a local directory, and the option <tt>binary</tt> must be enabled, which is required to support
      * resuming of downloads.
      */
