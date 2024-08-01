@@ -28,8 +28,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class GoogleCalendarApiCollection extends ApiCollection<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 
-    private static GoogleCalendarApiCollection collection;
-
     private GoogleCalendarApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<GoogleCalendarApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleCalendarApiName.class);
@@ -112,10 +110,11 @@ public final class GoogleCalendarApiCollection extends ApiCollection<GoogleCalen
         return result;
     }
 
-    public static synchronized GoogleCalendarApiCollection getCollection() {
-        if (collection == null) {
-            collection = new GoogleCalendarApiCollection();
-        }
-        return collection;
+    public static GoogleCalendarApiCollection getCollection() {
+        return GoogleCalendarApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class GoogleCalendarApiCollectionHolder {
+        private static final GoogleCalendarApiCollection INSTANCE = new GoogleCalendarApiCollection();
     }
 }
