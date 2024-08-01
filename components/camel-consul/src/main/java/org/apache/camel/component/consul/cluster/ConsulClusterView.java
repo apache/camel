@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.apache.camel.cluster.CamelClusterMember;
@@ -44,6 +46,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
 
     private final ConsulClusterConfiguration configuration;
     private final ConsulLocalMember localMember;
+    private final Lock sessionIdLock = new ReentrantLock();
     private final AtomicReference<String> sessionId;
     private final Watcher watcher;
 
@@ -113,21 +116,25 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             if (keyValueClient.releaseLock(this.path, sessionId.get())) {
                 LOGGER.debug("Successfully released lock on path '{}' with id '{}'", path, sessionId.get());
             }
-
-            synchronized (sessionId) {
+            sessionIdLock.lock();
+            try {
                 sessionClient.destroySession(sessionId.getAndSet(null));
                 localMember.setMaster(false);
+            } finally {
+                sessionIdLock.unlock();
             }
         }
     }
 
     private boolean acquireLock() {
-        synchronized (sessionId) {
+        sessionIdLock.lock();
+        try {
             String sid = sessionId.get();
 
             return (sid != null)
-                    ? sessionClient.getSessionInfo(sid).map(si -> keyValueClient.acquireLock(path, sid)).orElse(Boolean.FALSE)
-                    : false;
+                    && sessionClient.getSessionInfo(sid).map(si -> keyValueClient.acquireLock(path, sid)).orElse(Boolean.FALSE);
+        } finally {
+            sessionIdLock.unlock();
         }
     }
 
@@ -136,7 +143,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     // ***********************************************
 
     private final class ConsulLocalMember implements CamelClusterMember {
-        private AtomicBoolean master = new AtomicBoolean();
+        private final AtomicBoolean master = new AtomicBoolean();
 
         void setMaster(boolean master) {
             if (master && this.master.compareAndSet(false, true)) {
@@ -147,7 +154,6 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             if (!master && this.master.compareAndSet(true, false)) {
                 LOGGER.debug("Leadership lost for session id {}", sessionId.get());
                 fireLeadershipChangedEvent(getLeader().orElse(null));
-                return;
             }
         }
 
