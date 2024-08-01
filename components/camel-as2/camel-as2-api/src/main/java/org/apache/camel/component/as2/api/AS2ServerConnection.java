@@ -23,6 +23,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -213,7 +215,7 @@ public class AS2ServerConnection {
     }
 
     private RequestListenerThread listenerThread;
-    private final Object lock = new Object();
+    private final Lock lock = new ReentrantLock();
     private final String as2Version;
     private final String originServer;
     private final String serverFqdn;
@@ -267,7 +269,8 @@ public class AS2ServerConnection {
 
     public void close() {
         if (listenerThread != null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 try {
                     listenerThread.serversocket.close();
                 } catch (IOException e) {
@@ -275,14 +278,19 @@ public class AS2ServerConnection {
                 } finally {
                     listenerThread = null;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
 
     public void listen(String requestUri, HttpRequestHandler handler) {
         if (listenerThread != null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 listenerThread.registerHandler(requestUri, handler);
+            } finally {
+                lock.unlock();
             }
         }
     }

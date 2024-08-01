@@ -45,13 +45,8 @@ public class MethodInfoCache {
         this.methodCache = methodCache;
     }
 
-    public synchronized MethodInfo getMethodInfo(Method method) {
-        MethodInfo answer = methodCache.get(method);
-        if (answer == null) {
-            answer = createMethodInfo(method);
-            methodCache.put(method, answer);
-        }
-        return answer;
+    public MethodInfo getMethodInfo(Method method) {
+        return methodCache.computeIfAbsent(method, this::createMethodInfo);
     }
 
     protected MethodInfo createMethodInfo(Method method) {
@@ -60,13 +55,8 @@ public class MethodInfoCache {
         return info.getMethodInfo(method);
     }
 
-    protected synchronized BeanInfo getBeanInfo(Class<?> declaringClass) {
-        BeanInfo beanInfo = classCache.get(declaringClass);
-        if (beanInfo == null) {
-            beanInfo = createBeanInfo(declaringClass);
-            classCache.put(declaringClass, beanInfo);
-        }
-        return beanInfo;
+    protected BeanInfo getBeanInfo(Class<?> declaringClass) {
+        return classCache.computeIfAbsent(declaringClass, this::createBeanInfo);
     }
 
     protected BeanInfo createBeanInfo(Class<?> declaringClass) {

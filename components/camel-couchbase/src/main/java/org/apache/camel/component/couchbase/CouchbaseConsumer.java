@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.couchbase.client.core.deps.com.fasterxml.jackson.databind.JsonNode;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
@@ -43,6 +46,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements R
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseConsumer.class);
 
+    private final Lock lock = new ReentrantLock();
     private final CouchbaseEndpoint endpoint;
     private final Bucket bucket;
     private final Collection collection;
@@ -109,64 +113,69 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements R
     }
 
     @Override
-    protected synchronized int poll() throws Exception {
-        ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
+    protected int poll() throws Exception {
+        lock.lock();
+        try {
+            ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
 
-        // okay we have some response from CouchBase so lets mark the consumer as ready
-        forceConsumerAsReady();
+            // okay we have some response from CouchBase so lets mark the consumer as ready
+            forceConsumerAsReady();
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("ViewResponse =  {}", result);
-        }
-
-        String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
-        for (ViewRow row : result.rows()) {
-            Object doc;
-            String id = row.id().get();
-            if (endpoint.isFullDocument()) {
-                doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout());
-            } else {
-                doc = row.valueAs(Object.class);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("ViewResponse =  {}", result);
             }
 
-            String key = row.keyAs(JsonNode.class).get().asText();
-            String designDocumentName = endpoint.getDesignDocumentName();
-            String viewName = endpoint.getViewName();
-
-            Exchange exchange = createExchange(false);
-            try {
-                exchange.getIn().setBody(doc);
-                exchange.getIn().setHeader(HEADER_ID, id);
-                exchange.getIn().setHeader(HEADER_KEY, key);
-                exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
-                exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
-
-                if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Deleting doc with ID {}", id);
-                    }
-                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                            endpoint.getProducerRetryPause());
-                } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Filtering out ID {}", id);
-                    }
-                    // add filter for already processed docs
+            String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
+            for (ViewRow row : result.rows()) {
+                Object doc;
+                String id = row.id().get();
+                if (endpoint.isFullDocument()) {
+                    doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout());
                 } else {
-                    LOG.trace("No strategy set for already processed docs, beware of duplicates!");
+                    doc = row.valueAs(Object.class);
                 }
 
-                logDetails(id, doc, key, designDocumentName, viewName, exchange);
+                String key = row.keyAs(JsonNode.class).get().asText();
+                String designDocumentName = endpoint.getDesignDocumentName();
+                String viewName = endpoint.getViewName();
 
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                this.getExceptionHandler().handleException("Error processing exchange.", exchange, e);
-            } finally {
-                releaseExchange(exchange, false);
+                Exchange exchange = createExchange(false);
+                try {
+                    exchange.getIn().setBody(doc);
+                    exchange.getIn().setHeader(HEADER_ID, id);
+                    exchange.getIn().setHeader(HEADER_KEY, key);
+                    exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
+                    exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
+
+                    if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Deleting doc with ID {}", id);
+                        }
+                        CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                                endpoint.getProducerRetryPause());
+                    } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Filtering out ID {}", id);
+                        }
+                        // add filter for already processed docs
+                    } else {
+                        LOG.trace("No strategy set for already processed docs, beware of duplicates!");
+                    }
+
+                    logDetails(id, doc, key, designDocumentName, viewName, exchange);
+
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    this.getExceptionHandler().handleException("Error processing exchange.", exchange, e);
+                } finally {
+                    releaseExchange(exchange, false);
+                }
             }
-        }
 
-        return result.rows().size();
+            return result.rows().size();
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void logDetails(String id, Object doc, String key, String designDocumentName, String viewName, Exchange exchange) {

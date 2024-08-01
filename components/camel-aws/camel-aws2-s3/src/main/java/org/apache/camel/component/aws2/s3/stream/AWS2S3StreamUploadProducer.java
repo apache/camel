@@ -25,6 +25,8 @@ import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -63,7 +65,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private static final String TIMEOUT_CHECKER_EXECUTOR_NAME = "S3_Streaming_Upload_Timeout_Checker";
     private AtomicInteger part = new AtomicInteger();
     private UploadState uploadAggregate = null;
-    private final Object lock = new Object();
+    private final Lock lock = new ReentrantLock();
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
 
@@ -89,11 +91,14 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (ObjectHelper.isNotEmpty(uploadAggregate)) {
                 uploadPart(uploadAggregate);
                 completeUpload(uploadAggregate);
             }
+        } finally {
+            lock.unlock();
         }
         if (timeoutCheckerExecutorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(timeoutCheckerExecutorService);
@@ -110,12 +115,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         @Override
         public void run() {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 if (ObjectHelper.isNotEmpty(uploadAggregate)) {
                     uploadPart(uploadAggregate);
                     completeUpload(uploadAggregate);
                     uploadAggregate = null;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -139,7 +147,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             totalSize += b.length;
             if (getConfiguration().isMultiPartUpload())
                 maxRead -= b.length;
-            synchronized (lock) {
+            lock.lock();
+            try {
                 // aggregate with previously received exchanges
                 if (ObjectHelper.isNotEmpty(uploadAggregate)) {
                     uploadAggregate.buffer.write(b);
@@ -165,6 +174,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     }
                     continue;
                 }
+            } finally {
+                lock.unlock();
             }
             if (state == null) {
                 state = new UploadState();
@@ -242,13 +253,16 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
         if (ObjectHelper.isNotEmpty(state)) {
             // exchange wasn't large enough to send, batch it with subsequent exchanges.
-            synchronized (lock) {
+            lock.lock();
+            try {
                 if (ObjectHelper.isEmpty(this.uploadAggregate)) {
                     this.uploadAggregate = state;
                 } else {
                     // handle potential race condition.
                     this.uploadAggregate.buffer.write(state.buffer.toByteArray());
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
