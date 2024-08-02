@@ -22,7 +22,6 @@ message body.
 
 == URI format
 
-[source]
 ----
 dynamic-router-control:controlAction[?options]
 ----

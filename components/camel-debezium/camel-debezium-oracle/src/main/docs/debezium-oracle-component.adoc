@@ -2,7 +2,7 @@
 :doctitle: Debezium Oracle Connector
 :shortname: debezium-oracle
 :artifactid: camel-debezium-oracle
-:description: Capture changes from a Oracle database.
+:description: Capture changes from an Oracle database.
 :since: 3.17
 :supportlevel: Stable
 :tabs-sync-option:

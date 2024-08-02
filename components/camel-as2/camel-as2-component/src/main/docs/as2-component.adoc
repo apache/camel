@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 as2://apiName/methodName
 ----

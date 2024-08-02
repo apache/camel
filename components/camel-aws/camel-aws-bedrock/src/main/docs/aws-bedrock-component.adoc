@@ -700,7 +700,7 @@ from("direct:invoke")
                             + BedrockModels.TITAN_TEXT_EXPRESS_V1.model))
 --------------------------------------------------------------------------------
 
-and you can the send to the direct endpoint something like
+and you can then send to the direct endpoint something like
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -738,7 +738,7 @@ from("direct:invoke")
                         .setHeader("CamelFileName", simple("image-${random(128)}.png")).to("file:target/generated_images")
 --------------------------------------------------------------------------------
 
-and you can the send to the direct endpoint something like
+and you can then send to the direct endpoint something like
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -778,7 +778,7 @@ from("direct:send_titan_embeddings")
     .to(result);
 --------------------------------------------------------------------------------
 
-and you can the send to the direct endpoint something like
+and you can then send to the direct endpoint something like
 
 [source,java]
 --------------------------------------------------------------------------------

@@ -159,7 +159,7 @@ public class OpensearchConfiguration {
     }
 
     /**
-     * The timeout in ms to wait before the socket will timeout.
+     * The timeout in ms to wait before the socket will time out.
      */
     public int getSocketTimeout() {
         return socketTimeout;
@@ -170,7 +170,7 @@ public class OpensearchConfiguration {
     }
 
     /**
-     * The time in ms to wait before connection will timeout.
+     * The time in ms to wait before connection will time out.
      */
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -192,7 +192,7 @@ public class OpensearchConfiguration {
     }
 
     /**
-     * Password for authenticate
+     * Password for authenticating
      */
     public String getPassword() {
         return password;
@@ -249,7 +249,7 @@ public class OpensearchConfiguration {
 
     /**
      * Enable automatically discover nodes from a running OpenSearch cluster. If this option is used in conjunction with
-     * Spring Boot then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
+     * Spring Boot, then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
      */
     public boolean isEnableSniffer() {
         return enableSniffer;

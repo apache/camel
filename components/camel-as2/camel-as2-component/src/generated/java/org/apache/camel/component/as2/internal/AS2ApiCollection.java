@@ -23,8 +23,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configuration> {
 
-    private static AS2ApiCollection collection;
-
     private AS2ApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<AS2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(AS2ApiName.class);
@@ -67,10 +65,11 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
         return result;
     }
 
-    public static synchronized AS2ApiCollection getCollection() {
-        if (collection == null) {
-            collection = new AS2ApiCollection();
-        }
-        return collection;
+    public static AS2ApiCollection getCollection() {
+        return AS2ApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class AS2ApiCollectionHolder {
+        private static final AS2ApiCollection INSTANCE = new AS2ApiCollection();
     }
 }

@@ -19,7 +19,6 @@ The Kamelet Component provides support for interacting with the xref:manual::rou
 
 == URI format
 
-[source]
 ----
 kamelet:templateId/routeId[?options]
 ----

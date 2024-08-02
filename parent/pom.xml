@@ -188,9 +188,9 @@
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.36.0</google-oauth-client-version>
         <google-cloud-bom-version>26.43.0</google-cloud-bom-version>
-        <google-cloud-functions-bom-version>2.48.0</google-cloud-functions-bom-version>
+        <google-cloud-functions-bom-version>2.49.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.44.2</google-cloud-http-client-version>
-        <google-cloud-secretmanager-bom-version>2.46.0</google-cloud-secretmanager-bom-version>
+        <google-cloud-secretmanager-bom-version>2.47.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.0.2</graaljs-version>
         <graphql-java-version>22.1</graphql-java-version>
         <greenmail-version>2.0.1</greenmail-version>
@@ -408,7 +408,7 @@
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.5.Final</protostream-version>
         <prowide-version>SRU2023-10.1.6</prowide-version>
-        <pubnub-version>9.2.2</pubnub-version>
+        <pubnub-version>9.2.3</pubnub-version>
         <pulsar-version>3.3.0</pulsar-version>
         <qdrant-client-version>1.10.0</qdrant-client-version>
         <qpid-broker-version>9.2.0</qpid-broker-version>
@@ -435,7 +435,7 @@
         <slf4j-api-version>2.0.13</slf4j-api-version>
         <slf4j-version>2.0.13</slf4j-version>
         <smack-version>4.3.5</smack-version>
-        <smallrye-config-version>3.9.0</smallrye-config-version>
+        <smallrye-config-version>3.9.1</smallrye-config-version>
         <smallrye-health-version>4.1.0</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.4.0</smallrye-fault-tolerance-version>
         <smbj-version>0.13.0</smbj-version>
@@ -458,7 +458,7 @@
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
-        <sshd-version>2.13.1</sshd-version>
+        <sshd-version>2.13.2</sshd-version>
         <stompjms-version>1.19</stompjms-version>
         <swagger-java-version>1.6.10</swagger-java-version>
         <swagger-openapi3-version>2.2.22</swagger-openapi3-version>
@@ -467,7 +467,7 @@
         <swagger-request-validator-version>2.41.0</swagger-request-validator-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
-        <testcontainers-version>1.20.0</testcontainers-version>
+        <testcontainers-version>1.20.1</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.2</tika-version>
         <twilio-version>10.4.1</twilio-version>

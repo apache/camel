@@ -11,8 +11,7 @@
 
 Camel comes with a default client request validator for the Camel Rest DSL.
 
-The `camel-openapi-validator` uses the 3rd-party
-the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator]
+The `camel-openapi-validator` uses the third party https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator]
 library instead for client request validator. This library is a more extensive validator than
 the default validator from `camel-core`.
 

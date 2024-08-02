@@ -19,7 +19,6 @@ The Milvus Component provides support for interacting with the https://https://m
 
 == URI format
 
-[source]
 ----
 milvus:collection[?options]
 ----

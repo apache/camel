@@ -200,7 +200,7 @@ public interface AzureEventhubsComponentBuilderFactory {
     
         
         /**
-         * Sets the batch size between each checkpoint updates. Works jointly
+         * Sets the batch size between each checkpoint update. Works jointly
          * with checkpointBatchTimeout.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -218,7 +218,7 @@ public interface AzureEventhubsComponentBuilderFactory {
     
         
         /**
-         * Sets the batch timeout between each checkpoint updates. Works jointly
+         * Sets the batch timeout between each checkpoint update. Works jointly
          * with checkpointBatchSize.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -239,8 +239,8 @@ public interface AzureEventhubsComponentBuilderFactory {
          * Sets the CheckpointStore the EventProcessorClient will use for
          * storing partition ownership and checkpoint information. Users can,
          * optionally, provide their own implementation of CheckpointStore which
-         * will store ownership and checkpoint information. By default it set to
-         * use
+         * will store ownership and checkpoint information. By default, it's set
+         * to use
          * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option is a:
@@ -428,11 +428,11 @@ public interface AzureEventhubsComponentBuilderFactory {
         }
     
         /**
-         * Instead of supplying namespace, sharedAccessKey, sharedAccessName ...
-         * etc, you can just supply the connection string for your eventHub. The
-         * connection string for EventHubs already include all the necessary
-         * information to connection to your EventHub. To learn on how to
-         * generate the connection string, take a look at this documentation:
+         * Instead of supplying namespace, sharedAccessKey, sharedAccessName,
+         * etc, you can supply the connection string for your eventHub. The
+         * connection string for EventHubs already includes all the necessary
+         * information to connection to your EventHub. To learn how to generate
+         * the connection string, take a look at this documentation:
          * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.

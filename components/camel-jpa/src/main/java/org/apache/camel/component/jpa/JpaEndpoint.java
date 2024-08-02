@@ -299,7 +299,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Specifies whether or not to set an exclusive lock on each entity bean while processing the results from polling.
+     * Specifies whether to set an exclusive lock on each entity bean while processing the results from polling.
      */
     public void setConsumeLockEntity(boolean consumeLockEntity) {
         this.consumeLockEntity = consumeLockEntity;
@@ -321,9 +321,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * An integer value to define the maximum number of messages to gather per poll. By default, no maximum is set. Can
-     * be used to avoid polling many thousands of messages when starting up the server. Set a value of 0 or negative to
-     * disable.
+     * An integer value to define the maximum number of messages to gather per poll. By default, no maximum is set. It
+     * can be used to avoid polling many thousands of messages when starting up the server. Set a value of 0 or negative
+     * to disable.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
@@ -358,7 +358,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The camel-jpa component will join transaction by default. You can use this option to turn this off, for example
+     * The camel-jpa component will join transaction by default. You can use this option to turn this off, for example,
      * if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set
      * globally on the JpaComponent, instead of having to set it on all endpoints.
      */
@@ -384,7 +384,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should
+     * Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases, joinTransaction should
      * be set to false as this is not an EXTENDED EntityManager.
      */
     public void setSharedEntityManager(boolean sharedEntityManager) {
@@ -461,7 +461,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     /**
      * Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery, resultClass)
      * instead of entityManager.createNativeQuery(nativeQuery)). Without this option, we will return an object array.
-     * Only has an affect when using in conjunction with native query when consuming data.
+     * Only has an effect when using in conjunction with a native query when consuming data.
      */
     public void setResultClass(Class<?> resultClass) {
         this.resultClass = resultClass;
@@ -474,7 +474,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     /**
      * Whether to run the consumer in transacted mode, by which all messages will either commit or rollback, when the
      * entire batch has been processed. The default behavior (false) is to commit all the previously successfully
-     * processed messages, and only rollback the last failed message.
+     * processed messages, and only roll back the last failed message.
      */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
@@ -518,8 +518,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To configure whether to use executeUpdate() when producer executes a query. When you use INSERT, UPDATE or DELETE
-     * statement as a named query, you need to specify this option to 'true'.
+     * To configure whether to use executeUpdate() when producer executes a query. When you use INSERT, UPDATE or a
+     * DELETE statement as a named query, you need to specify this option to 'true'.
      */
     public void setUseExecuteUpdate(Boolean useExecuteUpdate) {
         this.useExecuteUpdate = useExecuteUpdate;
@@ -530,7 +530,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * If enabled then the producer will find a single entity by using the message body as key and entityType as the
+     * If enabled, then the producer will find a single entity by using the message body as a key and entityType as the
      * class type. This can be used instead of a query to find a single entity.
      */
     public void setFindEntity(boolean findEntity) {

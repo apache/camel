@@ -32,7 +32,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 langchain4j-chat:chatIdId[?options]
 ----
@@ -76,7 +75,7 @@ Add the dependency for LangChain4j OpenAI support:
 </dependency>
 ----
 
-Init the OpenAI Chat Language Model, add add it to the Camel Registry:
+Init the OpenAI Chat Language Model, and add it to the Camel Registry:
 [source, java]
 ----
 ChatLanguageModel model = OpenAiChatModel.builder()
@@ -98,7 +97,7 @@ Use the model in the Camel LangChain4j Chat Producer
 
 [NOTE]
 ====
-To switch to another Large Language Model and its corresponding dependency, simply replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
+To switch to another Large Language Model and its corresponding dependency, replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
 ====
 
 == Send a prompt with variables
@@ -150,8 +149,8 @@ String response = template.requestBody("direct:send-multiple", messages, String.
 ----
 
 == Chat with Tool
-Camel langchain4j-chat component as a consumer can be used to implement a LangChain Tool,
-right now Tools are supported only via the OpenAiChatModel backed by OpenAI APIs.
+Camel langchain4j-chat component as a consumer can be used to implement a LangChain tool.
+Right now tools are supported only via the OpenAiChatModel backed by OpenAI APIs.
 
 Tool Input parameter can be defined as an Endpoint multiValue option in the form of `parameter.<name>=<type>`,
 or via the endpoint option camelToolParameter for a programmatic approach.

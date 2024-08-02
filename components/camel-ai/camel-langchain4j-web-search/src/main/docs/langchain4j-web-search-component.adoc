@@ -15,10 +15,9 @@
 
 *{component-header}*
 
-The LangChain4j Web Search component provides support to perform a web search using the https://docs.langchain4j.dev/[LangChain4j] Web Search Engines.
+The LangChain4j Web Search component provides support for web searching using the https://docs.langchain4j.dev/[LangChain4j] Web Search Engines.
 
-Maven users will need to add the following dependency to their `pom.xml`
-for this component:
+Maven users will need to add the following dependency to their `pom.xml` for this component:
 
 [source,xml]
 ----
@@ -33,7 +32,6 @@ for this component:
 
 == URI format
 
-[source]
 ----
 langchain4j-web-search:searchId[?options]
 ----
@@ -102,7 +100,9 @@ Example of route:
 
 [NOTE]
 ====
-To switch to another Web Search Engine and its corresponding dependency, simply replace the `langchain4j-web-search-engine-tavily` dependency with the appropriate dependency for the desired web search engine. Update the initialization parameters accordingly in the code snippet provided above.
+To switch to another Web Search Engine and its corresponding dependency,
+replace the `langchain4j-web-search-engine-tavily` dependency with the appropriate dependency for the desired web search engine.
+Update the initialization parameters accordingly in the code snippet provided above.
 ====
 
 == Customizing Web Search Results

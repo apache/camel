@@ -19,7 +19,6 @@ The Qdrant Component provides support for interacting with the https://qdrant.te
 
 == URI format
 
-[source]
 ----
 qdrant:collection[?options]
 ----

@@ -589,7 +589,7 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider this parameter will set the
+         * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -701,7 +701,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * Set whether the Athena client should expect to use Session
          * Credentials. This is useful in a situation in which the user needs to
-         * assume a IAM role for doing operations in Athena.
+         * assume an IAM role for doing operations in Athena.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -718,7 +718,7 @@ public interface Athena2EndpointBuilderFactory {
         /**
          * Set whether the Athena client should expect to use Session
          * Credentials. This is useful in a situation in which the user needs to
-         * assume a IAM role for doing operations in Athena.
+         * assume an IAM role for doing operations in Athena.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

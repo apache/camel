@@ -299,7 +299,7 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set,
+     * Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set, it
      * will use the Athena API default for the given operation.
      */
     public void setMaxResults(Integer maxResults) {
@@ -479,7 +479,7 @@ public class Athena2Configuration implements Cloneable {
 
     /**
      * Set whether the Athena client should expect to use Session Credentials. This is useful in a situation in which
-     * the user needs to assume a IAM role for doing operations in Athena.
+     * the user needs to assume an IAM role for doing operations in Athena.
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
@@ -490,7 +490,7 @@ public class Athena2Configuration implements Cloneable {
     }
 
     /**
-     * If using a profile credentials provider this parameter will set the profile name
+     * If using a profile credentials provider, this parameter will set the profile name
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;

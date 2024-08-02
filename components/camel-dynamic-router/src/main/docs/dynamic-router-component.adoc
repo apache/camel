@@ -51,7 +51,6 @@ be a better fit.
 
 == URI format
 
-[source]
 ----
 dynamic-router:channel[?options]
 ----

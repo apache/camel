@@ -39,8 +39,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName, BraintreeConfiguration> {
 
-    private static BraintreeApiCollection collection;
-
     private BraintreeApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<BraintreeApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(BraintreeApiName.class);
@@ -211,10 +209,11 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
         return result;
     }
 
-    public static synchronized BraintreeApiCollection getCollection() {
-        if (collection == null) {
-            collection = new BraintreeApiCollection();
-        }
-        return collection;
+    public static BraintreeApiCollection getCollection() {
+        return BraintreeApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class BraintreeApiCollectionHolder {
+        private static final BraintreeApiCollection INSTANCE = new BraintreeApiCollection();
     }
 }

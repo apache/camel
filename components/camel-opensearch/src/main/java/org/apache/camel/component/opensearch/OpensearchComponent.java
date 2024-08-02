@@ -114,8 +114,8 @@ public class OpensearchComponent extends DefaultComponent {
     }
 
     /**
-     * To use an existing configured OpenSearch client, instead of creating a client per endpoint. This allows to
-     * customize the client with specific settings.
+     * To use an existing configured OpenSearch client, instead of creating a client per endpoint. This allows
+     * customizing the client with specific settings.
      */
     public void setClient(RestClient client) {
         this.client = client;
@@ -167,7 +167,7 @@ public class OpensearchComponent extends DefaultComponent {
     }
 
     /**
-     * Password for authenticate
+     * Password for authenticating
      */
     public String getPassword() {
         return password;
@@ -205,7 +205,7 @@ public class OpensearchComponent extends DefaultComponent {
 
     /**
      * Enable automatically discover nodes from a running OpenSearch cluster. If this option is used in conjunction with
-     * Spring Boot then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
+     * Spring Boot, then it's managed by the Spring Boot configuration (see: Disable Sniffer in Spring Boot).
      */
     public void setEnableSniffer(boolean enableSniffer) {
         this.enableSniffer = enableSniffer;
