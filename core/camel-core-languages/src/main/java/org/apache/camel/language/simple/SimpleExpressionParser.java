@@ -95,9 +95,9 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             nextToken();
         }
 
-        // now after parsing we need a bit of work to do, to make it easier to turn the tokens
+        // now after parsing, we need a bit of work to do, to make it easier to turn the tokens
         // into an ast, and then from the ast, to Camel expression(s).
-        // hence why there is a number of tasks going on below to accomplish this
+        // hence why there are a number of tasks going on below to accomplish this
 
         // turn the tokens into the ast model
         parseAndCreateAstModel();
@@ -153,7 +153,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 continue;
             }
 
-            // if no token was created then its a character/whitespace/escaped symbol
+            // if no token was created, then it's a character/whitespace/escaped symbol
             // which we need to add together in the same image
             if (imageToken == null) {
                 imageToken = new LiteralExpression(token);
@@ -249,11 +249,11 @@ public class SimpleExpressionParser extends BaseSimpleParser {
 
     // the expression parser only understands
     // - template = literal texts with can contain embedded functions
-    // - function = simple functions such as ${body} etc
-    // - unary operator = operator attached to the left hand side node
+    // - function = simple functions such as ${body} etc.
+    // - unary operator = operator attached to the left-hand side node
 
     protected void templateText() {
-        // for template we accept anything but functions
+        // for template, we accept anything but functions
         while (!token.getType().isFunctionStart() && !token.getType().isFunctionEnd() && !token.getType().isEol()) {
             nextToken();
         }

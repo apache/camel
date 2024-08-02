@@ -695,4 +695,8 @@ public final class CSimpleHelper {
         return num;
     }
 
+    public static Object iif(Exchange exchange, Object condition, Object trueResult, Object falseResult) {
+        boolean evaluatedCondition = exchange.getContext().getTypeConverter().convertTo(boolean.class, exchange, condition);
+        return evaluatedCondition ? trueResult : falseResult;
+    }
 }

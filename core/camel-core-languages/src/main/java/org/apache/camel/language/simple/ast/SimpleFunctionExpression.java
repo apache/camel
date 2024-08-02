@@ -278,7 +278,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
             if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${propertiesExist:key was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${propertiesExist:key} was: " + function, token.getIndex());
             }
             String key = parts[0];
             boolean negate = key != null && key.startsWith("!");
@@ -314,7 +314,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             Expression exp = SimpleExpressionBuilder.typeExpression(remainder);
             exp.init(camelContext);
-            // we want to cache this expression so we wont re-evaluate it as the type/constant wont change
+            // we want to cache this expression, so we won't re-evaluate it as the type/constant won't change
             return SimpleExpressionBuilder.cacheExpression(exp);
         }
 
@@ -403,7 +403,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             remainder = ifStartsWithReturnRemainder("in.body", function);
         }
         if (remainder != null) {
-            // OGNL must start with a . ? or [
+            // OGNL must start with a ".", "?" or "[".
             boolean ognlStart = remainder.startsWith(".") || remainder.startsWith("?") || remainder.startsWith("[");
             boolean invalid = !ognlStart || OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
@@ -907,6 +907,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return "exceptionAs(exchange, " + type + ")" + ognlCodeMethods(remainder, type);
         }
+
         // Exception OGNL
         remainder = ifStartsWithReturnRemainder("exception", function);
         if (remainder != null) {
@@ -1346,7 +1347,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // headers function
-        if ("in.headers".equals(function) || "headers".equals(function)) {
+        if ("in.headers".equals(function) || "headers".equals(function) || "header".equals(function)) {
             return "message.getHeaders()";
         }
 
@@ -1372,7 +1373,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
 
             // the key can contain index as it may be a map header.foo[0]
-            // and the key can also be OGNL (eg if there is a dot)
+            // and the key can also be OGNL (e.g., if there is a dot)
             boolean index = false;
             List<String> parts = splitOgnl(key);
             if (!parts.isEmpty()) {
@@ -1389,7 +1390,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             if (index) {
                 // is there any index, then we should use headerAsIndex function instead
-                // (use splitOgnl which assembles multiple indexes into a single part)
+                // (use splitOgnl which assembles multiple indexes into a single part?)
                 String func = "headerAsIndex(\"" + parts.get(0) + "\", Object.class, \"" + parts.get(1) + "\")";
                 if (parts.size() > 2) {
                     String last = String.join("", parts.subList(2, parts.size()));
@@ -1678,7 +1679,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
             if (tokens.length > 2) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${replace(num,num)} was: " + function, token.getIndex());
+                        "Valid syntax: ${substring(num,num)} was: " + function, token.getIndex());
             }
             String num1 = tokens[0];
             String num2 = "0";
@@ -1788,6 +1789,22 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             value = StringQuoteHelper.doubleQuote(value);
             return "empty(exchange, " + value + ")";
+        }
+
+        // iif function
+        remainder = ifStartsWithReturnRemainder("iif(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            if (tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+            }
+            return "iif(exchange, " + values + ")";
         }
 
         return null;

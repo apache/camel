@@ -141,6 +141,19 @@ public class ExpressionBuilderTest extends TestSupport {
         assertExpression(expression, exchange, "Hello big World");
     }
 
+    @Test
+    public void testIif() {
+        Expression expression
+                = iifExpression(simpleExpression("true"), constantExpression("true value"), constantExpression("false value"));
+        expression.init(camelContext);
+        assertEquals("true value", expression.evaluate(exchange, String.class));
+
+        expression
+                = iifExpression(simpleExpression("false"), constantExpression("true value"), constantExpression("false value"));
+        expression.init(camelContext);
+        assertEquals("false value", expression.evaluate(exchange, String.class));
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
