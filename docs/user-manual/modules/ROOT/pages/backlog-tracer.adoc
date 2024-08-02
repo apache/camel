@@ -144,6 +144,6 @@ When working with `InputStream` types then Camel has xref:stream-caching.adoc[] 
 make such types _safe_ to use as they are cached and able to be _re-read_. See more details at xref:stream-caching.adoc[].
 
 However, Camel's stream caching is **ONLY** for message body. Having message headers of type `InputStream` is discouraged
-and not common use. If you add custom message headers, then its recommended to **NOT** use streaming types, but
+and not common use. If you add custom message headers, then it is recommended to **NOT** use streaming types, but
 convert these headers into `String` or `byte[]` or other standard Java types that are in-memory and _safe_ to re-read.
 

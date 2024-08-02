@@ -225,7 +225,7 @@ NOTE: This requires to enabled JMX by including `camel-management` JAR in the cl
 == Component developers
 
 If you develop your own Camel component and are in need of a thread
-pool, then its advised to use the
+pool, then it is advised to use the
 `ExecutorServiceStrategy`/`ExecutorServiceManager` to create the thread
 pool you need.
 
