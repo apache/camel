@@ -255,7 +255,7 @@ Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
                      .add("b", "http://acme.com/beer");
 ----
 
-When using namespaces in XML DSL then its different, as you set up the namespaces
+When using namespaces in XML DSL then it is different, as you set up the namespaces
 in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,

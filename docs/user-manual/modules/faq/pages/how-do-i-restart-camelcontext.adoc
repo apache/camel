@@ -5,7 +5,7 @@ its lifecycle, see more at xref:ROOT:camelcontext.adoc[CamelContext].
 
 [NOTE]
 ====
-Obviously you can also restart a Camel application if its been
+Obviously you can also restart a Camel application if it has been
 deployed in a server. For example a WAR application can be restarted
 using the usual means for managing web applications.
 ====

@@ -74,7 +74,7 @@ the variable which name is out.headers.foo variable
 |*key name* |Object |Any exchange.properties and exchange.in.headers and any additional
 parameters set using `setParameters(Map)`. These parameters are added
 with their own key name, for instance, if there is an IN header with the
-key name *foo* then its added as *foo*.
+key name *foo* then it is added as *foo*.
 |=======================================================================
 
 == Using XML configuration

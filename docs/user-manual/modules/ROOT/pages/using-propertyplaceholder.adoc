@@ -608,7 +608,7 @@ camel.kubernetes-config.client.oauthToken = eyJhbGciOiJSUzI1NiIsImtpZCI...
 
 The `KubernetesClient` has many options, see the https://github.com/fabric8io/kubernetes-client documentation.
 
-If you only use _mount paths_ then its good practice to disable `KubernetesClient` which can be done by setting enabled to false as show:
+If you only use _mount paths_, then it is good practice to disable `KubernetesClient` which can be done by setting enabled to false as show:
 
 [source,properties]
 ----

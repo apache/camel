@@ -124,7 +124,7 @@ from MBean names and attributes.
 === Registering MBeans for specific resources only
 
 Camel automatically registers MBeans for the context, routes, and processors
-when it starts up. However, you can specify a level to control whether or not
+when it starts up. However, you can specify a level to control whether
 MBeans are registered at startup. The levels are:
 
 * `Default` - Camel will register MBeans for the context, all the routes and the processors.

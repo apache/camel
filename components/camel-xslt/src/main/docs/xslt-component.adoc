@@ -185,7 +185,7 @@ to use, instead of referring to a file as the example from above.
 
 TIP: You can set `contentCache=false` and refer to a non-existing template, such as `"xslt:dummy.xsl?contentCache=false&allowTemplateFromHeader=true"`
 as this will tell Camel to not load `dummy.xsl` on startup but to load the stylesheet on demand. And because you
-provide the stylesheet via headers, then its fully dynamic.
+provide the stylesheet via headers, then it is fully dynamic.
 
 == Accessing warnings, errors and fatalErrors from XSLT ErrorListener
 

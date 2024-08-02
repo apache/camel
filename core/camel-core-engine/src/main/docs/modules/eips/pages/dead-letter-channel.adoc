@@ -77,7 +77,7 @@ When fully implemented, then configuring error handler in Java and XML DSL would
 
 === Redelivery
 
-It is common for a temporary outage or database deadlock to cause a message to fail to process; but the chances are if its tried a few more times with some time delay then it will complete fine.
+It is common for a temporary outage or database deadlock to cause a message to fail to process; but the chances are if it is tried a few more times with some time delay then it will complete fine.
 So we typically wish to use some kind of redelivery policy to decide how many times to try to redeliver a message and how long to wait before redelivery attempts.
 
 The

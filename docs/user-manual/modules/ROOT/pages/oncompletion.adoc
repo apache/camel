@@ -21,7 +21,7 @@ The OnCompletion EIP supports the following features:
 * triggered either always, only if completed with success, or only if failed
 * `onWhen` predicate to only trigger if matched
 * `mode` to define whether to run either before or after
-route consumer writes response back to callee (if its InOut) (default AfterConsumer)
+route consumer writes response back to callee (if it is InOut) (default AfterConsumer)
 * `parallelProcessing` whether to run async or sync (use a thread pool or not) (default false)
 
 The onCompletion supports running the completion task in either synchronous or asynchronous mode

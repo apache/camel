@@ -145,7 +145,7 @@ from("direct:findById")
     .to("mock:resultFindById");
 ------------------------------------------------------------------------------
 
-Please, note that the default _id is treated by Mongo as and `ObjectId` type, so you may need to convert it properly.
+Please note that the default _id is treated by Mongo as and `ObjectId` type, so you may need to convert it properly.
 
 [source,java]
 ------------------------------------------------------------------------------

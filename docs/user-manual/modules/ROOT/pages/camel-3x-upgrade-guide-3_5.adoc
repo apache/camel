@@ -8,7 +8,7 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 === FluentProducerTemplate
 
-The template will now automatic clear its state send sending the message, this avoids end users having to call `clearAll` after usage,
+The template will now automatic clear its state when sending the message, this avoids end users having to call `clearAll` after usage,
 in case the template should be reused to send other messages.
 
 After the template has been started / used the first time, then its general configuration cannot be altered later,

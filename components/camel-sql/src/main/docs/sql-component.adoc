@@ -63,7 +63,7 @@ sql:select * from table where id=:#myId order by name[?options]
 When using named parameters, Camel will look up the names in the given precedence:
 
 1. from a xref:languages:simple-language.adoc[Simple] expressions
-2. from message body if its a `java.util.Map`
+2. from message body if it is a `java.util.Map`
 3. from message headers
 4. from exchange variables
 
