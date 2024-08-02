@@ -234,6 +234,40 @@ public interface JsonataEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To configure the Jsonata frame binding. Allows custom functions to be
+         * added.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jsonata.JsonataFrameBinding</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param frameBinding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJsonataEndpointBuilder frameBinding(org.apache.camel.component.jsonata.JsonataFrameBinding frameBinding) {
+            doSetProperty("frameBinding", frameBinding);
+            return this;
+        }
+        /**
+         * To configure the Jsonata frame binding. Allows custom functions to be
+         * added.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.jsonata.JsonataFrameBinding</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param frameBinding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJsonataEndpointBuilder frameBinding(String frameBinding) {
+            doSetProperty("frameBinding", frameBinding);
+            return this;
+        }
     }
 
     public interface JsonataBuilders {
