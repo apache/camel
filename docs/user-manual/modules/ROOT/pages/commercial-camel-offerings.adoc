@@ -89,6 +89,11 @@ developing with Camel, as well as architectural/design reviews,
 troubleshooting and SOA infrastructure implementations.
 
 
+== https://skintegrationsolutions.com[SK Integration Solutions Private Limited]
+
+https://skintegrationsolutions.com[SK Integration Solutions Private Limited] is a company based in India that offers the best practices for using Apache Camel in all phases of the SDLC.
+
+
 == http://www.talend.com[Talend, Inc]
 
 http://www.talend.com[Talend, Inc] provides enterprise level services,
