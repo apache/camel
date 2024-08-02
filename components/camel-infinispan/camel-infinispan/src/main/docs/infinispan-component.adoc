@@ -227,7 +227,7 @@ from("direct:start")
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
@@ -241,7 +241,7 @@ from("direct:start")
 
 * Queries
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION, InfinispanConstants.QUERY)
@@ -262,7 +262,7 @@ The .proto descriptors for domain objects must be registered with the remote Dat
 
 * Custom Listeners
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("infinispan://?cacheContainer=#cacheManager&customListener=#myCustomListener")
   .to("mock:result");

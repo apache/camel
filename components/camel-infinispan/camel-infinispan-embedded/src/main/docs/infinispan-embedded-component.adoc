@@ -241,13 +241,13 @@ from("direct:start")
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
     .setHeader(InfinispanConstants.KEY).constant("123")
     .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L) // <1>
-    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT.constant(TimeUnit.MILLISECONDS.toString()) // <2>
+    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT).constant(TimeUnit.MILLISECONDS.toString()) // <2>
     .to("infinispan:myCacheName");
 ----
 <1> Set the lifespan of the entry
@@ -255,7 +255,7 @@ from("direct:start")
 
 * Queries
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION, InfinispanConstants.QUERY)
@@ -271,7 +271,7 @@ from("direct:start")
 
 * Custom Listeners
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("infinispan://?cacheContainer=#cacheManager&customListener=#myCustomListener")
   .to("mock:result");
@@ -354,7 +354,7 @@ Java::
 [source,java]
 ----
 InfinispanEmbeddedConfiguration conf = new InfinispanEmbeddedConfiguration(); // <1>
-conf.setConfigurationUri("classpath:infinispan.xml")
+conf.setConfigurationUri("classpath:infinispan.xml");
 
 InfinispanEmbeddedAggregationRepository repo = new InfinispanEmbeddedAggregationRepository("aggregation");  // <2>
 repo.setConfiguration(conf);

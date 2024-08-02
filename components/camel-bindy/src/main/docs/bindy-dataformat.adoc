@@ -103,14 +103,14 @@ to several children's model classes.
 | separator | String | &#10003; |  a| Separator used to split a record in tokens (mandatory) - can be ',' or ';' or 'anything'. The only whitespace
 character supported is tab (\t). No other whitespace characters (spaces) are not supported. This value is
 interpreted as a regular expression. If you want to use a sign which has a special meaning in regular
-expressions, e.g. the '\|' sign, then you have to mask it, like '\|'
+expressions, e.g., the '\|' sign, then you have to mask it, like '\|'
 
 | allowEmptyStream | boolean |  | false | The allowEmptyStream parameter will allow to prcoess the unavaiable stream for CSV file.
 
 | autospanLine | boolean |  | false a| Last record spans rest of line (optional) - if enabled then the last column is auto spanned to end of line, for
-example if its a comment, etc this allows the line to contain all characters, also the delimiter char.
+example if it is a comment, etc this allows the line to contain all characters, also the delimiter char.
 
-| crlf | String |  | WINDOWS a| Character to be used to add a carriage return after each record (optional) - allow to define the carriage return
+| crlf | String |  | WINDOWS a| Character to be used to add a carriage return after each record (optional) - allow defining the carriage return
 character to use. If you specify a value other than the three listed before, the value you enter (custom) will be
 used as the CRLF character(s). Three values can be used : WINDOWS, UNIX, MAC, or custom.
 
@@ -135,10 +135,10 @@ when it contains the configured separator, quote, or crlf characters. The quotin
 
 | removeQuotes | boolean |  | true | The remove quotes parameter flags if unmarshalling should try to remove quotes for each field
 
-| skipField | boolean |  | false a| The skipField parameter will allow to skip fields of a CSV file. If some fields are not necessary, they can be
+| skipField | boolean |  | false a| The skipField parameter will allow skipping fields of a CSV file. If some fields are not necessary, they can be
 skipped.
 
-| skipFirstLine | boolean |  | false a| The skipFirstLine parameter will allow to skip or not the first line of a CSV file. This line often contains
+| skipFirstLine | boolean |  | false a| The skipFirstLine parameter will allow skipping or not the first line of a CSV file. This line often contains
 columns definition
 
 | trimLine | boolean |  | true | Whether to trim each line (stand and end) before parsing the line into data fields.
@@ -764,7 +764,7 @@ or custom. This option is used only during marshalling, whereas unmarshalling us
 line delimiter unless eol is customized.
 
 | eol | String |  |  a| Character to be used to process considering end of line after each record while unmarshalling (optional -
-default: "", which help default JDK provided line delimiter to be used unless any other line delimiter provided)
+default: "", which helps default JDK provided line delimiter to be used unless any other line delimiter provided)
 This option is used only during unmarshalling, where marshalling uses system default provided line delimiter as
 "WINDOWS" unless any other value is provided.
 
@@ -901,7 +901,7 @@ public static class Order {
 
 Sometimes, the default padding defined for record cannot be applied to
 the field as we have a number format where we would like to pad with
-'0' instead of ' '. In this case, you can use in the model the attribute
+'0' instead of `' '`. In this case, you can use in the model the attribute
 `paddingChar` on `@DataField` to set this value.
 
 ----
@@ -1891,7 +1891,7 @@ If you use maven, you could add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 --------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>

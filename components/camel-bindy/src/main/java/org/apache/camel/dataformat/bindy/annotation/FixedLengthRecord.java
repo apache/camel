@@ -46,7 +46,7 @@ public @interface FixedLengthRecord {
 
     /**
      * Character to be used to process considering end of line after each record while unmarshalling (optional -
-     * default: "", which help default JDK provided line delimiter to be used unless any other line delimiter provided)
+     * default: "", which helps default JDK provided line delimiter to be used unless any other line delimiter provided)
      * This option is used only during unmarshalling, where marshalling uses system default provided line delimiter as
      * "WINDOWS" unless any other value is provided.
      *
