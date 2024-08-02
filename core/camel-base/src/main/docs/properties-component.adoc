@@ -44,7 +44,7 @@ The location now supports using placeholders for JVM system properties and OS en
 
 For example:
 
-[source]
+[source,properties]
 ----
 location=file:{{sys:karaf.home}}/etc/foo.properties
 ----
@@ -55,7 +55,7 @@ To use an OS environment variable instead you would have to prefix with
 `env:`.
 You can also prefix with `env.`, however this style is not recommended because all the other functions use colon.
 
-[source]
+[source,properties]
 ----
 location=file:{{env:APP_HOME}}/etc/foo.properties
 ----
@@ -70,7 +70,7 @@ But if you specify `APP-HOME` then Camel 3 will automatic lookup the value as `A
 
 You can have multiple placeholders in the same location, such as:
 
-[source]
+[source,properties]
 ----
 location=file:{{env:APP_HOME}}/etc/{{prop.name}}.properties
 ----

@@ -160,7 +160,7 @@ Therefore, you need the same technique as described in the server streaming sect
 
 But there is another thing: requests also come in streaming mode. So you need the following:
 
-1. Set consumer strategy to DELEGATION -- that differs from the default PROPAGATION option in the fact that consumer will not produce responses at all. If you set PROPAGATION, then you will receive more responses than you expected;
+1. Set consumer strategy to DELEGATION - that differs from the default PROPAGATION option in the fact that consumer will not produce responses at all. If you set PROPAGATION, then you will receive more responses than you expected;
 2. Forward `onError` and `onCompletion` on consumer;
 3. Set producer strategy to STREAMING.
 
@@ -199,7 +199,7 @@ from("direct:grpc-sync")
 .to("grpc://remotehost:1101/org.apache.camel.component.grpc.PingPong?method=sendPing&synchronous=true");
 -------------------------------------------------------------------------------
 
-[source,java]
+[source,xml]
 ---------------------------------------------------------------------------------------
 <route>
     <from uri="direct:grpc-sync" />

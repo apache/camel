@@ -18,10 +18,10 @@ being a very small and simple language for evaluating
 `Expression` or `Predicate` without requiring any new dependencies
 or knowledge of other scripting languages such as Groovy.
 
-The simple language is designed with intend to cover almost all the common use cases
+The simple language is designed with intent to cover almost all the common use cases
 when little need for scripting in your Camel routes.
 
-However, for much more complex use cases then a more powerful language is recommended such as:
+However, for much more complex use cases, then a more powerful language is recommended such as:
 
 * xref:groovy-language.adoc[Groovy]
 * xref:mvel-language.adoc[MVEL]
@@ -46,7 +46,7 @@ See also the xref:csimple-language.adoc[CSimple] language which is *compiled*.
 *Alternative syntax* 
 
 You can also use the alternative syntax which
-uses `$simple{ }` as placeholders. This can be used in situations to avoid clashes when using for example
+uses `$simple{ }` as placeholders. This can be used in situations to avoid clashes when using, for example,
 Spring property placeholder together with Camel.
 ====
 
@@ -76,12 +76,12 @@ OGNL expression.
 |id |String |the message id
 
 |messageTimestamp |String |the message timestamp (millis since epoc) that this message originates from.
-Some systems like JMS, Kafka, AWS have a timestamp on the event/message, that Camel received. This method returns
-the timestamp, if a timestamp exists.
-The message timestamp and exchange created are not the same. An exchange always have a created timestamp which is the
+Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel received. This method returns
+the timestamp if a timestamp exists.
+The message timestamp and exchange created are different. An exchange always has a created timestamp which is the
 local timestamp when Camel created the exchange. The message timestamp is only available in some Camel components
 when the consumer is able to extract the timestamp from the source event.
-If the message has no timestamp then 0 is returned.
+If the message has no timestamp, then 0 is returned.
 
 |body |Object |the body
 
@@ -94,9 +94,9 @@ classname. The converted body can be null.
 classname and then invoke methods using a Camel OGNL expression. The
 converted body can be null.
 
-|bodyOneLine | String | Converts the body to a String and removes all line-breaks so the string is in one line.
+|bodyOneLine | String | Converts the body to a String and removes all line-breaks, so the string is in one line.
 
-|prettyBody | String | Converts the body to a String, and attempts to pretty print if JSon or XML, otherwise the body is returned as the String value.
+|prettyBody | String | Converts the body to a String, and attempts to pretty print if JSon or XML; otherwise the body is returned as the String value.
 
 |originalBody | Object | The original incoming body (only available if allowUseOriginalMessage=true).
 
@@ -117,7 +117,7 @@ classname and then invoke methods using a Camel OGNL expression.
 |headers[foo] |Object |refer to the foo header
 
 |header.foo[bar] |Object |regard foo header as a map and perform lookup on the
-map with bar as key
+map with bar as the key
 
 |header.foo.*OGNL* |Object |refer to the foo header and invoke its value using a
 Camel OGNL expression.
@@ -160,41 +160,41 @@ converted message can be null.
 |env.foo |String |refer to the system environment variable
 
 |exception |Object |refer to the exception object on the exchange, is *null* if
-no exception set on exchange. Will fallback and grab caught exceptions
+no exception set on exchange. Will fall back and grab caught exceptions
 (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
 
 |exception.*OGNL* |Object |refer to the exchange exception invoked using a Camel OGNL
 expression object
 
-|exception.message |String |refer to the exception.message on the exchange, is *null* if no
-exception set on exchange. Will fallback and grab caught exceptions
+|exception.message |String |refer to the `exception.message` on the exchange, is *null* if no
+exception set on exchange. Will fall back and grab caught exceptions
 (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
 
 |exception.stacktrace |String |refer to the exception.stracktrace on the exchange, is
-*null* if no exception set on exchange. Will fallback and grab caught
+*null* if no exception set on exchange. Will fall back and grab caught
 exceptions (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
 
 |date:_command_ |Date |evaluates to a Date object.
-Supported commands are: *now* for current timestamp,
-*exchangeCreated* for the timestamp when the current exchange was created,
-*header.xxx* to use the Long/Date object in the header with the key xxx.
-*variable.xxx* to use the Long/Date in the variable with the key xxx.
-*exchangeProperty.xxx* to use the Long/Date object in the exchange property with the key xxx.
-*file* for the last modified timestamp of the file (available with a File consumer).
-Command accepts offsets such as: *now-24h* or *header.xxx+1h* or even *now+1h30m-100*.
+Supported commands are: `now` for current timestamp,
+`exchangeCreated` for the timestamp when the current exchange was created,
+`header.xxx` to use the Long/Date object in the header with the key xxx.
+`variable.xxx` to use the Long/Date in the variable with the key xxx.
+`exchangeProperty.xxx` to use the Long/Date object in the exchange property with the key xxx.
+`file` for the last modified timestamp of the file (available with a File consumer).
+Command accepts offsets such as: `now-24h` or `header.xxx+1h` or even `now+1h30m-100`.
 
 |date:_command:pattern_ |String |Date formatting using `java.text.SimpleDateFormat` patterns.
 
 |date-with-timezone:_command:timezone:pattern_ |String |Date formatting using `java.text.SimpleDateFormat` timezones and patterns.
 
 |bean:_bean expression_ |Object |Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language.
-Specifying a method name you must use dot as separator. We also support
+Specifying a method name, you must use dot as the separator. We also support
 the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean]
-component. Camel will by default lookup a bean by the given name. However if you need to refer
-to a bean class (such as calling a static method) then you can prefix with type, such as `bean:type:fqnClassName`.
+component. Camel will by default lookup a bean by the given name. However, if you need to refer
+to a bean class (such as calling a static method), then you can prefix with the type, such as `bean:type:fqnClassName`.
 
 |properties:key:default |String |Lookup a property with the given key. If the key does
-not exists or has no value, then an optional default value can be
+not exist nor has a value, then an optional default value can be
 specified.
 
 |propertiesExist:key |String |Checks whether a property placeholder with the given key exists or not.
@@ -206,24 +206,24 @@ The result can be negated by prefixing the key with `!`.
 Exchange is being routed.
 
 |routeGroup |String |Returns the route group of the current route the
-Exchange is being routed. Not all routes has a group assigned, so this may be null.
+Exchange is being routed. Not all routes have a group assigned, so this may be null.
 
 |stepId |String |Returns the id of the current step the
 Exchange is being routed.
 
 |threadId |String |Returns the id of the current thread. Can be used for
-logging purpose.
+logging.
 
 |threadName |String |Returns the name of the current thread. Can be used for
-logging purpose.
+logging.
 
 |hostname |String |Returns the local hostname (may be empty if not possible to resolve).
 
-|ref:xxx |Object |To lookup a bean from the Registry with
+|ref:xxx |Object |To look up a bean from the Registry with
 the given id.
 
 |type:name.field |Object |To refer to a type or field by its FQN name. To refer to a
-field you can append .FIELD_NAME. For example, you can refer to the
+ field, you can append .FIELD_NAME. For example, you can refer to the
 constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
 
 |empty(type) |depends on parameter |Creates a new empty object of the type given as parameter. The type-parameter-Strings are case-insensitive. +
@@ -247,16 +247,16 @@ To make it easier to replace single and double quotes, then you can use XML esca
 To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 
 |substring(num1) |String |returns a substring of the message body.
-If the number is positive then the returned string is clipped from the beginning.
-If the number is negative then the returned string is clipped from the ending.
+If the number is positive, then the returned string is clipped from the beginning.
+If the number is negative, then the returned string is clipped from the ending.
 
 |substring(num1,num2) |String |returns a substring of the message body.
-If the number is positive then the returned string is clipped from the beginning.
-If the number is negative then the returned string is clipped from the ending.
+If the number is positive, then the returned string is clipped from the beginning.
+If the number is negative, then the returned string is clipped from the ending.
 
 |substring(num1,num2,exp) |String |replace all the string values in the given expression.
-If the number is positive then the returned string is clipped from the beginning.
-If the number is negative then the returned string is clipped from the ending.
+If the number is positive, then the returned string is clipped from the beginning.
+If the number is negative, then the returned string is clipped from the ending.
 
 |collate(group) |List |The collate function iterates the message body and groups
 the data into sub lists of specified size. This can be used with the
@@ -274,7 +274,7 @@ the data into a string. The separator is by default a comma. The prefix is optio
 The join uses the message body as source by default. It is possible to refer to another
 source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`.
 
-|messageHistory |String |The message history of the current exchange how it has
+|messageHistory |String |The message history of the current exchange - how it has
 been routed. This is similar to the route stack-trace message history
 the error handler logs in case of an unhandled exception.
 
@@ -282,34 +282,34 @@ the error handler logs in case of an unhandled exception.
 includes the route stack-trace). This can be used if you do not want to
 log sensitive data from the message itself.
 
-|uuid(type) |String |Returns an UUID using the Camel `UuidGenerator`.
+|uuid(type) |String |Returns a UUID using the Camel `UuidGenerator`.
 You can choose between `default`, `classic`, `short` and `simple` as the type.
-If no type is given the default is used. It is also possible to use a custom `UuidGenerator`
+If no type is given, the default is used. It is also possible to use a custom `UuidGenerator`
 and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}`
 where the ID is _myGenerator_.
 
 |hash(exp,algorithm) |String |Returns a hashed value (string in hex decimal) using JDK MessageDigest.
 The algorithm can be SHA-256 (default) or SHA3-256.
 
-|jsonpath(exp) | Object | When working with JSon data, then this allows to use the JsonPath language
-for example to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
+|jsonpath(exp) | Object | When working with JSon data, then this allows using the JsonPath language,
+for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
 
-|jsonpath(input,exp) | Object | When working with JSon data, then this allows to use the JsonPath language
-for example to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
-For _input_ you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
+|jsonpath(input,exp) | Object | When working with JSon data, then this allows using the JsonPath language,
+for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
+For _input_, you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
 
-|jq(exp) | Object | When working with JSon data, then this allows to use the JQ language
-for example to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
+|jq(exp) | Object | When working with JSon data, then this allows using the JQ language,
+for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
 
-|jq(input,exp) | Object | When working with JSon data, then this allows to use the JQ language
-for example to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
-For _input_ you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
+|jq(input,exp) | Object | When working with JSon data, then this allows using the JQ language,
+for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
+For _input_, you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
 
-|xpath(exp) | Object | When working with XML data, then this allows to use the XPath language
-for example to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
+|xpath(exp) | Object | When working with XML data, then this allows using the XPath language,
+for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
 
-|xpath(input,exp) | Object | When working with XML data, then this allows to use the XPath language
-for example to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
+|xpath(input,exp) | Object | When working with XML data, then this allows using the XPath language,
+for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
 For _input_ you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
 
 |pretty(exp) | String | Converts the inlined expression to a String, and attempts to pretty print if JSon or XML, otherwise the expression is returned as the String value.
@@ -348,8 +348,8 @@ simple("${body.address.getZip}")
 simple("${body.doSomething}")
 --------------------------------------
 
-You can also use the null safe operator (`?.`) to avoid NPE if for
-example the body does NOT have an address
+You can also use the null safe operator (`?.`) to avoid NPE if, for
+example, the body does NOT have an address
 
 [source,java]
 ----------------------------------
@@ -363,11 +363,11 @@ It is also possible to index in `Map` or `List` types, so you can do:
 simple("${body[foo].name}")
 ---------------------------
 
-To assume the body is `Map` based and lookup the value with `foo` as
+To assume the body is `Map` based and look up the value with `foo` as
 key, and invoke the `getName` method on that value.
 
 If the key has space, then you *must* enclose the key with quotes, for
-example 'foo bar':
+ example, 'foo bar':
 
 [source,java]
 ---------------------------------
@@ -391,7 +391,7 @@ safe operator to avoid the NPE as shown:
 simple("${body[foo]?.name}")
 ----------------------------
 
-You can also access `List` types, for example to get lines from the
+You can also access `List` types, for example, to get lines from the
 address you can do:
 
 [source,java]
@@ -417,7 +417,7 @@ And to get the 2nd last you can subtract a number, so we can use
 simple("${body.address.lines[last-1]}")
 ---------------------------------------
 
-And the 3rd last is of course:
+And the third last is, of course:
 
 [source,java]
 ---------------------------------------
@@ -431,7 +431,7 @@ And you can call the size method on the list with
 simple("${body.address.lines.size}")
 ------------------------------------
 
-Camel supports the length field for Java arrays as well, eg:
+Camel supports the length field for Java arrays as well, e.g.:
 
 [source,java]
 ---------------------------------------------------
@@ -441,7 +441,7 @@ exchange.getIn().setBody(lines);
 simple("There are ${body.length} lines")
 ---------------------------------------------------
 
-And yes you can combine this with the operator support as shown below:
+And yes, you can combine this with the operator support as shown below:
 
 [source,java]
 ------------------------------------
@@ -452,9 +452,8 @@ simple("${body.address.zip} > 1000")
 
 The parser is limited to only support a single operator.
 
-To enable it the left value must be enclosed in `${ }`. The syntax is:
+To enable it, the left value must be enclosed in `${ }`. The syntax is:
 
-[source]
 --------------------------
 ${leftValue} OP rightValue
 --------------------------
@@ -465,7 +464,7 @@ Where the `rightValue` can be a String literal enclosed in `' '`,
 IMPORTANT: There *must* be spaces around the operator.
 
 Camel will automatically type convert the rightValue type to the
-leftValue type, so it is able to eg. convert a string into a numeric, so
+leftValue type, so it is able to e.g., convert a string into a numeric, so
 you can use `>` comparison for numeric values.
 
 The following operators are supported:
@@ -490,13 +489,13 @@ The following operators are supported:
 
 |!=~ |not equals ignore case (will ignore case when comparing String values)
 
-|contains |For testing if contains in a string based value
+|contains |For testing if contains in a string-based value
 
-|!contains |For testing if not contains in a string based value
+|!contains |For testing if it does not contain in a string-based value
 
-|~~ |For testing if contains by ignoring case sensitivity in a string based value
+|~~ |For testing if contains by ignoring case sensitivity in a string-based value
 
-|!~~ |For testing if not contains by ignoring case sensitivity in a string based value
+|!~~ |For testing if it does not contain by ignoring case sensitivity in a string-based value
 
 |regex |For matching against a given regular expression pattern defined as a
 String value
@@ -505,30 +504,30 @@ String value
 String value
 
 |in |For matching if in a set of values, each element must be separated by
-comma. If you want to include an empty value, then it must be defined using double comma, eg ',,bronze,silver,gold', which
+comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',, bronze,silver,gold'`, which
 is a set of four values with an empty value and then the three medals.
 
 |!in |For matching if not in a set of values, each element must be separated
-by comma. If you want to include an empty value, then it must be defined using double comma, eg ',,bronze,silver,gold', which
+by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',,bronze,silver,gold'`, which
 is a set of four values with an empty value and then the three medals.
 
-|is |For matching if the left hand side type is an instance of the value.
+|is |For matching if the left-hand side type is an instance of the value.
 
-|!is |For matching if the left hand side type is not an instance of the value.
+|!is |For matching if the left-hand side type is not an instance of the value.
 
-|range |For matching if the left hand side is within a range of values defined
+|range |For matching if the left-hand side is within a range of values defined
 as numbers: `from..to`..
 
-|!range |For matching if the left hand side is not within a range of values
+|!range |For matching if the left-hand side is not within a range of values
 defined as numbers: `from..to`. .
 
-|startsWith |For testing if the left hand side string starts
-with the right hand string.
+|startsWith |For testing if the left-hand side string starts
+with the right-hand string.
 
 |starts with |Same as the startsWith operator.
 
-|endsWith |For testing if the left hand side string ends with
-the right hand string.
+|endsWith |For testing if the left-hand side string ends with
+the right-hand string.
 
 |ends with |Same as the endsWith operator.
 |===
@@ -539,10 +538,10 @@ And the following unary operators can be used:
 |===
 |Operator |Description
 
-|++ |To increment a number by one. The left hand side must be a
+|++ |To increment a number by one. The left-hand side must be a
 function, otherwise parsed as literal.
 
-|-- |To decrement a number by one. The left hand side must be a
+|-- |To decrement a number by one. The left-hand side must be a
 function, otherwise parsed as literal.
 
 |\n |To use newline character.
@@ -551,7 +550,7 @@ function, otherwise parsed as literal.
 
 |\r |To use carriage return character.
 
-|\} |To use the } character as text. This may be needed when building a JSon structure with the simple language.
+|\} |To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
 |===
 
 And the following logical operators can be used to group expressions:
@@ -586,7 +585,7 @@ Some examples:
 // exact equals match
 simple("${header.foo} == 'foo'")
 
-// ignore case when comparing, so if the header has value FOO this will match
+// ignore case when comparing, so if the header has value FOO, this will match
 simple("${header.foo} =~ 'foo'")
 
 // here Camel will type convert '100' into the type of header.bar and if it is an Integer '100' will also be converter to an Integer
@@ -594,18 +593,18 @@ simple("${header.bar} == '100'")
 
 simple("${header.bar} == 100")
 
-// 100 will be converter to the type of header.bar so we can do > comparison
+// 100 will be converter to the type of header.bar, so we can do > comparison
 simple("${header.bar} > 100")
 
-// if value of header.bar was 100, value returned will be 101. header.bar itself will not be changed.
+// if the value of header.bar was 100, value returned will be 101. header.bar itself will not be changed.
 simple("${header.bar}++")
 ----
 
 === Comparing with different types
 
 When you compare with different types such as String and int, then you
-have to take a bit care. Camel will use the type from the left hand side
-as 1st priority. And fallback to the right hand side type if both values
+have to take a bit of care. Camel will use the type from the left-hand side
+as first priority. And fallback to the right-hand side type if both values
 couldn't be compared based on that type. +
  This means you can flip the values to enforce a specific type. Suppose
 the bar value above is a String. Then you can flip the equation:
@@ -615,11 +614,11 @@ the bar value above is a String. Then you can flip the equation:
 simple("100 < ${header.bar}")
 ----
 
-which then ensures the int type is used as 1st priority.
+which then ensures the int type is used as first priority.
 
 This may change in the future if the Camel team improves the binary
-comparison operations to prefer numeric types to String based. It's
-most often the String type which causes problem when comparing with
+comparison operations to prefer numeric types to String-based. It's
+most often the String type which causes problems when comparing with
 numbers.
 
 [source,java]
@@ -641,7 +640,7 @@ simple("${header.date} == ${date:now:yyyyMMdd}")
 simple("${header.type} == ${bean:orderService?method=getOrderType}")
 ----
 
-And an example with contains, testing if the title contains the word
+And an example with `contains`, testing if the title contains the word
 Camel
 
 [source,java]
@@ -649,7 +648,7 @@ Camel
 simple("${header.title} contains 'Camel'")
 ----
 
-And an example with regex, testing if the number header is a 4 digit
+And an example with regex, testing if the number header is a 4-digit
 value:
 
 [source,java]
@@ -659,22 +658,22 @@ simple("${header.number} regex '\\d{4}'")
 
 And finally an example if the header equals any of the values in the
 list. Each element must be separated by comma, and no space around. +
- This also works for numbers etc, as Camel will convert each element
-into the type of the left hand side.
+ This also works for numbers etc., as Camel will convert each element
+into the type of the left-hand side.
 
 [source,java]
 ----
 simple("${header.type} in 'gold,silver'")
 ----
 
-And for all the last 3 we also support the negate test using not:
+And for all the last 3, we also support the negate test using not:
 
 [source,java]
 ----
 simple("${header.type} !in 'gold,silver'")
 ----
 
-And you can test if the type is a certain instance, eg for instance a
+And you can test if the type is a certain instance, e.g., for instance a
 String
 
 [source,java]
@@ -682,7 +681,7 @@ String
 simple("${header.type} is 'java.lang.String'")
 ----
 
-We have added a shorthand for all `java.lang` types so you can write it
+We have added a shorthand for all `java.lang` types, so you can write it
 as:
 
 [source,java]
@@ -691,7 +690,7 @@ simple("${header.type} is 'String'")
 ----
 
 Ranges are also supported. The range interval requires numbers and both
-from and end are inclusive. For instance to test whether a value is
+from and end are inclusive. For instance, to test whether a value is
 between 100 and 199:
 
 [source,java]
@@ -708,9 +707,9 @@ simple("${header.number} range '100..199'")
 ----
 
 As the XML DSL does not have all the power as the Java DSL with all
-its various builder methods, you have to resort to use some other
+its various builder methods, you have to resort to using some other
 languages for testing with simple operators. Now you can do this with the simple
-language. In the sample below we want to test if the header is a widget
+language. In the sample below, we want to test it if the header is a widget
 order:
 
 [source,xml]
@@ -744,7 +743,7 @@ simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
 
 == Examples
 
-In the XML DSL sample below we filter based on a header value:
+In the XML DSL sample below, we filter based on a header value:
 
 [source,xml]
 --------------------------------------------
@@ -759,7 +758,7 @@ In the XML DSL sample below we filter based on a header value:
 The Simple language can be used for the predicate test above in the
 Message Filter pattern, where we test if the
 in message has a `foo` header (a header with the key `foo` exists). If
-the expression evaluates to *true* then the message is routed to the
+the expression evaluates to `*true*`, then the message is routed to the
 `mock:fooOrders` endpoint, otherwise the message is dropped.
 
 The same example in Java DSL:
@@ -781,7 +780,7 @@ from("direct:hello")
     .to("mock:reply");
 ----
 
-Notice that we must use ${ } placeholders in the expression now to
+Notice that we must use `${ }` placeholders in the expression now to
 allow Camel to parse it correctly.
 
 And this sample uses the date command to output current date.
@@ -793,7 +792,7 @@ from("direct:hello")
     .to("mock:reply");
 ----
 
-And in the sample below we invoke the bean language to invoke a method
+And in the sample below, we invoke the bean language to invoke a method
 on a bean to be included in the returned string:
 
 [source,java]
@@ -804,7 +803,7 @@ from("direct:order")
 ----
 
 Where `orderIdGenerator` is the id of the bean registered in the
-Registry. If using Spring then it is the Spring bean
+Registry. If using Spring, then it is the Spring bean
 id.
 
 If we want to declare which method to invoke on the order id generator
@@ -829,7 +828,7 @@ from("direct:order")
 ----
 
 You can also convert the body to a given
-type, for example to ensure that it is a String you can do:
+type, for example, to ensure that it is a String you can do:
 
 [source,xml]
 ----
@@ -843,7 +842,7 @@ There are a few types which have a shorthand notation, so we can use
 `byte[], String, Integer, Long`. All other types must use their FQN
 name, e.g. `org.w3c.dom.Document`.
 
-It is also possible to lookup a value from a header `Map`:
+It is also possible to look up a value from a header `Map`:
 
 [source,xml]
 ----
@@ -852,9 +851,9 @@ It is also possible to lookup a value from a header `Map`:
 </transform>
 ----
 
-In the code above we lookup the header with name `type` and regard it as
-a `java.util.Map` and we then lookup with the key `gold` and return the
-value. If the header is not convertible to Map an exception is thrown. If the
+In the code above we look up the header with name `type` and regard it as
+a `java.util.Map` and we then look up with the key `gold` and return the
+value. If the header is not convertible to Map, an exception is thrown. If the
 header with name `type` does not exist `null` is returned.
 
 You can nest functions, such as shown below:
@@ -885,7 +884,7 @@ You can also clip from both ends at the same time such as `substring(1,-1)` that
 
 If the number is higher than the length of the message body, then an empty string is returned, for example `substring(99)`.
 
-Instead of the message body then a simple expression can be nested as input, for example using a variable, as shown below:
+Instead of the message body then a simple expression can be nested as input, for example, using a variable, as shown below:
 
 [source,xml]
 ----
@@ -901,7 +900,7 @@ using the XML escape syntax. This avoids to fiddle with enclosing a double quote
 that can get confusing to be correct as you may need to escape the quotes as well. So instead you can use the XML escape
 syntax where double quote is `\&quot;` and single quote is `\&apos;` (yeah that is the name).
 
-For example to replace all double quotes with single quotes:
+For example, to replace all double quotes with single quotes:
 
 [source,java]
 ----
@@ -928,14 +927,14 @@ Or to remove all double quotes:
 </setBody>
 ----
 
-== Setting result type
+== Setting the result type
 
 You can now provide a result type to the xref:simple-language.adoc[Simple]
 expression, which means the result of the evaluation will be converted
 to the desired type. This is most usable to define types such as
 booleans, integers, etc.
 
-For example to set a header as a boolean type you can do:
+For example, to set a header as a boolean type, you can do:
 
 [source,java]
 ----
@@ -983,7 +982,7 @@ whitespace characters.
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
 This is done using the following syntax: `"resource:scheme:location"`,
-e.g. to refer to a file on the classpath you can do:
+e.g., to refer to a file on the classpath you can do:
 
 [source,java]
 ----
