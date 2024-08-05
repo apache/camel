@@ -301,6 +301,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.excludes = excludes;
         run.openapi = openapi;
         run.download = download;
+        run.runtime = runtime;
         run.camelVersion = camelVersion;
         run.quarkusVersion = quarkusVersion;
         run.springBootVersion = springBootVersion;

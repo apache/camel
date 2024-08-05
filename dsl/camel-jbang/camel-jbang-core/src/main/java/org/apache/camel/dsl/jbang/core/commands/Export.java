@@ -77,8 +77,9 @@ public class Export extends ExportBaseCommand {
             Properties props = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(props, file);
             // read runtime and gav from profile if not configured
-            if (props.containsKey("camel.jbang.runtime")) {
-                this.runtime = RuntimeType.fromValue(props.getProperty("camel.jbang.runtime"));
+            String rt = props.getProperty("camel.jbang.runtime");
+            if (rt != null) {
+                this.runtime = RuntimeType.fromValue(rt);
             }
             this.gav = props.getProperty("camel.jbang.gav", this.gav);
             // allow configuring versions from profile
