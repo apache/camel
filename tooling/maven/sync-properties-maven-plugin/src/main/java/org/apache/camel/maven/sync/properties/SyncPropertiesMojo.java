@@ -32,7 +32,9 @@ import java.util.stream.Stream;
 
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -161,8 +163,20 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 .sorted()
                 .collect(Collectors.joining("\n        "));
 
+        final Parent parent = camelPomXmlModel.getParent();
+        if (parent == null || !parent.getGroupId().equals("org.apache") || !parent.getArtifactId().equals("apache")) {
+            throw new MojoExecutionException("Unexpected parent groupId / artifactId in parent " + camelPomXmlPath);
+        }
+
+        final String apacheParentVersion = parent.getVersion();
+        if (ObjectHelper.isEmpty(apacheParentVersion)) {
+            throw new MojoExecutionException(
+                    "Unable to determine the version of org.apache:apache parent from " + camelPomXmlPath);
+        }
+
         try {
             final String camelPropertiesContent = template
+                    .replace("@apache-parent-version@", apacheParentVersion)
                     .replace("@version@", version)
                     .replace("@properties@", properties);
 
