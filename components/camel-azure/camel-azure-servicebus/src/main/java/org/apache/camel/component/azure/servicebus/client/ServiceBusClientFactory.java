@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.azure.servicebus.client;
 
-import java.util.function.Consumer;
-
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.servicebus.*;
-import org.apache.camel.component.azure.servicebus.CredentialType;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
-import org.apache.camel.util.ObjectHelper;
+
+import java.util.function.Consumer;
 
 public final class ServiceBusClientFactory {
 
@@ -38,16 +36,12 @@ public final class ServiceBusClientFactory {
         String fullyQualifiedNamespace = configuration.getFullyQualifiedNamespace();
         TokenCredential credential = configuration.getTokenCredential();
 
-        if (configuration.getCredentialType().equals(CredentialType.CONNECTION_STRING)) {
-            builder.connectionString(configuration.getConnectionString());
-        } else if (configuration.getCredentialType().equals(CredentialType.TOKEN_CREDENTIAL)) {
-            // If the FQNS and credential are available, use those to connect
-            if (ObjectHelper.isNotEmpty(fullyQualifiedNamespace) && ObjectHelper.isNotEmpty(credential)) {
-                builder.credential(fullyQualifiedNamespace, credential);
-            }
-        } else {
-            builder.credential(new DefaultAzureCredentialBuilder().build());
+        switch (configuration.getCredentialType()) {
+            case CONNECTION_STRING -> builder.connectionString(configuration.getConnectionString());
+            case TOKEN_CREDENTIAL -> builder.credential(fullyQualifiedNamespace, credential);
+            case AZURE_IDENTITY -> builder.credential(fullyQualifiedNamespace, new DefaultAzureCredentialBuilder().build());
         }
+
         return builder;
     }
 
