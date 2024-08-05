@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.azure.servicebus.client;
 
+import java.util.function.Consumer;
+
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.servicebus.*;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
-
-import java.util.function.Consumer;
 
 public final class ServiceBusClientFactory {
 
