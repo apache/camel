@@ -76,6 +76,8 @@ public class SpringCamelContext extends DefaultCamelContext
     public SpringCamelContext(ApplicationContext applicationContext) {
         this();
         setApplicationContext(applicationContext);
+        // force creating injector that works with spring
+        getInjector();
     }
 
     /**
