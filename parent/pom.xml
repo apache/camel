@@ -205,7 +205,7 @@
         <guava-version>33.2.1-jre</guava-version>
         <guice3-version>3.0</guice3-version>
         <hadoop3-version>3.4.0</hadoop3-version>
-        <hamcrest-version>2.2</hamcrest-version>
+        <hamcrest-version>3.0</hamcrest-version>
         <hapi-version>2.5.1</hapi-version>
         <hapi-base-version>2.5.1</hapi-base-version>
         <hapi-fhir-version>7.2.2</hapi-fhir-version>
