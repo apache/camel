@@ -97,7 +97,7 @@ resource. This allows you to provide a dynamic template at runtime.
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Samples
+== Examples
 
 For example, you could use something like:
 

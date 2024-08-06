@@ -221,7 +221,7 @@ from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&t
 Please refer to the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP
 specification] for the complete list of error codes and their meanings.
 
-== Samples
+== Examples
 
 A route which sends an SMS using the Java DSL:
 

@@ -276,7 +276,7 @@ using the `Exchange` property:
 exchange.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
 ----------------------------------------------------------
 
-=== Sample with scheduled poll
+=== Example with scheduled poll
 
 This sample polls the Google homepage every 10 seconds and write the
 page to the file `message.html`:

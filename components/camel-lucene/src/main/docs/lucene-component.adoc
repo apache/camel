@@ -88,7 +88,9 @@ check out https://lucene.apache.org/core/8_4_1/queryparser/org/apache/lucene/que
 There is a processor called LuceneQueryProcessor available to perform
 queries against lucene without the need to create a producer.
 
-== Lucene Usage Samples
+== Examples
+
+Lucene usage samples.
 
 === Example 1: Creating a Lucene index
 

@@ -72,7 +72,9 @@ Sending data to the printer is very straightforward and involves
 creating a producer endpoint that can be sent message exchanges on in
 route.
 
-== Usage Samples
+== Examples
+
+Usage samples.
 
 === Example 1: Printing text-based payloads on a Default printer using letter stationary and one-sided mode
 

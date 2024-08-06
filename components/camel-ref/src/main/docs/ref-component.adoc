@@ -73,7 +73,7 @@ Registry such as:
 </camelContext>
 ----
 
-== Sample
+== Example
 
 Bind endpoints to the Camel registry:
 [source,java]

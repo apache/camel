@@ -87,7 +87,7 @@ producerTemplate.sendBody("paho:topic", payload);
 ----
 
 
-== Samples
+== Examples
 
 For example, the following snippet reads messages from the MQTT broker
 installed on the same host as the Camel router:

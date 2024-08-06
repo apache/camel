@@ -43,11 +43,13 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Collection Samples
+== Examples
+
+=== Collection Examples
 
 In the route below, we use the qdrant component to create a collection named _myCollection_ with the given parameters:
 
-=== Create Collection
+==== Create Collection
 
 [tabs]
 ====
@@ -67,7 +69,7 @@ from("direct:in")
 ----
 ====
 
-=== Delete Collection
+==== Delete Collection
 
 In the route below, we use the qdrant component to delete a collection named _myCollection_:
 
@@ -85,7 +87,7 @@ from("direct:in")
 ====
 
 
-=== Collection Info
+==== Collection Info
 
 In the route below, we use the qdrant component to get information about the collection named `myCollection`:
 
@@ -108,9 +110,9 @@ If there is not, the exchange will contain an exception of type `QdrantActionExc
 `StatusRuntimeException statusRuntimeException` and status `Status.NOT_FOUND`.
 
 
-== Points Samples
+=== Points Examples
 
-=== Upsert
+==== Upsert
 
 In the route below we use the qdrant component to perform insert + updates (upsert) on points in the collection named _myCollection_:
 
@@ -137,7 +139,7 @@ from("direct:in")
 ====
 
 
-=== Retrieve
+==== Retrieve
 
 In the route below, we use the qdrant component to retrieve information of a single point by id from the collection named _myCollection_:
 
@@ -158,7 +160,7 @@ from("direct:in")
 
 
 
-=== Delete
+==== Delete
 
 In the route below, we use the qdrant component to delete points from the collection named `myCollection` according to a criteria:
 

@@ -62,7 +62,7 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-== Samples
+== Examples
 
 Sending messages:
 

@@ -157,7 +157,7 @@ from("direct:stageName").thread(5).process(...)
 You can also directly configure number of threads that process messages
 on a SEDA endpoint using the `concurrentConsumers` option.
 
-== Sample
+== Example
 
 In the route below, we use the SEDA queue to send the request to this
 async queue.

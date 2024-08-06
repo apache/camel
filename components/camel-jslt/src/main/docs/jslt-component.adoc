@@ -83,7 +83,7 @@ For example, the header named `type` and the exchange property `instance` can be
 }
 --------------------------------------
 
-== Samples
+== Examples
 
 For example, you could use something like:
 

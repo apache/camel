@@ -170,7 +170,7 @@ of the performance gains achieved by using the Disruptor. Instead, it is
 advices to directly configure the number of threads that process messages on
 a Disruptor endpoint using the concurrentConsumers option.
 
-== Sample
+== Example
 
 In the route below, we use the Disruptor to send the request to this
 async queue.

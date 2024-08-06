@@ -163,7 +163,7 @@ return as:
 |file:absolute.path |/workspace/camel/camel-core/target/filelanguage/test/hello.txt
 |===
 
-== Samples
+== Examples
 
 You can enter a fixed file name such as `myfile.txt`:
 

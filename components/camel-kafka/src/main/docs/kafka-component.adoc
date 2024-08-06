@@ -103,7 +103,7 @@ camelContext.addComponent("kafka", kafka);
 It is recommended that you read the section below "Using manual commit with Kafka consumer" to understand how `breakOnFirstError`
 will work based on the `CommitManager` that is configured.
 
-== Samples
+== Examples
 
 === Consuming messages from Kafka
 

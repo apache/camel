@@ -77,7 +77,7 @@ apiKey = GuRW0*********
 secretKey = nKLki************
 ----
 
-== Samples
+== Examples
 
 In this sample we find the current Bitcoin market price in USDT:
 

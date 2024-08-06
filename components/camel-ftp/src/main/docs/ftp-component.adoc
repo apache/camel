@@ -552,7 +552,7 @@ String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?pass
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-== Samples
+== Examples
 
 In the sample below, we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as

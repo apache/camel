@@ -140,7 +140,7 @@ endpoint configured.
 |CamelVelocityTemplate |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-== Samples
+== Examples
 
 For example, you could use something like
 
@@ -202,7 +202,7 @@ from("direct:in").
   to("velocity:dummy?allowTemplateFromHeader=true"");
 ---------------------------------------------------------------------------------------------------------------
 
-== The Email Sample
+== The Email Example
 
 In this sample, we want to use Velocity templating for an order
 confirmation email. The email template is laid out in Velocity as:

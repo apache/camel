@@ -125,7 +125,7 @@ to escape string values to be LDAP injection safe.
 See the following link
 for information about https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html[LDAP Injection].
 
-== Samples
+== Examples
 
 Following on from the configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common

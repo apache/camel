@@ -904,7 +904,7 @@ prior actions such as interceptors, onCompletion to take action.
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-== Samples
+== Examples
 
 [[File2-ReadingFromADirectoryAndTheDefaultMoveOperation]]
 === Reading from a directory and the default move operation

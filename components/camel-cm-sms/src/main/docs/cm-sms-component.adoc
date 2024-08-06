@@ -36,7 +36,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Sample
+== Example
 
 ----
 cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=DefaultSender&defaultMaxNumberOfParts=8&productToken=xxxxx

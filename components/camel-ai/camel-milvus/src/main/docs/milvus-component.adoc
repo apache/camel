@@ -43,7 +43,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Collection Samples
+== Examples
+
+=== Collection Examples
 
 In the route below, we use the milvus component to create a collection named _test_ with the given parameters:
 
@@ -92,9 +94,9 @@ from("direct:in")
 ----
 ====
 
-== Points Samples
+=== Points Examples
 
-=== Upsert
+==== Upsert
 
 In the route below we use the milvus component to perform insert on points in the collection named _test_:
 
