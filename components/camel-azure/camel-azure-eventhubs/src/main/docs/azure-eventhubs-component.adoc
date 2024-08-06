@@ -63,8 +63,13 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
-== Authentication Information
+== Usage
+
+=== Authentication Information
 
 You have three different Credential Types: AZURE_IDENTITY, TOKEN_CREDENTIAL and CONNECTION_STRING. You can also provide a client instance yourself.
 To use this component, you have three options to provide the required Azure authentication information:
@@ -81,7 +86,7 @@ as these data already included in the `connectionString`, therefore is the simpl
 - Provide an implementation of `com.azure.core.credential.TokenCredential` into the Camel's Registry, e.g., using the `com.azure.identity.DefaultAzureCredentialBuilder().build();` API.
 See the documentation https://docs.microsoft.com/en-us/azure/active-directory/authentication/overview-authentication[here about Azure-AD authentication].
 
-AZURE_IDENTITY:
+*AZURE_IDENTITY*:
 - This will use `com.azure.identity.DefaultAzureCredentialBuilder().build();` instance. This will follow the Default Azure Credential Chain.
 See the documentation https://docs.microsoft.com/en-us/azure/active-directory/authentication/overview-authentication[here about Azure-AD authentication].
 
@@ -90,7 +95,7 @@ See the documentation https://docs.microsoft.com/en-us/azure/active-directory/au
 - Provide a https://docs.microsoft.com/en-us/java/api/com.azure.messaging.eventhubs.eventhubproducerasyncclient?view=azure-java-stable[EventHubProducerAsyncClient] instance which can be
 provided into `producerAsyncClient`. However, this is *only possible for camel producer*, for the camel consumer, is not possible to inject the client due to some design constraint by the `EventProcessorClient`.
 
-== Checkpoint Store Information
+=== Checkpoint Store Information
 
 A checkpoint store stores and retrieves partition ownership information and checkpoint details for each partition in a given consumer group of an event hub instance. Users are not meant to implement a CheckpointStore.
 Users are expected to choose existing implementations of this interface, instantiate it, and pass it to the component through `checkpointStore` option.
@@ -103,15 +108,14 @@ If you chose to use the default `BlobCheckpointStore`, you will need to supply t
 - `blobAccessKey`: It sets the access key for the associated azure account name to be used for authentication with azure blob services.
 - `blobContainerName`: It sets the blob container that shall be used by the BlobCheckpointStore to store the checkpoint offsets.
 
-
-== Async Consumer and Producer
+=== Async Consumer and Producer
 
 This component implements the async Consumer and producer.
 
 This allows camel route to consume and produce events asynchronously without blocking any threads.
 
 
-== Usage
+== Examples
 
 For example, to consume event from EventHub, use the following snippet:
 
@@ -120,10 +124,6 @@ For example, to consume event from EventHub, use the following snippet:
 from("azure-eventhubs:/camel/camelHub?sharedAccessName=SASaccountName&sharedAccessKey=SASaccessKey&blobAccountName=accountName&blobAccessKey=accessKey&blobContainerName=containerName")
   .to("file://queuedirectory");
 --------------------------------------------------------------------------------
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === Message body type
 The component's producer expects the data in the message body to be in `byte[]`. This allows the user to utilize Camel TypeConverter to marshal/unmarshal data with ease.
@@ -192,7 +192,7 @@ from("direct:start")
 .to("azure-eventhubs:namespace/eventHubName?tokenCredential=#myTokenCredential&credentialType=TOKEN_CREDENTIAL)"
 ----
 
-=== Development Notes (Important)
+== Important Development Notes
 
 When developing on this component, you will need to obtain your Azure accessKey to run the integration tests. In addition to the mocked unit tests,
 you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*

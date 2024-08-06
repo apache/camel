@@ -40,22 +40,6 @@ for this component:
 </dependency>
 ----
 
-== Connection Authentication Types
-
-The Box component supports three different types of authenticated connections.
-
-=== Standard Authentication
-
-*Standard Authentication* uses the *OAuth 2.0 three-legged authentication process* to authenticate its connections with Box.com. This type of authentication enables Box *managed users* and *external users* to access, edit, and save their Box content through the Box component.
-
-=== App Enterprise Authentication
-
-*App Enterprise Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as a *Service Account* for a *Box Application*. This type of authentication enables a service account to access, edit, and save the Box content of its *Box Application* through the Box component.
-
-=== App User Authentication
-
-*App User Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as an *App User* for a *Box Application*. This type of authentication enables app users to access, edit, and save their Box content in its *Box Application* through the Box component.
-
 // component-configure options: START
 
 // component-configure options: END
@@ -68,6 +52,24 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+== Usage
+
+=== Connection Authentication Types
+
+The Box component supports three different types of authenticated connections.
+
+==== Standard Authentication
+
+*Standard Authentication* uses the *OAuth 2.0 three-legged authentication process* to authenticate its connections with Box.com. This type of authentication enables Box *managed users* and *external users* to access, edit, and save their Box content through the Box component.
+
+==== App Enterprise Authentication
+
+*App Enterprise Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as a *Service Account* for a *Box Application*. This type of authentication enables a service account to access, edit, and save the Box content of its *Box Application* through the Box component.
+
+==== App User Authentication
+
+*App User Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as an *App User* for a *Box Application*. This type of authentication enables app users to access, edit, and save their Box content in its *Box Application* through the Box component.
 
 == Examples
 

@@ -46,7 +46,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Using
+== Usage
 
 You simply use the *class* component just as the xref:bean-component.adoc[Bean]
 component but by specifying the fully qualified class name instead.
@@ -69,7 +69,9 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------------------------------------------------------
 
-== Setting properties on the created instance
+== Examples
+
+=== Setting properties on the created instance
 
 In the endpoint uri you can specify properties to set on the created
 instance, for example, if it has a `setPrefix` method:

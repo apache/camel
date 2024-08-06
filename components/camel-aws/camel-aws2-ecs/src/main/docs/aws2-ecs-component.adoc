@@ -54,6 +54,10 @@ You have to provide the amazonECSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/ecs/[Amazon ECS] service.
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
@@ -75,10 +79,6 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === ECS Producer operations
 
 Camel-AWS ECS component provides the following operation on the producer side:
@@ -98,7 +98,7 @@ from("direct:listClusters")
     .to("aws2-ecs://test?ecsClient=#amazonEcsClient&operation=listClusters")
 --------------------------------------------------------------------------------
 
-== Using a POJO as body
+=== Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as a body.
 In AWS ECS there are multiple operations you can submit, as an example for List cluster request, you can do something like:

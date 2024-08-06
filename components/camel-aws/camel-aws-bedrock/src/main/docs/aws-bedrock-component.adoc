@@ -689,7 +689,9 @@ Camel-AWS Bedrock component provides the following operation on the producer sid
 - invokeImageModel
 - invokeEmbeddingsModel
 
-== Producer Examples
+== Examples
+
+=== Producer Examples
 
 - invokeTextModel: this operation will invoke a model from Bedrock. This is an example for both Titan Express and Titan Lite.
 
