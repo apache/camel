@@ -53,6 +53,12 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
 You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
@@ -71,10 +77,6 @@ You have also the possibility of using Profile Credentials Provider, by specifyi
 Only one of static, default and profile credentials could be used at the same time.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === AWS2-Eventbridge Producer operations
 
@@ -290,7 +292,7 @@ this operation will return a list of rules associated with a target.
 
 this operation will return a list of entries with related ID sent to servicebus.
 
-== Updating the rule
+=== Updating the rule
 
 To update a rule, you'll need to perform the putRule operation again.
 There is no explicit update rule operation in the Java SDK.

@@ -64,8 +64,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== Authentication Information
+=== Authentication Information
 
 To use this component, you have two options to provide the required Azure authentication information:
 
@@ -75,21 +76,11 @@ be generated through your CosmosDB Azure portal.
 provided into `cosmosAsyncClient`.
 
 
-== Async Consumer and Producer
+=== Async Consumer and Producer
 
 This component implements the async Consumer and producer.
 
 This allows camel route to consume and produce events asynchronously without blocking any threads.
-
-== Usage
-
-For example, to consume records from a specific container in a specific database to a file, use the following snippet:
-
-[source,java]
---------------------------------------------------------------------------------
-from("azure-cosmosdb://camelDb/myContainer?accountKey=MyaccountKey&databaseEndpoint=https//myazure.com:443&leaseDatabaseName=myLeaseDB&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true").
-to("file://directory");
---------------------------------------------------------------------------------
 
 === Message headers evaluated by the component producer
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -177,7 +168,21 @@ For these operations, `databaseName` and `containerName` is *required* for all o
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
 
-==== Examples
+== Examples
+
+
+=== Consuming records from a specific container
+
+For example, to consume records from a specific container in a specific database to a file, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-cosmosdb://camelDb/myContainer?accountKey=MyaccountKey&databaseEndpoint=https//myazure.com:443&leaseDatabaseName=myLeaseDB&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true").
+to("file://directory");
+--------------------------------------------------------------------------------
+
+=== Operations
+
 - `listDatabases`:
 
 [source,java]
@@ -358,7 +363,8 @@ To use the Camel Azure CosmosDB, `containerName` and `databaseName` are required
 
 The consumer will set `List<Map<String,>>` in exchange message body which reflect the list of items in a single feed.
 
-==== Example:
+==== Example
+
 For example, to listen to the events in `myContainer` container in `myDb`:
 
 [source,java]
@@ -368,7 +374,7 @@ from("azure-cosmosdb://myDb/myContainer?leaseDatabaseName=myLeaseDb&createLeaseD
 --------------------------------------------------------------------------------
 
 
-=== Development Notes (Important)
+== Important Development Notes
 
 When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests,
 you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*

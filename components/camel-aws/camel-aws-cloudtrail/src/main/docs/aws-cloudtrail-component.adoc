@@ -24,35 +24,6 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Cloudtrail. More information is available
 at https://aws.amazon.com/cloudtrail/[AWS Cloudtrail]
 
-== Static credentials, Default Credential Provider and Profile Credentials Provider
-
-You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
-
-The order of evaluation for Default Credentials Provider is the following:
-
- - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
- - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
- - Web Identity Token from AWS STS.
- - The shared credentials and config files.
- - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
- 
-You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
-
-Only one of static, default and profile credentials could be used at the same time.
-
-For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
-
-== Cloudtrail Events consumed
-
-The Cloudtrail consumer will use an API method called LookupEvents.
-
-This method will only take into account management events like create/update/delete of resources and Cloudtrail insight events where enabled.
-
-This means you won't consume the events registered in the Cloudtrail logs stored on S3, in case of creation of a new Trail.
-
-This is important to notice, and it must be taken into account when using this component.
-
 == URI Format
 
 -----------------------------------
@@ -78,5 +49,37 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+- Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+- Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+- Web Identity Token from AWS STS.
+- The shared credentials and config files.
+- Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+- Amazon EC2 Instance profile credentials.
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== Cloudtrail Events consumed
+
+The Cloudtrail consumer will use an API method called LookupEvents.
+
+This method will only take into account management events like create/update/delete of resources and Cloudtrail insight events where enabled.
+
+This means you won't consume the events registered in the Cloudtrail logs stored on S3, in case of creation of a new Trail.
+
+This is important to notice, and it must be taken into account when using this component.
+
 
 include::spring-boot:partial$starter.adoc[]

@@ -63,7 +63,9 @@ you can put multiple models in the same package.
 :shortName: bindyCsv
 include::partial$dataformat-options.adoc[]
 
-== Annotations
+== Usage
+
+=== Annotations
 
 The annotations created allow mapping different concept of your model to
 the POJO like:
@@ -1666,7 +1668,7 @@ public static class OrderNumberFormatFactory extends AbstractFormatFactory {
 }
 ----
 
-== Supported Datatypes
+=== Supported Datatypes
 
 The DefaultFormatFactory makes formatting of the following datatype available by
 returning an instance of the interface FormatFactoryInterface based on the provided
@@ -1693,7 +1695,7 @@ FormattingOptions:
 The DefaultFormatFactory can be overridden by providing an instance of
 FactoryRegistry in the registry in use (e.g., Spring or JNDI).
 
-== Using the Java DSL
+=== Using the Java DSL
 
 The next step instantiates the DataFormat _bindy_ class
 associated with this record type and providing a class as a parameter.
@@ -1825,7 +1827,7 @@ from("direct:handleOrders")
    .to("file://outbox")
 ----
 
-== Using Spring XML
+=== Using Spring XML
 
 This is really easy to use Spring as your favorite DSL language to
 declare the routes to be used for camel-bindy. The following example
