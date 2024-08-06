@@ -16,8 +16,16 @@
  */
 package org.apache.camel.main;
 
+/**
+ * This interface marks ConfigurationProperties classes that have one or more mandatory fields, i.e. fields without
+ * which configuration does not make sense.
+ */
 public interface ConfigurationPropertiesWithMandatoryFields {
 
+    /**
+     * Checks is this ConfigurationProperties has no mandatory fields absent.
+     * @return true if all mandatory fields are filled, false otherwise
+     */
     boolean areMandatoryFieldsFilled();
 
 }

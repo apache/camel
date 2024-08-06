@@ -24,12 +24,15 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
 import org.apache.camel.component.platform.http.main.authentication.MainAuthenticationConfigurer;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
+import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.main.ConfigurationPropertiesWithMandatoryFields;
 import org.apache.camel.main.HttpServerAuthenticationConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.MainHttpServerFactory;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.ObjectHelper;
 
 @JdkService(MainConstants.PLATFORM_HTTP_SERVER)
 public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttpServerFactory {
@@ -100,9 +103,9 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
                                 "Cannot configure authentication for MainHttpServer as more than one authentication configuration is present");
                     }
                     String configurerQualifiedName = MainAuthenticationConfigurer.class.getPackageName() + "."
-                                                     + authenticationTypeName + "AuthenticationConfigurer";
-                    result = (MainAuthenticationConfigurer) Class
-                            .forName(configurerQualifiedName)
+                            + authenticationTypeName + "AuthenticationConfigurer";
+                    ClassResolver resolver = new DefaultClassResolver();
+                    result = resolver.resolveMandatoryClass(configurerQualifiedName, MainAuthenticationConfigurer.class)
                             .getDeclaredConstructor()
                             .newInstance();
                 } catch (Exception e) {
@@ -118,10 +121,10 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
     private boolean authenticationTypeIsEnabled(
             HttpServerAuthenticationConfigurationProperties authenticationProperties, String authenticationTypeName) {
         try {
+            String authenticationTypeGetterMethodName = "get" + authenticationTypeName;
             ConfigurationPropertiesWithMandatoryFields propertiesForAuthenticationType
-                    = (ConfigurationPropertiesWithMandatoryFields) HttpServerAuthenticationConfigurationProperties.class
-                            .getMethod("get" + authenticationTypeName)
-                            .invoke(authenticationProperties);
+                    = (ConfigurationPropertiesWithMandatoryFields) ObjectHelper
+                    .invokeMethodSafe(authenticationTypeGetterMethodName, authenticationProperties);
             return propertiesForAuthenticationType.areMandatoryFieldsFilled();
         } catch (NoSuchMethodException noSuchMethodException) {
             throw new RuntimeException(
