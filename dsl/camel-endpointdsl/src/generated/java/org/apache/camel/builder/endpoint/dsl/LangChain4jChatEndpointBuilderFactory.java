@@ -252,6 +252,18 @@ public interface LangChain4jChatEndpointBuilderFactory {
         public String langChain4jChatPromptTemplate() {
             return "CamelLangChain4jChatPromptTemplate";
         }
+        /**
+         * Augmented Data for RAG.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jChatAugmentedData}.
+         */
+        public String langChain4jChatAugmentedData() {
+            return "CamelLangChain4jChatAugmentedData";
+        }
     }
     static LangChain4jChatEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jChatEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jChatEndpointBuilder, AdvancedLangChain4jChatEndpointBuilder {

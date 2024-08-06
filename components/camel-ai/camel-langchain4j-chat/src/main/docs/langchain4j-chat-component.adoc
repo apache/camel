@@ -180,3 +180,64 @@ List<ChatMessage> messages = new ArrayList<>();
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 ----
+
+== RAG (Retrieval Augmented Generation)
+Use the RAG feature to enrich exchanges with data retrieved from any type of Camel endpoint. The feature is compatible with all LangChain4 Chat operations and is ideal for orchestrating the RAG workflow, utilizing the extensive library of components and Enterprise Integration Patterns (EIPs) available in Apache Camel.
+
+There are two ways for utilizing the RAG feature:
+
+=== Using RAG with Content Enricher and LangChain4jRagAggregatorStrategy
+Enrich the exchange by retrieving a list of strings using any Camel producer. The `LangChain4jRagAggregatorStrategy` is specifically designed to augment data within LangChain4j chat producers.
+
+Example of usage:
+[source, java]
+----
+// Create an instance of the RAG aggregator strategy
+LangChain4jRagAggregatorStrategy aggregatorStrategy = new LangChain4jRagAggregatorStrategy();
+
+from("direct:test")
+     .enrich("direct:rag", aggregatorStrategy)
+     .to("langchain4j-chat:test1?chatOperation=CHAT_SIMPLE_MESSAGE");
+
+  from("direct:rag")
+          .process(exchange -> {
+                List<String> augmentedData = List.of("data 1", "data 2" );
+                exchange.getIn().setBody(augmentedData);
+              });
+----
+
+[NOTE]
+====
+This method leverages a separate Camel route to fetch and process the augmented data.
+====
+
+It is possible to enrich the message from multiple sources within the same exchange.
+
+Example of usage:
+[source, java]
+----
+// Create an instance of the RAG aggregator strategy
+LangChain4jRagAggregatorStrategy aggregatorStrategy = new LangChain4jRagAggregatorStrategy();
+
+from("direct:test")
+     .enrich("direct:rag-from-source-1", aggregatorStrategy)
+     .enrich("direct:rag-from-source-2", aggregatorStrategy)
+     .to("langchain4j-chat:test1?chatOperation=CHAT_SIMPLE_MESSAGE");
+----
+
+=== Using RAG with Header
+Directly add augmented data into the header. This method is particularly efficient for straightforward use cases where the augmented data is predefined or static.
+You must add augmented data as a List of `dev.langchain4j.rag.content.Content` directly inside the header `CamelLangChain4jChatAugmentedData`.
+
+Example of usage:
+[source, java]
+----
+import dev.langchain4j.rag.content.Content;
+
+...
+
+Content augmentedContent = new Content("data test");
+List<Content> contents = List.of(augmentedContent);
+
+String response = template.requestBodyAndHeader("direct:send-multiple", messages, LangChain4jChat.Headers.AUGMENTED_DATA , contents, String.class);
+----
