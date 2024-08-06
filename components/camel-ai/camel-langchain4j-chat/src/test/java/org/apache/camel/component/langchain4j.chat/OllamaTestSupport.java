@@ -44,7 +44,7 @@ public class OllamaTestSupport extends CamelTestSupport {
                 .baseUrl(OLLAMA.getBaseUrl())
                 .modelName(OLLAMA.getModel())
                 .temperature(0.3)
-                .timeout(ofSeconds(3000))
+                .timeout(ofSeconds(60))
                 .build();
     }
 }
