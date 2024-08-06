@@ -24,6 +24,7 @@ public interface ConfigurationPropertiesWithMandatoryFields {
 
     /**
      * Checks is this ConfigurationProperties has no mandatory fields absent.
+     *
      * @return true if all mandatory fields are filled, false otherwise
      */
     boolean areMandatoryFieldsFilled();
