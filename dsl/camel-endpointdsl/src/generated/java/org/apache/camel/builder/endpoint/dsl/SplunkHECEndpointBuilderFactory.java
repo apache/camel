@@ -185,6 +185,36 @@ public interface SplunkHECEndpointBuilderFactory {
             return this;
         }
         /**
+         * SSL configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SplunkHECEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Time this even occurred. By default, the time will be when this event
          * hits the splunk server.
          * 
