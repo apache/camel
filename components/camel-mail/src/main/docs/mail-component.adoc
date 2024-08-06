@@ -89,7 +89,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Sample endpoints
+=== Example endpoints
 
 Typically, you specify a URI with login credentials as follows:
 
@@ -310,7 +310,7 @@ IMAP API]
 https://javamail.java.net/nonav/docs/api/javax/mail/Flags.html[MAIL
 Flags]
 
-== Samples
+== Examples
 
 We start with a simple route that sends the messages received from a JMS
 queue as emails. The email account is the `admin` account on
@@ -329,7 +329,7 @@ from("imap://admin@mymailserver.com?password=secret&unseen=true&delay=60000")
     .to("seda://mails");
 -------------------------------------------------------
 
-== Sending mail with attachment sample
+=== Sending mail with attachment
 
 
 [WARNING]
@@ -370,7 +370,7 @@ producer.start();
 producer.process(exchange);
 -------------------------------------------------------
 
-== SSL sample
+=== SSL example
 
 In this sample, we want to poll our Google Mail inbox for mails. To
 download mail onto a local mail client, Google Mail requires you to
@@ -399,7 +399,7 @@ progress in the logs:
 2008-05-08 06:32:12,187 INFO  newmail - Exchange[MailMessage: messageNumber=[332], from=[James Bond <007@mi5.co.uk>], to=YOUR_USERNAME@gmail.com], subject=[...
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-== Consuming mails with attachment sample
+=== Consuming mails with attachment
 
 In this sample, we poll a mailbox and store all attachments from the
 mails as files. First, we define a route to poll the mailbox. As this

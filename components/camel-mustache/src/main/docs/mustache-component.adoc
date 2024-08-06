@@ -93,7 +93,7 @@ resource. This allows you to provide a dynamic template at runtime.
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Samples
+== Examples
 
 For example, you could use something like:
 
@@ -126,7 +126,7 @@ setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI).constant("path/to/my/template
 to("mustache:dummy?allowTemplateFromHeader=true");
 --------------------------------------------------------------------------------------------
 
-== The Email Sample
+== The Email Example
 
 In this sample, we want to use Mustache templating for an order
 confirmation email. The email template is laid out in Mustache as:

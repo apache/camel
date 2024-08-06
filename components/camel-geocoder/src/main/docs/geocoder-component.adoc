@@ -78,7 +78,7 @@ If the option `headersOnly` is set to `true` then the message body is
 left as-is, and only headers will be added to the
 Exchange.
 
-== Samples
+== Examples
 
 In the example below, we get the latitude and longitude for Paris, France
 

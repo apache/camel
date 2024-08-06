@@ -75,7 +75,7 @@ to the `Exchange`:
 |`Exchange.TIMER_COUNTER` |`Long` |The current fire counter. Starts from 1.
 |===
 
-== Sample
+== Example
 
 To set up a route that generates an event every 60 seconds:
 

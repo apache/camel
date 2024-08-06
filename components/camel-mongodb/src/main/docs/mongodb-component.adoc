@@ -108,7 +108,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/context
 </beans>
 ----------------------------------------------------------------------------------------------------------------------------------
 
-== Sample route
+== Example route
 
 The following route defined in Spring XML executes the operation
 <<getDbStats>> on a collection.

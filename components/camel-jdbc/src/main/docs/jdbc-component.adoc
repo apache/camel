@@ -107,7 +107,7 @@ Notice in the example above we set two headers with constant value
 You can also store the header values in a `java.util.Map` and store the
 map on the headers with the key `CamelJdbcParameters`.
 
-== Samples
+== Examples
 
 In the following example, we set up the DataSource that camel-jdbc requires.
 First we register our datasource in the Camel registry as `testdb`:

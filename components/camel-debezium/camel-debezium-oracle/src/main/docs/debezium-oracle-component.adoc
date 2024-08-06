@@ -79,7 +79,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 Check below for more details.
 ====
 
-== Samples
+== Examples
 
 === Consuming events
 

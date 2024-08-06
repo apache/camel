@@ -49,7 +49,7 @@ The operations for this producer are:
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Sample for *set*:
+=== Example for *set*:
 
 [tabs]
 ====
@@ -81,7 +81,7 @@ Spring XML::
 Provide the value to set inside the message body (here the value is 10):
 `template.sendBody("direct:set", 10);`
 
-=== Sample for *get*:
+=== Example for *get*:
 
 [tabs]
 ====
@@ -113,7 +113,7 @@ Spring XML::
 You can get the number with
 `long body = template.requestBody("direct:get", null, Long.class);`.
 
-=== Sample for *increment*:
+=== Example for *increment*:
 
 [tabs]
 ====
@@ -146,7 +146,7 @@ Spring XML::
 The actual value (after increment) will be provided inside the message
 body.
 
-=== Sample for *decrement*:
+=== Example for *decrement*:
 
 [tabs]
 ====
@@ -179,7 +179,7 @@ Spring XML::
 The actual value (after decrement) will be provided inside the message
 body.
 
-=== Sample for *destroy*
+=== Example for *destroy*
 
 [tabs]
 ====

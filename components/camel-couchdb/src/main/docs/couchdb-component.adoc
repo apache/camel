@@ -96,7 +96,7 @@ the producer will throw an unsupported body type exception.
 To update a CouchDB document, its `id` and `rev` field must be part of the json payload routed to CouchDB by Camel.
 ====
 
-== Samples
+== Examples
 
 For example, if you wish to consume all inserts, updates and deletes from
 a CouchDB instance running locally, on port 9999, then you could use the

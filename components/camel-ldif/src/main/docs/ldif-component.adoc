@@ -134,7 +134,7 @@ or in a OSGi blueprint.xml:
 ----
 
 
-== Samples
+== Examples
 
 Following on from the Spring configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common

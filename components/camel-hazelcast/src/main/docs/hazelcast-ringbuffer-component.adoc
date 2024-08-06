@@ -47,7 +47,7 @@ The ringbuffer producer provides 5 operations:
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Sample for *put*:
+=== Example for *put*:
 
 [tabs]
 ====
@@ -77,7 +77,7 @@ Spring XML::
 
 ====
 
-=== Sample for *readonce from head*:
+=== Example for *readonce from head*:
 
 Java DSL:
 

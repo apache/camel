@@ -89,7 +89,7 @@ resource. This allows you to provide a dynamic template at runtime.
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Samples
+== Examples
 
 For example, you could use something like:
 
@@ -133,7 +133,7 @@ to("chunk:file_example?themeFolder=template&themeSubfolder=subfolder&extension=c
 In this example, the Chunk component will look for the file
 `file_example.chunk` in the folder `template/subfolder`.
 
-== The Email Sample
+== The Email Example
 
 In this sample, we want to use Chunk templating for an order confirmation email.
 The email template is laid out in Chunk as:

@@ -76,7 +76,7 @@ add a `java.io.OutputStream` object to `message.in.header` in the key
 `header`. +
  See samples for an example.
 
-== Samples
+== Examples
 
 In the following sample we route messages from the `direct:in` endpoint
 to the `System.out` stream:

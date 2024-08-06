@@ -66,7 +66,7 @@ You can call the samples with:
 template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
 -------------------------------------------------------------------------------------------------------------------
 
-=== Sample for *put*:
+=== Example for *put*:
 
 [tabs]
 ====
@@ -133,7 +133,7 @@ Spring XML::
 
 ====
 
-=== Sample for *get*:
+=== Example for *get*:
 
 [tabs]
 ====
@@ -164,7 +164,7 @@ Spring XML::
 
 ====
 
-=== Sample for *update*:
+=== Example for *update*:
 
 [tabs]
 ====
@@ -193,7 +193,7 @@ Spring XML::
 
 ====
 
-=== Sample for *delete*:
+=== Example for *delete*:
 
 [tabs]
 ====
@@ -223,7 +223,7 @@ Spring XML::
 
 ====
 
-=== Sample for *query*
+=== Example for *query*
 
 [tabs]
 ====

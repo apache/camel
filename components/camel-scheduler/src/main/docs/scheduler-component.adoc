@@ -77,7 +77,7 @@ to the `Exchange`:
 |`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
 |===
 
-== Sample
+== Example
 
 To set up a route that generates an event every 60 seconds:
 

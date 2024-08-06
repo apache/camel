@@ -55,7 +55,9 @@ include::partial$component-endpoint-options.adoc[]
 
 The result body is a `Map<String, Object>` object.
 
-== Lumberjack Usage Samples
+== Examples
+
+Lumberjack usage samples.
 
 === Example 1: Streaming the log messages
 

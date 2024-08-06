@@ -209,7 +209,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Samples
+== Examples
 
 JMS is used in many examples for other components as well. But we
 provide a few samples below to get started.
@@ -253,7 +253,7 @@ from("file://orders").
 
 Camel also has annotations, so you can use xref:manual::pojo-consuming.adoc[POJO Consuming] and xref:manual::pojo-producing.adoc[POJO Producing].
 
-=== Spring DSL sample
+=== Spring DSL Example
 
 The preceding examples use the Java DSL. Camel also supports Spring XML
 DSL. Here is the big spender sample using Spring DSL:
@@ -269,7 +269,7 @@ DSL. Here is the big spender sample using Spring DSL:
 </route>
 ---------------------------------------------------
 
-=== Other samples
+=== Other Examples
 
 JMS appears in many of the examples for other components and EIP
 patterns, as well in this Camel documentation. So feel free to browse

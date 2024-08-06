@@ -64,7 +64,7 @@ Camel will not replace the body. This allows you to continue routing and
 keep the original body. The response from MyBatis is always stored in
 the header with the key `CamelMyBatisResult`.
 
-== Samples
+== Examples
 
 For example, if you wish to consume beans from a JMS queue and insert
 them into a database, you could do the following:

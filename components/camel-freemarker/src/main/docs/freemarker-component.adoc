@@ -126,7 +126,7 @@ resource. This allows you to provide a dynamic template at runtime.
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Samples
+== Examples
 
 For example, you could use something like:
 
@@ -178,7 +178,7 @@ from("direct:in").
   to("freemarker:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------------------------------
 
-== The Email Sample
+== The Email Example
 
 In this sample, we want to use FreeMarker templating for an order
 confirmation email. The email template is laid out in FreeMarker as:

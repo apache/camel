@@ -106,7 +106,7 @@ Below are listed the options for this operation:
 |`remotePath` |`true` |Folder or file to delete on Dropbox
 |===
 
-=== Samples
+=== Examples
 
 [source,java]
 ----
@@ -147,7 +147,7 @@ Below are listed the options for this operation:
 |`remotePath` |`true` |Folder or file to download from Dropbox
 |===
 
-=== Samples
+=== Examples
 
 [source,java]
 ----
@@ -198,7 +198,7 @@ Below are listed the options for this operation:
 |`newRemotePath` |`true` |Destination file or folder
 |===
 
-=== Samples
+=== Examples
 
 [source,java]
 ----
@@ -250,7 +250,7 @@ Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with
 	
 |===
 
-=== Samples
+=== Examples
 
 [source,java]
 ----
@@ -313,7 +313,7 @@ will be matched. The query is required to be provided in either the endpoint con
 or as a header `CamelDropboxQuery` on the Camel message.
 |===
 
-=== Samples
+=== Examples
 
 [source,java]
 ----

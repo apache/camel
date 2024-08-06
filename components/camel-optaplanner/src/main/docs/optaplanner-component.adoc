@@ -73,7 +73,7 @@ solver identified by solverId and either synchronously or asynchronously.
 the best result from the solver identified by `solverId`.
 
 
-=== Samples
+=== Examples
 
 Solve a planning problem on the ActiveMQ queue with OptaPlanner, passing the SolverManager:
 

@@ -137,7 +137,7 @@ endpoint configured.
 |CamelThymeleafTemplate |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-== Samples
+== Examples
 
 For a simple use case, you could use something like:
 
@@ -199,7 +199,7 @@ from("direct:in")
   .to("thymeleaf:dummy?allowTemplateFromHeader=true"");
 ---------------------------------------------------------------------------------------------------------------
 
-== The Email Sample
+== The Email Example
 
 In this sample, we want to use Thymeleaf templating for an order
 confirmation email. The email template is laid out in Thymeleaf as:

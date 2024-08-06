@@ -81,7 +81,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Regular logger sample
+== Regular logger example
 
 In the route below we log the incoming orders at `DEBUG` level before
 the order is processed:
@@ -102,7 +102,7 @@ Or using Spring XML to define the route:
 </route>
 ----
 
-== Regular logger with formatter sample
+== Regular logger with formatter example
 
 In the route below we log the incoming orders at `INFO` level before the
 order is processed.
@@ -113,7 +113,7 @@ from("activemq:orders").
     to("log:com.mycompany.order?showAll=true&multiline=true").to("bean:processOrder");
 ----
 
-== Throughput logger with groupSize sample
+== Throughput logger with groupSize example
 
 In the route below we log the throughput of the incoming orders at
 `DEBUG` level grouped by 10 messages.
@@ -124,7 +124,7 @@ from("activemq:orders").
     to("log:com.mycompany.order?level=DEBUG&groupSize=10").to("bean:processOrder");
 ----
 
-== Throughput logger with groupInterval sample
+== Throughput logger with groupInterval example
 
 This route will result in message stats logged every 10s, with an
 initial 60s delay, and stats should be displayed even if there isn't any

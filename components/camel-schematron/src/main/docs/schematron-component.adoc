@@ -114,7 +114,7 @@ harm in storing these rules in the class path though, but you will have
 to build and deploy the component to pick up the changes.
 ====
 
-== Schematron rules and report samples
+== Schematron rules and report examples
 
 Here is an example of schematron rules
 

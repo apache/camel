@@ -54,7 +54,7 @@ The queue producer provides 12 operations:
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Sample for *add*:
+=== Example for *add*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ from("direct:add")
 .toF("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX);
 ------------------------------------------------------------------------------------
 
-=== Sample for *put*:
+=== Example for *put*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ from("direct:put")
 .toF("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX);
 ------------------------------------------------------------------------------------
 
-=== Sample for *poll*:
+=== Example for *poll*:
 
 [source,java]
 -------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ from("direct:poll")
 .toF("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX);
 -------------------------------------------------------------------------------------
 
-=== Sample for *peek*:
+=== Example for *peek*:
 
 [source,java]
 -------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ from("direct:peek")
 .toF("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX);
 -------------------------------------------------------------------------------------
 
-=== Sample for *offer*:
+=== Example for *offer*:
 
 [source,java]
 --------------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ from("direct:offer")
 .toF("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX);
 --------------------------------------------------------------------------------------
 
-=== Sample for *removevalue*:
+=== Example for *removevalue*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ from("direct:removevalue")
 .toF("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX);
 --------------------------------------------------------------------------------------------
 
-=== Sample for *remaining capacity*:
+=== Example for *remaining capacity*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ from("direct:remaining-capacity").setHeader(HazelcastConstants.OPERATION, consta
 String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
-=== Sample for *remove all*:
+=== Example for *remove all*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ from("direct:removeAll").setHeader(HazelcastConstants.OPERATION, constant(Hazelc
 String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
-=== Sample for *remove if*:
+=== Example for *remove if*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ from("direct:removeIf").setHeader(HazelcastConstants.OPERATION, constant(Hazelca
 String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
-=== Sample for *drain to*:
+=== Example for *drain to*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ from("direct:drainTo").setHeader(HazelcastConstants.OPERATION, constant(Hazelcas
 String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
-=== Sample for *take*:
+=== Example for *take*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ from("direct:take").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOp
 String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
-=== Sample for *retain all*:
+=== Example for *retain all*:
 
 [source,java]
 --------------------------------------------------------------------------------------------

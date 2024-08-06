@@ -102,7 +102,7 @@ the OData resource being queried, created or modified.
 |Count |<resource-uri>/$count |`java.lang.Long`
 |=======================================================================
 
-== Samples
+== Examples
 
 The following route reads top 5 entries from the People entity
 ordered by ascending FirstName property. 
