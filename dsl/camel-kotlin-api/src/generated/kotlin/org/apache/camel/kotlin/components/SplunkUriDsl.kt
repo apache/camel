@@ -563,4 +563,20 @@ public class SplunkUriDsl(
   public fun useSunHttpsHandler(useSunHttpsHandler: Boolean) {
     it.property("useSunHttpsHandler", useSunHttpsHandler.toString())
   }
+
+  /**
+   * Sets client's certificate validation mode. Value false makes SSL vulnerable and is not
+   * recommended for the production environment.
+   */
+  public fun validateCertificates(validateCertificates: String) {
+    it.property("validateCertificates", validateCertificates)
+  }
+
+  /**
+   * Sets client's certificate validation mode. Value false makes SSL vulnerable and is not
+   * recommended for the production environment.
+   */
+  public fun validateCertificates(validateCertificates: Boolean) {
+    it.property("validateCertificates", validateCertificates.toString())
+  }
 }

@@ -96,6 +96,8 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "usesunhttpshandler":
         case "useSunHttpsHandler": target.getConfiguration().setUseSunHttpsHandler(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "validatecertificates":
+        case "validateCertificates": target.getConfiguration().setValidateCertificates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -176,6 +178,8 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "usesunhttpshandler":
         case "useSunHttpsHandler": return boolean.class;
         case "username": return java.lang.String.class;
+        case "validatecertificates":
+        case "validateCertificates": return boolean.class;
         default: return null;
         }
     }
@@ -257,6 +261,8 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "usesunhttpshandler":
         case "useSunHttpsHandler": return target.getConfiguration().isUseSunHttpsHandler();
         case "username": return target.getConfiguration().getUsername();
+        case "validatecertificates":
+        case "validateCertificates": return target.getConfiguration().isValidateCertificates();
         default: return null;
         }
     }
