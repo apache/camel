@@ -890,13 +890,14 @@ public class Run extends CamelCommand {
         eq.logging = false;
         eq.loggingLevel = "off";
 
-        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
-
         // run export
         int exit = eq.export();
-        if (exit != 0) {
+        if (exit != 0 || this.exportRun) {
             return exit;
         }
+
+        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
+
         // run quarkus via maven
         String mvnw = "/mvnw";
         if (FileUtil.isWindows()) {
@@ -958,13 +959,14 @@ public class Run extends CamelCommand {
         eq.logging = false;
         eq.loggingLevel = "off";
 
-        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
-
         // run export
         int exit = eq.export();
-        if (exit != 0) {
+        if (exit != 0 || exportRun) {
             return exit;
         }
+
+        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
+
         // prepare spring-boot for logging to file
         InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml");
         eq.safeCopy(is, new File(eq.exportDir + "/src/main/resources/logback.xml"));
