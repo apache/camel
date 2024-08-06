@@ -72,6 +72,13 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
         if (answer instanceof PlatformHttpComponent) {
             MainHttpServerFactory.setupHttpServer(camelContext, silent);
         }
+        if ("rest".equals(name)) {
+            // include direct component when using rest-dsl
+            ComponentModel direct = catalog.componentModel("direct");
+            if (direct != null) {
+                downloadLoader(direct.getGroupId(), direct.getArtifactId(), direct.getVersion());
+            }
+        }
         if (answer == null) {
             List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
             if (suggestion != null && !suggestion.isEmpty()) {
