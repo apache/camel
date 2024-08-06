@@ -29,6 +29,7 @@ import static org.apache.camel.component.mllp.MllpExceptionTestSupport.LOG_PHI_T
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -206,6 +207,16 @@ public class Hl7UtilTest {
 
         assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
         assertThat(actual, endsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadTimestamp() throws Exception {
+        MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, TEST_MESSAGE.getBytes(), "AA");
+
+        String actualMsh7Field = mllpSocketBuffer.toString().split("\\|")[6];
+
+        assertThat(actualMsh7Field, matchesPattern("\\d{14}\\.\\d{3}[+-]\\d{4}"));
     }
 
     /**
