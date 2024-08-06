@@ -35,7 +35,7 @@ public final class Hl7Util {
 
     public static final Map<Character, String> CHARACTER_REPLACEMENTS;
 
-    public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyyMMddHHmmssSSSZZZZ");
+    public static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss.SSSZZZZ");
 
     static final int STRING_BUFFER_PAD_SIZE = 100;
 
