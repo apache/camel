@@ -106,7 +106,8 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
                                                      + authenticationTypeName + "AuthenticationConfigurer";
                     ClassResolver resolver = camelContext.getClassResolver();
                     Injector injector = camelContext.getInjector();
-                    result = injector.newInstance(resolver.resolveMandatoryClass(configurerQualifiedName, MainAuthenticationConfigurer.class));
+                    result = injector.newInstance(
+                            resolver.resolveMandatoryClass(configurerQualifiedName, MainAuthenticationConfigurer.class));
                 } catch (Exception e) {
                     throw new RuntimeException(
                             "Could not create MainAuthenticationConfigurer for authentication type " + authenticationTypeName,
