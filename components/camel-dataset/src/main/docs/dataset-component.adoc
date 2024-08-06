@@ -65,7 +65,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Configuring DataSet
+== Usage
+
+=== Configuring DataSet
 
 Camel will look up in the Registry for a bean implementing the `DataSet` interface.
 So you can register your own data set as:
@@ -77,34 +79,12 @@ So you can register your own data set as:
 </bean>
 ----
 
-== Example
-
-For example, to test that a set of messages are sent to a queue and then
-consumed from the queue without losing any messages:
-
-[source,java]
-----
-// send the dataset to a queue
-from("dataset:foo").to("activemq:SomeQueue");
-
-// now lets test that the messages are consumed correctly
-from("activemq:SomeQueue").to("dataset:foo");
-----
-
-The above would look in the Registry to find the
-`foo` `DataSet` instance which is used to create the messages.
-
-Then you create a `DataSet` implementation, such as using the
-`SimpleDataSet` as described below, configuring things like how big the
-data set is and what the messages look like etc.  
- 
-
-== DataSetSupport (abstract class)
+=== DataSetSupport (abstract class)
 
 The `DataSetSupport` abstract class is a nice starting point for new
 data set, and provides some useful features to derived classes.
 
-=== Properties on DataSetSupport
+==== Additional Properties on DataSetSupport
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
@@ -124,11 +104,11 @@ Useful for showing the progress of a large load test. If smaller than zero (` < 
 `size` / 5, if is 0 then `size`, else set to `reportCount` value.
 |===
 
-== SimpleDataSet
+=== SimpleDataSet
 
 The `SimpleDataSet` extends `DataSetSupport`, and adds a default body.
 
-=== Additional Properties on SimpleDataSet
+==== Additional Properties on SimpleDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
@@ -141,12 +121,12 @@ configure the `SimpleDataSet` to use it by setting the
 `outputTransformer` property.
 |===
 
-== ListDataSet
+=== ListDataSet
 
 The List`DataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
-=== Additional Properties on ListDataSet
+==== Additional Properties on ListDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
@@ -168,12 +148,12 @@ the payload for the exchange will be selected using the modulus of the
 `CamelDataSetIndex % defaultBodies.size()` )
 |===
 
-== FileDataSet
+=== FileDataSet
 
 The `FileDataSet` extends `ListDataSet`, and adds support for loading
 the bodies from a file.
 
-=== Additional Properties on FileDataSet
+==== Additional Properties on FileDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
@@ -185,5 +165,25 @@ the bodies from a file.
 the file into multiple payloads.
 |===
 
+== Example
+
+For example, to test that a set of messages are sent to a queue and then
+consumed from the queue without losing any messages:
+
+[source,java]
+----
+// send the dataset to a queue
+from("dataset:foo").to("activemq:SomeQueue");
+
+// now lets test that the messages are consumed correctly
+from("activemq:SomeQueue").to("dataset:foo");
+----
+
+The above would look in the Registry to find the
+`foo` `DataSet` instance which is used to create the messages.
+
+Then you create a `DataSet` implementation, such as using the
+`SimpleDataSet` as described below, configuring things like how big the
+data set is and what the messages look like etc.
 
 include::spring-boot:partial$starter.adoc[]
