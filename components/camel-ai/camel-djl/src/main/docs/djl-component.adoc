@@ -173,7 +173,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Model Zoo
+== Usage
+
+=== Model Zoo
 
 The following tables contain supported models in the model zoos per application.
 
@@ -182,7 +184,7 @@ models found for them from the basic, PyTorch, TensorFlow or MXNet DJL model
 zoos. You may still find more models for an application from other model zoos
 such as Hugging Face, ONNX, etc.
 
-=== CV - Image Classification
+==== CV - Image Classification
 
 Application: `cv/image_classification`
 
@@ -265,7 +267,7 @@ Application: `cv/image_classification`
 
 |===
 
-=== CV - Object Detection
+==== CV - Object Detection
 
 Application: `cv/object_detection`
 
@@ -298,7 +300,7 @@ Application: `cv/object_detection`
 
 |===
 
-=== CV - Semantic Segmentation
+==== CV - Semantic Segmentation
 
 Application: `cv/semantic_segmentation`
 
@@ -310,7 +312,7 @@ Application: `cv/semantic_segmentation`
 
 |===
 
-=== CV - Instance Segmentation
+==== CV - Instance Segmentation
 
 Application: `cv/instance_segmentation`
 
@@ -324,7 +326,7 @@ Application: `cv/instance_segmentation`
 
 |===
 
-=== CV - Pose Estimation
+==== CV - Pose Estimation
 
 Application: `cv/pose_estimation`
 
@@ -341,7 +343,7 @@ Application: `cv/pose_estimation`
 
 |===
 
-=== CV - Action Recognition
+==== CV - Action Recognition
 
 Application: `cv/action_recognition`
 
@@ -355,7 +357,7 @@ Application: `cv/action_recognition`
 
 |===
 
-=== CV - Image Generation
+==== CV - Image Generation
 
 Application: `cv/image_generation`
 
@@ -375,7 +377,7 @@ Application: `cv/image_generation`
 
 |===
 
-=== NLP - Question Answer
+==== NLP - Question Answer
 
 Application: `nlp/question_answer`
 
@@ -393,7 +395,7 @@ Application: `nlp/question_answer`
 
 |===
 
-=== NLP - Sentiment Analysis
+==== NLP - Sentiment Analysis
 
 Application: `nlp/sentiment_analysis`
 
@@ -405,7 +407,7 @@ Application: `nlp/sentiment_analysis`
 
 |===
 
-=== NLP - Word Embedding
+==== NLP - Word Embedding
 
 Application: `nlp/word_embedding`
 
@@ -417,7 +419,7 @@ Application: `nlp/word_embedding`
 
 |===
 
-=== Time Series - Forecasting
+==== Time Series - Forecasting
 
 Application: `timeseries/forecasting`
 
@@ -433,13 +435,13 @@ Application: `timeseries/forecasting`
 |===
 
 
-== DJL Engine implementation
+=== DJL Engine implementation
 
 Because DJL is deep learning framework-agnostic, you don't have to make a choice between frameworks when creating your projects.
 You can switch frameworks at any point.
 To ensure the best performance, DJL also provides automatic CPU/GPU choice based on hardware configuration.
 
-=== PyTorch engine
+==== PyTorch engine
 
 You can pull the PyTorch engine from the central Maven repository by including the following dependency:
 
@@ -458,7 +460,7 @@ It will automatically determine the appropriate jars for your system based on th
 
 More information about https://docs.djl.ai/engines/pytorch/index.html[PyTorch engine installation]
 
-=== TensorFlow engine
+==== TensorFlow engine
 
 You can pull the TensorFlow engine from the central Maven repository by including the following dependency:
 
@@ -477,7 +479,7 @@ It will automatically determine the appropriate jars for your system based on th
 
 More information about https://docs.djl.ai/engines/tensorflow/index.html[TensorFlow engine installation]
 
-=== MXNet engine
+==== MXNet engine
 
 You can pull the MXNet engine from the central Maven repository by including the following dependency:
 
@@ -500,22 +502,21 @@ More information about https://docs.djl.ai/engines/mxnet/index.html[MXNet engine
 
 == Examples
 
-=== MNIST image classification from file
-
+.MNIST image classification from file
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
 
-=== Object detection
+.Object detection
 [source,java]
 ----
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?artifactId=ai.djl.mxnet:mlp:0.0.1");
 ----
 
-=== Custom deep learning model
+.Custom deep learning model
 [source,java]
 ----
 // create a deep learning model

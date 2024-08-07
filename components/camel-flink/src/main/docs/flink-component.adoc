@@ -61,7 +61,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Flink DataSet Callback
+== Examples
+
+=== Flink DataSet Callback
 
 [source,java]
 -----------------------------------
@@ -80,7 +82,7 @@ public DataSetCallback<Long> dataSetCallback() {
 }
 -----------------------------------
 
-== Flink DataStream Callback
+=== Flink DataStream Callback
 
 [source,java]
 ---------------------------
@@ -97,7 +99,7 @@ public VoidDataStreamCallback dataStreamCallback() {
 }
 ---------------------------
 
-== Camel-Flink Producer call
+=== Camel-Flink Producer call
 
 [source,java]
 -----------------------------------

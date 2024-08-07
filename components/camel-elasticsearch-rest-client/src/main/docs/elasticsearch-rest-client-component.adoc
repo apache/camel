@@ -86,7 +86,9 @@ You can set the message exchange body to a `Map` of `String` keys & values for t
 
 |===
 
-== Index Content Example
+== Examples
+
+=== Index Content Example
 
 To index some content.
 
@@ -107,7 +109,7 @@ from("direct:index")
     .to("elasticsearch-rest-client://myCluster?operation=INDEX_OR_UPDATE&indexName=myIndex");
 ----
 
-== Get By ID Example
+=== Get By ID Example
 
 [source,java]
 ----
@@ -116,7 +118,7 @@ from("direct:getById")
     .to("elasticsearch-rest-client://myCluster?operation=GET_BY_ID&indexName=myIndex");
 ----
 
-== Delete Example
+=== Delete Example
 
 To delete indexed content, provide the `ID` message header.
 
@@ -127,7 +129,7 @@ from("direct:getById")
     .to("elasticsearch-rest-client://myCluster?operation=DELETE&indexName=myIndex");
 ----
 
-== Create Index Example
+=== Create Index Example
 
 To create a new index.
 
@@ -151,7 +153,7 @@ from("direct:createIndex")
     .to("elasticsearch-rest-client://myCluster?operation=CREATE_INDEX&indexName=myIndex");
 ----
 
-== Delete Index Example
+=== Delete Index Example
 
 To delete an index.
 
@@ -161,7 +163,7 @@ from("direct:deleteIndex")
     .to("elasticsearch-rest-client://myCluster?operation=DELETE_INDEX&indexName=myIndex");
 ----
 
-== Search Example
+=== Search Example
 
 Search with a JSON query.
 

@@ -76,7 +76,9 @@ include::partial$component-endpoint-headers.adoc[]
 By default, it will override any existing file if one exists with the same name.
 ====
 
-== Move, Pre Move and Delete operations
+== Usage
+
+=== Move, Pre Move and Delete operations
 
 By default, Camel will move consumed files to the `.camel` subfolder
 relative to the directory where the file was consumed.
@@ -93,7 +95,7 @@ from("file://inbox?delete=true").to("bean:handleOrder");
 There is a sample <<File2-ReadingFromADirectoryAndTheDefaultMoveOperation,showing reading from a directory and the default move operation>> below.
 ====
 
-=== Move, Delete and the Routing process
+==== Move, Delete and the Routing process
 
 Any move or delete operations are executed after the routing has completed.
 So, during processing of the `Exchange` the file is still located in the inbox folder.
@@ -127,7 +129,7 @@ Then that's using the xref:languages:file-language.adoc[File Language] which we
 This can be either relative or absolute.
 If relative, the directory is created as a subfolder from within the folder where the file was consumed.
 
-=== Move and Pre Move operations
+==== Move and Pre Move operations
 
 We have introduced a `preMove` operation to move files *before* they
 are processed. This allows you to mark which files have been scanned as
@@ -148,7 +150,7 @@ from("file://inbox?preMove=inprogress&move=.done").to("bean:handleOrder");
 So in this situation, the file is in the `inprogress` folder when being
 processed, and after it's processed, it's moved to the `.done` folder.
 
-=== Fine-grained control over Move and PreMove option
+==== Fine-grained control over Move and PreMove option
 
 The `move` and `preMove` options are Expression-based, so we have the full power of
 the xref:languages:file-language.adoc[File Language] to do advanced configuration
@@ -170,7 +172,7 @@ the pattern, we can do:
 move=backup/${date:now:yyyyMMdd}/${file:name}
 ----
 
-=== About moveFailed
+==== About moveFailed
 
 The `moveFailed` option allows you to move files that *could not* be
 processed successfully to another location such as an error folder of your
@@ -183,7 +185,7 @@ For example, to move the files in an error folder with a timestamp you can use
 See more examples at xref:languages:file-language.adoc[File Language]
 ====
 
-== Exchange Properties, file consumer only
+=== Exchange Properties, file consumer only
 
 As the file consumer implements the `BatchConsumer` it supports batching
 the files it polls. By batching, we mean that Camel will add the
@@ -205,7 +207,7 @@ This allows you, for instance, to know how many files exist in this batch
 and for instance, let the Aggregator2 aggregate
 this number of files.
 
-== Using charset
+=== Using charset
 
 The `charset` option allows configuring the encoding of the files on
 both the consumer and producer endpoints. For example, if you read utf-8
@@ -291,7 +293,7 @@ DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/came
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-== Common gotchas with folder and filenames
+=== Common gotchas with folder and filenames
 
 When Camel is producing files (writing files), there are a few gotchas
 affecting how to set a filename of your choice. By default, Camel will
@@ -331,7 +333,7 @@ And a syntax where we set the filename on the endpoint with the
 from("direct:report").to("file:target/reports/?fileName=report.txt");
 ----
 
-== Filename Expression
+=== Filename Expression
 
 Filename can be set either using the *expression* option or as a
 string-based xref:languages:file-language.adoc[File Language] expression in the
@@ -339,7 +341,7 @@ string-based xref:languages:file-language.adoc[File Language] expression in the
 for syntax and samples.
 
 [[File2-Consumingfilesfromfolderswhereothersdropfilesdirectly]]
-== Consuming files from folders where others drop files directly
+=== Consuming files from folders where others drop files directly
 
 Beware if you consume files from a folder where other applications write
 files too. Take a look at the different `readLock` options to see
@@ -354,9 +356,9 @@ good at detecting this. You may also want to look at the `doneFileName`
 option, which uses a marker file (_done file_) to signal when a file is
 done and ready to be consumed.
 
-== Done files
+=== Done files
 
-=== Using done files
+==== Using done files
 
 See also section <<File2-WritingDoneFiles,_writing done files_>> below.
 
@@ -419,7 +421,7 @@ You can also use a prefix for the _done file_, such as:
 
 
 [[File2-WritingDoneFiles]]
-=== Writing done files
+==== Writing done files
 
 After you have written a file, you may want to write an additional _done file_ as a kind of marker,
 to indicate to others that the file is finished and has been written.
@@ -474,7 +476,7 @@ Will, for example, create a file named `foo.done` if the target file was
 ====
 
 [[File2-Usingflatten]]
-== Using flatten
+=== Using flatten
 
 If you want to store the files in the `outputdir` directory in the same
 directory, disregarding the source directory layout (e.g., to flatten out
@@ -493,13 +495,13 @@ outputdir/foo.txt
 outputdir/bar.txt
 ----
 
-== Writing to files
+=== Writing to files
 
 Camel is also able to write files, i.e., produce files.
 In the sample below, we receive some reports on the SEDA queue that we process
 before they are being written to a directory.
 
-=== Write to subdirectory using `Exchange.FILE_NAME`
+==== Write to subdirectory using `Exchange.FILE_NAME`
 
 Using a single route, it is possible to write a file to any number of
 subdirectories. If you have a route setup as such:
@@ -523,7 +525,7 @@ Exchange.FILE_NAME = foo/bye.txt => /rootDirectory/foo/bye.txt
 This allows you to have a single route to write files to multiple
 destinations.
 
-=== Writing file through the temporary directory relative to the final destination
+==== Writing file through the temporary directory relative to the final destination
 
 Sometimes you need to temporarily write the files to some directory
 relative to the destination directory. Such a situation usually happens
@@ -539,7 +541,7 @@ from("direct:start").
   to("file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/");
 ----
 
-== Avoiding reading the same file more than once (idempotent consumer)
+=== Avoiding reading the same file more than once (idempotent consumer)
 
 Camel supports Idempotent Consumer
 directly within the component, so it will skip already processed files.
@@ -589,9 +591,9 @@ consumed before:
 DEBUG FileConsumer is idempotent and the file has been consumed before. Will skip this file: target\idempotent\report.txt
 ----
 
-== Idempotent Repository
+=== Idempotent Repository
 
-=== Using a file-based idempotent repository
+==== Using a file-based idempotent repository
 
 In this section we will use the file-based idempotent repository
 `org.apache.camel.processor.idempotent.FileIdempotentRepository` instead
@@ -611,7 +613,7 @@ idempotent repository and define our file consumer to use our repository
 with the `idempotentRepository` using `#` sign to indicate
 Registry lookup:
 
-=== Using a JPA based idempotent repository
+==== Using a JPA based idempotent repository
 
 In this section, we will use the JPA based idempotent repository instead
 of the in-memory based that is used as default.
@@ -662,17 +664,17 @@ option:
 </route>
 ----
 
-== Filtering Strategies
+=== Filtering Strategies
 
 Camel supports pluggable filtering strategies. They are described below.
 
-=== Filter using the `GenericFilter`
+==== Filter using the `GenericFilter`
 
 The `filter` option allows you to implement a custom filter in Java code
 by implementing the `org.apache.camel.component.file.GenericFileFilter`
 interface.
 
-==== Implementing a GenericFilter
+===== Implementing a GenericFilter
 
 The interface has an `accept` method that returns a boolean.
 The meaning of the return values are:
@@ -684,7 +686,7 @@ The meaning of the return values are:
 There is also a `isDirectory` method on `GenericFile` to inform whether the file is a directory.
 This allows you to filter unwanted directories, to avoid traversing down unwanted directories.
 
-==== Using the `GenericFilter`
+===== Using the `GenericFilter`
 
 You can then configure the endpoint with such a filter to skip certain files being processed.
 
@@ -706,7 +708,7 @@ spring XML file:
 </route>
 ----
 
-=== Filtering using ANT path matcher
+==== Filtering using ANT path matcher
 
 The ANT path matcher is based on
 http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher].
@@ -728,11 +730,11 @@ The sample below demonstrates how to use it:
 from("file://inbox?antInclude=**/*.txt").to("...");
 ----
 
-== Sorting Strategies
+=== Sorting Strategies
 
 Camel supports pluggable sorting strategies. They are described below.
 
-=== Sorting using Comparator
+==== Sorting using Comparator
 
 This strategy it to use the build in `java.util.Comparator` in Java. You can then configure the
 endpoint with such a comparator and have Camel sort the files before
@@ -766,7 +768,7 @@ Registry by prefixing the id with `#`. So writing
 Registry for a bean with the ID, `mySorter`.
 ====
 
-=== Sorting using sortBy
+==== Sorting using sortBy
 
 Camel supports pluggable sorting strategies. This strategy uses the
 xref:languages:file-language.adoc[File Language] to configure the sorting. The
@@ -845,7 +847,7 @@ per group, so we could reverse the file names:
 sortBy=date:file:yyyyMMdd;reverse:file:name
 ----
 
-== Using GenericFileProcessStrategy
+=== Using GenericFileProcessStrategy
 
 The option `processStrategy` can be used to use a custom
 `GenericFileProcessStrategy` that allows you to implement your own
@@ -866,7 +868,7 @@ resources etc.
 * in the `commit()` method we can move the actual file and also delete
 the _ready_ file.
 
-== Using bridgeErrorHandler
+=== Using bridgeErrorHandler
 
 If you want to use the Camel Error Handler to
 deal with any exception occurring in the file consumer, then you can
@@ -899,7 +901,7 @@ The Exchange is processed directly by the Camel Error Handler, and does not allo
 prior actions such as interceptors, onCompletion to take action.
 ====
 
-== Debug logging
+=== Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.

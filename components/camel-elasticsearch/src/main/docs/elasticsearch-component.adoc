@@ -110,7 +110,9 @@ to configure it globally at the component level thanks to the option _enableDocu
 
 |===
 
-== Configure the component and enable basic authentication
+== Usage
+
+=== Configure the component and enable basic authentication
 To use the Elasticsearch component, it has to be configured with a minimum configuration.
 
 [source,java]
@@ -135,7 +137,55 @@ elasticsearchComponent.setCertificatePath(certPath);
 camelContext.addComponent("elasticsearch", elasticsearchComponent);
 ----
 
-== Index Example
+=== Document type
+
+For all the search operations, it is possible to indicate the type of document to retrieve to get the result already unmarshalled with the expected type.
+
+The document type can be set using the header "documentClass" or via the uri parameter of the same name.
+
+=== Using Camel Elasticsearch with Spring Boot
+
+When you use `camel-elasticsearch-starter` with Spring Boot v2, then you must declare the following
+dependency in your own `pom.xml`.
+
+[source,xml]
+----
+<dependency>
+  <groupId>jakarta.json</groupId>
+  <artifactId>jakarta.json-api</artifactId>
+  <version>2.0.2</version>
+</dependency>
+----
+
+This is needed because Spring Boot v2 provides jakarta.json-api:1.1.6, and Elasticsearch requires to use json-api v2.
+
+=== Use RestClient provided by Spring Boot
+
+By default, Spring Boot will auto configure an Elasticsearch RestClient that will be used by camel, it is possible to customize the client with the following basic properties:
+
+[source,properties]
+----
+spring.elasticsearch.uris=myelkhost:9200
+spring.elasticsearch.username=elkuser
+spring.elasticsearch.password=secure!!
+----
+
+More information can be found in https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#application-properties.data.spring.elasticsearch.connection-timeout
+
+=== Disable Sniffer when using Spring Boot
+
+When Spring Boot is on the classpath, the Sniffer client for Elasticsearch is enabled by default. This option can be disabled in the Spring Boot Configuration:
+
+[source,yaml]
+----
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
+----
+
+== Examples
+
+=== Index Example
 
 Below is a simple INDEX example
 
@@ -165,7 +215,7 @@ map.put("content", "test");
 String indexId = template.requestBody("direct:index", map, String.class);
 ----
 
-== Search Example
+=== Search Example
 
 Searching on specific field(s) and value use the Operation ´Search´.
 Pass in the query JSON String or the Map
@@ -244,7 +294,7 @@ from("direct:search")
   .end();
 ----
 
-== MultiSearch Example
+=== MultiSearch Example
 
 MultiSearching on specific field(s) and value uses the Operation ´MultiSearch´.
 Pass in the MultiSearchRequest instance
@@ -273,52 +323,6 @@ MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").s
         new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
                 .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
 List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
-----
-
-== Document type
-
-For all the search operations, it is possible to indicate the type of document to retrieve to get the result already unmarshalled with the expected type.
-
-The document type can be set using the header "documentClass" or via the uri parameter of the same name.
-
-== Using Camel Elasticsearch with Spring Boot
-
-When you use `camel-elasticsearch-starter` with Spring Boot v2, then you must declare the following
-dependency in your own `pom.xml`.
-
-[source,xml]
-----
-<dependency>
-  <groupId>jakarta.json</groupId>
-  <artifactId>jakarta.json-api</artifactId>
-  <version>2.0.2</version>
-</dependency>
-----
-
-This is needed because Spring Boot v2 provides jakarta.json-api:1.1.6, and Elasticsearch requires to use json-api v2.
-
-=== Use RestClient provided by Spring Boot
-
-By default, Spring Boot will auto configure an Elasticsearch RestClient that will be used by camel, it is possible to customize the client with the following basic properties:
-
-[source,properties]
-----
-spring.elasticsearch.uris=myelkhost:9200
-spring.elasticsearch.username=elkuser
-spring.elasticsearch.password=secure!!
-----
-
-More information can be found in https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#application-properties.data.spring.elasticsearch.connection-timeout
-
-=== Disable Sniffer when using Spring Boot
-
-When Spring Boot is on the classpath, the Sniffer client for Elasticsearch is enabled by default. This option can be disabled in the Spring Boot Configuration:
-
-[source,yaml]
-----
-spring:
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
 ----
 
 include::spring-boot:partial$starter.adoc[]

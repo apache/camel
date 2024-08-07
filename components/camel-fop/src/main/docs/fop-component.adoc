@@ -36,7 +36,9 @@ for this component:
 fop://outputFormat?[options]
 ----------------------------
 
-== Output Formats
+== Usage
+
+=== Output Formats
 
 The primary output format is PDF, but other output
 http://xmlgraphics.apache.org/fop/0.95/output.html[formats] are also
@@ -86,7 +88,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Configuration file
+=== Configuration file
 
 The location of a configuration file with the following
 http://xmlgraphics.apache.org/fop/1.0/configuration.html[structure].
@@ -95,44 +97,44 @@ default. You can use `file:`, or `classpath:` as prefix to load the
 resource from file or classpath. In previous releases, the file is always
 loaded from the file system.
 
-== Message Operations
+=== Message Operations
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |name |default value |description
 
-|CamelFop.Output.Format |  | Overrides the output format for that message
+|`CamelFop.Output.Format` |  | Overrides the output format for that message
 
-|CamelFop.Encrypt.userPassword |  | PDF user password
+|`CamelFop.Encrypt.userPassword` |  | PDF user password
 
-|CamelFop.Encrypt.ownerPassword |  | PDF owner passoword
+|`CamelFop.Encrypt.ownerPassword` |  | PDF owner passoword
 
-|CamelFop.Encrypt.allowPrint | true |Allows printing the PDF
+|`CamelFop.Encrypt.allowPrint` | `true` |Allows printing the PDF
 
-|CamelFop.Encrypt.allowCopyContent |true |Allows copying content of the PDF
+|`CamelFop.Encrypt.allowCopyContent` |`true` |Allows copying content of the PDF
 
-|CamelFop.Encrypt.allowEditContent |true |Allows editing content of the PDF
+|`CamelFop.Encrypt.allowEditContent` |`true` |Allows editing content of the PDF
 
-|CamelFop.Encrypt.allowEditAnnotations |true |Allows editing annotation of the PDF
+|`CamelFop.Encrypt.allowEditAnnotations` |`true` |Allows editing annotation of the PDF
 
-|CamelFop.Render.producer |Apache FOP |Metadata element for the system/software that produces the document
+|`CamelFop.Render.producer` |Apache FOP |Metadata element for the system/software that produces the document
 
-|CamelFop.Render.creator |  | Metadata element for the user that created the document
+|`CamelFop.Render.creator` |  | Metadata element for the user that created the document
 
-|CamelFop.Render.creationDate |  | Creation Date
+|`CamelFop.Render.creationDate` |  | Creation Date
 
-|CamelFop.Render.author |  | Author of the content of the document
+|`CamelFop.Render.author` |  | Author of the content of the document
 
-|CamelFop.Render.title |  | Title of the document
+|`CamelFop.Render.title` |  | Title of the document
 
-|CamelFop.Render.subject |  | Subject of the document
+|`CamelFop.Render.subject` |  | Subject of the document
 
-|CamelFop.Render.keywords |  | Set of keywords applicable to this document
+|`CamelFop.Render.keywords` |  | Set of keywords applicable to this document
 |=======================================================================
 
-== Example
+=== Example
 
-Below is an example route that renders PDFs from xml data and xslt
+Below is an example route that renders PDFs from XML data and XSLT
 template and saves the PDF files in the target folder:
 
 [source,java]

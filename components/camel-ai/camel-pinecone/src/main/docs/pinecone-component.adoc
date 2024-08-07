@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Pionecone Component provides support for interacting with the https://pinecone.io/[Milvus Vector Database].
+The Pinecone Component provides support for interacting with the https://pinecone.io/[Pinecone Vector Database].
 
 == URI format
 
