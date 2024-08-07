@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * During export then we can be more flexible and allow missing property placeholders to resolve to a hardcoded value,
@@ -31,11 +32,14 @@ public class ExportTypeConverter extends TypeConverterSupport {
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
         if (PropertyConfigurerSupport.MAGIC_VALUE.equals(value)) {
             // attempt to convert to the given type using different common inputs (boolean, numeric, string)
-            T answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, "true");
-            if (answer == null) {
+            T answer = null;
+            if (boolean.class == type || Boolean.class == type) {
+                answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, "true");
+            }
+            if (answer == null && ObjectHelper.isNumericType(type)) {
                 answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, "1");
             }
-            if (answer == null) {
+            if (answer == null && type == String.class) {
                 answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange,
                         PropertyConfigurerSupport.MAGIC_VALUE);
             }
