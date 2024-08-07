@@ -331,8 +331,9 @@ You can, however, use any Expression to send
 whatever you like. For example, you can invoke a method on a Bean or use
 a custom processor.
 
+== Usage
 
-== Message Mapping between JMS and Camel
+=== Message Mapping between JMS and Camel
 
 Camel automatically maps messages between `javax.jms.Message` and
 `org.apache.camel.Message`.
@@ -426,7 +427,7 @@ from("file://inbox/order").setHeader("CamelJmsMessageType", JmsMessageType.Text)
 The possible values are defined in the `enum` class,
 `org.apache.camel.jms.JmsMessageType`.
 
-== Message format when sending
+=== Message format when sending
 
 The exchange sent over the JMS wire must conform to the
 http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html[JMS Message
@@ -463,7 +464,7 @@ at *DEBUG* level if it drops a given header value. For example:
   - Ignoring non primitive header: order of class: org.apache.camel.component.jms.issues.DummyOrder with value: DummyOrder{orderId=333, itemId=4444, quantity=2}
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-== Message format when receiving
+=== Message format when receiving
 
 Camel adds the following properties to the `Exchange` when it receives a
 message:
@@ -509,7 +510,7 @@ As all the above information is standard JMS, you can check the
 http://java.sun.com/javaee/5/docs/api/javax/jms/Message.html[JMS
 documentation] for further details.
 
-== About using Camel to send and receive messages and JMSReplyTo
+=== About using Camel to send and receive messages and JMSReplyTo
 
 The JMS component is complex, and you have to pay close attention to how
 it works in some cases. So this is a short summary of some
@@ -527,7 +528,7 @@ endpoint: `disableReplyTo`, `preserveMessageQos`, `explicitQosEnabled`.
 All this can be a tad complex to understand and configure to support
 your use case.
 
-=== JmsProducer
+==== JmsProducer
 
 The `JmsProducer` behaves as follows, depending on configuration:
 
@@ -554,7 +555,7 @@ instruct Camel to keep the `JMSReplyTo`. In all situations the
 sending the message.
 |=======================================================================
 
-=== JmsConsumer
+==== JmsConsumer
 
 The `JmsConsumer` behaves as follows, depending on configuration:
 
@@ -584,7 +585,7 @@ from("activemq:queue:in")
    .to("bean:handleOrder");
 ------------------------------------------------------
 
-== Reuse endpoint and send to different destinations computed at runtime
+=== Reuse endpoint and send to different destinations computed at runtime
 
 If you need to send messages to a lot of different JMS destinations, it
 makes sense to reuse a JMS endpoint and specify the real destination in
@@ -638,7 +639,7 @@ them to the created JMS message to avoid the accidental loops
 in the routes (in scenarios when the message will be forwarded to
 another JMS endpoint).
 
-== Configuring different JMS providers
+=== Configuring different JMS providers
 
 You can configure your JMS provider in Spring XML as
 follows:
@@ -659,7 +660,7 @@ spring context for the scheme name you use for
 Endpoint URIs and having the
 Component resolve the endpoint URIs.
 
-=== Using JNDI to find the ConnectionFactory
+==== Using JNDI to find the ConnectionFactory
 
 If you are using a J2EE container, you might need to look up JNDI to
 find the JMS `ConnectionFactory` rather than use the usual `<bean>`
@@ -680,7 +681,7 @@ http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html
 jee schema] in the Spring reference documentation for more details about
 JNDI lookup.
 
-== Concurrent Consuming
+=== Concurrent Consuming
 
 A common requirement with JMS is to consume messages concurrently in
 multiple threads to make an application more responsive. You
@@ -699,7 +700,7 @@ You can configure this option in one of the following ways:
 * On the endpoint URI or,
 * By invoking `setConcurrentConsumers()` directly on the `JmsEndpoint`.
 
-=== Concurrent Consuming with async consumer
+==== Concurrent Consuming with async consumer
 
 Notice that each concurrent consumer will only pick up the next available
 message from the JMS broker, when the current message has been fully
@@ -716,7 +717,7 @@ from("jms:SomeQueue?concurrentConsumers=20&asyncConsumer=true").
   bean(MyClass.class);
 ----------------------------------------------------------------
 
-== Request-reply over JMS
+=== Request-reply over JMS
 
 Camel supports Request Reply over JMS. In
 essence the MEP of the Exchange should be `InOut` when you send a
@@ -805,7 +806,7 @@ from(xxx)
 In this route, we instruct Camel to route replies
 asynchronously using a thread pool with five threads.
 
-=== Request-reply over JMS and using a shared fixed reply queue
+==== Request-reply over JMS and using a shared fixed reply queue
 
 If you use a fixed reply queue when doing
 Request Reply over JMS as shown in the example
@@ -839,7 +840,7 @@ Notice this will cause the Camel to send pull requests to the message
 broker more frequently, and thus require more network traffic. +
  It is generally recommended to use temporary queues if possible.
 
-=== Request-reply over JMS and using an exclusive fixed reply queue
+==== Request-reply over JMS and using an exclusive fixed reply queue
 
 In the previous example, Camel would anticipate the fixed reply queue
 named "bar" was shared, and thus it uses a `JMSSelector` to only consume
@@ -883,7 +884,7 @@ node in the cluster may pick up messages intended as a reply on
 another node. For clustered environments, it's recommended to use shared
 reply queues instead.
 
-== Synchronizing clocks between senders and receivers
+=== Synchronizing clocks between senders and receivers
 
 When doing messaging between systems, it is desirable that the systems
 have synchronized clocks. For example, when sending a xref:jms-component.adoc[JMS]
@@ -900,7 +901,7 @@ can use the http://activemq.apache.org/timestampplugin.html[timestamp
 plugin] to synchronize clocks.
 ====
 
-== About time to live
+=== About time to live
 
 Read first above about synchronized clocks.
 
@@ -966,7 +967,7 @@ example, to indicate a 5 sec., you set `timeToLive=5000`. The option
 also for InOnly messaging. The `requestTimeout` option is not being used
 for InOnly messaging.
 
-== Enabling Transacted Consumption
+=== Enabling Transacted Consumption
 
 A common requirement is to consume from a queue in a transaction and
 then process the message using the Camel route. To do this, just ensure
@@ -1012,7 +1013,7 @@ http://tmielke.blogspot.com/2012/03/camel-jms-with-transactions-lessons.html[her
 and
 http://forum.springsource.org/showthread.php?123631-JMS-DMLC-not-caching%20connection-when-using-TX-despite-cacheLevel-CACHE_CONSUMER&p=403530&posted=1#post403530[here].
 
-== Using JMSReplyTo for late replies
+=== Using JMSReplyTo for late replies
 
 When using Camel as a JMS listener, it sets an Exchange property with
 the value of the ReplyTo `javax.jms.Destination` object, having the key
@@ -1051,7 +1052,7 @@ template.send("activemq:queue:dummy, new Processor() {
 }
 ----------------------------------------------------------------------------------------------------------------------------------------
 
-== Using a request timeout
+=== Using a request timeout
 
 In the sample below we send a Request Reply
 style message Exchange (we use the `requestBody`
@@ -1059,7 +1060,7 @@ method = `InOut`) to the slow queue for further processing in Camel, and
 we wait for a return reply:
 
 
-== Sending an InOnly message and keeping the JMSReplyTo header
+=== Sending an InOnly message and keeping the JMSReplyTo header
 
 When sending to a xref:jms-component.adoc[JMS] destination using *camel-jms*, the
 producer will use the MEP to detect if it is `InOnly` or `InOut` messaging.
@@ -1083,7 +1084,7 @@ template.send("activemq:queue:foo?preserveMessageQos=true", new Processor() {
 Notice we use `preserveMessageQos=true` to instruct Camel to keep the
 `JMSReplyTo` header.
 
-== Setting JMS provider options on the destination
+=== Setting JMS provider options on the destination
 
 Some JMS providers, like IBM's WebSphere MQ, need options to be set on
 the JMS destination. For example, you may need to specify the
