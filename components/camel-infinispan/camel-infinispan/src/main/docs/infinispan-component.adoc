@@ -55,7 +55,10 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Camel Operations
+== Usage
+
+=== Camel Operations
+
 This section lists all available operations, along with their header information.
 
 .Put Operations
@@ -272,7 +275,7 @@ The instance of `myCustomListener` must exist and Camel should be able to look i
 Users are encouraged to extend the `org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener` class and annotate the resulting class with `@ClientListener` which can be found in the package `org.infinispan.client.hotrod.annotation`.
 
 
-== Using the Infinispan based idempotent repository
+=== Using the Infinispan based idempotent repository
 
 In this section, we will use the Infinispan based idempotent repository.
 
@@ -333,7 +336,7 @@ XML::
 
 ====
 
-== Using the Infinispan based aggregation repository
+=== Using the Infinispan based aggregation repository
 
 In this section, we will use the Infinispan based aggregation repository.
 

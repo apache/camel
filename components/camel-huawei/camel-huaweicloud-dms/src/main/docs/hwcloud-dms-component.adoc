@@ -111,7 +111,7 @@ If any of the above properties are set, they will override their corresponding q
 |=======================================================================
 
 
-== List of Supported DMS Operations
+=== List of Supported DMS Operations
 
 - createInstance
 - deleteInstance
@@ -153,7 +153,7 @@ from("direct:triggerRoute")
  .to("hwcloud-dms:updateInstance?instanceId=******&region=cn-north-4&accessKey=********&secretKey=********&projectId=*******")
 ----
 
-== Using ServiceKey Configuration Bean
+=== Using ServiceKey Configuration Bean
 
 Access key and secret keys are required to authenticate against cloud DMS service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.common.models.ServiceKeys`.
