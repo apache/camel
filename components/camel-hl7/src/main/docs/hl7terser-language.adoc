@@ -26,7 +26,7 @@ include::partial$language-options.adoc[]
 // language options: END
 
 
-== Example
+== Examples
 
 In the example below, we want to set a header with the patent id
 from field QRD-8 in the QRY_A19 message:
@@ -46,7 +46,7 @@ from("direct:test2")
    .to("mock:test2");
 ----
 
-== HL7 Validation
+=== HL7 Validation
 
 Often it is preferable to first parse a HL7v2 message and in a separate
 step validate it against a HAPI
@@ -109,7 +109,7 @@ from("direct:test1")
    // route continues from here
 ----
 
-== HL7 Acknowledgement expression
+=== HL7 Acknowledgement expression
 
 A common task in HL7v2 processing is to generate an acknowledgement
 message as a response to an incoming HL7v2 message, e.g., based on a

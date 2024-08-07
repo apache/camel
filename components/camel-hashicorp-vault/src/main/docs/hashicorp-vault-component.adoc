@@ -43,6 +43,8 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Examples
+
 === Using Hashicorp Vault Property Function
 
 To use this function, you'll need to provide credentials for Hashicorp vault as environment variables:

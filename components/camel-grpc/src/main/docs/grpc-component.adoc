@@ -54,7 +54,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Transport security and authentication support
+== Usage
+
+=== Transport security and authentication support
 
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
@@ -82,7 +84,7 @@ To enable these features, the following component properties combinations must b
 |||jwtSubject||Optional
 |=======================================================================
 
-== gRPC producer resource type mapping
+=== gRPC producer resource type mapping
 
 The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note that invocation of the procedures with incoming stream parameter in asynchronous style is not allowed.
 
@@ -102,11 +104,11 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
-== gRPC Proxy
+=== gRPC Proxy
 
 It is not possible to create a universal proxy-route for all methods, so you need to divide your gRPC service into several services by method's type: unary, server streaming, client streaming and bidirectional streaming.
 
-=== Unary
+==== Unary
 
 For unary requests, it is enough to write the following code:
 

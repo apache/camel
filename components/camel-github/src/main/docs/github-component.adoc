@@ -68,7 +68,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Configuring authentication
+== Usage
+
+=== Configuring authentication
 
 The GitHub component requires to be configured with an authentication token on either the component or endpoint level.
 
@@ -80,7 +82,7 @@ GitHubComponent ghc = context.getComponent("github", GitHubComponent.class);
 ghc.setOauthToken("mytoken");
 ----
 
-== Consumer Endpoints:
+=== Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -97,7 +99,7 @@ request discussion) or `org.eclipse.egit.github.core.CommitComment`
 |commit |polling |`org.eclipse.egit.github.core.RepositoryCommit`
 |=======================================================================
 
-== Producer Endpoints:
+=== Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
