@@ -63,7 +63,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Result
+== Usage
+
+=== Result
 
 By default, the result is returned in the OUT body as an
 `ArrayList<HashMap<String, Object>>`. The `List` object contains the
@@ -74,7 +76,7 @@ the result.
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
 
-== Generated keys
+=== Generated keys
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the xref:jdbc-component.adoc[JDBC] producer to
@@ -85,7 +87,7 @@ table above.
 
 Using generated keys does not work together with named parameters.
 
-== Using named parameters
+=== Using named parameters
 
 In the given route below, we want to get all the projects from the
 `projects` table.

@@ -20,28 +20,14 @@ include::partial$language-options.adoc[]
 // language options: END
 
 
-== Examples
+== Usage
 
-For example, you can use JQ in a xref:manual::predicate.adoc[Predicate] with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
-
-[source,java]
-----
-from("queue:books.new")
-  .choice()
-    .when().jq(".store.book.price < 10)")
-      .to("jms:queue:book.cheap")
-    .when().jq(".store.book.price < 30)")
-      .to("jms:queue:book.average")
-    .otherwise()
-      .to("jms:queue:book.expensive");
-----
-
-== Message body types
+=== Message body types
 
 Camel JQ leverages `camel-jackson` for type conversion.
 To enable camel-jackson POJO type conversion, refer to the Camel Jackson documentation.
 
-== Using header as input
+=== Using header as input
 
 By default, JQ uses the message body as the input source. However, you can also use a header as input by specifying the `headerName` option.
 
@@ -55,7 +41,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-== Camel supplied JQ Functions
+=== Camel supplied JQ Functions
 
 NOTE: JQ comes with about a hundred built-in functions, and you can see many examples from https://jqlang.github.io/jq/[JQ] documentation.
 
@@ -95,7 +81,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-== Transforming a JSon message
+=== Transforming a JSon message
 
 For basic JSon transformation where you have a fixed structure, you can represent with a combination of using
 Camel simple and JQ language as:
@@ -120,6 +106,22 @@ also make it XML or plain text based:
     <company>${jq(.customer.name)}</company>
     <location>${jq(.customer.address.country)}</location>
 </customer>
+----
+
+== Examples
+
+For example, you can use JQ in a xref:manual::predicate.adoc[Predicate] with the xref:eips:choice-eip.adoc[Content-Based Router] EIP.
+
+[source,java]
+----
+from("queue:books.new")
+  .choice()
+    .when().jq(".store.book.price < 10)")
+      .to("jms:queue:book.cheap")
+    .when().jq(".store.book.price < 30)")
+      .to("jms:queue:book.average")
+    .otherwise()
+      .to("jms:queue:book.expensive");
 ----
 
 == Dependencies
