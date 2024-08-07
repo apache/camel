@@ -47,6 +47,7 @@ import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.KameletModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
@@ -119,6 +120,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/transformers")
     protected File transformersOutDir;
+
+    /**
+     * The output directory for kamelets catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/kamelets")
+    protected File kameletsOutDir;
 
     /**
      * The output directory for pojo beans catalog
@@ -336,7 +343,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                 allJsonFiles.add(p);
                             } else if (f.equals("component.properties") || f.equals("dataformat.properties")
                                     || f.equals("language.properties") || f.equals("other.properties")
-                                    || f.equals("transformer.properties") || f.equals("bean.properties")) {
+                                    || f.equals("transformer.properties") || f.equals("kamelet.properties")
+                                    || f.equals("bean.properties")) {
                                 allPropertiesFiles.add(p);
                             }
                         });
@@ -388,6 +396,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> dataformats = executeDataFormats();
             Set<String> languages = executeLanguages();
             Set<String> transformers = executeTransformers();
+            Set<String> kamelets = executeKamelets();
             Set<String> beans = executeBeans();
             Set<String> consoles = executeDevConsoles();
             Set<String> others = executeOthers();
@@ -777,6 +786,48 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printTransformersReport(jsonFiles, duplicateJsonFiles);
 
         return transformerNames;
+    }
+
+    protected Set<String> executeKamelets() throws Exception {
+        Path kameletsOutDir = this.kameletsOutDir.toPath();
+
+        getLog().info("Copying all Camel Kamelet json descriptors");
+
+        // lets use sorted set/maps
+        Set<Path> jsonFiles;
+        Set<Path> duplicateJsonFiles;
+        Set<Path> kameletFiles;
+
+        // find all kamelets from the components directory
+        kameletFiles = allPropertiesFiles.stream().filter(p -> p.endsWith("kamelet.properties"))
+                .collect(Collectors.toCollection(TreeSet::new));
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof KameletModel)
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        getLog().info("Found " + kameletFiles.size() + " kamelet.properties files");
+        getLog().info("Found " + jsonFiles.size() + " kamelet json files");
+
+        // make sure to create out dir
+        Files.createDirectories(kameletsOutDir);
+
+        // Check duplicates
+        duplicateJsonFiles = getDuplicates(jsonFiles);
+
+        // Copy all descriptors
+        Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> kameletsOutDir.resolve(p.getFileName()));
+        try (Stream<Path> stream = list(kameletsOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+        newJsons.forEach(this::copy);
+
+        Path all = kameletsOutDir.resolve("../kamelets.properties");
+        Set<String> kameletNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", kameletNames) + "\n");
+
+        printKameletsReport(jsonFiles, duplicateJsonFiles);
+
+        return kameletNames;
     }
 
     protected Set<String> executeBeans() throws Exception {
@@ -1318,6 +1369,23 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate transformer detected: " + duplicate.size());
+            printComponentWarning(duplicate);
+        }
+        getLog().info("");
+        getLog().info(SEPARATOR);
+    }
+
+    private void printKameletsReport(
+            Set<Path> json, Set<Path> duplicate) {
+        getLog().info(SEPARATOR);
+        getLog().info("");
+        getLog().info("Camel Kamelet catalog report");
+        getLog().info("");
+        getLog().info("\tKamelets found: " + json.size());
+        printComponentDebug(json);
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate Kamelet detected: " + duplicate.size());
             printComponentWarning(duplicate);
         }
         getLog().info("");

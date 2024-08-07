@@ -83,6 +83,16 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getKameletJSonSchema(String name) {
+        try {
+            return camelContext.getKameletParameterJsonSchema(name);
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    @Override
     public String getDevConsoleJSonSchema(String name) {
         try {
             return camelContext.getDevConsoleParameterJsonSchema(name);

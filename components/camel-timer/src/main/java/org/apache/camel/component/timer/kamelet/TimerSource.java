@@ -23,7 +23,8 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.spi.KameletProperty;
 import org.apache.camel.spi.KameletSpec;
 
-@KameletSpec(name = "timer-source",
+@KameletSpec(type = KameletSpec.KameletType.SOURCE,
+             name = "timer-source",
              title = "Timer Source",
              description = "Produces periodic events with a custom payload.",
              supportLevel = KameletSpec.SupportLevel.STABLE,

@@ -419,9 +419,9 @@ public class DefaultModel implements Model {
         if (target == null) {
             RouteTemplateHelper.loadRouteTemplate(getCamelContext(), routeTemplateId);
             target = routeTemplateDefinitions.stream()
-                        .filter(def -> routeTemplateId.equals(def.getId()))
-                        .findFirst()
-                        .orElse(null);
+                    .filter(def -> routeTemplateId.equals(def.getId()))
+                    .findFirst()
+                    .orElse(null);
         }
 
         if (target == null) {

@@ -31,6 +31,7 @@ public enum Kind implements Jsonable {
     dataformat,
     language,
     transformer,
+    kamelet,
     console,
     other,
     eip,

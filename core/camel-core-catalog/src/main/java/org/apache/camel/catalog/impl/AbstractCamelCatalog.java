@@ -42,20 +42,7 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.JSonSchemaResolver;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.SuggestionStrategy;
-import org.apache.camel.tooling.model.ApiMethodModel;
-import org.apache.camel.tooling.model.ApiModel;
-import org.apache.camel.tooling.model.BaseModel;
-import org.apache.camel.tooling.model.BaseOptionModel;
-import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.model.DataFormatModel;
-import org.apache.camel.tooling.model.DevConsoleModel;
-import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.model.LanguageModel;
-import org.apache.camel.tooling.model.MainModel;
-import org.apache.camel.tooling.model.OtherModel;
-import org.apache.camel.tooling.model.PojoBeanModel;
-import org.apache.camel.tooling.model.TransformerModel;
+import org.apache.camel.tooling.model.*;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
@@ -123,6 +110,15 @@ public abstract class AbstractCamelCatalog {
     public TransformerModel transformerModel(String name) {
         String json = transformerJSonSchema(name);
         return json != null ? JsonMapper.generateTransformerModel(json) : null;
+    }
+
+    public String kameletJSonSchema(String name) {
+        return getJSonSchemaResolver().getKameletJSonSchema(name);
+    }
+
+    public KameletModel kameletModel(String name) {
+        String json = kameletJSonSchema(name);
+        return json != null ? JsonMapper.generateKameletModel(json) : null;
     }
 
     public PojoBeanModel pojoBeanModel(String name) {

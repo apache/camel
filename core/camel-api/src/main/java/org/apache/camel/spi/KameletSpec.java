@@ -33,6 +33,8 @@ public @interface KameletSpec {
 
     String name();
 
+    KameletType type();
+
     String title();
 
     String description();
@@ -49,7 +51,14 @@ public @interface KameletSpec {
 
     KameletProperty[] properties() default {};
 
+    enum KameletType {
+        SOURCE,
+        SINK,
+        ACTION
+    }
+
     enum SupportLevel {
+        EXPERIMENTAL,
         PREVIEW,
         STABLE
     }

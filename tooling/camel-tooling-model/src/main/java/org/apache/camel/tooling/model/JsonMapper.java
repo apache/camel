@@ -65,6 +65,8 @@ public final class JsonMapper {
             return generateDataFormatModel(obj);
         } else if (obj.containsKey("transformer")) {
             return generateTransformerModel(obj);
+        } else if (obj.containsKey("kamelet")) {
+            return generateKameletModel(obj);
         } else if (obj.containsKey("console")) {
             return generateDevConsoleModel(obj);
         } else if (obj.containsKey("other")) {
@@ -446,6 +448,45 @@ public final class JsonMapper {
         JsonObject wrapper = new JsonObject();
         wrapper.put("transformer", obj);
         return wrapper;
+    }
+
+    public static KameletModel generateKameletModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateKameletModel(obj);
+    }
+
+    public static KameletModel generateKameletModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("kamelet");
+        KameletModel model = new KameletModel();
+        parseModel(mobj, model);
+        model.setType(mobj.getString("type"));
+
+        if (mobj.containsKey("dependencies")) {
+            model.setDependencies(mobj.getString("dependencies").split(","));
+        }
+
+        if (obj.containsKey("properties")) {
+            JsonArray properties = (JsonArray) obj.get("properties");
+            for (Object o : properties) {
+                JsonObject property = (JsonObject) o;
+                KameletModel.KameletPropertyModel propertyModel = new KameletModel.KameletPropertyModel();
+                propertyModel.setType(property.getString("type"));
+                propertyModel.setName(property.getString("name"));
+                propertyModel.setDescription(property.getString("description"));
+                propertyModel.setRequired(property.getBoolean("required"));
+                propertyModel.setDefaultValue(property.getString("defaultValue"));
+                if (property.containsKey("enumeration")) {
+                    propertyModel.setEnumeration(property.getString("enumeration").split(","));
+                }
+                if (property.containsKey("example")) {
+                    propertyModel.setExample(property.getString("example"));
+                }
+                model.addProperty(propertyModel);
+            }
+        }
+
+        parseArtifact(mobj, model);
+        return model;
     }
 
     public static DevConsoleModel generateDevConsoleModel(String json) {

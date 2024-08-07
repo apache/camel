@@ -56,6 +56,14 @@ public interface CatalogCamelContext extends CamelContext {
     String getTransformerParameterJsonSchema(String transformerName) throws IOException;
 
     /**
+     * Returns the JSON schema representation of the {@link org.apache.camel.spi.KameletSpec} parameters for the given
+     * Kamelet name.
+     *
+     * @return the json or <tt>null</tt> if the kamelet does not exist
+     */
+    String getKameletParameterJsonSchema(String kameletName) throws IOException;
+
+    /**
      * Returns the JSON schema representation of the {@link org.apache.camel.spi.annotations.DevConsole} parameters for
      * the given dev-console name.
      *

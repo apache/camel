@@ -23,7 +23,8 @@ import org.apache.camel.spi.KameletIcon;
 import org.apache.camel.spi.KameletProperty;
 import org.apache.camel.spi.KameletSpec;
 
-@KameletSpec(name = "log-sink",
+@KameletSpec(type = KameletSpec.KameletType.SINK,
+             name = "log-sink",
              title = "Log Sink",
              description = "A sink that logs all data that it receives, useful for debugging purposes.",
              properties = {

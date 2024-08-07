@@ -23,7 +23,8 @@ import org.apache.camel.spi.KameletIcon;
 import org.apache.camel.spi.KameletProperty;
 import org.apache.camel.spi.KameletSpec;
 
-@KameletSpec(name = "set-body-action",
+@KameletSpec(type = KameletSpec.KameletType.ACTION,
+             name = "set-body-action",
              title = "Set Body Action",
              description = "Sets a simple language parsed value as the new message body in transit.",
              properties = {

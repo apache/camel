@@ -23,21 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.camel.tooling.model.ArtifactModel;
-import org.apache.camel.tooling.model.BaseModel;
-import org.apache.camel.tooling.model.BaseOptionModel;
-import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.model.DataFormatModel;
-import org.apache.camel.tooling.model.DevConsoleModel;
-import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.EntityRef;
-import org.apache.camel.tooling.model.Kind;
-import org.apache.camel.tooling.model.LanguageModel;
-import org.apache.camel.tooling.model.MainModel;
-import org.apache.camel.tooling.model.OtherModel;
-import org.apache.camel.tooling.model.PojoBeanModel;
-import org.apache.camel.tooling.model.ReleaseModel;
-import org.apache.camel.tooling.model.TransformerModel;
+import org.apache.camel.tooling.model.*;
 
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
@@ -205,6 +191,11 @@ public interface CamelCatalog {
     List<String> findTransformerNames();
 
     /**
+     * Find all the Kamelet names from the Camel catalog
+     */
+    List<String> findKameletNames();
+
+    /**
      * Find all the dev-console names from the Camel catalog
      */
     List<String> findDevConsoleNames();
@@ -239,6 +230,7 @@ public interface CamelCatalog {
             case dataformat -> findDataFormatNames();
             case language -> findLanguageNames();
             case transformer -> findTransformerNames();
+            case kamelet -> findKameletNames();
             case console -> findDevConsoleNames();
             case other -> findOtherNames();
             case eip, model -> findModelNames();
@@ -302,6 +294,14 @@ public interface CamelCatalog {
      * @return      transformer details in JSon
      */
     String transformerJSonSchema(String name);
+
+    /**
+     * Returns the Kamelet information as JSON format.
+     *
+     * @param  name the kamelet name
+     * @return      kamelet details in JSon
+     */
+    String kameletJSonSchema(String name);
 
     /**
      * Returns the other (miscellaneous) information as JSON format.
@@ -524,6 +524,11 @@ public interface CamelCatalog {
     String listTransformersAsJson();
 
     /**
+     * Lists all the kamelet s summary details in JSon
+     */
+    String listKameletsAsJson();
+
+    /**
      * Lists all the dev-consoles summary details in JSon
      */
     String listDevConsolesAsJson();
@@ -568,6 +573,12 @@ public interface CamelCatalog {
     TransformerModel transformerModel(String name);
 
     /**
+     * @param  name the kamelet name to look up
+     * @return      the requested kamelet or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    KameletModel kameletModel(String name);
+
+    /**
      * @param  name the dev-console name to look up
      * @return      the requested dev-console or {@code null} in case it is not available in this {@link CamelCatalog}
      */
@@ -609,6 +620,7 @@ public interface CamelCatalog {
             case dataformat -> dataFormatModel(name);
             case language -> languageModel(name);
             case transformer -> transformerModel(name);
+            case kamelet -> kameletModel(name);
             case console -> devConsoleModel(name);
             case other -> otherModel(name);
             case eip, model -> eipModel(name);

@@ -114,6 +114,13 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getKameletJSonSchema(String name) {
+        name = sanitizeFileName(name);
+        final String file = camelCatalog.getRuntimeProvider().getKameletJSonSchemaDirectory() + "/" + name + EXTENSION;
+        return loadResourceFromVersionManager(file);
+    }
+
+    @Override
     public String getDevConsoleJSonSchema(String name) {
         name = sanitizeFileName(name);
         final String file = camelCatalog.getRuntimeProvider().getDevConsoleJSonSchemaDirectory() + "/" + name + EXTENSION;

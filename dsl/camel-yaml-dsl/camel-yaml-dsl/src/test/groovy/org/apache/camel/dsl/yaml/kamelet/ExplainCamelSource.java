@@ -26,18 +26,20 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.spi.KameletProperty;
 import org.apache.camel.spi.KameletSpec;
 
-@KameletSpec(name = "explain-camel-source",
-        title = "Explain Camel Source",
-        description = "Explains Apache Camel in multiple languages.",
-        properties = {
-            @KameletProperty(
-                    required = true,
-                    name = "language",
-                    title = "Language",
-                    defaultValue = "en",
-                    enumeration = { "en", "de", "it", "es", "fr" },
-                    description = "The language to use.")
-        })
+@KameletSpec(type = KameletSpec.KameletType.SOURCE,
+             name = "explain-camel-source",
+             title = "Explain Camel Source",
+             description = "Explains Apache Camel in multiple languages.",
+             properties = {
+                 @KameletProperty(
+                         required = true,
+                         name = "language",
+                         title = "Language",
+                         defaultValue = "en",
+                         enumeration = { "en", "de", "it", "es", "fr" },
+                         description = "The language to use.")
+             }
+)
 public class ExplainCamelSource extends KameletRouteTemplate {
 
     private final Map<String, String> explanations = new HashMap<>();

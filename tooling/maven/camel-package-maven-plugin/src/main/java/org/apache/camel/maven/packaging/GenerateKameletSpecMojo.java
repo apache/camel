@@ -65,6 +65,7 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
 
     private static class KameletSpecModel {
         private String className;
+        private String type;
         private String title;
         private String name;
         private String description;
@@ -76,6 +77,14 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
         private boolean deprecated;
 
         private final List<KameletPropertyModel> properties = new ArrayList<>();
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         public String getClassName() {
             return className;
@@ -173,6 +182,7 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
             private boolean required = false;
             private String defaultValue;
             private String example;
+            private String[] enumeration;
 
             public String getName() {
                 return name;
@@ -233,6 +243,14 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
             public void setExample(String example) {
                 this.example = example;
             }
+
+            public String[] getEnumeration() {
+                return enumeration;
+            }
+
+            public void setEnumeration(String[] enumeration) {
+                this.enumeration = enumeration;
+            }
         }
     }
 
@@ -266,6 +284,7 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
                     = a.target().asClass().hasAnnotation(Deprecated.class) || project.getName().contains("(deprecated)");
             model.setClassName(currentClass);
             model.setDeprecated(deprecated);
+            model.setType(annotationValue(a, "type"));
             model.setName(annotationValue(a, "name"));
             model.setTitle(annotationValue(a, "title"));
             model.setDescription(annotationValue(a, "description"));
@@ -274,7 +293,10 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
             model.setNamespace(annotationValue(a, "namespace"));
             model.setDependencies(annotationArrayValue(a, "dependencies"));
 
-            AnnotationValue[] properties = (AnnotationValue[]) Optional.ofNullable(a.value("properties")).map(AnnotationValue::value).orElse(null);
+            AnnotationValue[] properties = (AnnotationValue[]) Optional.ofNullable(a.value("properties"))
+                    .map(AnnotationValue::value)
+                    .orElse(null);
+
             if (properties != null) {
                 for (AnnotationValue pa : properties) {
                     KameletSpecModel.KameletPropertyModel propertyModel = new KameletSpecModel.KameletPropertyModel();
@@ -284,6 +306,7 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
                     propertyModel.setType(annotationValue(pa.asNested(), "type", "string"));
                     propertyModel.setRequired(annotationValue(pa.asNested(), "required"));
                     propertyModel.setDefaultValue(annotationValue(pa.asNested(), "defaultValue"));
+                    propertyModel.setEnumeration(annotationArrayValue(pa.asNested(), "enumeration"));
                     propertyModel.setExample(annotationValue(pa.asNested(), "example"));
                     model.addProperty(propertyModel);
                 }
@@ -333,6 +356,7 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
         JsonObject jo = new JsonObject();
         // we need to know the maven GAV also
         jo.put("kind", "kamelet");
+        jo.put("type", model.getType());
         jo.put("name", model.getName());
         if (model.getTitle() != null) {
             jo.put("title", model.getTitle());
@@ -380,6 +404,9 @@ public class GenerateKameletSpecMojo extends AbstractGeneratorMojo {
                 }
                 if (propertyModel.getExample() != null) {
                     po.put("example", propertyModel.getExample());
+                }
+                if (propertyModel.getEnumeration() != null) {
+                    po.put("enumeration", String.join(",", propertyModel.getEnumeration()));
                 }
 
                 propertyArray.add(po);

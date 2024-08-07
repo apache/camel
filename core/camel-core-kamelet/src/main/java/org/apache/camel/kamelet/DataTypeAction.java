@@ -23,7 +23,8 @@ import org.apache.camel.spi.KameletIcon;
 import org.apache.camel.spi.KameletProperty;
 import org.apache.camel.spi.KameletSpec;
 
-@KameletSpec(name = "data-type-action",
+@KameletSpec(type = KameletSpec.KameletType.SOURCE,
+             name = "data-type-action",
              title = "Data Type Action",
              description = "Applies a given data type with respective data transformation.",
              properties = {

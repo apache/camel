@@ -22,6 +22,7 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.KameletModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
@@ -112,6 +113,16 @@ public class DefaultRuntimeCamelCatalog extends AbstractCachingCamelCatalog impl
     @Override
     public TransformerModel transformerModel(String name) {
         return cache("transformer-model-" + name, name, super::transformerModel);
+    }
+
+    @Override
+    public String kameletJSonSchema(String name) {
+        return cache("kamelet-" + name, name, super::kameletJSonSchema);
+    }
+
+    @Override
+    public KameletModel kameletModel(String name) {
+        return cache("kamelet-model-" + name, name, super::kameletModel);
     }
 
     @Override
