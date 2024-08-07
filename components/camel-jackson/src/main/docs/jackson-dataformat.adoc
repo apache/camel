@@ -29,7 +29,9 @@ from("activemq:My.Queue").
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
-== Using custom ObjectMapper
+== Usage
+
+=== Using custom ObjectMapper
 
 You can configure `JacksonDataFormat` to use a custom `ObjectMapper` in case you need more control of the mapping configuration.
 
@@ -38,14 +40,14 @@ For example, if you use Spring Boot, then Spring Boot can provide a default `Obj
 And this would allow Camel to detect that there is one bean of `ObjectMapper` class type in the Spring Boot bean registry
 and then use it. When this happens you should set a `INFO` logging from Camel.
 
-== Using Jackson for automatic type conversion
+=== Using Jackson for automatic type conversion
 
 The `camel-jackson` module allows integrating Jackson as a xref:manual::type-converter.adoc[Type Converter].
 
-This gives a set of out of the box converters to/from the Jackson type `JSonNode`, such as converting
+This gives a set of out-of-the-box converters to/from the Jackson type `JSonNode`, such as converting
 from `JSonNode` to `String` or vice versa.
 
-=== Enabling more type converters and support for POJOs
+==== Enabling more type converters and support for POJOs
 
 To enable POJO conversion support for `camel-jackson` then this must be enabled,
 which is done by setting the following options on the `CamelContext` global options, as shown:

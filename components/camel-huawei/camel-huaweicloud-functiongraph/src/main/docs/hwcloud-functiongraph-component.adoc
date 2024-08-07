@@ -80,12 +80,11 @@ If the operation, function name, or function package are set, they will override
 
 |=======================================================================
 
-
-== List of Supported FunctionGraph Operations
+=== List of Supported FunctionGraph Operations
 
 - invokeFunction - to invoke a serverless function
 
-== Using ServiceKey Configuration Bean
+=== Using ServiceKey Configuration Bean
 
 Access key and secret keys are required to authenticate against cloud FunctionGraph service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.functiongraph.models.ServiceKeys`.

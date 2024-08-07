@@ -30,7 +30,15 @@ from("kafka:topic").
   to("log:info");
 -------------------------------
 
-== Configuring the `SchemaResolver`
+== Avro Jackson Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Usage
+
+=== Configuring the `SchemaResolver`
 
 Since Avro serialization is schema-based, this data format requires that you provide a SchemaResolver object
 that is able to look up the schema for each exchange that is going to be marshalled/unmarshalled.
@@ -38,14 +46,7 @@ that is able to look up the schema for each exchange that is going to be marshal
 You can add a single SchemaResolver to the registry, and it will be looked up automatically.
 Or you can explicitly specify the reference to a custom SchemaResolver.
 
-== Avro Jackson Options
-
-// dataformat options: START
-include::partial$dataformat-options.adoc[]
-// dataformat options: END
-
-
-== Using custom AvroMapper
+=== Using custom AvroMapper
 
 You can configure `JacksonAvroDataFormat` to use a custom `AvroMapper` in case you need more control of the mapping configuration.
 

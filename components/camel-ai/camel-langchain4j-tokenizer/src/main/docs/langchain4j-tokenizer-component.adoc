@@ -35,7 +35,9 @@ for this component:
 </dependency>
 ----
 
-== Chunking DSL
+== Usage
+
+=== Chunking DSL
 
 The tokenization process is done in route, using a DSL that handles the parameters of the tokenization:
 
@@ -62,7 +64,7 @@ The tokenization creates a composite message (i.e.: an array of Strings). This c
 using the xref:eips:split-eip.adoc[Split EIP] so that each text segment is separately to an endpoint. Alternatively, the
 contents of the composite message may be passed through a processor so that invalid data is filtered.
 
-== Supported Splitters
+=== Supported Splitters
 
 The following type of splitters is supported:
 
@@ -72,7 +74,7 @@ The following type of splitters is supported:
 * By line: using the DSL `tokenizer().byLine()`
 * By character: using the DSL `tokenizer().byCharacter()`
 
-== Supported Tokenizers
+=== Supported Tokenizers
 
 The following tokenizers are supported:
 

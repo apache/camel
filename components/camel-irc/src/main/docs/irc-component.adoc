@@ -47,9 +47,11 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== SSL Support
+== Usage
 
-=== Using the JSSE Configuration Utility
+=== SSL Support
+
+==== Using the JSSE Configuration Utility
 
 The IRC component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
@@ -120,7 +122,9 @@ If you need to provide your own custom trust manager, use the
 ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTrustManagerBean
 ----------------------------------------------------------------------------------------------
 
-== Using keys
+== Examples
+
+=== Using keys
 
 Some IRC rooms require you to provide a key to be able to join that
 channel. The key is just a secret word.
@@ -132,7 +136,7 @@ For example, we join three channels whereas only channel 1 and 3 use a key.
 irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
 -----------------------------------------------------------------------------
 
-== Getting a list of channel users
+=== Getting a list of channel users
 
 Using the `namesOnJoin` option one can invoke the IRC-`NAMES` command after the component has joined a channel. 
 The server will reply with `irc.num = 353`. So to process the result the property `onReply` has to be `true`.
@@ -149,7 +153,7 @@ from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
 			.to("mock:result").stop();
 -----------------------------------------------------------------------------
 
-== Sending to a different channel or a person
+=== Sending to a different channel or a person
 
 If you need to send messages to a different channel (or a person) which is not defined on IRC endpoint, you can specify a different destination in a message header.
 
