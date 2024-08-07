@@ -32,6 +32,11 @@ import org.apache.camel.util.TimeUtils;
 public abstract class PropertyConfigurerSupport {
 
     /**
+     * A special magic value that are used by tooling such as camel-jbang export
+     */
+    public static final String MAGIC_VALUE = "@@CamelMagicValue@@";
+
+    /**
      * Converts the property to the expected type
      *
      * @param  camelContext the camel context
@@ -83,7 +88,7 @@ public abstract class PropertyConfigurerSupport {
         // special for boolean values with string values as we only want to accept "true" or "false"
         if ((type == Boolean.class || type == boolean.class) && value instanceof String) {
             String text = (String) value;
-            if (!text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
+            if (!MAGIC_VALUE.equals(value) && !text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
                 throw new IllegalArgumentException(
                         "Cannot convert the String value: " + value + " to type: " + type
                                                    + " as the value is not true or false");
@@ -92,6 +97,9 @@ public abstract class PropertyConfigurerSupport {
 
         if (value != null) {
             try {
+                if (MAGIC_VALUE.equals(value) && boolean.class == type) {
+                    value = "true";
+                }
                 return camelContext.getTypeConverter().mandatoryConvertTo(type, value);
             } catch (NoTypeConversionAvailableException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
