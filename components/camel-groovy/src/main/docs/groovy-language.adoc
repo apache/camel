@@ -28,6 +28,106 @@ groovy("someGroovyExpression")
 include::partial$language-options.adoc[]
 // language options: END
 
+== Usage
+
+=== Groovy Context
+
+Camel will provide exchange information in the Groovy context (just
+a `Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchangeProperties` |The `Exchange` properties.
+
+|`variables` |The variables
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
+
+=== How to get the result from multiple statements script
+
+As the Groovy script engine evaluate method just return a `Null` if it runs a
+multiple statements script. Camel now looks up the value of script result
+by using the key of `result` from the value set. If you have multiple
+statements scripts, you need to make sure you set the value of result
+variable as the script return value.
+
+[source,text]
+-------------------------------------------------------------
+bar = "baz";
+# some other statements ...
+# camel take the result value as the script evaluation result
+result = body * 2 + 1
+-------------------------------------------------------------
+
+=== Customizing Groovy Shell
+
+For very special use-cases you may need to use a custom `GroovyShell` instance in your
+Groovy expressions. To provide the custom `GroovyShell`, add an implementation
+of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
+interface to the Camel registry.
+
+[source,java]
+----
+public class CustomGroovyShellFactory implements GroovyShellFactory {
+
+  public GroovyShell createGroovyShell(Exchange exchange) {
+    ImportCustomizer importCustomizer = new ImportCustomizer();
+    importCustomizer.addStaticStars("com.example.Utils");
+    CompilerConfiguration configuration = new CompilerConfiguration();
+    configuration.addCompilationCustomizers(importCustomizer);
+    return new GroovyShell(configuration);
+  }
+
+}
+----
+
+Camel will then use your custom GroovyShell instance (containing your
+custom static imports), instead of the default one.
+
+=== Loading script from external resource
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+This is done using the following syntax: `"resource:scheme:location"`,
+e.g., to refer to a file on the classpath you can do:
+
+[source,java]
+-------------------------------------------------------------------
+.setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
+-------------------------------------------------------------------
+
+=== Dependencies
+
+To use scripting languages in your camel routes, you need to add a
+dependency on *camel-groovy*.
+
+If you use Maven you could just add the following to your `pom.xml`,
+substituting the version number for the latest and greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+---------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-groovy</artifactId>
+  <version>x.x.x</version>
+</dependency>
+---------------------------------------
+
 == Examples
 
 In the example below, we use a groovy script as predicate in the message filter,
@@ -59,104 +159,5 @@ XML DSL::
 ----
 
 ====
-
-== Groovy Context
-
-Camel will provide exchange information in the Groovy context (just
-a `Map`). The `Exchange` is transferred as:
-
-[width="100%",cols="50%,50%",options="header",]
-|=======================================================================
-|key |value
-
-|`exchange` |The `Exchange` itself.
-
-|`exchangeProperties` |The `Exchange` properties.
-
-|`variables` |The variables
-
-|`headers` |The headers of the In message.
-
-|`camelContext` |The Camel Context.
-
-|`request` |The In message.
-
-|`body` |The In message body.
-
-|`response` |The Out message (only for InOut message exchange pattern).
-|=======================================================================
-
-
-== How to get the result from multiple statements script
-
-As the Groovy script engine evaluate method just return a `Null` if it runs a
-multiple statements script. Camel now looks up the value of script result
-by using the key of `result` from the value set. If you have multiple
-statements scripts, you need to make sure you set the value of result
-variable as the script return value.
-
-[source,text]
--------------------------------------------------------------
-bar = "baz";
-# some other statements ...
-# camel take the result value as the script evaluation result
-result = body * 2 + 1
--------------------------------------------------------------
-
-== Customizing Groovy Shell
-
-For very special use-cases you may need to use a custom `GroovyShell` instance in your
-Groovy expressions. To provide the custom `GroovyShell`, add an implementation
-of the `org.apache.camel.language.groovy.GroovyShellFactory` SPI
-interface to the Camel registry.
-
-[source,java]
-----
-public class CustomGroovyShellFactory implements GroovyShellFactory {
-
-  public GroovyShell createGroovyShell(Exchange exchange) {
-    ImportCustomizer importCustomizer = new ImportCustomizer();
-    importCustomizer.addStaticStars("com.example.Utils");
-    CompilerConfiguration configuration = new CompilerConfiguration();
-    configuration.addCompilationCustomizers(importCustomizer);
-    return new GroovyShell(configuration);
-  }
-
-}
-----
-
-Camel will then use your custom GroovyShell instance (containing your
-custom static imports), instead of the default one.
-
-== Loading script from external resource
-
-You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`.
-This is done using the following syntax: `"resource:scheme:location"`,
-e.g., to refer to a file on the classpath you can do:
-
-[source,java]
--------------------------------------------------------------------
-.setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
--------------------------------------------------------------------
-
-== Dependencies
-
-To use scripting languages in your camel routes, you need to add a
-dependency on *camel-groovy*.
-
-If you use Maven you could just add the following to your `pom.xml`,
-substituting the version number for the latest and greatest release (see
-the download page for the latest versions).
-
-[source,xml]
----------------------------------------
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-groovy</artifactId>
-  <version>x.x.x</version>
-</dependency>
----------------------------------------
-
 
 include::spring-boot:partial$starter.adoc[]

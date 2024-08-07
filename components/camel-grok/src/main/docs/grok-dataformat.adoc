@@ -29,7 +29,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== Basic usage
+== Usage
 
 .Extract all IP addresses from input
 [source,java]
@@ -48,12 +48,12 @@ from("file://apacheLogs")
     .to("log:4xx")
 --------------------------------------------------------------------------------
 
-== Preregistered patterns
+=== Preregistered patterns
 
 This component comes with preregistered patterns, which are based on Logstash patterns.
 All https://github.com/thekrakken/java-grok/tree/master/src/main/resources/patterns/patterns[Java Grok Default Patterns] are preregistered and as such could be used without manual registration.
 
-== Custom patterns
+=== Custom patterns
 
 Camel Grok DataFormat supports plugable patterns, which are auto loaded from Camel Registry.
 You can register patterns with Java DSL and Spring DSL:
