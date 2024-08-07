@@ -58,13 +58,15 @@ include::partial$component-endpoint-headers.adoc[]
 
 include::spring-boot:partial$starter.adoc[]
 
+== Usage
 
-== Using a specific Web Search Engine
+=== Using a specific Web Search Engine
+
 The Camel LangChain4j web search component provides an abstraction for interacting with various types of Web Search Engines supported by https://github.com/langchain4j/langchain4j[LangChain4j].
 
-To integrate with a specific Web Search Engine, users should follow these steps:
+To integrate with a specific Web Search Engine, users should follow the steps described below, which explain
+how to integrate with https://tavily.com/[Tavily].
 
-=== Example of integrating with Tavily
 Add the dependency for LangChain4j Tavily Web Search Engine support :
 
 [source,xml]
@@ -76,10 +78,10 @@ Add the dependency for LangChain4j Tavily Web Search Engine support :
 </dependency>
 ----
 
-Init the Tavily Web Search Engine, and add it to the Camel Registry:
-Initialize the Tavily Web Search Engine, and bind it to the Camel Registry:
+Initialize the Web Search Engine instance, and bind it to the Camel Registry:
 
-[source, java]
+.Example:
+[source,java]
 ----
 @BindToRegistry("web-search-engine")
 WebSearchEngine tavilyWebSearchEngine = TavilyWebSearchEngine.builder()
@@ -90,9 +92,8 @@ WebSearchEngine tavilyWebSearchEngine = TavilyWebSearchEngine.builder()
 
 The web search engine will be autowired automatically if its bound name is `web-search-engine`. Otherwise, it should be added as a configured parameter to the Camel route.
 
-Example of route:
-
-[source, java]
+.Example:
+[source,java]
 ----
  from("direct:web-search")
       .to("langchain4j-web-search:test?webSearchEngine=#web-search-engine-test")
@@ -105,34 +106,37 @@ replace the `langchain4j-web-search-engine-tavily` dependency with the appropria
 Update the initialization parameters accordingly in the code snippet provided above.
 ====
 
-== Customizing Web Search Results
+=== Customizing Web Search Results
+
 By default, the `maxResults` property is set to 1. You can adjust this value to retrieve a list of results.
 
-=== Retrieving single result or list of strings
-When `maxResults` is set to 1, you can by default retrieve by default the content as a single string.
-Example:
+==== Retrieving a single result or a list of strings
 
-[source, java]
+When `maxResults` is set to 1, you can by default retrieve by default the content as a single string.
+
+.Example:
+[source,java]
 ----
 String response = template.requestBody("langchain4j-web-search:test", "Who won the European Cup in 2024?", String.class);
 ----
 
 When `maxResults` is greater than 1, you can retrieve a list of strings.
-Example:
 
-[source, java]
+.Example:
+[source,java]
 ----
 List<String> responses = template.requestBody("langchain4j-web-search:test?maxResults=3", "Who won the European Cup in 2024?", List.class);
 ----
 
-=== Retrieve different types of Results
-You can get different type of Results.
+=== Retrieving different types of Results
 
-When `resultType` = SNIPPET, you will get a single or list (depending of `maxResults` value) of Strings containing the snippets.
+You can get different types of Results.
 
-When `resultType` = LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT, you will get a single or list (depending of `maxResults` value) of Objects of type `WebSearchOrganicResult` containing all the response created under the hood by Langchain4j Web Search.
+When `resultType` = SNIPPET, you will get a single or list (depending on `maxResults` value) of Strings containing the snippets.
 
-== Advanced usage of WebSearchRequest
+When `resultType` = LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT, you will get a single or list (depending on `maxResults` value) of Objects of type `WebSearchOrganicResult` containing all the response created under the hood by Langchain4j Web Search.
+
+=== Advanced usage of WebSearchRequest
 
 When defining a WebSearchRequest, the Camel LangChain4j web search component will default to this request, instead of creating one from the body and config parameters.
 
@@ -143,9 +147,8 @@ When using a WebSearchRequest, the body and the parameters of the search will be
 
 A WebSearchRequest should be bound to the registry.
 
-Example of binding the request to the registry.
-
-[source, java]
+.Example of binding the request to the registry.
+[source,java]
 ----
 @BindToRegistry("web-search-request")
 WebSearchRequest request = WebSearchRequest.builder()
@@ -156,8 +159,8 @@ WebSearchRequest request = WebSearchRequest.builder()
 
 The request will be autowired automatically if its bound name is `web-search-request`. Otherwise, it should be added as a configured parameter to the Camel route.
 
-Example of route:
-[source, java]
+.Example of route:
+[source,java]
 ----
  from("direct:web-search")
       .to("langchain4j-web-search:test?webSearchRequest=#searchRequestTest");

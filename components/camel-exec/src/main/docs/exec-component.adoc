@@ -59,7 +59,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Message body
+== Usage
+
+=== Message body
 
 If the component receives an `in` message body that is
 convertible to `java.io.InputStream`, it is used to feed input to the
@@ -92,7 +94,7 @@ will return the content of the _out file_. If no _out file_ is used, then
 this component will convert the `stdout` of the process to the target
 type. For more details, please refer to the xref:exec-component.adoc[usage examples] below.
 
-== Usage examples
+== Examples
 
 === Executing word count (Linux)
 

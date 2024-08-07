@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The LangChain4j Chat Component allows you to integrate with any LLM supported by https://github.com/langchain4j/langchain4j[LangChain4j].
+The LangChain4j Chat Component allows you to integrate with any Large Language Model (LLM) supported by https://github.com/langchain4j/langchain4j[LangChain4j].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -58,14 +58,20 @@ include::partial$component-endpoint-headers.adoc[]
 
 include::spring-boot:partial$starter.adoc[]
 
-== Using a specific Chat Model
+== Usage
+
+=== Using a specific Chat Model
+
 The Camel LangChain4j chat component provides an abstraction for interacting with various types of Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[LangChain4j].
 
-To integrate with a specific Large Language Model, users should follow these steps:
+==== Integrating with specific LLM
 
-=== Example of Integrating with OpenAI
+To integrate with a specific LLM, users should follow the steps described below, which explain
+how to integrate with OpenAI.
+
 Add the dependency for LangChain4j OpenAI support:
 
+.Example
 [source,xml]
 ----
 <dependency>
@@ -75,7 +81,8 @@ Add the dependency for LangChain4j OpenAI support:
 </dependency>
 ----
 
-Init the OpenAI Chat Language Model, and add it to the Camel Registry:
+Initialize the OpenAI Chat Language Model, and add it to the Camel Registry:
+
 [source, java]
 ----
 ChatLanguageModel model = OpenAiChatModel.builder()
@@ -88,6 +95,7 @@ context.getRegistry().bind("chatModel", model);
 ----
 
 Use the model in the Camel LangChain4j Chat Producer
+
 [source, java]
 ----
  from("direct:chat")
@@ -100,11 +108,12 @@ Use the model in the Camel LangChain4j Chat Producer
 To switch to another Large Language Model and its corresponding dependency, replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
 ====
 
-== Send a prompt with variables
+=== Send a prompt with variables
+
 To send a prompt with variables, use the Operation type `LangChain4jChatOperations.CHAT_SINGLE_MESSAGE_WITH_PROMPT`.
 This operation allows you to send a single prompt message with dynamic variables, which will be replaced with values provided in the request.
 
-Example of route :
+.Route example:
 [source, java]
 ----
  from("direct:chat")
@@ -112,7 +121,7 @@ Example of route :
 
 ----
 
-Example of usage:
+.Usage example:
 [source, java]
 ----
 var promptTemplate = "Create a recipe for a {{dishType}} with the following ingredients: {{ingredients}}";
@@ -125,12 +134,13 @@ String response = template.requestBodyAndHeader("direct:chat", variables,
                 LangChain4jChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
 ----
 
-== Chat with history
+=== Chat with history
+
 You can send a new prompt along with the chat message history by passing all messages in a list of type `dev.langchain4j.data.message.ChatMessage`.
 Use the Operation type `LangChain4jChatOperations.CHAT_MULTIPLE_MESSAGES`.
 This operation allows you to continue the conversation with the context of previous messages.
 
-Example of route :
+.Route example:
 [source, java]
 ----
  from("direct:chat")
@@ -138,7 +148,7 @@ Example of route :
 
 ----
 
-Example of usage:
+.Usage example:
 [source, java]
 ----
 List<ChatMessage> messages = new ArrayList<>();
@@ -148,7 +158,7 @@ messages.add(new SystemMessage("You are asked to provide recommendations for a r
 String response = template.requestBody("direct:send-multiple", messages, String.class);
 ----
 
-== Chat with Tool
+=== Chat with Tool
 Camel langchain4j-chat component as a consumer can be used to implement a LangChain tool.
 Right now tools are supported only via the OpenAiChatModel backed by OpenAI APIs.
 
@@ -157,7 +167,7 @@ or via the endpoint option camelToolParameter for a programmatic approach.
 The parameters can be found as headers in the consumer route, in particular, if you define `parameter.userId=5`,
 in the consumer route `${header.userId}` can be used.
 
-Example of a producer and a consumer:
+.Producer and consumer example:
 [source, java]
 ----
 from("direct:test")
@@ -167,7 +177,7 @@ from("langchain4j-chat:test1?description=Query user database by number&parameter
     .to("sql:SELECT name FROM users WHERE id = :#number");
 ----
 
-Example of usage:
+.Usage example:
 [source, java]
 ----
 List<ChatMessage> messages = new ArrayList<>();
@@ -181,15 +191,16 @@ List<ChatMessage> messages = new ArrayList<>();
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 ----
 
-== RAG (Retrieval Augmented Generation)
+=== Retrieval Augmented Generation (RAG)
+
 Use the RAG feature to enrich exchanges with data retrieved from any type of Camel endpoint. The feature is compatible with all LangChain4 Chat operations and is ideal for orchestrating the RAG workflow, utilizing the extensive library of components and Enterprise Integration Patterns (EIPs) available in Apache Camel.
 
 There are two ways for utilizing the RAG feature:
 
-=== Using RAG with Content Enricher and LangChain4jRagAggregatorStrategy
+==== Using RAG with Content Enricher and LangChain4jRagAggregatorStrategy
 Enrich the exchange by retrieving a list of strings using any Camel producer. The `LangChain4jRagAggregatorStrategy` is specifically designed to augment data within LangChain4j chat producers.
 
-Example of usage:
+.Usage example:
 [source, java]
 ----
 // Create an instance of the RAG aggregator strategy
@@ -213,7 +224,7 @@ This method leverages a separate Camel route to fetch and process the augmented 
 
 It is possible to enrich the message from multiple sources within the same exchange.
 
-Example of usage:
+.Usage example:
 [source, java]
 ----
 // Create an instance of the RAG aggregator strategy
@@ -225,11 +236,12 @@ from("direct:test")
      .to("langchain4j-chat:test1?chatOperation=CHAT_SIMPLE_MESSAGE");
 ----
 
-=== Using RAG with Header
+==== Using RAG with headers
+
 Directly add augmented data into the header. This method is particularly efficient for straightforward use cases where the augmented data is predefined or static.
 You must add augmented data as a List of `dev.langchain4j.rag.content.Content` directly inside the header `CamelLangChain4jChatAugmentedData`.
 
-Example of usage:
+.Usage example:
 [source, java]
 ----
 import dev.langchain4j.rag.content.Content;

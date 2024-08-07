@@ -57,7 +57,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Drill Producer
+== Usage
+
+=== Drill Producer
 
 The producer executes a query using the *CamelDrillQuery* header and puts the results into the body.
 

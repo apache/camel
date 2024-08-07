@@ -52,7 +52,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Producer Operations (Since 3.20)
+== Usage
+
+=== Producer Operations (Since 3.20)
 
 Apache Camel supports different etcd operations.
 
@@ -83,7 +85,7 @@ the key `CamelEtcdKeyCharset`.
 You indicate if the key is a prefix by setting the exchange header with
 the key `CamelEtcdIsPrefix` to `true`.
 
-== Consumer (Since 3.20)
+=== Consumer (Since 3.20)
 
 The consumer of the etcd components allows watching changes on the matching key-value pair(s). One exchange is created per event with the header `CamelEtcdPath` set to the path of the corresponding key-value pair and the body
 of type `WatchEvent`.
@@ -95,11 +97,11 @@ the key `CamelEtcdIsPrefix` to `true`.
 
 By default, the consumer receives only the latest changes, but it is also possible to start watching events from a specific revision by setting the option `fromIndex` to the expected starting index.
 
-== AggregationRepository
+=== AggregationRepository
 
 The Etcd v3 component provides an `AggregationStrategy` to use etcd as the backend datastore.
 
-== RoutePolicy (Since 3.20)
+=== RoutePolicy (Since 3.20)
 
 The Etcd v3 component provides a `RoutePolicy` to use etcd as clustered lock.
 

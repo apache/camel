@@ -119,7 +119,7 @@ Dig is a Unix command-line utility to run DNS queries.
 The query must be provided in the header with key `"dns.query"`.
 
 
-== Dns Activation Policy
+=== Dns Activation Policy
 
 The `DnsActivationPolicy` can be used to dynamically start and stop routes based on dns state.
 

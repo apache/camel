@@ -35,7 +35,7 @@ include::partial$dataformat-options.adoc[]
 
 == Usage
 
-To use the data format, simply instantiate an instance and invoke the
+To use the data format, instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
 
 [source,java]
@@ -61,23 +61,22 @@ df.setIgnoreFirstRecord(false);
 from("seda:people").marshal(df).convertBodyTo(String.class).to("jms:queue:people");
 -----------------------------------------------------------------------------------
 
-In the code above we marshal the data from a Object representation as a
+In the code above we marshal the data from an Object representation as a
 `List` of rows as `Maps`. The rows as `Map` contains the column name as
 the key, and the corresponding value. This structure can be created
-in Java code from e.g. a processor. We marshal the data according to the
+in Java code from e.g., a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
 == Dependencies
 
-To use Flatpack in your camel routes you need to add the a dependency on
+To use Flatpack in your camel routes, you need to add a dependency on
 *camel-flatpack* which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest release.
 
-[source,java]
+[source,xml]
 -----------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
