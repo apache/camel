@@ -647,7 +647,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
      * Configures the dynamic context with exchange specific parameters
      */
     protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange) {
-        addParameters(dynamicQueryContext, exchange.getProperties());
+        addParameters(dynamicQueryContext, exchange.getAllProperties());
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
         dynamicQueryContext.setParameter(
                 StructuredQName.fromClarkName("in.body"),
