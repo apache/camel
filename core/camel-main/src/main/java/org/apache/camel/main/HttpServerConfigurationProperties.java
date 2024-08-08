@@ -47,10 +47,20 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private boolean uploadEnabled;
     private String uploadSourceDir;
 
-    private HttpServerAuthenticationConfigurationProperties authentication;
+    @Metadata(label = "security")
+    private boolean authenticationEnabled;
+    @Metadata(label = "security")
+    private String authenticationPath;
+    @Metadata(label = "security")
+    private String basicPropertiesFile;
+    @Metadata(label = "security")
+    private String jwtKeystoreType;
+    @Metadata(label = "security")
+    private String jwtKeystorePath;
+    @Metadata(label = "security", secret = true)
+    private String jwtKeystorePassword;
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
-        authentication = new HttpServerAuthenticationConfigurationProperties(this);
         this.parent = parent;
     }
 
@@ -60,10 +70,6 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     @Override
     public void close() {
-        if (authentication != null) {
-            authentication.close();
-            authentication = null;
-        }
         parent = null;
     }
 
@@ -217,6 +223,73 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.uploadSourceDir = uploadSourceDir;
     }
 
+    public boolean isAuthenticationEnabled() {
+        return authenticationEnabled;
+    }
+
+    /**
+     * Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or
+     * Quarkus).
+     */
+    public void setAuthenticationEnabled(boolean authenticationEnabled) {
+        this.authenticationEnabled = authenticationEnabled;
+    }
+
+    public String getAuthenticationPath() {
+        return authenticationPath;
+    }
+
+    /**
+     * Set HTTP url path of embedded server that is protected by authentication configuration.
+     */
+    public void setAuthenticationPath(String authenticationPath) {
+        this.authenticationPath = authenticationPath;
+    }
+
+    public String getBasicPropertiesFile() {
+        return basicPropertiesFile;
+    }
+
+    /**
+     * Name of the file that contains basic authentication info for Vert.x file auth provider.
+     */
+    public void setBasicPropertiesFile(String basicPropertiesFile) {
+        this.basicPropertiesFile = basicPropertiesFile;
+    }
+
+    public String getJwtKeystoreType() {
+        return jwtKeystoreType;
+    }
+
+    /**
+     * Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.).
+     */
+    public void setJwtKeystoreType(String jwtKeystoreType) {
+        this.jwtKeystoreType = jwtKeystoreType;
+    }
+
+    public String getJwtKeystorePath() {
+        return jwtKeystorePath;
+    }
+
+    /**
+     * Path to the keystore file used for JWT tokens validation.
+     */
+    public void setJwtKeystorePath(String jwtKeystorePath) {
+        this.jwtKeystorePath = jwtKeystorePath;
+    }
+
+    public String getJwtKeystorePassword() {
+        return jwtKeystorePassword;
+    }
+
+    /**
+     * Password from the keystore used for JWT tokens validation.
+     */
+    public void setJwtKeystorePassword(String jwtKeystorePassword) {
+        this.jwtKeystorePassword = jwtKeystorePassword;
+    }
+
     /**
      * Whether embedded HTTP server is enabled. By default, the server is not enabled.
      */
@@ -329,36 +402,52 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
+     * Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or
+     * Quarkus).
      */
-    public HttpServerAuthenticationConfigurationProperties authentication() {
-        if (authentication == null) {
-            authentication = new HttpServerAuthenticationConfigurationProperties(this);
-        }
-        return authentication;
-    }
-
-    /**
-     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
-     */
-    public HttpServerAuthenticationConfigurationProperties getAuthentication() {
-        return authentication;
-    }
-
-    /**
-     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
-     */
-    public void setAuthentication(
-            HttpServerAuthenticationConfigurationProperties authentication) {
-        this.authentication = authentication;
-    }
-
-    /**
-     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
-     */
-    public HttpServerConfigurationProperties withAuthentication(
-            HttpServerAuthenticationConfigurationProperties authentication) {
-        this.authentication = authentication;
+    public HttpServerConfigurationProperties withAuthenticationEnabled(boolean authenticationEnabled) {
+        this.authenticationEnabled = authenticationEnabled;
         return this;
     }
+
+    /**
+     * Set HTTP url path of embedded server that is protected by authentication configuration.
+     */
+    public HttpServerConfigurationProperties withAuthenticationPath(String authenticationPath) {
+        this.authenticationPath = authenticationPath;
+        return this;
+    }
+
+    /**
+     * Name of the file that contains basic authentication info for Vert.x file auth provider.
+     */
+    public HttpServerConfigurationProperties withBasicPropertiesFile(String basicPropertiesFile) {
+        this.basicPropertiesFile = basicPropertiesFile;
+        return this;
+    }
+
+    /**
+     * Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.).
+     */
+    public HttpServerConfigurationProperties withJwtKeystoreType(String jwtKeystoreType) {
+        this.jwtKeystoreType = jwtKeystoreType;
+        return this;
+    }
+
+    /**
+     * Path to the keystore file used for JWT tokens validation.
+     */
+    public HttpServerConfigurationProperties withJwtKeystorePath(String jwtKeystorePath) {
+        this.jwtKeystorePath = jwtKeystorePath;
+        return this;
+    }
+
+    /**
+     * Password from the keystore used for JWT tokens validation.
+     */
+    public HttpServerConfigurationProperties withJwtKeystorePassword(String jwtKeystorePassword) {
+        this.jwtKeystorePassword = jwtKeystorePassword;
+        return this;
+    }
+
 }

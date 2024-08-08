@@ -17,10 +17,12 @@
 package org.apache.camel.component.platform.http.main.authentication;
 
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
-import org.apache.camel.main.HttpServerAuthenticationConfigurationProperties;
+import org.apache.camel.main.HttpServerConfigurationProperties;
 
+/**
+ * Configure authentication on the embedded HTTP server.
+ */
 public interface MainAuthenticationConfigurer {
-    void configureAuthentication(
-            AuthenticationConfig authenticationConfig,
-            HttpServerAuthenticationConfigurationProperties authenticationProperties);
+
+    void configureAuthentication(AuthenticationConfig authenticationConfig, HttpServerConfigurationProperties properties);
 }

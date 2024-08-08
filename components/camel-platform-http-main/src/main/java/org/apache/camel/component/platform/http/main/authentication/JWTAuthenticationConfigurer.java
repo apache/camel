@@ -25,18 +25,18 @@ import io.vertx.ext.web.handler.JWTAuthHandler;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationConfigEntry;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationHandlerFactory;
-import org.apache.camel.main.HttpServerAuthenticationConfigurationProperties;
-import org.apache.camel.main.HttpServerJWTAuthenticationConfigurationProperties;
+import org.apache.camel.main.HttpServerConfigurationProperties;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer {
+
     @Override
     public void configureAuthentication(
             AuthenticationConfig authenticationConfig,
-            HttpServerAuthenticationConfigurationProperties authenticationProperties) {
-        HttpServerJWTAuthenticationConfigurationProperties properties = authenticationProperties.getJWT();
-        String path = isEmpty(authenticationProperties.getPath()) ? authenticationProperties.getPath() : "/*";
+            HttpServerConfigurationProperties properties) {
+
+        String path = isEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : "/*";
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
@@ -52,9 +52,9 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
                 vertx,
                 new JWTAuthOptions(
                         new JsonObject().put("keyStore", new JsonObject()
-                                .put("type", properties.getKeystoreType())
-                                .put("path", properties.getKeystorePath())
-                                .put("password", properties.getKeystorePassword())))));
+                                .put("type", properties.getJwtKeystoreType())
+                                .put("path", properties.getJwtKeystorePath())
+                                .put("password", properties.getJwtKeystorePassword())))));
 
         authenticationConfig.getEntries().add(entry);
         authenticationConfig.setEnabled(true);
