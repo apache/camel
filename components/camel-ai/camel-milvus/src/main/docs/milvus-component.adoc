@@ -180,5 +180,46 @@ from("direct:in")
 ----
 ====
 
+=== Relation with Langchain4j-Embeddings component
+
+The Milvus component provides a datatype transformer, from langchain4j-embeddings to an insert/upsert object compatible with Milvus.
+
+As an example you could think about these routes:
+
+[tabs]
+====
+Java::
+[source,java]
+----
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:in")
+                        .to("langchain4j-embeddings:test")
+                        .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.INSERT)
+                        .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
+                        .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
+                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
+                        .to(MILVUS_URI);
+
+                from("direct:up")
+                        .to("langchain4j-embeddings:test")
+                        .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.UPSERT)
+                        .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
+                        .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
+                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
+                        .to(MILVUS_URI);
+            }
+        };
+    } 
+----
+====
+
+It's important to note that: Milvus SDK doesn't support upsert for autoID fields. This means if you set a field as key, and you set the autoID to true, the upsert won't be possible.
+
+That's the reason why, in the example we are setting the userID as keyName with a keyValue of 3. This is particularly important when you design your Milvus database.
+
+The transformer only support insert/upsert objects, so the only operation you can set via header are INSERT and UPSERT, otherwise the transformer will fail with an error log.
+
 
 include::spring-boot:partial$starter.adoc[]
