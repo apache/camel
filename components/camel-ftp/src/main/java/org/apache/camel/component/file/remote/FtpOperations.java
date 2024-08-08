@@ -381,26 +381,24 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             String originalDirectory = client.printWorkingDirectory();
 
             boolean success;
-            try {
-                // maybe the full directory already exists
-                success = client.changeWorkingDirectory(directory);
+            // maybe the full directory already exists
+            success = client.changeWorkingDirectory(directory);
+            if (!success) {
+                log.trace("Trying to build remote directory: {}", directory);
+                success = client.makeDirectory(directory);
                 if (!success) {
-                    log.trace("Trying to build remote directory: {}", directory);
-                    success = client.makeDirectory(directory);
-                    if (!success) {
-                        // we are here if the server side doesn't create
-                        // intermediate folders so create the folder one by one
-                        success = buildDirectoryChunks(directory);
-                    }
-                }
-
-                return success;
-            } finally {
-                // change back to original directory
-                if (originalDirectory != null) {
-                    changeCurrentDirectory(originalDirectory);
+                    // we are here if the server side doesn't create
+                    // intermediate folders so create the folder one by one
+                    success = buildDirectoryChunks(directory);
                 }
             }
+
+            // change back to original directory
+            if (originalDirectory != null) {
+                changeCurrentDirectory(originalDirectory);
+            }
+
+            return success;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
@@ -698,14 +696,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             // store the file
             answer = doStoreFile(name, targetName, exchange);
-        } catch (GenericFileOperationFailedException e) {
-            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
-            throw e;
-        } finally {
+
             // change back to current directory if we changed directory
             if (currentDir != null) {
                 changeCurrentDirectory(currentDir);
             }
+        } catch (GenericFileOperationFailedException e) {
+            clientActivityListener.onGeneralError(endpoint.getConfiguration().remoteServerInformation(), e.getMessage());
+            throw e;
         }
 
         if (answer) {
