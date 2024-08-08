@@ -149,6 +149,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String startupRecorderProfile = "default";
     private long startupRecorderDuration;
     private String startupRecorderDir;
+    private String cloudPropertiesLocation;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -2724,6 +2725,26 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStartupRecorderDir(String startupRecorderDir) {
         this.startupRecorderDir = startupRecorderDir;
+        return (T) this;
+    }
+
+    public String getCloudPropertiesLocation() {
+        return cloudPropertiesLocation;
+    }
+
+    /**
+     * Sets the locations (comma separated values) where to find properties configuration as defined for cloud native
+     * environments such as Kubernetes. You should only scan text based mounted configuration.
+     */
+    public void setCloudPropertiesLocation(String cloudPropertiesLocation) {
+        this.cloudPropertiesLocation = cloudPropertiesLocation;
+    }
+
+    /**
+     * Whether to use cloud properties location setting. Default is none.
+     */
+    public T withCloudPropertiesLocation(boolean dumpRoutesResolvePlaceholders) {
+        this.cloudPropertiesLocation = cloudPropertiesLocation;
         return (T) this;
     }
 
