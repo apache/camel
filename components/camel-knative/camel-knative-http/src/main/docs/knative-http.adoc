@@ -9,4 +9,4 @@
 
 *Since Camel {since}*
 
-HTTP transport for camel-knative component.
+HTTP transport for the camel-knative component.

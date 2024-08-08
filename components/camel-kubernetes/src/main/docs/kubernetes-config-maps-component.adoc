@@ -36,18 +36,22 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listConfigMaps
-- listConfigMapsByLabels
-- getConfigMap
-- createConfigMap
-- updateConfigMap
-- deleteConfigMap
+=== Supported producer operation
 
-== Kubernetes ConfigMaps Producer Examples
+- `listConfigMaps`
+- `listConfigMapsByLabels`
+- `getConfigMap`
+- `createConfigMap`
+- `updateConfigMap`
+- `deleteConfigMap`
 
-- listConfigMaps: this operation lists the configmaps
+== Examples
+
+=== Kubernetes ConfigMaps Producer Examples
+
+- `listConfigMaps`: this operation lists the configmaps
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -58,7 +62,7 @@ from("direct:list").
 
 This operation returns a List of ConfigMaps from your cluster
 
-- listConfigMapsByLabels: this operation lists the configmaps selected by label
+- `listConfigMapsByLabels`: this operation lists the configmaps selected by label
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -78,7 +82,7 @@ from("direct:listByLabels").process(new Processor() {
 
 This operation returns a List of ConfigMaps from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
-== Kubernetes ConfigMaps Consumer Example
+=== Kubernetes ConfigMaps Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------

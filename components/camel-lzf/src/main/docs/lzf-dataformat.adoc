@@ -54,7 +54,7 @@ To use LZF compression in your Camel routes, you need to add a dependency
 on *camel-lzf* which implements this data format.
 
 If you use Maven you can add the following to your `pom.xml`,
-substituting the version number for the latest & greatest release.
+substituting the version number for the latest release.
 
 [source,xml]
 ----------------------------------------------------------

@@ -35,15 +35,19 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listBuilds
-- listBuildsByLabels
-- getBuild
+=== Supported producer operation
 
-== Openshift Builds Producer Examples
+- `listBuilds`
+- `listBuildsByLabels`
+- `getBuild`
 
-- listBuilds: this operation lists the Builds on an Openshift cluster
+== Examples
+
+=== Openshift Builds Producer Examples
+
+- `listBuilds`: this operation lists the builds on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -54,7 +58,7 @@ from("direct:list").
 
 This operation returns a List of Builds from your Openshift cluster
 
-- listBuildsByLabels: this operation lists the builds by labels on an Openshift cluster
+- `listBuildsByLabels`: this operation lists the builds by labels on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -71,7 +75,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Builds from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a list of builds from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 
 include::spring-boot:partial$starter.adoc[]

@@ -35,18 +35,22 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listPods
-- listPodsByLabels
-- getPod
-- createPod
-- updatePod
-- deletePod
+=== Supported producer operation
 
-== Kubernetes Pods Producer Examples
+- `listPods`
+- `listPodsByLabels`
+- `getPod`
+- `createPod`
+- `updatePod`
+- `deletePod`
 
-- listPods: this operation lists the pods on a kubernetes cluster
+== Examples
+
+=== Kubernetes Pods Producer Examples
+
+- `listPods`: this operation lists the pods on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -55,9 +59,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Pods from your cluster
+This operation returns a list of pods from your cluster
 
-- listPodsByLabels:  this operation lists the pods by labels on a kubernetes cluster
+- `listPodsByLabels`: this operation lists the pods by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -74,9 +78,9 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Pods from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a list of pods from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
-== Kubernetes Pods Consumer Example
+=== Kubernetes Pods Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -92,7 +96,6 @@ fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&resourceName=test", 
 --------------------------------------------------------------------------------
 
 This consumer will return a list of events on the namespace default for the pod test.
-
 
 
 include::spring-boot:partial$starter.adoc[]

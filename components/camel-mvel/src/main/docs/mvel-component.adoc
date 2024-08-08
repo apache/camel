@@ -54,7 +54,13 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-== MVEL Context
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== MVEL Context
 
 Camel will provide exchange information in the MVEL context (just a
 `Map`). The `Exchange` is transferred as:
@@ -62,19 +68,19 @@ Camel will provide exchange information in the MVEL context (just a
 [width="100%",cols="10%m,90%",options="header",]
 |=======================================================================
 |key |value
-|exchange |The `Exchange` itself
-|exchange.properties |The `Exchange` properties
-|variables |The variables
-|headers |The headers of the message
-|camelContext |The `CamelContext`
-|request |The message
-|in |The message
-|body |The message body
-|out | The Out message (only for InOut message exchange pattern).
-|response |The Out message (only for InOut message exchange pattern).
+|`exchange` |The `Exchange` itself
+|`exchange.properties` |The `Exchange` properties
+|`variables` |The variables
+|`headers` |The headers of the message
+|`camelContext` |The `CamelContext`
+|`request` |The message
+|`in` |The message
+|`body` |The message body
+|`out` | The Out message (only for InOut message exchange pattern).
+|`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-== Hot reloading
+=== Hot reloading
 
 The mvel template resource is, by default, hot reloadable for both file
 and classpath resources (expanded jar). If you set `contentCache=true`,
@@ -82,18 +88,14 @@ Camel will only load the resource once, and thus hot reloading is not
 possible. This scenario can be used in production when the resource
 never changes.
 
-== Dynamic templates
+=== Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template, or the template content itself. If any of these
 headers is set, then Camel uses this over the endpoint configured
 resource. This allows you to provide a dynamic template at runtime.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
-== Example
+== Examples
 
 For example, you could use something like
 

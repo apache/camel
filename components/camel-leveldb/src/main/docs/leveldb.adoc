@@ -19,7 +19,7 @@ Aggregator.
 
 Current features it provides:
 
-* LevelDBAggregationRepository
+* `LevelDBAggregationRepository`
 
 [[LevelDB-UsingLevelDBAggregationRepository]]
 == Using LevelDBAggregationRepository

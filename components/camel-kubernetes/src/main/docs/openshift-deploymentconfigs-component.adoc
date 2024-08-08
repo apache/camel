@@ -35,19 +35,23 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listDeploymentConfigs
-- listDeploymentsConfigsByLabels
-- getDeploymentConfig
-- createDeploymentConfig
-- updateDeploymentConfig
-- deleteDeploymentConfig
-- scaleDeploymentConfig
+=== Supported producer operation
 
-== Openshift Deployment Configs Producer Examples
+- `listDeploymentConfigs`
+- `listDeploymentsConfigsByLabels`
+- `getDeploymentConfig`
+- `createDeploymentConfig`
+- `updateDeploymentConfig`
+- `deleteDeploymentConfig`
+- `scaleDeploymentConfig`
 
-- listDeploymentConfigs: this operation lists the deployments on an Openshift cluster
+== Examples
+
+=== Openshift Deployment Configs Producer Examples
+
+- `listDeploymentConfigs`: this operation lists the deployments on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -56,9 +60,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Deployment Configs from your cluster
+This operation returns a list of deployment configs from your cluster
 
-- listDeploymentConfigsByLabels:  this operation lists the deployment configs by labels on an Openshift cluster
+- `listDeploymentConfigsByLabels`: this operation lists the deployment configs by labels on an Openshift cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -75,9 +79,9 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Deployment Configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a list of deployment configs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
-== Openshift Deployment Configs Consumer Example
+=== Openshift Deployment Configs Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -93,7 +97,6 @@ fromF("openshift-deploymentconfigs://%s?oauthToken=%s&namespace=default&resource
 --------------------------------------------------------------------------------
 
 This consumer will return a list of events on the namespace default for the deployment config test.
-
 
 
 include::spring-boot:partial$starter.adoc[]

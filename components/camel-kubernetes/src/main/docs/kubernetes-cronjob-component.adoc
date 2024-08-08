@@ -38,11 +38,11 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Supported producer operation
 
-- listCronJob
-- listCronJobByLabels
-- getCronJob
-- createCronJob
-- updateCronJob
-- deleteCronJob
+- `listCronJob`
+- `listCronJobByLabels`
+- `getCronJob`
+- `createCronJob`
+- `updateCronJob`
+- `deleteCronJob`
 
 include::spring-boot:partial$starter.adoc[]
