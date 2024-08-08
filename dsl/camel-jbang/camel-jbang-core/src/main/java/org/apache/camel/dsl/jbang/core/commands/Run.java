@@ -883,7 +883,9 @@ public class Run extends CamelCommand {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
-        eq.addDependencies("camel:cli-connector");
+        if (!this.exportRun) {
+            eq.addDependencies("camel:cli-connector");
+        }
         eq.fresh = this.fresh;
         eq.download = this.download;
         eq.quiet = true;
@@ -948,7 +950,9 @@ public class Run extends CamelCommand {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
         eq.dependencies.addAll(dependencies);
-        eq.addDependencies("camel:cli-connector");
+        if (!this.exportRun) {
+            eq.addDependencies("camel:cli-connector");
+        }
         if (this.dev) {
             // hot-reload of spring-boot
             eq.addDependencies("mvn:org.springframework.boot:spring-boot-devtools");
