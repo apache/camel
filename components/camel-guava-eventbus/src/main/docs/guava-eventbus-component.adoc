@@ -1,10 +1,11 @@
-= Guava EventBus Component
+= Guava EventBus Component (deprecated)
 :doctitle: Guava EventBus
 :shortname: guava-eventbus
 :artifactid: camel-guava-eventbus
 :description: Send and receive messages to/from Guava EventBus.
 :since: 2.10
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

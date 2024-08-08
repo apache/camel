@@ -518,6 +518,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @param path eventBusRef
          * @return the dsl builder
          */
+        @Deprecated
         default GuavaEventBusEndpointBuilder guavaEventbus(String path) {
             return GuavaEventBusEndpointBuilderFactory.endpointBuilder("guava-eventbus", path);
         }
@@ -539,6 +540,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @param path eventBusRef
          * @return the dsl builder
          */
+        @Deprecated
         default GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
             return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

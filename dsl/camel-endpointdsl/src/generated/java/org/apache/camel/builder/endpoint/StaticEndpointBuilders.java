@@ -5813,6 +5813,7 @@ public class StaticEndpointBuilders {
      * @param path eventBusRef
      * @return the dsl builder
      */
+    @Deprecated
     public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String path) {
         return guavaEventbus("guava-eventbus", path);
     }
@@ -5834,6 +5835,7 @@ public class StaticEndpointBuilders {
      * @param path eventBusRef
      * @return the dsl builder
      */
+    @Deprecated
     public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
         return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

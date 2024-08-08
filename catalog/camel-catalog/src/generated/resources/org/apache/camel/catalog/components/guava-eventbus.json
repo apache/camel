@@ -4,7 +4,7 @@
     "name": "guava-eventbus",
     "title": "Guava EventBus",
     "description": "Send and receive messages to\/from Guava EventBus.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.10.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.guava.eventbus.GuavaEventBusComponent",

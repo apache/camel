@@ -28,7 +28,7 @@
 
     <artifactId>camel-guava-eventbus</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Guava-EventBus</name>
+    <name>Camel :: Guava-EventBus (deprecated)</name>
     <description>Camel Guava EventBus support</description>
 
     <properties>
