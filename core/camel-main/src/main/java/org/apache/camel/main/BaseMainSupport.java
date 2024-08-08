@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Configuration;
 import org.apache.camel.ExtendedCamelContext;
@@ -2283,7 +2284,7 @@ public abstract class BaseMainSupport extends BaseService {
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find MainHttpServerFactory on classpath. Add camel-platform-http-main to classpath."));
         }
-        return answer;
+        return CamelContextAware.trySetCamelContext(answer, camelContext);
     }
 
     private static final class PropertyPlaceholderListener implements PropertiesLookupListener {

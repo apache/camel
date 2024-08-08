@@ -169,19 +169,27 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 13 options, which are listed below.
+The camel.server supports 21 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.server.authentication* | To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus) |  | HttpServerAuthenticationConfigurationProperties
+| *camel.server.authentication{zwsp}PropertiesFile* | Name of the file that contains authentication info for Vert.x property file auth provider. |  | String
+| *camel.server.basic* | To configure Basic HTTP authentication for embedded server. |  | HttpServerBasicAuthenticationConfigurationProperties
 | *camel.server.devConsoleEnabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
+| *camel.server.enabled* | Whether to enable HTTP authentication for embedded server. | false | boolean
 | *camel.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
 | *camel.server.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health | false | boolean
 | *camel.server.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
 | *camel.server.infoEnabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /q/info | false | boolean
 | *camel.server.jolokiaEnabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia | false | boolean
+| *camel.server.keystorePassword* | Password from the keystore used for JWT tokens validation. |  | String
+| *camel.server.keystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
+| *camel.server.keystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
 | *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics | false | boolean
+| *camel.server.path* | Set HTTP url path of embedded server that is protected by authentication configuration. |  | String
 | *camel.server.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.server.port* | Port to use for binding embedded HTTP server | 8080 | int
 | *camel.server.uploadEnabled* | Whether to enable file upload via HTTP (not intended for production use). This functionality is for development to be able to reload Camel routes and code with source changes (if reload is enabled). If enabled then you can upload/delete files via HTTP PUT/DELETE on context-path: /q/upload/\{name}. You must also configure the uploadSourceDir option. | false | boolean

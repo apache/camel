@@ -47,7 +47,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private boolean uploadEnabled;
     private String uploadSourceDir;
 
+    private HttpServerAuthenticationConfigurationProperties authentication;
+
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
+        authentication = new HttpServerAuthenticationConfigurationProperties(this);
         this.parent = parent;
     }
 
@@ -57,6 +60,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     @Override
     public void close() {
+        if (authentication != null) {
+            authentication.close();
+            authentication = null;
+        }
         parent = null;
     }
 
@@ -321,4 +328,37 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         return this;
     }
 
+    /**
+     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public HttpServerAuthenticationConfigurationProperties authentication() {
+        if (authentication == null) {
+            authentication = new HttpServerAuthenticationConfigurationProperties(this);
+        }
+        return authentication;
+    }
+
+    /**
+     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public HttpServerAuthenticationConfigurationProperties getAuthentication() {
+        return authentication;
+    }
+
+    /**
+     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public void setAuthentication(
+            HttpServerAuthenticationConfigurationProperties authentication) {
+        this.authentication = authentication;
+    }
+
+    /**
+     * To configure embedded HTTP server authentication (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public HttpServerConfigurationProperties withAuthentication(
+            HttpServerAuthenticationConfigurationProperties authentication) {
+        this.authentication = authentication;
+        return this;
+    }
 }
