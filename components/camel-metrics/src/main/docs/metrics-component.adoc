@@ -21,7 +21,7 @@ xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xre
 http://metrics.dropwizard.io[Metrics] provides a simple way to measure the behaviour of applications.
 The configurable reporting backend enables different integration options for
 collecting and visualizing statistics. The component also provides
-a `MetricsRoutePolicyFactory` which allows to expose route statistics
+a `MetricsRoutePolicyFactory` which allows exposing route statistics
 using Dropwizard Metrics, see bottom of page for details.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -156,13 +156,13 @@ Metrics endpoint will catch all exceptions and write log entry using
 level `warn`.
 
 [[MetricsComponent-counter]]
-== Metrics type counter
+=== Metrics type counter
 
 ----
 metrics:counter:metricname[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |=====================================================
@@ -199,7 +199,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-=== Headers
+==== Headers
 
 Message headers can be used to override `increment` and `decrement`
 values specified in Metrics component URI.
@@ -231,13 +231,13 @@ from("direct:in")
 ----
 
 [[MetricsComponent-histogram]]
-== Metric type histogram
+=== Metric type histogram
 
 ----
 metrics:histogram:metricname[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |===================================
@@ -265,7 +265,7 @@ from("direct:in")
 
 ----
 
-=== Headers
+==== Headers
 
 Message header can be used to override value specified in Metrics
 component URI.
@@ -287,13 +287,13 @@ from("direct:in")
 ----
 
 [[MetricsComponent-meter]]
-== Metric type meter
+=== Metric type meter
 
 ----
 metrics:meter:metricname[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |===================================
@@ -319,7 +319,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-=== Headers
+==== Headers
 
 Message header can be used to override `mark` value specified in Metrics
 component URI.
@@ -340,13 +340,13 @@ from("direct:in")
 ----
 
 [[MetricsComponent-timer]]
-== Metrics type timer
+=== Metrics type timer
 
 ----
 metrics:timer:metricname[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |==========================
@@ -371,7 +371,7 @@ from("direct:in")
 `TimerContext` objects are stored as Exchange properties between
 different Metrics component calls.
 
-=== Headers
+==== Headers
 
 Message header can be used to override action value specified in Metrics
 component URI.
@@ -393,13 +393,13 @@ from("direct:in")
 ----
 
 [[MetricsComponent-gauge]]
-== Metric type gauge
+=== Metric type gauge
 
 ----
 metrics:gauge:metricname[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |=====================================================
@@ -417,7 +417,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-=== Headers
+==== Headers
 
 Message headers can be used to override `subject` values specified in Metrics component URI.
 Note: if `CamelMetricsName` header is specified, then new gauge is registered in addition to
@@ -438,7 +438,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-== MetricsRoutePolicyFactory
+=== MetricsRoutePolicyFactory
 
 This factory allows adding a `RoutePolicy` for each
 route that exposes route utilization statistics using Dropwizard metrics.
@@ -519,7 +519,7 @@ if (registryService != null) {
 }
 ----
 
-== MetricsMessageHistoryFactory
+=== MetricsMessageHistoryFactory
 
 This factory allows using metrics to
 capture Message History performance
@@ -593,7 +593,7 @@ String json = service.dumpStatisticsAsJson();
 And the JMX API the MBean is registered in the `type=services` tree
 with `name=MetricsMessageHistoryService`.
 
-== InstrumentedThreadPoolFactory
+=== InstrumentedThreadPoolFactory
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from the inside of Camel.

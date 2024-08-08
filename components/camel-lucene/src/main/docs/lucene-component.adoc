@@ -67,7 +67,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Sending/Receiving Messages to/from the cache
+== Usage
 
 === Lucene Producers
 
