@@ -53,6 +53,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "camelEventsTimestampEnabled": target.setCamelEventsTimestampEnabled(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitiveheaders":
         case "caseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, boolean.class, value)); return true;
+        case "cloudpropertieslocation":
+        case "cloudPropertiesLocation": target.setCloudPropertiesLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "compileworkdir":
         case "compileWorkDir": target.setCompileWorkDir(property(camelContext, java.lang.String.class, value)); return true;
         case "configurationclasses":
@@ -293,6 +295,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "camelEventsTimestampEnabled": return boolean.class;
         case "caseinsensitiveheaders":
         case "caseInsensitiveHeaders": return boolean.class;
+        case "cloudpropertieslocation":
+        case "cloudPropertiesLocation": return java.lang.String.class;
         case "compileworkdir":
         case "compileWorkDir": return java.lang.String.class;
         case "configurationclasses":
@@ -534,6 +538,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "camelEventsTimestampEnabled": return target.isCamelEventsTimestampEnabled();
         case "caseinsensitiveheaders":
         case "caseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
+        case "cloudpropertieslocation":
+        case "cloudPropertiesLocation": return target.getCloudPropertiesLocation();
         case "compileworkdir":
         case "compileWorkDir": return target.getCompileWorkDir();
         case "configurationclasses":

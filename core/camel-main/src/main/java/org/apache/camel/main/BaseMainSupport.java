@@ -20,6 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -415,6 +421,15 @@ public abstract class BaseMainSupport extends BaseService {
         if (op != null) {
             pc.setOverrideProperties(op);
         }
+
+        Optional<String> cloudLocations = pc.resolveProperty(MainConstants.CLOUD_PROPERTIES_LOCATION);
+        if (cloudLocations.isPresent()) {
+            LOG.info("Cloud properties location: {}", cloudLocations);
+            final Properties kp = tryLoadCloudProperties(op, cloudLocations.get());
+            if (kp != null) {
+                pc.setOverrideProperties(kp);
+            }
+        }
     }
 
     private Properties tryLoadProperties(
@@ -431,6 +446,43 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         return ip;
+    }
+
+    private static Properties tryLoadCloudProperties(
+            Properties overridProperties, String cloudPropertiesLocations)
+            throws IOException {
+        final OrderedLocationProperties cp = new OrderedLocationProperties();
+        try {
+            String[] locations = cloudPropertiesLocations.split(",");
+            for (String loc : locations) {
+                Path confPath = Paths.get(loc);
+                if (Files.exists(confPath) && Files.isDirectory(confPath)) {
+                    Files.walkFileTree(confPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            if (!Files.isDirectory(file)) {
+                                try {
+                                    String val = new String(Files.readAllBytes(file));
+                                    cp.put(loc, file.getFileName().toString(), val);
+                                } catch (IOException e) {
+                                    LOG.warn("Some error happened while reading property from cloud configuration file {}",
+                                            file, e);
+                                }
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (overridProperties == null) {
+            return cp;
+        }
+        Properties mergedProperties = new Properties(overridProperties);
+        mergedProperties.putAll(cp);
+        return mergedProperties;
     }
 
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
