@@ -139,7 +139,7 @@ from("direct:in")
                 .withCollectionName("test")
                 .withFields(fields)
                 .build())
-    .to("qdrant:test");
+    .to("milvus:test");
 ----
 ====
 
@@ -176,7 +176,7 @@ from("direct:in")
                 .withOutputFields(Lists.newArrayList("userAge"))
                 .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
                 .build())
-    .to("qdrant:myCollection");
+    .to("milvus:myCollection");
 ----
 ====
 
