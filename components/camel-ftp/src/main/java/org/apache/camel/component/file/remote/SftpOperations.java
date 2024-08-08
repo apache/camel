@@ -584,7 +584,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
             if (!success) {
                 LOG.debug("Trying to build remote directory: {}", directory);
-
                 try {
                     channel.mkdir(directory);
                     success = true;
@@ -600,14 +599,15 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     chmodOfDirectory(directory);
                 }
             }
-        } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
-        } finally {
+
             // change back to original directory
             if (originalDirectory != null) {
                 changeCurrentDirectory(originalDirectory);
             }
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
         }
+
         return success;
     }
 
@@ -807,8 +807,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        String currentDir = null;
         try {
+            String currentDir = null;
             GenericFile<ChannelSftp.LsEntry> target
                     = (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
@@ -847,17 +847,17 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
 
             createResultHeadersFromExchange(null, exchange);
+
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
             return true;
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
-        } finally {
-            // change back to current directory if we changed directory
-            if (currentDir != null) {
-                changeCurrentDirectory(currentDir);
-            }
         }
     }
 
@@ -906,8 +906,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);
         }
-        String currentDir = null;
         try {
+            String currentDir = null;
             // store the java.io.File handle as the body
             file.setBody(local);
 
@@ -930,6 +930,11 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
             channel.get(remoteName, os);
 
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
+
         } catch (SftpException e) {
             createResultHeadersFromExchange(e, exchange);
             LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
@@ -945,11 +950,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             IOHelper.close(os, "retrieve: " + name, LOG);
-
-            // change back to current directory if we changed directory
-            if (currentDir != null) {
-                changeCurrentDirectory(currentDir);
-            }
         }
 
         createResultHeadersFromExchange(null, exchange);
@@ -982,27 +982,25 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         String path = FileUtil.onlyPath(name);
         String targetName = name;
 
-        try {
-            if (path != null && endpoint.getConfiguration().isStepwise()) {
-                // must remember current dir so we stay in that directory after
-                // the write
-                currentDir = getCurrentDirectory();
+        if (path != null && endpoint.getConfiguration().isStepwise()) {
+            // must remember current dir so we stay in that directory after
+            // the write
+            currentDir = getCurrentDirectory();
 
-                // change to path of name
-                changeCurrentDirectory(path);
+            // change to path of name
+            changeCurrentDirectory(path);
 
-                // the target name should be without path, as we have changed
-                // directory
-                targetName = FileUtil.stripPath(name);
-            }
+            // the target name should be without path, as we have changed
+            // directory
+            targetName = FileUtil.stripPath(name);
+        }
 
-            // store the file
-            answer = doStoreFile(name, targetName, exchange);
-        } finally {
-            // change back to current directory if we changed directory
-            if (currentDir != null) {
-                changeCurrentDirectory(currentDir);
-            }
+        // store the file
+        answer = doStoreFile(name, targetName, exchange);
+
+        // change back to current directory if we changed directory
+        if (currentDir != null) {
+            changeCurrentDirectory(currentDir);
         }
 
         return answer;
@@ -1149,7 +1147,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             // otherwise its a more serious error so rethrow
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
-
     }
 
     @Override
@@ -1178,7 +1175,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
      * against the connection should bind
      */
     static Socket createSocketUtil(final String host, final int port, final String bindAddress, final int timeout) {
-        Socket socket = null;
+        Socket socket;
         if (timeout == 0) {
             try {
                 socket = new Socket(InetAddress.getByName(host), port, InetAddress.getByName(bindAddress), 0);
@@ -1226,10 +1223,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
     /**
      * Helper method which gets result code and message from sftpException and puts it into header. In case that
-     * exception is null, it sets successfull response.
+     * exception is null, it sets successfully response.
      */
     private void createResultHeadersFromExchange(SftpException sftpException, Exchange exchange) {
-
         // if exception is null, it means that result was ok
         if (sftpException == null) {
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, OK_STATUS);
@@ -1245,7 +1241,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
      * Helper method which sets the path permissions
      */
     private void chmodOfDirectory(String directory) {
-
         String chmodDirectory = endpoint.getConfiguration().getChmodDirectory();
         if (ObjectHelper.isNotEmpty(chmodDirectory)) {
             LOG.trace("Setting permission: {} on directory: {}", chmodDirectory, directory);
