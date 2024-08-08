@@ -91,4 +91,33 @@ public class MainPropertyPlaceholderTest {
             main.stop();
         }
     }
+
+    @Test
+    public void testCloudPropertyPlaceholderLocationEnabled() {
+        Main main = new Main();
+        try {
+            main.setDefaultPropertyPlaceholderLocation("classpath:cloud.properties");
+            main.start();
+            assertEquals("My configmap value", main.getCamelContext().resolvePropertyPlaceholders("{{my-prop-1.txt}}"));
+            assertEquals("My secret value", main.getCamelContext().resolvePropertyPlaceholders("{{my-prop-2.txt}}"));
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testCloudPropertyPlaceholderOverride() {
+        Main main = new Main();
+        try {
+            main.setInitialProperties(
+                    mapOf("my-prop-1.txt", "val-init"));
+            main.setOverrideProperties(
+                    mapOf("my-prop-1.txt", "val-override"));
+            main.setDefaultPropertyPlaceholderLocation("classpath:cloud.properties");
+            main.start();
+            assertEquals("My configmap value", main.getCamelContext().resolvePropertyPlaceholders("{{my-prop-1.txt}}"));
+        } finally {
+            main.stop();
+        }
+    }
 }
