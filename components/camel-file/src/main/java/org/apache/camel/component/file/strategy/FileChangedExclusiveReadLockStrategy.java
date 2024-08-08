@@ -88,7 +88,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             LOG.trace("Min File Trigger Time: {}", minTriggerTime);
 
             if (newLength >= minLength && currentTime >= minTriggerTime
-                    && newLastModified == lastModified && newLength == length) {
+                && newLastModified == lastModified && newLength == length) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
