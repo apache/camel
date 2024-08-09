@@ -18,6 +18,7 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.HasMetadata;
@@ -25,10 +26,14 @@ import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class KubernetesRunTest extends KubernetesBaseTest {
 
@@ -37,6 +42,13 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @BeforeEach
     public void setup() {
         printer = new StringPrinter();
+    }
+
+    private static Stream<Arguments> runtimeProvider() {
+        return Stream.of(
+                Arguments.of(RuntimeType.main),
+                Arguments.of(RuntimeType.quarkus),
+                Arguments.of(RuntimeType.springBoot));
     }
 
     @Test
@@ -50,8 +62,9 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertTrue(printer.getOutput().contains("Project export failed"));
     }
 
-    @Test
-    public void shouldGenerateKubernetesManifest() throws Exception {
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
         KubernetesRun command = createCommand();
         command.filePaths = new String[] { "classpath:route.yaml" };
         int exit = command.doCall();
