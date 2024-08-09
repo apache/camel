@@ -47,6 +47,7 @@ import static org.apache.camel.support.ExchangeHelper.getCharsetName;
  * @param <P>   uniVocity parser class
  * @param <DF>  the data format class (for providing a fluent API)
  */
+@Deprecated(since = "4.8.0")
 public abstract class AbstractUniVocityDataFormat<
         F extends Format, CWS extends CommonWriterSettings<F>,
         W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>,

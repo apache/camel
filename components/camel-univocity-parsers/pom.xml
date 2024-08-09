@@ -28,7 +28,7 @@
 
     <artifactId>camel-univocity-parsers</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: UniVocity Parsers</name>
+    <name>Camel :: UniVocity Parsers (deprecated)</name>
     <description>Camel UniVocity parsers data format support</description>
 
     <properties>
