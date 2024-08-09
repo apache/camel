@@ -63,7 +63,6 @@ Questions on using Apache Camel
 * xref:how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs with parameters in XML?]
 * xref:how-do-i-write-a-custom-processor-which-sends-multiple-messages.adoc[How do I write a custom Processor which sends multiple messages?]
 * xref:how-should-i-invoke-my-pojos-or-spring-services.adoc[How should I invoke my POJOs or Spring Services?]
-* xref:how-to-avoid-importing-bunch-of-cxf-packages-when-start-up-the-camel-cxf-endpoint-from-osgi-platform-.adoc[How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform?]
 * xref:how-to-avoid-sending-some-or-all-message-headers.adoc[How to avoid sending some or all message headers?]
 * xref:how-to-create-executable-jar-camel-main.adoc[How to create executable JAR for camel-main project?]
 * xref:how-to-remove-the-http-protocol-headers-in-the-camel-message.adoc[How to remove the http protocol headers in the camel message?]
