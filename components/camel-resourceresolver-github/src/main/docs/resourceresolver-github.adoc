@@ -41,7 +41,7 @@ github:apache:camel-kamelets:kamelets/aws-ddb-streams-source.kamelet.yaml
 
 
 IMPORTANT: This resource resolver can potentially load any resources from GitHub that are in public repositories.
-It's not recommended for production usage, but is great for development and demo purposes.
+It's not recommended for production usage but is great for development and demo purposes.
 
 == Resolving from gist
 

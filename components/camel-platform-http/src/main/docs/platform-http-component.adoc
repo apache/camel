@@ -29,7 +29,22 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 </dependency>
 ----
 
-== Platform HTTP Provider
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== Usage
+
+=== Platform HTTP Provider
 
 To use Platform HTTP, a provider (engine) is required to be available on the classpath.
 The purpose is to have drivers for different runtimes such as Quarkus, or Spring Boot.
@@ -63,24 +78,10 @@ Spring Boot::
 ----
 ====
 
-
-// component-configure options: START
-
-// component-configure options: END
-
-// component options: START
-include::partial$component-configure-options.adoc[]
-include::partial$component-endpoint-options.adoc[]
-// component options: END
-
-// endpoint options: START
-
-// endpoint options: END
-
-include::spring-boot:partial$starter.adoc[]
-
-== Implementing a reverse proxy
+=== Implementing a reverse proxy
 
 Platform HTTP component can act as a reverse proxy. In that case, some headers are populated from the absolute URL received on the request line of the HTTP request. Those headers are specific to the underlining platform.
 
 At this moment, this feature is only supported for Quarkus implemented in `camel-platform-http-vertx` component.
+
+include::spring-boot:partial$starter.adoc[]

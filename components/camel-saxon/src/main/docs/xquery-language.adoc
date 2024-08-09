@@ -33,14 +33,14 @@ And the following variables are available as well:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
-|exchange |Exchange |The current Exchange
-|in.body |Object |The message body
-|out.body |Object |*deprecated* The OUT message body (if any)
-|in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
+|`exchange` |Exchange |The current Exchange
+|`in.body` |Object |The message body
+|`out.body` |Object |*deprecated* The OUT message body (if any)
+|`in.headers.*` |Object |You can access the value of exchange.in.headers with key *foo* by using
 the variable which name is in.headers.foo
-|out.headers.* |Object |*deprecated* You can access the value of `exchange.out.headers` with key *foo* by using
+|`out.headers.*` |Object |*deprecated* You can access the value of `exchange.out.headers` with key *foo* by using
 the variable which name is `out.headers.foo` variable
-|*key name* |Object |Any `exchange.properties` and `exchange.in.headers` and any additional
+|`*key name*` |Object |Any `exchange.properties` and `exchange.in.headers` and any additional
 parameters set using `setParameters(Map)`. These parameters are added
 with their own key name, for instance, if there is an IN header with the
 key name *foo* then it is added as *foo*.

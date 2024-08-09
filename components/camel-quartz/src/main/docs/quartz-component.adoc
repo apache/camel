@@ -15,9 +15,7 @@
 *{component-header}*
 
 The Quartz component provides a scheduled delivery of messages using
-the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x].  +
- Each endpoint represents a different timer (in Quartz terms, a Trigger
-and JobDetail).
+the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -61,7 +59,11 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Configuring quartz.properties file
+== Usage
+
+Each endpoint represents a different timer (in Quartz terms, a `Trigger` and ``JobDetail`).
+
+=== Configuring quartz.properties file
 
 By default, Quartz will look for a `quartz.properties` file in the
 `org/quartz` directory of the classpath. If you are using WAR
@@ -89,16 +91,16 @@ To do this, you can configure this in Spring XML as follows
 </bean>
 ----
 
-== Enabling Quartz scheduler in JMX
+=== Enabling Quartz scheduler in JMX
 
-You need to configure the quartz scheduler properties to enable JMX. +
- That is typically setting the option
+You need to configure the quartz scheduler properties to enable JMX.
+That is typically setting the option
 `"org.quartz.scheduler.jmx.export"` to a `true` value in the
 configuration file.
 
-This option is set to true by default, unless explicitly disabled.
+This option is set to `true` by default, unless explicitly disabled.
 
-== Clustering
+=== Clustering
 
 If you use Quartz in clustered mode, e.g., the `JobStore` is clustered.
 Then the xref:quartz-component.adoc[Quartz] component will *not* pause/remove
@@ -108,7 +110,7 @@ to keep running on the other nodes in the cluster.
 NOTE: When running in clustered node, no checking is done to ensure
 unique job name/group for endpoints.
 
-== Message Headers
+=== Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header
 values. The following headers are added: +
@@ -120,7 +122,7 @@ values. The following headers are added: +
 The `fireTime` header contains the `java.util.Date` of when the exchange
 was fired.
 
-== Using Cron Triggers
+=== Using Cron Triggers
 
 Quartz supports
 http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html[Cron-like
@@ -153,7 +155,7 @@ valid URI syntax:
 |`+` | _Space_
 |===
 
-== Specifying time zone
+=== Specifying time zone
 
 The Quartz Scheduler allows you to configure time zone per trigger. For
 example, to use a time zone of your country, then you can do as follows:
@@ -164,7 +166,7 @@ quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.timeZone=Europ
 
 The timeZone value is the values accepted by `java.util.TimeZone`.
 
-== Specifying start date
+=== Specifying start date
 
 The Quartz Scheduler allows you to configure start date per trigger. You can provide the start date 
 in the date format yyyy-MM-dd'T'HH:mm:ssz.
@@ -173,10 +175,10 @@ in the date format yyyy-MM-dd'T'HH:mm:ssz.
 quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.startAt=2023-11-22T14:32:36UTC
 ----
 
-== Specifying end date
+=== Specifying end date
 
 The Quartz Scheduler allows you to configure end date per trigger. You can provide the end date 
-in the date format yyyy-MM-dd'T'HH:mm:ssz.
+in the date format `yyyy-MM-dd'T'HH:mm:ssz`.
 
 ----
 quartz://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.endAt=2023-11-22T14:32:36UTC
@@ -186,7 +188,7 @@ Note: Start and end dates may be affected by time drifts and unpredictable behav
 daylight-saving time changes.
 Exercise caution, especially in environments where precise timing is critical.
 
-== Configuring misfire instructions
+=== Configuring misfire instructions
 
 The quartz scheduler can be configured with a misfire instruction
 to handle misfire situations for the trigger.
@@ -206,16 +208,16 @@ quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?&trigger.misfireInstruction=2
 
 The simple and cron triggers have the following misfire instructions representative:
 
-=== SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW = 1 (default)
+==== SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW = 1 (default)
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be fired now by Scheduler.
 
 This instruction should typically only be used for
 'one-shot' (non-repeating) Triggers. If it is used on a trigger with a
-repeat count > 0, then it is equivalent to the instruction `MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT`.
+repeat count greater than 0, then it is equivalent to the instruction `MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT`.
 
-=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT = 2
+==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT = 2
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -229,7 +231,7 @@ the start-time and repeat-count that it was originally setup with.
 This is only an issue if you for some reason wanted to be able to tell what
 the original values were at some later time.
 
-=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT = 3
+==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT = 3
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -251,7 +253,7 @@ This instruction could cause the Trigger
 to go to the 'COMPLETE' state after firing `now`, if all the
 repeat-fire-times where missed.
 
-=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT = 4
+==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT = 4
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -262,7 +264,7 @@ repeat count set to what it would be, if it had not missed any firings.
 WARNING: This instruction could cause the Trigger
 to go directly to the 'COMPLETE' state if all fire-times where missed.
 
-=== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT = 5
+==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT = 5
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -273,12 +275,12 @@ WARNING: This instruction could cause the Trigger
 to go directly to the 'COMPLETE' state if the end-time of the trigger
 has arrived.
 
-=== CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW = 1 (default)
+==== CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW = 1 (default)
 
 Instructs the Scheduler that upon a mis-fire
 situation, the CronTrigger wants to be fired now by Scheduler.
 
-=== CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING = 2
+==== CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING = 2
 
 Instructs the Scheduler that upon a mis-fire
 situation, the CronTrigger wants to have its
@@ -287,16 +289,16 @@ current time (taking into account any associated Calendar.
 However, it does not want to be fired now.
 
 
-== Using QuartzScheduledPollConsumerScheduler
+=== Using QuartzScheduledPollConsumerScheduler
 
 The xref:quartz-component.adoc[Quartz] component provides a
-Polling Consumer scheduler which allows to
-use cron based scheduling for xref:eips:polling-consumer.adoc[Polling
+Polling Consumer scheduler which allows
+using cron based scheduling for xref:eips:polling-consumer.adoc[Polling
 Consumers] such as the File and FTP
 consumers.
 
-For example, to use a cron based expression to poll for files every second
-second, then a Camel route can be defined simply as:
+For example, to use a cron based expression to poll for files every second,
+then a Camel route can be defined simply as:
 
 [source,java]
 ----
@@ -328,7 +330,7 @@ and used.
 |`timeZone` |`Default` |`TimeZone` |The time zone to use for the CRON trigger.
 |===
 
-*Important:* Remember configuring these options from the endpoint
+IMPORTANT: Remember that configuring these options from the endpoint
 URIs must be prefixed with `scheduler.`.
 For example, to configure the trigger id and group:
 
@@ -347,25 +349,15 @@ use the following as well:
        .to("bean:process");
 ----
 
-== Cron Component Support
+=== Cron Component Support
 
 The Quartz component can be used as implementation of the Camel Cron component.
 
-
-Maven users will need to add the following additional dependency to their `pom.xml`:
-
-[source,xml]
-------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-cron</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-------------------------------------------------------------
+== Example
 
 Users can then use the cron component instead of the quartz component, as in the following route:
 
+.Example route for the cron component
 [source,java]
 ----
     from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI")

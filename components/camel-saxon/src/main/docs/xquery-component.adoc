@@ -50,7 +50,9 @@ from("direct:start")
   .recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
 -----------------------------------------------------------------------------
 
-== Variables
+== Usage
+
+=== Variables
 
 The IN message body will be set as the `contextItem`. Besides this, these
 Variables are also added as parameters:
@@ -59,25 +61,25 @@ Variables are also added as parameters:
 |=======================================================================
 |Variable |Type |Description
 
-|exchange |Exchange |The current Exchange
+|`exchange` |Exchange |The current Exchange
 
-|in.body |Object |The In message's body
+|`in.body` |Object |The In message's body
 
-|out.body |Object |The OUT message's body (if any)
+|`out.body` |Object |The OUT message's body (if any)
 
-|in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
+|`in.headers.*` |Object |You can access the value of exchange.in.headers with key *foo* by using
 the variable which name is in.headers.foo
 
-|out.headers.* |Object |You can access the value of exchange.out.headers with key *foo* by using
+|`out.headers.*` |Object |You can access the value of exchange.out.headers with key *foo* by using
 the variable which name is out.headers.foo variable
 
-|*key name* |Object |Any exchange.properties and exchange.in.headers and any additional
+|`*key name*` |Object |Any exchange.properties and exchange.in.headers and any additional
 parameters set using `setParameters(Map)`. These parameters are added
 with their own key name, for instance, if there is an IN header with the
 key name *foo* then it is added as *foo*.
 |=======================================================================
 
-== Using XML configuration
+=== Using XML configuration
 
 If you prefer to configure your routes in your Spring
 XML file, then you can use XPath expressions as follows
@@ -116,7 +118,7 @@ attribute:
 -------------------------------------------------------------------------------
 
 
-== Using XQuery as an endpoint
+=== Using XQuery as an endpoint
 
 Sometimes an XQuery expression can be quite large; it can essentally be
 used for Templating. So you may want to use an
@@ -137,7 +139,7 @@ The following example shows how to take a message of an ActiveMQ queue
   </camelContext>
 -------------------------------------------------------------------------
 
-== Loading script from external resource
+=== Loading script from external resource
 
 You can externalize the script and have Apache Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`.
@@ -149,7 +151,7 @@ e.g., to refer to a file on the classpath you can do:
 .setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
 ------------------------------------------------------------------------------
 
-== Learning XQuery
+=== Learning XQuery
 
 XQuery is a very powerful language for querying, searching, sorting and
 returning XML.
@@ -164,7 +166,7 @@ To use XQuery in your Camel routes, you need to add the dependency on
 *camel-saxon*, which implements the XQuery language.
 
 If you use Maven, you could add the following to your `pom.xml`,
-substituting the version number for the latest & greatest release.
+substituting the version number for the latest release.
 
 [source,xml]
 --------------------------------------

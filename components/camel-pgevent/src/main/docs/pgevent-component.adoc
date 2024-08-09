@@ -31,7 +31,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-URI format
+== URI format
 
 The pgevent component uses the following two styles of endpoint URI
 notation:
@@ -59,9 +59,11 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Common problems
+== Usage
 
-=== Unable to connect to PostgreSQL database using DataSource
+=== Common problems
+
+==== Unable to connect to PostgreSQL database using DataSource
 Using the driver provided by PostgreSQL itself (`jdbc:postgresql:/...`) when using a DataSource to connect to a PostgreSQL database does not work.
 
 Please use the pgjdbc-ng driver (`jdbc:pgsql:/...`) instead.

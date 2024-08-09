@@ -24,13 +24,13 @@ The configuration properties for the OpenTelemetry tracer are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|instrumentationName| camel | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null.
-|excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
+|`instrumentationName`| camel | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null.
+|`excludePatterns` |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
 uses the rules from Intercept.
-|encoding | false | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
+|`encoding` | `false` | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
 Dashes are required for instances to be encoded for JMS property keys.
-|traceProcessors | false | Setting this to true will create new OpenTelemetry Spans for each Camel Processors.
+|`traceProcessors` | `false` | Setting this to true will create new OpenTelemetry Spans for each Camel Processors.
 Use the excludePattern property to filter out Processors
 |=======================================================================
 
@@ -84,7 +84,7 @@ a `OpenTelemetryTracer` bean has been defined by the application.
 
 Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
 
-This package includes the instrumentation agent as well as instrumentation's for all supported libraries and all available data exporters.
+This package includes the instrumentation agent as well as instrumentation for all supported libraries and all available data exporters.
 The package provides a completely automatic, out-of-the-box experience.
 
 Enable the instrumentation agent using the `-javaagent` flag to the JVM.

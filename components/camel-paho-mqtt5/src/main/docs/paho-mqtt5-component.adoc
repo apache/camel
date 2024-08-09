@@ -58,7 +58,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Default payload type
+== Usage
+
+=== Default payload type
 
 By default, the Camel Paho component operates on the binary payloads
 extracted out of (or put into) the MQTT message:
