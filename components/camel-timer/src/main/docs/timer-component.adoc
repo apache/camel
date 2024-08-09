@@ -55,7 +55,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Exchange Properties
+== Usage
+
+=== Exchange Properties
 
 When the timer is fired, it adds the following information as properties
 to the `Exchange`:
@@ -98,7 +100,7 @@ And the route in Spring DSL:
 </route>
 -----
 
-== Firing as soon as possible
+=== Firing as soon as possible
 
 You may want to fire messages in a Camel route as soon as possible, you
 can use a negative delay:
@@ -120,7 +122,7 @@ reached.
 If you don't specify a `repeatCount` then the timer will continue firing
 messages until the route will be stopped. 
 
-== Firing only once
+=== Firing only once
 
 You may want to fire a message in a Camel route only once, such as when
 starting the route.

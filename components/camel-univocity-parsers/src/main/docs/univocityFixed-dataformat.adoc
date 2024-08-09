@@ -24,7 +24,7 @@ tabulation
 Thus, there are three data formats based on uniVocity-parsers.
 
 If you use Maven, you can add the following to your `pom.xml`,
-substituting the version number for the latest and greatest release.
+substituting the version number for the latest release.
 
 [source,xml]
 ----------------------------------------------------

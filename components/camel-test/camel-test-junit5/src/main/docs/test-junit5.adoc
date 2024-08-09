@@ -19,7 +19,7 @@ and implement your Camel unit test.
 As shown below is a basic junit test which uses `camel-test-junit5`. The `createRouteBuilder` method is used
 for build the routes to be tested. Then the methods with `@Test` annotations are JUnit test methods which
 will be executed. The base class `CamelTestSupport` has a number of helper methods to configure testing,
-see more at the javadoc of this class.
+see more at the Javadoc of this class.
 
 [source,java]
 ----
@@ -93,4 +93,4 @@ Once Camel related steps have been performed, there are still typical JUnit 5 mi
 * `org.junit.AfterClass` should be changed in favor of `import org.junit.jupiter.api.AfterAll`
 * Built-in `assertThat` from third-party assertion libraries should be used. For instance, use `org.hamcrest.MatcherAssert.assertThat` from `java-hamcrest`
 
-Depending on the context, more involved tips might be needed, please check the https://junit.org/junit5/docs/current/user-guide/[JUnit 5 User Guide].
+Please check the https://junit.org/junit5/docs/current/user-guide/[JUnit 5 User Guide] for additional insights about writing tests using JUnit 5.
