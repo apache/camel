@@ -8819,7 +8819,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer",
-            description = "Represents a tokenizer that uses LangChain4j for tokenization",
+            description = "Tokenizer that uses LangChain4j for tokenization.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),

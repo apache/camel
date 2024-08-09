@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Resilience4j Circuit Breaker EIP configuration
  */
-@Metadata(label = "configuration,eip")
+@Metadata(label = "configuration,error")
 @XmlRootElement(name = "resilience4jConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)

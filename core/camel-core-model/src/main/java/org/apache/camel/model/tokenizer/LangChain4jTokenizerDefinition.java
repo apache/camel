@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.model.tokenizer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -29,9 +28,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Tokenizer;
 
 /**
- * Represents a tokenizer that uses LangChain4j for tokenization
+ * Tokenizer that uses LangChain4j for tokenization.
  */
-@Metadata(firstVersion = "4.8.0", label = "tokenizer,transformation,ai", title = "LangChain4J Tokenizer")
+@Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer")
 @XmlRootElement(name = "langChain4j")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LangChain4jTokenizerDefinition extends TokenizerDefinition {
@@ -50,7 +49,6 @@ public class LangChain4jTokenizerDefinition extends TokenizerDefinition {
     private String maxOverlap;
 
     public LangChain4jTokenizerDefinition() {
-
     }
 
     public LangChain4jTokenizerDefinition(LangChain4jTokenizerDefinition source) {

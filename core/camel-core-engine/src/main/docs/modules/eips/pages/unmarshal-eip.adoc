@@ -1,4 +1,9 @@
 = Unmarshal EIP
+:doctitle: Unmarshal
+:shortname: unmarshal
+:description: Converts the message data received from the wire into a format that Apache Camel processors can consume
+:since: 
+:supportlevel: Stable
 :tabs-sync-option:
 
 The xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs are used

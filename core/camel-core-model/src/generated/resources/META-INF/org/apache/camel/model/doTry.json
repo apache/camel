@@ -5,7 +5,7 @@
     "title": "Do Try",
     "description": "Marks the beginning of a try, catch, finally block",
     "deprecated": false,
-    "label": "error",
+    "label": "eip,routing,error",
     "javaType": "org.apache.camel.model.TryDefinition",
     "abstract": false,
     "input": true,

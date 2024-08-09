@@ -861,7 +861,7 @@ Deprecated: null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Represents a tokenizer that uses LangChain4j for tokenization
+Tokenizer that uses LangChain4j for tokenization.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -17283,11 +17283,20 @@ Sets the component name that this definition will apply to.
     <xs:complexContent>
       <xs:extension base="tns:tokenizerDefinition">
         <xs:sequence/>
+        <xs:attribute name="tokenizerType" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the tokenizer type.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="maxTokens" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of tokens on each segment. Default value: 1024
+Sets the maximum number of tokens on each segment.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17296,16 +17305,7 @@ Sets the maximum number of tokens on each segment. Default value: 1024
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the maximum number of tokens that can overlap in each segment. Default value: 0
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="tokenizerType" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the tokenizer type. Default value: OPEN_AI
+Sets the maximum number of tokens that can overlap in each segment.
 ]]>
             </xs:documentation>
           </xs:annotation>
