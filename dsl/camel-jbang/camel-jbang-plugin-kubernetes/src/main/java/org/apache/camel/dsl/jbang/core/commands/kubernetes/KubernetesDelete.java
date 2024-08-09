@@ -31,9 +31,9 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "delete", description = "Delete Camel application from Kubernetes", sortOptions = false)
 public class KubernetesDelete extends KubernetesBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel file(s) to delete.",
-                            arity = "0..9", paramLabel = "<files>")
-    String[] filePaths;
+    @CommandLine.Parameters(description = "The Camel file to delete. Integration name is derived from the file name.",
+                            arity = "0..1", paramLabel = "<file>")
+    String filePath;
 
     @CommandLine.Option(names = { "--name" },
                         description = "The integration name. Use this when the name should not get derived from the source file name.")
@@ -55,8 +55,8 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             String projectName;
             if (name != null) {
                 projectName = KubernetesHelper.sanitize(name);
-            } else if (filePaths != null && filePaths.length > 0) {
-                projectName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePaths[0])));
+            } else if (filePath != null) {
+                projectName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
             } else {
                 printer().println("Name or source file must be set");
                 return 1;

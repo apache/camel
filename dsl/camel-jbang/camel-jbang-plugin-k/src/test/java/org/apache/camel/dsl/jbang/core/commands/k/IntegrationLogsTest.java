@@ -31,7 +31,7 @@ class IntegrationLogsTest extends CamelKBaseTest {
     @Test
     public void shouldHandleIntegrationsNotFound() throws Exception {
         IntegrationLogs command = createCommand();
-        command.name = "mickey-mouse";
+        command.withName("mickey-mouse");
         command.doCall();
 
         Assertions.assertEquals("Integration mickey-mouse not found", printer.getOutput());
@@ -56,7 +56,7 @@ class IntegrationLogsTest extends CamelKBaseTest {
 
         IntegrationLogs command = createCommand();
 
-        command.name = "routes";
+        command.withName("routes");
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
     }

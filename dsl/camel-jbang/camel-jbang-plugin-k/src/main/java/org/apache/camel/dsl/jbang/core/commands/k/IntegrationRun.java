@@ -354,7 +354,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
         if (logs) {
             IntegrationLogs logsCommand = new IntegrationLogs(getMain());
             logsCommand.withClient(client());
-            logsCommand.name = integration.getMetadata().getName();
+            logsCommand.withName(integration.getMetadata().getName());
             logsCommand.doCall();
         }
 
