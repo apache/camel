@@ -143,7 +143,7 @@ the prefix, then Camel uses the prefix from the endpoint configuration.
 If no prefix is specified in the endpoint configuration, the default is `classpath:`.
 
 You can also refer backwards in the included paths.
-In the following example, the xsl file will be resolved under `org/apache/camel/component`.
+In the following example, the XSL file will be resolved under `org/apache/camel/component`.
 
 [source,xml]
 ----
@@ -151,7 +151,7 @@ In the following example, the xsl file will be resolved under `org/apache/camel/
 ----
 
 
-== Using xsl:include and default prefix
+== Using `xsl:include` and default prefix
 
 Camel will use the prefix from the endpoint configuration as the default prefix.
 

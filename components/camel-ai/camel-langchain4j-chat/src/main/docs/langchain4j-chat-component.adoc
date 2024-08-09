@@ -163,7 +163,7 @@ Camel langchain4j-chat component as a consumer can be used to implement a LangCh
 Right now tools are supported only via the OpenAiChatModel backed by OpenAI APIs.
 
 Tool Input parameter can be defined as an Endpoint multiValue option in the form of `parameter.<name>=<type>`,
-or via the endpoint option camelToolParameter for a programmatic approach.
+or via the endpoint option `camelToolParameter` for a programmatic approach.
 The parameters can be found as headers in the consumer route, in particular, if you define `parameter.userId=5`,
 in the consumer route `${header.userId}` can be used.
 

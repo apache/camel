@@ -65,7 +65,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Use cases
+== Usage
 
 === Reading from a _znode_
 
@@ -156,7 +156,7 @@ or equivalently:
 </route>
 ----
 
-ZooKeeper nodes can have different types; they can be 'Ephemeral' or
+ZooKeeper's nodes can have different types; they can be 'Ephemeral' or
 'Persistent' and 'Sequenced' or 'Unsequenced'. For further information
 of each type, you can check
 http://zookeeper.apache.org/doc/trunk/zookeeperProgrammers.html#Ephemeral+Nodes[here].

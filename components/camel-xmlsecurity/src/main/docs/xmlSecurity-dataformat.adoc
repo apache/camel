@@ -26,14 +26,14 @@ while being dispatched or received along a route.
 
 *Since Camel 2.9* +
  The XMLSecurity Data Format supports asymmetric key encryption. In this
-encryption model a symmetric key is generated and used to perform XML
+encryption model, a symmetric key is generated and used to perform XML
 content encryption or decryption. This "content encryption key" is then
 itself encrypted using an asymmetric encryption algorithm that leverages
 the recipient's public key as the "key encryption key". Use of an
 asymmetric key encryption algorithm ensures that only the holder of the
 recipient's private key can access the generated symmetric encryption
 key. Thus, only the private key holder can decode the message. The
-XMLSecurity Data Format handles all of the logic required to encrypt and
+XMLSecurity Data Format handles all the logic required to encrypt and
 decrypt the message content and encryption key(s) using asymmetric key
 encryption.
 
@@ -41,7 +41,7 @@ The XMLSecurity Data Format also has improved support for namespaces
 when processing the XPath queries that select content for encryption. A
 namespace definition mapping can be included as part of the data format
 configuration. This enables true namespace matching, even if the prefix
-values in the XPath query and the target xml document are not equivalent
+values in the XPath query and the target XML document are not equivalent
 strings.
 
 == XMLSecurity Options
@@ -54,19 +54,19 @@ include::partial$dataformat-options.adoc[]
 === Key Cipher Algorithm
 
 The default Key Cipher Algorithm is now
-XMLCipher.RSA_OAEP instead of XMLCipher.RSA_v1dot5. Usage of
-XMLCipher.RSA_v1dot5 is discouraged due to various attacks. Requests
+`XMLCipher.RSA_OAEP` instead of `XMLCipher.RSA_v1dot5`. Usage of
+`XMLCipher.RSA_v1dot5` is discouraged due to various attacks. Requests
 that use RSA v1.5 as the key cipher algorithm will be rejected unless it
 has been explicitly configured as the key cipher algorithm.
 
 == Marshal
 
-In order to encrypt the payload, the `marshal` processor needs to be
+To encrypt the payload, the `marshal` processor needs to be
 applied on the route followed by the *`xmlSecurity()`* tag.
 
 == Unmarshal
 
-In order to decrypt the payload, the `unmarshal` processor needs to be
+To decrypt the payload, the `unmarshal` processor needs to be
 applied on the route followed by the *`xmlSecurity()`* tag.
 
 == Examples
@@ -145,7 +145,7 @@ context.addRoutes(new RouteBuilder() {
 [[XMLSecurityDataFormat-SpringXML]]
 Spring XML
 
-A namespace prefix that is defined as part of the `camelContext`
+A namespace prefix defined as part of the `camelContext`
 definition can be re-used in context within the data format `secureTag`
 attribute of the `xmlSecurity` element.
 
