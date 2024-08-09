@@ -37,17 +37,17 @@ import org.apache.camel.spi.Tokenizer;
 public class LangChain4jTokenizerDefinition extends TokenizerDefinition {
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "1024")
+    @Metadata(javaType = "org.apache.camel.model.tokenizer.TokenizerType", required = true,
+              enums = "OPEN_AI,AZURE,QWEN")
+    private String tokenizerType;
+
+    @XmlAttribute(required = true)
+    @Metadata(javaType = "java.lang.Integer", required = true)
     private String maxTokens;
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "java.lang.Integer", defaultValue = "0")
+    @Metadata(javaType = "java.lang.Integer", required = true)
     private String maxOverlap;
-
-    @XmlAttribute(required = true)
-    @Metadata(javaType = "org.apache.camel.model.tokenizer.TokenizerType", defaultValue = "OPEN_AI",
-              enums = "OPEN_AI,AZURE,QWEN")
-    private String tokenizerType;
 
     public LangChain4jTokenizerDefinition() {
 

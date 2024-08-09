@@ -3461,8 +3461,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteLangChain4jTokenizerDefinition(String name, LangChain4jTokenizerDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("tokenizerType", def.getTokenizerType());
         doWriteAttribute("maxTokens", def.getMaxTokens());
+        doWriteAttribute("tokenizerType", def.getTokenizerType());
         doWriteAttribute("maxOverlap", def.getMaxOverlap());
         endElement(name);
     }

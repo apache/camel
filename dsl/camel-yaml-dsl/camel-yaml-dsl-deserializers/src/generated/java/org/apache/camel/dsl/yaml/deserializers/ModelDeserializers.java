@@ -8826,9 +8826,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "maxOverlap", type = "number", required = true, defaultValue = "0", description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
-                    @YamlProperty(name = "maxTokens", type = "number", required = true, defaultValue = "1024", description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
-                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", defaultValue = "OPEN_AI", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
             }
     )
     public static class LangChain4jTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jTokenizerDefinition> {
