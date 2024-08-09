@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "core-kamelet",
+    "title": "Core Kamelet",
+    "description": "Camel Kamelets",
+    "deprecated": false,
+    "firstVersion": "3.8.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-kamelet",
+    "version": "4.8.0-SNAPSHOT"
+  }
+}

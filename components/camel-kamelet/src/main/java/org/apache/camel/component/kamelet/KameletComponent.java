@@ -422,10 +422,17 @@ public class KameletComponent extends DefaultComponent {
             final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();
             final String uuid = (String) endpoint.getKameletProperties().get(PARAM_UUID);
 
-            if (context.getRouteTemplateDefinition(templateId) == null && loc != null) {
-                LOG.debug("Loading route template={} from {}", templateId, loc);
-                RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), routeTemplateLoaderListener, templateId,
-                        loc);
+            if (context.getRouteTemplateDefinition(templateId) == null) {
+                if (loc != null) {
+                    LOG.debug("Loading route template={} from {}", templateId, loc);
+                    RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), routeTemplateLoaderListener,
+                            templateId, loc);
+                }
+            }
+
+            if (context.getRouteTemplateDefinition(templateId) == null) {
+                LOG.debug("Loading route template={} from Kamelet resolvers", templateId);
+                RouteTemplateHelper.loadRouteTemplate(getCamelContext(), templateId);
             }
 
             LOG.debug("Creating route from template={} and id={}", templateId, routeId);

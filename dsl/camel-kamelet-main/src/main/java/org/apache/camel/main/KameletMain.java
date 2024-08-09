@@ -46,6 +46,7 @@ import org.apache.camel.main.download.DependencyDownloaderClassResolver;
 import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
 import org.apache.camel.main.download.DependencyDownloaderDataFormatResolver;
 import org.apache.camel.main.download.DependencyDownloaderKamelet;
+import org.apache.camel.main.download.DependencyDownloaderKameletResolver;
 import org.apache.camel.main.download.DependencyDownloaderLanguageResolver;
 import org.apache.camel.main.download.DependencyDownloaderPropertiesComponent;
 import org.apache.camel.main.download.DependencyDownloaderPropertiesFunctionResolver;
@@ -84,6 +85,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.KameletResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -616,6 +618,8 @@ public class KameletMain extends MainCommandLineSupport {
                     new DependencyDownloaderLanguageResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(TransformerResolver.class,
                     new DependencyDownloaderTransformerResolver(answer, stubPattern, silent));
+            answer.getCamelContextExtension().addContextPlugin(KameletResolver.class,
+                    new DependencyDownloaderKameletResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
                     new DependencyDownloaderUriFactoryResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,

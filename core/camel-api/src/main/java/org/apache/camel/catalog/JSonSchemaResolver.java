@@ -59,6 +59,14 @@ public interface JSonSchemaResolver {
     String getTransformerJSonSchema(String name);
 
     /**
+     * Returns the kamelet information as JSON format.
+     *
+     * @param  name the kamelet name
+     * @return      kamelet details in JSon
+     */
+    String getKameletJSonSchema(String name);
+
+    /**
      * Returns the dev console information as JSON format.
      *
      * @param  name the dev console name

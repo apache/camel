@@ -176,6 +176,7 @@ import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultKameletResolver;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
@@ -1517,6 +1518,17 @@ public abstract class AbstractCamelContext extends BaseService
         String name = sanitizeFileName(transformerName) + ".json";
         String path = DefaultTransformerResolver.DATA_TYPE_TRANSFORMER_RESOURCE_PATH + name;
         String inputStream = doLoadResource(transformerName, path, "transformer");
+        if (inputStream != null) {
+            return inputStream;
+        }
+        return null;
+    }
+
+    @Override
+    public String getKameletParameterJsonSchema(String kameletName) throws IOException {
+        String name = sanitizeFileName(kameletName) + ".json";
+        String path = DefaultKameletResolver.KAMELET_TRANSFORMER_RESOURCE_PATH + name;
+        String inputStream = doLoadResource(kameletName, path, "kamelet");
         if (inputStream != null) {
             return inputStream;
         }

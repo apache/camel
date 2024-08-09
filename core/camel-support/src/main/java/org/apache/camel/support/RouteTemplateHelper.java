@@ -102,8 +102,14 @@ public final class RouteTemplateHelper {
                 path += "/";
             }
             String target = path + templateId + ".kamelet.yaml";
-            PluginHelper.getRoutesLoader(camelContext).loadRoutes(
-                    resourceLoader.resolveResource(target));
+            Resource res = resourceLoader.resolveResource(target);
+            if (res.exists()) {
+                PluginHelper.getRoutesLoader(camelContext).loadRoutes(res);
+            }
         }
+    }
+
+    public static void loadRouteTemplate(CamelContext camelContext, String routeTemplateId) throws Exception {
+        new DefaultKameletResolver().resolve(routeTemplateId, camelContext);
     }
 }

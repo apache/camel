@@ -72,6 +72,11 @@ public interface RuntimeProvider {
     String getTransformerJSonSchemaDirectory();
 
     /**
+     * Gets the directory where the Kamelet json files are stored in the catalog JAR file
+     */
+    String getKameletJSonSchemaDirectory();
+
+    /**
      * Gets the directory where the dev-console json files are stored in the catalog JAR file
      */
     String getDevConsoleJSonSchemaDirectory();
@@ -102,9 +107,14 @@ public interface RuntimeProvider {
     List<String> findLanguageNames();
 
     /**
-     * Find all the transfromer names from the Camel catalog supported by the provider
+     * Find all the transformer names from the Camel catalog supported by the provider
      */
     List<String> findTransformerNames();
+
+    /**
+     * Find all the Kamelet names from the Camel catalog supported by the provider
+     */
+    List<String> findKameletNames();
 
     /**
      * Find all the dev console names from the Camel catalog supported by the provider

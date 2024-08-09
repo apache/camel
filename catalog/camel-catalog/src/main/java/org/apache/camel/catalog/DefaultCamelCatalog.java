@@ -35,21 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.impl.AbstractCachingCamelCatalog;
 import org.apache.camel.catalog.impl.CatalogHelper;
-import org.apache.camel.tooling.model.ArtifactModel;
-import org.apache.camel.tooling.model.BaseModel;
-import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.model.DataFormatModel;
-import org.apache.camel.tooling.model.DevConsoleModel;
-import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.EntityRef;
-import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.model.Kind;
-import org.apache.camel.tooling.model.LanguageModel;
-import org.apache.camel.tooling.model.MainModel;
-import org.apache.camel.tooling.model.OtherModel;
-import org.apache.camel.tooling.model.PojoBeanModel;
-import org.apache.camel.tooling.model.ReleaseModel;
-import org.apache.camel.tooling.model.TransformerModel;
+import org.apache.camel.tooling.model.*;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -78,6 +64,8 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     public static final String FIND_TRANSFORMER_NAMES = "findTransformerNames";
     public static final String LIST_TRANSFORMERS_AS_JSON = "listTransformersAsJson";
+    public static final String FIND_KAMELET_NAMES = "findKameletNames";
+    public static final String LIST_KAMELETS_AS_JSON = "listKameletsAsJson";
 
     public static final String FIND_CONSOLE_NAMES = "findConsoleNames";
     public static final String LIST_CONSOLES_AS_JSON = "listConsolesAsJson";
@@ -257,6 +245,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public List<String> findKameletNames() {
+        return cache(FIND_KAMELET_NAMES, runtimeProvider::findKameletNames);
+    }
+
+    @Override
     public List<String> findDevConsoleNames() {
         return cache(FIND_CONSOLE_NAMES, runtimeProvider::findDevConsoleNames);
     }
@@ -387,6 +380,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public String kameletJSonSchema(String name) {
+        return cache("kamelet-" + name, name, super::kameletJSonSchema);
+    }
+
+    @Override
     public String devConsoleJSonSchema(String name) {
         return cache("dev-console-" + name, name, super::devConsoleJSonSchema);
     }
@@ -399,6 +397,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public TransformerModel transformerModel(String name) {
         return cache("transformer-model-" + name, name, super::transformerModel);
+    }
+
+    @Override
+    public KameletModel kameletModel(String name) {
+        return cache("kamelet-model-" + name, name, super::kameletModel);
     }
 
     @Override
@@ -512,6 +515,15 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public String listKameletsAsJson() {
+        return cache(LIST_KAMELETS_AS_JSON, () -> JsonMapper.serialize(findKameletNames().stream()
+                .map(this::kameletJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("kamelet"))
+                .toList()));
+    }
+
+    @Override
     public String listDevConsolesAsJson() {
         return cache(LIST_CONSOLES_AS_JSON, () -> JsonMapper.serialize(findDevConsoleNames().stream()
                 .map(this::devConsoleJSonSchema)
@@ -600,6 +612,16 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
         try {
             for (String name : findTransformerNames()) {
                 ArtifactModel<?> am = transformerModel(name);
+                if (matchArtifact(am, groupId, artifactId, version)) {
+                    return am;
+                }
+            }
+        } catch (Throwable e) {
+            // ignore as catalog can be dynamic changed and older releases may not have newer apis
+        }
+        try {
+            for (String name : findKameletNames()) {
+                ArtifactModel<?> am = kameletModel(name);
                 if (matchArtifact(am, groupId, artifactId, version)) {
                     return am;
                 }

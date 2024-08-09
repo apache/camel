@@ -51,6 +51,7 @@
         <module>camel-core-model</module>
         <module>camel-core-processor</module>
         <module>camel-core-reifier</module>
+        <module>camel-core-kamelet</module>
         <module>camel-xml-io</module>
         <module>camel-xml-jaxb</module>
         <module>camel-yaml-io</module>

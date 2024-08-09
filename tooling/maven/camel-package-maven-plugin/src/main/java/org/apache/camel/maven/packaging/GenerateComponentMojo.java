@@ -50,6 +50,8 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         invoke(GenerateInvokeOnHeaderMojo.class);
         // generate data-type-transformer
         invoke(GenerateDataTypeTransformerMojo.class);
+        // generate kamelet-spec
+        invoke(GenerateKameletSpecMojo.class);
         // generate pojo-beans
         invoke(GeneratePojoBeanMojo.class);
         // generate dev-console

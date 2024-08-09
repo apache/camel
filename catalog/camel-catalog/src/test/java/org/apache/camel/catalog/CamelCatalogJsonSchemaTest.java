@@ -58,6 +58,10 @@ public class CamelCatalogJsonSchemaTest {
         return CATALOG.findTransformerNames().stream();
     }
 
+    static Stream<String> kamelets() {
+        return CATALOG.findKameletNames().stream();
+    }
+
     static Stream<String> models() {
         return CATALOG.findModelNames().stream();
     }
@@ -171,6 +175,21 @@ public class CamelCatalogJsonSchemaTest {
         assertNotNull(tree);
 
         assertTrue(tree.has("transformer"), name);
+    }
+
+    @ParameterizedTest
+    @MethodSource("kamelets")
+    public void testValidateJsonKamelets(String name) throws Exception {
+        String json = CATALOG.kameletJSonSchema(name);
+        LOG.info("Validating {} kamelet", name);
+        LOG.debug("with JSon: {}", json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+
+        assertTrue(tree.has("kamelet"), name);
     }
 
     @ParameterizedTest

@@ -32,6 +32,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/dataformats";
     private static final String LANGUAGE_DIR = "org/apache/camel/catalog/languages";
     private static final String TRANSFORMER_DIR = "org/apache/camel/catalog/transformers";
+    private static final String KAMELET_DIR = "org/apache/camel/catalog/kamelets";
     private static final String CONSOLE_DIR = "org/apache/camel/catalog/dev-consoles";
     private static final String OTHER_DIR = "org/apache/camel/catalog/others";
     private static final String BEANS_DIR = "org/apache/camel/catalog/beans";
@@ -39,6 +40,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
     private static final String TRANSFORMER_CATALOG = "org/apache/camel/catalog/transformers.properties";
+    private static final String KAMELET_CATALOG = "org/apache/camel/catalog/kamelets.properties";
     private static final String CONSOLE_CATALOG = "org/apache/camel/catalog/dev-consoles.properties";
     private static final String OTHER_CATALOG = "org/apache/camel/catalog/others.properties";
     private static final String CAPABILITIES_CATALOG = "org/apache/camel/catalog/capabilities.properties";
@@ -99,6 +101,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     }
 
     @Override
+    public String getKameletJSonSchemaDirectory() {
+        return KAMELET_DIR;
+    }
+
+    @Override
     public String getDevConsoleJSonSchemaDirectory() {
         return CONSOLE_DIR;
     }
@@ -127,6 +134,10 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
 
     protected String getTransformerCatalog() {
         return TRANSFORMER_CATALOG;
+    }
+
+    protected String getKameletCatalog() {
+        return KAMELET_CATALOG;
     }
 
     protected String getDevConsoleCatalog() {
@@ -163,6 +174,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findTransformerNames() {
         return find(getTransformerCatalog());
+    }
+
+    @Override
+    public List<String> findKameletNames() {
+        return find(getKameletCatalog());
     }
 
     @Override

@@ -163,7 +163,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
      * @param name the name of the parameter
      */
     public RouteTemplateDefinition templateOptionalParameter(String name) {
-        addTemplateOptionalParameter(name, null);
+        addTemplateOptionalParameter(name, null, null);
         return this;
     }
 
@@ -174,7 +174,19 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
      * @param description the description of the parameter
      */
     public RouteTemplateDefinition templateOptionalParameter(String name, String description) {
-        addTemplateOptionalParameter(name, description);
+        addTemplateOptionalParameter(name, null, description);
+        return this;
+    }
+
+    /**
+     * Adds an optional parameter the route template uses
+     *
+     * @param name         the name of the parameter
+     * @param defaultValue the defaultValue of the parameter
+     * @param description  the description of the parameter
+     */
+    public RouteTemplateDefinition templateOptionalParameter(String name, String defaultValue, String description) {
+        addTemplateOptionalParameter(name, defaultValue, description);
         return this;
     }
 
@@ -383,11 +395,11 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         this.templateParameters.add(new RouteTemplateParameterDefinition(name, defaultValue, description));
     }
 
-    private void addTemplateOptionalParameter(String name, String description) {
+    private void addTemplateOptionalParameter(String name, String defaultValue, String description) {
         if (this.templateParameters == null) {
             this.templateParameters = new ArrayList<>();
         }
-        RouteTemplateParameterDefinition def = new RouteTemplateParameterDefinition(name, null, description);
+        RouteTemplateParameterDefinition def = new RouteTemplateParameterDefinition(name, defaultValue, description);
         def.setRequired(false);
         this.templateParameters.add(def);
     }

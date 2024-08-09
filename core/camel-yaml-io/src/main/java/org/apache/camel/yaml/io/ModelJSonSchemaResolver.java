@@ -55,6 +55,11 @@ class ModelJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getKameletJSonSchema(String name) {
+        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+    }
+
+    @Override
     public String getDevConsoleJSonSchema(String name) {
         throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
     }

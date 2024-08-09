@@ -126,22 +126,26 @@ public final class MojoHelper {
     }
 
     public static String annotationValue(AnnotationInstance ann, String key) {
+        return annotationValue(ann, key, null);
+    }
+
+    public static String annotationValue(AnnotationInstance ann, String key, String defaultValue) {
         if (ann == null) {
-            return null;
+            return defaultValue;
         }
         var v = ann.value(key);
         if (v == null) {
-            return null;
+            return defaultValue;
         }
         var o = v.value();
         if (o == null) {
-            return null;
+            return defaultValue;
         }
         var s = o.toString();
-        return s == null || s.isBlank() ? null : s;
+        return s == null || s.isBlank() ? defaultValue : s;
     }
 
-    public static String annotationValue(AnnotationInstance ann, String key, String subKey) {
+    public static String[] annotationArrayValue(AnnotationInstance ann, String key) {
         if (ann == null) {
             return null;
         }
@@ -157,8 +161,22 @@ public final class MojoHelper {
         if (arr.length == 0) {
             return null;
         }
-        for (AnnotationValue av : arr) {
-            String s = av.value().toString();
+
+        String[] values = new String[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            values[i] = arr[i].value().toString();
+        }
+
+        return values;
+    }
+
+    public static String annotationValueFromMap(AnnotationInstance ann, String key, String subKey) {
+        String[] arr = annotationArrayValue(ann, key);
+        if (arr == null) {
+            return null;
+        }
+
+        for (String s : arr) {
             String before = Strings.before(s, "=");
             if (subKey.equals(before)) {
                 return Strings.after(s, "=");
