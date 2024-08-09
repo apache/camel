@@ -345,7 +345,7 @@ class ExportSpringBoot extends Export {
 
         if (openapi != null) {
             // include http server if using openapi
-            answer.add("mvn:org.apache.camel:camel-platform-http");
+            answer.add("org.apache.camel:camel-platform-http");
         }
 
         return answer;
