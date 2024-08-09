@@ -54,7 +54,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Usage as a Producer endpoint
+== Usage
+
+=== Usage as a Producer endpoint
 
 When the SSH Component is used as a Producer (`.to("ssh://...")`), it
 will send the message body as the command to execute on the remote SSH
@@ -75,7 +77,7 @@ an XML encoded newline (`+&#10;+`).
 </route>
 ----------------------------------------------
 
-== Authentication
+=== Authentication
 
 The SSH Component can authenticate against the remote SSH server using
 one of two mechanisms: Public Key certificate or username/password.
@@ -120,7 +122,7 @@ An example of using Public Key authentication is provided in
 `examples/camel-example-ssh-security`.
 
 [[SSH-CertificateDependencies]]
-== Certificate Dependencies
+=== Certificate Dependencies
 
 You will need to add some additional runtime dependencies if you use
 certificate-based authentication.

@@ -17,9 +17,6 @@
 The Slack component allows you to connect to an instance
 of http://www.slack.com/[Slack] and to send and receive the messages.
 
-To send a message contained in the message body, a pre-established
-https://api.slack.com/incoming-webhooks[Slack incoming webhook] must be configured in Slack.
-
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -63,7 +60,12 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Configuring in Spring XML
+== Usage
+
+To send a message contained in the message body, a pre-established
+https://api.slack.com/incoming-webhooks[Slack incoming webhook] must be configured in Slack.
+
+=== Configuring in Spring XML
 
 The SlackComponent with XML must be configured as a Spring or Blueprint
 bean that contains the incoming webhook url or the app token for the integration as a
@@ -77,9 +79,11 @@ parameter.
 </bean>
 -----------------------------------------------------------------------------------------------------------------------
 
+=== Configuring in Java
+
 For Java, you can configure this using Java code.
 
-== Example
+=== Example
 
 A CamelContext with Blueprint could be as:
 
@@ -102,7 +106,7 @@ A CamelContext with Blueprint could be as:
 </blueprint>
 ---------------------------------------------------------------------------------------------------------------------------
 
-== Producer
+=== Producer
 
 You can now use a token to send a message instead of WebhookUrl
 
@@ -147,7 +151,7 @@ For User tokens, you'll need the following permissions:
 - channels:history
 - chat:write
 
-== Consumer
+=== Consumer
 
 You can also use a consumer for messages in a channel
 
