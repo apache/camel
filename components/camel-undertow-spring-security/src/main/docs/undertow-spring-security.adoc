@@ -11,9 +11,6 @@
 
 *Since Camel {since}*
 
-*OSGi is not supported*
-
-
 The Spring Security Provider provides Spring Security (5.x) token bearer security over the camel-undertow component.
 To force camel-undertow to use spring security provider:
 

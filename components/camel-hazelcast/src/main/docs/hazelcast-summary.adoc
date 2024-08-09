@@ -134,56 +134,6 @@ In the example above we set up this for the hazelcast map component and setup ha
 </bean>
 ------------------------------------------------------------------------------
 
-== Publishing hazelcast instance as an OSGI service
-
-If operating in an OSGI container, and you would want to use one instance
-of hazelcast across all bundles in the same container. You can publish
-the instance as an OSGI service and bundles using the cache al need is
-to reference the service in the hazelcast endpoint.
-
-=== Bundle A create an instance and publish it as an OSGI service
-
-[source,xml]
---------------------------------------------------------------------------------------------------------
-<bean id="config" class="com.hazelcast.config.FileSystemXmlConfig">
-    <argument type="java.lang.String" value="${hazelcast.config}"/>
-</bean>
-
-<bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
-    <argument type="com.hazelcast.config.Config" ref="config"/>
-</bean>
-
-<!-- publishing the hazelcastInstance as a service -->
-<service ref="hazelcastInstance" interface="com.hazelcast.core.HazelcastInstance" />
---------------------------------------------------------------------------------------------------------
-
-=== Bundle B uses the instance
-
-[source,xml]
---------------------------------------------------------------------------------------
-<!-- referencing the hazelcastInstance as a service -->
-<reference ref="hazelcastInstance" interface="com.hazelcast.core.HazelcastInstance" />
-
-<camelContext xmlns="http://camel.apache.org/schema/blueprint">
-    <route id="testHazelcastInstanceBeanRefPut">
-        <from uri="direct:testHazelcastInstanceBeanRefPut"/>
-        <setHeader name="CamelHazelcastOperationType">
-            <constant>put</constant>
-        </setHeader>
-        <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
-    </route>
-
-    <route id="testHazelcastInstanceBeanRefGet">
-        <from uri="direct:testHazelcastInstanceBeanRefGet" />
-        <setHeader name="CamelHazelcastOperationType">
-            <constant>get</constant>
-        </setHeader>
-        <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
-        <to uri="seda:out" />
-    </route>
-</camelContext>
---------------------------------------------------------------------------------------
-
 :camel-spring-boot-name: hazelcast
 
 include::spring-boot:partial$starter.adoc[]
