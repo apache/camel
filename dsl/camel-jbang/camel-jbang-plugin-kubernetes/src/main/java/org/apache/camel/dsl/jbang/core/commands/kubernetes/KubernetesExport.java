@@ -263,12 +263,31 @@ public class KubernetesExport extends Export {
             buildProperties.add("%s.kubernetes.image-pull-policy=%s".formatted(propPrefix, imagePullPolicy));
         }
 
-        // Quarkus Runtime specific
+        // Runtime specific for Main
+        if (runtime == RuntimeType.main) {
+            addDependencies("org.apache.camel:camel-health",
+                    "org.apache.camel:camel-platform-http-main",
+                    "org.apache.camel:camel-rest",
+                    "org.apache.camel:camel-rest-openapi");
+        }
+
+        // Runtime specific for Quarkus
         if (runtime == RuntimeType.quarkus) {
+            addDependencies("org.apache.camel.quarkus:camel-quarkus-microprofile-health",
+                    "org.apache.camel.quarkus:camel-quarkus-platform-http",
+                    "org.apache.camel.quarkus:camel-quarkus-rest",
+                    "org.apache.camel.quarkus:camel-quarkus-rest-openapi");
 
             // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
             // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
             addDependencies("io.fabric8:kubernetes-client:6.13.1");
+        }
+
+        // Runtime specific for Spring-Boot
+        if (runtime == RuntimeType.springBoot) {
+            addDependencies("org.apache.camel:camel-platform-http",
+                    "org.apache.camel:camel-rest",
+                    "org.apache.camel:camel-rest-openapi");
         }
 
         File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
@@ -347,7 +366,7 @@ public class KubernetesExport extends Export {
                 = TraitHelper.mergeTraits(traits, annotationsTraits, applicationProfileProperties, applicationProperties);
 
         Traits traitsSpec;
-        if (allTraits != null && allTraits.length > 0) {
+        if (allTraits.length > 0) {
             traitsSpec = TraitHelper.parseTraits(allTraits);
         } else {
             traitsSpec = new Traits();

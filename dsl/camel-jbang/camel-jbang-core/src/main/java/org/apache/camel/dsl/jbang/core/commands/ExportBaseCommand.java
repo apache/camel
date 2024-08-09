@@ -358,27 +358,31 @@ public abstract class ExportBaseCommand extends CamelCommand {
         boolean kamelets = lines.stream().anyMatch(l -> l.startsWith("kamelet="));
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
-                String v = StringHelper.after(line, "dependency=");
-                // skip endpointdsl as its already included, and core-languages and java-joor as
-                // we let quarkus compile
-                boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
-                        || v.contains("org.apache.camel:camel-java-joor-dsl")
-                        || v.contains("camel-endpointdsl")
-                        || !kamelets && v.contains("org.apache.camel:camel-kamelet");
-                if (!skip) {
-                    answer.add(v);
-                }
-                if (kamelets && v != null && v.contains("org.apache.camel:camel-kamelet")) {
-                    // include yaml-dsl and kamelet catalog if we use kamelets
-                    answer.add("camel:yaml-dsl");
-                    answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                    answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                String deps = StringHelper.after(line, "dependency=");
+                if (!deps.isEmpty()) {
+                    // skip endpointdsl as its already included, and core-languages and java-joor as
+                    // we let quarkus compile
+                    boolean skip = deps.contains("org.apache.camel:camel-core-languages")
+                            || deps.contains("org.apache.camel:camel-java-joor-dsl")
+                            || deps.contains("camel-endpointdsl")
+                            || !kamelets && deps.contains("org.apache.camel:camel-kamelet");
+                    if (!skip) {
+                        for (String d : deps.split(",")) {
+                            answer.add(normalizeDependency(d));
+                        }
+                    }
+                    if (kamelets && deps.contains("org.apache.camel:camel-kamelet")) {
+                        // include yaml-dsl and kamelet catalog if we use kamelets
+                        answer.add("camel:yaml-dsl");
+                        answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                        answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                    }
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
                 String deps = StringHelper.after(line, "camel.jbang.dependencies=");
                 if (!deps.isEmpty()) {
                     for (String d : deps.split(",")) {
-                        answer.add(d.trim());
+                        answer.add(normalizeDependency(d));
                         if (kamelets && d.contains("org.apache.camel:camel-kamelet")) {
                             // include yaml-dsl and kamelet catalog if we use kamelets
                             answer.add("camel:yaml-dsl");
@@ -405,21 +409,21 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             // java is moved into src/main/java and compiled during build
                             // for the other DSLs we need to add dependencies
                             if ("groovy".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-groovy-dsl");
+                                answer.add("org.apache.camel:camel-groovy-dsl");
                             } else if ("js".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-js-dsl");
+                                answer.add("org.apache.camel:camel-js-dsl");
                             } else if ("jsh".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-jsh-dsl");
+                                answer.add("org.apache.camel:camel-jsh-dsl");
                             } else if ("kts".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-kotlin-dsl");
+                                answer.add("org.apache.camel:camel-kotlin-dsl");
                             } else if ("xml".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-xml-io-dsl");
+                                answer.add("org.apache.camel:camel-xml-io-dsl");
                             } else if ("yaml".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-yaml-dsl");
+                                answer.add("org.apache.camel:camel-yaml-dsl");
                                 // is it a kamelet?
                                 ext = FileUtil.onlyExt(r, false);
                                 if ("kamelet.yaml".equals(ext)) {
-                                    answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                                    answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                                 }
                             }
                         }
@@ -427,8 +431,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 }
             } else if (kamelets && line.startsWith("camel.component.kamelet.location=")) {
                 // include kamelet catalog if we use kamelets
-                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
             } else if (line.startsWith("modeline=")) {
                 answer.add("camel:dsl-modeline");
             }
@@ -828,6 +832,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
      * @return            normalized dependency.
      */
     private static String normalizeDependency(String dependency) {
+        if (dependency.startsWith("mvn:")) {
+            dependency = dependency.substring("mvn:".length());
+        }
         if (dependency.startsWith("camel-quarkus-")) {
             return "camel:" + dependency.substring("camel-quarkus-".length());
         }
