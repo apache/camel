@@ -31,6 +31,7 @@ import org.apache.camel.spi.annotations.Dataformat;
  * This class is the data format that uses the fixed-width uniVocity parser.
  */
 @Dataformat("univocityFixed")
+@Deprecated(since = "4.8.0")
 public class UniVocityFixedDataFormat
         extends
         AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings, FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedDataFormat> {
