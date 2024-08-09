@@ -77,10 +77,6 @@ XML::
 --------------------------------------------------------------------------------------------------------------------------------
 ====
 
-If no custom `ValidationProviderResolver` is defined and the validator
-component has been deployed into the OSGi environment,
-the `HibernateValidationProviderResolver` will be automatically used.
-
 == Example
 
 Assumed we have a java bean with the following annotations

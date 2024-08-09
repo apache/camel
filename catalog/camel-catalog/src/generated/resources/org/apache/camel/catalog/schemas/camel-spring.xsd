@@ -17796,8 +17796,8 @@ Set whether breadcrumb is enabled.
 Can be used to turn off bean post processing. Be careful to turn this off, as this means that beans that use Camel
 annotations such as org.apache.camel.EndpointInject , org.apache.camel.ProducerTemplate , org.apache.camel.Produce ,
 org.apache.camel.Consume etc will not be injected and in use. Turning this off should only be done if you are sure you
-do not use any of these Camel features. Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi
-with XML). The default value is true (enabled). Default value: true
+do not use any of these Camel features. Not all runtimes allow turning this off. The default value is true (enabled).
+Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
