@@ -21,6 +21,7 @@ public final class MainConstants {
     public static final String DEFAULT_PROPERTY_PLACEHOLDER_LOCATION = "classpath:application.properties;optional=true";
     public static final String INITIAL_PROPERTIES_LOCATION = "camel.main.initial-properties-location";
     public static final String OVERRIDE_PROPERTIES_LOCATION = "camel.main.override-properties-location";
+    public static final String CLOUD_PROPERTIES_LOCATION = "camel.main.cloud-properties-location";
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
     public static final String PLATFORM_HTTP_SERVER = "platform-http-server";
     public static final String PROFILE = "camel.main.profile";
