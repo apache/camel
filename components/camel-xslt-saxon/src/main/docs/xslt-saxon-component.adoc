@@ -38,9 +38,9 @@ You can append query options to the URI in the following format:
 [options="header"]
 |=================================================================
 |URI                              |Description     
-|xslt-saxon:com/acme/mytransform.xsl|Refers to the file com/acme/mytransform.xsl on the classpath
-|xslt-saxon:file:///foo/bar.xsl |Refers to the file /foo/bar.xsl
-|xslt-saxon:http://acme.com/cheese/foo.xsl|Refers to the remote http resource
+|`xslt-saxon:com/acme/mytransform.xsl`|Refers to the file `com/acme/mytransform.xsl` on the classpath
+|`xslt-saxon:file:///foo/bar.xsl` |Refers to the file `/foo/bar.xsl`
+|`xslt-saxon:http://acme.com/cheese/foo.xsl`|Refers to the remote http resource
 |=================================================================
 
 
@@ -58,8 +58,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== Using XSLT endpoints
+=== Using XSLT endpoints
 
 The following format is an example of using an XSLT template to formulate a response for a message for InOut
 message exchanges (where there is a `JMSReplyTo` header) 
@@ -81,7 +82,7 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 ----
 
-== Getting Usable Parameters into the XSLT
+=== Getting Usable Parameters into the XSLT
 
 By default, all headers are added as parameters which are then available in
 the XSLT. +
@@ -105,7 +106,7 @@ available:
     <xsl:template ...>
 ----
 
-== Spring XML versions
+=== Spring XML versions
 
 To use the above examples in Spring XML, you would use something like the following code:
 
@@ -120,7 +121,7 @@ To use the above examples in Spring XML, you would use something like the follow
   </camelContext>
 ----
 
-== Using xsl:include
+=== Using `xsl:include`
 
 Camel provides its own implementation of `URIResolver`. This allows
 Camel to load included files from the classpath.
@@ -140,7 +141,7 @@ the prefix, then Camel uses the prefix from the endpoint configuration.
 If no prefix is specified in the endpoint configuration, the default is `classpath:`.
 
 You can also refer backwards in the included paths.
-In the following example, the xsl file will be resolved under `org/apache/camel/component`.
+In the following example, the XSL file will be resolved under `org/apache/camel/component`.
 
 [source,xml]
 ----
@@ -148,13 +149,13 @@ In the following example, the xsl file will be resolved under `org/apache/camel/
 ----
 
 
-== Using xsl:include and default prefix
+=== Using `xsl:include` and default prefix
 
 Camel will use the prefix from the endpoint configuration as the default prefix.
 
 You can explicitly specify `file:` or `classpath:` loading. The two loading types can be mixed in an XSLT script, if necessary.
 
-== Using Saxon extension functions
+=== Using Saxon extension functions
 
 Since Saxon 9.2, writing extension functions has been supplemented by a
 new mechanism, referred to
@@ -193,12 +194,12 @@ With Spring XML:
 ----
 
 
-== Dynamic stylesheets
+=== Dynamic stylesheets
 
 To provide a dynamic stylesheet at runtime, you can either:
 
 - Define a dynamic URI. See xref:manual:faq:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
-to()] for more information.
+`to()`] for more information.
 - Use header with the stylesheet.
 
 When using a header for dynamic stylesheet, then you can either refer to the stylesheet as a `file` or `classpath`
@@ -223,7 +224,7 @@ TIP: You can set `contentCache=false` and refer to a non-existing template, such
 as this will tell Camel to not load `dummy.xsl` on startup but to load the stylesheet on demand. And because you
 provide the stylesheet via headers, then it is fully dynamic.
 
-== Accessing warnings, errors and fatalErrors from XSLT ErrorListener
+=== Accessing warnings, errors and fatalErrors from XSLT ErrorListener
 
 Any warning/error or fatalError is stored on
 the current Exchange as a property with the
@@ -233,7 +234,7 @@ errors happening during transformation.
 
 For example, in the stylesheet below, we want to determinate whether a staff has
 an empty dob field. And to include a custom error message using
-xsl:message.
+`xsl:message`.
 
 [source,xml]
 ----

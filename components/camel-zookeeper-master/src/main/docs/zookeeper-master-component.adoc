@@ -59,7 +59,7 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-== Example
+== Examples
 
 You can protect a clustered Camel application to only consume files from one active node.
 
@@ -93,7 +93,7 @@ However, you can also configure the url of the ZooKeeper ensemble using environm
 export ZOOKEEPER_URL = "myzookeeper:2181"
 ----
 
-== Master RoutePolicy
+=== Master RoutePolicy
 
 You can also use a `RoutePolicy` to control routes in master/slave mode.
 

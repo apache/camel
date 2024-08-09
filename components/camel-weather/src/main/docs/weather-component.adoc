@@ -61,7 +61,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Exchange data format
+== Usage
+
+=== Exchange data format
 
 Camel will deliver the body as a json formatted `java.lang.String` (see
 the `mode` option above).
