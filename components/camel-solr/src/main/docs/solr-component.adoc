@@ -54,53 +54,55 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Message Operations
+== Usage
 
-The following Solr operations are currently supported. Simply set an
-exchange header with a key of "SolrOperation" and a value set to one of
+=== Message Operations
+
+The following Solr operations are currently supported. Set an
+exchange header with a key of `SolrOperation` and a value set to one of
 the following. Some operations also require the message body to be set.
 
-* INSERT
-* INSERT_STREAMING
+* `INSERT`
+* `INSERT_STREAMING`
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Operation |Message body |Description
 
-|INSERT/INSERT_STREAMING |n/a |adds an index using message headers (must be prefixed with "SolrField.")
+|`INSERT/INSERT_STREAMING` |n/a |adds an index using message headers (must be prefixed with "SolrField.")
 
-|INSERT/INSERT_STREAMING |File |adds an index using the given File (using ContentStreamUpdateRequest)
+|`INSERT/INSERT_STREAMING` |File |adds an index using the given File (using `ContentStreamUpdateRequest`)
 
-|INSERT/INSERT_STREAMING |SolrInputDocument |updates index based on the given SolrInputDocument
+|`INSERT/INSERT_STREAMING` |`SolrInputDocument` |updates index based on the given `SolrInputDocument`
 
-|INSERT/INSERT_STREAMING |String XML |updates index based on the given XML (must follow
-SolrInputDocument format)
+|`INSERT/INSERT_STREAMING` |String XML |updates index based on the given XML (must follow
+`SolrInputDocument` format)
 
-|ADD_BEAN |bean instance |adds an index based on values in an
+|`ADD_BEAN` |bean instance |adds an index based on values in an
 http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
 bean]
 
-|ADD_BEANS |collection<bean> |adds index based on a collection of
+|`ADD_BEANS` |`collection<bean>` |adds index based on a collection of
 http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
 bean]
 
-|DELETE_BY_ID |index id to delete |delete a record by ID
+|`DELETE_BY_ID` |index id to delete |delete a record by ID
 
-|DELETE_BY_QUERY |query string |delete a record by a query
+|`DELETE_BY_QUERY` |query string |delete a record by a query
 
-|COMMIT |n/a |performs a commit on any pending index changes
+|`COMMIT` |n/a |performs a commit on any pending index changes
 
-|SOFT_COMMIT |n/a |performs a `soft commit` (without guarantee that Lucene index files are written to stable storage; useful for Near Real Time operations) on any pending index changes
+|`SOFT_COMMIT` |n/a |performs a `soft commit` (without guarantee that Lucene index files are written to stable storage; useful for Near Real Time operations) on any pending index changes
 
-|ROLLBACK |n/a |performs a rollback on any pending index changes
+|`ROLLBACK` |n/a |performs a rollback on any pending index changes
 
-|OPTIMIZE |n/a |performs a commit on any pending index changes and then runs the
+|`OPTIMIZE` |n/a |performs a commit on any pending index changes and then runs the
 optimize command (This command reorganizes the Solr index and might be a heavy task)
 |=======================================================================
 
 == Example
 
-Below is a simple INSERT, DELETE and COMMIT example
+Below is a simple `INSERT`, `DELETE` and `COMMIT` example
 
 [source,java]
 ---------------------------------------------------------------------------------------
@@ -157,7 +159,7 @@ template.sendBody("direct:delete", "1234");
 template.sendBody("direct:commit", null);
 -----------------------------------------------
 
-== Querying Solr
+=== Querying Solr
 
 The components provide a producer operation to query Solr.
 

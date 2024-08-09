@@ -58,7 +58,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Using a connection factory
+== Usage
+
+=== Using a connection factory
 
 To connect to RabbitMQ, you need to set up a `ConnectionFactory` (same as with JMS) with the login details such as:
 
@@ -83,7 +85,7 @@ The `ConnectionFactory` is auto-detected by default, so you can do:
 </camelContext>
 ----
 
-== Default Exchange Name
+=== Default Exchange Name
 
 To use default exchange name (which would be an empty exchange name in RabbitMQ) then you should use `default` as name
 in the endpoint uri, such as:
@@ -93,7 +95,7 @@ in the endpoint uri, such as:
 to("spring-rabbitmq:default?routingKey=foo")
 ----
 
-== Auto declare exchanges, queues and bindings
+=== Auto declare exchanges, queues and bindings
 
 Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
 
@@ -135,7 +137,7 @@ See details in the RabbitMQ documentation.
 You can also configure any additional `x-` arguments, such as the message time to live, via `x-message-ttl`, and many others.
 See details in the RabbitMQ documentation.
 
-== Mapping from Camel to RabbitMQ
+=== Mapping from Camel to RabbitMQ
 
 The message body is mapped from Camel Message body to a `byte[]` which is the type that RabbitMQ uses for message body.
 Camel will use its type converter to convert the message body to a byte array.
@@ -147,7 +149,7 @@ Custom message headers are mapped from Camel Message headers to RabbitMQ headers
 This behaviour can be customized by configuring
 a new implementation of `HeaderFilterStrategy` on the Camel component.
 
-== Request / Reply
+=== Request / Reply
 
 Request and reply messaging is supported using https://www.rabbitmq.com/direct-reply-to.html[RabbitMQ direct reply-to].
 
@@ -172,7 +174,7 @@ from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
     .transform(body().prepend("Hello "));
 ----
 
-== Reuse endpoint and send to different destinations computed at runtime
+=== Reuse endpoint and send to different destinations computed at runtime
 
 If you need to send messages to a lot of different RabbitMQ exchanges, it
 makes sense to reuse an endpoint and specify the real destination in
@@ -226,7 +228,7 @@ message to avoid the accidental loops
 in the routes (in scenarios when the message will be forwarded to
 another RabbitMQ endpoint).
 
-== Using toD
+=== Using toD
 
 If you need to send messages to a lot of different exchanges, it
 makes sense to reuse an endpoint and specify the dynamic destinations
@@ -235,13 +237,14 @@ with simple language using xref:eips:toD-eip.adoc[toD].
 For example, suppose you need to send messages to exchanges with order types,
 then using toD could, for example, be done as follows:
 
+.Example SJMS2 route with `toD`
 [source,java]
 ----
 from("direct:order")
   .toD("spring-rabbit:order-${header.orderType}");
 ----
 
-== Manual Acknowledgement 
+=== Manual Acknowledgement
 
 If we need to manually acknowledge a message for some use case, we can
 do it by setting and acknowledgeMode to Manual and using the below snippet

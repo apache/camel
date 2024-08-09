@@ -66,7 +66,7 @@ from("activemq:My.Queue")
 
 == Using YAML in Spring DSL
 
-When using Data Format in Spring DSL you need to
+When using Data Format in Spring DSL, you need to
 declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
@@ -118,11 +118,11 @@ And then you can refer to those ids in the route:
 
 == Dependencies for SnakeYAML
 
-To use YAML in your camel routes you need to add the a dependency
-on *camel-snakeyaml* which implements this data format.
+To use YAML in your camel routes, you need to add a dependency
+on `camel-snakeyaml` which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release
+If you use maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest release
 (see the download page for the latest versions).
 
 [source,xml]
