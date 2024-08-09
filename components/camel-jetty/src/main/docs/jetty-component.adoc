@@ -207,39 +207,6 @@ Spring DSL based configuration of endpoint
   <to uri="jetty:https://127.0.0.1/mail/?sslContextParameters=#sslContextParameters"/>
 
 ----
-[[HTTP-Blueprintbasedconfigurationofendpoint]]
-Blueprint based configuration of endpoint
-
-Global configuration of sslContextParameters in a dedicated Blueprint XML file
-
-[source,xml]
-----
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-
-  <sslContextParameters id="sslContextParameters" xmlns="http://camel.apache.org/schema/blueprint">
-    <keyManagers keyPassword="keyPassword">
-      <keyStore resource="etc/keystore.p12" password="keystorePassword"/>
-      </keyManagers>
-  </sslContextParameters>
-
-  <service ref="sslContextParameters" auto-export="all-classes"/>
-</blueprint>
-----
-
-Use of the global configuration in other Blueprint XML files with route definitions
-
-[source,xml]
-----
-...
-<reference id="sslContextParameters" interface="org.apache.camel.support.jsse.SSLContextParameters" ext:proxy-method="classes" />
-
-  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-    <route>
-     <from uri="jetty:https://0.0.0.0/path?sslContextParameters=#sslContextParameters"/>
-...
-----
 
 [[Jetty-ConfiguringJettyDirectly]]
 Configuring Jetty Directly
@@ -487,74 +454,11 @@ You can then define the endpoint as:
 
 [source,java]
 ----
-from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler")
+from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler");
 ----
 
 If you need more handlers, set the `handlers` option equal to a
 comma-separated list of bean IDs.
-
-Blueprint-based definition of basic authentication (based on Jetty 12):
-
-[source,xml]
-----
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd"
-  xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0">
-
-  <bean id="constraint" class="org.eclipse.jetty.util.security.Constraint">
-    <property name="name" value="BASIC"/>
-    <property name="authenticate" value="true"/>
-      <property name="roles">
-        <list>
-          <value>rolename1</value>
-        </list>
-      </property>
-  </bean>
-
-  <bean id="constraintMapping" class="org.eclipse.jetty.security.ConstraintMapping">
-    <property name="constraint" ref="constraint"/>
-    <property name="pathSpec" value="/path"/>
-  </bean>
-
-  <bean id="securityHandler" class="org.eclipse.jetty.security.ConstraintSecurityHandler">
-    <property name="loginService">
-      <bean class="org.eclipse.jetty.security.HashLoginService">
-        <property name="config" value="/opt/apache-karaf/etc/roles.properties"/>
-        <property name="hotReload" value="true"/>
-      </bean>
-    </property>
-    <property name="authenticator">
-      <bean class="org.eclipse.jetty.security.authentication.BasicAuthenticator"/>
-    </property>
-    <property name="constraintMappings">
-      <list>
-        <ref component-id="constraintMapping"/>
-      </list>
-    </property>
-  </bean>
-  
-  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
-    <route>
-      <from uri="jetty:http://0.0.0.0/path?handlers=securityHandler"/>
-...
-----
-
-The `roles.properties` files contain
-
-----
-username1=password1,rolename1
-username2=password2,rolename1
-----
-
-This file is located in the `etc` folder and will be reloaded when changed. The endpoint:
-
-----
-http://0.0.0.0/path
-----
-
-It is now secured with basic authentication. Only `username1` with `password1` and `username2` with `password2` are able to access the endpoint.
 
 === How to return a custom HTTP 500 reply message
 

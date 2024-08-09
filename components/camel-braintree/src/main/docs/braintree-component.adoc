@@ -50,60 +50,11 @@ include::partial$component-endpoint-options.adoc[]
 
 == Examples
 
-[tabs]
-====
-Java::
-+
 [source,java]
 ----
 from("direct://GENERATE")
     .to("braintree://sclientToken/generate");
 ----
-
-OSGi Blueprint::
-+
-[source,xml]
-----
-<?xml version="1.0"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
-           xsi:schemaLocation="
-             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
-             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-             http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
-
-
-    <cm:property-placeholder id="placeholder" persistent-id="camel.braintree">
-    </cm:property-placeholder>
-
-    <bean id="braintree" class="org.apache.camel.component.braintree.BraintreeComponent">
-        <property name="configuration">
-            <bean class="org.apache.camel.component.braintree.BraintreeConfiguration">
-                <property name="environment" value="${environment}"/>
-                <property name="merchantId" value="${merchantId}"/>
-                <property name="publicKey" value="${publicKey}"/>
-                <property name="privateKey" value="${privateKey}"/>
-            </bean>
-        </property>
-    </bean>
-
-    <camelContext trace="true" xmlns="http://camel.apache.org/schema/blueprint" id="braintree-example-context">
-        <route id="braintree-example-route">
-            <from uri="direct:generateClientToken"/>
-            <to uri="braintree://clientToken/generate"/>
-            <to uri="stream:out"/>
-        </route>
-    </camelContext>
-
-</blueprint>
-----
-+
-[NOTE]
-=====
-Starting from Camel 4, OSGI Blueprint is considered a *legacy* DSL. Users are strongly advised to migrate to the modern XML IO DSL.
-=====
-
-====
 
 == More Information
 

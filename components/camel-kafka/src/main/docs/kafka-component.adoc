@@ -129,7 +129,7 @@ If setting this value explicitly, be aware that there is a tradeoff between the 
 |===
 
 The repository can be instantiated by defining the `topic` and `bootstrapServers`, or the `producerConfig` and `consumerConfig` property sets can be explicitly defined to enable features such as SSL/SASL.
-To use, this repository must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
+To use, this repository must be placed in the Camel registry, either manually or by registration as a bean in Spring, as it is `CamelContext` aware.
 
 Sample usage is as follows:
 
@@ -337,7 +337,7 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 .to("kafka:my_topic?headerFilterStrategy=#myStrategy")
 ----
 
-`myStrategy` object should be a subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
+`myStrategy` object should be a subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring, as it is `CamelContext` aware.
 
 === Kafka Transaction
 

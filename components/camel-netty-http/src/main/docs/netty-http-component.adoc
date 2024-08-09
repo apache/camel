@@ -338,11 +338,6 @@ And in the routes you refer to this option as shown below
 </route>
 ----------------------------------------------------------------------------------------------------------
 
-=== Reusing the same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
-
-See the Netty HTTP Server Example
-for more details and example how to do that.
-
 === Implementing a reverse proxy
 
 Netty HTTP component can act as a reverse proxy, in that case

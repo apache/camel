@@ -114,27 +114,6 @@ The `LdapConnection` bean may be defined as follows in Spring XML:
 <bean id="ldapConnection" factory-bean="ldapConnectionFactory" factory-method="newLdapConnection" scope="prototype"/>
 ----
 
-or in a OSGi `blueprint.xml`:
-
-[source,xml]
-----
-<bean id="ldapConnectionOptions" class="org.apache.directory.ldap.client.api.LdapConnectionConfig">
-  <property name="ldapHost" value="${ldap.host}"/>
-  <property name="ldapPort" value="${ldap.port}"/>
-  <property name="name" value="${ldap.username}"/>
-  <property name="credentials" value="${ldap.password}"/>
-  <property name="useSsl" value="false"/>
-  <property name="useTls" value="false"/>
-</bean>
-
-<bean id="ldapConnectionFactory" class="org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory">
-  <argument ref="ldapConnectionOptions"/>
-</bean>
-
-<bean id="ldapConnection" factory-ref="ldapConnectionFactory" factory-method="newLdapConnection" scope="prototype"/>
-----
-
-
 == Examples
 
 Following on from the Spring configuration above, the code sample below

@@ -380,21 +380,5 @@ versions 2.4 and 2.5, then the following dependencies must be added:
 </dependency>
 ----
 
-Alternatively, an OSGi bundle containing the base library, all
-structures libraries and required dependencies (on the bundle classpath)
-can be downloaded from the
-https://repo1.maven.org/maven2/ca/uhn/hapi/hapi-osgi-base[central Maven
-repository].
-
-[source,xml]
-----
-<dependency>
-    <groupId>ca.uhn.hapi</groupId>
-    <artifactId>hapi-osgi-base</artifactId>
-    <version>2.2</version>
-</dependency>
-----
-
-
 
 include::spring-boot:partial$starter.adoc[]

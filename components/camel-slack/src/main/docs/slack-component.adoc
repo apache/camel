@@ -67,8 +67,7 @@ https://api.slack.com/incoming-webhooks[Slack incoming webhook] must be configur
 
 === Configuring in Spring XML
 
-The SlackComponent with XML must be configured as a Spring or Blueprint
-bean that contains the incoming webhook url or the app token for the integration as a
+The SlackComponent with XML must be configured as a Spring bean that contains the incoming webhook url or the app token for the integration as a
 parameter.
 
 [source,xml]
@@ -79,32 +78,7 @@ parameter.
 </bean>
 -----------------------------------------------------------------------------------------------------------------------
 
-=== Configuring in Java
-
-For Java, you can configure this using Java code.
-
-=== Example
-
-A CamelContext with Blueprint could be as:
-
-[source,xml]
----------------------------------------------------------------------------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
-
-    <bean id="slack" class="org.apache.camel.component.slack.SlackComponent">
-        <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
-    </bean>
-
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-        <route>
-            <from uri="direct:test"/>
-            <to uri="slack:#channel?iconEmoji=:camel:&amp;username=CamelTest"/>
-        </route>
-    </camelContext>
-
-</blueprint>
----------------------------------------------------------------------------------------------------------------------------
+NOTE: for Java, you can configure this using Java code.
 
 === Producer
 
