@@ -5,7 +5,7 @@
     "title": "Circuit Breaker",
     "description": "Route messages in a fault tolerance way using Circuit Breaker",
     "deprecated": false,
-    "label": "eip,routing",
+    "label": "eip,routing,error",
     "javaType": "org.apache.camel.model.CircuitBreakerDefinition",
     "abstract": false,
     "input": true,

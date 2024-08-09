@@ -5,7 +5,7 @@
     "title": "On Fallback",
     "description": "Route to be executed when Circuit Breaker EIP executes fallback",
     "deprecated": false,
-    "label": "eip,routing",
+    "label": "error",
     "javaType": "org.apache.camel.model.OnFallbackDefinition",
     "abstract": false,
     "input": true,

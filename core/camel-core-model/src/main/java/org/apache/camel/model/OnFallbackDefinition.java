@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route to be executed when Circuit Breaker EIP executes fallback
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "error")
 @XmlRootElement(name = "onFallback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnFallbackDefinition extends ProcessorDefinition<OnFallbackDefinition> implements OutputNode {

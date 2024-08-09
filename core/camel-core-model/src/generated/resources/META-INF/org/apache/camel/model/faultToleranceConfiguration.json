@@ -5,7 +5,7 @@
     "title": "Fault Tolerance Configuration",
     "description": "MicroProfile Fault Tolerance Circuit Breaker EIP configuration",
     "deprecated": false,
-    "label": "configuration,eip",
+    "label": "configuration,error",
     "javaType": "org.apache.camel.model.FaultToleranceConfigurationDefinition",
     "abstract": false,
     "input": false,

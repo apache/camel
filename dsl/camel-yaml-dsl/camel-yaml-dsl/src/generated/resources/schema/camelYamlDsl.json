@@ -15698,7 +15698,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer",
-        "description" : "Represents a tokenizer that uses LangChain4j for tokenization",
+        "description" : "Tokenizer that uses LangChain4j for tokenization.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

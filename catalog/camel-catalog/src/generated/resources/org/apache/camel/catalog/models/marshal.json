@@ -5,7 +5,7 @@
     "title": "Marshal",
     "description": "Marshals data into a specified format for transmission over a transport or component",
     "deprecated": false,
-    "label": "dataformat,transformation",
+    "label": "eip,dataformat,transformation",
     "javaType": "org.apache.camel.model.MarshalDefinition",
     "abstract": false,
     "input": true,

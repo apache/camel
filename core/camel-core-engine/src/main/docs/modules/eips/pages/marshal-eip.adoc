@@ -1,4 +1,9 @@
 = Marshal EIP
+:doctitle: Marshal
+:shortname: marshal
+:description: Marshals data into a specified format for transmission over a transport or component
+:since: 
+:supportlevel: Stable
 :tabs-sync-option:
 
 The xref:marshal-eip.adoc[Marshal] and xref:unmarshal-eip.adoc[Unmarshal] EIPs are used
@@ -70,4 +75,3 @@ YAML::
           uri: jms:queue:order 
 ----
 ====
-
