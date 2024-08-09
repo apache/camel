@@ -15720,20 +15720,17 @@
           "maxOverlap" : {
             "type" : "number",
             "title" : "Max Overlap",
-            "description" : "Sets the maximum number of tokens that can overlap in each segment",
-            "default" : "0"
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
           },
           "maxTokens" : {
             "type" : "number",
             "title" : "Max Tokens",
-            "description" : "Sets the maximum number of tokens on each segment",
-            "default" : "1024"
+            "description" : "Sets the maximum number of tokens on each segment"
           },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
             "description" : "Sets the tokenizer type",
-            "default" : "OPEN_AI",
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
           }
         },
