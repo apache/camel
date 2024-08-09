@@ -742,23 +742,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return -1;
     }
 
-    protected static String jibMavenPluginVersion(File settings, Properties prop) {
-        String answer = null;
-        if (prop != null) {
-            answer = prop.getProperty("camel.jbang.jib-maven-plugin-version");
-        }
-        if (answer == null) {
-            try {
-                List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-                answer = lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
-                        .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return answer != null ? answer : "3.4.3";
-    }
-
     protected static String jkubeMavenPluginVersion(File settings, Properties props) {
         String answer = null;
         if (props != null) {
