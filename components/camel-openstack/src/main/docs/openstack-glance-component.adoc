@@ -19,10 +19,9 @@ The Openstack Glance component allows messages to be sent to an OpenStack image 
 
 == Dependencies
 
-Maven users will need to add the following dependency to their pom.xml.
+Maven users will need to add the following dependency to their `pom.xml`.
 
-*pom.xml*
-
+.pom.xml
 [source,xml]
 ---------------------------------------
 <dependency>

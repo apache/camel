@@ -62,9 +62,9 @@ failing that OpenApi's own resource loading support.
 This component does not act as an HTTP client.
 It delegates that to another component mentioned above.
 The lookup mechanism searches for a single component that
-implements the _RestProducerFactory_ interface and
+implements the `RestProducerFactory` interface and
 uses that.
-If the CLASSPATH contains more than one, then the property
+If the `_CLASSPATH_` contains more than one, then the property
 `componentName` should be set to indicate which component to delegate
 to.
 
@@ -86,9 +86,9 @@ and implement the required _RestProducerFactory_ interface -- as do the
 components listed at the top.
 
 If you do not specify the _componentName_ at either component or 
-endpoint level, CLASSPATH is searched for a suitable delegate. There 
-should be only one component present on the CLASSPATH that implements 
-the _RestProducerFactory_ interface for this to work.
+endpoint level, `_CLASSPATH_` is searched for a suitable delegate. There
+should be only one component present on the `_CLASSPATH_` that implements
+the `RestProducerFactory` interface for this to work.
 
 This component's endpoint URI is lenient which means that in addition
 to message headers you can specify REST operation's parameters as
@@ -110,23 +110,51 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== Example: PetStore
+== Request validation
+
+API requests can be validated against the configured OpenAPI specification before they are sent by setting the `requestValidationEnabled` option to `true`.
+Validation is provided by the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[swagger-request-validator].
+
+The validator checks for the following conditions:
+
+* request body - Checks if the request body is required and whether there is any body on the Camel Exchange.
+
+* valid json - Checks if the content-type is `application/json` that the message body can be parsed as valid JSon.
+
+* content-type - Validates whether the `Content-Type` header for the request is valid for the API operation.
+The value is taken from the `Content-Type` Camel message exchange header.
+
+* request parameters - Validates whether an HTTP header required by the API operation is present. The header is
+expected to be present among the Camel message exchange headers.
+
+* query parameters - Validates whether an HTTP query parameter required by the API operation is present. The query parameter is
+expected to be present among the Camel message exchange headers.
+
+If any of the validation checks fail, then a `RestOpenApiValidationException` is thrown. The exception object
+has a `getValidationErrors` method that returns the error messages from the validator.
+
+
+== Examples
+
+=== PetStore
 
 Checkout the `rest-openapi-simple` example project in
-the https://github.com/apache/camel-spring-boot-examples repository.
+the https://github.com/apache/camel-spring-boot-examples[camel-spring-boot-examples] repository.
 
 For example, if you wanted to use the
 https://petstore3.swagger.io/api/v3/[_PetStore_] provided REST API simply
 reference the specification URI and desired operation id from the
 OpenApi specification or download the specification and store it as
-`openapi.json` (in the root) of CLASSPATH that way it will be 
+`openapi.json` (in the root) of `_CLASSPATH_` that way it will be
 automatically used. Let's use the xref:http-component.adoc[HTTP]
 component to perform all the requests and Camel's excellent support for 
 Spring Boot.
 
 Here are our dependencies defined in Maven POM file:
 
+.Example pom.xml
 [source,xml]
 ----
 <dependency>
@@ -140,7 +168,7 @@ Here are our dependencies defined in Maven POM file:
 </dependency>
 ----
 
-Start by defining a _RestOpenApiComponent_ bean:
+Start by defining a `RestOpenApiComponent` bean:
 
 [source,java]
 ----
@@ -166,7 +194,7 @@ manner (using `application.properties`).
 
 In this example, there is no need to explicitly associate the `petstore`
 component with the `HttpComponent` as Camel will use the first class on 
-the CLASSPATH that implements `RestProducerFactory`. However, if a different
+the `_CLASSPATH_` that implements `RestProducerFactory`. However, if a different
 component is required, then calling `petstore.setComponentName("http")` 
 would use the named component from the Camel registry.
 
@@ -184,27 +212,3 @@ String getPetJsonById(int petId) {
     return template.requestBodyAndHeader("petstore:getPetById", null, "petId", petId);
 }
 ----
-
-== Request validation
-
-API requests can be validated against the configured OpenAPI specification before they are sent by setting the `requestValidationEnabled` option to `true`.
-Validation is provided by the https://bitbucket.org/atlassian/swagger-request-validator/src/master/[swagger-request-validator].
-
-The validator checks for the following conditions:
-
-* request body - Checks if the request body is required and whether there is any body on the Camel Exchange.
-
-* valid json - Checks if the content-type is `application/json` that the message body can be parsed as valid JSon.
-
-* content-type - Validates whether the `Content-Type` header for the request is valid for the API operation.
-The value is taken from the `Content-Type` Camel message exchange header.
-
-* request parameters - Validates whether an HTTP header required by the API operation is present. The header is
-expected to be present among the Camel message exchange headers.
-
-* query parameters - Validates whether an HTTP query parameter required by the API operation is present. The query parameter is
-expected to be present among the Camel message exchange headers.
-
-If any of the validation checks fail, then a `RestOpenApiValidationException` is thrown. The exception object
-has a `getValidationErrors` method that returns the error messages from the validator.
-

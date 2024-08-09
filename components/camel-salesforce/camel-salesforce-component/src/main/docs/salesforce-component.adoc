@@ -72,7 +72,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Authenticating to Salesforce [[AuthenticatingToSalesforce]]
+== Usage
+
+=== Authenticating to Salesforce [[AuthenticatingToSalesforce]]
 
 The component supports three OAuth authentication flows:
 
@@ -86,12 +88,12 @@ For each of the flows, different sets of properties need to be set:
 |===
 | Property     | Where to find it on Salesforce     | Flow
 
-| clientId     | Connected App, Consumer Key        | All flows
-| clientSecret | Connected App, Consumer Secret     | Username-Password, Refresh Token, Client Credentials
-| userName     | Salesforce user username           | Username-Password, JWT Bearer Token
-| password     | Salesforce user password           | Username-Password
-| refreshToken | From OAuth flow callback           | Refresh Token
-| keystore     | Connected App, Digital Certificate | JWT Bearer Token
+| `clientId`     | Connected App, Consumer Key        | All flows
+| `clientSecret` | Connected App, Consumer Secret     | Username-Password, Refresh Token, Client Credentials
+| `userName`     | Salesforce user username           | Username-Password, JWT Bearer Token
+| `password`     | Salesforce user password           | Username-Password
+| `refreshToken` | From OAuth flow callback           | Refresh Token
+| `keystore`     | Connected App, Digital Certificate | JWT Bearer Token
 |===
 
 The component auto determines what flow you're trying to configure. In order to be explicit, set the
@@ -109,9 +111,9 @@ certificate. The KeyStore holding the certificate and the private key
 must contain only a single certificate-private key entry.
 ====
 
-== General Usage
+=== General Usage
 
-=== URI format
+==== URI format
 
 When used as a consumer, receiving streaming events, the URI scheme is:
 
@@ -166,7 +168,7 @@ class MyProcessor implements Processor {
 In addition, HTTP response status code and text are available as headers `Exchange.HTTP_RESPONSE_CODE` and
 `Exchange.HTTP_RESPONSE_TEXT`.
 
-===  Sending null values to salesforce
+====  Sending null values to salesforce
 
 By default, SObject fields with null values are not sent to salesforce. In order to
 send null values to salesforce, use the `fieldsToNull` property, as follows:
@@ -176,7 +178,7 @@ send null values to salesforce, use the `fieldsToNull` property, as follows:
 accountSObject.getFieldsToNull().add("Site");
 ----
 
-== Supported Salesforce APIs
+=== Supported Salesforce APIs
 
 Camel supports the following Salesforce APIs:
 
@@ -189,7 +191,7 @@ Camel supports the following Salesforce APIs:
 * <<ReportsAPI,Reports API>>
 
 [[RESTAPI]]
-=== REST API
+==== REST API
 
 The following operations are supported:
 
@@ -230,7 +232,7 @@ request as the input to a subsequent request.
 Unless otherwise specified, DTO types for the following options are from  `org.apache.camel.component.salesforce.api.dto` or one if its sub-packages.
 
 [[getVersions]]
-==== Versions
+===== Versions
 
 `getVersions`
 
@@ -241,7 +243,7 @@ Lists summary information about each Salesforce version currently available, inc
 Type:  `List<Version>`
 
 [[getResources]]
-==== Resources by Version
+===== Resources by Version
 
 `getResources`
 
@@ -252,7 +254,7 @@ Lists available resources for the current API version, including resource name a
 Type: `Map<String, String>`
 
 [[limits]]
-==== Limits
+===== Limits
 
 `limits`
 
@@ -291,7 +293,7 @@ from("direct:querySalesforce")
 ----
 
 [[recent]]
-==== Recently Viewed Items
+===== Recently Viewed Items
 
 `recent`
 
@@ -327,7 +329,7 @@ from("direct:fetchRecentItems")
 ----
 
 [[getGlobalObjects]]
-==== Describe Global
+===== Describe Global
 
 `getGlobalObjects`
 
@@ -339,7 +341,7 @@ as well as the maximum batch size permitted in queries.
 Type: `GlobalObjects`
 
 [[getBasicInfo]]
-==== sObject Basic Information
+===== sObject Basic Information
 
 `getBasicInfo`
 
@@ -356,7 +358,7 @@ Describes the individual metadata for the specified object.
 Type: `SObjectBasicInfo`
 
 [[getDescription]]
-==== sObject Describe
+===== sObject Describe
 
 `getDescription`
 
@@ -373,7 +375,7 @@ Completely describes the individual metadata at all levels for the specified obj
 Type: `SObjectDescription`
 
 [[getSObject]]
-==== Retrieve SObject
+===== Retrieve SObject
 
 `getSObject`
 
@@ -394,7 +396,7 @@ overrides `sObjectName` and `sObjectId` parameters.  | |
 Type: Subclass of `AbstractSObjectBase`
 
 [[getSObjectWithId]]
-==== Retrieve SObject by External Id
+===== Retrieve SObject by External Id
 
 `getSObjectWithId`
 
@@ -415,7 +417,7 @@ overrides `sObjectName` and `sObjectIdValue` parameters.  | |
 Type: Subclass of `AbstractSObjectBase`
 
 [[getBlobField]]
-==== sObject Blob Retrieve
+===== sObject Blob Retrieve
 
 `getBlobField`
 
@@ -437,7 +439,7 @@ and `sObjectName` are not supplied
 Type: `InputStream`
 
 [[createSObject]]
-==== Create SObject
+===== Create SObject
 
 `createSObject`
 
@@ -455,7 +457,7 @@ Creates a record in salesforce.
 Type: `CreateSObjectResult`
 
 [[updateSObject]]
-==== Update SObject
+===== Update SObject
 
 `updateSObject`
 
@@ -470,7 +472,7 @@ Updates a record in salesforce.
 |===
 
 [[upsertSObject]]
-==== Upsert SObject
+===== Upsert SObject
 
 `upsertSObject`
 
@@ -490,7 +492,7 @@ Upserts a record by External ID.
 Type: `UpsertSObjectResult`
 
 [[deleteSObject]]
-==== Delete SObject
+===== Delete SObject
 
 `deleteSObject`
 
@@ -505,7 +507,7 @@ Deletes a record in salesforce.
 |===
 
 [[deleteSObjectWithId]]
-==== Delete SObject by External Id
+===== Delete SObject by External Id
 
 `deleteSObjectWithId`
 
@@ -521,7 +523,7 @@ Deletes a record in salesforce by External ID.
 |===
 
 [[query]]
-==== Query
+===== Query
 
 `query`
 
@@ -542,7 +544,7 @@ the correct `AbstractQueryRecordsBase` sublcass based on the response.
 Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true. If `streamQueryResult` is true, the header `CamelSalesforceQueryResultTotalSize` is set to the number of records that matched the query.
 
 [[queryMore]]
-==== Query More
+===== Query More
 
 `queryMore`
 
@@ -564,7 +566,7 @@ operations. If neither `sObjectClass` nor `sObjectName` are set, Camel will atte
 Type: Instance of class supplied in `sObjectClass`
 
 [[queryAll]]
-==== Query All
+===== Query All
 
 `queryAll`
 
@@ -587,7 +589,7 @@ response.
 Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true.
 
 [[sosl_search]]
-==== Search
+===== Search
 
 `search`
 
@@ -604,7 +606,7 @@ Runs a Salesforce SOSL search
 Type: `SearchResult2`
 
 [[approval]]
-==== Submit Approval
+===== Submit Approval
 
 `approval`
 
@@ -667,7 +669,7 @@ final ApprovalResult result = template.requestBody("direct:example1", body, Appr
 ----
 
 [[approvals]]
-==== Get Approvals
+===== Get Approvals
 
 `approvals`
 
@@ -678,7 +680,7 @@ Returns a list of all approval processes.
 Type: `Approvals`
 
 [[composite]]
-==== Composite
+===== Composite
 
 `composite`
 
@@ -771,14 +773,14 @@ from("timer:fire?period=2000").setBody(constant("{\n" +
 
 The route directly creates the body as JSON and directly submit to salesforce endpoint using `rawPayload=true` option.
 
-With this approach, you have the complete control on the Salesforce request.
+With this approach, you have complete control on the Salesforce request.
 
 `POST` is the default HTTP method used to send raw Composite requests to salesforce. Use the
 `compositeMethod` option to override to the other supported value, `GET`, which returns a list of
 other available composite resources.
 
 [[composite-tree]]
-==== Composite Tree
+===== Composite Tree
 
 `composite-tree`
 
@@ -835,7 +837,7 @@ final String firstId = succeeded.get(0).getId();
 ----
 
 [[composite-batch]]
-==== Composite Batch
+===== Composite Batch
 
 `composite-batch`
 
@@ -906,7 +908,7 @@ final Object updateResultData = deleteResult.getResult(); // probably null
 ----
 
 [[compositeRetrieveSObjectCollections]]
-==== Retrieve Multiple Records with Fewer Round-Trips
+===== Retrieve Multiple Records with Fewer Round-Trips
 
 `compositeRetrieveSObjectCollections`
 
@@ -927,7 +929,7 @@ Type: `List` of class determined by `sObjectName` or `sObjectClass` header
 
 
 [[compositeCreateSObjectCollections]]
-==== Create SObject Collections
+===== Create SObject Collections
 
 `compositeCreateSObjectCollections`
 
@@ -944,7 +946,7 @@ Add up to 200 records. Mixed SObject types is supported.
 Type: `List<SaveSObjectResult>`
 
 [[compositeUpdateSObjectCollections]]
-==== Update SObject Collections
+===== Update SObject Collections
 
 `compositeUpdateSObjectCollections`
 
@@ -961,7 +963,7 @@ Update up to 200 records. Mixed SObject types is supported.
 Type: `List<SaveSObjectResult>`
 
 [[compositeUpsertSObjectCollections]]
-==== Upsert SObject Collections
+===== Upsert SObject Collections
 
 `compositeUpsertSObjectCollections`
 
@@ -980,7 +982,7 @@ Create or update (upsert) up to 200 records based on an external ID field. Mixed
 Type: `List<UpsertSObjectResult>`
 
 [[compositeDeleteSObjectCollections]]
-==== Delete SObject Collections
+===== Delete SObject Collections
 
 `compositeDeleteSObjectCollections`
 
@@ -999,7 +1001,7 @@ Type: `List<DeleteSObjectResult>`
 
 
 [[getEventSchema]]
-==== Get Event Schema
+===== Get Event Schema
 
 `getEventSchema`
 
@@ -1018,10 +1020,10 @@ Gets the definition of a Platform Event in JSON format. Other types of events su
 Type: `InputStream`
 
 [[ApexRESTAPI]]
-=== Apex REST API
+==== Apex REST API
 
 [[apexCall]]
-==== Invoke an Apex REST Web Service method
+===== Invoke an Apex REST Web Service method
 
 `apexCall`
 
@@ -1059,7 +1061,7 @@ Type: Instance of class supplied in `sObjectClass` input header.
 
 
 [[Bulk2API]]
-=== Bulk 2.0 API
+==== Bulk 2.0 API
 
 The Bulk 2.0 API has a simplified model over the original Bulk API. Use it to quickly load a large
 amount of data into salesforce, or query a large amount of data out of salesforce. Data must be
@@ -1085,7 +1087,7 @@ is v41.0. The minimum API version for Bulk Queries is v47.0. DTO classes mention
 * <<bulk2GetAllQueryJobs,bulk2GetAllQueryJobs>> - Gets all query jobs.
 
 [[bulk2CreateJob]]
-==== Create a Job
+===== Create a Job
 
 `bulk2CreateJob`
 Creates a bulk ingest job.
@@ -1101,7 +1103,7 @@ Creates a bulk ingest job.
 Type: `Job`
 
 [[bulk2CreateBatch]]
-==== Upload a Batch of Job Data
+===== Upload a Batch of Job Data
 
 `bulk2CreateBatch`
 
@@ -1115,7 +1117,7 @@ Adds a batch of data to an ingest job.
 |===
 
 [[bulk2CloseJob]]
-==== Close a Job
+===== Close a Job
 
 `bulk2CloseJob`
 
@@ -1133,7 +1135,7 @@ aborted/deleted.
 Type: `Job`
 
 [[bulk2AbortJob]]
-==== Abort a Job
+===== Abort a Job
 
 `bulk2AbortJob`
 
@@ -1150,7 +1152,7 @@ Aborts an ingest job.
 Type: `Job`
 
 [[bulk2DeleteJob]]
-==== Delete a Job
+===== Delete a Job
 
 `bulk2DeleteJob`
 
@@ -1163,7 +1165,7 @@ Deletes an ingest job.
 |===
 
 [[bulk2GetSuccessfulResults]]
-==== Get Job Successful Record Results
+===== Get Job Successful Record Results
 
 `bulk2GetSuccessfulResults`
 
@@ -1181,7 +1183,7 @@ Type: `InputStream` +
 Contents: CSV data
 
 [[bulk2GetFailedResults]]
-==== Get Job Failed Record Results
+===== Get Job Failed Record Results
 
 `bulk2GetFailedResults`
 
@@ -1199,7 +1201,7 @@ Type: `InputStream` +
 Contents: CSV data
 
 [[bulk2GetUnprocessedRecords]]
-==== Get Job Unprocessed Record Results
+===== Get Job Unprocessed Record Results
 
 `bulk2GetUnprocessedRecords`
 
@@ -1217,7 +1219,7 @@ Type: `InputStream`
 Contents: CSV data
 
 [[bulk2GetJob]]
-==== Get Job Info
+===== Get Job Info
 
 `bulk2GetJob`
 
@@ -1235,7 +1237,7 @@ Gets an ingest Job.
 Type: `Job`
 
 [[bulk2GetAllJobs]]
-==== Get All Jobs
+===== Get All Jobs
 
 `bulk2GetAllJobs`
 
@@ -1256,7 +1258,7 @@ is false, there are additional pages to fetch, and the `nextRecordsUrl` property
 to be set in the `queryLocator` parameter on subsequent calls.
 
 [[bulk2CreateQueryJob]]
-==== Create a Query Job
+===== Create a Query Job
 
 `bulk2CreateQueryJob`
 
@@ -1273,7 +1275,7 @@ Gets a query job.
 Type: `QueryJob`
 
 [[bulk2GetQueryJobResults]]
-==== Get Results for a Query Job
+===== Get Results for a Query Job
 
 `bulk2GetQueryJobResults`
 
@@ -1299,7 +1301,7 @@ Response message headers include `Sforce-NumberOfRecords` and
 `locator` parameter.
 
 [[bulk2AbortQueryJob]]
-==== Abort a Query Job
+===== Abort a Query Job
 
 `bulk2AbortQueryJob`
 
@@ -1316,7 +1318,7 @@ Aborts a query job.
 Type: `QueryJob`
 
 [[bulk2DeleteQueryJob]]
-==== Delete a Query Job
+===== Delete a Query Job
 
 `bulk2DeleteQueryJob`
 
@@ -1329,7 +1331,7 @@ Deletes a query job.
 |===
 
 [[bulk2GetQueryJob]]
-==== Get Information About a Query Job
+===== Get Information About a Query Job
 
 `bulk2GetQueryJob`
 
@@ -1346,7 +1348,7 @@ Gets a query job.
 Type: `QueryJob`
 
 [[bulk2GetAllQueryJobs]]
-==== Get Information About All Query Jobs
+===== Get Information About All Query Jobs
 
 `bulk2GetAllQueryJobs`
 
@@ -1367,7 +1369,7 @@ is false, there are additional pages to fetch, and the `nextRecordsUrl` property
 to be set in the `queryLocator` parameter on subsequent calls.
 
 [[BulkAPI]]
-=== Bulk (original) API 
+==== Bulk (original) API
 
 Producer endpoints can use the following APIs. All Job data formats,
 i.e. xml, csv, zip/xml, and zip/csv are supported. +
@@ -1392,7 +1394,7 @@ The following operations are supported:
 * <<getQueryResult,getQueryResult>> - Gets results for a Result Id
 
 [[createJob]]
-==== Create a Job
+===== Create a Job
 
 `createJob`
 
@@ -1415,7 +1417,7 @@ is supported via the pkChunking* options. See an explanation https://developer.s
 Type: `JobInfo`
 
 [[getJob]]
-==== Get Job Details
+===== Get Job Details
 
 `getJob`
 
@@ -1433,7 +1435,7 @@ Gets a Job
 Type: `JobInfo`
 
 [[closeJob]]
-==== Close a Job
+===== Close a Job
 
 `closeJob`
 
@@ -1451,7 +1453,7 @@ Closes a Job
 Type: `JobInfo`
 
 [[abortJob]]
-==== Abort a Job
+===== Abort a Job
 
 `abortJob`
 
@@ -1469,7 +1471,7 @@ Aborts a Job
 Type: `JobInfo`
 
 [[createBatch]]
-==== Add a Batch to a Job
+===== Add a Batch to a Job
 
 `createBatch`
 
@@ -1488,7 +1490,7 @@ Submits a Batch within a Bulk Job
 Type: `BatchInfo`
 
 [[getBatch]]
-==== Get Information for a Batch
+===== Get Information for a Batch
 
 `getBatch`
 
@@ -1507,7 +1509,7 @@ Get a Batch
 Type: `BatchInfo`
 
 [[getAllBatches]]
-==== Get Information for All Batches in a Job
+===== Get Information for All Batches in a Job
 
 `getAllBatches`
 
@@ -1525,7 +1527,7 @@ Gets all Batches for a Bulk Job Id
 Type: `List<JobInfo>`
 
 [[getRequest]]
-==== Get a Batch Request
+===== Get a Batch Request
 
 `getRequest`
 
@@ -1545,7 +1547,7 @@ Type: `InputStream`
 
 
 [[getResults]]
-==== Get Batch Results
+===== Get Batch Results
 
 `getResults`
 
@@ -1564,7 +1566,7 @@ Gets the results of the Batch when it's complete
 Type: `InputStream`
 
 [[createBatchQuery]]
-==== Create Bulk Query Batch
+===== Create Bulk Query Batch
 
 `createBatchQuery`
 
@@ -1584,7 +1586,7 @@ Creates a Batch from an SOQL query
 Type: `BatchInfo`
 
 [[getQueryResultIds]]
-==== Get Batch Results
+===== Get Batch Results
 
 `getQueryResultIds`
 
@@ -1604,7 +1606,7 @@ Type: `List<String>`
 
 
 [[getQueryResult]]
-==== Get Bulk Query Results
+===== Get Bulk Query Results
 
 `getQueryResult`
 
@@ -1638,13 +1640,13 @@ error.
 ----
 
 [[PubSubAPI]]
-=== Pub/Sub API
+==== Pub/Sub API
 
 The Pub/Sub API allows you to publish and subscribe to platform events, including real-time event
 monitoring events, and change data capture events. This API is based on gRPC and HTTP/2, and event
 payloads are delivered in Apache Avro format.
 
-==== Publishing Events
+===== Publishing Events
 
 The URI format for publishing events is:
 ----
@@ -1657,7 +1659,7 @@ For example:
 ----
 
 [[pubSubPublish]]
-==== Publish an Event
+===== Publish an Event
 
 `pubSubPublish`
 
@@ -1691,7 +1693,7 @@ Type: `List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult>`
 
 The order of the items in the returned `List` correlates to the order of the items in the input `List`.
 
-==== Subscribing
+===== Subscribing
 The URI format for subscribing to a Pub/Sub topic is:
 ----
 salesforce:pubSubSubscribe:<topic_name>
@@ -1724,14 +1726,14 @@ Headers: `CamelSalesforcePubSubReplayId`
 
 
 [[StreamingAPI]]
-=== Streaming API
+==== Streaming API
 
 The Streaming API enables streaming of events using push technology and provides a subscription
 mechanism for receiving events in near real time. The Streaming API subscription mechanism supports
 multiple types of events, including PushTopic events, generic events, platform events, and Change
 Data Capture events.
 
-==== Push Topics
+===== Push Topics
 
 The URI format for consuming Push Topics is:
 ----
@@ -1774,7 +1776,7 @@ from("salesforce:subscribe:CamelTestTopic&sObjectName=Merchandise__c")...
 
 Type: Class passed via `sObjectName` parameter
 
-==== Platform Events
+===== Platform Events
 
 To emit a platform event use the <<createSObject,createSObject>> operation, passing an instance of a platform event, e.g. `Order_Event__e`.
 
@@ -1803,7 +1805,7 @@ from("salesforce:subscribe:event/Order_Event__e")
 
 Type: `PlatformEvent` or `org.cometd.bayeux.Message`
 
-==== Change Data Capture Events
+===== Change Data Capture Events
 
 Change Data Capture (CDC) allows you to receive near-real-time changes of Salesforce records, and synchronize corresponding records in an external data store. Change Data Capture publishes change events, which represent changes to Salesforce records. Changes include the creation of a new record, updates to an existing record, deletion of a record, and undeletion of a record.
 
@@ -1858,7 +1860,7 @@ Headers
 |===
 
 [[ReportsAPI]]
-=== Reports API
+==== Reports API
 
 * <<getRecentReports,getRecentReports>> - Gets up to 200 of the reports you most recently viewed.
 * <<getReportDescription,getReportDescription>> - Retrieves report description.
@@ -1868,7 +1870,7 @@ Headers
 * <<getReportResults,getReportResults>> - Retrieves results for an instance of a report run asynchronously.
 
 [[getRecentReports]]
-==== Report List
+===== Report List
 
 `getRecentReports`
 
@@ -1879,7 +1881,7 @@ Gets up to 200 of the reports you most recently viewed.
 Type: `List<RecentReport>`
 
 [[getReportDescription]]
-==== Describe Report
+===== Describe Report
 
 `getReportDescription`
 
@@ -1897,7 +1899,7 @@ Retrieves the report, report type, and related metadata for a report, either in 
 Type: `ReportDescription`
 
 [[executeSyncReport]]
-==== Execute Sync
+===== Execute Sync
 
 `executeSyncReport`
 
@@ -1917,7 +1919,7 @@ Runs a report synchronously with or without changing filters and returns the lat
 Type: `AbstractReportResultsBase`
 
 [[executeAsyncReport]]
-==== Execute Async
+===== Execute Async
 
 `executeAsyncReport`
 
@@ -1937,7 +1939,7 @@ Runs an instance of a report asynchronously with or without filters and returns 
 Type: `ReportInstance`
 
 [[getReportInstances]]
-==== Instances List
+===== Instances List
 
 `getReportInstances`
 
@@ -1955,7 +1957,7 @@ Returns a list of instances for a report that you requested to be run asynchrono
 Type: `List<ReportInstance>`
 
 [[getReportResults]]
-==== Instance Results
+===== Instance Results
 
 `getReportResults`
 
@@ -1973,12 +1975,12 @@ Contains the results of running a report.
 
 Type: `AbstractReportResultsBase`
 
-== Miscellaneous Operations
+=== Miscellaneous Operations
 
 * <<raw,raw>> - Send requests to salesforce and have full, raw control over endpoint, parameters, body, etc.
 
 [[raw]]
-=== Raw
+==== Raw
 
 `raw`
 
@@ -1999,7 +2001,7 @@ header will be automatically set based on the `format` option, but this can be o
 
 Type: `InputStream`
 
-==== Query example
+===== Query example
 
 In this example we'll send a query to the REST API. The query must be passed in a URL parameter called "q", so we'll create a message header called q and tell the
 raw operation to include that message header as a URL parameter:
@@ -2010,7 +2012,7 @@ from("direct:queryExample")
   // deserialize JSON results or handle in some other way
 ----
 
-==== SObject example
+===== SObject example
 
 In this example, we'll pass a Contact the REST API in a `create` operation. Since the `raw` operation does not perform any serialization,
 we make sure to pass XML in the message body
@@ -2029,7 +2031,7 @@ The response is:
 </Result>
 ----
 
-== Uploading a document to a ContentWorkspace
+=== Uploading a document to a ContentWorkspace
 
 Create the ContentVersion in Java, using a Processor instance:
 
@@ -2069,11 +2071,11 @@ from("file:///home/camel/library")
     .to("salesforce:createSObject");
 ----
 
-== Generating SOQL query strings
+=== Generating SOQL query strings
 
 `org.apache.camel.component.salesforce.api.utils.QueryHelper` contains helper
-methods to generate SOQL queries. For instance to fetch all custom fields from
-_Account_ SObject you can simply generate the SOQL SELECT by invoking:
+methods to generate SOQL queries. For instance, to fetch all custom fields from
+_Account_ SObject, you can generate the SOQL SELECT by invoking:
 
 [source,java]
 ----
@@ -2081,7 +2083,7 @@ String allCustomFieldsQuery = QueryHelper.queryToFetchFilteredFieldsOf(new Accou
 ----
 
 [[MavenPlugin]]
-== Camel Salesforce Maven Plugin
+=== Camel Salesforce Maven Plugin
 
 The Maven plugin generates Java DTOs to represent salesforce objects.
 

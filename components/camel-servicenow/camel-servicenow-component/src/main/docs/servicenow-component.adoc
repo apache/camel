@@ -141,7 +141,7 @@ http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API
 https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 ====
 
-== Usage examples:
+== Examples:
  
 [source,java]
 .Retrieve 10 Incidents

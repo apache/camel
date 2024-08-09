@@ -105,7 +105,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Access to Netty types
+== Usage
+
+=== Access to Netty types
 
 This component uses the
 `org.apache.camel.component.netty.http.NettyHttpMessage` as the message
@@ -119,7 +121,7 @@ accessible at all times.
 io.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
 ----------------------------------------------------------------------------------------------------------
 
-== Using HTTP Basic Authentication
+=== Using HTTP Basic Authentication
 
 The Netty HTTP consumer supports HTTP basic authentication by specifying
 the security realm name to use, as shown below
@@ -141,7 +143,7 @@ End user of Apache Karaf / ServiceMix has a karaf realm out of the box,
 and hence why the example above would work out of the box in these
 containers.
 
-=== Specifying ACL on web resources
+==== Specifying ACL on web resources
 
 The `org.apache.camel.component.netty.http.SecurityConstraint` allows
 to define constraints on web resources.
@@ -180,7 +182,7 @@ no roles)
 * access to /admin/* requires the admin role
 * access to /guest/* requires the admin or guest role
 * access to /public/* is an exclusion that means no authentication is
-needed, and is therefore public for everyone without logging in
+necessary, and is therefore public for everyone without logging in
 
 To use this constraint, we just need to refer to the bean id as shown
 below:

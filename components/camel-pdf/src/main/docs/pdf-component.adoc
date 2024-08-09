@@ -59,8 +59,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Usage
 
-== Type converter
+=== Type converter
 
 Since Camel 4.8, the component is capable of doing simple document conversions. For instance,
 suppose you are receiving a PDF byte as a byte array:

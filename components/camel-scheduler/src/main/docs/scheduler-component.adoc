@@ -63,7 +63,9 @@ you can find more information about the options above, and examples at
 the http://camel.apache.org/polling-consumer.html[Polling
 Consumer] page.
 
-== Exchange Properties
+== Usage
+
+=== Exchange Properties
 
 When the timer is fired, it adds the following information as properties
 to the `Exchange`:
@@ -76,6 +78,26 @@ to the `Exchange`:
 
 |`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
 |===
+
+=== Forcing the scheduler to trigger immediately when completed
+
+To let the scheduler trigger as soon as the previous task is complete,
+you can set the option `greedy=true`. But beware then the scheduler will
+keep firing all the time. So use this with caution.
+
+=== Forcing the scheduler to be idle
+
+There can be use cases where you want the scheduler to trigger and be
+greedy. But sometimes you want to "tell the scheduler" that there was no
+task to poll, so the scheduler can change into idle mode using the
+backoff options. To do this, you would need to set a property on the
+exchange with the key `Exchange.SCHEDULER_POLLED_MESSAGES` to a boolean
+value of false. This will cause the consumer to indicate that there were
+no messages polled.
+
+The consumer will otherwise as by default return 1 message polled to the
+scheduler, every time the consumer has completed processing the
+exchange.
 
 == Example
 
@@ -99,27 +121,6 @@ And the route in Spring DSL:
   <to uri="bean:myBean?method=someMethodName"/>
 </route>
 ----
-
-== Forcing the scheduler to trigger immediately when completed
-
-To let the scheduler trigger as soon as the previous task is complete,
-you can set the option `greedy=true`. But beware then the scheduler will
-keep firing all the time. So use this with caution.
-
-== Forcing the scheduler to be idle
-
-There can be use cases where you want the scheduler to trigger and be
-greedy. But sometimes you want to "tell the scheduler" that there was no
-task to poll, so the scheduler can change into idle mode using the
-backoff options. To do this, you would need to set a property on the
-exchange with the key `Exchange.SCHEDULER_POLLED_MESSAGES` to a boolean
-value of false. This will cause the consumer to indicate that there were
-no messages polled. 
-
-The consumer will otherwise as by default return 1 message polled to the
-scheduler, every time the consumer has completed processing the
-exchange.
-
 
 
 include::spring-boot:partial$starter.adoc[]

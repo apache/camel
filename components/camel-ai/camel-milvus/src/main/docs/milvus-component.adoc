@@ -184,7 +184,7 @@ from("direct:in")
 
 The Milvus component provides a datatype transformer, from langchain4j-embeddings to an insert/upsert object compatible with Milvus.
 
-As an example you could think about these routes:
+As an example, you could think about these routes:
 
 [tabs]
 ====
@@ -215,11 +215,14 @@ Java::
 ----
 ====
 
-It's important to note that: Milvus SDK doesn't support upsert for autoID fields. This means if you set a field as key, and you set the autoID to true, the upsert won't be possible.
+It's important to note that Milvus SDK doesn't support upsert for autoID fields.
+This means if you set a field as key, and you set the autoID to true, the upsert won't be possible.
 
-That's the reason why, in the example we are setting the userID as keyName with a keyValue of 3. This is particularly important when you design your Milvus database.
+That's the reason why, in the example, we are setting the userID as keyName with a keyValue of 3.
+This is particularly important when you design your Milvus database.
 
-The transformer only support insert/upsert objects, so the only operation you can set via header are INSERT and UPSERT, otherwise the transformer will fail with an error log.
+The transformer only supports insert/upsert objects, so the only operation you can set via header are INSERT and UPSERT,
+otherwise the transformer will fail with an error log.
 
 
 include::spring-boot:partial$starter.adoc[]
