@@ -74,7 +74,9 @@ $in.setHeader("fruit", "Apple")
 
 The `fruit` header is now accessible from the `message.out.headers`.
 
-== Thymeleaf Context
+== Usage
+
+=== Thymeleaf Context
 
 Camel will provide exchange information in the Thymeleaf context (just a
 `Map`).
@@ -112,7 +114,7 @@ EngineContext engineContext = new EngineContext(variableMap);
 exchange.getIn().setHeader("CamelThymeleafContext", engineContext);
 -----------------------------------------------------------------------
 
-== Hot reloading
+=== Hot reloading
 
 The Thymeleaf template resource is, by default, hot reloadable for both
 file and classpath resources (expanded jar). If you set
@@ -120,7 +122,7 @@ file and classpath resources (expanded jar). If you set
 hot reloading is not possible. This scenario can be used in production
 when the resource never changes.
 
-== Dynamic templates
+=== Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -131,10 +133,10 @@ resource. This allows you to provide a dynamic template at runtime.
 |=======================================================================
 |Header |Type |Description
 
-|CamelThymeleafResourceUri |String |A URI for the template resource to use instead of the
+|`CamelThymeleafResourceUri` |`String` |A URI for the template resource to use instead of the
 endpoint configured.
 
-|CamelThymeleafTemplate |String |The template to use instead of the endpoint configured.
+|`CamelThymeleafTemplate` |`String` |The template to use instead of the endpoint configured.
 |=======================================================================
 
 == Examples
@@ -199,7 +201,7 @@ from("direct:in")
   .to("thymeleaf:dummy?allowTemplateFromHeader=true"");
 ---------------------------------------------------------------------------------------------------------------
 
-== The Email Example
+=== The Email Example
 
 In this sample, we want to use Thymeleaf templating for an order
 confirmation email. The email template is laid out in Thymeleaf as:

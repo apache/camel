@@ -17,7 +17,7 @@
 The Stomp component is used for communicating with
 http://stomp.github.io/[Stomp] compliant message brokers, like
 http://activemq.apache.org[Apache ActiveMQ] or
-http://activemq.apache.org/apollo/[ActiveMQ Apollo]
+https://activemq.apache.org/components/artemis/[ActiveMQ Artemis]
 
 NOTE: Since STOMP specification is not actively maintained,
 please note https://github.com/fusesource/stompjms/tree/master/stompjms-client[STOMP JMS client]
@@ -89,20 +89,20 @@ the DSL via their URIs.
 
 From an Endpoint you can use the following methods
 
-* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createProducer--[createProducer()]
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createProducer--[`createProducer()`]
 will create a
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
 for sending message exchanges to the endpoint
-* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createConsumer-org.apache.camel.Processor-[createConsumer()]
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createConsumer-org.apache.camel.Processor-[`createConsumer()`]
 implements the Event Driven Consumer
 pattern for consuming message exchanges from the endpoint via a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[`Processor`]
 when creating a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[Consumer]
-* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createPollingConsumer--[createPollingConsumer()]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[`Consumer`]
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createPollingConsumer--[`createPollingConsumer()`]
 implements the Polling Consumer pattern for
 consuming message exchanges from the endpoint via a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[PollingConsumer]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[`PollingConsumer`]
 
 
 

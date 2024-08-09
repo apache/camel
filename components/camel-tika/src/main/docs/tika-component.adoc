@@ -49,8 +49,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== To Detect a file's MIME Type
+=== To Detect a file's MIME Type
 
 The file should be placed in the Body.
 
@@ -60,7 +61,7 @@ from("direct:start")
         .to("tika:detect");
 ----
 
-== To Parse a File
+=== To Parse a File
 
 The file should be placed in the Body.
 

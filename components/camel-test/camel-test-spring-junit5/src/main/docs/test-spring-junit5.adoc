@@ -200,17 +200,17 @@ The following annotations can be used with `camel-spring-junit5` unit testing.
 [width="100%",cols="1m,4",options="header",]
 |=======================================================================
 |Annotation |Description
-| @CamelSpringBootTest | Used for testing Camel with Spring Boot
-| @CamelSpringTest | Used for testing Camel with classic Spring XML (not Spring Boot)
-| @DisableJmx | Used for disabling JMX
-| @EnableRouteCoverage | Enables dumping route coverage statistics. The route coverage status is written as xml files in the `target/camel-route-coverage` directory after the test has finished. See more information at xref:manual::camel-report-maven-plugin.adoc[Camel Maven Report Plugin].
-| @ExcludeRoutes | Indicates if certain route builder classes should be excluded from package scan discovery
-| @MockEndpoints | Auto-mocking of endpoints whose URIs match the provided filter. For more information, see xref:manual::advice-with.adoc[Advice With].
-| @MockEndpointsAndSkip | Auto-mocking of endpoints whose URIs match the provided filter with the added provision that the endpoints are also skipped. For more information, see xref:manual::advice-with.adoc[Advice With].
-| @ProvidesBreakpoint | Indicates that the annotated method returns a `Breakpoint` for use in the test. Useful for intercepting traffic to all endpoints or simply for setting a break point in an IDE for debugging. The method must be `public static`, take no arguments, and return `Breakpoint`.
-| @ShutdownTimeout | Timeout to use for xref:manual::graceful-shutdown.adoc[shutdown]. The default is 10 seconds.
-| @UseAdviceWith | To enable testing with xref:manual::advice-with.adoc[Advice With].
-| @UseOverridePropertiesWithPropertiesComponent | To use custom `Properties` with the xref:ROOT:properties-component.adoc[Properties] component. The annotated method must be `public` and return `Properties`.
+| `@CamelSpringBootTest` | Used for testing Camel with Spring Boot
+| `@CamelSpringTest` | Used for testing Camel with classic Spring XML (not Spring Boot)
+| `@DisableJmx` | Used for disabling JMX
+| `@EnableRouteCoverage` | Enables dumping route coverage statistics. The route coverage status is written as xml files in the `target/camel-route-coverage` directory after the test has finished. See more information at xref:manual::camel-report-maven-plugin.adoc[Camel Maven Report Plugin].
+| `@ExcludeRoutes` | Indicates if certain route builder classes should be excluded from package scan discovery
+| `@MockEndpoints` | Auto-mocking of endpoints whose URIs match the provided filter. For more information, see xref:manual::advice-with.adoc[Advice With].
+| `@MockEndpointsAndSkip` | Auto-mocking of endpoints whose URIs match the provided filter with the added provision that the endpoints are also skipped. For more information, see xref:manual::advice-with.adoc[Advice With].
+| `@ProvidesBreakpoint` | Indicates that the annotated method returns a `Breakpoint` for use in the test. Useful for intercepting traffic to all endpoints or simply for setting a break point in an IDE for debugging. The method must be `public static`, take no arguments, and return `Breakpoint`.
+| `@ShutdownTimeout` | Timeout to use for xref:manual::graceful-shutdown.adoc[shutdown]. The default is 10 seconds.
+| `@UseAdviceWith` | To enable testing with xref:manual::advice-with.adoc[Advice With].
+| `@UseOverridePropertiesWithPropertiesComponent` | To use custom `Properties` with the xref:ROOT:properties-component.adoc[Properties] component. The annotated method must be `public` and return `Properties`.
 |=======================================================================
 
 
