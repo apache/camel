@@ -152,10 +152,10 @@ public class Run extends CamelCommand {
             description = "Profile to run (dev, test, or prod).")
     String profile = "dev";
 
-    @Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
+    @Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies")
     List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repository" }, arity = "*", description = "Additional maven repositories")
+    @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
     List<String> repositories = new ArrayList<>();
 
     @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
@@ -193,7 +193,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
-    @CommandLine.Option(names = { "--exclude" }, arity = "*", description = "Exclude files by name or pattern")
+    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
     @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")

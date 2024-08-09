@@ -88,10 +88,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repository" }, arity = "*", description = "Additional maven repositories")
+    @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
     protected List<String> repositories = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
+    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies")
     protected List<String> dependencies = new ArrayList<>();
 
     @CommandLine.Option(names = { "--runtime" },
@@ -103,7 +103,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
-    @CommandLine.Option(names = { "--exclude" }, arity = "*", description = "Exclude files by name or pattern")
+    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
     @CommandLine.Option(names = { "--maven-settings" },
@@ -201,7 +201,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     protected boolean download = true;
 
-    @CommandLine.Option(names = { "--build-property" }, arity = "*",
+    @CommandLine.Option(names = { "--build-property" },
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
 
