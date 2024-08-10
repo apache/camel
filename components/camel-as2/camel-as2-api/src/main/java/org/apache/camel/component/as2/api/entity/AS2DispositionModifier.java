@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.util.Locale;
+
 public final class AS2DispositionModifier {
 
     public static final AS2DispositionModifier ERROR = new AS2DispositionModifier("error");
@@ -46,7 +48,7 @@ public final class AS2DispositionModifier {
         return modifier.startsWith("error: ");
     }
 
-    public boolean isFailuer() {
+    public boolean isFailure() {
         return modifier.startsWith("failure: ");
     }
 
@@ -67,13 +69,14 @@ public final class AS2DispositionModifier {
         return new AS2DispositionModifier("failure: " + description);
     }
 
-    public static AS2DispositionModifier parseDispositionType(String dispositionModifierString) {
-        switch (dispositionModifierString) {
+    public static AS2DispositionModifier parseDispositionType(String modifier) {
+        modifier = modifier.toLowerCase(Locale.ROOT);
+        switch (modifier) {
             case "error":
                 return ERROR;
             case "error: authentication-failed":
                 return ERROR_AUTHENTICATION_FAILED;
-            case "error: decompression-failed\"":
+            case "error: decompression-failed":
                 return ERROR_DECOMPRESSION_FAILED;
             case "error: decryption-failed":
                 return ERROR_DECRYPTION_FAILED;
@@ -86,8 +89,8 @@ public final class AS2DispositionModifier {
             case "warning":
                 return WARNING;
             default:
-                if (dispositionModifierString.startsWith("warning: ") || dispositionModifierString.startsWith("failure: ")) {
-                    return new AS2DispositionModifier(dispositionModifierString);
+                if (modifier.startsWith("warning: ") || modifier.startsWith("failure: ")) {
+                    return new AS2DispositionModifier(modifier);
                 }
                 return null;
         }
