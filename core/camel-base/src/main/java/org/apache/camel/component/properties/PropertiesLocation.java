@@ -25,7 +25,7 @@ public final class PropertiesLocation {
 
     public PropertiesLocation(String location) {
         // make sure to trim as people may use new lines when configuring using XML
-        // and do this in the setter as Spring/Blueprint resolves placeholders before
+        // and do this in the setter as Spring resolves placeholders before
         // Camel is being started
         location = location.trim();
 

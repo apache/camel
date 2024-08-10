@@ -37,7 +37,6 @@ import org.apache.camel.tooling.util.Strings;
 public final class CamelXmlHelper {
 
     private static final String CAMEL_NS_SPRING = "http://camel.apache.org/schema/spring";
-    private static final String CAMEL_NS_BLUEPRINT = "http://camel.apache.org/schema/blueprint";
 
     private CamelXmlHelper() {
         // utility class
@@ -283,9 +282,6 @@ public final class CamelXmlHelper {
         NodeList list = dom.getElementsByTagName(tagName);
         if (list.getLength() == 0) {
             list = dom.getElementsByTagNameNS(CAMEL_NS_SPRING, tagName);
-        }
-        if (list.getLength() == 0) {
-            list = dom.getElementsByTagNameNS(CAMEL_NS_BLUEPRINT, tagName);
         }
         return list;
     }

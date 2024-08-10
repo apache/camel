@@ -32,7 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 /**
- * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ * Legacy error handler for XML DSL in camel-spring-xml
  */
 @Deprecated
 public class LegacyTransactionErrorHandlerReifier

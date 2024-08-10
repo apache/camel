@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.ErrorHandlerFactory;
 
 /**
- * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ * Legacy error handler for XML DSL in camel-spring-xml
  */
 @Deprecated(since = "3.17.0")
 @XmlTransient

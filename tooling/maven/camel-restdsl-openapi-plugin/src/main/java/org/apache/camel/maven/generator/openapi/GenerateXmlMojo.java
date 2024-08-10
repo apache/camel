@@ -37,9 +37,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
       requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateXmlMojo extends AbstractGenerateMojo {
 
-    @Parameter(defaultValue = "false")
-    private boolean blueprint;
-
     @Parameter(defaultValue = "camel-rest.xml", required = true)
     private String fileName;
 
@@ -66,10 +63,6 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
         }
 
         final RestDslXmlGenerator generator = RestDslGenerator.toXml(openapi);
-
-        if (blueprint) {
-            generator.withBlueprint();
-        }
 
         if (ObjectHelper.isNotEmpty(basePath)) {
             generator.withBasePath(basePath);

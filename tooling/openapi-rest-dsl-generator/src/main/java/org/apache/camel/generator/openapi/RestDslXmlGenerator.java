@@ -42,8 +42,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
-    private boolean blueprint;
-
     RestDslXmlGenerator(final OpenAPI document) {
         super(document);
     }
@@ -74,10 +72,6 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         final Document document = builder.parse(new InputSource(new StringReader(xml)));
 
         final Element root = document.getDocumentElement();
-
-        if (blueprint) {
-            document.renameNode(root, "http://camel.apache.org/schema/blueprint", root.getTagName());
-        }
 
         // remove all customId attributes as we do not want them in the output
         final NodeList elements = document.getElementsByTagName("*");
@@ -122,10 +116,5 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         transformer.transform(new DOMSource(document), new StreamResult(writer));
 
         return writer.toString();
-    }
-
-    public RestDslXmlGenerator withBlueprint() {
-        blueprint = true;
-        return this;
     }
 }
