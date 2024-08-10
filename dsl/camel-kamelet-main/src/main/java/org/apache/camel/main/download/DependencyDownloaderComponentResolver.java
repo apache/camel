@@ -27,6 +27,7 @@ import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.OtherModel;
 
 /**
  * Auto downloaded needed JARs when resolving components.
@@ -77,6 +78,13 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             ComponentModel direct = catalog.componentModel("direct");
             if (direct != null) {
                 downloadLoader(direct.getGroupId(), direct.getArtifactId(), direct.getVersion());
+            }
+        }
+        if ("rest-openapi".equals(name)) {
+            // include camel-openapi-java when using rest-dsl with openapi contract-first
+            OtherModel oa = catalog.otherModel("openapi-java");
+            if (oa != null) {
+                downloadLoader(oa.getGroupId(), oa.getArtifactId(), oa.getVersion());
             }
         }
         if (answer == null) {
