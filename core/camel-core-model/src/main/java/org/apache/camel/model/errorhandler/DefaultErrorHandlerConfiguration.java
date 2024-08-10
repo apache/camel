@@ -27,7 +27,7 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 
 /**
- * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ * Legacy error handler for XML DSL in camel-spring-xml
  */
 @XmlTransient
 @Deprecated(since = "3.17.0")

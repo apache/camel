@@ -57,8 +57,8 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  * {@link org.apache.camel.RoutingSlip} for creating <a href="http://camel.apache.org/routingslip-annotation.html">a
  * Routing Slip router via annotations</a>.
  * <p/>
- * Components such as camel-spring or camel-blueprint can leverage this post processor to hook in Camel bean post
- * processing into their bean processing framework.
+ * Components such as camel-spring can leverage this post-processor to hook in Camel bean post-processing into their
+ * bean processing framework.
  */
 public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, CamelContextAware {
 
