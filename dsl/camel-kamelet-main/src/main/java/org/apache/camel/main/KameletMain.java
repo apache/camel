@@ -790,12 +790,7 @@ public class KameletMain extends MainCommandLineSupport {
      */
     protected void configureInitialProperties(String location) {
         // optional configuration if these components are in-use
-        addInitialProperty("camel.component.?kamelet.location", location);
-        addInitialProperty("camel.component.?rest-api.consumerComponentName", "platform-http");
-        addInitialProperty("camel.component.?rest.consumerComponentName", "platform-http");
-        addInitialProperty("camel.component.?rest.producerComponentName", "vertx-http");
-        // make it easy to load mock-data from file without having to add camel-mock to classpath
-        addInitialProperty("camel.component.?rest-openapi.mockIncludePattern", "file:camel-mock/**,classpath:camel-mock/**");
+        addInitialProperty("camel.component.kamelet.location", location);
     }
 
     protected String startupInfo() {
