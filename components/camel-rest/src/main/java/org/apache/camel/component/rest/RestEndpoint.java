@@ -399,20 +399,15 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         // no explicit factory found then try to see if we can find any of the default rest producer components
-        // and there must only be exactly one so we safely can pick this one
         if (factory == null) {
             RestProducerFactory found = null;
             String foundName = null;
             for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
                 Object comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
                 if (comp instanceof RestProducerFactory) {
-                    if (found == null) {
-                        found = (RestProducerFactory) comp;
-                        foundName = name;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Multiple RestProducerFactory found on classpath. Configure explicit which component to use");
-                    }
+                    found = (RestProducerFactory) comp;
+                    foundName = name;
+                    break;
                 }
             }
             if (found != null) {
@@ -506,20 +501,15 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         // no explicit factory found then try to see if we can find any of the default rest consumer components
-        // and there must only be exactly one so we safely can pick this one
         if (factory == null) {
             RestConsumerFactory found = null;
             String foundName = null;
             for (String name : DEFAULT_REST_CONSUMER_COMPONENTS) {
                 Object comp = getCamelContext().getComponent(name, true);
                 if (comp instanceof RestConsumerFactory) {
-                    if (found == null) {
-                        found = (RestConsumerFactory) comp;
-                        foundName = name;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Multiple RestConsumerFactory found on classpath. Configure explicit which component to use");
-                    }
+                    found = (RestConsumerFactory) comp;
+                    foundName = name;
+                    break;
                 }
             }
             if (found != null) {
