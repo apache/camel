@@ -23,6 +23,7 @@ import org.apache.camel.spi.CircuitBreakerConstants;
  */
 public enum ExchangePropertyKey {
 
+    ACTIVE_SPAN("OpenTracing.activeSpan"),
     AGGREGATED_COMPLETED_BY(Exchange.AGGREGATED_COMPLETED_BY),
     AGGREGATED_CORRELATION_KEY(Exchange.AGGREGATED_CORRELATION_KEY),
     AGGREGATED_SIZE(Exchange.AGGREGATED_SIZE),

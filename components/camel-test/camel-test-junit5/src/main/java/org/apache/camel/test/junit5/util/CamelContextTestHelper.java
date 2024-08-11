@@ -44,6 +44,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class CamelContextTestHelper {
+
+    private CamelContextTestHelper() {
+    }
+
     /**
      * JVM system property which can be set to true to turn on dumping route coverage statistics.
      */
@@ -68,7 +72,7 @@ public final class CamelContextTestHelper {
 
         if (context.getStatus().equals(ServiceStatus.Started)) {
             LOG.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
-            // we need to stop the context first to setup the debugger
+            // we need to stop the context first to set up the debugger
             context.stop();
         }
         context.setDebugging(true);
@@ -76,7 +80,7 @@ public final class CamelContextTestHelper {
         context.setDebugger(defaultDebugger);
 
         defaultDebugger.addBreakpoint(breakpoint);
-        // when stopping CamelContext it will automatically remove the breakpoint
+        // when stopping CamelContext, it will automatically remove the breakpoint
     }
 
     /**
@@ -89,9 +93,9 @@ public final class CamelContextTestHelper {
     public static void setupRoutes(CamelContext context, RoutesBuilder[] builders) throws Exception {
         // add configuration before routes
         for (RoutesBuilder builder : builders) {
-            if (builder instanceof RouteConfigurationsBuilder) {
+            if (builder instanceof RouteConfigurationsBuilder routeConfigurationsBuilder) {
                 LOG.debug("Using created route configuration: {}", builder);
-                context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+                context.addRoutesConfigurations(routeConfigurationsBuilder);
             }
         }
         for (RoutesBuilder builder : builders) {
@@ -115,7 +119,7 @@ public final class CamelContextTestHelper {
      */
     public static MockEndpoint lookupEndpoint(CamelContext context, String uri, boolean create, String target) {
         MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
-                .filter(e -> e instanceof MockEndpoint).filter(e -> {
+                .filter(MockEndpoint.class::isInstance).filter(e -> {
                     String t = e.getEndpointUri();
                     // strip query
                     int idx2 = t.indexOf('?');

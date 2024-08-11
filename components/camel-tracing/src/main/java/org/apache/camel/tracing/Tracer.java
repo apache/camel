@@ -195,7 +195,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             sd = DECORATORS.get(scheme);
         }
         if (sd == null) {
-            // okay there was no decorator found via component name (scheme), then try FQN
+            // okay, there was no decorator found via component name (scheme), then try FQN
             if (endpoint instanceof DefaultEndpoint de) {
                 Component comp = de.getComponent();
                 String fqn = comp.getClass().getName();
@@ -238,8 +238,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         @Override
         public void notify(CamelEvent event) throws Exception {
             try {
-                if (event instanceof CamelEvent.ExchangeSendingEvent) {
-                    CamelEvent.ExchangeSendingEvent ese = (CamelEvent.ExchangeSendingEvent) event;
+                if (event instanceof CamelEvent.ExchangeSendingEvent ese) {
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                     if (shouldExclude(sd, ese.getExchange(), ese.getEndpoint())) {
                         return;
@@ -255,8 +254,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Tracing: start client span: {}", span);
                     }
-                } else if (event instanceof CamelEvent.ExchangeSentEvent) {
-                    CamelEvent.ExchangeSentEvent ese = (CamelEvent.ExchangeSentEvent) event;
+                } else if (event instanceof CamelEvent.ExchangeSentEvent ese) {
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                     if (shouldExclude(sd, ese.getExchange(), ese.getEndpoint())) {
                         return;
@@ -273,11 +271,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     } else {
                         LOG.warn("Tracing: could not find managed span for exchange: {}", ese.getExchange());
                     }
-                } else if (event instanceof CamelEvent.ExchangeAsyncProcessingStartedEvent) {
-                    CamelEvent.ExchangeAsyncProcessingStartedEvent eap = (CamelEvent.ExchangeAsyncProcessingStartedEvent) event;
+                } else if (event instanceof CamelEvent.ExchangeAsyncProcessingStartedEvent eap) {
 
                     // no need to filter scopes here. It's ok to close a scope multiple times and
-                    // implementations check if scope being disposed is current
+                    // implementations check if the scope being disposed is current
                     // and should not do anything if scopes don't match.
                     ActiveSpanManager.endScope(eap.getExchange());
                 }

@@ -23,8 +23,8 @@ import java.util.Map;
 
 public class MockSpanAdapter implements SpanAdapter {
 
-    private List<LogEntry> logEntries = new ArrayList<>();
-    private Map<String, Object> tags = new HashMap<>();
+    private final List<LogEntry> logEntries = new ArrayList<>();
+    private final Map<String, Object> tags = new HashMap<>();
     private String traceId;
     private String spanId;
     private boolean isCurrent;
@@ -43,26 +43,12 @@ public class MockSpanAdapter implements SpanAdapter {
 
     @Override
     public void setComponent(String component) {
-        this.tags.put(Tag.COMPONENT.name(), component);
         this.tags.put(TagConstants.COMPONENT, component);
     }
 
     @Override
     public void setError(boolean error) {
-        this.tags.put(Tag.ERROR.name(), error);
         this.tags.put(TagConstants.ERROR, error);
-    }
-
-    @Override
-    public void setTag(Tag key, String value) {
-        this.tags.put(key.name(), value);
-        this.tags.put(key.getAttribute(), value);
-    }
-
-    @Override
-    public void setTag(Tag key, Number value) {
-        this.tags.put(key.name(), value);
-        this.tags.put(key.getAttribute(), value);
     }
 
     @Override

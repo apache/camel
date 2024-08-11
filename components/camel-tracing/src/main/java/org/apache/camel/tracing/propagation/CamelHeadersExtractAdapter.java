@@ -29,7 +29,7 @@ public final class CamelHeadersExtractAdapter implements ExtractAdapter {
     public CamelHeadersExtractAdapter(final Map<String, Object> map) {
         // Extract string valued map entries
         map.entrySet().stream().filter(e -> e.getValue() instanceof String)
-                .forEach(e -> this.map.put(e.getKey(), (String) e.getValue()));
+                .forEach(e -> this.map.put(e.getKey(), e.getValue()));
     }
 
     @Override
