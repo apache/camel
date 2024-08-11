@@ -26,8 +26,6 @@ import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
@@ -57,33 +55,21 @@ public class OpenTelemetryPropagateContextTest extends CamelOpenTelemetryTestSup
         super(testdata);
     }
 
-    @Override
-    protected void initTracer(CamelContext context) {
-        ottracer = new OpenTelemetryTracer();
-
-        tracerFactory = SdkTracerProvider.builder()
-                .addSpanProcessor(new LoggingSpanProcessor())
-                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter)).build();
-
-        tracer = tracerFactory.get("tracerTest");
-        ottracer.setTracer(tracer);
-        ottracer.setExcludePatterns(getExcludePatterns());
-        ottracer.addDecorator(new TestSEDASpanDecorator());
-        ottracer.setTraceProcessors(true);
-        ottracer.initTracer();
-        ottracer.init(context);
-    }
-
     @BeforeAll
     public static void createFile() throws IOException {
         Files.createFile(tempDirectory.resolve("file.txt"));
     }
 
     @Test
-    void testTracingOfProcessors() throws IOException, InterruptedException {
+    void testTracingOfProcessors() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         assertTrue(notify.matches(30, TimeUnit.SECONDS));
         verify(true);
+    }
+
+    @Override
+    protected boolean isTraceProcessor() {
+        return true;
     }
 
     @Override

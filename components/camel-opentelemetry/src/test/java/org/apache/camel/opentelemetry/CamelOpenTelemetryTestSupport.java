@@ -22,25 +22,26 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.trace.SpanContext;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.ReadWriteSpan;
-import io.opentelemetry.sdk.trace.ReadableSpan;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.instrumentation.log4j.appender.v2_17.OpenTelemetryAppender;
+import io.opentelemetry.sdk.logs.data.LogRecordData;
 import io.opentelemetry.sdk.trace.data.SpanData;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,14 +58,16 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelOpenTelemetryTestSupport.class);
 
-    InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
+    @RegisterExtension
+    public final CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
+
     SpanTestData[] expected;
     Tracer tracer;
     OpenTelemetryTracer ottracer;
-    SdkTracerProvider tracerFactory;
 
     CamelOpenTelemetryTestSupport(SpanTestData[] expected) {
         this.expected = expected;
+        OpenTelemetryAppender.install(otelExtension.getOpenTelemetry());
     }
 
     @AfterEach
@@ -74,16 +77,18 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     protected void initTracer(CamelContext context) {
         ottracer = new OpenTelemetryTracer();
+        CamelContextAware.trySetCamelContext(ottracer, context);
 
-        tracerFactory = SdkTracerProvider.builder()
-                .addSpanProcessor(new LoggingSpanProcessor())
-                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter)).build();
-
-        tracer = tracerFactory.get("tracerTest");
+        tracer = otelExtension.getOpenTelemetry().getTracer("tracerTest");
         ottracer.setTracer(tracer);
         ottracer.setExcludePatterns(getExcludePatterns());
         ottracer.addDecorator(new TestSEDASpanDecorator());
-        ottracer.setTracingStrategy(getTracingStrategy().apply(ottracer));
+        if (isTraceProcessor()) {
+            ottracer.setTraceProcessors(true);
+            ottracer.initTracer();
+        } else {
+            ottracer.setTracingStrategy(getTracingStrategy().apply(ottracer));
+        }
         ottracer.init(context);
     }
 
@@ -92,6 +97,10 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
         initTracer(context);
         return context;
+    }
+
+    protected boolean isTraceProcessor() {
+        return false;
     }
 
     protected String getExcludePatterns() {
@@ -111,15 +120,27 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     }
 
     protected List<SpanData> verify(SpanTestData[] expected, boolean async) {
-        List<SpanData> spans = inMemorySpanExporter.getFinishedSpanItems();
+        List<SpanData> spans = otelExtension.getSpans();
+        SpanTreePrinter.printSpanTree(spans);
         spans.forEach(mockSpan -> {
             LOG.info("Span: {}", mockSpan);
-            LOG.info("Component: {}", mockSpan.getAttributes().get(COMPONENT_KEY));
-            LOG.info("Tags: {}", mockSpan.getAttributes());
-            LOG.info("Logs: ");
-
+            LOG.info("\tComponent: {}", mockSpan.getAttributes().get(COMPONENT_KEY));
+            LOG.info("\tTags: {}", mockSpan.getAttributes());
         });
+
+        List<LogRecordData> logRecords = otelExtension.getLogRecords();
+        if (!logRecords.isEmpty()) {
+            LOG.info("Log records:");
+            logRecords.forEach(logRecord -> {
+                SpanContext spanContext = logRecord.getSpanContext();
+                LOG.info("\tLog: [{},{}] {}", spanContext.getTraceId(), spanContext.getSpanId(), logRecord);
+            });
+        }
+
         assertEquals(expected.length, spans.size(), "Incorrect number of spans");
+        int numberOfLogs = spans.size() * 2;
+        assertEquals(numberOfLogs, logRecords.size(), "Incorrect number of log records");
+
         verifySameTrace();
 
         if (async) {
@@ -140,7 +161,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         return spans.stream().filter(s -> {
             boolean matched = s.getName().equals(testdata.getOperation());
             if (s.getAttributes().get(CAMEL_URI_KEY) != null) {
-                matched = matched && s.getAttributes().get(CAMEL_URI_KEY).equals(testdata.getUri());
+                matched = matched && Objects.equals(s.getAttributes().get(CAMEL_URI_KEY), testdata.getUri());
             }
             matched = matched && s.getKind().equals(testdata.getKind());
             return matched;
@@ -158,13 +179,13 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
                 .atMost(5, TimeUnit.SECONDS)
                 .pollInterval(10, TimeUnit.MILLISECONDS)
                 .pollDelay(0, TimeUnit.MILLISECONDS)
-                .until(() -> inMemorySpanExporter.getFinishedSpanItems().size() >= (numOfTraces * numSpansPerTrace));
+                .until(() -> otelExtension.getSpans().size() >= (numOfTraces * numSpansPerTrace));
 
-        List<SpanData> finishedSpans = inMemorySpanExporter.getFinishedSpanItems();
+        List<SpanData> finishedSpans = otelExtension.getSpans();
         // Sort spans into separate traces
-        for (int i = 0; i < finishedSpans.size(); i++) {
-            List<SpanData> spans = traces.computeIfAbsent(finishedSpans.get(i).getTraceId(), k -> new ArrayList<>());
-            spans.add(finishedSpans.get(i));
+        for (SpanData finishedSpan : finishedSpans) {
+            List<SpanData> spans = traces.computeIfAbsent(finishedSpan.getTraceId(), k -> new ArrayList<>());
+            spans.add(finishedSpan);
         }
 
         LOG.info("Found traces: {}", traces);
@@ -178,19 +199,19 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     protected void verifySpan(int index, SpanTestData[] testdata, List<SpanData> spans) {
         SpanData span = spans.get(index);
         SpanTestData td = testdata[index];
-
-        String component = span.getAttributes().get(COMPONENT_KEY);
+        Attributes attributes = span.getAttributes();
+        String component = attributes.get(COMPONENT_KEY);
         assertNotNull(component);
 
-        String scheme = span.getAttributes().get(CAMEL_SCHEME_KEY);
+        String scheme = attributes.get(CAMEL_SCHEME_KEY);
 
         if (td.getUri() != null) {
             assertEquals(URI.create(td.getUri()).getScheme(), scheme);
         }
 
         if ("camel-seda".equals(component)) {
-            assertNotNull(span.getAttributes().get(PRE_KEY));
-            assertNotNull(span.getAttributes().get(POST_KEY));
+            assertNotNull(attributes.get(PRE_KEY));
+            assertNotNull(attributes.get(POST_KEY));
         }
 
         assertEquals(td.getOperation(), span.getName(), td.getLabel());
@@ -209,43 +230,16 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         }
         if (!td.getTags().isEmpty()) {
             for (Map.Entry<String, String> entry : td.getTags().entrySet()) {
-                assertEquals(entry.getValue(), span.getAttributes().get(AttributeKey.stringKey(entry.getKey())));
+                assertEquals(entry.getValue(), attributes.get(AttributeKey.stringKey(entry.getKey())));
             }
         }
-
     }
 
     protected void verifySameTrace() {
-        assertEquals(1, inMemorySpanExporter.getFinishedSpanItems().stream().map(s -> s.getTraceId()).distinct().count());
+        assertEquals(1, otelExtension.getSpans().stream().map(SpanData::getTraceId).distinct().count());
     }
 
     protected Function<OpenTelemetryTracer, InterceptStrategy> getTracingStrategy() {
-        return ottracer -> new NoopTracingStrategy();
-    }
-
-    static class LoggingSpanProcessor implements SpanProcessor {
-        private static final Logger LOG = LoggerFactory.getLogger(LoggingSpanProcessor.class);
-
-        @Override
-        public void onStart(Context context, ReadWriteSpan readWriteSpan) {
-            LOG.debug("Span started: name - '{}', kind - '{}', id - '{}-{}", readWriteSpan.getName(), readWriteSpan.getKind(),
-                    readWriteSpan.getSpanContext().getTraceId(), readWriteSpan.getSpanContext().getSpanId());
-        }
-
-        @Override
-        public boolean isStartRequired() {
-            return true;
-        }
-
-        @Override
-        public void onEnd(ReadableSpan readableSpan) {
-            LOG.debug("Span ended: name - '{}', kind - '{}', id - '{}-{}", readableSpan.getName(), readableSpan.getKind(),
-                    readableSpan.getSpanContext().getTraceId(), readableSpan.getSpanContext().getSpanId());
-        }
-
-        @Override
-        public boolean isEndRequired() {
-            return true;
-        }
+        return openTelemetryTracer -> new NoopTracingStrategy();
     }
 }
