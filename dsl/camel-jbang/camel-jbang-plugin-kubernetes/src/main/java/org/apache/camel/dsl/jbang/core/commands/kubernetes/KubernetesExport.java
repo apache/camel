@@ -283,7 +283,7 @@ public class KubernetesExport extends Export {
 
             // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
             // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
-            addDependencies("io.fabric8:kubernetes-client:6.13.1");
+            addDependencies("io.fabric8:kubernetes-client:6.13.2");
 
             // Configure image builder - use Jib by default
             if (imageBuilder == null) {
