@@ -30,10 +30,12 @@ import io.fabric8.kubernetes.api.model.Pod;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
@@ -172,6 +174,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = RUN_PLATFORM_DIR + "/" + projectName;
 
+        printer().println("Exporting application ...");
+
+        // Cache export output in String for later usage in case of error
+        Printer runPrinter = printer();
+        StringPrinter exportPrinter = new StringPrinter();
+        getMain().withPrinter(exportPrinter);
+
         KubernetesExport export = new KubernetesExport(
                 getMain(), new KubernetesExport.ExportConfigurer(
                         runtime,
@@ -185,7 +194,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         openApi,
                         true,
                         true,
-                        true,
+                        false,
                         false,
                         "off"));
 
@@ -206,11 +215,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.labels = labels;
         export.traits = traits;
 
-        printer().println("Exporting application ...");
-
         int exit = export.export();
+
+        // Revert printer to this run command's printer
+        getMain().withPrinter(runPrinter);
         if (exit != 0) {
-            printer().println("Project export failed");
+            // print export command output with error details
+            printer().println(exportPrinter.getOutput());
             return exit;
         }
 
