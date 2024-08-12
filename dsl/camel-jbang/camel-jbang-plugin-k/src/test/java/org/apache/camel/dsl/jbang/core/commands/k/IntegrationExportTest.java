@@ -28,6 +28,8 @@ import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
@@ -107,7 +109,9 @@ class IntegrationExportTest extends CamelKBaseTest {
     }
 
     private <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
-        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
+        try (FileInputStream fis = new FileInputStream(
+                KubernetesHelper.getKubernetesManifest(ClusterType.KUBERNETES.name(),
+                        new File(workingDir, "/src/main/kubernetes")))) {
             List<HasMetadata> resources = kubernetesClient.load(fis).items();
             return resources.stream()
                     .filter(it -> type.isAssignableFrom(it.getClass()))
