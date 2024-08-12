@@ -14,13 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.services;
 
-import org.apache.camel.test.infra.common.services.TestService;
-
-public interface OllamaService extends TestService {
-
-    String getEndpoint();
-
-    String getModel();
+public interface OllamaServiceConfiguration {
+    String modelName();
 }
