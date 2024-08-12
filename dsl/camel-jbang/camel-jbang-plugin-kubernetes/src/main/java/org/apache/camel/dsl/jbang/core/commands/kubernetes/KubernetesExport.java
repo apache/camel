@@ -187,7 +187,8 @@ public class KubernetesExport extends Export {
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
             if (!quiet) {
-                printer().printf("Project export failed - %s%n", e.getMessage());
+                printer().printf("Project export failed: %s - %s%n", e.getMessage(),
+                        Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("unknown reason"));
             }
             return 1;
         }
