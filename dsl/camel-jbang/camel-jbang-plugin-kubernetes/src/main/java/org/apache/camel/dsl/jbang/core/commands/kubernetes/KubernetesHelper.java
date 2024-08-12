@@ -17,9 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -150,5 +154,54 @@ public final class KubernetesHelper {
 
     public static Map<String, Object> toJsonMap(Object model) {
         return json().convertValue(model, Map.class);
+    }
+
+    public static File resolveKubernetesManifest(String workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifest(new File(workingDir));
+    }
+
+    public static File resolveKubernetesManifest(String workingDir, String extension) throws FileNotFoundException {
+        return resolveKubernetesManifest(new File(workingDir), extension);
+    }
+
+    public static File resolveKubernetesManifest(File workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifest(workingDir, "yml");
+    }
+
+    public static File resolveKubernetesManifest(File workingDir, String extension) throws FileNotFoundException {
+        // Try arbitrary Kubernetes manifest first
+        File manifest = getKubernetesManifest(ClusterType.KUBERNETES.name(), workingDir);
+        if (manifest.exists()) {
+            return manifest;
+        }
+
+        // try to resolve from all the other cluster type specific manifests
+        return Arrays.stream(ClusterType.values())
+                .filter(ct -> ct != ClusterType.KUBERNETES)
+                .map(ct -> getKubernetesManifest(ct.name(), workingDir, extension))
+                .filter(File::exists)
+                .findFirst()
+                .orElseThrow(() -> new FileNotFoundException(
+                        "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
+                                .formatted(extension, workingDir.toPath().toString())));
+    }
+
+    public static File getKubernetesManifest(String clusterType, String workingDir) {
+        return getKubernetesManifest(clusterType, new File(workingDir));
+    }
+
+    public static File getKubernetesManifest(String clusterType, File workingDir) {
+        return getKubernetesManifest(clusterType, workingDir, "yml");
+    }
+
+    public static File getKubernetesManifest(String clusterType, File workingDir, String extension) {
+        String manifestFile;
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+            manifestFile = "kubernetes";
+        } else {
+            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+        }
+
+        return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
     }
 }

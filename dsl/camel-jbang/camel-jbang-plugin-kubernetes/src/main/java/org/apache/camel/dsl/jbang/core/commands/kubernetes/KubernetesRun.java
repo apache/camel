@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
@@ -239,8 +240,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             File manifest;
             switch (output) {
-                case "yaml" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.yml");
-                case "json" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.json");
+                case "yaml" -> manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
+                case "json" ->
+                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes", "json");
                 default -> {
                     printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
                     return 1;
@@ -261,7 +263,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (exit != 0) {
-            printer().println("Deployment to Kubernetes failed!");
+            printer().println("Deployment to %s failed!".formatted(Optional.ofNullable(clusterType)
+                    .map(StringHelper::capitalize).orElse("Kubernetes")));
             return exit;
         }
 
@@ -337,7 +340,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deployQuarkus(String workingDir) throws IOException, InterruptedException {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // Run Quarkus build via Maven
         String mvnw = "/mvnw";
@@ -364,7 +368,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("-Dquarkus.container-image.push=true");
         }
 
-        args.add("-Dquarkus.kubernetes.deploy=true");
+        if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            args.add("-Dquarkus.openshift.deploy=true");
+        } else {
+            args.add("-Dquarkus.kubernetes.deploy=true");
+        }
 
         if (namespace != null) {
             args.add("-Dquarkus.kubernetes.namespace=%s".formatted(namespace));
@@ -393,7 +401,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deploySpringBoot(String workingDir) {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // TODO: implement SpringBoot Kubernetes deployment
         return 0;

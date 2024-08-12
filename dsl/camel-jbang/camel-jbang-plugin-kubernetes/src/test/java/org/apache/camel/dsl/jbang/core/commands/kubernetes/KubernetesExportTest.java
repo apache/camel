@@ -740,7 +740,10 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
     private <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
         if (rt == RuntimeType.quarkus) {
-            try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
+            try (FileInputStream fis
+                    = new FileInputStream(
+                            KubernetesHelper.getKubernetesManifest(ClusterType.KUBERNETES.name(),
+                                    new File(workingDir, "/src/main/kubernetes")))) {
                 List<HasMetadata> resources = kubernetesClient.load(fis).items();
                 return resources.stream()
                         .filter(it -> type.isAssignableFrom(it.getClass()))
