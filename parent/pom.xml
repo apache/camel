@@ -74,7 +74,7 @@
         <atmosphere-version>3.0.8</atmosphere-version>
         <avro-version>1.12.0</avro-version>
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
-        <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
+        <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
         <aws-java-sdk2-version>2.27.2</aws-java-sdk2-version>
         <aws-xray-version>2.17.0</aws-xray-version>
