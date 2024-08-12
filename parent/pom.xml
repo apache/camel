@@ -432,7 +432,7 @@
         <scala-datasonnet-version>2.13.14</scala-datasonnet-version>
         <shiro-version>2.0.1</shiro-version>
         <slack-api-model-version>1.40.3</slack-api-model-version>
-        <slf4j-api-version>2.0.13</slf4j-api-version>
+        <slf4j-api-version>2.0.16</slf4j-api-version>
         <slf4j-version>2.0.13</slf4j-version>
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.9.1</smallrye-config-version>
