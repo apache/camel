@@ -329,7 +329,7 @@
         <lucene-version>9.11.1</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.2.3</littleproxy-version>
-        <mapstruct-version>1.5.5.Final</mapstruct-version>
+        <mapstruct-version>1.6.0</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.8</maven-version>
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
