@@ -17,11 +17,10 @@
 package org.apache.camel.component.infinispan.remote.protostream;
 
 import org.infinispan.protostream.SerializationContextInitializer;
-import org.infinispan.protostream.annotations.AutoProtoSchemaBuilder;
+import org.infinispan.protostream.annotations.ProtoSchema;
 
-@AutoProtoSchemaBuilder(
-                        includeClasses = { DefaultExchangeHolderProtoAdapter.class },
-                        className = "DefaultExchangeHolderContextInitializer",
-                        schemaPackageName = "org.apache.camel.support")
+@ProtoSchema(includeClasses = { DefaultExchangeHolderProtoAdapter.class },
+             className = "DefaultExchangeHolderContextInitializer",
+             schemaPackageName = "org.apache.camel.support")
 interface DefaultExchangeHolderInitializer extends SerializationContextInitializer {
 }
