@@ -364,7 +364,7 @@
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>6.13.3</mockwebserver-version>
         <mockito-version>5.12.0</mockito-version>
-        <mongo-java-driver-version>4.11.2</mongo-java-driver-version>
+        <mongo-java-driver-version>5.1.3</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.16.2</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
