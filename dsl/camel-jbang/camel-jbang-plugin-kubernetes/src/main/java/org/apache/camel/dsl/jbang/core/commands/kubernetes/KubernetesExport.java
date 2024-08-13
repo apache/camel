@@ -216,7 +216,7 @@ public class KubernetesExport extends Export {
                 .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
 
         if (traitProfile != null) {
-            context.setProfile(TraitProfile.valueOf(traitProfile));
+            context.setProfile(TraitProfile.valueOf(traitProfile.toUpperCase()));
         }
 
         if (serviceAccount != null) {

@@ -36,6 +36,7 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.CronJobBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressBuilder;
+import io.fabric8.openshift.api.model.RouteBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.CatalogHelper;
@@ -139,6 +140,13 @@ public class TraitContext {
         return resourceRegistry.stream()
                 .filter(it -> it.getClass().isAssignableFrom(IngressBuilder.class))
                 .map(it -> (IngressBuilder) it)
+                .findFirst();
+    }
+
+    public Optional<RouteBuilder> getRoute() {
+        return resourceRegistry.stream()
+                .filter(it -> it.getClass().isAssignableFrom(RouteBuilder.class))
+                .map(it -> (RouteBuilder) it)
                 .findFirst();
     }
 

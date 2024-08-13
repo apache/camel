@@ -962,7 +962,7 @@ The ingress trait provides the following configuration options:
 
 |===
 
-he syntax to specify container trait options is as follows:
+The syntax to specify container trait options is as follows:
 
 [source,bash]
 ----
@@ -1010,6 +1010,104 @@ spec:
 <2> Service port name
 <3> Custom ingress backend path
 <4> Custom ingress backend path type
+
+=== Route trait options
+
+The Route trait enhance the Kubenetes manifest with a Route resource to expose the application to the outside world. This requires the presence in the Kubenetes manifest of a Service Resource.
+
+NOTE: You need to enable the Openshift profile trait with `--trait-profile=openshift` option.
+
+The Camel JBang plugin automatically creates an Route Resource if the Service Resource is generated for the Camel route's service trait application.
+
+The Route trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| route.enabled
+| bool
+| Can be used to enable or disable a trait. All traits share this common property (default `true`).
+
+| route.annotations
+| map[string]string
+| The annotations added to the route. This can be used to set https://docs.openshift.com/container-platform/4.16/networking/routes/route-configuration.html#nw-route-specific-annotations_route-configuration[openshift route specific annotations] options.
+
+| route.host
+| string
+| To configure the host exposed by the route.
+
+| ingress.tls-termination
+| string
+| The TLS termination type, like `edge`, `passthrough` or `reencrypt`. Refer to the OpenShift route documentation for additional information.
+
+| route.tls-certificate
+| string
+| The TLS certificate contents or file (`file:absolute.path`). Refer to the OpenShift route documentation for additional information.
+
+| route.tls-key
+| string
+| The TLS certificate key contents or file (`file:absolute.path`). Refer to the OpenShift route documentation for additional information.
+
+| route.tls-ca-certificate
+| string
+| The TLS CA certificate contents or file (`file:absolute.path`). Refer to the OpenShift route documentation for additional information.
+
+| route.tls-destination-ca-certificate
+| string
+| The destination CA contents or file (`file:absolute.path`). The destination CA certificate provides the contents of the CA certificate of the final destination. When using reencrypt termination this file should be provided in order to have routers use it for health checks on the secure connection. If this field is not specified, the router may provide its own destination CA and perform hostname validation using the short service name (service.namespace.svc), which allows infrastructure generated certificates to automatically verify. Refer to the OpenShift route documentation for additional information.
+
+
+| route.tls-insecure-edge-termination-policy
+| string
+| To configure how to deal with insecure traffic, e.g. `Allow`, `Disable` or `Redirect` traffic. Refer to the OpenShift route documentation for additional information.
+
+|===
+
+The syntax to specify container trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait route.[key]=[value]
+----
+
+You may specify these options with the export command to customize the Route Resource specification.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait-profile=openshift --trait ingress.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
+----
+
+
+This results in the following container specification in the Route resource.
+
+[source,yaml]
+----
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: route-service
+spec:
+  host: example.com #<1>
+  port:
+    targetPort: http #<2>
+  tls:
+    certificate: | #<3>
+      ...
+    key: | #<4>
+      ...
+    termination: edge #<5>
+  to: #<6>
+    kind: Service
+    name: route-service
+----
+<1> Custom route host
+<2> Service port name
+<3> Custom route TLS certificate content
+<4> Custom route TLS certificate key content
+<5> Custom route TLS termination
+<6> Service Resource reference
+
 
 === OpenApi specifications
 
