@@ -315,7 +315,7 @@
         <knative-client-version>6.13.2</knative-client-version>
         <kotlin-version>1.9.24</kotlin-version>
         <kotlinpoet-version>1.18.1</kotlinpoet-version>
-        <kubernetes-client-version>6.13.2</kubernetes-client-version>
+        <kubernetes-client-version>6.13.3</kubernetes-client-version>
         <kudu-version>1.17.0</kudu-version>
         <langchain4j-version>0.33.0</langchain4j-version>
         <leveldbjni-version>1.8</leveldbjni-version>
