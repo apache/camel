@@ -23,7 +23,7 @@
 If you're unsure, you can format the pull request title like `[CAMEL-XXX] Fixes bug in camel-file component`, where you replace `CAMEL-XXX` with the appropriate JIRA issue.
 -->
 
-- [ ] I have run `mvn clean install -DskipTests` locally and I have committed all auto-generated changes
+- [ ] I have run `mvn clean install -DskipTests` locally from root folder and I have committed all auto-generated changes.
 
 <!--
 You can run the aforementioned command in your module so that the build auto-formats your code. This will also be verified as part of the checks and your PR may be rejected if if there are uncommited changes after running `mvn clean install -DskipTests`.
