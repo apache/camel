@@ -57,6 +57,7 @@
 ** xref:onFallback-eip.adoc[On Fallback]
 ** xref:pipeline-eip.adoc[Pipeline]
 ** xref:point-to-point-channel.adoc[Point to Point Channel]
+** xref:poll-eip.adoc[Poll]
 ** xref:pollEnrich-eip.adoc[Poll Enrich]
 ** xref:polling-consumer.adoc[Polling Consumer]
 ** xref:process-eip.adoc[Process]

@@ -624,6 +624,14 @@ public class ModelParser extends BaseParser {
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputDefinitionElementHandler(), noValueHandler());
     }
+    protected PollDefinition doParsePollDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PollDefinition(), (def, key, val) -> switch (key) {
+                case "timeout": def.setTimeout(val); yield true;
+                case "uri": def.setUri(sanitizeUri(val)); yield true;
+                case "variableReceive": def.setVariableReceive(val); yield true;
+                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
     protected PollEnrichDefinition doParsePollEnrichDefinition() throws IOException, XmlPullParserException {
         return doParse(new PollEnrichDefinition(), (def, key, val) -> switch (key) {
                 case "aggregateOnException": def.setAggregateOnException(val); yield true;
@@ -2742,6 +2750,7 @@ public class ModelParser extends BaseParser {
             case "pausable": return doParsePausableDefinition();
             case "pipeline": return doParsePipelineDefinition();
             case "policy": return doParsePolicyDefinition();
+            case "poll": return doParsePollDefinition();
             case "pollEnrich": return doParsePollEnrichDefinition();
             case "process": return doParseProcessDefinition();
             case "recipientList": return doParseRecipientListDefinition();

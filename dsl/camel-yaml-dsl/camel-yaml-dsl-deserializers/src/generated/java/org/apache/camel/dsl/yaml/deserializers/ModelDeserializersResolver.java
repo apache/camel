@@ -313,6 +313,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.PipelineDefinition": return new ModelDeserializers.PipelineDefinitionDeserializer();
             case "policy": return new ModelDeserializers.PolicyDefinitionDeserializer();
             case "org.apache.camel.model.PolicyDefinition": return new ModelDeserializers.PolicyDefinitionDeserializer();
+            case "poll": return new ModelDeserializers.PollDefinitionDeserializer();
+            case "org.apache.camel.model.PollDefinition": return new ModelDeserializers.PollDefinitionDeserializer();
             case "poll-enrich": return new ModelDeserializers.PollEnrichDefinitionDeserializer();
             case "pollEnrich": return new ModelDeserializers.PollEnrichDefinitionDeserializer();
             case "org.apache.camel.model.PollEnrichDefinition": return new ModelDeserializers.PollEnrichDefinitionDeserializer();

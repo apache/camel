@@ -48,6 +48,7 @@ PackageScanDefinition
 PausableDefinition
 PipelineDefinition
 PolicyDefinition
+PollDefinition
 PollEnrichDefinition
 ProcessDefinition
 PropertyDefinition
