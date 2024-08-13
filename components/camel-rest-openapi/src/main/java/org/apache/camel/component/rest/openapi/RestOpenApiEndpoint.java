@@ -566,7 +566,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             absoluteURI = opURI.get();
         }
         if (absoluteURI != null) {
-            return absoluteURI.toString();
+            String scheme = absoluteURI.getScheme();
+            String host = absoluteURI.getHost();
+            int port = absoluteURI.getPort();
+            if (isNotEmpty(scheme) && isNotEmpty(host)) {
+                return scheme + "://" + host + (port > 0 ? ":" + port : "");
+            }
         }
 
         final CamelContext camelContext = getCamelContext();
