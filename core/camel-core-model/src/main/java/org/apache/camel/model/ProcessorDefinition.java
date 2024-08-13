@@ -3813,6 +3813,97 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Polls a message from the given endpoint
+     *
+     * @param  uri the endpoint to poll from
+     * @return     the builder
+     */
+    public Type poll(@AsEndpointUri String uri) {
+        addOutput(new PollDefinition(uri));
+        return asType();
+    }
+
+    /**
+     * Polls a message from the given endpoint
+     *
+     * @param  uri     the endpoint to poll from
+     * @param  timeout timeout in millis when polling from the external service.
+     * @return         the builder
+     */
+    public Type poll(@AsEndpointUri String uri, long timeout) {
+        PollDefinition poll = new PollDefinition(uri);
+        poll.setTimeout(String.valueOf(timeout));
+        addOutput(poll);
+        return asType();
+    }
+
+    /**
+     * Polls a message from the given endpoint
+     *
+     * @param  endpoint the endpoint to poll from
+     * @return          the builder
+     */
+    public Type poll(Endpoint endpoint) {
+        addOutput(new PollDefinition(endpoint));
+        return asType();
+    }
+
+    /**
+     * Polls a message from the given endpoint
+     *
+     * @param  endpoint the endpoint to poll from
+     * @param  timeout  timeout in millis when polling from the external service.
+     * @return          the builder
+     */
+    public Type poll(Endpoint endpoint, long timeout) {
+        PollDefinition poll = new PollDefinition(endpoint);
+        poll.setTimeout(String.valueOf(timeout));
+        addOutput(poll);
+        return asType();
+    }
+
+    /**
+     * Polls a message from the given endpoint
+     *
+     * @param  endpoint the endpoint to poll from
+     * @return          the builder
+     */
+    public Type poll(@AsEndpointUri EndpointConsumerBuilder endpoint) {
+        addOutput(new PollDefinition(endpoint));
+        return asType();
+    }
+
+    /**
+     * Polls a message from the given endpoint
+     *
+     * @param  endpoint the endpoint to poll from
+     * @param  timeout  timeout in millis when polling from the external service.
+     * @return          the builder
+     */
+    public Type poll(@AsEndpointUri EndpointConsumerBuilder endpoint, long timeout) {
+        PollDefinition poll = new PollDefinition(endpoint);
+        poll.setTimeout(String.valueOf(timeout));
+        addOutput(poll);
+        return asType();
+    }
+
+    /**
+     * Polls a message from the given endpoint
+     *
+     * @param  uri             the endpoint to poll from
+     * @param  timeout         timeout in millis when polling from the external service.
+     * @param  variableReceive to use a variable to store the received message body (only body, not headers).
+     * @return                 the builder
+     */
+    public Type pollV(@AsEndpointUri String uri, long timeout, String variableReceive) {
+        PollDefinition poll = new PollDefinition(uri);
+        poll.setTimeout(String.valueOf(timeout));
+        poll.setVariableReceive(variableReceive);
+        addOutput(poll);
+        return asType();
+    }
+
+    /**
      * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a> enriches an exchange with
      * additional data obtained from a <code>resourceUri</code> using a {@link org.apache.camel.PollingConsumer} to poll
      * the endpoint.
