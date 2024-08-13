@@ -408,8 +408,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                     }
                     if (basePath == null) {
                         // parse server url as fallback
-                        URL serverUrl = new URL(parseVariables(((Oas30Document) openapi).getServers().get(0).url, server));
-                        basePath = serverUrl.getPath();
+                        String url = parseVariables(((Oas30Document) openapi).getServers().get(0).url, server);
+                        if (url.startsWith("/")) {
+                            basePath = url;
+                        } else {
+                            URL serverUrl = new URL(url);
+                            basePath = serverUrl.getPath();
+                        }
                         if (basePath.indexOf("//") == 0) {
                             // strip off the first "/" if double "/" exists
                             basePath = basePath.substring(1);
@@ -585,14 +590,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             if (oas30Document.getServers() != null
                     && oas30Document.getServers().get(0) != null) {
                 try {
-
-                    URL serverUrl = new URL(
-                            parseVariables(oas30Document.getServers().get(0).url,
-                                    (Oas30Server) oas30Document.getServers().get(0)));
-                    final String openapiScheme = serverUrl.getProtocol();
-                    final String openapiHost = serverUrl.getHost();
-                    if (isNotEmpty(openapiScheme) && isNotEmpty(openapiHost)) {
-                        return openapiScheme + "://" + openapiHost;
+                    String url = parseVariables(oas30Document.getServers().get(0).url, (Oas30Server) oas30Document.getServers().get(0));
+                    if (!url.startsWith("/")) {
+                        URL serverUrl = new URL(url);
+                        final String openapiScheme = serverUrl.getProtocol();
+                        final String openapiHost = serverUrl.getHost();
+                        final Integer openapiPort = serverUrl.getPort();
+                        if (isNotEmpty(openapiScheme) && isNotEmpty(openapiHost)) {
+                            return openapiScheme + "://" + openapiHost + (openapiPort > 0 ? ":" + openapiPort : "");
+                        }
                     }
                 } catch (MalformedURLException e) {
                     throw new IllegalStateException(e);
