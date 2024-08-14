@@ -63,8 +63,8 @@ public interface RoutesLoader extends CamelContextAware {
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         // add configuration first before the routes
         for (RoutesBuilder builder : builders) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                getCamelContext().addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+            if (builder instanceof RouteConfigurationsBuilder rcb) {
+                getCamelContext().addRoutesConfigurations(rcb);
             }
         }
         for (RoutesBuilder builder : builders) {
@@ -85,8 +85,8 @@ public interface RoutesLoader extends CamelContextAware {
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
         // add configuration first before the routes
         for (RoutesBuilder builder : builders) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                getCamelContext().addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+            if (builder instanceof RouteConfigurationsBuilder rcb) {
+                getCamelContext().addRoutesConfigurations(rcb);
             }
         }
         for (RoutesBuilder builder : builders) {

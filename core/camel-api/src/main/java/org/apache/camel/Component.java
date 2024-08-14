@@ -106,8 +106,8 @@ public interface Component extends CamelContextAware, Service {
      * Set the {@link Component} context if the component is an instance of {@link ComponentAware}.
      */
     static <T> T trySetComponent(T object, Component component) {
-        if (object instanceof ComponentAware) {
-            ((ComponentAware) object).setComponent(component);
+        if (object instanceof ComponentAware componentAware) {
+            componentAware.setComponent(component);
         }
 
         return object;

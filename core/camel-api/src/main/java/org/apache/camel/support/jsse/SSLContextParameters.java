@@ -281,11 +281,11 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
         if (this.getCertAlias() != null && keyManagers != null) {
             for (int idx = 0; idx < keyManagers.length; idx++) {
-                if (keyManagers[idx] instanceof X509KeyManager) {
+                if (keyManagers[idx] instanceof X509KeyManager x509KeyManager) {
                     try {
                         keyManagers[idx] = new AliasedX509ExtendedKeyManager(
                                 this.parsePropertyValue(this.getCertAlias()),
-                                (X509KeyManager) keyManagers[idx]);
+                                x509KeyManager);
                     } catch (Exception e) {
                         throw new GeneralSecurityException(e);
                     }
