@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing.decorators;
+package org.apache.camel.support.tracing.decorators;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
@@ -72,7 +71,7 @@ public class AbstractSpanDecoratorTest {
             }
         };
 
-        MockSpanAdapter span = new MockSpanAdapter();
+        InMemorySpanAdapter span = new InMemorySpanAdapter();
 
         decorator.pre(span, null, endpoint);
 
@@ -103,7 +102,7 @@ public class AbstractSpanDecoratorTest {
             }
         };
 
-        MockSpanAdapter span = new MockSpanAdapter();
+        InMemorySpanAdapter span = new InMemorySpanAdapter();
 
         decorator.post(span, exchange, null);
 

@@ -22,7 +22,7 @@ import java.time.OffsetDateTime;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.tracing.MockSpanAdapter;
+import org.apache.camel.support.tracing.decorators.InMemorySpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -79,7 +79,7 @@ public class AzureServiceBusSpanDecoratorTest {
 
         AbstractMessagingSpanDecorator decorator = new AzureServiceBusSpanDecorator();
 
-        MockSpanAdapter span = new MockSpanAdapter();
+        InMemorySpanAdapter span = new InMemorySpanAdapter();
 
         decorator.pre(span, exchange, endpoint);
 

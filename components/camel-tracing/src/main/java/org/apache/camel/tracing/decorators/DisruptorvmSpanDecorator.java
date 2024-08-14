@@ -16,6 +16,8 @@
  */
 package org.apache.camel.tracing.decorators;
 
+import org.apache.camel.support.tracing.decorators.AbstractInternalSpanDecorator;
+
 public class DisruptorvmSpanDecorator extends AbstractInternalSpanDecorator {
 
     @Override

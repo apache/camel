@@ -16,13 +16,29 @@
  */
 package org.apache.camel.tracing;
 
-public interface InjectAdapter {
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * An adapter to extract tracing attributes from a tracing span.
+ */
+public interface ExtractAdapter {
 
     /**
-     * Inject a tag into the current tracing span, for context propagation.
-     *
-     * @param key   the tag key
-     * @param value the tag value
+     * Extract an iterator of attributes from the current tracing span.
      */
-    void put(String key, String value);
+    Iterator<Map.Entry<String, Object>> iterator();
+
+    /**
+     * Extract an attribute from the current tracing span.
+     *
+     * @param key the attribute key
+     */
+    Object get(String key);
+
+    /**
+     * Get the attribute keys for the current tracing span.
+     */
+    Set<String> keys();
 }

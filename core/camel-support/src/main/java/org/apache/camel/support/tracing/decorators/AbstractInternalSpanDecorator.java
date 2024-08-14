@@ -14,11 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing;
+package org.apache.camel.support.tracing.decorators;
 
-public enum SpanKind {
-    SPAN_KIND_CLIENT,
-    SPAN_KIND_SERVER,
-    CONSUMER,
-    PRODUCER,
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+
+public abstract class AbstractInternalSpanDecorator extends AbstractSpanDecorator {
+
+    @Override
+    public String getOperationName(Exchange exchange, Endpoint endpoint) {
+        // Internal communications use descriptive names, so suitable
+        // as an operation name, but need to strip the scheme and any options
+        return stripSchemeAndOptions(endpoint);
+    }
+
 }

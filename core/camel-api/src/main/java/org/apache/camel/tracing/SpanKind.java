@@ -14,24 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing.propagation;
+package org.apache.camel.tracing;
 
-import java.util.Map;
-
-import org.apache.camel.tracing.InjectAdapter;
-
-public final class CamelHeadersInjectAdapter implements InjectAdapter {
-    private final Map<String, Object> map;
-
-    public CamelHeadersInjectAdapter(final Map<String, Object> map) {
-        this.map = map;
-    }
-
-    @Override
-    public void put(String key, String value) {
-        // Assume any header property that begins with 'Camel' is for internal use
-        if (!key.startsWith("Camel")) {
-            this.map.put(key, value);
-        }
-    }
+/**
+ * Represents the kind of tracing span.
+ */
+public enum SpanKind {
+    SPAN_KIND_CLIENT,
+    SPAN_KIND_SERVER,
+    CONSUMER,
+    PRODUCER,
 }

@@ -32,11 +32,11 @@ import org.apache.camel.opentelemetry.propagators.OpenTelemetrySetter;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.tracing.decorators.AbstractInternalSpanDecorator;
 import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
-import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

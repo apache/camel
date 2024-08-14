@@ -19,6 +19,7 @@ package org.apache.camel.tracing.decorators;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.tracing.decorators.AbstractSpanDecorator;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.TagConstants;
 
