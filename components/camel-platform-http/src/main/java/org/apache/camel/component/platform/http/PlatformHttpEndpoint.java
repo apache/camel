@@ -183,7 +183,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
                 if (COMMON_HTTP_REQUEST_HEADERS.contains(headerName)) {
                     return true;
                 }
-                return headerFilterStrategy.applyFilterToExternalHeaders(headerName, headerValue, exchange);
+                return headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
             }
 
             @Override

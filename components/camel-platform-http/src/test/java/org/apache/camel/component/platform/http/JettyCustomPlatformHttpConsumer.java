@@ -182,6 +182,11 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
         }
 
         for (HttpField header : request.getHeaders()) {
+            String headerName = header.getName();
+            String headerValue = header.getValue();
+            if (getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(headerName, headerValue, exchange)) {
+                continue;
+            }
             message.setHeader(header.getName(), header.getValue());
         }
 
