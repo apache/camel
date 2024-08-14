@@ -170,6 +170,22 @@ public class PlatformHttpUriDsl(
   }
 
   /**
+   * Whether to include HTTP request headers (Accept, User-Agent, etc.) into HTTP response produced
+   * by this endpoint.
+   */
+  public fun returnHttpRequestHeaders(returnHttpRequestHeaders: String) {
+    it.property("returnHttpRequestHeaders", returnHttpRequestHeaders)
+  }
+
+  /**
+   * Whether to include HTTP request headers (Accept, User-Agent, etc.) into HTTP response produced
+   * by this endpoint.
+   */
+  public fun returnHttpRequestHeaders(returnHttpRequestHeaders: Boolean) {
+    it.property("returnHttpRequestHeaders", returnHttpRequestHeaders.toString())
+  }
+
+  /**
    * Whether to enable the Cookie Handler that allows Cookie addition, expiry, and retrieval
    * (currently only supported by camel-platform-http-vertx)
    */
