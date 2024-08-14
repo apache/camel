@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.PollEnricher;
+import org.apache.camel.processor.PollProcessor;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LanguageSupport;
 
@@ -45,7 +45,7 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
             exp = camelContext.resolveLanguage("constant").createExpression(uri);
         }
         long timeout = parseDuration(definition.getTimeout(), 20000);
-        PollEnricher answer = new PollEnricher(exp, uri, timeout);
+        PollProcessor answer = new PollProcessor(exp, uri, timeout);
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
         return answer;
     }
