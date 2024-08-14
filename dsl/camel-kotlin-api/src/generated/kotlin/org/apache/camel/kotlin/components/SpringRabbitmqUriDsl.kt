@@ -465,6 +465,50 @@ public class SpringRabbitmqUriDsl(
   }
 
   /**
+   * If true the queue will not be bound to the exchange after declaring it.
+   */
+  public fun skipBindQueue(skipBindQueue: String) {
+    it.property("skipBindQueue", skipBindQueue)
+  }
+
+  /**
+   * If true the queue will not be bound to the exchange after declaring it.
+   */
+  public fun skipBindQueue(skipBindQueue: Boolean) {
+    it.property("skipBindQueue", skipBindQueue.toString())
+  }
+
+  /**
+   * This can be used if we need to declare the queue but not the exchange.
+   */
+  public fun skipDeclareExchange(skipDeclareExchange: String) {
+    it.property("skipDeclareExchange", skipDeclareExchange)
+  }
+
+  /**
+   * This can be used if we need to declare the queue but not the exchange.
+   */
+  public fun skipDeclareExchange(skipDeclareExchange: Boolean) {
+    it.property("skipDeclareExchange", skipDeclareExchange.toString())
+  }
+
+  /**
+   * If true the producer will not declare and bind a queue. This can be used for directing messages
+   * via an existing routing key.
+   */
+  public fun skipDeclareQueue(skipDeclareQueue: String) {
+    it.property("skipDeclareQueue", skipDeclareQueue)
+  }
+
+  /**
+   * If true the producer will not declare and bind a queue. This can be used for directing messages
+   * via an existing routing key.
+   */
+  public fun skipDeclareQueue(skipDeclareQueue: Boolean) {
+    it.property("skipDeclareQueue", skipDeclareQueue.toString())
+  }
+
+  /**
    * Use a separate connection for publishers and consumers
    */
   public fun usePublisherConnection(usePublisherConnection: String) {
