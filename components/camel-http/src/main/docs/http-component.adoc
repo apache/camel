@@ -57,14 +57,16 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Message Body
+== Usage
+
+=== Message Body
 
 Camel will store the HTTP response from the external server on the _OUT_ body.
 All headers from the _IN_ message will be copied to the _OUT_ message,
 so headers are preserved during routing. Additionally, Camel will add the
 HTTP response headers as well to the _OUT_ message headers.
 
-== Using System Properties
+=== Using System Properties
 
 When setting useSystemProperties to true, the HTTP Client will look for
 the following System Properties, and it will use it:
@@ -86,7 +88,7 @@ the following System Properties, and it will use it:
 * `http.keepAlive`
 * `http.maxConnections`
 
-== Response code
+=== Response code
 
 Camel will handle, according to the HTTP response code:
 
@@ -104,7 +106,7 @@ The option, `throwExceptionOnFailure`, can be set to `false` to prevent
 the `HttpOperationFailedException` from being thrown for failed response
 codes. This allows you to get any response from the remote server.
 
-== Exceptions
+=== Exceptions
 
 `HttpOperationFailedException` exception contains the following information:
 
@@ -114,7 +116,7 @@ codes. This allows you to get any response from the remote server.
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
-== Which HTTP method will be used
+=== Which HTTP method will be used
 
 The following algorithm is used to determine what HTTP method should be used: +
  1. Use method provided as endpoint configuration (`httpMethod`). +
@@ -124,7 +126,7 @@ The following algorithm is used to determine what HTTP method should be used: +
  5. `POST` if there is data to send (body is not `null`). +
  6. `GET` otherwise.
 
-== Configuring URI to call
+=== Configuring URI to call
 
 You can set the HTTP producer's URI directly from the endpoint URI. In
 the route below, Camel will call out to the external server, `oldhost`,
@@ -161,7 +163,7 @@ endpoint is configured with http://oldhost. +
 If the http endpoint is working in bridge mode, it will ignore the
 message header of `Exchange.HTTP_URI`.
 
-== Configuring URI Parameters
+=== Configuring URI Parameters
 
 The *http* producer supports URI parameters to be sent to the HTTP
 server. The URI parameters can either be set directly on the endpoint
@@ -182,7 +184,7 @@ from("direct:start")
   .to("http://oldhost");
 ---------------------------------------------------------------------
 
-== How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
+=== How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
 
 The HTTP component provides a way to set the HTTP request method by
 setting the message header. Here is an example:
@@ -216,13 +218,13 @@ And the equivalent XML DSL:
 </route>
 ---------------------------------------------------------------------
 
-== Using client timeout - SO_TIMEOUT
+=== Using client timeout - SO_TIMEOUT
 
 See the
 https://github.com/apache/camel/blob/main/components/camel-http/src/test/java/org/apache/camel/component/http/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
 unit test.
 
-== Configuring a Proxy
+=== Configuring a Proxy
 
 The HTTP component provides a way to configure a proxy.
 
@@ -235,7 +237,7 @@ from("direct:start")
 There is also support for proxy authentication via the
 `proxyAuthUsername` and `proxyAuthPassword` options.
 
-=== Using proxy settings outside of URI
+==== Using proxy settings outside of URI
 
 To avoid System properties conflicts, you can set proxy configuration
 only from the CamelContext or URI. +
@@ -266,7 +268,7 @@ So you can override the system properties with the endpoint options.
 There is also a `http.proxyScheme` property you
 can set to explicitly configure the scheme to use.
 
-== Configuring charset
+=== Configuring charset
 
 If you are using `POST` to send data you can configure the `charset`
 using the `Exchange` property:
@@ -276,7 +278,7 @@ using the `Exchange` property:
 exchange.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
 ----------------------------------------------------------
 
-=== Sample with scheduled poll
+==== Example with scheduled poll
 
 This sample polls the Google homepage every 10 seconds and write the
 page to the file `message.html`:
@@ -289,7 +291,7 @@ from("timer://foo?fixedRate=true&delay=0&period=10000")
   .to("file:target/google");
 ------------------------------------------------------------
 
-=== URI Parameters from the endpoint URI
+==== URI Parameters from the endpoint URI
 
 In this sample, we have the complete URI endpoint that is just what you
 would have typed in a web browser. Multiple URI parameters can of course
@@ -302,7 +304,7 @@ web browser. Camel does no tricks here.
 template.sendBody("http://www.google.com/search?q=Camel", null);
 -----------------------------------------------------------------
 
-=== URI Parameters from the Message
+==== URI Parameters from the Message
 
 [source,java]
 ------------------------------------------------------------------
@@ -315,7 +317,7 @@ template.sendBody("http://www.google.com/search", null, headers);
 In the header value above notice that it should *not* be prefixed with
 `?` and you can separate parameters as usual with the `&` char.
 
-=== Getting the Response Code
+==== Getting the Response Code
 
 You can get the HTTP response code from the HTTP component by getting
 the value from the Out message header with
@@ -332,17 +334,17 @@ Message out = exchange.getOut();
 int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 ------------------------------------------------------------------------------------
 
-== Disabling Cookies
+=== Disabling Cookies
 
 To disable cookies in the CookieStore, you can set the HTTP Client to ignore cookies by
 adding this URI option: `httpClient.cookieSpec=ignore`. This doesn't affect cookies manually set in the `Cookie` header
 
-== Basic auth with the streaming message body
+=== Basic auth with the streaming message body
 
 To avoid the `NonRepeatableRequestException`, you need to do the
 Preemptive Basic Authentication by adding the option: `authenticationPreemptive=true`
 
-== OAuth2 Support
+=== OAuth2 Support
 
 To get an access token from an Authorization Server and fill that in Authorization header to do requests to protected services, you will need to use `oauth2ClientId`, `oauth2ClientSecret` and  `oauth2TokenEndpoint` properties, and those should be defined as specified at RFC 6749 and provided by your Authorization Server.
 
@@ -365,13 +367,13 @@ Camel only provides support for OAuth2 client credentials flow
 [IMPORTANT]
 Camel does not perform any validation in access token. It's up to the underlying service to validate it.
 
-== Advanced Usage
+=== Advanced Usage
 
 If you need more control over the HTTP producer, you should use the
 `HttpComponent` where you can set various classes to give you custom
 behavior.
 
-=== Setting up SSL for HTTP Client
+==== Setting up SSL for HTTP Client
 
 [[HTTP-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility

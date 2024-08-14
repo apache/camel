@@ -68,6 +68,7 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.PausableDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
+import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -112,10 +113,12 @@ import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
+import org.apache.camel.reifier.tokenizer.LangChain4JTokenizerReifier;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
@@ -265,6 +268,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new PipelineReifier(route, definition);
         } else if (definition instanceof PolicyDefinition) {
             return new PolicyReifier(route, definition);
+        } else if (definition instanceof PollDefinition) {
+            return new PollReifier(route, definition);
         } else if (definition instanceof PollEnrichDefinition) {
             return new PollEnrichReifier(route, definition);
         } else if (definition instanceof ProcessDefinition) {
@@ -347,6 +352,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new ResumableReifier(route, definition);
         } else if (definition instanceof PausableDefinition) {
             return new PausableReifier(route, definition);
+        } else if (definition instanceof LangChain4jTokenizerDefinition) {
+            return new LangChain4JTokenizerReifier(route, definition);
         }
         return null;
     }

@@ -30,7 +30,15 @@ from("kafka:topic").
   to("log:info");
 -------------------------------
 
-== Configuring the `SchemaResolver`
+== Protobuf Jackson Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Usage
+
+=== Configuring the `SchemaResolver`
 
 Since Protobuf serialization is schema-based, this data format requires that you provide a SchemaResolver object
 that is able to look up the schema for each exchange that is going to be marshalled/unmarshalled.
@@ -38,14 +46,7 @@ that is able to look up the schema for each exchange that is going to be marshal
 You can add a single SchemaResolver to the registry, and it will be looked up automatically.
 Or you can explicitly specify the reference to a custom SchemaResolver.
 
-== Protobuf Jackson Options
-
-// dataformat options: START
-include::partial$dataformat-options.adoc[]
-// dataformat options: END
-
-
-== Using custom ProtobufMapper
+=== Using custom ProtobufMapper
 
 You can configure `JacksonProtobufDataFormat` to use a custom `ProtobufMapper` in case you need more control of the mapping configuration.
 

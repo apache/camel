@@ -42,8 +42,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== Runtime lookup
+=== Runtime lookup
 
 This component can be used when you need dynamic discovery of endpoints
 in the Registry where you can compute the URI at
@@ -73,7 +74,7 @@ Registry such as:
 </camelContext>
 ----
 
-== Sample
+== Example
 
 Bind endpoints to the Camel registry:
 [source,java]

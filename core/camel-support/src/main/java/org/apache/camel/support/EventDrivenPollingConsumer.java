@@ -133,7 +133,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
         while (isRunAllowed()) {
             // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-            synchronized (this) {
+            lock.lock();
+            try {
                 try {
                     beforePoll(0);
                     // take will block waiting for message
@@ -143,6 +144,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
                 } finally {
                     afterPoll();
                 }
+            } finally {
+                lock.unlock();
             }
         }
         LOG.trace("Consumer is not running, so returning null");
@@ -157,7 +160,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
 
         // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-        synchronized (this) {
+        lock.lock();
+        try {
             try {
                 // use the timeout value returned from beforePoll
                 timeout = beforePoll(timeout);
@@ -168,6 +172,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             } finally {
                 afterPoll();
             }
+        } finally {
+            lock.unlock();
         }
     }
 

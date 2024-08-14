@@ -60,7 +60,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Producer Endpoints
+== Usage
+
+=== Producer Endpoints
 
 Producer endpoints can accept and deliver to PubSub individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
@@ -84,7 +86,7 @@ For more information, see https://cloud.google.com/pubsub/docs/ordering[Ordering
 Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
 the header `GooglePubsubConstants.MESSAGE_ID`.
 
-== Consumer Endpoints
+=== Consumer Endpoints
 Google PubSub will redeliver the message if it has not been acknowledged within the time period set
 as a configuration option on the subscription.
 
@@ -97,18 +99,18 @@ To ack/nack the message the component uses Acknowledgement ID stored as header `
 If the header is removed or tampered with, the ack will fail and the message will be redelivered
 again after the ack deadline.
 
-== Message Body
+=== Message Body
 
 The consumer endpoint returns the content of the message as `byte[]`. Exactly as the underlying system sends it.
 It is up for the route to convert/unmarshall the contents.
 
-== Authentication Configuration
+=== Authentication Configuration
 
 By default, this component acquires credentials using `GoogleCredentials.getApplicationDefault()`.
 This behavior can be disabled by setting _authenticate_ option to `false`, in which case requests to Google API will be made without authentication details. This is only desirable when developing against an emulator.
 This behavior can be altered by supplying a path to a service account key file.
 
-== Rollback and Redelivery
+=== Rollback and Redelivery
 
 The rollback for Google PubSub relies on the idea of the Acknowledgement Deadline - the time period where Google PubSub expects to receive the acknowledgement.
 If the acknowledgement has not been received, the message is redelivered.
@@ -126,7 +128,7 @@ setting the message header `GooglePubsubConstants.ACK_DEADLINE` to the value in 
 
 include::spring-boot:partial$starter.adoc[]
 
-== Manual Acknowledgement
+=== Manual Acknowledgement
 
 By default, the PubSub consumer will acknowledge messages once the exchange has been processed, or negative-acknowledge them if the exchange has failed.
 

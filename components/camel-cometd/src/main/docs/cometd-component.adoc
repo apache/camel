@@ -69,7 +69,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Samples
+== Examples
 
 Below, you can find some examples of how to pass the parameters.
 
@@ -77,15 +77,15 @@ For file, for webapp resources located in the Web Application directory --> `com
 
 For classpath, when, for example, the web resources are packaged inside the webapp folder --> `cometd://localhost:8080?resourceBase=classpath:webapp`
 
-== Authentication
+=== Authentication
 
 You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as
 http://cometd.org/documentation/howtos/authentication[documented here]
 
-== Setting up SSL for Cometd Component
+=== Setting up SSL for Cometd Component
 
-=== Using the JSSE Configuration Utility
+==== Using the JSSE Configuration Utility
 
 The Cometd component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE

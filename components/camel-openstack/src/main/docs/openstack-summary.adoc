@@ -20,6 +20,7 @@ indexDescriptionList::[attributes='group={doctitle}',descriptionformat=descripti
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
+
 [source,xml]
 ------------------------------------------------------------
 <dependency>

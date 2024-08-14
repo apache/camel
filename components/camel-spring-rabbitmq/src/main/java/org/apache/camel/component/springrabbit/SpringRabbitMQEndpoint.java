@@ -150,6 +150,15 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     @UriParam(label = "producer",
               description = "Specifies whether the producer should auto declare binding between exchange, queue and routing key when starting.")
     private boolean autoDeclareProducer;
+    @UriParam(label = "producer",
+              description = "This can be used if we need to declare the queue but not the exchange.")
+    private boolean skipDeclareExchange;
+    @UriParam(label = "producer",
+              description = "If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key.")
+    private boolean skipDeclareQueue;
+    @UriParam(label = "producer",
+              description = "If true the queue will not be bound to the exchange after declaring it.")
+    private boolean skipBindQueue;
     @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "30000",
               description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
                             + " The default value is 30 seconds. A negative value indicates an indefinite timeout (Beware that this will cause a memory leak if a reply is not received).")
@@ -285,6 +294,30 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
     public void setAutoDeclareProducer(boolean autoDeclareProducer) {
         this.autoDeclareProducer = autoDeclareProducer;
+    }
+
+    public boolean isSkipDeclareExchange() {
+        return skipDeclareExchange;
+    }
+
+    public void setSkipDeclareExchange(boolean skipDeclareExchange) {
+        this.skipDeclareExchange = skipDeclareExchange;
+    }
+
+    public boolean isSkipDeclareQueue() {
+        return skipDeclareQueue;
+    }
+
+    public void setSkipDeclareQueue(boolean skipDeclareQueue) {
+        this.skipDeclareQueue = skipDeclareQueue;
+    }
+
+    public boolean isSkipBindQueue() {
+        return skipBindQueue;
+    }
+
+    public void setSkipBindQueue(boolean skipBindQueue) {
+        this.skipBindQueue = skipBindQueue;
     }
 
     public boolean isAsyncConsumer() {
@@ -685,25 +718,27 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 }
             }
 
-            Map<String, Object> map = getExchangeArgs();
-            boolean durable = parseArgsBoolean(map, "durable", "true");
-            boolean autoDelete = parseArgsBoolean(map, "autoDelete", "false");
-            if (!durable || autoDelete) {
-                LOG.info("Auto-declaring a non-durable or auto-delete Exchange ({}) durable:{}, auto-delete:{}. "
-                         + "It will be deleted by the broker if it shuts down, and can be redeclared by closing and "
-                         + "reopening the connection.",
-                        exchangeName, durable, autoDelete);
-            }
+            String exchangeName = SpringRabbitMQHelper.isDefaultExchange(getExchangeName()) ? "" : getExchangeName();
+            if (!skipDeclareExchange) {
+                Map<String, Object> map = getExchangeArgs();
+                boolean durable = parseArgsBoolean(map, "durable", "true");
+                boolean autoDelete = parseArgsBoolean(map, "autoDelete", "false");
+                if (!durable || autoDelete) {
+                    LOG.info("Auto-declaring a non-durable or auto-delete Exchange ({}) durable:{}, auto-delete:{}. "
+                             + "It will be deleted by the broker if it shuts down, and can be redeclared by closing and "
+                             + "reopening the connection.",
+                            exchangeName, durable, autoDelete);
+                }
 
-            String en = SpringRabbitMQHelper.isDefaultExchange(getExchangeName()) ? "" : getExchangeName();
-            ExchangeBuilder eb = new ExchangeBuilder(en, getExchangeType());
-            eb.durable(durable);
-            if (autoDelete) {
-                eb.autoDelete();
+                ExchangeBuilder eb = new ExchangeBuilder(exchangeName, getExchangeType());
+                eb.durable(durable);
+                if (autoDelete) {
+                    eb.autoDelete();
+                }
+                eb.withArguments(map);
+                final org.springframework.amqp.core.Exchange rabbitExchange = eb.build();
+                admin.declareExchange(rabbitExchange);
             }
-            eb.withArguments(map);
-            final org.springframework.amqp.core.Exchange rabbitExchange = eb.build();
-            admin.declareExchange(rabbitExchange);
 
             // if the consumer has no specific queue names then auto-create an unique queue (auto deleted)
             String queuesToDeclare = queues;
@@ -717,10 +752,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
             for (String queue : queuesToDeclare.split(",")) {
                 queue = queue.trim();
-                map = getQueueArgs();
+                Map<String, Object> map = getQueueArgs();
                 prepareDeadLetterQueueArgs(map);
-                durable = parseArgsBoolean(map, "durable", "false");
-                autoDelete = parseArgsBoolean(map, "autoDelete", autoDeleteDefault);
+                boolean durable = parseArgsBoolean(map, "durable", "false");
+                boolean autoDelete = parseArgsBoolean(map, "autoDelete", autoDeleteDefault);
                 boolean exclusive = parseArgsBoolean(map, "exclusive", "false");
 
                 QueueBuilder qb;
@@ -747,25 +782,27 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 qb.withArguments(map);
                 final Queue rabbitQueue = qb.build();
 
-                if (!durable || autoDelete || exclusive) {
-                    LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ({})"
-                             + "durable:{}, auto-delete:{}, exclusive:{}. It will be redeclared if the broker stops and "
-                             + "is restarted while the connection factory is alive, but all messages will be lost.",
-                            rabbitQueue.getName(), durable, autoDelete, exclusive);
+                String qn = queue;
+                if (!skipDeclareQueue) {
+                    if (!durable || autoDelete || exclusive) {
+                        LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ({})"
+                                 + "durable:{}, auto-delete:{}, exclusive:{}. It will be redeclared if the broker stops and "
+                                 + "is restarted while the connection factory is alive, but all messages will be lost.",
+                                rabbitQueue.getName(), durable, autoDelete, exclusive);
+                    }
+                    qn = admin.declareQueue(rabbitQueue);
+                    // if we auto created a new unique queue then the container needs to know the queue name
+                    if (generateUniqueQueue && container != null) {
+                        container.setQueueNames(qn);
+                    }
                 }
-
-                String qn = admin.declareQueue(rabbitQueue);
-
-                // if we auto created a new unique queue then the container needs to know the queue name
-                if (generateUniqueQueue && container != null) {
-                    container.setQueueNames(qn);
+                if (!skipBindQueue) {
+                    // bind queue to exchange
+                    Binding binding = new Binding(
+                            qn, Binding.DestinationType.QUEUE, exchangeName, routingKey,
+                            getBindingArgs());
+                    admin.declareBinding(binding);
                 }
-
-                // bind queue to exchange
-                Binding binding = new Binding(
-                        qn, Binding.DestinationType.QUEUE, rabbitExchange.getName(), routingKey,
-                        getBindingArgs());
-                admin.declareBinding(binding);
             }
         }
     }

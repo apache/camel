@@ -121,4 +121,21 @@ public class AwsVaultConfigurationProperties extends AwsVaultConfiguration imple
         return this;
     }
 
+    /**
+     * Whether to use AWS SQS for secrets updates notification, this will require setting up Eventbridge/Cloudtrail/SQS
+     * communication
+     */
+    public AwsVaultConfigurationProperties withUseSqsNotification(boolean useSqsNotification) {
+        setUseSqsNotification(useSqsNotification);
+        return this;
+    }
+
+    /**
+     * In case of usage of SQS notification this field will specified the Queue URL to use
+     */
+    public AwsVaultConfigurationProperties withSqsQueueName(String sqsQueueUrl) {
+        setSqsQueueUrl(sqsQueueUrl);
+        return this;
+    }
+
 }

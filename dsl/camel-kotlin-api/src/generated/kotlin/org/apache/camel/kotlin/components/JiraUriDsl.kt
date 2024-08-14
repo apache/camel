@@ -68,7 +68,7 @@ public class JiraUriDsl(
   }
 
   /**
-   * The Jira server url, example: http://my_jira.com:8081
+   * The Jira server url, for example http://my_jira.com:8081.
    */
   public fun jiraUrl(jiraUrl: String) {
     it.property("jiraUrl", jiraUrl)

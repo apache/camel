@@ -30,8 +30,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApiName, GoogleDriveConfiguration> {
 
-    private static GoogleDriveApiCollection collection;
-
     private GoogleDriveApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<GoogleDriveApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleDriveApiName.class);
@@ -130,10 +128,11 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
         return result;
     }
 
-    public static synchronized GoogleDriveApiCollection getCollection() {
-        if (collection == null) {
-            collection = new GoogleDriveApiCollection();
-        }
-        return collection;
+    public static GoogleDriveApiCollection getCollection() {
+        return GoogleDriveApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class GoogleDriveApiCollectionHolder {
+        private static final GoogleDriveApiCollection INSTANCE = new GoogleDriveApiCollection();
     }
 }

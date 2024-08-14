@@ -886,6 +886,38 @@ public interface SplunkEndpointBuilderFactory {
             doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
+        /**
+         * Sets client's certificate validation mode. Value false makes SSL
+         * vulnerable and is not recommended for the production environment.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param validateCertificates the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointConsumerBuilder validateCertificates(boolean validateCertificates) {
+            doSetProperty("validateCertificates", validateCertificates);
+            return this;
+        }
+        /**
+         * Sets client's certificate validation mode. Value false makes SSL
+         * vulnerable and is not recommended for the production environment.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param validateCertificates the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointConsumerBuilder validateCertificates(String validateCertificates) {
+            doSetProperty("validateCertificates", validateCertificates);
+            return this;
+        }
     }
 
     /**
@@ -1435,6 +1467,38 @@ public interface SplunkEndpointBuilderFactory {
             doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
+        /**
+         * Sets client's certificate validation mode. Value false makes SSL
+         * vulnerable and is not recommended for the production environment.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param validateCertificates the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointProducerBuilder validateCertificates(boolean validateCertificates) {
+            doSetProperty("validateCertificates", validateCertificates);
+            return this;
+        }
+        /**
+         * Sets client's certificate validation mode. Value false makes SSL
+         * vulnerable and is not recommended for the production environment.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param validateCertificates the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointProducerBuilder validateCertificates(String validateCertificates) {
+            doSetProperty("validateCertificates", validateCertificates);
+            return this;
+        }
     }
 
     /**
@@ -1728,6 +1792,38 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointBuilder useSunHttpsHandler(String useSunHttpsHandler) {
             doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
+            return this;
+        }
+        /**
+         * Sets client's certificate validation mode. Value false makes SSL
+         * vulnerable and is not recommended for the production environment.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param validateCertificates the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointBuilder validateCertificates(boolean validateCertificates) {
+            doSetProperty("validateCertificates", validateCertificates);
+            return this;
+        }
+        /**
+         * Sets client's certificate validation mode. Value false makes SSL
+         * vulnerable and is not recommended for the production environment.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param validateCertificates the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointBuilder validateCertificates(String validateCertificates) {
+            doSetProperty("validateCertificates", validateCertificates);
             return this;
         }
     }

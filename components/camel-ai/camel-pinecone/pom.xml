@@ -29,7 +29,7 @@
 
     <artifactId>camel-pinecone</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Pinecone</name>
+    <name>Camel :: AI :: Pinecone</name>
     <description>Camel Pinecone support</description>
 
     <properties>

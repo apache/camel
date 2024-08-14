@@ -35,7 +35,7 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface LangChain4jChatEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint for the langChain4j Chat component.
+     * Builder for endpoint for the LangChain4j Chat component.
      */
     public interface LangChain4jChatEndpointBuilder
             extends
@@ -85,7 +85,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the langChain4j Chat component.
+     * Advanced builder for endpoint for the LangChain4j Chat component.
      */
     public interface AdvancedLangChain4jChatEndpointBuilder
             extends
@@ -176,7 +176,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
 
     public interface LangChain4jChatBuilders {
         /**
-         * langChain4j Chat (camel-langchain4j-chat)
+         * LangChain4j Chat (camel-langchain4j-chat)
          * LangChain4j Chat component
          * 
          * Category: ai
@@ -189,7 +189,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
             return LangChain4jChatHeaderNameBuilder.INSTANCE;
         }
         /**
-         * langChain4j Chat (camel-langchain4j-chat)
+         * LangChain4j Chat (camel-langchain4j-chat)
          * LangChain4j Chat component
          * 
          * Category: ai
@@ -208,7 +208,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
             return LangChain4jChatEndpointBuilderFactory.endpointBuilder("langchain4j-chat", path);
         }
         /**
-         * langChain4j Chat (camel-langchain4j-chat)
+         * LangChain4j Chat (camel-langchain4j-chat)
          * LangChain4j Chat component
          * 
          * Category: ai
@@ -231,7 +231,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
 
     }
     /**
-     * The builder of headers' name for the langChain4j Chat component.
+     * The builder of headers' name for the LangChain4j Chat component.
      */
     public static class LangChain4jChatHeaderNameBuilder {
         /**
@@ -251,6 +251,18 @@ public interface LangChain4jChatEndpointBuilderFactory {
          */
         public String langChain4jChatPromptTemplate() {
             return "CamelLangChain4jChatPromptTemplate";
+        }
+        /**
+         * Augmented Data for RAG.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jChatAugmentedData}.
+         */
+        public String langChain4jChatAugmentedData() {
+            return "CamelLangChain4jChatAugmentedData";
         }
     }
     static LangChain4jChatEndpointBuilder endpointBuilder(String componentName, String path) {

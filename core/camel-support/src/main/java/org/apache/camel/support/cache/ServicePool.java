@@ -207,13 +207,16 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             cleanupEvicts();
 
             if (s == null) {
-                synchronized (this) {
+                lock.lock();
+                try {
                     if (s == null) {
                         LOG.trace("Creating service from endpoint: {}", endpoint);
                         S tempS = creator.apply(endpoint);
                         endpoint.getCamelContext().addService(tempS, true, true);
                         s = tempS;
                     }
+                } finally {
+                    lock.unlock();
                 }
             }
             LOG.trace("Acquired service: {}", s);
@@ -236,9 +239,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         @Override
         public void stop() {
             S toStop;
-            synchronized (this) {
+            lock.lock();
+            try {
                 toStop = s;
                 s = null;
+            } finally {
+                lock.unlock();
             }
             doStop(toStop);
             pool.remove(endpoint);

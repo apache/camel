@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 120 options, which are listed below.
+The camel.main supports 121 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -36,9 +36,10 @@ The camel.main supports 120 options, which are listed below.
 | *camel.main.basePackageScan{zwsp}Enabled* | Whether base package scan is enabled. | true | boolean
 | *camel.main.beanIntrospection{zwsp}ExtendedStatistics* | Sets whether bean introspection uses extended statistics. The default is false. | false | boolean
 | *camel.main.beanIntrospection{zwsp}LoggingLevel* | Sets the logging level used by bean introspection, logging activity of its usage. The default is TRACE. |  | LoggingLevel
-| *camel.main.beanPostProcessor{zwsp}Enabled* | Can be used to turn off bean post processing. Be careful to turn this off, as this means that beans that use Camel annotations such as org.apache.camel.EndpointInject , org.apache.camel.ProducerTemplate , org.apache.camel.Produce , org.apache.camel.Consume etc will not be injected and in use. Turning this off should only be done if you are sure you do not use any of these Camel features. Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML). The default value is true (enabled). | true | boolean
+| *camel.main.beanPostProcessor{zwsp}Enabled* | Can be used to turn off bean post processing. Be careful to turn this off, as this means that beans that use Camel annotations such as org.apache.camel.EndpointInject , org.apache.camel.ProducerTemplate , org.apache.camel.Produce , org.apache.camel.Consume etc will not be injected and in use. Turning this off should only be done if you are sure you do not use any of these Camel features. Not all runtimes allow turning this off. The default value is true (enabled). | true | boolean
 | *camel.main.camelEvents{zwsp}TimestampEnabled* | Whether to include timestamps for all emitted Camel Events. Enabling this allows to know fine-grained at what time each event was emitted, which can be used for reporting to report exactly the time of the events. This is by default false to avoid the overhead of including this information. | false | boolean
 | *camel.main.caseInsensitive{zwsp}Headers* | Whether to use case sensitive or insensitive headers. Important: When using case sensitive (this is set to false). Then the map is case sensitive which means headers such as content-type and Content-Type are two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers. However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care. Default is true. | true | boolean
+| *camel.main.cloudProperties{zwsp}Location* | Sets the locations (comma separated values) where to find properties configuration as defined for cloud native environments such as Kubernetes. You should only scan text based mounted configuration. |  | String
 | *camel.main.compileWorkDir* | Work directory for compiler. Can be used to write compiled classes or other resources. |  | String
 | *camel.main.configuration{zwsp}Classes* | Sets classes names that will be used to configure the camel context as example by providing custom beans through org.apache.camel.BindToRegistry annotation. |  | String
 | *camel.main.configurations* | Sets the configuration objects used to configure the camel context. |  | List
@@ -158,7 +159,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 | *camel.routecontroller.backOff{zwsp}MaxDelay* | Backoff maximum delay in millis when restarting a route that failed to startup. |  | long
 | *camel.routecontroller.backOff{zwsp}MaxElapsedTime* | Backoff maximum elapsed time in millis, after which the backoff should be considered exhausted and no more attempts should be made. |  | long
 | *camel.routecontroller.backOff{zwsp}Multiplier* | Backoff multiplier to use for exponential backoff. This is used to extend the delay between restart attempts. |  | double
-| *camel.routecontroller.enabled* | To enable using supervising route controller which allows Camel to startup and then the controller takes care of starting the routes in a safe manner. This can be used when you want to startup Camel despite a route may otherwise fail fast during startup and cause Camel to fail to startup as well. By delegating the route startup to the supervising route controller then its manages the startup using a background thread. The controller allows to be configured with various settings to attempt to restart failing routes. | false | boolean
+| *camel.routecontroller.enabled* | To enable using supervising route controller which allows Camel to start up and then, the controller takes care of starting the routes in a safe manner. This can be used when you want to start up Camel despite a route may otherwise fail fast during startup and cause Camel to fail to start up as well. By delegating the route startup to the supervising route controller, then it manages the startup using a background thread. The controller allows to be configured with various settings to attempt to restart failing routes. | false | boolean
 | *camel.routecontroller.exclude{zwsp}Routes* | Pattern for filtering routes to be excluded as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to exclude all JMS routes, you can say jms:. And to exclude routes with specific route ids mySpecialRoute,myOtherSpecialRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern. |  | String
 | *camel.routecontroller.include{zwsp}Routes* | Pattern for filtering routes to be included as supervised. The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma. For example to include all kafka routes, you can say kafka:. And to include routes with specific route ids myRoute,myOtherRoute. The pattern supports wildcards and uses the matcher from org.apache.camel.support.PatternHelper#matchPattern. |  | String
 | *camel.routecontroller.initial{zwsp}Delay* | Initial delay in milli seconds before the route controller starts, after CamelContext has been started. |  | long
@@ -169,17 +170,23 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 13 options, which are listed below.
+The camel.server supports 19 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.server.authentication{zwsp}Enabled* | Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or Quarkus). | false | boolean
+| *camel.server.authentication{zwsp}Path* | Set HTTP url path of embedded server that is protected by authentication configuration. |  | String
+| *camel.server.basicProperties{zwsp}File* | Name of the file that contains basic authentication info for Vert.x file auth provider. |  | String
 | *camel.server.devConsoleEnabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
 | *camel.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
 | *camel.server.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health | false | boolean
 | *camel.server.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
 | *camel.server.infoEnabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /q/info | false | boolean
 | *camel.server.jolokiaEnabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia | false | boolean
+| *camel.server.jwtKeystore{zwsp}Password* | Password from the keystore used for JWT tokens validation. |  | String
+| *camel.server.jwtKeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
+| *camel.server.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
 | *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics | false | boolean
 | *camel.server.path* | Context-path to use for embedded HTTP server | / | String
@@ -325,7 +332,7 @@ The camel.rest supports 29 options, which are listed below.
 
 
 === Camel AWS Vault configurations
-The camel.vault.aws supports 9 options, which are listed below.
+The camel.vault.aws supports 11 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -339,6 +346,8 @@ The camel.vault.aws supports 9 options, which are listed below.
 | *camel.vault.aws.region* | The AWS region |  | String
 | *camel.vault.aws.secretKey* | The AWS secret key |  | String
 | *camel.vault.aws.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
+| *camel.vault.aws.sqsQueueUrl* | In case of usage of SQS notification this field will specified the Queue URL to use |  | String
+| *camel.vault.aws.useSqs{zwsp}Notification* | Whether to use AWS SQS for secrets updates notification, this will require setting up Eventbridge/Cloudtrail/SQS communication | false | boolean
 |===
 
 

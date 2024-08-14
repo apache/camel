@@ -75,14 +75,14 @@ When using imageContent option, we suggest you use RAW(image_base64_value) to av
 
 |=======================================================================
 
-== List of Supported Image Recognition Operations
+=== List of Supported Image Recognition Operations
 
 - celebrityRecognition - to analyze and identify the political figures, stars and online celebrities contained in the picture, and return the person information and face coordinates
 - tagRecognition - to recognize hundreds of scenes and thousands of objects and their properties in natural images
 
-== Inline Configuration of route
+=== Inline Configuration of route
 
-=== celebrityRecognition
+==== celebrityRecognition
 
 Java DSL
 

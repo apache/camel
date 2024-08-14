@@ -19,6 +19,8 @@ package org.apache.camel.processor.errorhandler;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -86,6 +88,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     public static final RedeliveryPolicy DEFAULT_POLICY = new RedeliveryPolicy();
 
     protected static Random randomNumberGenerator;
+    private static final Lock LOCK = new ReentrantLock();
     private static final @Serial long serialVersionUID = -338222777701473252L;
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryPolicy.class);
 
@@ -564,11 +567,16 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         this.useExponentialBackOff = useExponentialBackOff;
     }
 
-    protected static synchronized Random getRandomNumberGenerator() {
-        if (randomNumberGenerator == null) {
-            randomNumberGenerator = new Random(); // NOSONAR
+    protected static Random getRandomNumberGenerator() {
+        LOCK.lock();
+        try {
+            if (randomNumberGenerator == null) {
+                randomNumberGenerator = new Random(); // NOSONAR
+            }
+            return randomNumberGenerator;
+        } finally {
+            LOCK.unlock();
         }
-        return randomNumberGenerator;
     }
 
     /**

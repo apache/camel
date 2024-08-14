@@ -48,16 +48,15 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-
-== Consumer and Producer
-
-This component implements the Consumer and Producer.
-
-== Usage
-
 // component headers: START
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
+
+== Usage
+
+=== Consumer and Producer
+
+This component implements the Consumer and Producer.
 
 === Authentication Information
 
@@ -106,7 +105,8 @@ In the consumer, the returned message body will be of type `String.
 |===
 
 
-==== Examples
+== Examples
+
 - `sendMessages`
 
 [source,java]

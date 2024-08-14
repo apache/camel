@@ -53,6 +53,10 @@ You have to provide the amazonSESClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/ses[Amazon's SES].
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
@@ -73,10 +77,6 @@ You have also the possibility of using Profile Credentials Provider, by specifyi
 Only one of static, default and profile credentials could be used at the same time.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === Advanced SesClient configuration
 

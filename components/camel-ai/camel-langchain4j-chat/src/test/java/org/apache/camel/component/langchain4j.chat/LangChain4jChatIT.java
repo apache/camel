@@ -20,27 +20,38 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.rag.content.Content;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.chat.rag.LangChain4jRagAggregatorStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.Headers.AUGMENTED_DATA;
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.Headers.PROMPT_TEMPLATE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jChatIT extends OllamaTestSupport {
 
+    final static String AUGMENTEG_DATA_FOR_RAG
+            = "Sweden's Armand Duplantis set a new world record of 6.25m after winning gold in the men's pole vault at Paris 2024 Olympics.";
+    final static String QUESTION_FOR_RAG = "Who got the gold medal in pole vault at Paris 2024?";
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         this.context.getRegistry().bind("chatModel", chatLanguageModel);
+        LangChain4jRagAggregatorStrategy aggregatorStrategy = new LangChain4jRagAggregatorStrategy();
 
         return new RouteBuilder() {
             public void configure() {
@@ -71,6 +82,25 @@ public class LangChain4jChatIT extends OllamaTestSupport {
                             .to("mock:invalid-payload")
                         .end()
                         .to("mock:response");
+
+                from("direct:send-with-rag")
+                        .enrich("direct:add-augmented-data", aggregatorStrategy)
+                        .to("direct:send-simple-message");
+
+                from("direct:send-message-prompt-enrich")
+                        .enrich("direct:add-augmented-data", aggregatorStrategy)
+                        .to("direct:send-message-prompt");
+
+                from("direct:send-multiple-enrich")
+                        .enrich("direct:add-augmented-data", aggregatorStrategy)
+                        .to("direct:send-multiple");
+
+                from("direct:add-augmented-data")
+                        .process(exchange -> {
+                            List<String> augmentedData = List.of(
+                                    AUGMENTEG_DATA_FOR_RAG);
+                            exchange.getIn().setBody(augmentedData);
+                        });
 
             }
         };
@@ -121,7 +151,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         variables.put("ingredients", "potato, tomato, feta, olive oil");
 
         String response = template.requestBodyAndHeader("direct:send-message-prompt", variables,
-                LangChain4jChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
+                PROMPT_TEMPLATE, promptTemplate, String.class);
         mockEndpoint.assertIsSatisfied();
 
         assertTrue(response.contains("potato"));
@@ -153,7 +183,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         var promptTemplate = "Create a recipe for a {{dishType}} with the following ingredients: {{ingredients}}";
 
         template.sendBodyAndHeader("direct:send-message-prompt", null,
-                LangChain4jChat.Headers.PROMPT_TEMPLATE, promptTemplate);
+                PROMPT_TEMPLATE, promptTemplate);
         mockEndpoint.assertIsSatisfied();
     }
 
@@ -185,6 +215,125 @@ public class LangChain4jChatIT extends OllamaTestSupport {
 
         template.sendBody("direct:send-multiple", null);
         mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    @Timeout(value = 2, unit = TimeUnit.MINUTES)
+    void testSimpleMessageWithEnrichRAG() throws InterruptedException {
+        MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+
+        var response = template.requestBody("direct:send-with-rag", QUESTION_FOR_RAG,
+                String.class);
+
+        // this test could change if using an LLM updated after results of Olympics 2024
+        assertTrue(response.toLowerCase().contains("armand duplantis"));
+        mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void testSimpleMessageWithHeaderhRAG() throws InterruptedException {
+        MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+
+        Content augmentedContent = new Content(AUGMENTEG_DATA_FOR_RAG);
+
+        List<Content> contents = List.of(augmentedContent);
+
+        var response = template.requestBodyAndHeader("direct:send-simple-message", QUESTION_FOR_RAG,
+                AUGMENTED_DATA, contents, String.class);
+
+        // this test could change if using an LLM updated after results of Olympics 2024
+        assertTrue(response.toLowerCase().contains("armand duplantis"));
+        mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    void testSendMessageWithPromptRagEnrich() throws InterruptedException {
+        MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+
+        var promptTemplate = " Who got the gold medal in {{field}} at: {{competition}}";
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("field", "pole vault");
+        variables.put("competition", "Paris 2024");
+
+        String response = template.requestBodyAndHeader("direct:send-message-prompt-enrich", variables,
+                PROMPT_TEMPLATE, promptTemplate, String.class);
+        mockEndpoint.assertIsSatisfied();
+
+        // this test could change if using an LLM updated after results of Olympics 2024
+        assertTrue(response.toLowerCase().contains("armand duplantis"));
+    }
+
+    @Test
+    void testSendMessageWithPromptRagHeader() throws InterruptedException {
+        MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+
+        var promptTemplate = " Who got the gold medal in {{field}} at: {{competition}}";
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("field", "pole vault");
+        variables.put("competition", "Paris 2024");
+
+        Content augmentedContent = new Content(AUGMENTEG_DATA_FOR_RAG);
+
+        List<Content> contents = List.of(augmentedContent);
+
+        Map<String, Object> headerValues = new HashMap<>();
+        headerValues.put(PROMPT_TEMPLATE, promptTemplate);
+        headerValues.put(AUGMENTED_DATA, contents);
+
+        String response = template.requestBodyAndHeaders("direct:send-message-prompt", variables,
+                headerValues, String.class);
+        mockEndpoint.assertIsSatisfied();
+
+        // this test could change if using an LLM updated after results of Olympics 2024
+        assertTrue(response.toLowerCase().contains("armand duplantis"));
+    }
+
+    @Test
+    void testSendMultipleMessagesRagEnrich() throws InterruptedException {
+        MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new SystemMessage("You are asked to provide names for athletes that won medals at Paris 2024 Olympics."));
+        messages.add(new UserMessage("Hello, my name is Karen."));
+        messages.add(new AiMessage("Hello Karen, how can I help you?"));
+        messages.add(new UserMessage(QUESTION_FOR_RAG));
+
+        String response = template.requestBody("direct:send-multiple-enrich", messages, String.class);
+        mockEndpoint.assertIsSatisfied();
+
+        // this test could change if using an LLM updated after results of Olympics 2024
+        assertTrue(response.toLowerCase().contains("armand duplantis"));
+    }
+
+    @Test
+    void testSendMultipleMessagesRagHeader() throws InterruptedException {
+        MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
+        mockEndpoint.expectedMessageCount(1);
+
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new SystemMessage("You are asked to provide names for athletes that won medals at Paris 2024 Olympics."));
+        messages.add(new UserMessage("Hello, my name is Karen."));
+        messages.add(new AiMessage("Hello Karen, how can I help you?"));
+        messages.add(new UserMessage(QUESTION_FOR_RAG));
+
+        Content augmentedContent = new Content(AUGMENTEG_DATA_FOR_RAG);
+        List<Content> contents = List.of(augmentedContent);
+
+        String response
+                = template.requestBodyAndHeader("direct:send-multiple", messages, AUGMENTED_DATA, contents, String.class);
+        mockEndpoint.assertIsSatisfied();
+
+        // this test could change if using an LLM updated after results of Olympics 2024
+        assertTrue(response.toLowerCase().contains("armand duplantis"));
+
     }
 
 }

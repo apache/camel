@@ -40,6 +40,8 @@ public class SplunkConfiguration {
     private int port = Service.DEFAULT_PORT;
     @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2", label = "security")
     private SSLSecurityProtocol sslProtocol = SSLSecurityProtocol.TLSv1_2;
+    @UriParam(defaultValue = "true", label = "security")
+    private boolean validateCertificates = true;
     @UriParam
     private String app;
     @UriParam
@@ -261,6 +263,19 @@ public class SplunkConfiguration {
         this.sslProtocol = sslProtocol;
     }
 
+    public boolean isValidateCertificates() {
+        return validateCertificates;
+    }
+
+    /**
+     * Sets client's certificate validation mode.
+     *
+     * Value `false` makes SSL vulnerable and is not recommended for the production environment.
+     */
+    public void setValidateCertificates(boolean validateCertificates) {
+        this.validateCertificates = validateCertificates;
+    }
+
     public String getScheme() {
         return scheme;
     }
@@ -397,6 +412,7 @@ public class SplunkConfiguration {
         splunkConnectionFactory.setScheme(getScheme());
         splunkConnectionFactory.setUseSunHttpsHandler(isUseSunHttpsHandler());
         splunkConnectionFactory.setSslProtocol(getSslProtocol());
+        splunkConnectionFactory.setValidateCertificates(isValidateCertificates());
         splunkConnectionFactory.setToken(getToken());
         return splunkConnectionFactory;
     }

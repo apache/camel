@@ -19,12 +19,16 @@ package org.apache.camel.component.jsonata;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ResourceHelper;
 
 @Component("jsonata")
 public class JsonataComponent extends DefaultComponent {
+    @Metadata(label = "advanced",
+              description = "To configure custom frame bindings and inject user functions.")
+    protected JsonataFrameBinding frameBinding;
 
     public JsonataComponent() {
     }
@@ -33,7 +37,14 @@ public class JsonataComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 
-        JsonataEndpoint answer = new JsonataEndpoint(uri, this, remaining);
+        JsonataFrameBinding frameBinding
+                = resolveAndRemoveReferenceParameter(parameters, "frameBinding", JsonataFrameBinding.class);
+        if (frameBinding == null) {
+            // fallback to component configured
+            frameBinding = getFrameBinding();
+        }
+
+        JsonataEndpoint answer = new JsonataEndpoint(uri, this, remaining, frameBinding);
         answer.setContentCache(cache);
 
         // if its a http resource then append any remaining parameters and update the resource uri
@@ -43,5 +54,16 @@ public class JsonataComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    /**
+     * To use the custom JsonataFrameBinding to perform configuration of custom functions that will be used.
+     */
+    public void setFrameBinding(JsonataFrameBinding frameBinding) {
+        this.frameBinding = frameBinding;
+    }
+
+    public JsonataFrameBinding getFrameBinding() {
+        return frameBinding;
     }
 }

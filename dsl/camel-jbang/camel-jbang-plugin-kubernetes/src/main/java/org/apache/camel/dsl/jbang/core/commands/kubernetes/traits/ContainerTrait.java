@@ -21,15 +21,15 @@ import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
-import io.fabric8.kubernetes.api.model.IntOrString;
-import io.fabric8.kubernetes.api.model.ServiceBuilder;
-import io.fabric8.kubernetes.api.model.ServicePortBuilder;
+import io.fabric8.kubernetes.api.model.Quantity;
+import io.fabric8.kubernetes.api.model.ResourceRequirementsBuilder;
 import org.apache.camel.v1.integrationspec.Traits;
 import org.apache.camel.v1.integrationspec.traits.Container;
 
 public class ContainerTrait extends BaseTrait {
 
     public static final int CONTAINER_TRAIT_ORDER = 1600;
+    public static final int DEFAULT_CONTAINER_PORT = 8080;
     public static final String DEFAULT_CONTAINER_PORT_NAME = "http";
 
     public ContainerTrait() {
@@ -54,37 +54,29 @@ public class ContainerTrait extends BaseTrait {
             container.withImagePullPolicy(containerTrait.getImagePullPolicy().getValue());
         }
 
-        if (containerTrait.getPort() != null) {
+        if (containerTrait.getPort() != null || context.getService().isPresent() || context.getKnativeService().isPresent()) {
             container.addToPorts(new ContainerPortBuilder()
                     .withName(Optional.ofNullable(containerTrait.getPortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
-                    .withContainerPort(containerTrait.getPort().intValue())
+                    .withContainerPort(
+                            Optional.ofNullable(containerTrait.getPort()).map(Long::intValue).orElse(DEFAULT_CONTAINER_PORT))
                     .withProtocol("TCP")
                     .build());
         }
 
-        Optional<ServiceBuilder> service = context.getService();
-        if (service.isPresent()) {
-            if (containerTrait.getPort() == null) {
-                container.addToPorts(new ContainerPortBuilder()
-                        .withName(Optional.ofNullable(containerTrait.getPortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
-                        .withContainerPort(8080)
-                        .withProtocol("TCP")
-                        .build());
-            }
-
-            service.get().editOrNewSpec()
-                    .addToPorts(new ServicePortBuilder()
-                            .withName(Optional.ofNullable(containerTrait.getServicePortName())
-                                    .orElse(DEFAULT_CONTAINER_PORT_NAME))
-                            .withPort(Optional.ofNullable(containerTrait.getServicePort()).map(Long::intValue).orElse(80))
-                            .withTargetPort(
-                                    new IntOrString(
-                                            Optional.ofNullable(containerTrait.getPortName())
-                                                    .orElse(DEFAULT_CONTAINER_PORT_NAME)))
-                            .withProtocol("TCP")
-                            .build())
-                    .endSpec();
+        ResourceRequirementsBuilder resourceRequirementsBuilder = new ResourceRequirementsBuilder();
+        if (containerTrait.getRequestMemory() != null) {
+            resourceRequirementsBuilder.addToRequests("memory", new Quantity(containerTrait.getRequestMemory()));
         }
+        if (containerTrait.getRequestCPU() != null) {
+            resourceRequirementsBuilder.addToRequests("cpu", new Quantity(containerTrait.getRequestCPU()));
+        }
+        if (containerTrait.getLimitMemory() != null) {
+            resourceRequirementsBuilder.addToLimits("memory", new Quantity(containerTrait.getLimitMemory()));
+        }
+        if (containerTrait.getLimitCPU() != null) {
+            resourceRequirementsBuilder.addToLimits("cpu", new Quantity(containerTrait.getLimitCPU()));
+        }
+        container.withResources(resourceRequirementsBuilder.build());
 
         context.doWithDeployments(d -> d.editOrNewSpec()
                 .editOrNewTemplate()

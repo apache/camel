@@ -585,7 +585,7 @@ public interface Aws2AthenaComponentBuilderFactory {
         }
     
         /**
-         * If using a profile credentials provider this parameter will set the
+         * If using a profile credentials provider, this parameter will set the
          * profile name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -672,7 +672,7 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * Set whether the Athena client should expect to use Session
          * Credentials. This is useful in a situation in which the user needs to
-         * assume a IAM role for doing operations in Athena.
+         * assume an IAM role for doing operations in Athena.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

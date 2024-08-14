@@ -395,10 +395,12 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
 
-        PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
-        if (phc != null) {
-            uris.forEach(phc::removeHttpEndpoint);
-            uris.clear();
+        if (camelContext != null) {
+            PlatformHttpComponent phc = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
+            if (phc != null) {
+                uris.forEach(phc::removeHttpEndpoint);
+                uris.clear();
+            }
         }
     }
 

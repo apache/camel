@@ -19,7 +19,6 @@ package org.apache.camel.component.jira.consumer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -50,8 +49,7 @@ import static org.apache.camel.component.jira.JiraTestConstants.PROJECT;
 import static org.apache.camel.component.jira.Utils.createIssue;
 import static org.apache.camel.component.jira.Utils.createIssueWithComments;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.reset;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -88,15 +86,14 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
 
     public void setMocks() {
         SearchResult result = new SearchResult(0, 50, 100, ISSUES);
-        Promise<SearchResult> promiseSearchResult = Promises.promise(result);
-        Issue issue = createIssueWithComments(4L, 1);
-        Promise<Issue> promiseIssue = Promises.promise(issue);
+        Promise<SearchResult> searchResultPromise = Promises.promise(result);
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
         when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
         when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
-        when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(promiseSearchResult);
-        when(issueRestClient.getIssue(anyString())).thenReturn(promiseIssue);
+        when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(searchResultPromise);
+        ISSUES.forEach(issue -> when(issueRestClient.getIssue(eq(issue.getKey())))
+                .then(inv -> Promises.promise(issue)));
     }
 
     @Override
@@ -129,23 +126,18 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
 
     @Test
     public void singleIssueCommentsTest() throws Exception {
-        Issue issueWithCommends = createIssueWithComments(11L, 3000);
+        Issue issueWithComments = createIssueWithComments(11L, 3000);
         Issue issueWithNoComments = createIssue(51L);
+        List<Issue> newIssues = List.of(issueWithComments, issueWithNoComments);
 
-        reset(issueRestClient);
-        AtomicInteger regulator = new AtomicInteger();
-        when(issueRestClient.getIssue(anyString())).then(inv -> {
-            int idx = regulator.getAndIncrement();
-            Issue issue = issueWithNoComments;
-            if (idx < 1) {
-                issue = issueWithCommends;
-            }
-            return Promises.promise(issue);
-        });
+        SearchResult result = new SearchResult(0, 50, 2, newIssues);
+        when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(Promises.promise(result));
+        newIssues.forEach(issue -> when(issueRestClient.getIssue(eq(issue.getKey())))
+                .then(inv -> Promises.promise(issue)));
+
+        //clearInvocations(issueRestClient);
         List<Comment> comments = new ArrayList<>();
-        for (Comment c : issueWithCommends.getComments()) {
-            comments.add(c);
-        }
+        newIssues.forEach(issue -> issue.getComments().forEach(comments::add));
         // reverse the order, from oldest comment to recent
         Collections.reverse(comments);
         // expect 3000 comments
@@ -158,32 +150,15 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         Issue issue1 = createIssueWithComments(20L, 2000);
         Issue issue2 = createIssueWithComments(21L, 3000);
         Issue issue3 = createIssueWithComments(22L, 1000);
-        List<Issue> newIssues = new ArrayList<>();
-        newIssues.add(issue3);
-        newIssues.add(issue2);
-        newIssues.add(issue1);
-        Issue issueWithNoComments = createIssue(31L);
+        List<Issue> newIssues = List.of(issue3, issue2, issue1);
 
-        reset(searchRestClient);
-        reset(issueRestClient);
         SearchResult searchResult = new SearchResult(0, 50, 3, newIssues);
-        Promise<SearchResult> searchResultPromise = Promises.promise(searchResult);
-        when(searchRestClient.searchJql(anyString(), any(), any(), any())).thenReturn(searchResultPromise);
-        AtomicInteger regulator = new AtomicInteger();
-        when(issueRestClient.getIssue(anyString())).then(inv -> {
-            int idx = regulator.getAndIncrement();
-            Issue issue = issueWithNoComments;
-            if (idx < newIssues.size()) {
-                issue = newIssues.get(idx);
-            }
-            return Promises.promise(issue);
-        });
+        when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(Promises.promise(searchResult));
+        newIssues.forEach(issue -> when(issueRestClient.getIssue(eq(issue.getKey())))
+                .then(inv -> Promises.promise(issue)));
+
         List<Comment> comments = new ArrayList<>();
-        for (Issue issue : newIssues) {
-            for (Comment c : issue.getComments()) {
-                comments.add(c);
-            }
-        }
+        newIssues.forEach(issue -> issue.getComments().forEach(comments::add));
         // reverse the order, from oldest comment to recent
         Collections.reverse(comments);
         // expect 6000 comments

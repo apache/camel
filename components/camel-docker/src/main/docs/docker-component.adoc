@@ -46,7 +46,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Header Strategy
+== Usage
+
+=== Header Strategy
 
 All URI options can be passed as Header properties. Values found in a
 message header take precedence over URI parameters. A header property

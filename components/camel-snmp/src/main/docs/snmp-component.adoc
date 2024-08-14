@@ -59,8 +59,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== The result of a poll
+=== The result of a poll
 
 Given the situation, that I poll for the following OIDs:
 

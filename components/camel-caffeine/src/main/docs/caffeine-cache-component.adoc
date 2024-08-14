@@ -53,6 +53,15 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Usage
+
+=== Checking the operation result
+
+Each time you'll use an operation on the cache, you'll have two different headers to check for status:
+
+* `CaffeineConstants.ACTION_HAS_RESULT`
+* `CaffeineConstants.ACTION_SUCCEEDED`
+
 == Examples
 
 You can use your cache with the following code:
@@ -78,12 +87,5 @@ protected RouteBuilder createRouteBuilder() throws Exception {
 ------------------------------------------------------------
 
 In this way, you'll work always on the same cache in the registry.
-
-== Checking the operation result
-
-Each time you'll use an operation on the cache, you'll have two different headers to check for status:
-
-* `CaffeineConstants.ACTION_HAS_RESULT`
-* `CaffeineConstants.ACTION_SUCCEEDED`
 
 include::spring-boot:partial$starter.adoc[]

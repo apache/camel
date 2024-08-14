@@ -857,6 +857,15 @@ Deprecated: null
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="langChain4j" type="tns:langChain4JTokenizerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Tokenizer that uses LangChain4j for tokenization.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="language" type="tns:languageExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -1146,6 +1155,15 @@ Routes the message to a sequence of processors.
       <xs:documentation xml:lang="en">
 <![CDATA[
 Defines a policy the route will use
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="poll" type="tns:pollDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Polls a message from a static endpoint
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -3042,11 +3060,11 @@ If the location is optional. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To enable using supervising route controller which allows Camel to startup and then the controller takes care of
-starting the routes in a safe manner. This can be used when you want to startup Camel despite a route may otherwise fail
-fast during startup and cause Camel to fail to startup as well. By delegating the route startup to the supervising route
-controller then its manages the startup using a background thread. The controller allows to be configured with various
-settings to attempt to restart failing routes. Default value: false
+To enable using supervising route controller which allows Camel to start up and then, the controller takes care of
+starting the routes in a safe manner. This can be used when you want to start up Camel despite a route may otherwise
+fail fast during startup and cause Camel to fail to start up as well. By delegating the route startup to the supervising
+route controller then its manages the startup using a background thread. The controller allows to be configured with
+various settings to attempt to restart failing routes. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3583,6 +3601,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -3622,6 +3641,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="parallelProcessing" type="xs:string">
@@ -4224,6 +4244,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4263,6 +4284,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -4334,6 +4356,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4373,6 +4396,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -4435,6 +4459,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4474,6 +4499,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -4519,6 +4545,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4558,6 +4585,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="configuration" type="xs:string">
@@ -4992,6 +5020,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -5031,6 +5060,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="fallbackViaNetwork" type="xs:string">
@@ -6161,6 +6191,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6200,6 +6231,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="statusPropertyName" type="xs:string">
@@ -6252,6 +6284,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6291,6 +6324,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -6414,6 +6448,7 @@ Global option value.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6453,6 +6488,7 @@ Global option value.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="idempotentRepository" type="xs:string" use="required">
@@ -6575,6 +6611,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6614,6 +6651,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -6673,6 +6711,7 @@ intercepted.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6712,6 +6751,7 @@ intercepted.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="uri" type="xs:string" use="required">
@@ -6782,6 +6822,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6821,6 +6862,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
@@ -6882,6 +6924,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6921,6 +6964,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -7201,6 +7245,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -7240,6 +7285,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="copy" type="xs:string">
@@ -10609,6 +10655,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -10648,6 +10695,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="aggregationStrategy" type="xs:string">
@@ -10833,6 +10881,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -10872,6 +10921,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="mode" type="xs:string">
@@ -11032,6 +11082,7 @@ its considered handled as well.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -11071,6 +11122,7 @@ its considered handled as well.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="redeliveryPolicyRef" type="xs:string">
@@ -11291,6 +11343,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -11330,6 +11383,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -11372,6 +11426,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -11411,6 +11466,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string" use="required">
@@ -11418,6 +11474,47 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets a reference to use for lookup the policy in the registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="pollDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+        <xs:attribute name="variableReceive" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a variable to store the received message body (only body, not headers). This is handy for easy access to the
+received message body via variables. Important: When using receive variable then the received body is stored only in
+this variable and not on the current Message .
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="uri" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the uri of the endpoint to poll from.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timeout" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It
+basically operations in three different modes: negative value - Waits until a message is available and then returns it.
+Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message
+exchange immediately without waiting and returning null if a message exchange is not available yet. positive value -
+Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available.
+Returns null if timed out The default value is 20000 (20 seconds). Default value: 20000
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12005,6 +12102,7 @@ Name of variable to remove.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -12044,6 +12142,7 @@ Name of variable to remove.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -12355,6 +12454,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -12394,6 +12494,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="autoStartup" type="xs:string">
@@ -12793,6 +12894,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -12832,6 +12934,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="sagaService" type="xs:string">
@@ -13251,6 +13354,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -13290,6 +13394,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="delimiter" type="xs:string">
@@ -13482,6 +13587,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -13521,6 +13627,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -14061,6 +14168,13 @@ Whether to auto startup components when toD is starting up. Default value: true
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType abstract="true" name="tokenizerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="transactedDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -14098,6 +14212,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -14137,6 +14252,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string">
@@ -14241,6 +14357,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -14280,6 +14397,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
+            <xs:element ref="tns:langChain4j"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -17237,6 +17355,40 @@ Sets the component name that this definition will apply to.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="langChain4JTokenizerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:tokenizerDefinition">
+        <xs:sequence/>
+        <xs:attribute name="tokenizerType" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the tokenizer type.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxTokens" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the maximum number of tokens on each segment.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxOverlap" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the maximum number of tokens that can overlap in each segment.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="customTransformer">
     <xs:complexContent>
       <xs:extension base="tns:transformer">
@@ -17720,8 +17872,8 @@ Set whether breadcrumb is enabled.
 Can be used to turn off bean post processing. Be careful to turn this off, as this means that beans that use Camel
 annotations such as org.apache.camel.EndpointInject , org.apache.camel.ProducerTemplate , org.apache.camel.Produce ,
 org.apache.camel.Consume etc will not be injected and in use. Turning this off should only be done if you are sure you
-do not use any of these Camel features. Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi
-with XML). The default value is true (enabled). Default value: true
+do not use any of these Camel features. Not all runtimes allow turning this off. The default value is true (enabled).
+Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -18290,6 +18442,13 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="BOOLEAN"/>
       <xs:enumeration value="NODESET"/>
       <xs:enumeration value="NODE"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="tokenizerType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OPEN_AI"/>
+      <xs:enumeration value="AZURE"/>
+      <xs:enumeration value="QWEN"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="springErrorHandlerType">

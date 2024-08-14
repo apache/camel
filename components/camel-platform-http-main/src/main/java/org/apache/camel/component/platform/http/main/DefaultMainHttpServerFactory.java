@@ -19,10 +19,13 @@ package org.apache.camel.component.platform.http.main;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
+import org.apache.camel.component.platform.http.main.authentication.BasicAuthenticationConfigurer;
+import org.apache.camel.component.platform.http.main.authentication.JWTAuthenticationConfigurer;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.MainHttpServerFactory;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.util.ObjectHelper;
 
 @JdkService(MainConstants.PLATFORM_HTTP_SERVER)
 public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttpServerFactory {
@@ -59,6 +62,23 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         server.setUploadEnabled(configuration.isUploadEnabled());
         server.setUploadSourceDir(configuration.getUploadSourceDir());
 
+        if (configuration.isAuthenticationEnabled()) {
+            configureAuthentication(server, configuration);
+        }
+
         return server;
     }
+
+    private void configureAuthentication(MainHttpServer server, HttpServerConfigurationProperties configuration) {
+        if (configuration.getBasicPropertiesFile() != null) {
+            BasicAuthenticationConfigurer auth = new BasicAuthenticationConfigurer();
+            auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
+        } else if (configuration.getJwtKeystoreType() != null) {
+            ObjectHelper.notNull(configuration.getJwtKeystorePath(), "jwtKeyStorePath");
+            ObjectHelper.notNull(configuration.getJwtKeystorePassword(), "jwtKeyStorePassword");
+            JWTAuthenticationConfigurer auth = new JWTAuthenticationConfigurer();
+            auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
+        }
+    }
+
 }

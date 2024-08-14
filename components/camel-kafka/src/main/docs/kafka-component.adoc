@@ -62,7 +62,9 @@ include::partial$component-endpoint-headers.adoc[]
 
 If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as it is used as a one-time header that is not sent along the message, and actually is removed in the producer.
 
-== Consumer error handling
+== Usage
+
+=== Consumer error handling
 
 While kafka consumer is polling messages from the kafka broker, then errors can happen. This section describes what happens and what
 you can configure.
@@ -85,7 +87,7 @@ Camel components have.
 For advanced control a custom implementation of `org.apache.camel.component.kafka.PollExceptionStrategy` can be configured
 on the component level, which allows controlling which of the strategies to use for each exception.
 
-== Consumer error handling (advanced)
+=== Consumer error handling (advanced)
 
 By default, Camel will poll using the *ERROR_HANDLER* to process exceptions.
 How Camel handles a message that results in an exception can be altered using the `breakOnFirstError` attribute in the configuration.
@@ -103,145 +105,7 @@ camelContext.addComponent("kafka", kafka);
 It is recommended that you read the section below "Using manual commit with Kafka consumer" to understand how `breakOnFirstError`
 will work based on the `CommitManager` that is configured.
 
-== Samples
-
-=== Consuming messages from Kafka
-
-Here is the minimal route you need to read messages from Kafka.
-
-[source,java]
-----
-from("kafka:test?brokers=localhost:9092")
-    .log("Message received from Kafka : ${body}")
-    .log("    on the topic ${headers[kafka.TOPIC]}")
-    .log("    on the partition ${headers[kafka.PARTITION]}")
-    .log("    with the offset ${headers[kafka.OFFSET]}")
-    .log("    with the key ${headers[kafka.KEY]}")
-----
-
-If you need to consume messages from multiple topics, you can use a comma separated list of topic names.
-
-[source,java]
-----
-from("kafka:test,test1,test2?brokers=localhost:9092")
-    .log("Message received from Kafka : ${body}")
-    .log("    on the topic ${headers[kafka.TOPIC]}")
-    .log("    on the partition ${headers[kafka.PARTITION]}")
-    .log("    with the offset ${headers[kafka.OFFSET]}")
-    .log("    with the key ${headers[kafka.KEY]}")
-----
-
-It's also possible to subscribe to multiple topics giving a pattern as the topic name and using the `topicIsPattern` option.
-
-[source,java]
-----
-from("kafka:test*?brokers=localhost:9092&topicIsPattern=true")
-    .log("Message received from Kafka : ${body}")
-    .log("    on the topic ${headers[kafka.TOPIC]}")
-    .log("    on the partition ${headers[kafka.PARTITION]}")
-    .log("    with the offset ${headers[kafka.OFFSET]}")
-    .log("    with the key ${headers[kafka.KEY]}")
-----
-
-When consuming messages from Kafka, you can use your own offset management and not delegate this management to Kafka.
-To keep the offsets, the component needs a `StateRepository` implementation such as `FileStateRepository`.
-This bean should be available in the registry.
-Here how to use it :
-
-[source,java]
-----
-// Create the repository in which the Kafka offsets will be persisted
-FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
-
-// Bind this repository into the Camel registry
-Registry registry = createCamelRegistry();
-registry.bind("offsetRepo", repository);
-
-// Configure the camel context
-DefaultCamelContext camelContext = new DefaultCamelContext(registry);
-camelContext.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-                     // Set up the topic and broker address
-                     "&groupId=A" +
-                     // The consumer processor group ID
-                     "&autoOffsetReset=earliest" +
-                     // Ask to start from the beginning if we have unknown offset
-                     "&offsetRepository=#offsetRepo")
-                     // Keep the offsets in the previously configured repository
-                .to("mock:result");
-    }
-});
-----
- 
-
-=== Producing messages to Kafka
-
-Here is the minimal route you need in order to write messages to Kafka.
-
-[source,java]
-----
-from("direct:start")
-    .setBody(constant("Message from Camel"))          // Message to send
-    .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
-    .to("kafka:test?brokers=localhost:9092");
-----
-
-== SSL configuration
-
-You have 2 different ways to configure the SSL communication on the Kafka component.
-
-The first way is through the many SSL endpoint parameters:
-
-[source,java]
-----
-from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-             "&groupId=A" +
-             "&sslKeystoreLocation=/path/to/keystore.jks" +
-             "&sslKeystorePassword=changeit" +
-             "&sslKeyPassword=changeit" +
-             "&securityProtocol=SSL")
-        .to("mock:result");
-----
-
-The second way is to use the `sslContextParameters` endpoint parameter:
-
-[source,java]
-----
-// Configure the SSLContextParameters object
-KeyStoreParameters ksp = new KeyStoreParameters();
-ksp.setResource("/path/to/keystore.jks");
-ksp.setPassword("changeit");
-KeyManagersParameters kmp = new KeyManagersParameters();
-kmp.setKeyStore(ksp);
-kmp.setKeyPassword("changeit");
-SSLContextParameters scp = new SSLContextParameters();
-scp.setKeyManagers(kmp);
-
-// Bind this SSLContextParameters into the Camel registry
-Registry registry = createCamelRegistry();
-registry.bind("ssl", scp);
-
-// Configure the camel context
-DefaultCamelContext camelContext = new DefaultCamelContext(registry);
-camelContext.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-                     // Set up the topic and broker address
-                     "&groupId=A" +
-                     // The consumer processor group ID
-                     "&sslContextParameters=#ssl" +
-                     // The security protocol
-                     "&securityProtocol=SSL)
-                     // Reference the SSL configuration
-                .to("mock:result");
-    }
-});
-----
-
-== Using the Kafka idempotent repository
+=== The Kafka idempotent repository
 
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
 The topic used must be unique per idempotent repository instance. The mechanism does not have any requirements about the number of topic partitions, as the repository consumes from all partitions at the same time. It also does not have any requirements about the replication factor of the topic.
@@ -265,7 +129,7 @@ If setting this value explicitly, be aware that there is a tradeoff between the 
 |===
 
 The repository can be instantiated by defining the `topic` and `bootstrapServers`, or the `producerConfig` and `consumerConfig` property sets can be explicitly defined to enable features such as SSL/SASL.
-To use, this repository must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
+To use, this repository must be placed in the Camel registry, either manually or by registration as a bean in Spring, as it is `CamelContext` aware.
 
 Sample usage is as follows:
 
@@ -359,7 +223,7 @@ from(from).routeId("foo")
     .to(to);
 ----
 
-== Using manual commit with Kafka consumer
+=== Manual commits with the Kafka consumer
 
 By default, the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
 
@@ -372,7 +236,7 @@ or on the endpoint, for example:
 KafkaComponent kafka = new KafkaComponent();
 kafka.setAutoCommitEnable(false);
 kafka.setAllowManualCommit(true);
-...
+// ...
 camelContext.addComponent("kafka", kafka);
 ----
 
@@ -423,7 +287,7 @@ exception with the message `KafkaConsumer is not safe for multi-threaded access`
 
 *Note 2: this is mostly useful with aggregation's completion timeout strategies.
 
-== Pausable Consumers
+=== Pausable Consumers
 
 The Kafka component supports pausable consumers. This type of consumer can pause consuming data based on
 conditions external to the component itself, such as an external system being unavailable or other transient conditions.
@@ -444,7 +308,7 @@ the check called by the `pausable` EIP should be used to test for transient cond
 
 NOTE: most users should prefer using the xref:manual::route-policy.adoc[RoutePolicy], which offers better control of the route.
 
-== Kafka Headers propagation
+=== Kafka Headers propagation
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.
 Producing flow backed by same behaviour - camel headers of particular exchange will be propagated to kafka message headers.
@@ -473,9 +337,9 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 .to("kafka:my_topic?headerFilterStrategy=#myStrategy")
 ----
 
-`myStrategy` object should be a subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
+`myStrategy` object should be a subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring, as it is `CamelContext` aware.
 
-== Kafka Transaction
+=== Kafka Transaction
 
 You need to add `transactional.id`, `enable.idempotence` and `retries` in `additional-properties` to enable kafka transaction with the producer.
 [source,java]
@@ -487,9 +351,10 @@ At the end of exchange routing, the kafka producer would commit the transaction 
 
 It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS), which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to roll back the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
 
-== Setting Kerberos config file
+=== Setting Kerberos config file
 
-Configure the 'krb5.conf' file directly through the API
+Configure the 'krb5.conf' file directly through the API:
+
 [source,java]
 ----
 static {
@@ -497,7 +362,7 @@ static {
 }
 ----
 
-== Batching Consumer
+=== Batching Consumer
 
 To use a Kafka batching consumer with Camel, an application has to set the configuration `batching` to `true`.
 
@@ -509,7 +374,7 @@ The size of the batch is controlled by the option `maxPollRecords`.
 
 To avoid blocking for too long, waiting for the whole set of records to fill the batch, it is possible to use the `pollTimeoutMs` option to set a timeout for the polling. In this case, the batch may contain less messages than set in the `maxPollRecords`.
 
-=== Automatic Commits
+==== Automatic Commits
 
 By default, Camel uses automatic commits when using batch processing. In this case, Camel automatically commits the records after they have been successfully processed by the application.
 
@@ -538,7 +403,7 @@ public void configure() {
 }
 ----
 
-==== Handling Errors with Automatic Commits
+===== Handling Errors with Automatic Commits
 
 When using automatic commits, Camel will not commit records if there is a failure in processing. Because of this, there is a risk that records could be reprocessed multiple times.
 
@@ -637,7 +502,7 @@ public void configure() {
 }
 ----
 
-== Custom Subscription Adapters
+=== Custom Subscription Adapters
 
 Applications with complex subscription logic may provide a custom bean to handle the subscription process. To so, it is
 necessary to implement the interface `SubscribeAdapter`.
@@ -665,9 +530,9 @@ Then, it is necessary to add it as named bean instance to the registry:
 context.getRegistry().bind(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER, new CustomSubscribeAdapter());
 ----
 
-== Interoperability
+=== Interoperability
 
-=== JMS
+==== JMS
 
 When interoperating Kafka and JMS, it may be necessary to coerce the JMS headers into their expected type.
 
@@ -692,6 +557,145 @@ For example:
 ----
 from("kafka:topic?headerDeserializer=#class:org.apache.camel.component.kafka.consumer.support.interop.JMSDeserializer")
     .to("...");
+----
+
+
+== Examples
+
+=== Consuming messages from Kafka
+
+Here is the minimal route you need to read messages from Kafka.
+
+[source,java]
+----
+from("kafka:test?brokers=localhost:9092")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+----
+
+If you need to consume messages from multiple topics, you can use a comma separated list of topic names.
+
+[source,java]
+----
+from("kafka:test,test1,test2?brokers=localhost:9092")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+----
+
+It's also possible to subscribe to multiple topics giving a pattern as the topic name and using the `topicIsPattern` option.
+
+[source,java]
+----
+from("kafka:test.*?brokers=localhost:9092&topicIsPattern=true")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+----
+
+When consuming messages from Kafka, you can use your own offset management and not delegate this management to Kafka.
+To keep the offsets, the component needs a `StateRepository` implementation such as `FileStateRepository`.
+This bean should be available in the registry.
+Here how to use it :
+
+[source,java]
+----
+// Create the repository in which the Kafka offsets will be persisted
+FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
+
+// Bind this repository into the Camel registry
+Registry registry = createCamelRegistry();
+registry.bind("offsetRepo", repository);
+
+// Configure the camel context
+DefaultCamelContext camelContext = new DefaultCamelContext(registry);
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        fromF("kafka:%s?brokers=localhost:{{kafkaPort}}" +
+                     // Set up the topic and broker address
+                     "&groupId=A" +
+                     // The consumer processor group ID
+                     "&autoOffsetReset=earliest" +
+                     // Ask to start from the beginning if we have unknown offset
+                     "&offsetRepository=#offsetRepo", TOPIC)
+                     // Keep the offsets in the previously configured repository
+                .to("mock:result");
+    }
+});
+----
+
+
+=== Producing messages to Kafka
+
+Here is the minimal route you need to produce messages to Kafka.
+
+[source,java]
+----
+from("direct:start")
+    .setBody(constant("Message from Camel"))          // Message to send
+    .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
+    .to("kafka:test?brokers=localhost:9092");
+----
+
+=== SSL configuration
+
+You have two different ways to configure the SSL communication on the Kafka component.
+
+The first way is through the many SSL endpoint parameters:
+
+[source,java]
+----
+from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
+             "&groupId=A" +
+             "&sslKeystoreLocation=/path/to/keystore.jks" +
+             "&sslKeystorePassword=changeit" +
+             "&sslKeyPassword=changeit" +
+             "&securityProtocol=SSL")
+        .to("mock:result");
+----
+
+The second way is to use the `sslContextParameters` endpoint parameter:
+
+[source,java]
+----
+// Configure the SSLContextParameters object
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/path/to/keystore.jks");
+ksp.setPassword("changeit");
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("changeit");
+SSLContextParameters scp = new SSLContextParameters();
+scp.setKeyManagers(kmp);
+
+// Bind this SSLContextParameters into the Camel registry
+Registry registry = createCamelRegistry();
+registry.bind("ssl", scp);
+
+// Configure the camel context
+DefaultCamelContext camelContext = new DefaultCamelContext(registry);
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
+                     // Set up the topic and broker address
+                     "&groupId=A" +
+                     // The consumer processor group ID
+                     "&sslContextParameters=#ssl" +
+                     // The security protocol
+                     "&securityProtocol=SSL)
+                     // Reference the SSL configuration
+                .to("mock:result");
+    }
+});
 ----
 
 include::spring-boot:partial$starter.adoc[]

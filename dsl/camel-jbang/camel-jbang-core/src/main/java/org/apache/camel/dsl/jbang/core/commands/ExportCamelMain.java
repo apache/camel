@@ -20,13 +20,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -42,6 +38,7 @@ class ExportCamelMain extends Export {
 
     public ExportCamelMain(CamelJBangMain main) {
         super(main);
+        pomTemplateName = "main-pom.tmpl";
     }
 
     @Override
@@ -160,7 +157,7 @@ class ExportCamelMain extends Export {
     private void createMavenPom(File settings, File profile, File pom, Set<String> deps, String packageName) throws Exception {
         String[] ids = gav.split(":");
 
-        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-pom.tmpl");
+        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/" + pomTemplateName);
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
@@ -169,10 +166,10 @@ class ExportCamelMain extends Export {
             camelVersion = catalog.getCatalogVersion();
         }
 
-        context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
-        context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
-        context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
-        context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
         if (packageName != null) {
             context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);
@@ -182,20 +179,9 @@ class ExportCamelMain extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = getMavenRepos(settings, prop, camelVersion);
+        String repos = getMavenRepositories(settings, prop, camelVersion);
 
-        if (additionalProperties != null) {
-            String properties = Arrays.stream(additionalProperties.split(","))
-                    .map(property -> {
-                        String[] keyValueProperty = property.split("=");
-                        return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
-                                keyValueProperty[0]);
-                    })
-                    .collect(Collectors.joining(System.lineSeparator()));
-            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), Matcher.quoteReplacement(properties));
-        } else {
-            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), "");
-        }
+        context = replaceBuildProperties(context);
 
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
@@ -246,85 +232,7 @@ class ExportCamelMain extends Export {
 
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        // include kubernetes?
-        context = enrichMavenPomKubernetes(context, settings, profile);
-
         IOHelper.writeText(context, new FileOutputStream(pom, false));
-    }
-
-    protected String enrichMavenPomKubernetes(String context, File settings, File profile) throws Exception {
-        StringBuilder sb1 = new StringBuilder();
-        StringBuilder sb2 = new StringBuilder();
-
-        // is kubernetes included?
-        Properties prop = new CamelCaseOrderedProperties();
-        if (profile.exists()) {
-            RuntimeUtil.loadProperties(prop, profile);
-        }
-        boolean jib = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib."));
-        boolean jkube = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jkube."));
-        // jib is used for docker and kubernetes, jkube is only used for kubernetes
-        if (jib || jkube) {
-            // include all jib/jkube/label properties
-            String fromImage = null;
-            for (String key : prop.stringPropertyNames()) {
-                String value = prop.getProperty(key);
-                if ("jib.from.image".equals(key)) {
-                    fromImage = value;
-                }
-                boolean accept = key.startsWith("jkube.") || key.startsWith("jib.") || key.startsWith("label.");
-                if (accept) {
-                    sb1.append(String.format("        <%s>%s</%s>%n", key, value, key));
-                }
-            }
-            // from image is mandatory so use a default image if none provided
-            if (fromImage == null) {
-                fromImage = "eclipse-temurin:" + javaVersion + "-jre";
-                sb1.append(String.format("        <%s>%s</%s>%n", "jib.from.image", fromImage, "jib.from.image"));
-            }
-
-            InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-pom.tmpl");
-            String context2 = IOHelper.loadText(is);
-            IOHelper.close(is);
-
-            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings, prop));
-
-            // image from/to auth
-            String auth = "";
-            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth."))) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-from-auth-pom.tmpl");
-                auth = IOHelper.loadText(is);
-                IOHelper.close(is);
-            }
-            context2 = context2.replace("{{ .JibFromImageAuth }}", auth);
-            auth = "";
-            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.to.auth."))) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-to-auth-pom.tmpl");
-                auth = IOHelper.loadText(is);
-                IOHelper.close(is);
-            }
-            context2 = context2.replace("{{ .JibToImageAuth }}", auth);
-            // http port setting
-            int port = httpServerPort(settings);
-            if (port == -1) {
-                port = 8080;
-            }
-            context2 = context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port));
-            sb2.append(context2);
-            // jkube is only used for kubernetes
-            if (jkube) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
-                String context3 = IOHelper.loadText(is);
-                IOHelper.close(is);
-                context3 = context3.replaceFirst("\\{\\{ \\.JkubeMavenPluginVersion }}",
-                        jkubeMavenPluginVersion(settings, prop));
-                sb2.append(context3);
-            }
-        }
-
-        context = context.replace("{{ .CamelKubernetesProperties }}", sb1.toString());
-        context = context.replace("{{ .CamelKubernetesPlugins }}", sb2.toString());
-        return context;
     }
 
     @Override

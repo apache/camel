@@ -329,6 +329,30 @@ public interface MilvusEndpointBuilderFactory {
         public String milvusCollectionName() {
             return "CamelMilvusCollectionName";
         }
+        /**
+         * Key Name for Insert/Upsert operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MilvusKeyName}.
+         */
+        public String milvusKeyName() {
+            return "CamelMilvusKeyName";
+        }
+        /**
+         * Key Value for Insert/Upsert operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MilvusKeyValue}.
+         */
+        public String milvusKeyValue() {
+            return "CamelMilvusKeyValue";
+        }
     }
     static MilvusEndpointBuilder endpointBuilder(String componentName, String path) {
         class MilvusEndpointBuilderImpl extends AbstractEndpointBuilder implements MilvusEndpointBuilder, AdvancedMilvusEndpointBuilder {

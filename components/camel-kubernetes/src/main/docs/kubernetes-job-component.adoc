@@ -36,18 +36,22 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listJob
-- listJobByLabels
-- getJob
-- createJob
-- updateJob
-- deleteJob
+=== Supported producer operation
 
-== Kubernetes Job Producer Examples
+- `listJob`
+- `listJobByLabels`
+- `getJob`
+- `createJob`
+- `updateJob`
+- `deleteJob`
 
-- listJob: this operation lists the jobs on a kubernetes cluster
+== Examples
+
+=== Kubernetes Job Producer Examples
+
+- `listJob`: this operation lists the jobs on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -56,9 +60,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Jobs from your cluster
+This operation returns a list of jobs from your cluster
 
-- listJobByLabels:  this operation lists the jobs by labels on a kubernetes cluster
+- `listJobByLabels`: this operation lists the jobs by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -75,9 +79,9 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Jobs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a list of jobs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
-- createJob: This operation creates a job on a Kubernetes Cluster
+- `createJob`: This operation creates a job on a Kubernetes Cluster
 
 We have a wonderful example of this operation thanks to https://github.com/Emmerson-Miranda[Emmerson Miranda] from this https://github.com/Emmerson-Miranda/camel/blob/master/camel3-cdi/cdi-k8s-pocs/src/main/java/edu/emmerson/camel/k8s/jobs/camel_k8s_jobs/KubernetesCreateJob.java[Java test]
 
@@ -179,7 +183,6 @@ public class KubernetesCreateJob extends RouteBuilder {
 	}
 }
 --------------------------------------------------------------------------------
-
 
 
 include::spring-boot:partial$starter.adoc[]

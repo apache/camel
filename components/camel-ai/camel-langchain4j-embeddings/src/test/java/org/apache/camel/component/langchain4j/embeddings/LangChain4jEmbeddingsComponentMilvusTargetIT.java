@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import dev.langchain4j.model.embedding.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.DataType;
 import io.milvus.param.IndexType;
@@ -80,7 +80,6 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .withDescription("user identification")
                 .withDataType(DataType.Int64)
                 .withPrimaryKey(true)
-                .withAutoID(true)
                 .build();
 
         FieldType fieldType2 = FieldType.newBuilder()
@@ -171,6 +170,18 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 c -> assertThat(c.rowRecords.size() == 1));
     }
 
+    @Test
+    @Order(4)
+    public void upsert() {
+
+        Exchange result = fluentTemplate.to("direct:up")
+                .withBody("hello")
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -178,6 +189,16 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
                         .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.INSERT)
+                        .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
+                        .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
+                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
+                        .to(MILVUS_URI);
+
+                from("direct:up")
+                        .to("langchain4j-embeddings:test")
+                        .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.UPSERT)
+                        .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
+                        .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
                         .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
             }

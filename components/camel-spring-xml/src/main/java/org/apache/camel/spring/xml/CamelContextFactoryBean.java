@@ -1088,7 +1088,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      *
      * Turning this off should only be done if you are sure you do not use any of these Camel features.
      *
-     * Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML).
+     * Not all runtimes allow turning this off.
      *
      * The default value is true (enabled).
      */

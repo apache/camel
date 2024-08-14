@@ -292,8 +292,13 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
         // subscribe to topic
         ServiceHelper.startService(subscriptionHelper);
-        subscriptionHelper.subscribe(topicName, this);
+        subscriptionHelper.subscribe(this);
         subscribed = true;
+    }
+
+    @Override
+    public SalesforceEndpoint getEndpoint() {
+        return this.endpoint;
     }
 
     /**
@@ -324,7 +329,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
         if (subscribed) {
             subscribed = false;
             // unsubscribe from topic
-            subscriptionHelper.unsubscribe(topicName, this);
+            subscriptionHelper.unsubscribe(this);
         }
     }
 

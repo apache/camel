@@ -28,5 +28,8 @@ public class LangChain4jChat {
     public static class Headers {
         @Metadata(description = "The prompt Template.", javaType = "String")
         public static final String PROMPT_TEMPLATE = "CamelLangChain4jChatPromptTemplate";
+
+        @Metadata(description = "Augmented Data for RAG", javaType = "String")
+        public static final String AUGMENTED_DATA = "CamelLangChain4jChatAugmentedData";
     }
 }

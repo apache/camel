@@ -30,7 +30,7 @@
 
     <artifactId>camel-langchain4j-chat</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: LangChain4j :: Chat</name>
+    <name>Camel :: AI :: LangChain4j :: Chat</name>
     <description>LangChain4j Chat component</description>
 
     <dependencies>

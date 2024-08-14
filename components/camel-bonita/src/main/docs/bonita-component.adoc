@@ -37,8 +37,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== Body content
+=== Body content
 
 For the startCase operation, the input variables are retrieved from the body message.
 This one has to contain a `Map<String,Serializable>`.

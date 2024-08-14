@@ -38,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
 
 @UriEndpoint(firstVersion = "4.5.0", scheme = SCHEME,
-             title = "langChain4j Chat",
+             title = "LangChain4j Chat",
              syntax = "langchain4j-chat:chatId", producerOnly = true,
              category = { Category.AI }, headersClass = LangChain4jChat.Headers.class)
 public class LangChain4jChatEndpoint extends DefaultEndpoint {
@@ -141,5 +141,12 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
 
     public void setCamelToolParameter(CamelSimpleToolParameter camelToolParameter) {
         this.camelToolParameter = camelToolParameter;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        CamelToolExecutorCache.getInstance().getTools().clear();
     }
 }

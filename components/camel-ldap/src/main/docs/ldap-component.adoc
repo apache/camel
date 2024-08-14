@@ -58,11 +58,13 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-== Result
+== Usage
+
+=== Result
 
 The result is returned to Out body as a `List<javax.naming.directory.SearchResult>` object.
 
-== DirContext
+=== DirContext
 
 The URI, `ldap:ldapserver`, references a bean with the ID 
 `ldapserver`. The `ldapserver` bean may be defined as follows:
@@ -115,7 +117,7 @@ that connects anonymously to a locally hosted LDAP server.
 For Camel Quarkus applications, you can achieve similar behavior by using the `@Dependent` annotation. When you annotate a component or bean with `@Dependent`, a new instance of the component is created for each injection point or usage, which effectively provides the same concurrency guarantees as Spring's `prototype` scope. This ensures that each part of your application interacts with a separate and isolated `DirContext` instance, preventing unintended thread interference.
 ====
 
-== Security concerns related to LDAP injection
+=== Security concerns related to LDAP injection
 
 IMPORTANT: The camel-ldap component uses the message body to filter the search results.
 Therefore, the message body should be protected from LDAP injection. To assist with this,
@@ -125,7 +127,7 @@ to escape string values to be LDAP injection safe.
 See the following link
 for information about https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html[LDAP Injection].
 
-== Samples
+== Examples
 
 Following on from the configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common
@@ -151,9 +153,9 @@ if (results.size() > 0) {
 }
 ----------------------------------------------------------
 
-If no specific filter is required - for example, you just need to look
-up a single entry - specify a wildcard filter expression. For example,
-if the LDAP entry has a Common Name, use a filter expression like:
+If no specific filter is required (for example, you need to look
+up a single entry), specify a wildcard filter expression.
+If the LDAP entry has a Common Name, use a filter expression like:
 
 ------
 (cn=*)
@@ -208,7 +210,8 @@ context.stop();
 == Configuring SSL
 
 All that is required is to create a custom socket factory and reference it in
-the InitialDirContext bean - see below sample.
+the `InitialDirContext` bean.
+See the sample below.
 
 *SSL Configuration*
 

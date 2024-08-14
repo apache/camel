@@ -98,6 +98,40 @@ public interface SplunkHecComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * Sets the default SSL configuration to use for all the endpoints. You
+         * can also configure it directly at the endpoint level.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SplunkHecComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default SplunkHecComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
     }
 
     class SplunkHecComponentBuilderImpl
@@ -115,6 +149,8 @@ public interface SplunkHecComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((SplunkHECComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SplunkHECComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "sslContextParameters": ((SplunkHECComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((SplunkHECComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

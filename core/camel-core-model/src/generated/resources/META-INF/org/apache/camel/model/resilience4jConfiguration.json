@@ -5,7 +5,7 @@
     "title": "Resilience4j Configuration",
     "description": "Resilience4j Circuit Breaker EIP configuration",
     "deprecated": false,
-    "label": "configuration,eip",
+    "label": "configuration,eip,error",
     "javaType": "org.apache.camel.model.Resilience4jConfigurationDefinition",
     "abstract": false,
     "input": false,

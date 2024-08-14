@@ -68,13 +68,13 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Using XJ endpoints
+== Usage
 
 === Converting JSON to XML
 
 The following route does an "identity" transform of the message because no xslt stylesheet is given. In the context of
-xml to xml transformations, "Identity" transform means that the output document is just a copy of the input document.
-In the case of XJ, it means it transforms the json document to an equivalent xml representation.
+XML to XML transformations, "Identity" transform means that the output document is just a copy of the input document.
+In the case of XJ, it means it transforms the JSON document to an equivalent XML representation.
 
 [source,java]
 ----
@@ -245,12 +245,12 @@ will result in
 }
 ----
 
-You may have noted that the input xml and output json are very similar to the examples above when converting from json to xml,
-although nothing special is done here. We only transformed an arbitrary XML document to json.
+You may have noted that the input XML and output JSON are very similar to the examples above when converting from json to xml,
+although nothing special is done here. We only transformed an arbitrary XML document to JSON.
 XJ uses the following rules by default:
 
-* The XML root element can be named somehow, it will always end in a json root object declaration `{}`
-* The json key name is the name of the xml element
+* The XML root element can be named somehow, it will always end in a JSON root object declaration `{}`
+* The JSON key name is the name of the XML element
 * If there is a name clash as in `<roles>` above where two `<entry>` elements exist a json array will be generated.
 * XML elements with text-only-child-nodes will result in the usual key/string-value pair. Mixed content elements
 result in a key/child-object pair as seen in `<state>` above.
@@ -354,9 +354,9 @@ and get the following output:
 }
 ----
 
-Note, this transformation resulted in exactly the same json document as we used as input to the _json2xml_ conversion.
-What did the stylesheet do? We just gave some hints to XJ on how to write the json document. The following XML
-document is that what is passed to XJ after xsl transformation:
+Note, this transformation resulted in exactly the same JSON document as we used as input to the _json2xml_ conversion.
+What did the stylesheet do? We just gave some hints to XJ on how to write the JSON document. The following XML
+document is that what is passed to XJ after XSL transformation:
 
 [source,xml]
 ----
@@ -380,9 +380,9 @@ document is that what is passed to XJ after xsl transformation:
 ----
 
 In the stylesheet we just provided the minimal required type hints to get the same result.
-The supported type hints are exactly the same as XJ writes to a XML document when converting from json to xml.
+The supported type hints are exactly the same as XJ writes to an XML document when converting from json to xml.
 
-In the end, that means that we can feed back in the result document from the json to xml transformation sample above:
+In the end, that means that we can feed back in the result document from the JSON to XML transformation sample above:
 
 [source,xml]
 ----
@@ -430,7 +430,7 @@ and get the same output again:
 As seen in the example above:
 
 * xj:type lets you specify exactly the desired output type
-* xj:name lets you overrule the json key name.
+* xj:name lets you overrule the JSON key name.
 
 This is required when you want to generate key names that contain chars that aren't allowed in XML element names.
 
@@ -439,13 +439,13 @@ This is required when you want to generate key names that contain chars that are
 [width="100%",cols="2,4",options="header"]
 |===
 | @xj:type= | Description
-| object | Generate a json object
-| array | Generate a json array
-| string | Generate a json string
-| int | Generate a json number without fractional part
-| float | Generate a json number with fractional part
-| boolean | Generate a json boolean
-| null | Generate an empty value using the word null
+| `object` | Generate a JSON object
+| `array` | Generate a JSON array
+| `string` | Generate a JSON string
+| `int` | Generate a JSON number without fractional part
+| `float` | Generate a JSON number with fractional part
+| `boolean` | Generate a JSON boolean
+| `null` | Generate an empty value using the word null
 |===
 
 

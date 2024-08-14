@@ -14,7 +14,6 @@ which also is used for invoking beans, but in the form as a Camel component.
 
 == URI Format
 
-[source]
 ----
 bean:beanID[?options]
 ----

@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-langchain4j-web-search/src/main/docs/langchain4j-web-search-component.adoc

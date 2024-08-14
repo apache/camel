@@ -118,9 +118,8 @@ public interface ExtendedCamelContext {
      * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      * <p/>
      * As the startup procedure of {@link CamelContext} is slightly different when using plain Java versus
-     * camel-spring-xml or camel-blueprint, then we need to know when spring/blueprint are setting up the routes, which
-     * can happen after the {@link CamelContext} itself is in started state, due the asynchronous event nature of
-     * especially blueprint.
+     * camel-spring-xml, then we need to know when spring is setting up the routes, which can happen after the
+     * {@link CamelContext} itself is in started state.
      *
      * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
      */

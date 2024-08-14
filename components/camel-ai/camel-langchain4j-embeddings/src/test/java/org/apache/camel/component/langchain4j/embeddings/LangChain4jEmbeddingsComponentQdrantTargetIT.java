@@ -18,7 +18,7 @@ package org.apache.camel.component.langchain4j.embeddings;
 
 import java.util.Collection;
 
-import dev.langchain4j.model.embedding.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import io.qdrant.client.PointIdFactory;
 import io.qdrant.client.grpc.Collections;
 import org.apache.camel.CamelContext;

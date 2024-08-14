@@ -1226,9 +1226,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             if (verb.getType() != null) {
                 String bodyType = parseText(camelContext, verb.getType());
-                if (bodyType.endsWith("[]")) {
-                    bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
-                }
                 ParamDefinition param = findParam(verb, RestParamType.body.name());
                 if (param == null) {
                     // must be body type and set the model class as data type

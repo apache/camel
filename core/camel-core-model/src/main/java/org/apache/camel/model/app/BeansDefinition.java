@@ -79,6 +79,10 @@ public class BeansDefinition {
                            documentElement = "beans")
     @XmlAnyElement
     private List<Element> springBeans = new ArrayList<>();
+
+    // Blueprint XML is deprecated, but we need those so that Camel JBang can
+    // load the routes and transform them
+
     @ExternalSchemaElement(names = { "bean" },
                            namespace = "http://www.osgi.org/xmlns/blueprint/v1.0.0",
                            documentElement = "blueprint")

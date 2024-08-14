@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>{{ .JavaVersion }}</java.version>
-{{ .AdditionalProperties }}
+{{ .BuildProperties }}
     </properties>
 
     <dependencyManagement>
@@ -75,33 +75,63 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
+                <groupId>org.eclipse.jkube</groupId>
+                <artifactId>kubernetes-maven-plugin</artifactId>
+                <version>${camel.springboot.jkube.version}</version>
                 <configuration>
-                    <from>
-                        <image>eclipse-temurin:{{ .JavaVersion }}</image>
-                        <platforms>
-                            <platform>
-                                <architecture>amd64</architecture>
-                                <os>linux</os>
-                            </platform>
-                            <platform>
-                                <architecture>arm64</architecture>
-                                <os>linux</os>
-                            </platform>
-                        </platforms>
-                    </from>
-                    <to>
-                        <image>${camel.springboot.kubernetes.image-name}</image>
-                    </to>
-                    <allowInsecureRegistries>${camel.springboot.container-image.insecure}</allowInsecureRegistries>
+                    <imagePullPolicy>${camel.springboot.kubernetes.image-pull-policy}</imagePullPolicy>
+                    <buildStrategy>docker</buildStrategy>
+                    <images>
+                        <image>
+                            <name>${camel.springboot.kubernetes.image-name}</name>
+                            <build>
+                                <from>eclipse-temurin:{{ .JavaVersion }}</from>
+                                <createImageOptions>
+                                    <platform>linux/amd64</platform>
+                                    <platform>linux/arm64</platform>
+                                </createImageOptions>
+                                <ports>
+                                    <port>${camel.springboot.kubernetes.ports.http.container-port}</port>
+                                </ports>
+                                <entryPoint>
+                                    <exec>
+                                        <arg>java</arg>
+                                        <arg>-jar</arg>
+                                        <arg>/maven/${project.artifactId}-${project.version}.jar</arg>
+                                    </exec>
+                                </entryPoint>
+                            </build>
+                        </image>
+                    </images>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>dockerBuild</goal>
+                            <goal>build</goal>
+                            <goal>resource</goal>
                         </goals>
                         <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <!-- For symmetry with Quarkus, copy kubernetes.yml to the same target location -->
+                            <outputDirectory>${project.build.directory}/kubernetes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/classes/META-INF/jkube</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -109,6 +139,58 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>camel.debug</id>
+            <activation>
+                <property>
+                    <name>camel.debug</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-debug</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.7.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                      <artifactItem>
+                                        <groupId>org.jolokia</groupId>
+                                        <artifactId>jolokia-agent-jvm</artifactId>
+                                        <version>2.1.0</version>
+                                        <type>jar</type>
+                                        <classifier>javaagent</classifier>
+                                      </artifactItem>
+                                    </artifactItems>
+                                    <stripVersion>true</stripVersion>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <jvmArguments>-javaagent:target/dependency/jolokia-agent-jvm-javaagent.jar=port=7878,host=localhost</jvmArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 </project>

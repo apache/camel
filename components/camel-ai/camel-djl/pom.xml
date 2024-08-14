@@ -28,7 +28,7 @@
 
     <artifactId>camel-djl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Deep Java Library</name>
+    <name>Camel :: AI :: Deep Java Library</name>
     <description>Camel Deep Java Library support</description>
 
     <properties>

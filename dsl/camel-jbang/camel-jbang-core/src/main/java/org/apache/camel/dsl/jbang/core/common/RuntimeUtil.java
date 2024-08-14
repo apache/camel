@@ -167,6 +167,14 @@ public final class RuntimeUtil {
         return lines;
     }
 
+    public static List<String> getCommaSeparatedPropertyAsList(Properties props, String key, List<String> defaultValue) {
+        var value = props.getProperty(key);
+        return Optional.ofNullable(value)
+                .map(val -> Arrays.asList(val.split(",")))
+                .filter(tok -> !tok.isEmpty())
+                .orElse(defaultValue);
+    }
+
     public static String getDependencies(Properties properties) {
         String deps = properties != null ? properties.getProperty("camel.jbang.dependencies") : null;
         if (deps != null) {
@@ -184,7 +192,8 @@ public final class RuntimeUtil {
     }
 
     public static String[] getDependenciesAsArray(Properties properties) {
-        return getDependencies(properties).split(",");
+        String deps = getDependencies(properties);
+        return deps.isEmpty() ? new String[0] : deps.split(",");
     }
 
     public static String getPid() {

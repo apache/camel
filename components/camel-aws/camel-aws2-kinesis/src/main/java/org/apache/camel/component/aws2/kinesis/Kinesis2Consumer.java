@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,9 +52,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private KinesisConnection connection;
     private ResumeStrategy resumeStrategy;
 
-    private Map<String, String> currentShardIterators = new java.util.HashMap<>();
+    private final Map<String, String> currentShardIterators = new java.util.HashMap<>();
 
-    private List<Shard> currentShardList = new ArrayList<>();
+    private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
     private ScheduledExecutorService shardMonitorExecutor;
 
@@ -384,12 +380,12 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         return getEndpoint().getConfiguration();
     }
 
-    protected synchronized List<Shard> getCurrentShardList() {
+    protected List<Shard> getCurrentShardList() {
         return this.currentShardList;
     }
 
-    private synchronized void setCurrentShardList(List<Shard> latestShardList) {
-        this.currentShardList = latestShardList;
+    private void setCurrentShardList(List<Shard> latestShardList) {
+        this.currentShardList = List.copyOf(latestShardList);
     }
 
     private class ShardMonitor implements Runnable {

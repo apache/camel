@@ -57,15 +57,19 @@ You have to provide the amazonSQSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sqs[Amazon's SQS].
 
-== Batch Consumer
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== Batch Consumer
 
 This component implements the Batch Consumer.
 
 This allows you, for instance, to know how many messages exist in this
 batch and for instance, let the Aggregator
 aggregate this number of messages.
-
-== Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
@@ -86,9 +90,7 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
+== Examples
 
 === Advanced AmazonSQS configuration
 
@@ -128,7 +130,7 @@ to true if you need to add a fixed delay to all messages enqueued.
 There is a set of Server Side Encryption attributes for a queue. The related option are: `serverSideEncryptionEnabled`, `keyMasterKeyId` and `kmsDataKeyReusePeriod`.
 The SSE is disabled by default. You need to explicitly set the option to true and set the related parameters as queue attributes.
 
-== JMS-style Selectors
+=== JMS-style Selectors
 
 SQS does not allow selectors, but you can effectively achieve this by
 using the Camel Filter EIP and setting an
@@ -156,13 +158,14 @@ consumers.
 Note we must set the property `Sqs2Constants.SQS_DELETE_FILTERED` to `true` to
 instruct Camel to send the DeleteMessage, if being filtered.
 
-== Available Producer Operations
+=== Available Producer Operations
+
 - single message (default)
 - sendBatchMessage
 - deleteMessage
 - listQueues
 
-== Send Message
+=== Send Message
 
 [source,java]
 ------------------------------------------------------------------------------------------------------
@@ -171,7 +174,7 @@ from("direct:start")
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 ------------------------------------------------------------------------------------------------------
 
-== Send Batch Message
+=== Send Batch Message
 
 You can set a `SendMessageBatchRequest` or an `Iterable`
 
@@ -196,7 +199,7 @@ from("direct:start")
 As result, you'll get an exchange containing a `SendMessageBatchResponse` instance, that you can examine to check what messages were successful and what not.
 The id set on each message of the batch will be a Random UUID.
 
-== Delete single Message
+=== Delete single Message
 
 Use deleteMessage operation to delete a single message. You'll need to set a receipt handle header for the message you want to delete.
 
@@ -210,7 +213,7 @@ from("direct:start")
 
 As result, you'll get an exchange containing a `DeleteMessageResponse` instance, that you can use to check if the message was deleted or not.
 
-== List Queues
+=== List Queues
 
 Use listQueues operation to list queues.
 
@@ -223,7 +226,7 @@ from("direct:start")
 
 As result, you'll get an exchange containing a `ListQueuesResponse` instance, that you can examine to check the actual queues.
 
-== Purge Queue
+=== Purge Queue
 
 Use purgeQueue operation to purge queue.
 
@@ -236,12 +239,12 @@ from("direct:start")
 
 As result you'll get an exchange containing a `PurgeQueueResponse` instance.
 
-== Queue Auto-creation
+=== Queue Auto-creation
 
 With the option `autoCreateQueue` users are able to avoid the autocreation of an SQS Queue in case it doesn't exist. The default for this option is `false`.
 If set to _false_, any operation on a non-existent queue in AWS won't be successful and an error will be returned.
 
-== Send Batch Message and Message Deduplication Strategy
+=== Send Batch Message and Message Deduplication Strategy
 
 In case you're using a SendBatchMessage Operation, you can set two different kinds of Message Deduplication Strategy:
 - useExchangeId

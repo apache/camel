@@ -45,7 +45,7 @@ class KubernetesCommandTest extends KubernetesBaseTest {
                 "yaml");
 
         List<HasMetadata> resources = kubernetesClient.load(getKubernetesManifestAsStream(printer.getOutput())).items();
-        Assertions.assertEquals(2, resources.size());
+        Assertions.assertEquals(3, resources.size());
 
         Deployment deployment = resources.stream()
                 .filter(it -> Deployment.class.isAssignableFrom(it.getClass()))
@@ -59,7 +59,7 @@ class KubernetesCommandTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
         Assertions.assertEquals(3, deployment.getSpec().getSelector().getMatchLabels().size());
         Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
+        Assertions.assertEquals("docker.io/camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("Always",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());

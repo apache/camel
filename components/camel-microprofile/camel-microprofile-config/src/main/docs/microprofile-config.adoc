@@ -14,7 +14,9 @@ This allows using configuration management from Eclipse MicroProfile with Camel.
 
 To enable this, add this component to the classpath and Camel should auto-detect this when starting up.
 
-== Register manually
+== Usage
+
+=== Register manually
 
 You can also register the microprofile-config component manually with the Apache Camel Properties Component as shown below:
 

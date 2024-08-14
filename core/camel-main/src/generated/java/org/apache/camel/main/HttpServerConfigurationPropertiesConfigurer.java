@@ -23,6 +23,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authenticationenabled":
+        case "authenticationEnabled": target.setAuthenticationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "authenticationpath":
+        case "authenticationPath": target.setAuthenticationPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertiesfile":
+        case "basicPropertiesFile": target.setBasicPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsoleenabled":
         case "devConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
@@ -33,6 +39,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "infoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
         case "jolokiaenabled":
         case "jolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
+        case "jwtkeystorepassword":
+        case "jwtKeystorePassword": target.setJwtKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtkeystorepath":
+        case "jwtKeystorePath": target.setJwtKeystorePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtkeystoretype":
+        case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbodysize":
         case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
         case "metricsenabled":
@@ -52,6 +64,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authenticationenabled":
+        case "authenticationEnabled": return boolean.class;
+        case "authenticationpath":
+        case "authenticationPath": return java.lang.String.class;
+        case "basicpropertiesfile":
+        case "basicPropertiesFile": return java.lang.String.class;
         case "devconsoleenabled":
         case "devConsoleEnabled": return boolean.class;
         case "enabled": return boolean.class;
@@ -62,6 +80,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "infoEnabled": return boolean.class;
         case "jolokiaenabled":
         case "jolokiaEnabled": return boolean.class;
+        case "jwtkeystorepassword":
+        case "jwtKeystorePassword": return java.lang.String.class;
+        case "jwtkeystorepath":
+        case "jwtKeystorePath": return java.lang.String.class;
+        case "jwtkeystoretype":
+        case "jwtKeystoreType": return java.lang.String.class;
         case "maxbodysize":
         case "maxBodySize": return java.lang.Long.class;
         case "metricsenabled":
@@ -82,6 +106,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.HttpServerConfigurationProperties target = (org.apache.camel.main.HttpServerConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authenticationenabled":
+        case "authenticationEnabled": return target.isAuthenticationEnabled();
+        case "authenticationpath":
+        case "authenticationPath": return target.getAuthenticationPath();
+        case "basicpropertiesfile":
+        case "basicPropertiesFile": return target.getBasicPropertiesFile();
         case "devconsoleenabled":
         case "devConsoleEnabled": return target.isDevConsoleEnabled();
         case "enabled": return target.isEnabled();
@@ -92,6 +122,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "infoEnabled": return target.isInfoEnabled();
         case "jolokiaenabled":
         case "jolokiaEnabled": return target.isJolokiaEnabled();
+        case "jwtkeystorepassword":
+        case "jwtKeystorePassword": return target.getJwtKeystorePassword();
+        case "jwtkeystorepath":
+        case "jwtKeystorePath": return target.getJwtKeystorePath();
+        case "jwtkeystoretype":
+        case "jwtKeystoreType": return target.getJwtKeystoreType();
         case "maxbodysize":
         case "maxBodySize": return target.getMaxBodySize();
         case "metricsenabled":

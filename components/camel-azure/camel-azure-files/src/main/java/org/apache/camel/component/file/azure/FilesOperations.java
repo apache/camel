@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
+import java.util.ArrayDeque;
 import java.util.EmptyStackException;
-import java.util.Stack;
 
 import com.azure.core.util.Context;
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -79,7 +79,7 @@ public class FilesOperations extends NormalizedOperations {
     private final FilesToken token;
     private ShareServiceClient client;
     private ShareDirectoryClient root;
-    private Stack<ShareDirectoryClient> dirStack = new Stack<>();
+    private ArrayDeque<ShareDirectoryClient> dirStack = new ArrayDeque<>();
 
     FilesOperations(FilesEndpoint endpoint) {
         super(endpoint.getConfiguration());
@@ -129,7 +129,7 @@ public class FilesOperations extends NormalizedOperations {
         var ms = configuration.getConnectTimeout();
         root.forceCloseAllHandles(true, Duration.ofMillis(ms), Context.NONE);
         root = null;
-        dirStack = new Stack<>();
+        dirStack = new ArrayDeque<>();
     }
 
     @Override
@@ -157,7 +157,7 @@ public class FilesOperations extends NormalizedOperations {
 
     @SuppressWarnings("unchecked")
     void restore(Object backup) {
-        dirStack = (Stack<ShareDirectoryClient>) backup;
+        dirStack = (ArrayDeque<ShareDirectoryClient>) backup;
     }
 
     Object backup() {
@@ -641,7 +641,6 @@ public class FilesOperations extends NormalizedOperations {
         if (!isConnected()) {
             throw new GenericFileOperationFailedException("Cannot cd to the share root: not connected");
         }
-        dirStack.empty();
         dirStack.push(root);
     }
 

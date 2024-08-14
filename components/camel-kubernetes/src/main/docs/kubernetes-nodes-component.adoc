@@ -35,19 +35,22 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listNodes
-- listNodesByLabels
-- getNode
-- createNode
-- updateNode
-- deleteNode
+=== Supported producer operation
 
+- `listNodes`
+- `listNodesByLabels`
+- `getNode`
+- `createNode`
+- `updateNode`
+- `deleteNode`
 
-== Kubernetes Nodes Producer Examples
+== Examples
 
-- listNodes: this operation lists the nodes on a kubernetes cluster
+=== Kubernetes Nodes Producer Examples
+
+- `listNodes`: this operation lists the nodes on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -58,7 +61,7 @@ from("direct:list").
 
 This operation returns a List of Nodes from your cluster
 
-- listNodesByLabels:  this operation lists the nodes by labels on a kubernetes cluster
+- `listNodesByLabels`: this operation lists the nodes by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -75,9 +78,9 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Nodes from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a list of nodes from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
-== Kubernetes Nodes Consumer Example
+=== Kubernetes Nodes Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -93,7 +96,6 @@ fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=test", host, authToken).
 --------------------------------------------------------------------------------
 
 This consumer will return a list of events for the node test.
-
 
 
 include::spring-boot:partial$starter.adoc[]

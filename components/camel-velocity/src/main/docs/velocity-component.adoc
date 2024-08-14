@@ -75,7 +75,9 @@ $in.setHeader("fruit", "Apple")
 
 The `fruit` header is now accessible from the `message.out.headers`.
 
-== Velocity Context
+== Usage
+
+=== Velocity Context
 
 Camel will provide exchange information in the Velocity context (just a
 `Map`).
@@ -115,7 +117,7 @@ VelocityContext velocityContext = new VelocityContext(variableMap);
 exchange.getIn().setHeader("CamelVelocityContext", velocityContext);
 -----------------------------------------------------------------------
 
-== Hot reloading
+=== Hot reloading
 
 The Velocity template resource is, by default, hot reloadable for both
 file and classpath resources (expanded jar). If you set
@@ -123,7 +125,7 @@ file and classpath resources (expanded jar). If you set
 hot reloading is not possible. This scenario can be used in production
 when the resource never changes.
 
-== Dynamic templates
+=== Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -134,13 +136,13 @@ resource. This allows you to provide a dynamic template at runtime.
 |=======================================================================
 |Header |Type |Description
 
-|CamelVelocityResourceUri |String |A URI for the template resource to use instead of the
+|`CamelVelocityResourceUri` |String |A URI for the template resource to use instead of the
 endpoint configured.
 
-|CamelVelocityTemplate |String |The template to use instead of the endpoint configured.
+|`CamelVelocityTemplate` |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-== Samples
+== Examples
 
 For example, you could use something like
 
@@ -202,7 +204,7 @@ from("direct:in").
   to("velocity:dummy?allowTemplateFromHeader=true"");
 ---------------------------------------------------------------------------------------------------------------
 
-== The Email Sample
+=== The Email Example
 
 In this sample, we want to use Velocity templating for an order
 confirmation email. The email template is laid out in Velocity as:

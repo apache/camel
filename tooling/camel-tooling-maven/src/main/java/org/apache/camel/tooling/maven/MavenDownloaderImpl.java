@@ -1168,7 +1168,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     /**
      * <p>
-     * Using the passed ({@code --repos} parameter or {@code camel.jbang.repos} option) and configured (in Maven
+     * Using the passed ({@code --repos} parameter or {@code camel.jbang.repositories} option) and configured (in Maven
      * settings) repository locations, prepare a list of {@link RemoteRepository remote repositories} to be used during
      * Maven resolution. These repositories are <b>not yet</b> mirrored/proxied. Use
      * {@link RepositorySystem#newResolutionRepositories} first.

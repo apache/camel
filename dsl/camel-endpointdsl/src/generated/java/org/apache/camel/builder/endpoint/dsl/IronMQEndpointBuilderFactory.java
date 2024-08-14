@@ -114,7 +114,7 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Should messages be deleted in one batch. This will limit the number
          * of api requests since messages are deleted in one request, instead of
-         * one pr. exchange. If enabled care should be taken that the consumer
+         * one per exchange. If enabled care should be taken that the consumer
          * is idempotent when processing exchanges.
          * 
          * The option is a: <code>boolean</code> type.
@@ -132,7 +132,7 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Should messages be deleted in one batch. This will limit the number
          * of api requests since messages are deleted in one request, instead of
-         * one pr. exchange. If enabled care should be taken that the consumer
+         * one per exchange. If enabled care should be taken that the consumer
          * is idempotent when processing exchanges.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -178,7 +178,7 @@ public interface IronMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of messages to poll pr. call. Maximum is 100.
+         * Number of messages to poll per call. Maximum is 100.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -193,7 +193,7 @@ public interface IronMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of messages to poll pr. call. Maximum is 100.
+         * Number of messages to poll per call. Maximum is 100.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

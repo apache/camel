@@ -18,11 +18,10 @@ package org.apache.camel.test.infra.ollama.commons;
 
 public class OllamaProperties {
 
-    public static final String PORT = "ollama.port";
     public static final String CONTAINER = "ollama.container";
     public static final String MODEL = "ollama.model";
 
-    public static final String BASE_URL = "ollama.url";
+    public static final String ENDPOINT = "ollama.endpoint";
 
     private OllamaProperties() {
 

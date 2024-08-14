@@ -54,20 +54,22 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 // endpoint options: END
 
+== Usage
 
-== Supported Knative resources
+=== Supported Knative resources
 
 The component support the following Knative resources you can target or exposes using the `type` path parameter:
 
-- **channel**: allow producing or consuming events to or from a https://knative.dev/docs/eventing/channels/[**Knative Channel**]
-- **endpoint**: allow exposing or targeting serverless workloads using https://knative.dev/docs/serving/spec/knative-api-specification-1.0/#service[**Knative Services**]
-- **event**: allow producing or consuming events to or from a https://knative.dev/docs/eventing/broker[**Knative Broker**]
+- `channel`: allow producing or consuming events to or from a https://knative.dev/docs/eventing/channels/[**Knative Channel**]
+- `endpoint`: allow exposing or targeting serverless workloads using https://knative.dev/docs/serving/spec/knative-api-specification-1.0/#service[**Knative Services**]
+- `event`: allow producing or consuming events to or from a https://knative.dev/docs/eventing/broker[**Knative Broker**]
 
-== Knative Environment
+=== Knative Environment
 
 As the Knative component hides the technical details of how to communicate with Knative services to the user (protocols, addresses, etc.), it needs some metadata that describes the Knative environment to set up the low-level transport details.
 To do so, the component needs a so called `Knative Environment`, which is essence is a Json document made by a number of `service` elements which looks like the below example:
 
+.Example
 [source,json]
 ------------------------------------------------------------
 {
@@ -119,8 +121,7 @@ The `metadata` fields has some additional advanced fields:
 
 |===
 
-== Example
-
+.Example
 [source,java]
 ----
 CamelContext context = new DefaultCamelContext();
@@ -136,7 +137,7 @@ RouteBuilder.addRoutes(context, b -> {
 <1> set the location of the `Knative Environment` file
 <2> expose knative service
 
-== Using custom Knative Transport
+=== Using custom Knative Transport
 
 As today the component only support `http` as transport as it is the only supported protocol on Knative side but the transport is pluggable by implementing the following interface:
 
@@ -170,11 +171,11 @@ public interface KnativeTransport extends Service {
 }
 ----
 
-== Using ProducerTemplate
+=== Using ProducerTemplate
+
 When using Knative producer with a ProducerTemplate, it is necessary to specify a value for the CloudEvent source, simply by setting a value for the header 'CamelCloudEventSource'.
 
-=== Example
-
+.Example
 [source,java]
 ----
 producerTemplate.sendBodyAndHeader("knative:event/broker-test", body, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "my-source-name");

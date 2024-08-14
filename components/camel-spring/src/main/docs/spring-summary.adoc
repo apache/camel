@@ -182,11 +182,11 @@ Under the covers, this is using _ant path_ styles, which matches as follows
 
 For example:
 
-**.*Excluded* would match org.simple.Excluded,
-org.apache.camel.SomeExcludedRoute or org.example.RouteWhichIsExcluded
+`**.*Excluded*` would match `org.simple.Excluded`,
+`org.apache.camel.SomeExcludedRoute` or `org.example.RouteWhichIsExcluded`
 
-**.??cluded* would match org.simple.IncludedRoute, org.simple.Excluded
-but not match org.simple.PrecludedRoute
+`**.??cluded*` would match `org.simple.IncludedRoute`, `org.simple.Excluded`
+but not match `org.simple.PrecludedRoute`
 
 === Using contextScan
 
@@ -219,7 +219,7 @@ When defining routes in Camel using Spring XML, you may want to define some rout
 For example, you may have many routes, and it may help to maintain the
 application if some routes are in separate XML files. You may
 also want to store common and reusable routes in other XML files, which
-you can simply import when needed.
+you can import when needed.
 
 It is possible to define routes outside
 `<camelContext/>` which you do in a new `<routeContext/>` tag.
@@ -260,8 +260,8 @@ a couple of routes as shown:
 ----
 
 Then in your XML file which contains the CamelContext you can use Spring
-to import the `myCoolRoute.xml` file. +
- And then inside `<camelContext/>` you can refer to the
+to import the `myCoolRoute.xml` file.
+And then inside `<camelContext/>` you can refer to the
 `<routeContext/>` by its id as shown below:
 
 [source,xml]
@@ -283,7 +283,7 @@ to import the `myCoolRoute.xml` file. +
 ----
 
 Also notice that you can mix and match, having routes inside
-CamelContext and also externalized in RouteContext.
+`CamelContext` and also externalized in `RouteContext`.
 
 You can have as many `<routeContextRef/>` as you like.
 
@@ -398,7 +398,7 @@ the above example), then you can refer to the component using
 SpringCamelContext lazily fetching components from the spring context
 for the scheme name you use for Endpoint URIs.
 
-For more detail see xref:manual:faq:how-do-i-configure-endpoints.adoc[Configuring
+For more details, see xref:manual:faq:how-do-i-configure-endpoints.adoc[Configuring
 Endpoints and Components].
 
 == CamelContextAware

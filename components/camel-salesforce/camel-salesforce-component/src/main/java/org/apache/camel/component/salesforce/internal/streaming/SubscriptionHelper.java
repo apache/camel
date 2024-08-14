@@ -21,14 +21,22 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.URI;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.component.salesforce.*;
+import org.apache.camel.component.salesforce.SalesforceComponent;
+import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.StreamingApiConsumer;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.support.service.ServiceSupport;
@@ -46,9 +54,12 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptySet;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.cometd.bayeux.Channel.*;
+import static org.cometd.bayeux.Channel.META_CONNECT;
+import static org.cometd.bayeux.Channel.META_HANDSHAKE;
+import static org.cometd.bayeux.Channel.META_SUBSCRIBE;
 import static org.cometd.bayeux.Message.ERROR_FIELD;
 import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
@@ -58,13 +69,13 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
-    private static final int CONNECT_TIMEOUT = 110;
+    private static final int HANDSHAKE_TIMEOUT_SEC = 120;
 
     private static final String FAILURE_FIELD = "failure";
     private static final String EXCEPTION_FIELD = "exception";
     private static final String SFDC_FIELD = "sfdc";
     private static final String FAILURE_REASON_FIELD = "failureReason";
-    private static final int DISCONNECT_INTERVAL = 5000;
+
     private static final String SERVER_TOO_BUSY_ERROR = "503::";
     private static final String AUTHENTICATION_INVALID = "401::Authentication invalid";
     private static final String INVALID_REPLAY_ID_PATTERN = "400::The replayId \\{.*} you provided was invalid.*";
@@ -73,30 +84,164 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private final SalesforceComponent component;
     private SalesforceSession session;
-    private final long timeout = 60 * 1000L;
 
-    private final Map<StreamingApiConsumer, ClientSessionChannel.MessageListener> listenerMap;
     private final long maxBackoff;
     private final long backoffIncrement;
-
-    private ClientSessionChannel.MessageListener handshakeListener;
-    private ClientSessionChannel.MessageListener connectListener;
-
     private volatile String handshakeError;
     private volatile Exception handshakeException;
     private volatile String connectError;
     private volatile Exception connectException;
 
-    private volatile boolean reconnecting;
     private final AtomicLong handshakeBackoff;
-    private final AtomicBoolean handshaking = new AtomicBoolean();
+
+    private final Map<String, Set<StreamingApiConsumer>> channelToConsumers = new ConcurrentHashMap<>();
+
+    private final Map<StreamingApiConsumer, ClientSessionChannel.MessageListener> consumerToListener
+            = new ConcurrentHashMap<>();
+
+    private final Set<String> channelsToSubscribe = ConcurrentHashMap.newKeySet();
+
+    private final ClientSessionChannel.MessageListener handshakeListener = createHandshakeListener();
+
+    private final ClientSessionChannel.MessageListener subscriptionListener = createSubscriptionListener();
+
+    private final ClientSessionChannel.MessageListener connectListener = createConnectionListener();
 
     public SubscriptionHelper(final SalesforceComponent component) {
         this.component = component;
-        listenerMap = new ConcurrentHashMap<>();
         handshakeBackoff = new AtomicLong();
         backoffIncrement = component.getConfig().getBackoffIncrement();
         maxBackoff = component.getConfig().getMaxBackoff();
+    }
+
+    private MessageListener createHandshakeListener() {
+        return (channel, message) -> component.getHttpClient().getWorkerPool().execute(() -> {
+            LOG.debug("[CHANNEL:META_HANDSHAKE]: {}", message);
+
+            if (!message.isSuccessful()) {
+                LOG.warn("Handshake failure: {}", message);
+                handshakeError = (String) message.get(ERROR_FIELD);
+                handshakeException = getFailure(message);
+                if (handshakeError != null) {
+                    if (handshakeError.startsWith("403::")) {
+                        String failureReason = getFailureReason(message);
+                        if (failureReason.equals(AUTHENTICATION_INVALID)) {
+                            LOG.debug(
+                                    "attempting login due to handshake error: 403 -> 401::Authentication invalid");
+                            session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
+                        }
+                    }
+                }
+                // failed, so keep trying
+                LOG.debug("Handshake failed, so try again.");
+                client.handshake();
+            } else if (!channelToConsumers.isEmpty()) {
+                channelsToSubscribe.clear();
+                channelsToSubscribe.addAll(channelToConsumers.keySet());
+                LOG.info("Handshake successful. Channels to subscribe: {}", channelsToSubscribe);
+            }
+        });
+    }
+
+    private MessageListener createConnectionListener() {
+        return (channel, message) -> component.getHttpClient().getWorkerPool().execute(() -> {
+            LOG.debug("[CHANNEL:META_CONNECT]: {}", message);
+
+            if (!message.isSuccessful()) {
+                LOG.warn("Connect failure: {}", message);
+                connectError = (String) message.get(ERROR_FIELD);
+                connectException = getFailure(message);
+
+                if (connectError != null && connectError.equals(AUTHENTICATION_INVALID)) {
+                    LOG.debug("connectError: {}", connectError);
+                    LOG.debug("Attempting login...");
+                    session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
+                }
+                if (message.getAdvice() == null || "none".equals(message.getAdvice().get("reconnect"))) {
+                    LOG.debug("Advice == none, so handshaking");
+                    client.handshake();
+                }
+            } else if (!channelsToSubscribe.isEmpty()) {
+                LOG.info("Subscribing to channels: {}", channelsToSubscribe);
+                for (var channelName : channelsToSubscribe) {
+                    for (var consumer : channelToConsumers.get(channelName)) {
+                        subscribe(consumer);
+                    }
+                }
+            }
+        });
+    }
+
+    private MessageListener createSubscriptionListener() {
+        return (channel, message) -> component.getHttpClient().getWorkerPool().execute(() -> {
+            LOG.debug("[CHANNEL:META_SUBSCRIBE]: {}", message);
+            var channelName = message.getOrDefault(SUBSCRIPTION_FIELD, "").toString();
+            if (!message.isSuccessful()) {
+                LOG.warn("Subscription failure: {}", message);
+                var consumers = channelToConsumers.getOrDefault(channelName, emptySet());
+                consumers.stream().findFirst().ifPresent(salesforceConsumer -> subscriptionFailed(salesforceConsumer, message));
+            } else {
+                // remember subscription
+                LOG.info("Subscribed to channel {}", channelName);
+                channelsToSubscribe.remove(channelName);
+
+                // reset backoff interval
+                handshakeBackoff.set(0);
+            }
+        });
+    }
+
+    private void subscriptionFailed(StreamingApiConsumer firstConsumer, Message message) {
+        var channelName = message.getOrDefault(SUBSCRIPTION_FIELD, "").toString();
+        var consumers = channelToConsumers.getOrDefault(channelName, emptySet());
+
+        String error = (String) message.get(ERROR_FIELD);
+        if (error == null) {
+            error = "Missing error message";
+        }
+
+        Exception failure = getFailure(message);
+        String msg = String.format("Error subscribing to %s: %s", firstConsumer.getTopicName(),
+                failure != null ? failure.getMessage() : error);
+        boolean abort = true;
+
+        LOG.warn(msg);
+        if (isTemporaryError(message)) {
+
+            // retry after delay
+            final long backoff = handshakeBackoff.getAndAdd(backoffIncrement);
+            if (backoff > maxBackoff) {
+                LOG.error("Subscribe aborted after exceeding {} msecs backoff", maxBackoff);
+            } else {
+                abort = false;
+
+                try {
+                    LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
+                    Thread.sleep(backoff);
+                    for (var consumer : consumers) {
+                        subscribe(consumer);
+                    }
+                } catch (InterruptedException e) {
+                    LOG.warn("Aborting subscribe on interrupt!", e);
+                }
+            }
+        } else if (error.matches(INVALID_REPLAY_ID_PATTERN)) {
+            abort = false;
+            long fallBackReplayId
+                    = ((SalesforceEndpoint) firstConsumer.getEndpoint()).getConfiguration().getFallBackReplayId();
+            LOG.warn(error);
+            LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
+            REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, fallBackReplayId);
+            for (var consumer : consumers) {
+                subscribe(consumer);
+            }
+        }
+
+        if (abort && client != null) {
+            for (var consumer : consumers) {
+                consumer.handleException(msg, new SalesforceException(msg, failure));
+            }
+        }
     }
 
     @Override
@@ -111,97 +256,20 @@ public class SubscriptionHelper extends ServiceSupport {
         client = createClient(component, session);
 
         initMessageListeners();
-        connect();
+        handshake();
     }
 
     private void initMessageListeners() {
-        // listener for handshake error or exception
-        if (handshakeListener == null) {
-            // first start
-            handshakeListener = new ClientSessionChannel.MessageListener() {
-                public void onMessage(ClientSessionChannel channel, Message message) {
-                    component.getHttpClient().getWorkerPool().execute(() -> {
-                        LOG.debug("[CHANNEL:META_HANDSHAKE]: {}", message);
-
-                        if (!message.isSuccessful()) {
-                            LOG.warn("Handshake failure: {}", message);
-                            handshakeError = (String) message.get(ERROR_FIELD);
-                            handshakeException = getFailure(message);
-                            if (handshakeError != null) {
-                                if (handshakeError.startsWith("403::")) {
-                                    String failureReason = getFailureReason(message);
-                                    if (failureReason.equals(AUTHENTICATION_INVALID)) {
-                                        LOG.debug(
-                                                "attempting login due to handshake error: 403 -> 401::Authentication invalid");
-                                        session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
-                                    }
-                                }
-                            }
-
-                            // failed, so keep trying
-                            LOG.debug("Handshake failed, so try again.");
-                            handshake();
-
-                        } else if (!listenerMap.isEmpty()) {
-                            reconnecting = true;
-                        }
-                    });
-                }
-            };
-        }
         client.getChannel(META_HANDSHAKE).addListener(handshakeListener);
-
-        // listener for connect error
-        if (connectListener == null) {
-            connectListener = new ClientSessionChannel.MessageListener() {
-                public void onMessage(ClientSessionChannel channel, Message message) {
-                    component.getHttpClient().getWorkerPool().execute(() -> {
-                        LOG.debug("[CHANNEL:META_CONNECT]: {}", message);
-
-                        if (!message.isSuccessful()) {
-
-                            LOG.warn("Connect failure: {}", message);
-                            connectError = (String) message.get(ERROR_FIELD);
-                            connectException = getFailure(message);
-                            client.disconnect();
-
-                            if (connectError != null && connectError.equals(AUTHENTICATION_INVALID)) {
-                                LOG.debug("connectError: {}", connectError);
-                                LOG.debug("Attempting login...");
-                                session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
-                            }
-                            // Server says don't retry to connect, so we'll handshake instead
-                            // Otherwise, Bayeux client automatically re-attempts connection
-                            if (message.getAdvice() != null &&
-                                    !message.getAdvice().get("reconnect").equals("retry")) {
-                                LOG.debug("Advice != retry, so handshaking");
-                                handshake();
-                            }
-                        } else if (reconnecting) {
-                            LOG.debug("Refreshing subscriptions to {} channels on reconnect", listenerMap.size());
-                            // reconnected to Salesforce, subscribe to existing
-                            // channels
-                            final Map<StreamingApiConsumer, MessageListener> map = new HashMap<>(listenerMap);
-                            listenerMap.clear();
-                            for (Map.Entry<StreamingApiConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {
-                                final StreamingApiConsumer consumer = entry.getKey();
-                                final String topicName = consumer.getTopicName();
-                                subscribe(topicName, consumer);
-                            }
-                            reconnecting = false;
-                        }
-                    });
-                }
-            };
-        }
+        client.getChannel(META_SUBSCRIBE).addListener(subscriptionListener);
         client.getChannel(META_CONNECT).addListener(connectListener);
     }
 
-    private void connect() throws CamelException {
+    private void handshake() throws CamelException {
         // connect to Salesforce cometd endpoint
         client.handshake();
 
-        final long waitMs = MILLISECONDS.convert(CONNECT_TIMEOUT, SECONDS);
+        final long waitMs = MILLISECONDS.convert(HANDSHAKE_TIMEOUT_SEC, SECONDS);
         if (!client.waitFor(waitMs, BayeuxClient.State.CONNECTED)) {
             if (handshakeException != null) {
                 throw new CamelException(
@@ -214,105 +282,9 @@ public class SubscriptionHelper extends ServiceSupport {
             } else if (connectError != null) {
                 throw new CamelException(String.format("Error during CONNECT: %s", connectError));
             } else {
-                throw new CamelException(String.format("Handshake request timeout after %s seconds", CONNECT_TIMEOUT));
-            }
-        }
-    }
-
-    private void handshake() {
-        LOG.debug("Begin handshake if not already in progress.");
-        if (!handshaking.compareAndSet(false, true)) {
-            return;
-        }
-
-        LOG.debug("Continuing with handshake.");
-        try {
-            doHandshake();
-        } finally {
-            handshaking.set(false);
-        }
-    }
-
-    private void doHandshake() {
-        if (isStoppingOrStopped()) {
-            return;
-        }
-
-        LOG.info("Handshaking after unexpected disconnect from Salesforce...");
-        boolean abort = false;
-
-        // wait for disconnect
-        LOG.debug("Waiting to disconnect...");
-        while (!abort && !client.isDisconnected()) {
-            try {
-                Thread.sleep(DISCONNECT_INTERVAL);
-            } catch (InterruptedException e) {
-                LOG.error("Aborting handshake on interrupt!");
-                abort = true;
-                Thread.currentThread().interrupt();
-            }
-
-            abort = abort || isStoppingOrStopped();
-        }
-
-        if (!abort) {
-
-            // update handshake attempt backoff
-            final long backoff = handshakeBackoff.getAndAdd(backoffIncrement);
-            if (backoff > maxBackoff) {
-                LOG.error("Handshake aborted after exceeding {} msecs backoff", maxBackoff);
-                abort = true;
-            } else {
-
-                // pause before handshake attempt
-                LOG.debug("Pausing for {} msecs before handshake attempt", backoff);
-                try {
-                    Thread.sleep(backoff);
-                } catch (InterruptedException e) {
-                    LOG.error("Aborting handshake on interrupt!");
-                    abort = true;
-                    Thread.currentThread().interrupt();
-                }
-            }
-
-            if (!abort) {
-                Exception lastError = new SalesforceException("Unknown error", null);
-                try {
-                    // reset client. If we fail to stop and logout, catch the exception
-                    // so we can still continue to doStart()
-                    if (client != null) {
-                        client.disconnect();
-                        boolean disconnected = client.waitFor(timeout, State.DISCONNECTED);
-                        if (!disconnected) {
-                            LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component),
-                                    timeout);
-                            client.abort();
-                        }
-
-                        client.handshake();
-                        final long waitMs = MILLISECONDS.convert(CONNECT_TIMEOUT, SECONDS);
-                        client.waitFor(waitMs, BayeuxClient.State.CONNECTED);
-                    }
-                } catch (Exception e) {
-                    LOG.error("Error handshaking: {}", e.getMessage(), e);
-                    lastError = e;
-                }
-
-                if (client != null && client.isHandshook()) {
-                    LOG.debug("Successful handshake!");
-                    // reset backoff interval
-                    handshakeBackoff.set(backoffIncrement);
-                } else {
-                    LOG.error("Failed to handshake after pausing for {} msecs", backoff);
-                    if ((backoff + backoffIncrement) > maxBackoff) {
-                        // notify all consumers
-                        String abortMsg = "Aborting handshake attempt due to: " + lastError.getMessage();
-                        SalesforceException ex = new SalesforceException(abortMsg, lastError);
-                        for (StreamingApiConsumer consumer : listenerMap.keySet()) {
-                            consumer.handleException(abortMsg, ex);
-                        }
-                    }
-                }
+                throw new CamelException(
+                        String.format("Handshake request timeout after %s seconds",
+                                HANDSHAKE_TIMEOUT_SEC));
             }
         }
     }
@@ -333,37 +305,32 @@ public class SubscriptionHelper extends ServiceSupport {
         return exception;
     }
 
-    private void closeChannel(final String name, MessageListener listener) {
+    private void closeChannel(final String name) {
         if (client == null) {
             return;
         }
 
         final ClientSessionChannel channel = client.getChannel(name);
-        channel.removeListener(listener);
+        for (var listener : channel.getListeners()) {
+            channel.removeListener(listener);
+        }
         channel.release();
     }
 
     @Override
     protected void doStop() throws Exception {
-        closeChannel(META_CONNECT, connectListener);
-        closeChannel(META_HANDSHAKE, handshakeListener);
-
-        for (Map.Entry<StreamingApiConsumer, MessageListener> entry : listenerMap.entrySet()) {
-            final StreamingApiConsumer consumer = entry.getKey();
-            final String topic = consumer.getTopicName();
-
-            final MessageListener listener = entry.getValue();
-            closeChannel(getChannelName(topic), listener);
-        }
+        closeChannel(META_CONNECT);
+        closeChannel(META_SUBSCRIBE);
+        closeChannel(META_HANDSHAKE);
 
         if (client == null) {
             return;
         }
 
         client.disconnect();
-        boolean disconnected = client.waitFor(timeout, State.DISCONNECTED);
+        boolean disconnected = client.waitFor(60_000, State.DISCONNECTED);
         if (!disconnected) {
-            LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component), timeout);
+            LOG.warn("Could not disconnect client connected to: {}", getEndpointUrl(component));
             client.abort();
         }
 
@@ -381,9 +348,13 @@ public class SubscriptionHelper extends ServiceSupport {
         final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
         Map<String, Object> options = new HashMap<>();
-        options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, httpClient.getTimeout());
+        /*
+        The timeout should be greater than 110 sec as per https://github.com/cometd/cometd/issues/1142#issuecomment-1048256297
+        and https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming/using_streaming_api_timeouts.htm
+        */
+        options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, 120000);
         if (component.getLongPollingTransportProperties() != null) {
-            options = component.getLongPollingTransportProperties();
+            options.putAll(component.getLongPollingTransportProperties());
         }
 
         // check login access token
@@ -442,109 +413,25 @@ public class SubscriptionHelper extends ServiceSupport {
         return client;
     }
 
-    public void subscribe(final String topicName, final StreamingApiConsumer consumer) {
-        subscribe(topicName, consumer, false);
-    }
-
-    public void subscribe(
-            final String topicName, final StreamingApiConsumer consumer,
-            final boolean skipReplayId) {
+    public synchronized void subscribe(StreamingApiConsumer consumer) {
         // create subscription for consumer
-        final String channelName = getChannelName(topicName);
+        final String channelName = getChannelName(consumer.getTopicName());
+        channelToConsumers.computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet()).add(consumer);
+        channelsToSubscribe.add(channelName);
 
-        if (!reconnecting && !skipReplayId) {
-            setupReplay((SalesforceEndpoint) consumer.getEndpoint());
-        }
+        setReplayIdIfAbsent(consumer.getEndpoint());
 
         // channel message listener
         LOG.info("Subscribing to channel {}...", channelName);
-        final ClientSessionChannel.MessageListener listener = new ClientSessionChannel.MessageListener() {
-
-            @Override
-            public void onMessage(ClientSessionChannel channel, Message message) {
-                LOG.debug("Received Message: {}", message);
-                // convert CometD message to Camel Message
-                consumer.processMessage(channel, message);
-            }
-        };
-
-        // listener for subscription
-        final ClientSessionChannel.MessageListener subscriptionListener = new ClientSessionChannel.MessageListener() {
-            public void onMessage(ClientSessionChannel channel, Message message) {
-                LOG.debug("[CHANNEL:META_SUBSCRIBE]: {}", message);
-                final String subscribedChannelName = message.getOrDefault(SUBSCRIPTION_FIELD, "").toString();
-                if ("".equals(subscribedChannelName)) {
-                    LOG.warn("[CHANNEL:META_SUBSCRIBE]: No field {} found. Skipping message: {}", SUBSCRIPTION_FIELD, message);
-                    return;
-                }
-                if (channelName.equals(subscribedChannelName)) {
-                    if (!message.isSuccessful()) {
-                        String error = (String) message.get(ERROR_FIELD);
-                        if (error == null) {
-                            error = "Missing error message";
-                        }
-
-                        Exception failure = getFailure(message);
-                        String msg = String.format("Error subscribing to %s: %s", topicName,
-                                failure != null ? failure.getMessage() : error);
-                        boolean abort = true;
-
-                        if (isTemporaryError(message)) {
-                            LOG.warn(msg);
-
-                            // retry after delay
-                            final long backoff = handshakeBackoff.getAndAdd(backoffIncrement);
-                            if (backoff > maxBackoff) {
-                                LOG.error("Subscribe aborted after exceeding {} msecs backoff", maxBackoff);
-                            } else {
-                                abort = false;
-
-                                try {
-                                    LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
-                                    Thread.sleep(backoff);
-
-                                    component.getHttpClient().getWorkerPool().execute(() -> subscribe(topicName, consumer));
-                                } catch (InterruptedException e) {
-                                    LOG.warn("Aborting subscribe on interrupt!", e);
-                                    Thread.currentThread().interrupt();
-                                }
-                            }
-                        } else if (error.matches(INVALID_REPLAY_ID_PATTERN)) {
-                            abort = false;
-                            final Long fallBackReplayId
-                                    = ((SalesforceEndpoint) consumer.getEndpoint()).getConfiguration().getFallBackReplayId();
-                            LOG.warn(error);
-                            LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
-                            REPLAY_EXTENSION.addChannelReplayId(channelName, fallBackReplayId);
-                            subscribe(topicName, consumer, true);
-                        }
-
-                        if (abort && client != null) {
-                            consumer.handleException(msg, new SalesforceException(msg, failure));
-                        }
-                    } else {
-                        // remember subscription
-                        LOG.info("Subscribed to channel {}", subscribedChannelName);
-                        listenerMap.put(consumer, listener);
-
-                        // reset backoff interval
-                        handshakeBackoff.set(0);
-                    }
-
-                    // remove this subscription listener
-                    if (client != null) {
-                        client.getChannel(META_SUBSCRIBE).removeListener(this);
-                    } else {
-                        LOG.warn("Trying to handle a subscription message but the client is already destroyed");
-                    }
-                }
-            }
-        };
-        client.getChannel(META_SUBSCRIBE).addListener(subscriptionListener);
+        var messageListener = consumerToListener.computeIfAbsent(consumer, key -> (channel, message) -> {
+            LOG.debug("Received Message: {}", message);
+            // convert CometD message to Camel Message
+            consumer.processMessage(channel, message);
+        });
 
         // subscribe asynchronously
         final ClientSessionChannel clientChannel = client.getChannel(channelName);
-        clientChannel.subscribe(listener);
+        clientChannel.subscribe(messageListener);
     }
 
     private static boolean isTemporaryError(Message message) {
@@ -564,7 +451,7 @@ public class SubscriptionHelper extends ServiceSupport {
         return failureReason;
     }
 
-    void setupReplay(final SalesforceEndpoint endpoint) {
+    private void setReplayIdIfAbsent(final SalesforceEndpoint endpoint) {
         final String topicName = endpoint.getTopicName();
 
         final Optional<Long> replayId = determineReplayIdFor(endpoint, topicName);
@@ -573,9 +460,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
             final Long replayIdValue = replayId.get();
 
-            LOG.info("Set Replay extension to replay from `{}` for channel `{}`", replayIdValue, channelName);
-
-            REPLAY_EXTENSION.addChannelReplayId(channelName, replayIdValue);
+            REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, replayIdValue);
         }
     }
 
@@ -621,20 +506,26 @@ public class SubscriptionHelper extends ServiceSupport {
         return channelName.toString();
     }
 
-    public void unsubscribe(String topicName, StreamingApiConsumer consumer) {
-
+    public synchronized void unsubscribe(StreamingApiConsumer consumer) {
         // channel name
-        final String channelName = getChannelName(topicName);
+        final String channelName = getChannelName(consumer.getTopicName());
 
         // unsubscribe from channel
-        final ClientSessionChannel.MessageListener listener = listenerMap.remove(consumer);
+        var consumers = channelToConsumers.get(channelName);
+        if (consumers != null) {
+            consumers.remove(consumer);
+            if (consumers.isEmpty()) {
+                channelToConsumers.remove(channelName);
+            }
+        }
+        final ClientSessionChannel.MessageListener listener = consumerToListener.remove(consumer);
         if (listener != null) {
-
             LOG.debug("Unsubscribing from channel {}...", channelName);
             final ClientSessionChannel clientChannel = client.getChannel(channelName);
             // if there are other listeners on this channel, an unsubscribe message will not be sent,
             // so we're not going to listen for and expect an unsub response. Just unsub and move on.
             clientChannel.unsubscribe(listener);
+            clientChannel.release();
         }
     }
 

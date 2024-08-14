@@ -16,29 +16,19 @@
  */
 package org.apache.camel.component.djl.model.audio;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.audio.Audio;
-import ai.djl.modality.audio.AudioFactory;
 import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.djl.DJLConstants;
 import org.apache.camel.component.djl.DJLEndpoint;
 import org.apache.camel.component.djl.model.AbstractPredictor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CustomAudioPredictor extends AbstractPredictor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CustomAudioPredictor.class);
 
     protected final String modelName;
     protected final String translatorName;
@@ -51,41 +41,13 @@ public class CustomAudioPredictor extends AbstractPredictor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object body = exchange.getIn().getBody();
-        String result;
-        if (body instanceof Audio) {
-            result = predict(exchange, exchange.getIn().getBody(Audio.class));
-        } else if (body instanceof byte[]) {
-            byte[] bytes = exchange.getIn().getBody(byte[].class);
-            result = predict(exchange, new ByteArrayInputStream(bytes));
-        } else if (body instanceof File) {
-            result = predict(exchange, exchange.getIn().getBody(File.class));
-        } else if (body instanceof InputStream) {
-            result = predict(exchange, exchange.getIn().getBody(InputStream.class));
-        } else {
+        try {
+            Audio audio = exchange.getIn().getBody(Audio.class);
+            String result = predict(exchange, audio);
+            exchange.getIn().setBody(result);
+        } catch (TypeConversionException e) {
             throw new RuntimeCamelException(
                     "Data type is not supported. Body should be ai.djl.modality.audio.Audio, byte[], InputStream or File");
-        }
-        exchange.getIn().setBody(result);
-    }
-
-    protected String predict(Exchange exchange, File input) {
-        try (InputStream fileInputStream = new FileInputStream(input)) {
-            Audio audio = AudioFactory.newInstance().fromInputStream(fileInputStream);
-            return predict(exchange, audio);
-        } catch (IOException e) {
-            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
-            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
-        }
-    }
-
-    protected String predict(Exchange exchange, InputStream input) {
-        try {
-            Audio audio = AudioFactory.newInstance().fromInputStream(input);
-            return predict(exchange, audio);
-        } catch (IOException e) {
-            LOG.error(FAILED_TO_TRANSFORM_MESSAGE);
-            throw new RuntimeCamelException(FAILED_TO_TRANSFORM_MESSAGE, e);
         }
     }
 

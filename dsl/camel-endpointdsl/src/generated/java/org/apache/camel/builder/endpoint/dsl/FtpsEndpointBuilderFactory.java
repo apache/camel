@@ -255,7 +255,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Configures the interval in seconds to use when logging the progress
          * of upload and download operations that are in-flight. This is used
-         * for logging progress when operations takes longer time.
+         * for logging progress when operations take a longer time.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -272,7 +272,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Configures the interval in seconds to use when logging the progress
          * of upload and download operations that are in-flight. This is used
-         * for logging progress when operations takes longer time.
+         * for logging progress when operations take a longer time.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -320,7 +320,7 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures whether the perform verbose (fine grained) logging of the
+         * Configures whether perform verbose (fine-grained) logging of the
          * progress of upload and download operations.
          * 
          * The option is a: <code>boolean</code> type.
@@ -336,7 +336,7 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures whether the perform verbose (fine grained) logging of the
+         * Configures whether perform verbose (fine-grained) logging of the
          * progress of upload and download operations.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -524,7 +524,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Configures whether resume download is enabled. This must be supported
-         * by the FTP server (almost all FTP servers support it). In addition
+         * by the FTP server (almost all FTP servers support it). In addition,
          * the options localWorkDirectory must be configured so downloaded files
          * are stored in a local directory, and the option binary must be
          * enabled, which is required to support resuming of downloads.
@@ -543,7 +543,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Configures whether resume download is enabled. This must be supported
-         * by the FTP server (almost all FTP servers support it). In addition
+         * by the FTP server (almost all FTP servers support it). In addition,
          * the options localWorkDirectory must be configured so downloaded files
          * are stored in a local directory, and the option binary must be
          * enabled, which is required to support resuming of downloads.
@@ -2613,10 +2613,10 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Allows you to set how the consumer will handle subfolders and files
-         * in the path if the directory parser results in with absolute paths
+         * in the path if the directory parser results in with absolute paths.
          * The reason for this is that some FTP servers may return file names
-         * with absolute paths, and if so then the FTP component needs to handle
-         * this by converting the returned path into a relative path.
+         * with absolute paths, and if so, then the FTP component needs to
+         * handle this by converting the returned path into a relative path.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2632,10 +2632,10 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Allows you to set how the consumer will handle subfolders and files
-         * in the path if the directory parser results in with absolute paths
+         * in the path if the directory parser results in with absolute paths.
          * The reason for this is that some FTP servers may return file names
-         * with absolute paths, and if so then the FTP component needs to handle
-         * this by converting the returned path into a relative path.
+         * with absolute paths, and if so, then the FTP component needs to
+         * handle this by converting the returned path into a relative path.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2896,7 +2896,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Set the client side port range in active mode. The syntax is:
-         * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
+         * minPort-maxPort Both port numbers are inclusive, e.g., 10000-19999 to
          * include all 1xxxx ports.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -3595,7 +3595,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Configures the interval in seconds to use when logging the progress
          * of upload and download operations that are in-flight. This is used
-         * for logging progress when operations takes longer time.
+         * for logging progress when operations take a longer time.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -3612,7 +3612,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Configures the interval in seconds to use when logging the progress
          * of upload and download operations that are in-flight. This is used
-         * for logging progress when operations takes longer time.
+         * for logging progress when operations take a longer time.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -3660,7 +3660,7 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures whether the perform verbose (fine grained) logging of the
+         * Configures whether perform verbose (fine-grained) logging of the
          * progress of upload and download operations.
          * 
          * The option is a: <code>boolean</code> type.
@@ -3676,7 +3676,7 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures whether the perform verbose (fine grained) logging of the
+         * Configures whether perform verbose (fine-grained) logging of the
          * progress of upload and download operations.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -4283,7 +4283,7 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to set chmod on the stored file. For example chmod=640.
+         * Allows you to set chmod on the stored file. For example, chmod=640.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4546,7 +4546,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Set the client side port range in active mode. The syntax is:
-         * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
+         * minPort-maxPort Both port numbers are inclusive, e.g., 10000-19999 to
          * include all 1xxxx ports.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -5246,7 +5246,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Configures the interval in seconds to use when logging the progress
          * of upload and download operations that are in-flight. This is used
-         * for logging progress when operations takes longer time.
+         * for logging progress when operations take a longer time.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -5263,7 +5263,7 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Configures the interval in seconds to use when logging the progress
          * of upload and download operations that are in-flight. This is used
-         * for logging progress when operations takes longer time.
+         * for logging progress when operations take a longer time.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -5311,7 +5311,7 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures whether the perform verbose (fine grained) logging of the
+         * Configures whether perform verbose (fine-grained) logging of the
          * progress of upload and download operations.
          * 
          * The option is a: <code>boolean</code> type.
@@ -5327,7 +5327,7 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Configures whether the perform verbose (fine grained) logging of the
+         * Configures whether perform verbose (fine-grained) logging of the
          * progress of upload and download operations.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -5679,7 +5679,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Set the client side port range in active mode. The syntax is:
-         * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
+         * minPort-maxPort Both port numbers are inclusive, e.g., 10000-19999 to
          * include all 1xxxx ports.
          * 
          * The option is a: <code>java.lang.String</code> type.

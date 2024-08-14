@@ -24,6 +24,7 @@ public enum BedrockModels {
     TITAN_EMBEDDINGS_G1("amazon.titan-embed-text-v1"),
     TITAN_MULTIMODAL_EMBEDDINGS_G1("amazon.titan-embed-image-v1"),
     TITAN_TEXT_PREMIER_V1("amazon.titan-text-premier-v1:0"),
+    TITAN_TEXT_EMBEDDINGS_V2("amazon.titan-embed-text-v2:0"),
     JURASSIC2_ULTRA("ai21.j2-ultra-v1"),
     JURASSIC2_MID("ai21.j2-mid-v1"),
     ANTROPHIC_CLAUDE_INSTANT_V1("anthropic.claude-instant-v1"),

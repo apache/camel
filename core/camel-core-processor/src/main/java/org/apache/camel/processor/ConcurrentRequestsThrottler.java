@@ -25,6 +25,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -216,6 +218,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
 
     protected class ThrottlingState {
         private final String key;
+        private final Lock lock = new ReentrantLock();
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
         private volatile int throttleRate;
         private final WrappedSemaphore semaphore;
@@ -282,50 +285,56 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         /**
          * Evaluates the maxConcurrentRequestsExpression and adjusts the throttle rate up or down.
          */
-        public synchronized void calculateAndSetMaxConcurrentRequestsExpression(final Exchange exchange) throws Exception {
-            Integer newThrottle = getMaximumRequestsExpression().evaluate(exchange, Integer.class);
+        public void calculateAndSetMaxConcurrentRequestsExpression(final Exchange exchange) throws Exception {
+            lock.lock();
+            try {
+                Integer newThrottle = getMaximumRequestsExpression().evaluate(exchange, Integer.class);
 
-            if (newThrottle != null && newThrottle < 0) {
-                throw new IllegalStateException("The maximumConcurrentRequests must be a positive number, was: " + newThrottle);
-            }
+                if (newThrottle != null && newThrottle < 0) {
+                    throw new IllegalStateException(
+                            "The maximumConcurrentRequests must be a positive number, was: " + newThrottle);
+                }
 
-            if (newThrottle == null && throttleRate == 0) {
-                throw new RuntimeExchangeException(
-                        "The maxConcurrentRequestsExpression was evaluated as null: " + getMaximumRequestsExpression(),
-                        exchange);
-            }
+                if (newThrottle == null && throttleRate == 0) {
+                    throw new RuntimeExchangeException(
+                            "The maxConcurrentRequestsExpression was evaluated as null: " + getMaximumRequestsExpression(),
+                            exchange);
+                }
 
-            if (newThrottle != null) {
-                if (newThrottle != throttleRate) {
-                    // decrease
-                    if (throttleRate > newThrottle) {
-                        int delta = throttleRate - newThrottle;
+                if (newThrottle != null) {
+                    if (newThrottle != throttleRate) {
+                        // decrease
+                        if (throttleRate > newThrottle) {
+                            int delta = throttleRate - newThrottle;
 
-                        // discard any permits that are needed to decrease throttling
-                        semaphore.reducePermits(delta);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate,
-                                    newThrottle, exchange.getExchangeId());
-                        }
-
-                        // increase
-                    } else if (newThrottle > throttleRate) {
-                        int delta = newThrottle - throttleRate;
-                        semaphore.increasePermits(delta);
-                        if (throttleRate == 0) {
+                            // discard any permits that are needed to decrease throttling
+                            semaphore.reducePermits(delta);
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle,
-                                        exchange.getExchangeId());
-                            }
-                        } else {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate,
+                                LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate,
                                         newThrottle, exchange.getExchangeId());
                             }
+
+                            // increase
+                        } else if (newThrottle > throttleRate) {
+                            int delta = newThrottle - throttleRate;
+                            semaphore.increasePermits(delta);
+                            if (throttleRate == 0) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle,
+                                            exchange.getExchangeId());
+                                }
+                            } else {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate,
+                                            newThrottle, exchange.getExchangeId());
+                                }
+                            }
                         }
+                        throttleRate = newThrottle;
                     }
-                    throttleRate = newThrottle;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }

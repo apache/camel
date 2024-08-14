@@ -47,7 +47,7 @@ public class SqsBatchConsumerConcurrentConsumersIT extends CamelTestSupport {
             message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
             message.receiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5");
 
-            clientMock.messages.add(message.build());
+            clientMock.addMessage(message.build());
         }
 
         return clientMock;

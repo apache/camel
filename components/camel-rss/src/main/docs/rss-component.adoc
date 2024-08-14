@@ -56,7 +56,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Exchange data types
+== Usage
+
+=== Exchange data types
 
 Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
 Depending on the value of the `splitEntries` flag, Camel returns either
@@ -82,7 +84,7 @@ from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&d
     .to("bean:rss");
 ----
 
-== Filtering entries
+=== Filtering entries
 
 You can filter out entries using XPath, as shown in the
 data format section above. You can also exploit Camel's

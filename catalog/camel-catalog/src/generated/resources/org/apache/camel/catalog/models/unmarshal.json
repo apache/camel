@@ -5,7 +5,7 @@
     "title": "Unmarshal",
     "description": "Converts the message data received from the wire into a format that Apache Camel processors can consume",
     "deprecated": false,
-    "label": "dataformat,transformation",
+    "label": "eip,dataformat,transformation",
     "javaType": "org.apache.camel.model.UnmarshalDefinition",
     "abstract": false,
     "input": true,

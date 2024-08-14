@@ -1108,7 +1108,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
-     * Capture changes from a Oracle database.
+     * Capture changes from an Oracle database.
      * 
      * Category: database
      * Since: 3.17
@@ -2800,7 +2800,7 @@ public interface ComponentsBuilderFactory {
         return KuduComponentBuilderFactory.kudu();
     }
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
@@ -3939,6 +3939,45 @@ public interface ComponentsBuilderFactory {
      */
     static SnmpComponentBuilderFactory.SnmpComponentBuilder snmp() {
         return SnmpComponentBuilderFactory.snmp();
+    }
+    /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * @return the dsl builder
+     */
+    static SolrComponentBuilderFactory.SolrComponentBuilder solr() {
+        return SolrComponentBuilderFactory.solr();
+    }
+    /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * @return the dsl builder
+     */
+    static SolrcloudComponentBuilderFactory.SolrcloudComponentBuilder solrcloud() {
+        return SolrcloudComponentBuilderFactory.solrcloud();
+    }
+    /**
+     * Solr (Secure) (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * @return the dsl builder
+     */
+    static SolrsComponentBuilderFactory.SolrsComponentBuilder solrs() {
+        return SolrsComponentBuilderFactory.solrs();
     }
     /**
      * Splunk (camel-splunk)

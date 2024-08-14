@@ -41,7 +41,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Sample
+== Examples
 
 In the route below, we insert a `browse:` component to be able to browse
 the Exchanges that are passing through:

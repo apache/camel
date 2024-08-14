@@ -35,17 +35,21 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listServices
-- listServicesByLabels
-- getService
-- createService
-- deleteService
+=== Supported producer operation
 
-== Kubernetes Services Producer Examples
+- `listServices`
+- `listServicesByLabels`
+- `getService`
+- `createService`
+- `deleteService`
 
-- listServices: this operation list the services on a kubernetes cluster
+== Examples
+
+=== Kubernetes Services Producer Examples
+
+- `listServices`: this operation lists the services on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -54,9 +58,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of services from your cluster
+This operation returns a List of services from your cluster
 
-- listServicesByLabels:  this operation list the deployments by labels on a kubernetes cluster
+- `listServicesByLabels`: this operation lists the deployments by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -73,9 +77,9 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation return a List of Services from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a list of services from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
-== Kubernetes Services Consumer Example
+=== Kubernetes Services Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------

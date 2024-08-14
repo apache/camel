@@ -21,8 +21,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class ZendeskApiCollection extends ApiCollection<ZendeskApiName, ZendeskConfiguration> {
 
-    private static ZendeskApiCollection collection;
-
     private ZendeskApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<ZendeskApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(ZendeskApiName.class);
@@ -49,10 +47,11 @@ public final class ZendeskApiCollection extends ApiCollection<ZendeskApiName, Ze
         return result;
     }
 
-    public static synchronized ZendeskApiCollection getCollection() {
-        if (collection == null) {
-            collection = new ZendeskApiCollection();
-        }
-        return collection;
+    public static ZendeskApiCollection getCollection() {
+        return ZendeskApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class ZendeskApiCollectionHolder {
+        private static final ZendeskApiCollection INSTANCE = new ZendeskApiCollection();
     }
 }

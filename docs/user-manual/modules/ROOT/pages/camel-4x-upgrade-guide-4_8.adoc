@@ -6,6 +6,13 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.7 to 4.8
 
+
+=== Deprecated Components
+
+The following components that were marked as deprecated:
+
+* camel-univocity-parsers
+
 === camel-kafka
 
 The `KafkaIdempotentRepository` will now continue to sync cache updates after Camel has been started.

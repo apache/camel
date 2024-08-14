@@ -33,17 +33,17 @@ And the following variables are available as well:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Variable |Type |Description
-|exchange |Exchange |The current Exchange
-|in.body |Object |The message body
-|out.body |Object |*deprecated* The OUT message body (if any)
-|in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
+|`exchange` |Exchange |The current Exchange
+|`in.body` |Object |The message body
+|`out.body` |Object |*deprecated* The OUT message body (if any)
+|`in.headers.*` |Object |You can access the value of exchange.in.headers with key *foo* by using
 the variable which name is in.headers.foo
-|out.headers.* |Object |*deprecated* You can access the value of `exchange.out.headers` with key *foo* by using
+|`out.headers.*` |Object |*deprecated* You can access the value of `exchange.out.headers` with key *foo* by using
 the variable which name is `out.headers.foo` variable
-|*key name* |Object |Any `exchange.properties` and `exchange.in.headers` and any additional
+|`*key name*` |Object |Any `exchange.properties` and `exchange.in.headers` and any additional
 parameters set using `setParameters(Map)`. These parameters are added
 with their own key name, for instance, if there is an IN header with the
-key name *foo* then its added as *foo*.
+key name *foo* then it is added as *foo*.
 |=======================================================================
 
 == Example
@@ -113,7 +113,7 @@ Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
                      .add("b", "http://acme.com/beer");
 ----
 
-When using namespaces in XML DSL then its different, as you set up the namespaces
+When using namespaces in XML DSL then it is different, as you set up the namespaces
 in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,

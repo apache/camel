@@ -14,9 +14,13 @@
 
 The Camel Smooks component uses https://www.smooks.org/[Smooks] to break up the structured data (EDI, CSV, POJO, etc...) of a Camel message body into fragments. These fragments can be processed independently of one another from within Smooks.
 
-Common applications of Smooks include transformation (e.g., EDI to CSV, POJO to EDI, POJO to XML), routing (e.g., split, transform, and route fragments to destinations such as JMS queues, file systems, and databases), and enrichment (e.g., enriching a fragment with data from a database).
+Common applications of Smooks include:
 
-Maven users will need to add the following dependency to their `+pom.xml+`.
+* transformation (e.g., EDI to CSV, POJO to EDI, POJO to XML)
+* routing (e.g., split, transform, and route fragments to destinations such as JMS queues, file systems, and databases)
+* enrichment (e.g., enriching a fragment with data from a database).
+
+Maven users will need to add the following dependency to their `pom.xml`.
 
 [source,xml]
 ----

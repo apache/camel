@@ -14,7 +14,7 @@ For instance, `camel:docs/components/antora.yml` for the `docs/components/antora
 
 //== Notes on versions
 //
-//Within an Antora component, xrefs to content in the same component, whether or not they are in the same source tree or repository, should never include the `version` or `component` segment of the page id.
+//Within an Antora component, xrefs to content in the same component, whether they are in the same source tree or repository, should never include the `version` or `component` segment of the page id.
 //Including the version will make the page non-relocatable to another version: for instance specifying `next` in the main branch will break the link when main is branched for a release.
 //Including the `component` segment will redirect to the (Antora) latest version, which will typically be the last released version.
 //

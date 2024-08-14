@@ -5,7 +5,7 @@
     "title": "Route Templates",
     "description": "A series of route templates",
     "deprecated": false,
-    "label": "routeTemplates",
+    "label": "configuration",
     "javaType": "org.apache.camel.model.RouteTemplatesDefinition",
     "abstract": false,
     "input": false,

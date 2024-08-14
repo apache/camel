@@ -45,16 +45,28 @@ public final class ResultErrorHelper {
 
     /**
      *
-     * @param  parameterName the required option
-     * @param  parameters    the
-     * @return
+     * @param      parameterName the required option
+     * @param      parameters    the parameters
+     * @return                   an optional error
+     *
+     * @deprecated               use {@link #requiresOption(Map, String)} instead
      */
+    @Deprecated
     public static Optional<VerificationError> requiresOption(String parameterName, Map<String, Object> parameters) {
-        if (ObjectHelper.isEmpty(parameters.get(parameterName))) {
-            return Optional.of(ResultErrorBuilder.withMissingOption(parameterName).build());
-        }
+        return Optional.ofNullable(requiresOption(parameters, parameterName));
+    }
 
-        return Optional.empty();
+    /**
+     *
+     * @param  parameterName the required option
+     * @param  parameters    the parameters
+     * @return               an error or null
+     */
+    public static VerificationError requiresOption(Map<String, Object> parameters, String parameterName) {
+        if (ObjectHelper.isEmpty(parameters.get(parameterName))) {
+            return ResultErrorBuilder.withMissingOption(parameterName).build();
+        }
+        return null;
     }
 
     /**

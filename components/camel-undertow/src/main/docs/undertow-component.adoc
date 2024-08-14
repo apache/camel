@@ -18,7 +18,7 @@ The Undertow component provides HTTP and WebSocket based endpoints for consuming
 and producing HTTP/WebSocket requests.
 
 That is, the Undertow component behaves as a simple Web server.
-Undertow can also be used as a http client that means you can also use
+Undertow can also be used as an HTTP client that means you can also use
 it with Camel as a producer.
 
 Since the component also supports WebSocket
@@ -70,7 +70,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Message Headers
+== Usage
+
+=== Message Headers
 
 Camel uses the same message headers as the xref:http-component.adoc[HTTP]
 component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
@@ -81,7 +83,42 @@ For example, given a client request with the URL,
 `\http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value `123`.
 
-== HTTP Producer Example
+=== Using localhost as host
+
+When you specify `localhost` in a URL, Camel exposes the endpoint only
+on the local TCP/IP network interface, so it cannot be accessed from
+outside the machine it operates on.
+
+If you need to expose an Undertow endpoint on a specific network interface,
+the numerical IP address of this interface should be used as the host.
+If you need to expose an Undertow endpoint on all network interfaces, the
+`0.0.0.0` address should be used.
+
+To listen across an entire URI prefix, see
+xref:manual:faq:how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards?].
+
+If you actually want to expose routes by HTTP and already have a
+Servlet, you should instead refer to the
+xref:servlet-component.adoc[Servlet Transport].
+
+=== Security provider
+
+To plug in a security provider for endpoint authentication, implement SPI interface
+`org.apache.camel.component.undertow.spi.UndertowSecurityProvider`.
+
+Undertow component locates all implementations of `UndertowSecurityProvider` using
+Java SPI (Service Provider Interfaces).
+If there is an object passed to the component as parameter `securityConfiguration` and provider accepts it.
+Provider will be used
+for authentication of all requests.
+
+Property `requireServletContext` of security providers forces the Undertow server to start
+with servlet context. There will be no servlet actually handled. This feature is meant only
+for use with servlet filters, which needs servlet context for their functionality.
+
+== Examples
+
+=== HTTP Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -109,7 +146,7 @@ XML::
 
 ====
 
-== HTTP Consumer Example
+=== HTTP Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `\http://localhost:8080/myapp/myservice`:
@@ -122,7 +159,7 @@ In this sample we define a route that exposes a HTTP service at
 </route>
 ----
 
-== WebSocket Example
+=== WebSocket Example
 
 In this sample we define a route that exposes a WebSocket service at
 `\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
@@ -135,39 +172,5 @@ In this sample we define a route that exposes a WebSocket service at
   <to uri="undertow:ws://localhost:8080/myapp/mysocket"/>
 </route>
 ----
-
-== Using localhost as host
-
-When you specify `localhost` in a URL, Camel exposes the endpoint only
-on the local TCP/IP network interface, so it cannot be accessed from
-outside the machine it operates on.
-
-If you need to expose an Undertow endpoint on a specific network interface,
-the numerical IP address of this interface should be used as the host.
-If you need to expose an Undertow endpoint on all network interfaces, the
-`0.0.0.0` address should be used.
-
-To listen across an entire URI prefix, see
-xref:manual:faq:how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards?].
-
-If you actually want to expose routes by HTTP and already have a
-Servlet, you should instead refer to the
-xref:servlet-component.adoc[Servlet Transport].
-
-== Security provider
-
-To plug in a security provider for endpoint authentication, implement SPI interface
-`org.apache.camel.component.undertow.spi.UndertowSecurityProvider`.
-
-Undertow component locates all implementations of `UndertowSecurityProvider` using
-Java SPI (Service Provider Interfaces).
-If there is an object passed to the component as parameter `securityConfiguration` and provider accepts it.
-Provider will be used
-for authentication of all requests.
-
-Property `requireServletContext` of security providers forces the Undertow server to start
-with servlet context. There will be no servlet actually handled. This feature is meant only
-for use with servlet filters, which needs servlet context for their functionality.
-
 
 include::spring-boot:partial$starter.adoc[]

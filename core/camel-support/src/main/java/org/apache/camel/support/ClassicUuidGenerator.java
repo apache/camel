@@ -17,6 +17,8 @@
 package org.apache.camel.support;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.InetAddressUtil;
@@ -30,6 +32,7 @@ import org.slf4j.LoggerFactory;
 public class ClassicUuidGenerator implements UuidGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClassicUuidGenerator.class);
+    private static final Lock LOCK = new ReentrantLock();
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
@@ -78,11 +81,14 @@ public class ClassicUuidGenerator implements UuidGenerator {
     }
 
     public ClassicUuidGenerator(String prefix) {
-        synchronized (UNIQUE_STUB) {
+        LOCK.lock();
+        try {
             this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
             // let the ID be friendly for URL and file systems
             this.seed = generateSanitizedId(this.seed);
             this.length = seed.length() + (Long.toString(Long.MAX_VALUE)).length();
+        } finally {
+            LOCK.unlock();
         }
     }
 

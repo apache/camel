@@ -47,10 +47,10 @@ public class KinesisFirehose2ComponentVerifierExtension extends DefaultComponent
     protected Result verifyParameters(Map<String, Object> parameters) {
 
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-                .error(ResultErrorHelper.requiresOption("accessKey", parameters))
-                .error(ResultErrorHelper.requiresOption("secretKey", parameters))
-                .error(ResultErrorHelper.requiresOption("region", parameters))
-                .error(ResultErrorHelper.requiresOption("streamName", parameters));
+                .error(ResultErrorHelper.requiresOption(parameters, "accessKey"))
+                .error(ResultErrorHelper.requiresOption(parameters, "secretKey"))
+                .error(ResultErrorHelper.requiresOption(parameters, "region"))
+                .error(ResultErrorHelper.requiresOption(parameters, "streamName"));
 
         // Validate using the catalog
 

@@ -35,7 +35,7 @@ import org.apache.camel.spi.annotations.DslProperty;
 /**
  * Marks the beginning of a try, catch, finally block
  */
-@Metadata(label = "error")
+@Metadata(label = "eip,routing,error")
 @XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {
@@ -229,21 +229,22 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             if (catchClauses == null) {
                 catchClauses = new ArrayList<>();
             }
+            int doFinallyCounter = 0;
             for (ProcessorDefinition<?> output : outputs) {
                 if (output instanceof CatchDefinition) {
                     if (!catchClauses.contains(output)) {
                         catchClauses.add((CatchDefinition) output);
                     }
                 } else if (output instanceof FinallyDefinition) {
-                    if (finallyClause != null && output != finallyClause) {
-                        throw new IllegalArgumentException(
-                                "Multiple finally clauses added: " + finallyClause + " and " + output);
-                    } else {
-                        finallyClause = (FinallyDefinition) output;
-                    }
+                    ++doFinallyCounter;
+                    finallyClause = (FinallyDefinition) output;
                 } else {
                     outputsWithoutCatches.add(output);
                 }
+            }
+            if (doFinallyCounter > 1) {
+                throw new IllegalArgumentException(
+                        "Multiple finally clauses added: " + doFinallyCounter);
             }
             // initialize parent
             for (CatchDefinition cd : catchClauses) {

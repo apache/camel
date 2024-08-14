@@ -40,7 +40,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     @Metadata(description = "Sets the URI to use to resolve the endpoint. Notice that additional options can be configured using a series of property.")
     private String uri;
     @XmlElementRef
-    @Metadata(description = "To configure additional endpoint options using a XML style which is similar as configuring Spring or Blueprint beans.")
+    @Metadata(description = "To configure additional endpoint options using a XML style which is similar as configuring Spring beans.")
     private List<PropertyDefinition> properties = new ArrayList<>();
     @XmlTransient
     private Endpoint endpoint;
@@ -82,8 +82,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     }
 
     /**
-     * To configure additional endpoint options using a XML style which is similar as configuring Spring or Blueprint
-     * beans.
+     * To configure additional endpoint options using an XML style which is similar as configuring Spring beans.
      */
     public void setProperties(List<PropertyDefinition> properties) {
         this.properties = properties;

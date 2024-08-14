@@ -39,6 +39,8 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sourceType": target.getConfiguration().setSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "splunkendpoint":
         case "splunkEndpoint": target.getConfiguration().setSplunkEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "time": target.getConfiguration().setTime(property(camelContext, java.lang.Long.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -64,6 +66,8 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sourceType": return java.lang.String.class;
         case "splunkendpoint":
         case "splunkEndpoint": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "time": return java.lang.Long.class;
         case "token": return java.lang.String.class;
         default: return null;
@@ -90,6 +94,8 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sourceType": return target.getConfiguration().getSourceType();
         case "splunkendpoint":
         case "splunkEndpoint": return target.getConfiguration().getSplunkEndpoint();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getSslContextParameters();
         case "time": return target.getConfiguration().getTime();
         case "token": return target.getConfiguration().getToken();
         default: return null;

@@ -57,6 +57,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher} that
  * uses a {@link org.apache.camel.Producer}.
  *
+ * @see PollProcessor
  * @see Enricher
  */
 public class PollEnricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
@@ -132,6 +133,10 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    public String getUri() {
+        return uri;
     }
 
     public Expression getExpression() {

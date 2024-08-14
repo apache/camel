@@ -74,8 +74,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class TwilioApiCollection extends ApiCollection<TwilioApiName, TwilioConfiguration> {
 
-    private static TwilioApiCollection collection;
-
     private TwilioApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<TwilioApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(TwilioApiName.class);
@@ -796,10 +794,11 @@ public final class TwilioApiCollection extends ApiCollection<TwilioApiName, Twil
         return result;
     }
 
-    public static synchronized TwilioApiCollection getCollection() {
-        if (collection == null) {
-            collection = new TwilioApiCollection();
-        }
-        return collection;
+    public static TwilioApiCollection getCollection() {
+        return TwilioApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class TwilioApiCollectionHolder {
+        private static final TwilioApiCollection INSTANCE = new TwilioApiCollection();
     }
 }

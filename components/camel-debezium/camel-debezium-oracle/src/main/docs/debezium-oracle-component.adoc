@@ -2,7 +2,7 @@
 :doctitle: Debezium Oracle Connector
 :shortname: debezium-oracle
 :artifactid: camel-debezium-oracle
-:description: Capture changes from a Oracle database.
+:description: Capture changes from an Oracle database.
 :since: 3.17
 :supportlevel: Stable
 :tabs-sync-option:
@@ -79,7 +79,7 @@ The message body if is not `null` (in case of tombstones), it contains the state
 Check below for more details.
 ====
 
-== Samples
+== Examples
 
 === Consuming events
 

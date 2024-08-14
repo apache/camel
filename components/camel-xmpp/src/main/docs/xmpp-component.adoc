@@ -60,8 +60,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Usage
 
-== Headers and setting Subject or Language
+=== Headers and setting Subject or Language
 
 Camel sets the message IN headers as properties on the XMPP message. You
 can configure a `HeaderFilterStategy` if you need custom filtering of

@@ -17,7 +17,6 @@
 package org.apache.camel.component.djl;
 
 import ai.djl.modality.cv.Image;
-import ai.djl.modality.cv.output.DetectedObjects;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,21 +42,11 @@ public class CvPoseEstimationTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/resources/data/pose?recursive=true&noop=true")
-                        .convertBodyTo(byte[].class)
                         .to("djl:cv/object_detection?artifactId=ai.djl.mxnet:ssd:0.0.1")
                         .log("${header.CamelFileName} = ${body}")
                         .split(simple("${body.items}"))
                         .filter(simple("${body.className} == 'person'"))
-                        .process(exchange -> {
-                            var obj = exchange.getMessage().getBody(DetectedObjects.DetectedObject.class);
-                            var rect = obj.getBoundingBox().getBounds();
-                            var image = exchange.getIn().getHeader(DJLConstants.INPUT, Image.class);
-                            exchange.getIn().setBody(image.getSubImage(
-                                    (int) (rect.getX() * image.getWidth()),
-                                    (int) (rect.getY() * image.getHeight()),
-                                    (int) (rect.getWidth() * image.getWidth()),
-                                    (int) (rect.getHeight() * image.getHeight())));
-                        })
+                        .convertBodyTo(Image.class)
                         .to("djl:cv/pose_estimation?artifactId=ai.djl.mxnet:simple_pose:0.0.1")
                         .log("${header.CamelFileName} = ${body}")
                         .to("mock:result");

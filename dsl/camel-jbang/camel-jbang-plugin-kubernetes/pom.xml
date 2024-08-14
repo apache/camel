@@ -47,14 +47,21 @@
           <artifactId>camel-jbang-core</artifactId>
         </dependency>
 
-        <!-- kubernetes -->
+        <!-- Kubernetes -->
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-client</artifactId>
             <version>${kubernetes-client-version}</version>
         </dependency>
 
-        <!-- camel k-->
+        <!-- Knative model -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>knative-model</artifactId>
+            <version>${knative-client-version}</version>
+        </dependency>
+
+        <!-- Camel K-->
         <!-- TODO: remove dependency in favor of using trait domain model in Camel JBang -->
         <dependency>
             <groupId>org.apache.camel.k</groupId>
@@ -62,7 +69,7 @@
             <version>${camel-k-version}</version>
         </dependency>
 
-        <!-- test dependencies -->
+        <!-- Test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
@@ -75,5 +82,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!-- Used in unit tests to resolve dependencies via Maven downloader -->
+                        <camel.version>${project.version}</camel.version>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

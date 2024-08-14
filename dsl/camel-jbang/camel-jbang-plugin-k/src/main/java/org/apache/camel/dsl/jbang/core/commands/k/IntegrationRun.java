@@ -311,7 +311,9 @@ public class IntegrationRun extends KubernetesBaseCommand {
         if (output != null) {
             switch (output) {
                 case "k8s" -> {
-                    TraitContext context = new TraitContext(integration.getMetadata().getName(), "1.0-SNAPSHOT");
+                    List<Source> sources = SourceHelper.resolveSources(integrationSources);
+                    TraitContext context
+                            = new TraitContext(integration.getMetadata().getName(), "1.0-SNAPSHOT", printer(), sources);
                     TraitHelper.configureContainerImage(traitsSpec, image, "quay.io", null, integration.getMetadata().getName(),
                             "1.0-SNAPSHOT");
 
@@ -352,7 +354,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
         if (logs) {
             IntegrationLogs logsCommand = new IntegrationLogs(getMain());
             logsCommand.withClient(client());
-            logsCommand.name = integration.getMetadata().getName();
+            logsCommand.withName(integration.getMetadata().getName());
             logsCommand.doCall();
         }
 
@@ -361,7 +363,9 @@ public class IntegrationRun extends KubernetesBaseCommand {
 
     private void convertOptionsToTraits(Traits traitsSpec) {
         TraitHelper.configureMountTrait(traitsSpec, configs, resources, volumes);
-        TraitHelper.configureOpenApiSpec(traitsSpec, openApis);
+        if (openApis != null) {
+            Stream.of(openApis).forEach(openapi -> TraitHelper.configureOpenApiSpec(traitsSpec, openapi));
+        }
         TraitHelper.configureProperties(traitsSpec, properties);
         TraitHelper.configureBuildProperties(traitsSpec, buildProperties);
         TraitHelper.configureEnvVars(traitsSpec, envVars);

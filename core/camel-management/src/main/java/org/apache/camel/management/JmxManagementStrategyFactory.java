@@ -70,7 +70,7 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
                 }
             }
 
-            // camel-spring/camel-blueprint may re-initialize JMX during startup, so remove any previous
+            // camel-spring may re-initialize JMX during startup, so remove any previous
             camelContext.getLifecycleStrategies().removeIf(s -> s instanceof JmxManagementLifecycleStrategy);
         }
         camelContext.getLifecycleStrategies().add(0, lifecycle);

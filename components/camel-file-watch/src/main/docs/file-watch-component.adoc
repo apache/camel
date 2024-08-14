@@ -36,7 +36,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Examples:
+== Examples
 
 === Recursive watch all events (file creation, file deletion, file modification):
 

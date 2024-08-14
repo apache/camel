@@ -37,6 +37,7 @@ import org.apache.camel.model.errorhandler.*;
 import org.apache.camel.model.language.*;
 import org.apache.camel.model.loadbalancer.*;
 import org.apache.camel.model.rest.*;
+import org.apache.camel.model.tokenizer.*;
 import org.apache.camel.model.transformer.*;
 import org.apache.camel.model.validator.*;
 
@@ -179,6 +180,9 @@ public class ModelWriter extends BaseWriter {
     }
     public void writePolicyDefinition(PolicyDefinition def) throws IOException {
         doWritePolicyDefinition("policy", def);
+    }
+    public void writePollDefinition(PollDefinition def) throws IOException {
+        doWritePollDefinition("poll", def);
     }
     public void writePollEnrichDefinition(PollEnrichDefinition def) throws IOException {
         doWritePollEnrichDefinition("pollEnrich", def);
@@ -750,6 +754,9 @@ public class ModelWriter extends BaseWriter {
     public void writeSecurityDefinition(SecurityDefinition def) throws IOException {
         doWriteSecurityDefinition("security", def);
     }
+    public void writeLangChain4jTokenizerDefinition(LangChain4jTokenizerDefinition def) throws IOException {
+        doWriteLangChain4jTokenizerDefinition("langChain4j", def);
+    }
     public void writeTransformersDefinition(TransformersDefinition def) throws IOException {
         doWriteTransformersDefinition("transformers", def);
     }
@@ -1289,6 +1296,14 @@ public class ModelWriter extends BaseWriter {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("ref", def.getRef());
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        endElement(name);
+    }
+    protected void doWritePollDefinition(String name, PollDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("uri", def.getUri());
+        doWriteAttribute("timeout", def.getTimeout());
         endElement(name);
     }
     protected void doWritePollEnrichDefinition(String name, PollEnrichDefinition def) throws IOException {
@@ -3454,6 +3469,14 @@ public class ModelWriter extends BaseWriter {
         doWriteVerbDefinitionElements(def);
         endElement(name);
     }
+    protected void doWriteLangChain4jTokenizerDefinition(String name, LangChain4jTokenizerDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("maxTokens", def.getMaxTokens());
+        doWriteAttribute("tokenizerType", def.getTokenizerType());
+        doWriteAttribute("maxOverlap", def.getMaxOverlap());
+        endElement(name);
+    }
     protected void doWriteCustomTransformerDefinition(String name, CustomTransformerDefinition def) throws IOException {
         startElement(name);
         doWriteTransformerDefinitionAttributes(def);
@@ -3639,6 +3662,7 @@ public class ModelWriter extends BaseWriter {
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);
                 case "PolicyDefinition" -> doWritePolicyDefinition("policy", (PolicyDefinition) v);
+                case "PollDefinition" -> doWritePollDefinition("poll", (PollDefinition) v);
                 case "PollEnrichDefinition" -> doWritePollEnrichDefinition("pollEnrich", (PollEnrichDefinition) v);
                 case "ProcessDefinition" -> doWriteProcessDefinition("process", (ProcessDefinition) v);
                 case "RecipientListDefinition" -> doWriteRecipientListDefinition("recipientList", (RecipientListDefinition) v);
@@ -3696,6 +3720,7 @@ public class ModelWriter extends BaseWriter {
                 case "RestBindingDefinition" -> doWriteRestBindingDefinition("restBinding", (RestBindingDefinition) v);
                 case "RestDefinition" -> doWriteRestDefinition("rest", (RestDefinition) v);
                 case "RestsDefinition" -> doWriteRestsDefinition("rests", (RestsDefinition) v);
+                case "LangChain4jTokenizerDefinition" -> doWriteLangChain4jTokenizerDefinition("langChain4j", (LangChain4jTokenizerDefinition) v);
             }
         }
     }
@@ -3740,6 +3765,7 @@ public class ModelWriter extends BaseWriter {
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);
                 case "PolicyDefinition" -> doWritePolicyDefinition("policy", (PolicyDefinition) v);
+                case "PollDefinition" -> doWritePollDefinition("poll", (PollDefinition) v);
                 case "PollEnrichDefinition" -> doWritePollEnrichDefinition("pollEnrich", (PollEnrichDefinition) v);
                 case "ProcessDefinition" -> doWriteProcessDefinition("process", (ProcessDefinition) v);
                 case "RecipientListDefinition" -> doWriteRecipientListDefinition("recipientList", (RecipientListDefinition) v);
@@ -3780,6 +3806,7 @@ public class ModelWriter extends BaseWriter {
                 case "WhenDefinition" -> doWriteWhenDefinition("when", (WhenDefinition) v);
                 case "WireTapDefinition" -> doWriteWireTapDefinition("wireTap", (WireTapDefinition) v);
                 case "ServiceCallDefinition" -> doWriteServiceCallDefinition("serviceCall", (ServiceCallDefinition) v);
+                case "LangChain4jTokenizerDefinition" -> doWriteLangChain4jTokenizerDefinition("langChain4j", (LangChain4jTokenizerDefinition) v);
             }
         }
     }

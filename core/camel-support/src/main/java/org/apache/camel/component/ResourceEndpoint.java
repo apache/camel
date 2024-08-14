@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedResource;
@@ -57,6 +59,8 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
                                                     + " Doing so impose a potential security risk as this opens access to the full power of CamelContext API.")
     private boolean allowContextMapAll;
 
+    private final Lock lock = new ReentrantLock();
+
     public ResourceEndpoint() {
     }
 
@@ -77,7 +81,8 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     public InputStream getResourceAsInputStream() throws IOException {
         // try to get the resource input stream
         if (isContentCache()) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (buffer == null) {
                     log.debug("Reading resource: {} into the content cache", resourceUri);
                     try (InputStream is = getResourceAsInputStreamWithoutCache()) {
@@ -86,6 +91,8 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
                         buffer = bos.toByteArray();
                     }
                 }
+            } finally {
+                lock.unlock();
             }
             log.debug("Using resource: {} from the content cache", resourceUri);
             return new ByteArrayInputStream(buffer);

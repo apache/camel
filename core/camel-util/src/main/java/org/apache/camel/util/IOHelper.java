@@ -43,6 +43,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -626,6 +628,7 @@ public final class IOHelper {
      */
     public static class EncodingInputStream extends InputStream {
 
+        private final Lock lock = new ReentrantLock();
         private final File file;
         private final BufferedReader reader;
         private final Charset defaultStreamCharset;
@@ -659,8 +662,13 @@ public final class IOHelper {
         }
 
         @Override
-        public synchronized void reset() throws IOException {
-            reader.reset();
+        public void reset() throws IOException {
+            lock.lock();
+            try {
+                reader.reset();
+            } finally {
+                lock.unlock();
+            }
         }
 
         public InputStream toOriginalInputStream() throws FileNotFoundException {

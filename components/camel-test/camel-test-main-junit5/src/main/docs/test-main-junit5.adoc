@@ -95,7 +95,7 @@ Several methods in the test class and/or its parent classes can be annotated.
 
 === Examples ===
 
-In the next examples, the test class `SomeTest` adds a configuration class and specifies the xml routes to include.
+In the next examples, the test class `SomeTest` adds a configuration class and specifies the XML routes to include.
 
 [tabs]
 ====

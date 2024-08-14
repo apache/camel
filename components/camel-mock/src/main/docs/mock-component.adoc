@@ -24,6 +24,30 @@ xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 
+== URI format
+
+----
+mock:someName[?options]
+----
+
+Where `someName` can be any string that uniquely identifies the
+endpoint.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== Usage
+
 The Mock component provides a powerful declarative testing mechanism,
 which is similar to http://www.jmock.org[jMock] in
 that it allows declarative expectations to be created on any Mock
@@ -55,7 +79,7 @@ or xref:jpa-component.adoc[database], for example.
 
 [CAUTION]
 ====
-*Mock endpoints keep received Exchanges in memory indefinitely.* 
+*Mock endpoints keep received Exchanges in memory indefinitely.*
 
 Remember that Mock is designed for testing. When you add Mock endpoints
 to a route, each Exchange sent to the endpoint will
@@ -65,38 +89,15 @@ large messages, this may cause excessive memory use. If your goal is to
 test deployable routes inline, consider using
 NotifyBuilder or
 AdviceWith in your tests instead of adding Mock
-endpoints to routes directly. 
+endpoints to routes directly.
 There are two new options `retainFirst`, and
 `retainLast` that can be used to limit the number of messages the Mock
 endpoints keep in memory.
 ====
 
+== Examples
 
-== URI format
-
-----
-mock:someName[?options]
-----
-
-Where `someName` can be any string that uniquely identifies the
-endpoint.
-
-// component-configure options: START
-
-// component-configure options: END
-
-// component options: START
-include::partial$component-configure-options.adoc[]
-include::partial$component-endpoint-options.adoc[]
-// component options: END
-
-// endpoint options: START
-
-// endpoint options: END
-
-
-
-== Simple Example
+=== Simple Example
 
 Here's a simple example of Mock endpoint in use. First, the endpoint is
 resolved on the context. Then we set an expectation, and then, after the
@@ -123,7 +124,7 @@ Camel will by default wait 10 seconds when the `assertIsSatisfied()` is
 invoked. This can be configured by setting the
 `setResultWaitTime(millis)` method.
 
-== Using assertPeriod
+=== Using assertPeriod
 
 When the assertion is satisfied then Camel will stop waiting and
 continue from the `assertIsSatisfied` method. That means if a new
@@ -144,7 +145,7 @@ resultEndpoint.expectedMessageCount(2);
 resultEndpoint.assertIsSatisfied();
 ----
 
-== Setting expectations
+=== Setting expectations
 
 You can see from the Javadoc of
 https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html[MockEndpoint]
@@ -188,7 +189,7 @@ Here's another example:
 resultEndpoint.expectedBodiesReceived("firstMessageBody", "secondMessageBody", "thirdMessageBody");
 ----
 
-== Adding expectations to specific messages
+=== Adding expectations to specific messages
 
 In addition, you can use the
 https://javadoc.io/doc/org.apache.camel/camel-mock/latest/org/apache/camel/component/mock/MockEndpoint.html[`message(int
@@ -208,7 +209,7 @@ There are some examples of the Mock endpoint in use in the
 https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel/processor[`camel-core`
 processor tests].
 
-== Mocking existing endpoints
+=== Mocking existing endpoints
 
 Camel now allows you to automatically mock existing endpoints in your
 Camel routes.
@@ -266,12 +267,12 @@ same matching function used by Camel.
 
 [NOTE]
 Mind that mocking endpoints causes the messages to be copied when they
-arrive at the mock. +
+arrive at the mock.
 That means Camel will use more memory. This may not be suitable when you
 send in a lot of messages.
 
 
-== Mocking existing endpoints using the `camel-test` component
+=== Mocking existing endpoints using the `camel-test` component
 
 Instead of using the `adviceWith` to instruct Camel to mock endpoints,
 you can easily enable this behavior when using the `camel-test` Test
@@ -291,11 +292,12 @@ include::{examplesdir}/components/camel-test/camel-test-junit5/src/test/java/org
 ----
 
 
-== Mocking existing endpoints with XML DSL
+=== Mocking existing endpoints with XML DSL
 
 If you do not use the `camel-test` component for unit testing (as shown
 above) you can use a different approach when using XML files for
-routes. +
+routes.
+
 The solution is to create a new XML file used by the unit test and then
 include the intended XML file which has the route you want to test.
 
@@ -331,7 +333,7 @@ in the constructor for the bean:
 </bean>
 ----
 
-== Mocking endpoints and skip sending to original endpoint
+=== Mocking endpoints and skip sending to original endpoint
 
 Sometimes you want to easily mock and skip sending to certain
 endpoints. So the message is detoured and send to the mock endpoint
@@ -353,7 +355,7 @@ The same example using the Test Kit
 include::{examplesdir}/components/camel-test/camel-test-junit5/src/test/java/org/apache/camel/test/junit5/patterns/IsMockEndpointsAndSkipJUnit5Test.java[tags=e1]
 ----
 
-== Limiting the number of messages to keep
+=== Limiting the number of messages to keep
 
 The xref:mock-component.adoc[Mock] endpoints will by default keep a copy of every
 Exchange that it received. So if you test with a lot
@@ -386,7 +388,7 @@ methods that work on message bodies, headers, etc. will only operate on
 the retained messages. In the example above, they can test only the
 expectations on the 10 retained messages.
 
-== Testing with arrival times
+=== Testing with arrival times
 
 The xref:mock-component.adoc[Mock] endpoint stores the arrival time of the message
 as a property on the Exchange.

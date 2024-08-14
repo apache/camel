@@ -49,8 +49,8 @@ public class OpensearchComponentVerifierExtension extends DefaultComponentVerifi
     protected Result verifyParameters(Map<String, Object> parameters) {
 
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-                .error(ResultErrorHelper.requiresOption("clusterName", parameters))
-                .error(ResultErrorHelper.requiresOption("hostAddresses", parameters));
+                .error(ResultErrorHelper.requiresOption(parameters, "clusterName"))
+                .error(ResultErrorHelper.requiresOption(parameters, "hostAddresses"));
         // Validate using the catalog
 
         super.verifyParametersAgainstCatalog(builder, parameters);

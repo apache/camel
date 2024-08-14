@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This component will hold a Quartz Scheduler that will provide scheduled timer based endpoint that generate a
+ * This component will hold a Quartz Scheduler that will provide a scheduled timer based endpoint that generate a
  * QuartzMessage to a route.
  */
 @Component("quartz")
@@ -122,9 +122,9 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX.
+     * Whether to enable Quartz JMX, which allows managing the Quartz scheduler from JMX.
      * <p/>
-     * This options is default true
+     * The default value for this option is true.
      */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
@@ -183,11 +183,11 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any
-     * running jobs. If this is enabled then any running jobs can fail due to being interrupted. When a job is
-     * interrupted then Camel will mark the exchange to stop continue routing and set
-     * {@link java.util.concurrent.RejectedExecutionException} as caused exception. Therefore use this with care, as its
-     * often better to allow Camel jobs to complete and shutdown gracefully.
+     * Whether to interrupt jobs on shutdown, which forces the scheduler to shut down quicker and attempt to interrupt
+     * any running jobs. If this is enabled, then any running jobs can fail due to being interrupted. When a job is
+     * interrupted then Camel will mark the exchange to stop to continue routing and set
+     * {@link java.util.concurrent.RejectedExecutionException} as caused exception. Therefore, use this with care, as
+     * its often better to allow Camel jobs to complete and shutdown gracefully.
      */
     public void setInterruptJobsOnShutdown(boolean interruptJobsOnShutdown) {
         this.interruptJobsOnShutdown = interruptJobsOnShutdown;
@@ -199,7 +199,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
 
     /**
      * Whether to ignore quartz cannot schedule a trigger because the trigger will never fire in the future. This can
-     * happen when using a cron trigger that are configured to only run in the past.
+     * happen when using a cron trigger configured to only run in the past.
      *
      * By default, Quartz will fail to schedule the trigger and therefore fail to start the Camel route. You can set
      * this to true which then logs a WARN and then ignore the problem, meaning that the route will never fire in the
@@ -364,7 +364,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
      */
     public void addScheduleInitTask(SchedulerInitTask task) {
         if (schedulerInitTasksDone) {
-            // task already done then run task now
+            // task already done then run the task now
             try {
                 task.initializeTask(scheduler);
             } catch (Exception e) {
@@ -393,7 +393,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
         }
 
-        // Extract trigger.XXX and job.XXX properties to be set on endpoint below
+        // Extract trigger.XXX and job.XXX properties to be set on the endpoint below
         Map<String, Object> triggerParameters = PropertiesHelper.extractProperties(parameters, "trigger.");
         Map<String, Object> jobParameters = PropertiesHelper.extractProperties(parameters, "job.");
 
@@ -471,7 +471,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         SchedulerContext quartzContext = storeCamelContextInQuartzContext();
 
         // Set camel job counts to zero. We needed this to prevent shutdown in case there are multiple Camel contexts
-        // that has not completed yet, and the last one with job counts to zero will eventually shutdown.
+        // that have not completed yet, and the last one with job counts to zero will eventually shut down.
         quartzContext.computeIfAbsent(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT, k -> new AtomicInteger());
     }
 
@@ -514,7 +514,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
         if (alreadyStarted) {
-            // a route may have been added or starter after CamelContext is started so ensure we startup the scheduler
+            // a route may have been added or starter after CamelContext is started, so ensure we start the scheduler
             doStartScheduler();
         }
     }
@@ -525,12 +525,12 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     protected void doStartScheduler() throws Exception {
-        // If Camel has already started and then user add a route dynamically, we need to ensure
+        // If Camel has already started and then user adds a route dynamically, we need to ensure
         // to create and init the scheduler first.
         if (scheduler == null) {
             createAndInitScheduler();
         } else {
-            // in case custom scheduler was injected (i.e. created elsewhere), we may need to add
+            // in case custom scheduler was injected (i.e., created elsewhere); we may need to add
             // current camel context to quartz context so jobs have access
             storeCamelContextInQuartzContext();
         }
@@ -543,7 +543,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         schedulerInitTasks.clear();
         schedulerInitTasksDone = true;
 
-        // Now scheduler is ready, let see how we should start it.
+        // Now the scheduler is ready, let's see how we should start it.
         if (!autoStartScheduler) {
             LOG.info("Not starting Quartz scheduler: {} because autoStartScheduler is set to false", scheduler);
         } else {

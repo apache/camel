@@ -108,6 +108,17 @@ from("direct:start")
 
 Queries with variables need to reference a JsonObject instance from the registry:
 
+bookByIdQuery.graphql file:
+----
+query BookById($id: Int!) {
+  bookById(id: $id) {
+    id
+    name
+    author
+  }
+}
+----
+
 [source,java]
 ----
 @BindToRegistry("bookByIdQueryVariables")

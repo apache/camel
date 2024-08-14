@@ -23,21 +23,39 @@ import dev.langchain4j.agent.tool.JsonSchemaProperty;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter;
 import org.apache.camel.component.langchain4j.chat.tool.NamedJsonSchemaProperty;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".*")
+import static java.time.Duration.ofSeconds;
+
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jConsumerIT extends CamelTestSupport {
 
+    public static final String MODEL_NAME = "llama3.1:latest";
     private final String nameFromDB = "pippo";
+    private ChatLanguageModel chatLanguageModel;
+
+    @RegisterExtension
+    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> MODEL_NAME);
+
+    @Override
+    protected void setupResources() throws Exception {
+        super.setupResources();
+
+        chatLanguageModel = createModel();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -46,10 +64,23 @@ public class LangChain4jConsumerIT extends CamelTestSupport {
         LangChain4jChatComponent component
                 = context.getComponent(LangChain4jChat.SCHEME, LangChain4jChatComponent.class);
 
-        component.getConfiguration().setChatModel(
-                OpenAiChatModel.withApiKey(System.getenv("OPENAI_API_KEY")));
+        component.getConfiguration().setChatModel(chatLanguageModel);
 
         return context;
+    }
+
+    protected ChatLanguageModel createModel() {
+        chatLanguageModel = OpenAiChatModel.builder()
+                .apiKey("NO_API_KEY")
+                .modelName(MODEL_NAME)
+                .baseUrl(OLLAMA.getEndpoint())
+                .temperature(0.0)
+                .timeout(ofSeconds(60))
+                .logRequests(true)
+                .logResponses(true)
+                .build();
+
+        return chatLanguageModel;
     }
 
     @Override
@@ -65,10 +96,11 @@ public class LangChain4jConsumerIT extends CamelTestSupport {
                 context().getRegistry().bind("parameters", camelToolParameter);
 
                 from("direct:test")
-                        .to("langchain4j-chat:test1?chatOperation=CHAT_MULTIPLE_MESSAGES");
+                        .to("langchain4j-chat:test1?chatOperation=CHAT_MULTIPLE_MESSAGES")
+                        .log("response is: ${body}");
 
                 from("langchain4j-chat:test1?description=Query user database by number&parameter.number=integer")
-                        .process(exchange -> exchange.getIn().setBody(nameFromDB));
+                        .setBody(simple("{\"name\": \"pippo\"}"));
 
                 from("langchain4j-chat:test1?camelToolParameter=#parameters")
                         .setBody(constant("Hello World"));
@@ -76,12 +108,13 @@ public class LangChain4jConsumerIT extends CamelTestSupport {
         };
     }
 
-    @Test
+    @RepeatedTest(10)
     public void testSimpleInvocation() {
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage("""
-                You provide information about specific user name querying the database given a number.
-                """));
+        messages.add(new SystemMessage(
+                """
+                        You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
+                        """));
         messages.add(new UserMessage("""
                 What is the name of the user 1?
                 """));
@@ -89,6 +122,7 @@ public class LangChain4jConsumerIT extends CamelTestSupport {
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
         Assertions.assertThat(message).isNotNull();
-        Assertions.assertThat(message.getMessage().getBody().toString()).contains(nameFromDB);
+        final String responseContent = message.getMessage().getBody().toString();
+        Assertions.assertThat(responseContent).containsIgnoringCase(nameFromDB);
     }
 }

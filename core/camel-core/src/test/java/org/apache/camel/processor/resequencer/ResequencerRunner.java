@@ -16,12 +16,16 @@
  */
 package org.apache.camel.processor.resequencer;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResequencerRunner<E> extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(ResequencerRunner.class);
 
+    private final Lock lock = new ReentrantLock();
     private final ResequencerEngineSync<E> resequencer;
 
     private final long interval;
@@ -55,12 +59,22 @@ public class ResequencerRunner<E> extends Thread {
         running = false;
     }
 
-    public synchronized void cancel() {
-        this.cancelRequested = true;
+    public void cancel() {
+        lock.lock();
+        try {
+            this.cancelRequested = true;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    private synchronized boolean cancelRequested() {
-        return cancelRequested;
+    private boolean cancelRequested() {
+        lock.lock();
+        try {
+            return cancelRequested;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean isRunning() {

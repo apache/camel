@@ -87,17 +87,17 @@ public class SkipLastByteInputStream extends BufferedInputStream {
     }
 
     @Override
-    public synchronized long skip(long n) {
+    public long skip(long n) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public synchronized void mark(int readlimit) {
+    public void mark(int readlimit) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         throw new UnsupportedOperationException();
     }
 

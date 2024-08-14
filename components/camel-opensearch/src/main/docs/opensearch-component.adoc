@@ -54,9 +54,11 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Message Operations
+== Usage
 
-The following https://opensearch.org/ operations are currently supported.
+=== Message Operations
+
+The following https://opensearch.org/[OpenSearch] operations are currently supported.
 Set an endpoint URI option or exchange header with a key of "operation"
 and a value set to one of the following. Some operations also require
 other parameters or the message body to be set.
@@ -65,41 +67,41 @@ other parameters or the message body to be set.
 |===
 |operation |message body |description
 
-|Index |*Map*, *String*, *byte[]*, *Reader*, *InputStream* or *IndexRequest.Builder* content to index |Adds content to an index and returns the content's indexId in the body.
+|`Index` |`Map`, `String`, `byte[]`, `Reader`, `InputStream` or `IndexRequest.Builder` content to index |Adds content to an index and returns the content's indexId in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the indexId by setting the message header with
 the key "indexId".
 
-|GetById |*String* or *GetRequest.Builder* index id of content to retrieve |Retrieves the document corresponding to the given index id and returns a GetResponse object in the body.
+|`GetById` |`String` or `GetRequest.Builder` index id of content to retrieve |Retrieves the document corresponding to the given index id and returns a GetResponse object in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the type of document by setting the message header with
 the key "documentClass".
 
-|Delete |*String* or *DeleteRequest.Builder* index id of content to delete |Deletes the specified indexName and returns a Result object in the body.
+|`Delete` |`String` or `DeleteRequest.Builder` index id of content to delete |Deletes the specified indexName and returns a Result object in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|DeleteIndex |*String* or *DeleteIndexRequest.Builder* index name of the index to delete |Deletes the specified indexName and returns a status code in the body.
+|`DeleteIndex` |`String` or `DeleteIndexRequest.Builder` index name of the index to delete |Deletes the specified indexName and returns a status code in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|Bulk |*Iterable* or *BulkRequest.Builder* of any type that is already accepted (DeleteOperation.Builder for delete operation, UpdateOperation.Builder for update operation, CreateOperation.Builder for create operation, byte[], InputStream, String, Reader, Map or any document type for index operation) | Adds/Updates/Deletes content from/to an index and returns a List<BulkResponseItem> object in the body
+|`Bulk` `Iterable` or `BulkRequest.Builder` of any type that is already accepted (DeleteOperation.Builder for delete operation, UpdateOperation.Builder for update operation, CreateOperation.Builder for create operation, byte[], InputStream, String, Reader, Map or any document type for index operation) | Adds/Updates/Deletes content from/to an index and returns a List<BulkResponseItem> object in the body
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|Search |*Map*, *String* or *SearchRequest.Builder* |Search the content with the map of query string.
+|`Search` |`Map`, `String` or `SearchRequest.Builder` |Search the content with the map of query string.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the number of hits to return by setting the message header with the key "size".
 You can set the starting document offset by setting the message header with the key "from".
 
-|MultiSearch |*MsearchRequest.Builder* |Multiple search in one
+|`MultiSearch` |`MsearchRequest.Builder` |Multiple search in one
 
-|MultiGet |*Iterable<String>* or *MgetRequest.Builder* the id of the document to retrieve |Multiple get in one
+|`MultiGet` |`Iterable<String>` or `MgetRequest.Builder` the id of the document to retrieve |Multiple get in one
 
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|Exists |None |Checks whether the index exists or not and returns a Boolean flag in the body.
+|`Exists` |None |Checks whether the index exists or not and returns a Boolean flag in the body.
 
 You must set the name of the target index by setting the message header with the key "indexName".
 
-|Update |*byte[]*, *InputStream*, *String*, *Reader*, *Map* or any document type content to update |Updates content to an index and returns the content's indexId in the body.
+|`Update` |`byte[]`, `InputStream`, `String`, `Reader`, `Map` or any document type content to update |Updates content to an index and returns the content's indexId in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the indexId by setting the message header with
 the key "indexId".
@@ -108,7 +110,7 @@ the key "indexId".
 
 |===
 
-== Configure the component and enable basic authentication
+=== Configure the component and enable basic authentication
 To use the OpenSearch component, it has to be configured with a minimum configuration.
 
 [source,java]
@@ -131,7 +133,16 @@ opensearchComponent.setPassword("secure!!");
 camelContext.addComponent("opensearch", opensearchComponent);
 ----
 
-== Index Example
+
+=== Document type
+
+For all the search operations, it is possible to indicate the type of document to retrieve to get the result already unmarshalled with the expected type.
+
+The document type can be set using the header "documentClass" or via the uri parameter of the same name.
+
+== Examples
+
+=== Index Example
 
 Below is a simple INDEX example
 
@@ -149,7 +160,7 @@ from("direct:index")
 </route>
 ----
 
-*For this operation, you'll need to specify an indexId header.*
+NOTE: For this operation, you'll need to specify an indexId header.
 
 A client would simply need to pass a body message containing a Map to
 the route. The result body contains the indexId created.
@@ -161,7 +172,7 @@ map.put("content", "test");
 String indexId = template.requestBody("direct:index", map, String.class);
 ----
 
-== Search Example
+=== Search Example
 
 Searching on specific field(s) and value use the Operation ´Search´.
 Pass in the query JSON String or the Map
@@ -240,7 +251,7 @@ from("direct:search")
   .end();
 ----
 
-== MultiSearch Example
+=== MultiSearch Example
 
 MultiSearching on specific field(s) and value uses the Operation `MultiSearch`.
 Pass in the MultiSearchRequest instance
@@ -270,9 +281,3 @@ MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").s
                 .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
 List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
 ----
-
-== Document type
-
-For all the search operations, it is possible to indicate the type of document to retrieve to get the result already unmarshalled with the expected type.
-
-The document type can be set using the header "documentClass" or via the uri parameter of the same name.

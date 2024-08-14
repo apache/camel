@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.djl;
 
-import java.io.ByteArrayOutputStream;
-
-import ai.djl.modality.cv.Image;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,12 +45,8 @@ public class CvImageGenerationTest extends CamelTestSupport {
                         .to("djl:cv/image_generation?artifactId=ai.djl.pytorch:biggan-deep:0.0.1")
                         .split(body())
                         .log("image = ${body}")
-                        .process(exchange -> {
-                            var image = exchange.getIn().getBody(Image.class);
-                            var os = new ByteArrayOutputStream();
-                            image.save(os, "png");
-                            exchange.getIn().setBody(os.toByteArray());
-                        })
+                        .setHeader(DJLConstants.FILE_TYPE, constant("png"))
+                        .convertBodyTo(byte[].class)
                         .to("file:target/output?fileName=CvImageGenerationTest-${date:now:ssSSS}.png")
                         .to("mock:result");
             }

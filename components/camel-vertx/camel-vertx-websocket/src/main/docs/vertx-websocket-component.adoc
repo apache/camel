@@ -55,7 +55,7 @@ include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
 == Usage
-The following example shows how to expose a WebSocket on http://localhost:8080/echo and returns an 'echo' response back to the same channel:
+The following example shows how to expose a WebSocket on http://localhost:8080/echo and returns an '_echo_' response back to the same channel:
 
 [source,java]
 ----
@@ -72,7 +72,7 @@ from("vertx-websocket:my.websocket.com:8080/chat?consumeAsClient=true")
     .log("Got WebSocket message ${body}");
 ----
 
-== Path & query parameters
+=== Path & query parameters
 
 The WebSocket server consumer supports the configuration of parameterized paths. The path parameter value will be set
 as a Camel exchange header:
@@ -94,7 +94,7 @@ from("vertx-websocket:localhost:8080/chat/{user}")
     .log("New message from ${header.user} (${header.role}) >>> ${body}")
 ----
 
-== Sending messages to peers connected to the vertx-websocket server consumer
+=== Sending messages to peers connected to the vertx-websocket server consumer
 
 NOTE: This section only applies when producing messages to a WebSocket hosted by the camel-vertx-websocket consumer.
 It is not relevant when producing messages to an externally hosted WebSocket.
@@ -129,7 +129,7 @@ from("direct:broadcastMessage")
     .to("vertx-websocket:localhost:8080/chat");
 ----
 
-== SSL
+=== SSL
 
 By default, the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer
 via the `sslContextParameters` URI parameter and the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility]

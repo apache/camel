@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -51,7 +53,7 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
     private TimeUnit units;
     private long timeOfLastExchange;
     private final StopProcessor stopper = new StopProcessor();
-    private final Object calculationLock = new Object();
+    private final Lock calculationLock = new ReentrantLock();
     private final SampleStats sampled = new SampleStats();
 
     public SamplingThrottler(long messageFrequency) {
@@ -123,9 +125,8 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean doSend = false;
-
-        synchronized (calculationLock) {
-
+        calculationLock.lock();
+        try {
             if (messageFrequency > 0) {
                 currentMessageCount++;
                 if (currentMessageCount % messageFrequency == 0) {
@@ -145,6 +146,8 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
                     }
                 }
             }
+        } finally {
+            calculationLock.unlock();
         }
 
         if (!doSend) {

@@ -3523,7 +3523,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
-     * Capture changes from a Oracle database.
+     * Capture changes from an Oracle database.
      * 
      * Category: database
      * Since: 3.17
@@ -3543,7 +3543,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
-     * Capture changes from a Oracle database.
+     * Capture changes from an Oracle database.
      * 
      * Category: database
      * Since: 3.17
@@ -5813,6 +5813,7 @@ public class StaticEndpointBuilders {
      * @param path eventBusRef
      * @return the dsl builder
      */
+    @Deprecated
     public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String path) {
         return guavaEventbus("guava-eventbus", path);
     }
@@ -5834,6 +5835,7 @@ public class StaticEndpointBuilders {
      * @param path eventBusRef
      * @return the dsl builder
      */
+    @Deprecated
     public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
         return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -9303,7 +9305,7 @@ public class StaticEndpointBuilders {
         return KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
@@ -9322,7 +9324,7 @@ public class StaticEndpointBuilders {
         return langchain4jChat("langchain4j-chat", path);
     }
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
@@ -13252,6 +13254,92 @@ public class StaticEndpointBuilders {
      */
     public static SnmpEndpointBuilderFactory.SnmpEndpointBuilder snmp(String componentName, String path) {
         return SnmpEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solr:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String path) {
+        return solr("solr", path);
+    }
+    /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solr:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String componentName, String path) {
+        return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Solr (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solrCloud:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solrCloud(String path) {
+        return solr("solrCloud", path);
+    }
+    /**
+     * Solr (Secure) (camel-solr)
+     * Perform operations against Apache Lucene Solr.
+     * 
+     * Category: monitoring,search
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solrs:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the Solr server(s). Multiple hosts can be
+     * specified, separated with a comma. See the solrClient parameter for more
+     * information on the SolrClient used to connect to Solr.
+     * 
+     * @param path url
+     * @return the dsl builder
+     */
+    public static SolrEndpointBuilderFactory.SolrEndpointBuilder solrs(String path) {
+        return solr("solrs", path);
     }
     /**
      * Splunk (camel-splunk)

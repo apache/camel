@@ -64,7 +64,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             throw new MojoExecutionException(
                     "Unable to generate REST DSL OpenApi sources from specification: "
                                              + specificationUri
-                                             + ", make sure that the specification is available at the given URI");
+                                             + ". Check that the specification is available at the given URI and that it has version OpenAPI 3.0.x or 3.1.x.");
         }
 
         final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(openapi);

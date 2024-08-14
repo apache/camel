@@ -44,7 +44,7 @@ include::partial$dataformat-options.adoc[]
 
 == Examples
 
-== Avro Data Format usage
+=== Avro Data Format usage
 
 Using the avro data format is as easy as specifying that the class that
 you want to marshal or unmarshal in your route.

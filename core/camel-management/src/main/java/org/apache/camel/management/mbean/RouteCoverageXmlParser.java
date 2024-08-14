@@ -17,7 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import java.io.InputStream;
-import java.util.Stack;
+import java.util.ArrayDeque;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -89,7 +89,7 @@ public final class RouteCoverageXmlParser {
         final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         final Document doc = docBuilder.newDocument();
 
-        final Stack<Element> elementStack = new Stack<>();
+        final ArrayDeque<Element> elementStack = new ArrayDeque<>();
         final StringBuilder textBuffer = new StringBuilder();
         final DefaultHandler handler = new DefaultHandler() {
 

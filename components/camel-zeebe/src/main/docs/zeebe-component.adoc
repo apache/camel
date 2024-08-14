@@ -48,27 +48,29 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-== Producer Endpoints:
+== Usage
+
+=== Producer Endpoints
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
 |Endpoint |Description
 
-|startProcess |Creates and starts an instance of the specified process.
+|`startProcess` |Creates and starts an instance of the specified process.
 
-|cancelProcess |Cancels a running process instance.
+|`cancelProcess` |Cancels a running process instance.
 
-|publishMessage |Publishes a message.
+|`publishMessage` |Publishes a message.
 
-|completeJob |Completes a job for a service task.
+|`completeJob` |Completes a job for a service task.
 
-|failJob |Fails a job.
+|`failJob` |Fails a job.
 
-|updateJobRetries |Updates the number of retries for a job.
+|`updateJobRetries` |Updates the number of retries for a job.
 
-|throwError |Throw an error to indicate that a business error has occurred.
+|`throwError` |Throw an error to indicate that a business error has occurred.
 
-|deployResource |Deploy a process resource. Currently only supports process definitions.
+|`deployResource` |Deploy a process resource. Currently only supports process definitions.
 
 |=======================================================================
 
@@ -291,7 +293,7 @@ The endpoints accept either Java request objects as shown in the examples below 
         });
 ----------------------------------------------------------------------------------------------------------------------
 
-== Consumer Endpoints:
+=== Consumer Endpoints:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================

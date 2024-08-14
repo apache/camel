@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -37,6 +39,7 @@ public abstract class LRUCacheFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(LRUCacheFactory.class);
 
+    private static final Lock LOCK = new ReentrantLock();
     private static volatile LRUCacheFactory instance;
 
     /**
@@ -61,10 +64,13 @@ public abstract class LRUCacheFactory {
      */
     public static LRUCacheFactory getInstance() {
         if (instance == null) {
-            synchronized (LRUCacheFactory.class) {
+            LOCK.lock();
+            try {
                 if (instance == null) {
                     instance = createLRUCacheFactory();
                 }
+            } finally {
+                LOCK.unlock();
             }
         }
         return instance;

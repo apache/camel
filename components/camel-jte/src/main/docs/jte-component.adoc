@@ -58,8 +58,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
-== JTE Context
+=== JTE Context
 
 Camel will provide exchange information in the JTE context, as a `org.apache.camel.component.jte.Model` class
 with the following information:
@@ -85,8 +86,7 @@ with the following information:
 You can set up your custom JTE data model in the
 message header with the key "*CamelJteDataModel*" just like this
 
-
-== Dynamic templates
+=== Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -97,7 +97,7 @@ resource. This allows you to provide a dynamic template at runtime.
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Samples
+== Examples
 
 For example, you could use something like:
 

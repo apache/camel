@@ -90,8 +90,8 @@ public class DisruptorComponent extends DefaultComponent {
             }
         }
 
-        // Check if the pollTimeout argument is set (may be the case if Disruptor component is used as drop-in
-        // replacement for the SEDA component.
+        // Check if the pollTimeout argument is set (maybe the case if the Disruptor component is used as drop-in
+        // replacement for the SEDA component).
         if (parameters.containsKey("pollTimeout")) {
             throw new IllegalArgumentException("The 'pollTimeout' argument is not supported by the Disruptor component");
         }

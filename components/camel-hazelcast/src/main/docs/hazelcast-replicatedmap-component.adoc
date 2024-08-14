@@ -48,7 +48,7 @@ The replicatedmap producer provides 6 operations:
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Sample for *put*:
+=== Example for *put*:
 
 [tabs]
 ====
@@ -78,7 +78,7 @@ Spring XML::
 
 ====
 
-=== Sample for *get*:
+=== Example for *get*:
 
 [tabs]
 ====
@@ -110,7 +110,7 @@ Spring XML::
 
 ====
 
-=== Sample for *delete*:
+=== Example for *delete*:
 
 [tabs]
 ====

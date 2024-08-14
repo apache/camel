@@ -54,8 +54,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Usage
 
-== Writing A Wasm processor
+=== Writing A Wasm processor
 
 In _Wasm_, sharing objects between the host, in this case the _JVM_, and the _Wasm_ module is deliberately restricted and as of today, it requires a number of steps:
 
@@ -65,7 +66,7 @@ In _Wasm_, sharing objects between the host, in this case the _JVM_, and the _Wa
 4. From the _Wasm_ module, read the data and process it
 5. From the _host_, release the memory when done
 
-=== Providing functions for memory management
+==== Providing functions for memory management
 
 The module hosting the function *must* provide the functions to allocate/deallocate memory that *must* be named `alloc` and `dealloc` respectively.
 
@@ -89,7 +90,7 @@ pub unsafe extern "C" fn dealloc(ptr: &mut u8, len: i32) {
 }
 ---------------------------------------
 
-=== Data shapes
+==== Data shapes
 
 It is not possible to share a Java object with the Wasm module directly, and as mentioned before,
 data exchange leverages Wasm's memory that can be accessed by both the host and the guest runtimes.
@@ -107,7 +108,7 @@ public static class Wrapper {
 }
 -------------------------------------------------
 
-=== Data processing
+==== Data processing
 
 The component expects the processing function to have the following signature:
 

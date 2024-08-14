@@ -51,7 +51,6 @@ be a better fit.
 
 == URI format
 
-[source]
 ----
 dynamic-router:channel[?options]
 ----
@@ -120,7 +119,7 @@ Spring XML::
 ----
 ====
 
-== Dynamic Router EIP Component Use Cases
+== Examples
 
 The benefit of the Dynamic Router EIP Component can best be seen, perhaps, through looking at some use cases.  These
 examples are not the only possibilities with this component, but they show the basics of two main usages -- message
@@ -317,7 +316,7 @@ In the `camel-spring-boot-examples` project, the `dynamic-router-eip-multimodule
 in this category that you can run and/or experiment with to get a practical feel for how you might use this in your own
 multi-JVM application stack.
 
-== JMX Control and Monitoring Operations
+=== JMX Control and Monitoring Operations
 
 The Dynamic Router Control component supports some JMX operations that allow you to control and monitor the component.
 It is beyond the scope of this document to go into detail about JMX, so this is a list of the operations that are

@@ -69,32 +69,20 @@ command execution is returned in the message body.
 [width="100%",cols="10%,40%,50%,10%",options="header",]
 |=======================================================================
 |Hash Commands |Description |Parameters |Result
-
 |`HSET` |Set the string value of a hash field |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Object) |void
-
 |`HGET` |Get the value of a hash field |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String) |String
-
 |`HSETNX` |Set the value of a hash field only if the field does not exist |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Object) |void
-
 |`HMSET` |Set multiple hash fields to multiple values |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |void
-
 |`HMGET` |Get the values of all the given hash fields |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELDS`/"CamelRedis.Fields" (Collection<String>) |Collection<Object>
-
 |`HINCRBY` |Increment the integer value of a hash field by the given number |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String), `RedisConstants.VALUE`/"CamelRedis.Value"
 (Long) |Long
-
 |`HEXISTS` |Determine if a hash field exists |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String) |Boolean
-
 |`HDEL` |Delete one or more hash fields |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.FIELD`/"CamelRedis.Field" (String) |void
-
 |`HLEN` |Get the number of fields in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
-
 |`HKEYS` |Get all the fields in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Set<String>
-
 |`HVALS` |Get all the values in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Collection<Object>
-
 |`HGETALL` |Get all the fields and values in a hash |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Map<String, Object>
 |=======================================================================
 
@@ -264,7 +252,7 @@ new key |`RedisConstants.KEY`/"CamelRedis.Key" (String), `RedisConstants.KEYS`/"
 
 |`INCR` |Increment the integer value of a key by one |`RedisConstants.KEY`/"CamelRedis.Key" (String) |Long
 
-|`MGET` |Get the values of all the given keys |`RedisConstants.FIELDS`/"CamelRedis.Filds" (Collection<String>) |List<Object>
+|`MGET` |Get the values of all the given keys |`RedisConstants.FIELDS`/"CamelRedis.Fields" (Collection<String>) |List<Object>
 
 |`MSET` |Set multiple keys to multiple values |`RedisConstants.VALUES`/"CamelRedis.Values" (Map<String, Object>) |void
 

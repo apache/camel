@@ -17,9 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -55,6 +59,7 @@ public final class KubernetesHelper {
                 .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
                 .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
                 .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
+                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
                 .build()
                 .setDefaultPropertyInclusion(
                         JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY));
@@ -134,8 +139,6 @@ public final class KubernetesHelper {
 
     /**
      * Overwrites the kubernetes client. Typically used by unit tests.
-     *
-     * @param kubernetesClient
      */
     public static void setKubernetesClient(KubernetesClient kubernetesClient) {
         KubernetesHelper.kubernetesClient = kubernetesClient;
@@ -144,11 +147,61 @@ public final class KubernetesHelper {
     /**
      * Dump given domain model object as YAML. Uses Json conversion to generic map as intermediate step. This makes sure
      * to properly write Json additional properties.
-     *
-     * @param  model
-     * @return
      */
     public static String dumpYaml(Object model) {
         return yaml().dumpAsMap(json().convertValue(model, Map.class));
+    }
+
+    public static Map<String, Object> toJsonMap(Object model) {
+        return json().convertValue(model, Map.class);
+    }
+
+    public static File resolveKubernetesManifest(String workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifest(new File(workingDir));
+    }
+
+    public static File resolveKubernetesManifest(String workingDir, String extension) throws FileNotFoundException {
+        return resolveKubernetesManifest(new File(workingDir), extension);
+    }
+
+    public static File resolveKubernetesManifest(File workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifest(workingDir, "yml");
+    }
+
+    public static File resolveKubernetesManifest(File workingDir, String extension) throws FileNotFoundException {
+        // Try arbitrary Kubernetes manifest first
+        File manifest = getKubernetesManifest(ClusterType.KUBERNETES.name(), workingDir);
+        if (manifest.exists()) {
+            return manifest;
+        }
+
+        // try to resolve from all the other cluster type specific manifests
+        return Arrays.stream(ClusterType.values())
+                .filter(ct -> ct != ClusterType.KUBERNETES)
+                .map(ct -> getKubernetesManifest(ct.name(), workingDir, extension))
+                .filter(File::exists)
+                .findFirst()
+                .orElseThrow(() -> new FileNotFoundException(
+                        "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
+                                .formatted(extension, workingDir.toPath().toString())));
+    }
+
+    public static File getKubernetesManifest(String clusterType, String workingDir) {
+        return getKubernetesManifest(clusterType, new File(workingDir));
+    }
+
+    public static File getKubernetesManifest(String clusterType, File workingDir) {
+        return getKubernetesManifest(clusterType, workingDir, "yml");
+    }
+
+    public static File getKubernetesManifest(String clusterType, File workingDir, String extension) {
+        String manifestFile;
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+            manifestFile = "kubernetes";
+        } else {
+            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+        }
+
+        return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
     }
 }

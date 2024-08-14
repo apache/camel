@@ -650,7 +650,8 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public void addPropertiesSource(PropertiesSource propertiesSource) {
         CamelContextAware.trySetCamelContext(propertiesSource, getCamelContext());
-        synchronized (lock) {
+        lock.lock();
+        try {
             sources.add(propertiesSource);
             // resort after we add a new source
             sources.sort(OrderedComparator.get());
@@ -661,6 +662,8 @@ public class PropertiesComponent extends ServiceSupport
             if (isStarted()) {
                 ServiceHelper.startService(propertiesSource);
             }
+        } finally {
+            lock.unlock();
         }
     }
 

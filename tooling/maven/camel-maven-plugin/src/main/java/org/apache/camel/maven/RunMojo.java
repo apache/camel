@@ -428,14 +428,7 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         if (cleanupDaemonThreads) {
-
             terminateThreads(threadGroup);
-
-            try {
-                threadGroup.destroy();
-            } catch (IllegalThreadStateException e) {
-                getLog().warn("Couldn't destroy threadgroup " + threadGroup, e);
-            }
         }
 
         if (originalSystemProperties != null) {
@@ -889,7 +882,7 @@ public class RunMojo extends AbstractExecMojo {
      *                                dependencies.)
      * @throws MojoExecutionException
      */
-    private Set<Artifact> determineRelevantPluginDependencies() throws MojoExecutionException {
+    protected Set<Artifact> determineRelevantPluginDependencies() throws MojoExecutionException {
         Set<Artifact> relevantDependencies;
         if (this.includePluginDependencies) {
             if (this.executableDependency == null) {

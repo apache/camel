@@ -56,7 +56,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Producer Example
+== Examples
+
+=== Producer Example
 
 Below is an example route of a producer that adds a file test.java to a
 local repository, commits it with a specific message on the `main` branch and
@@ -74,7 +76,7 @@ from("direct:start")
     .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin");
 --------------------------------------------------------------------------------------------------------------------
 
-== Consumer Example
+=== Consumer Example
 
 Below is an example route of a consumer that consumes commit:
 
@@ -84,7 +86,8 @@ from("git:///tmp/testRepo?type=commit")
     .to(....)
 ---------------------------------------
 
-== Custom config file
+=== Custom config file
+
 By default, camel-git will load ``.gitconfig`` file from user home folder.
 You can override this by providing your own ``.gitconfig`` file.
 

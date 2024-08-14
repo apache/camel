@@ -24,16 +24,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
@@ -52,6 +55,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
     String traitProfile;
 
+    @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
+    String serviceAccount;
+
     @CommandLine.Option(names = { "--property" },
                         description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
     String[] properties;
@@ -65,7 +71,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String[] resources;
 
     @CommandLine.Option(names = { "--open-api" }, description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
-    String[] openApis;
+    String openApi;
 
     @CommandLine.Option(names = { "--env" },
                         description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
@@ -117,13 +123,20 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String image;
 
     @CommandLine.Option(names = { "--image-registry" },
-                        defaultValue = "quay.io",
                         description = "The image registry to hold the app container image.")
-    String imageRegistry = "quay.io";
+    String imageRegistry;
 
     @CommandLine.Option(names = { "--image-group" },
                         description = "The image registry group used to push images to.")
     String imageGroup;
+
+    @CommandLine.Option(names = { "--image-builder" },
+                        description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
+    String imageBuilder;
+
+    @CommandLine.Option(names = { "--cluster-type" },
+                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
+    String clusterType;
 
     @CommandLine.Option(names = { "--image-build" },
                         defaultValue = "true",
@@ -162,6 +175,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = RUN_PLATFORM_DIR + "/" + projectName;
 
+        printer().println("Exporting application ...");
+
+        // Cache export output in String for later usage in case of error
+        Printer runPrinter = printer();
+        StringPrinter exportPrinter = new StringPrinter();
+        getMain().withPrinter(exportPrinter);
+
         KubernetesExport export = new KubernetesExport(
                 getMain(), new KubernetesExport.ExportConfigurer(
                         runtime,
@@ -172,20 +192,23 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         workingDir,
                         List.of(filePaths),
                         gav,
+                        openApi,
                         true,
                         true,
-                        true,
+                        false,
                         false,
                         "off"));
 
         export.image = image;
         export.imageRegistry = imageRegistry;
         export.imageGroup = imageGroup;
+        export.imageBuilder = imageBuilder;
+        export.clusterType = clusterType;
         export.traitProfile = traitProfile;
+        export.serviceAccount = serviceAccount;
         export.properties = properties;
         export.configs = configs;
         export.resources = resources;
-        export.openApis = openApis;
         export.envVars = envVars;
         export.volumes = volumes;
         export.connects = connects;
@@ -193,11 +216,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.labels = labels;
         export.traits = traits;
 
-        printer().println("Exporting application ...");
-
         int exit = export.export();
+
+        // Revert printer to this run command's printer
+        getMain().withPrinter(runPrinter);
         if (exit != 0) {
-            printer().println("Project export failed!");
+            // print export command output with error details
+            printer().println(exportPrinter.getOutput());
             return exit;
         }
 
@@ -215,8 +240,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             File manifest;
             switch (output) {
-                case "yaml" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.yml");
-                case "json" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.json");
+                case "yaml" -> manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
+                case "json" ->
+                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes", "json");
                 default -> {
                     printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
                     return 1;
@@ -237,7 +263,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (exit != 0) {
-            printer().println("Deployment to Kubernetes failed!");
+            printer().println("Deployment to %s failed!".formatted(Optional.ofNullable(clusterType)
+                    .map(StringHelper::capitalize).orElse("Kubernetes")));
             return exit;
         }
 
@@ -313,7 +340,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deployQuarkus(String workingDir) throws IOException, InterruptedException {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // Run Quarkus build via Maven
         String mvnw = "/mvnw";
@@ -340,7 +368,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("-Dquarkus.container-image.push=true");
         }
 
-        args.add("-Dquarkus.kubernetes.deploy=true");
+        if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            args.add("-Dquarkus.openshift.deploy=true");
+        } else {
+            args.add("-Dquarkus.kubernetes.deploy=true");
+        }
 
         if (namespace != null) {
             args.add("-Dquarkus.kubernetes.namespace=%s".formatted(namespace));
@@ -369,7 +401,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deploySpringBoot(String workingDir) {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // TODO: implement SpringBoot Kubernetes deployment
         return 0;

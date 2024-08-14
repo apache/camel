@@ -93,7 +93,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Accessing web services
+== Usage
+
+=== Accessing web services
 
 To call a web service at `\http://foo.com/bar` simply define a route:
 
@@ -112,7 +114,7 @@ template.requestBody("direct:example", "<foobar xmlns=\"http://foo.com\"><msg>te
 Remember if it's a SOAP service you're calling, you don't have to include
 SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
 
-== Sending SOAP and WS-Addressing action headers
+=== Sending SOAP and WS-Addressing action headers
 
 When a remote web service requires a SOAP action or use of the
 WS-Addressing standard, you define your route as:
@@ -132,7 +134,7 @@ template.requestBodyAndHeader("direct:example",
 SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
 --------------------------------------------------------------------
 
-== Using SOAP headers
+=== Using SOAP headers
 
 You can provide the SOAP header(s) as a Camel Message header when
 sending a message to a spring-ws endpoint, for example, given the
@@ -162,7 +164,7 @@ For example, see this
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-ws/src/test/java/org/apache/camel/component/spring/ws/SoapHeaderTest.java[unit
 test].
 
-== The header and attachment propagation
+=== The header and attachment propagation
 
 Spring WS Camel supports propagation of the headers and attachments into
 Spring-WS WebServiceMessage response. The
@@ -184,7 +186,7 @@ Qname(key)=value attribute in the soap header. Recommended is to create
 a QName class directly and put any key into header.
 ====
 
-== How to transform the soap header using a stylesheet
+=== How to transform the soap header using a stylesheet
 
 The header transformation filter (HeaderTransformationMessageFilter.java)
 can be used to transform the soap header for a soap request. If you want to use 
@@ -207,7 +209,7 @@ Use the bead defined above in the camel endpoint
 ------------------------------------------------------------------
 
 
-== The custom header and attachment filtering
+=== The custom header and attachment filtering
 
 If you need to provide your custom processing of either headers or
 attachments, extend existing BasicMessageFilter and override the
@@ -249,7 +251,7 @@ protected void doProcessSoapAttachements(Message inOrOut, SoapMessage response)
 { your code /*no need to call super*/ }
 -------------------------------------------------------------------------------
 
-== Using a custom MessageSender and MessageFactory
+=== Using a custom MessageSender and MessageFactory
 
 A custom message sender or factory in the registry can be referenced
 like this:
@@ -282,7 +284,7 @@ Spring configuration:
 </bean>
 ---------------------------------------------------------------------------------------------------------------------
 
-== Exposing web services
+=== Exposing web services
 
 To expose a web service using this component, you first need to
 set up a
@@ -341,7 +343,7 @@ comes in). Also remember to check out the
 Spring Web Services Example included in the
 Camel distribution.
 
-== Endpoint mapping in routes
+=== Endpoint mapping in routes
 
 With the XML configuration in place, you can now use Camel's DSL to
 define what web service requests are handled by your endpoint:
@@ -383,7 +385,7 @@ from("spring-ws:xpathresult:abc?expression=//foobar&endpointMapping=#endpointMap
 .convertBodyTo(String.class).to(mock:example)
 --------------------------------------------------------------------------------------
 
-== Alternative configuration, using existing endpoint mappings
+=== Alternative configuration, using existing endpoint mappings
 
 For every endpoint with mapping-type `beanname` one bean of type
 `CamelEndpointDispatcher` with a corresponding name is required in the
@@ -429,7 +431,7 @@ An example of a route using `beanname`:
 <bean id="FutureEndpointDispatcher" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />
 ------------------------------------------------------------------------------------------------------------------------
 
-== POJO (un)marshalling
+=== POJO (un)marshalling
 
 Camel's pluggable data formats offer support for
 pojo/xml marshalling using libraries such as JAXB.

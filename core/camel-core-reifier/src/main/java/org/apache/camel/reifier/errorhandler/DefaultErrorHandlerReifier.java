@@ -121,31 +121,36 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         return answer;
     }
 
-    protected synchronized ScheduledExecutorService getExecutorService(
+    protected ScheduledExecutorService getExecutorService(
             ScheduledExecutorService executorService, String executorServiceRef) {
 
-        executorServiceRef = parseString(executorServiceRef);
-        if (executorService == null || executorService.isShutdown()) {
-            // camel context will shutdown the executor when it shutdown so no
-            // need to shut it down when stopping
-            if (executorServiceRef != null) {
-                executorService = lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
-                if (executorService == null) {
-                    ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
-                    ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
-                    executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
+        lock.lock();
+        try {
+            executorServiceRef = parseString(executorServiceRef);
+            if (executorService == null || executorService.isShutdown()) {
+                // camel context will shutdown the executor when it shutdown so no
+                // need to shut it down when stopping
+                if (executorServiceRef != null) {
+                    executorService = lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
+                    if (executorService == null) {
+                        ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+                        ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
+                        executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
+                    }
+                    if (executorService == null) {
+                        throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
+                    }
+                } else {
+                    // no explicit configured thread pool, so leave it up to the
+                    // error handler to decide if it need a default thread pool from
+                    // CamelContext#getErrorHandlerExecutorService
+                    executorService = null;
                 }
-                if (executorService == null) {
-                    throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
-                }
-            } else {
-                // no explicit configured thread pool, so leave it up to the
-                // error handler to decide if it need a default thread pool from
-                // CamelContext#getErrorHandlerExecutorService
-                executorService = null;
             }
+            return executorService;
+        } finally {
+            lock.unlock();
         }
-        return executorService;
     }
 
 }

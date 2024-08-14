@@ -32,7 +32,7 @@ import org.apache.camel.component.langchain4j.chat.LangChain4jChatComponent;
 public interface Langchain4jChatComponentBuilderFactory {
 
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
@@ -46,7 +46,7 @@ public interface Langchain4jChatComponentBuilderFactory {
     }
 
     /**
-     * Builder for the langChain4j Chat component.
+     * Builder for the LangChain4j Chat component.
      */
     interface Langchain4jChatComponentBuilder extends ComponentBuilder<LangChain4jChatComponent> {
     

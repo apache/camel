@@ -67,7 +67,7 @@ include::partial$component-endpoint-options.adoc[]
 
 If any of the above properties are set, they will override their corresponding query parameter.
 
-== List of Supported IAM Operations
+=== List of Supported IAM Operations
 
 - listUsers
 - getUser - `userId` parameter is *required*
@@ -111,7 +111,7 @@ from("direct:triggerRoute")
  .to("hwcloud-iam:updateUser?groupId=********&region=cn-north-4&accessKey=********&secretKey=********")
 ----
 
-== Using ServiceKey Configuration Bean
+=== Using ServiceKey Configuration Bean
 
 Access key and secret keys are required to authenticate against cloud IAM service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.iam.models.ServiceKeys`.
@@ -126,6 +126,7 @@ Check the following code snippets:
    <property name="secretKey" value="your_secret_key" />
 </bean>
 ----
+
 [source,java]
 ----
 from("direct:triggerRoute")

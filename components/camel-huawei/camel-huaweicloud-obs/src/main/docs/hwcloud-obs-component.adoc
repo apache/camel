@@ -84,7 +84,7 @@ If any of the above properties are set, they will override their corresponding q
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== List of Supported OBS Operations
+=== List of Supported OBS Operations
 
 - listBuckets
 - createBucket - `bucketName` parameter is *required*, `bucketLocation` parameter is optional
@@ -131,7 +131,7 @@ from("direct:triggerRoute")
 ----
 
 
-== Using ServiceKey Configuration Bean
+=== Using ServiceKey Configuration Bean
 
 Access key and secret keys are required to authenticate against the OBS cloud. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class `org.apache.camel.component.huaweicloud.obs.models.ServiceKeys`.

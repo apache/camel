@@ -34,7 +34,7 @@ from("direct:unmarshal").unmarshal(parquet).to("mock:unmarshal");
 
 == Marshal
 
-Marshalling is the reverse process of unmarshalling, so when you have your GenericRecord or POJO and marshal it, you will get the parquet-formatted output stream on your producer endpoint.
+Marshalling is the reverse process of unmarshalling, so when you have your `GenericRecord` or POJO and marshal it, you will get the parquet-formatted output stream on your producer endpoint.
 
 [source,java]
 -----------------------------------------------------------------------

@@ -30,7 +30,6 @@ any consumers when a producer sends a message exchange.
 
 == URI format
 
-[source]
 ----
 direct:someId[?options]
 ----
@@ -52,7 +51,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Samples
+== Examples
 
 In the route below, we use the direct component to link the two routes together:
 

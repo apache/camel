@@ -127,9 +127,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         if (m instanceof RestOpenApiConsumerPath rcp) {
             Operation o = rcp.getConsumer();
 
-            // binding mode
-            RestConfiguration config = camelContext.getRestConfiguration();
-
             // map path-parameters from operation to camel headers
             HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), uri, rcp.getConsumerPath());
 

@@ -166,7 +166,7 @@ public final class XmlRouteParser {
     }
 
     private static boolean isConsumerOnly(String nodeName) {
-        return "from".equals(nodeName) || "pollEnrich".equals(nodeName);
+        return "from".equals(nodeName) || "pollEnrich".equals(nodeName) || "poll".equals(nodeName);
     }
 
     private static CamelEndpointDetails toEndpointDetails(

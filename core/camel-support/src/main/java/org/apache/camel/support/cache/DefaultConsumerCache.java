@@ -203,15 +203,20 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      * Purges this cache
      */
     @Override
-    public synchronized void purge() {
+    public void purge() {
+        lock.lock();
         try {
-            consumers.stop();
-            consumers.start();
-        } catch (Exception e) {
-            LOG.debug("Error restarting consumer pool", e);
-        }
-        if (statistics != null) {
-            statistics.clear();
+            try {
+                consumers.stop();
+                consumers.start();
+            } catch (Exception e) {
+                LOG.debug("Error restarting consumer pool", e);
+            }
+            if (statistics != null) {
+                statistics.clear();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

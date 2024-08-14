@@ -86,6 +86,7 @@ The unmarshaller converts the input data into the concrete class of type `com.pr
 In this example, we unmarshal the content of a file to get SWIFT MT
 objects before processing them with the `newOrder` processor.
 
+.SwiftMt example in Java
 [source,java]
 ----
 from("file://data.bin")
@@ -93,8 +94,7 @@ from("file://data.bin")
     .process("newOrder");
 ----
 
-In Spring DSL:
-
+.SwiftMt example in In Spring DSL
 [source,xml]
 ----
  <from uri="file://data.bin">
@@ -109,7 +109,7 @@ In Spring DSL:
 To use SWIFT MT in your Camel routes, you need to add a dependency on
 *camel-swift* which implements this data format.
 
-If you use Maven, you can add the following to your pom.xml:
+If you use Maven, you can add the following to your `pom.xml`:
 
 [source,xml]
 ----

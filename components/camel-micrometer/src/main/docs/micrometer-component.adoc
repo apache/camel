@@ -64,8 +64,10 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Usage
+
 [[MicrometerComponent-registry]]
-== Meter Registry
+=== Meter Registry
 
 By default the Camel Micrometer component creates a `SimpleMeterRegistry` instance, suitable
 mainly for testing.
@@ -75,7 +77,7 @@ to be used. A `CompositeMeterRegistry` can be used to address more than one moni
 
 
 
-== Default Camel Metrics
+=== Default Camel Metrics
 
 Some Camel specific metrics are available out of the box.
 
@@ -97,7 +99,7 @@ Some Camel specific metrics are available out of the box.
 |camel.route.policy.long.task |gauge + summary |Route long task metric
 |=====================================================
 
-=== Using legacy metrics naming
+==== Using legacy metrics naming
 
 In Camel 3.20 or older, then the naming of metrics is using _camelCase_ style.
 However, since Camel 3.21 onwards, the naming is using the Micrometer convention style (see table above).
@@ -120,7 +122,7 @@ The naming style can be configured on:
 - `MicrometerMessageHistoryFactory`
 
 
-== Usage of producers
+=== Usage of producers
 
 Each meter has type and name. Supported types are
 xref:#MicrometerComponent-counter[counter],
@@ -135,7 +137,7 @@ The optional `tags` URI parameter is a comma-separated string, consisting of `ke
 E.g., the URI parameter `tags=X=${header.Y}` would assign the current value of header `Y` to the key `X`.
 
 
-=== Headers
+==== Headers
 
 The meter name defined in URI can be overridden by populating a header with name `CamelMetricsName`.
 The meter tags defined as URI parameters can be augmented by populating a header with name `CamelMetricsTags`.
@@ -159,13 +161,13 @@ Micrometer endpoint will catch all exceptions and write log entry using level `w
 
 
 [[MicrometerComponent-counter]]
-== Counter
+=== Counter
 
 ----
 micrometer:counter:name[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |=====================================================
@@ -205,7 +207,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-=== Headers
+==== Headers
 
 Like in `camel-metrics`, specific Message headers can be used to override
 `increment` and `decrement` values specified in the Micrometer endpoint URI.
@@ -237,13 +239,13 @@ from("direct:in")
 ----
 
 [[MicrometerComponent-summary]]
-== Distribution Summary
+=== Distribution Summary
 
 ----
 micrometer:summary:metricname[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |===================================
@@ -282,7 +284,7 @@ from("direct:in")
 
 ----
 
-=== Headers
+==== Headers
 
 Like in `camel-metrics`, a specific Message header can be used to override the value specified in
 the Micrometer endpoint URI.
@@ -305,13 +307,13 @@ from("direct:in")
 
 
 [[MicrometerComponent-timer]]
-== Timer
+=== Timer
 
 ----
 micrometer:timer:metricname[?options]
 ----
 
-=== Options
+==== Options
 
 [width="100%",options="header"]
 |==========================
@@ -338,7 +340,7 @@ different Metrics component calls.
 
 `action` is evaluated as a `Simple` expression returning a result of type `MicrometerTimerAction`.
 
-=== Headers
+==== Headers
 
 Like in `camel-metrics`, a specific Message header can be used to override action value specified in
 the Micrometer endpoint URI.
@@ -360,7 +362,7 @@ from("direct:in")
 ----
 
 
-== Using Micrometer route policy factory
+=== Using Micrometer route policy factory
 
 `MicrometerRoutePolicyFactory` allows to add a RoutePolicy for each
 route to expose route utilization statistics using Micrometer.
@@ -424,7 +426,7 @@ If JMX is enabled in the CamelContext, the MBean is registered in the `type=serv
 with `name=MicrometerRoutePolicy`.
 
 
-== Using Micrometer message history factory
+=== Using Micrometer message history factory
 
 `MicrometerMessageHistoryFactory` allows to use metrics to capture Message History performance
 statistics while routing messages. It works by using a Micrometer Timer for
@@ -471,7 +473,7 @@ String json = service.dumpStatisticsAsJson();
 If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree with `name=MicrometerMessageHistory`.
 
 
-== Micrometer event notification
+=== Micrometer event notification
 
 There is a `MicrometerRouteEventNotifier` (counting added and running routes) and a
 `MicrometerExchangeEventNotifier` (timing exchanges from their creation to their completion).
@@ -499,14 +501,14 @@ If JMX is enabled in the CamelContext, the MBean is registered in the `type=serv
 with `name=MicrometerEventNotifier`.
 
 
-== Instrumenting Camel thread pools
+=== Instrumenting Camel thread pools
 
 `InstrumentedThreadPoolFactory` allows you to gather performance information about Camel Thread Pools by injecting a `InstrumentedThreadPoolFactory`
 which collects information from the inside of Camel.
 See more details at xref:manual::threading-model.adoc[Threading Model].
 
 
-== Exposing Micrometer statistics in JMX
+=== Exposing Micrometer statistics in JMX
 
 Micrometer uses `MeterRegistry` implementations to publish statistics. While in production scenarios it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for test or local deployments to publish statistics to JMX.
 
@@ -562,7 +564,7 @@ CDI::
 
 The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into an MBean name.
 
-== Using Camel Micrometer with Camel Main
+=== Using Camel Micrometer with Camel Main
 
 When you use Camel standalone (`camel-main`), then if you need to expose metrics for Prometheus, then you can use `camel-micrometer-prometheus` JAR.
 And easily enable and configure this from `application.properties` as shown:
@@ -582,7 +584,7 @@ camel.metrics.binders=processor,jvm-info,file-descriptor
 ----
 
 
-== Using Camel Micrometer with Spring Boot
+=== Using Camel Micrometer with Spring Boot
 
 When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot autoconfiguration will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
 

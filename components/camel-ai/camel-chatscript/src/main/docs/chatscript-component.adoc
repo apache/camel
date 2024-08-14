@@ -17,17 +17,6 @@
 
 The ChatScript component allows you to interact with https://github.com/ChatScript/ChatScript[ChatScript Server] and have conversations. This component is stateless and relies on ChatScript to maintain chat history.
 
-This component expects a JSON with the following fields:
-
-[source,json]
-----
-{
-  "username": "name here",
-  "botname": "name here",
-  "body": "body here"
-}
-----
-
 [NOTE]
 ====
 Refer to the file https://github.com/apache/camel/blob/main/components/camel-chatscript/src/main/java/org/apache/camel/component/chatscript/ChatScriptMessage.java[`ChatScriptMessage.java`] for details and samples.
@@ -47,6 +36,17 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
 
+This component expects a JSON with the following fields:
+
+[source,json]
+----
+{
+  "username": "name here",
+  "botname": "name here",
+  "body": "body here"
+}
+----
 
 include::spring-boot:partial$starter.adoc[]

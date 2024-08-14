@@ -50,7 +50,7 @@ The list producer provides eight operations:
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Sample for *add*:
+=== Example for *add*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ from("direct:add")
 .toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 ------------------------------------------------------------------------------------
 
-=== Sample for *get*:
+=== Example for *get*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ from("direct:get")
 .to("seda:out");
 ------------------------------------------------------------------------------------
 
-=== Sample for *setvalue*:
+=== Example for *setvalue*:
 
 [source,java]
 -----------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ from("direct:set")
 .toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 -----------------------------------------------------------------------------------------
 
-=== Sample for *removevalue*:
+=== Example for *removevalue*:
 
 [source,java]
 --------------------------------------------------------------------------------------------

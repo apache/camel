@@ -146,6 +146,8 @@ you must first register the query acceleration feature with your subscription.
 
 Refer to the examples section below for more details on how to use these operations
 
+== Examples
+
 === Consumer Examples
 To consume a file from the storage datalake into a file using the file component, this can be done like this:
 

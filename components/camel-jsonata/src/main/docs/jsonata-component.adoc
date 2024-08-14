@@ -56,7 +56,9 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-== Samples
+== Examples
+
+=== Basic
 
 For example, you could use something like:
 
@@ -75,5 +77,29 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 ---------------------------------------------------------------
 
+=== Frame bindings
+
+It is possible to configure custom functions that can be called from Jsonata. For example you might want to be able to
+inject environment variables:
+
+[source,java]
+---------------------------------------------------------------
+from("activemq:My.Queue").
+  to("jsonata:file://myfolder/MyResponse.json?contentCache=true&frameBinding=#customBindings").
+  to("activemq:Another.Queue");
+---------------------------------------------------------------
+
+A custom binding might look like the following:
+
+[source,java]
+---------------------------------------------------------------
+@NoArgsConstructor
+public class CustomJsonataFrameBinding implements JsonataFrameBinding {
+  @Override
+  public void bindToFrame(Jsonata.Frame frame) {
+    frame.bind("env", (String s) -> System.getenv(s));
+  }
+}
+---------------------------------------------------------------
 
 include::spring-boot:partial$starter.adoc[]

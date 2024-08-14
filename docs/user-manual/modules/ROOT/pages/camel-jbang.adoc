@@ -547,6 +547,7 @@ And if you have `jq` installed which can format and output the JSon data in colo
 curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
 ----
 
+[#_using_profiles]
 === Using profiles
 
 *Available from Camel 4.5*
@@ -648,11 +649,11 @@ camel run foo.java --repos=https://packages.atlassian.com/maven-external
 TIP: Multiple repositories can be separated by comma
 
 The configuration for the 3rd-party Maven repositories can also be configured in `application.properties`
-with the key `camel.jbang.repos` as shown:
+with the key `camel.jbang.repositories` as shown:
 
 [source,properties]
 ----
-camel.jbang.repos=https://packages.atlassian.com/maven-external
+camel.jbang.repositories=https://packages.atlassian.com/maven-external
 ----
 
 And when running Camel then `application.properties` is automatically loaded:
@@ -3511,90 +3512,6 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=..
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
-[#_exporting_to_camel_main_for_kubernetes]
-==== Exporting to Camel Main for Kubernetes
-
-If your want to run Camel Main on Kubernetes, then it's possible to export to Maven based project
-that are pre-configured to build for Kubernetes (with JKube and JIB).
-
-To use this, then `application.properties` must contain JKube configurations that are to be used for generating
-Kubernetes YAML manifest files.
-
-Camel JBang will export and copy every entry from `application.properties` that start with the following keys:
-
-- `jkube.xxx`
-- `jib.xxx`
-- `label.xxx`
-
-For example, the following can be used for a general Camel based application to run in Kubernetes:
-
-[source,properties]
-----
-label.runtime=app.kubernetes.io/runtime
-jib.to.image=demo/myapp:1.0
-jkube.version=1.16.2
-jkube.build.strategy=jib
-jkube.skip.build=true
-jkube.namespace=my-namespace
-jkube.imagePullPolicy=IfNotPresent
-jkube.enricher.jkube-project-label.group=my-company
-jkube.enricher.jkube-project-label.provider=my-company
-jkube.enricher.jkube-controller.type=Deployment
-jkube.enricher.jkube-controller.replicaCount=1
-jkube.enricher.jkube-service.port=8080
-jkube.recreate=true
-----
-
-TIP: You can specify the jib-maven-plugin version using the `camel.jbang.jib-maven-plugin-version` property in `application.properties`.
-
-===== Configuring from and to image
-
-The jib-maven-plugin must be configured with a from and to image. The from image will default be `eclipse-temurin:17-jre`
-for Java 17 and `eclipse-temurin:21-jre` for Java 21. However, companies often have their own base images to be used, so
-you can configure this in the properties (together with authentication if needed):
-
-[source,properties]
-----
-jib.from.image=com.mycompany/base-images/ubi17/java17-builder:latest
-jib.from.auth.username = myuser
-jib.from.auth.password = mypass
-----
-
-The to image is configured in the same way, such as:
-
-[source,properties]
-----
-jib.to.image=com.mycompany/myproject/myapp
-jib.to.auth.username = myuser
-jib.to.auth.password = mypass
-----
-
-You can find more details in the https://eclipse.dev/jkube/docs/[Eclipse JKube] and https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin[Jib] documentations.
-
-===== Resource fragments
-
-Resource fragments for JKube allows to store external configuration in YAML resource descriptions, which
-will be exported to `src/main/jkube` directory.
-
-Camel JBang will export files that ends with `jkube.yaml` or `jkube.yml` into `src/main/jkube` directory.
-
-For example having the following file named `configmap.jkube.yaml`:
-
-[source,yaml]
-----
-metadata:
-  name: ${project.artifactId}
-data:
-  application.properties: |
-    # spring application properties file
-    welcome = Hello from Kubernetes ConfigMap!!!
-    dummy = some value
-----
-
-Will let Camel JBang export this into as `src/main/jkube/configmap.yaml`.
-
-You can find more information about resource fragments at the https://eclipse.dev/jkube/docs/kubernetes-maven-plugin/#_resource_fragments[Eclipse JKube] website.
-
 ==== Exporting with Java Agent included
 
 The Camel Main runtime allows to export with Java Agents that makes it easier to run your Camel integration
@@ -3699,14 +3616,14 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.dependencies`
 |Additional dependencies (Use commas to separate multiple dependencies). See more details at xref:_adding_custom_jars[].
 
-|`camel.jbang.exclude`
+|`camel.jbang.excludes`
 |Exclude files by name or pattern. Multiple names can be separated by comma.
 
 |`camel.jbang.classpathFiles`
 |Additional files to add to classpath (Use commas to separate multiple files). See more details at xref:_adding_custom_jars[].
 
 |`camel.jbang.jkubeFiles`
-|Resource fragments for Kubernetes (Use commas to separate multiple files). See more details at xref:_exporting_to_camel_main_for_kubernetes[].
+|Resource fragments for Kubernetes (Use commas to separate multiple files). 
 
 |`camel.jbang.javaVersion`
 |Java version (17 or 21). Java 17 is default.
@@ -3741,7 +3658,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.buildTool`
 |Build tool to use (maven or gradle)
 
-|`camel.jbang.repos`
+|`camel.jbang.repositories`
 |Additional maven repositories for download on-demand (Use commas to separate multiple repositories)
 
 |`camel.jbang.mavenSettings`

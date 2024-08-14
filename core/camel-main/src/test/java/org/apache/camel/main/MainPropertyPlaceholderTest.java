@@ -21,7 +21,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Isolated
 public class MainPropertyPlaceholderTest {
@@ -32,10 +32,19 @@ public class MainPropertyPlaceholderTest {
         try {
             main.setDefaultPropertyPlaceholderLocation("false");
             main.start();
-            main.getCamelContext().resolvePropertyPlaceholders("{{hello}}");
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // ok
+            assertThrows(IllegalArgumentException.class, () -> main.getCamelContext().resolvePropertyPlaceholders("{{hello}}"));
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testDefaultPropertyPlaceholderLocationDisabledWithAdditionalLocations() {
+        Main main = new Main();
+        try {
+            main.setDefaultPropertyPlaceholderLocation("classpath:additional-config.properties,false");
+            main.start();
+            assertThrows(IllegalArgumentException.class, () -> main.getCamelContext().resolvePropertyPlaceholders("{{hello}}"));
         } finally {
             main.stop();
         }
@@ -78,6 +87,35 @@ public class MainPropertyPlaceholderTest {
             assertEquals("val-override", main.getCamelContext().resolvePropertyPlaceholders("{{1}}"));
             assertEquals("val-init", main.getCamelContext().resolvePropertyPlaceholders("{{2}}"));
             assertEquals("val-override", main.getCamelContext().resolvePropertyPlaceholders("{{3}}"));
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testCloudPropertyPlaceholderLocationEnabled() {
+        Main main = new Main();
+        try {
+            main.setDefaultPropertyPlaceholderLocation("classpath:cloud.properties");
+            main.start();
+            assertEquals("My configmap value", main.getCamelContext().resolvePropertyPlaceholders("{{my-prop-1.txt}}"));
+            assertEquals("My secret value", main.getCamelContext().resolvePropertyPlaceholders("{{my-prop-2.txt}}"));
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testCloudPropertyPlaceholderOverride() {
+        Main main = new Main();
+        try {
+            main.setInitialProperties(
+                    mapOf("my-prop-1.txt", "val-init"));
+            main.setOverrideProperties(
+                    mapOf("my-prop-1.txt", "val-override"));
+            main.setDefaultPropertyPlaceholderLocation("classpath:cloud.properties");
+            main.start();
+            assertEquals("My configmap value", main.getCamelContext().resolvePropertyPlaceholders("{{my-prop-1.txt}}"));
         } finally {
             main.stop();
         }

@@ -50,7 +50,7 @@ inline as shown below.
 
 == Marshal
 
-In this example we marshal the file content to base64 object.
+In this example, we marshal the file content to a base64 object.
 
 [source,java]
 ----
@@ -72,8 +72,8 @@ In Spring DSL:
 
 == Unmarshal
 
-In this example we unmarshal the payload from the JMS queue to a byte[]
-object, before its processed by the newOrder processor.
+In this example, we unmarshal the payload from the JMS queue to a byte[]
+object, before its processed by the `newOrder` processor.
 
 [source,java]
 ----
@@ -95,10 +95,10 @@ In Spring DSL:
 
 == Dependencies
 
-To use Base64 in your Camel routes you need to add a dependency on
+To use Base64 in your Camel routes, you need to add a dependency on
 *camel-base64* which implements this data format.
 
-If you use Maven you can just add the following to your pom.xml:
+If you use Maven, you can add the following to your pom.xml:
 
 [source,xml]
 ----

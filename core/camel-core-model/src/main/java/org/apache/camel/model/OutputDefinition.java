@@ -33,8 +33,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.NONE)
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> implements OutputNode {
 
-    // TODO: copyDefinition return value to be class type itself and not generic
-
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public OutputDefinition() {

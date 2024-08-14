@@ -65,7 +65,7 @@ public class CamelKBaseTest {
     }
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         printer = new StringPrinter();
         k8sServer.reset();
     }

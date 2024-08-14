@@ -72,7 +72,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(FaultToleranceProcessor.class);
 
-    private volatile CircuitBreaker<?> circuitBreaker;
+    private volatile CircuitBreaker<Exchange> circuitBreaker;
     private CamelContext camelContext;
     private String id;
     private String routeId;
@@ -129,7 +129,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         return circuitBreaker;
     }
 
-    public void setCircuitBreaker(CircuitBreaker<?> circuitBreaker) {
+    public void setCircuitBreaker(CircuitBreaker<Exchange> circuitBreaker) {
         this.circuitBreaker = circuitBreaker;
     }
 
@@ -258,7 +258,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
 
             // circuit breaker
-            FaultToleranceStrategy<?> target = circuitBreaker;
+            FaultToleranceStrategy<Exchange> target = circuitBreaker;
 
             // 1. bulkhead
             if (config.isBulkheadEnabled()) {
@@ -274,13 +274,20 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             if (fallbackProcessor != null) {
                 fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
                 final CircuitBreakerFallbackTask fFallbackTask = fallbackTask;
-                target = new Fallback(target, "fallback", fallbackContext -> {
+                target = new Fallback<>(target, "fallback", fallbackContext -> {
                     exchange.setException(fallbackContext.failure);
-                    return fFallbackTask.call();
+                    try {
+                        return fFallbackTask.call();
+                    } catch (Exception e) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Error occurred processing fallback task", e);
+                        }
+                    }
+                    return null;
                 }, ExceptionDecision.ALWAYS_FAILURE);
             }
 
-            target.apply(new InvocationContext(task));
+            target.apply(new InvocationContext<>(task));
 
         } catch (CircuitBreakerOpenException e) {
             // the circuit breaker triggered a call rejected

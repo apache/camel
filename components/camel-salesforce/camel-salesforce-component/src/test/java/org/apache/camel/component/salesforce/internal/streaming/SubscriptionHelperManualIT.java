@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce.internal.streaming;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
@@ -31,6 +32,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
+import org.cometd.bayeux.client.ClientSessionChannel.MessageListener;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +42,11 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperManualIT.MessageArgumentMatcher.messageForAccountCreationWithName;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperManualIT.MessageArgumentMatcher.messageWithName;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.atLeastOnce;
@@ -58,9 +64,7 @@ public class SubscriptionHelperManualIT {
     final BlockingQueue<String> messages = new LinkedBlockingDeque<>();
     final SalesforceComponent salesforce;
     final StubServer server;
-    final SubscriptionHelper subscription;
-
-    StreamingApiConsumer toUnsubscribe;
+    private SubscriptionHelper subscription;
 
     static class MessageArgumentMatcher implements ArgumentMatcher<Message> {
 
@@ -74,21 +78,24 @@ public class SubscriptionHelperManualIT {
         public boolean matches(final Message message) {
             final Map<String, Object> data = message.getDataAsMap();
             @SuppressWarnings("unchecked")
-            final Map<String, Object> event = (Map<String, Object>) data.get("event");
+            final Map<String, Object> event = (Map<String, Object>) data.get(
+                    "event");
             @SuppressWarnings("unchecked")
-            final Map<String, Object> sobject = (Map<String, Object>) data.get("sobject");
+            final Map<String, Object> sobject = (Map<String, Object>) data.get(
+                    "sobject");
             return "created".equals(event.get("type")) && name.equals(sobject.get("Name"));
         }
 
-        static Message messageForAccountCreationWithName(final String name) {
+        static Message messageWithName(final String name) {
             return argThat(new MessageArgumentMatcher(name));
         }
     }
 
     public SubscriptionHelperManualIT() throws SalesforceException {
         server = new StubServer();
-        LoggerFactory.getLogger(SubscriptionHelperManualIT.class).info("Port for wireshark to filter: {}",
-                server.port());
+        LoggerFactory.getLogger(SubscriptionHelperManualIT.class)
+                .info("Port for wireshark to filter: {}",
+                        server.port());
         final String instanceUrl = "http://localhost:" + server.port();
         server.replyTo(
                 "POST", "/services/oauth2/token",
@@ -103,67 +110,54 @@ public class SubscriptionHelperManualIT {
 
         server.replyTo(
                 "POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/handshake",
-                "[\n"
-                                                                                              + "  {\n"
-                                                                                              + "    \"ext\": {\n"
-                                                                                              + "      \"replay\": true,\n"
-                                                                                              + "      \"payload.format\": true\n"
-                                                                                              + "    },\n"
-                                                                                              + "    \"minimumVersion\": \"1.0\",\n"
-                                                                                              + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                                                                                              + "    \"supportedConnectionTypes\": [\n"
-                                                                                              + "      \"long-polling\"\n"
-                                                                                              + "    ],\n"
-                                                                                              + "    \"channel\": \"/meta/handshake\",\n"
-                                                                                              + "    \"id\": \"$id\",\n"
-                                                                                              + "    \"version\": \"1.0\",\n"
-                                                                                              + "    \"successful\": true\n"
-                                                                                              + "  }\n"
-                                                                                              + "]");
+                """
+                        [
+                          {
+                            "ext": {
+                              "replay": true,
+                              "payload.format": true
+                            },
+                            "minimumVersion": "1.0",
+                            "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                            "supportedConnectionTypes": [
+                              "long-polling"
+                            ],
+                            "channel": "/meta/handshake",
+                            "id": "$id",
+                            "version": "1.0",
+                            "successful": true
+                          }
+                        ]""");
 
         server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect",
-                req -> req.contains("\"timeout\":0"), "[\n"
-                                                      + "  {\n"
-                                                      + "    \"clientId\": \"1f0agp5a95yiaeb1kifib37r5z4g\",\n"
-                                                      + "    \"advice\": {\n"
-                                                      + "      \"interval\": 0,\n"
-                                                      + "      \"timeout\": 110000,\n"
-                                                      + "      \"reconnect\": \"retry\"\n"
-                                                      + "    },\n"
-                                                      + "    \"channel\": \"/meta/connect\",\n"
-                                                      + "    \"id\": \"$id\",\n"
-                                                      + "    \"successful\": true\n"
-                                                      + "  }\n"
-                                                      + "]");
+                req -> {
+                    return req.contains("\"timeout\":0");
+                }, """
+                        [
+                          {
+                            "clientId": "1f0agp5a95yiaeb1kifib37r5z4g",
+                            "advice": {
+                              "interval": 0,
+                              "timeout": 110000,
+                              "reconnect": "retry"
+                            },
+                            "channel": "/meta/connect",
+                            "id": "$id",
+                            "successful": true
+                          }
+                        ]""");
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect", messages);
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect",
+                messages);
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe", "[\n"
-                                                                                                     + "  {\n"
-                                                                                                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                                                                                                     + "    \"channel\": \"/meta/subscribe\",\n"
-                                                                                                     + "    \"id\": \"$id\",\n"
-                                                                                                     + "    \"subscription\": \"/topic/Account\",\n"
-                                                                                                     + "    \"successful\": true\n"
-                                                                                                     + "  }\n"
-                                                                                                     + "]");
-
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/unsubscribe", "[\n"
-                                                                                                       + "  {\n"
-                                                                                                       + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                                                                                                       + "    \"channel\": \"/meta/unsubscribe\",\n"
-                                                                                                       + "    \"id\": \"$id\",\n"
-                                                                                                       + "    \"subscription\": \"/topic/Account\",\n"
-                                                                                                       + "    \"successful\": true\n"
-                                                                                                       + "  }\n"
-                                                                                                       + "]");
-
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/disconnect", "[\n"
-                                                                                                      + "  {\n"
-                                                                                                      + "     \"channel\": \"/meta/disconnect\",\n"
-                                                                                                      + "     \"clientId\": \"client-id\"\n"
-                                                                                                      + "   }\n"
-                                                                                                      + "]");
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/disconnect",
+                """
+                        [
+                          {
+                             "channel": "/meta/disconnect",
+                             "clientId": "client-id"
+                           }
+                        ]""");
 
         server.replyTo("GET", "/services/oauth2/revoke", 200);
 
@@ -178,16 +172,13 @@ public class SubscriptionHelperManualIT {
         salesforce.setRefreshToken("refreshToken");
         salesforce.setAuthenticationType(AuthenticationType.REFRESH_TOKEN);
         salesforce.setConfig(config);
-
         salesforce.start();
         subscription = new SubscriptionHelper(salesforce);
+        subscription.start();
     }
 
     @BeforeEach
-    public void cleanSlate() throws CamelException {
-        if (toUnsubscribe != null) {
-            subscription.unsubscribe("Account", toUnsubscribe);
-        }
+    public void resetServer() throws CamelException {
         server.reset();
     }
 
@@ -200,93 +191,80 @@ public class SubscriptionHelperManualIT {
 
     @Test
     void shouldResubscribeOnConnectionFailures() throws InterruptedException {
-        // handshake and connect
-        subscription.start();
+        var consumer = createConsumer("Account");
+        subscription.subscribe(consumer);
 
-        final StreamingApiConsumer consumer
-                = toUnsubscribe = mock(StreamingApiConsumer.class, "shouldResubscribeOnConnectionFailures:consumer");
+        messages.add("""
+                [
+                  {
+                    "data": {
+                      "event": {
+                        "createdDate": "2020-12-11T13:44:56.891Z",
+                        "replayId": 1,
+                        "type": "created"
+                      },
+                      "sobject": {
+                        "Id": "0011n00002XWMgVAAX",
+                        "Name": "shouldResubscribeOnConnectionFailures 1"
+                      }
+                    },
+                    "channel": "/topic/Account"
+                  },
+                  {
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                    "channel": "/meta/connect",
+                    "id": "$id",
+                    "successful": true
+                  }
+                ]""");
+        verify(consumer, Mockito.timeout(10000)).processMessage(any(ClientSessionChannel.class),
+                messageWithName("shouldResubscribeOnConnectionFailures 1"));
 
-        final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class, "shouldResubscribeOnConnectionFailures:endpoint");
+        subscription.client.getChannel("/meta/subscribe").addListener(
+                (MessageListener) (clientSessionChannel, message) -> {
+                    var subscription = (String) message.get("subscription");
+                    if (subscription != null && subscription.contains("Account")) {
+                        messages.add("""
+                                [
+                                  {
+                                    "data": {
+                                      "event": {
+                                        "createdDate": "2020-12-11T13:44:57.891Z",
+                                        "replayId": 2,
+                                        "type": "created"
+                                      },
+                                      "sobject": {
+                                        "Id": "0011n00002XWMgVAAX",
+                                        "Name": "shouldResubscribeOnConnectionFailures 2"
+                                      }
+                                    },
+                                    "channel": "/topic/Account"
+                                  },
+                                  {
+                                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                                    "channel": "/meta/connect",
+                                    "id": "$id",
+                                    "successful": true
+                                  }
+                                ]""");
+                    }
+                });
+        subscription.client.disconnect(10000);
+        messages.add("""
+                [
+                  {
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                    "channel": "/meta/connect",
+                    "id": "$id",
+                    "successful": false,
+                    "advice": {
+                       "reconnect": "none"
+                    }
+                  }
+                ]""");
 
-        // subscribe
-        when(consumer.getTopicName()).thenReturn("Account");
-
-        when(consumer.getEndpoint()).thenReturn(endpoint);
-        when(endpoint.getConfiguration()).thenReturn(config);
-        when(endpoint.getComponent()).thenReturn(salesforce);
-        when(endpoint.getTopicName()).thenReturn("Account");
-
-        subscription.subscribe("Account", consumer);
-
-        // push one message so we know connection is established and consumer
-        // receives notifications
-        messages.add("[\n"
-                     + "  {\n"
-                     + "    \"data\": {\n"
-                     + "      \"event\": {\n"
-                     + "        \"createdDate\": \"2020-12-11T13:44:56.891Z\",\n"
-                     + "        \"replayId\": 1,\n"
-                     + "        \"type\": \"created\"\n"
-                     + "      },\n"
-                     + "      \"sobject\": {\n"
-                     + "        \"Id\": \"0011n00002XWMgVAAX\",\n"
-                     + "        \"Name\": \"shouldResubscribeOnConnectionFailures 1\"\n"
-                     + "      }\n"
-                     + "    },\n"
-                     + "    \"channel\": \"/topic/Account\"\n"
-                     + "  },\n"
-                     + "  {\n"
-                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                     + "    \"channel\": \"/meta/connect\",\n"
-                     + "    \"id\": \"$id\",\n"
-                     + "    \"successful\": true\n"
-                     + "  }\n"
-                     + "]");
-
-        verify(consumer, Mockito.timeout(100)).processMessage(any(ClientSessionChannel.class),
-                messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 1"));
-
-        // send failed connection message w/o reconnect advice so we handshake again
-
-        messages.add("[\n" +
-                     "  {\n" +
-                     "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n" +
-                     "    \"channel\": \"/meta/connect\",\n" +
-                     "    \"id\": \"$id\",\n" +
-                     "    \"successful\": false,\n" +
-                     "    \"advice\": {\n" +
-                     "       \"reconnect\": \"none\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "]");
-
-        // queue next message for when the client recovers
-        messages.add("[\n"
-                     + "  {\n"
-                     + "    \"data\": {\n"
-                     + "      \"event\": {\n"
-                     + "        \"createdDate\": \"2020-12-11T13:44:56.891Z\",\n"
-                     + "        \"replayId\": 2,\n"
-                     + "        \"type\": \"created\"\n"
-                     + "      },\n"
-                     + "      \"sobject\": {\n"
-                     + "        \"Id\": \"0011n00002XWMgVAAX\",\n"
-                     + "        \"Name\": \"shouldResubscribeOnConnectionFailures 2\"\n"
-                     + "      }\n"
-                     + "    },\n"
-                     + "    \"channel\": \"/topic/Account\"\n"
-                     + "  },\n"
-                     + "  {\n"
-                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                     + "    \"channel\": \"/meta/connect\",\n"
-                     + "    \"id\": \"$id\",\n"
-                     + "    \"successful\": true\n"
-                     + "  }\n"
-                     + "]");
-
-        // assert last message was received, recovery can take a bit
-        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
-                messageForAccountCreationWithName("shouldResubscribeOnConnectionFailures 2"));
+        verify(consumer, timeout(20000)).processMessage(any(ClientSessionChannel.class),
+                messageWithName("shouldResubscribeOnConnectionFailures 2"));
 
         verify(consumer, atLeastOnce()).getEndpoint();
         verify(consumer, atLeastOnce()).getTopicName();
@@ -294,86 +272,168 @@ public class SubscriptionHelperManualIT {
     }
 
     @Test
+    void shouldResubscribeOnSubscriptionFailure() {
+        var consumer = createConsumer("Contact");
+        var subscribeAttempts = new AtomicInteger(0);
+        subscription.client.getChannel("/meta/subscribe").addListener(
+                (MessageListener) (clientSessionChannel, message) -> {
+                    var subscription = (String) message.get("subscription");
+                    if (subscription != null && subscription.contains("Contact")) {
+                        subscribeAttempts.incrementAndGet();
+                    }
+                });
+
+        server.reset();
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+                s -> s.contains("/topic/Contact"),
+                """
+                        [
+                          {
+                            "clientId": "5ra4927ikfky6cb12juthkpofeu8aaa",
+                            "channel": "/meta/subscribe",
+                            "id": "$id",
+                            "subscription": "/topic/Contact",
+                            "successful": false
+                          }
+                        ]""");
+        subscription.subscribe(consumer);
+        await().atMost(10, SECONDS).until(() -> subscribeAttempts.get() == 1);
+        assertThat(subscription.client.getChannel("/topic/Contact").getSubscribers(), hasSize(0));
+
+        server.reset();
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+                s -> s.contains("/topic/Contact"),
+                """
+                        [
+                          {
+                            "clientId": "5ra4927ikfky6cb12juthkpofeu8bbb",
+                            "channel": "/meta/subscribe",
+                            "id": "$id",
+                            "subscription": "/topic/Contact",
+                            "successful": true
+                          }
+                        ]""");
+        messages.add("""
+                [
+                  {
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                    "channel": "/meta/connect",
+                    "id": "$id",
+                    "successful": true
+                  }
+                ]""");
+        await().atMost(10, SECONDS).until(() -> subscribeAttempts.get() == 2);
+        assertThat(subscription.client.getChannel("/topic/Contact").getSubscribers(), hasSize(1));
+    }
+
+    @Test
     void shouldResubscribeOnHelperRestart() {
-        // handshake and connect
-        subscription.start();
+        var consumer = createConsumer("Person");
+        subscription.subscribe(consumer);
 
-        final StreamingApiConsumer consumer
-                = toUnsubscribe = mock(StreamingApiConsumer.class, "shouldResubscribeOnHelperRestart:consumer");
-
-        final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class, "shouldResubscribeOnHelperRestart:endpoint");
-
-        // subscribe
-        when(consumer.getTopicName()).thenReturn("Account");
-
-        when(consumer.getEndpoint()).thenReturn(endpoint);
-        when(endpoint.getConfiguration()).thenReturn(config);
-        when(endpoint.getComponent()).thenReturn(salesforce);
-        when(endpoint.getTopicName()).thenReturn("Account");
-
-        subscription.subscribe("Account", consumer);
-
-        // push one message so we know connection is established and consumer
-        // receives notifications
-        messages.add("[\n"
-                     + "  {\n"
-                     + "    \"data\": {\n"
-                     + "      \"event\": {\n"
-                     + "        \"createdDate\": \"2020-12-11T13:44:56.891Z\",\n"
-                     + "        \"replayId\": 1,\n"
-                     + "        \"type\": \"created\"\n"
-                     + "      },\n"
-                     + "      \"sobject\": {\n"
-                     + "        \"Id\": \"0011n00002XWMgVAAX\",\n"
-                     + "        \"Name\": \"shouldResubscribeOnHelperRestart 1\"\n"
-                     + "      }\n"
-                     + "    },\n"
-                     + "    \"channel\": \"/topic/Account\"\n"
-                     + "  },\n"
-                     + "  {\n"
-                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                     + "    \"channel\": \"/meta/connect\",\n"
-                     + "    \"id\": \"$id\",\n"
-                     + "    \"successful\": true\n"
-                     + "  }\n"
-                     + "]");
-        verify(consumer, timeout(100)).processMessage(any(ClientSessionChannel.class),
-                messageForAccountCreationWithName("shouldResubscribeOnHelperRestart 1"));
+        messages.add("""
+                [
+                  {
+                    "data": {
+                      "event": {
+                        "createdDate": "2020-12-11T13:44:56.891Z",
+                        "replayId": 1,
+                        "type": "created"
+                      },
+                      "sobject": {
+                        "Id": "0011n00002XWMgVAAX",
+                        "Name": "shouldResubscribeOnHelperRestart 1"
+                      }
+                    },
+                    "channel": "/topic/Person"
+                  },
+                  {
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                    "channel": "/meta/connect",
+                    "id": "$id",
+                    "successful": true
+                  }
+                ]""");
+        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
+                messageWithName("shouldResubscribeOnHelperRestart 1"));
 
         // stop and start the subscription helper
         subscription.stop();
         subscription.start();
 
         // queue next message for when the client recovers
-        messages.add("[\n"
-                     + "  {\n"
-                     + "    \"data\": {\n"
-                     + "      \"event\": {\n"
-                     + "        \"createdDate\": \"2020-12-11T13:44:56.891Z\",\n"
-                     + "        \"replayId\": 2,\n"
-                     + "        \"type\": \"created\"\n"
-                     + "      },\n"
-                     + "      \"sobject\": {\n"
-                     + "        \"Id\": \"0011n00002XWMgVAAX\",\n"
-                     + "        \"Name\": \"shouldResubscribeOnHelperRestart 2\"\n"
-                     + "      }\n"
-                     + "    },\n"
-                     + "    \"channel\": \"/topic/Account\"\n"
-                     + "  },\n"
-                     + "  {\n"
-                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                     + "    \"channel\": \"/meta/connect\",\n"
-                     + "    \"id\": \"$id\",\n"
-                     + "    \"successful\": true\n"
-                     + "  }\n"
-                     + "]");
+        messages.add("""
+                [
+                  {
+                    "data": {
+                      "event": {
+                        "createdDate": "2020-12-11T13:44:56.891Z",
+                        "replayId": 2,
+                        "type": "created"
+                      },
+                      "sobject": {
+                        "Id": "0011n00002XWMgVAAX",
+                        "Name": "shouldResubscribeOnHelperRestart 2"
+                      }
+                    },
+                    "channel": "/topic/Person"
+                  },
+                  {
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                    "channel": "/meta/connect",
+                    "id": "$id",
+                    "successful": true
+                  }
+                ]""");
 
         // assert last message was received, recovery can take a bit
-        verify(consumer, timeout(2000)).processMessage(any(ClientSessionChannel.class),
-                messageForAccountCreationWithName("shouldResubscribeOnHelperRestart 2"));
+        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
+                messageWithName("shouldResubscribeOnHelperRestart 2"));
 
         verify(consumer, atLeastOnce()).getEndpoint();
         verify(consumer, atLeastOnce()).getTopicName();
         verifyNoMoreInteractions(consumer);
     }
+
+    private StreamingApiConsumer createConsumer(String topic) {
+        var endpoint = createAccountEndpoint(topic);
+        var consumer = mock(StreamingApiConsumer.class, topic + ":consumer");
+        when(consumer.getTopicName()).thenReturn(topic);
+        when(consumer.getEndpoint()).thenReturn(endpoint);
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+                s -> s.contains("\"subscription\":\"/topic/" + topic + "\""),
+                """
+                        [
+                          {
+                            "clientId": "5ra4927ikfky6cb12juthkpofeu8qqq",
+                            "channel": "/meta/subscribe",
+                            "id": "$id",
+                            "subscription": "/topic/""" + topic + "\"," + """
+                            "successful": true
+                          }
+                        ]""");
+
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/unsubscribe",
+                s -> s.contains("\"subscription\":\"/topic/" + topic + "\""),
+                """
+                        [
+                          {
+                            "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                            "channel": "/meta/unsubscribe",
+                            "id": "$id",
+                            "subscription": "/topic/""" + topic + "\"," + """
+                            "successful": true
+                          }
+                        ]""");
+        return consumer;
+    }
+
+    private SalesforceEndpoint createAccountEndpoint(String topic) {
+        SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class, topic + ":endpoint");
+        when(endpoint.getConfiguration()).thenReturn(config);
+        when(endpoint.getComponent()).thenReturn(salesforce);
+        when(endpoint.getTopicName()).thenReturn(topic);
+        return endpoint;
+    }
+
 }

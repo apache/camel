@@ -16,8 +16,12 @@
  */
 package org.apache.camel.language.python;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PythonTest extends LanguageTestSupport {
 
@@ -30,6 +34,19 @@ public class PythonTest extends LanguageTestSupport {
         exchange.getMessage().setBody(7);
         exchange.getMessage().setHeader("foo", "bar");
         assertExpression("headers['foo']", "bar");
+    }
+
+    @Test
+    void testPythonExpressionRepeatableEvaluation() {
+        PythonLanguage python = new PythonLanguage();
+        PythonExpression expression = (PythonExpression) python.createExpression("body == 5");
+        Exchange exchange = createExchange();
+
+        exchange.getIn().setBody(5);
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getIn().setBody(6);
+        assertFalse(expression.evaluate(exchange, Boolean.class));
     }
 
     @Override

@@ -20,6 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,7 +33,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -37,6 +42,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Configuration;
 import org.apache.camel.ExtendedCamelContext;
@@ -395,7 +401,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (locations != null) {
                 locations = locations.trim();
             }
-            if (!Objects.equals(locations, "false")) {
+            if (ObjectHelper.isNotEmpty(locations) && !locations.endsWith("false")) {
                 pc.addLocation(locations);
                 if (defaultPropertyPlaceholderLocation.equals(locations)) {
                     LOG.debug("Properties location: {}", locations);
@@ -415,6 +421,15 @@ public abstract class BaseMainSupport extends BaseService {
         if (op != null) {
             pc.setOverrideProperties(op);
         }
+
+        Optional<String> cloudLocations = pc.resolveProperty(MainConstants.CLOUD_PROPERTIES_LOCATION);
+        if (cloudLocations.isPresent()) {
+            LOG.info("Cloud properties location: {}", cloudLocations);
+            final Properties kp = tryLoadCloudProperties(op, cloudLocations.get());
+            if (kp != null) {
+                pc.setOverrideProperties(kp);
+            }
+        }
     }
 
     private Properties tryLoadProperties(
@@ -431,6 +446,43 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         return ip;
+    }
+
+    private static Properties tryLoadCloudProperties(
+            Properties overridProperties, String cloudPropertiesLocations)
+            throws IOException {
+        final OrderedLocationProperties cp = new OrderedLocationProperties();
+        try {
+            String[] locations = cloudPropertiesLocations.split(",");
+            for (String loc : locations) {
+                Path confPath = Paths.get(loc);
+                if (Files.exists(confPath) && Files.isDirectory(confPath)) {
+                    Files.walkFileTree(confPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            if (!Files.isDirectory(file)) {
+                                try {
+                                    String val = new String(Files.readAllBytes(file));
+                                    cp.put(loc, file.getFileName().toString(), val);
+                                } catch (IOException e) {
+                                    LOG.warn("Some error happened while reading property from cloud configuration file {}",
+                                            file, e);
+                                }
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (overridProperties == null) {
+            return cp;
+        }
+        Properties mergedProperties = new Properties(overridProperties);
+        mergedProperties.putAll(cp);
+        return mergedProperties;
     }
 
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
@@ -2086,16 +2138,23 @@ public abstract class BaseMainSupport extends BaseService {
 
         for (String key : prop.stringPropertyNames()) {
             computeProperties("camel.component.", key, prop, properties, name -> {
+                boolean optional = name.startsWith("?");
+                if (optional) {
+                    name = name.substring(1);
+                }
                 if (reload) {
                     // force re-creating component on reload
                     camelContext.removeComponent(name);
                 }
                 // its an existing component name
-                Component target = camelContext.getComponent(name);
-                if (target == null) {
+                Component target = optional ? camelContext.hasComponent(name) : camelContext.getComponent(name);
+                if (target == null && !optional) {
                     throw new IllegalArgumentException(
                             "Error configuring property: " + key + " because cannot find component with name " + name
                                                        + ". Make sure you have the component on the classpath");
+                }
+                if (target == null) {
+                    return Collections.EMPTY_LIST;
                 }
                 return Collections.singleton(target);
             });
@@ -2106,7 +2165,6 @@ public abstract class BaseMainSupport extends BaseService {
                             "Error configuring property: " + key + " because cannot find dataformat with name " + name
                                                        + ". Make sure you have the dataformat on the classpath");
                 }
-
                 return Collections.singleton(target);
             });
             computeProperties("camel.language.", key, prop, properties, name -> {
@@ -2118,7 +2176,6 @@ public abstract class BaseMainSupport extends BaseService {
                             "Error configuring property: " + key + " because cannot find language with name " + name
                                                        + ". Make sure you have the language on the classpath");
                 }
-
                 return Collections.singleton(target);
             });
         }
@@ -2279,7 +2336,7 @@ public abstract class BaseMainSupport extends BaseService {
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find MainHttpServerFactory on classpath. Add camel-platform-http-main to classpath."));
         }
-        return answer;
+        return CamelContextAware.trySetCamelContext(answer, camelContext);
     }
 
     private static final class PropertyPlaceholderListener implements PropertiesLookupListener {
