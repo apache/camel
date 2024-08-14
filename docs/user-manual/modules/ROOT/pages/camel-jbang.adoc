@@ -144,8 +144,6 @@ named _foobar_ you can do:
 camel init foo.java --directory=foobar
 ----
 
-IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
-
 === Running Routes from multiple files
 
 You can run more than 1 file, for example to run two YAML files you can do:
@@ -820,8 +818,6 @@ you would do:
 camel init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory=myproject
 ----
 
-IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
-
 You can also run in dev mode, to hot-deploy on source code changes.
 
 [source,bash]
@@ -866,8 +862,6 @@ you would do:
 ----
 camel init https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92 --directory=foobar
 ----
-
-IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
 
 === Using a specific Camel version
 

@@ -54,7 +54,8 @@ public class Init extends CamelCommand {
 
     @Option(names = {
             "--dir",
-            "--directory" }, description = "Directory where the project will be saved", defaultValue = ".")
+            "--directory" }, description = "Directory relative path where the new Camel integration will be saved",
+            defaultValue = ".")
     private String directory;
 
     @Option(names = { "--from-kamelet" },
@@ -146,8 +147,6 @@ public class Init extends CamelCommand {
 
         if (!directory.equals(".")) {
             File dir = new File(directory);
-            CommandHelper.cleanExportDir(directory);
-            // ensure target dir is created after clean
             dir.mkdirs();
         }
         File target = new File(directory, file);
