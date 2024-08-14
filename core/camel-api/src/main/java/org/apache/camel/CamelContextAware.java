@@ -27,8 +27,8 @@ public interface CamelContextAware extends HasCamelContext {
      * Set the {@link CamelContext} context if the object is an instance of {@link CamelContextAware}.
      */
     static <T> T trySetCamelContext(T object, CamelContext camelContext) {
-        if (camelContext != null && object instanceof CamelContextAware) {
-            ((CamelContextAware) object).setCamelContext(camelContext);
+        if (camelContext != null && object instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(camelContext);
         }
 
         return object;

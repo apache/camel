@@ -51,10 +51,10 @@ public final class ServiceHelper {
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void buildService(Object value) {
-        if (value instanceof Service) {
-            ((Service) value).build();
-        } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+        if (value instanceof Service service) {
+            service.build();
+        } else if (value instanceof Iterable iterable) {
+            for (Object o : iterable) {
                 buildService(o);
             }
         }
@@ -80,10 +80,10 @@ public final class ServiceHelper {
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void initService(Object value) {
-        if (value instanceof Service) {
-            ((Service) value).init();
-        } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value) {
+        if (value instanceof Service service) {
+            service.init();
+        } else if (value instanceof Iterable iterable) {
+            for (Object o : iterable) {
                 initService(o);
             }
         }
@@ -109,10 +109,10 @@ public final class ServiceHelper {
      * Calling this method has no effect if {@code value} is {@code null}.
      */
     public static void startService(Object value) {
-        if (value instanceof Service) {
-            startService((Service) value);
-        } else if (value instanceof Iterable) {
-            startService((Iterable<?>) value);
+        if (value instanceof Service service) {
+            startService(service);
+        } else if (value instanceof Iterable iterable) {
+            startService(iterable);
         }
     }
 
@@ -181,10 +181,10 @@ public final class ServiceHelper {
      * @see #stopService(Collection)
      */
     public static void stopService(Object value) {
-        if (value instanceof Service) {
-            stopService((Service) value);
-        } else if (value instanceof Iterable) {
-            stopService((Iterable<?>) value);
+        if (value instanceof Service service) {
+            stopService(service);
+        } else if (value instanceof Iterable iterable) {
+            stopService(iterable);
         }
     }
 
@@ -278,9 +278,8 @@ public final class ServiceHelper {
         stopService(value);
 
         // then try to shutdown
-        if (value instanceof ShutdownableService) {
-            ShutdownableService service = (ShutdownableService) value;
-            LOG.trace("Shutting down service {}", value);
+        if (value instanceof ShutdownableService service) {
+            LOG.trace("Shutting down service {}", service);
             service.shutdown();
         }
     }
@@ -351,8 +350,7 @@ public final class ServiceHelper {
         }
         RuntimeException firstException = null;
         for (Object value : services) {
-            if (value instanceof Service) {
-                Service service = (Service) value;
+            if (value instanceof Service service) {
                 try {
                     resumeService(service);
                 } catch (RuntimeException e) {
@@ -389,8 +387,7 @@ public final class ServiceHelper {
      * @see              #startService(Object)
      */
     public static boolean resumeService(Object service) {
-        if (service instanceof Suspendable && service instanceof SuspendableService) {
-            SuspendableService ss = (SuspendableService) service;
+        if (service instanceof Suspendable && service instanceof SuspendableService ss) {
             if (ss.isSuspended()) {
                 LOG.debug("Resuming service {}", service);
                 ss.resume();
@@ -419,8 +416,7 @@ public final class ServiceHelper {
         }
         RuntimeException firstException = null;
         for (Object value : services) {
-            if (value instanceof Service) {
-                Service service = (Service) value;
+            if (value instanceof Service service) {
                 try {
                     suspendService(service);
                 } catch (RuntimeException e) {
@@ -457,8 +453,7 @@ public final class ServiceHelper {
      * @see              #stopService(Object)
      */
     public static boolean suspendService(Object service) {
-        if (service instanceof Suspendable && service instanceof SuspendableService) {
-            SuspendableService ss = (SuspendableService) service;
+        if (service instanceof Suspendable && service instanceof SuspendableService ss) {
             if (!ss.isSuspended()) {
                 LOG.trace("Suspending service {}", service);
                 ss.suspend();
@@ -480,8 +475,8 @@ public final class ServiceHelper {
      * @see    StatefulService#isStopped()
      */
     public static boolean isStopped(Object value) {
-        if (value instanceof StatefulService) {
-            return isStopped((StatefulService) value);
+        if (value instanceof StatefulService statefulService) {
+            return isStopped(statefulService);
         }
 
         return false;
@@ -510,8 +505,8 @@ public final class ServiceHelper {
      * @see    StatefulService#isStarted()
      */
     public static boolean isStarted(Object value) {
-        if (value instanceof StatefulService) {
-            return isStarted((StatefulService) value);
+        if (value instanceof StatefulService statefulService) {
+            return isStarted(statefulService);
         }
 
         return false;
@@ -540,8 +535,8 @@ public final class ServiceHelper {
      * @see    StatefulService#isSuspended()
      */
     public static boolean isSuspended(Object value) {
-        if (value instanceof StatefulService) {
-            return isSuspended((StatefulService) value);
+        if (value instanceof StatefulService statefulService) {
+            return isSuspended(statefulService);
         }
 
         return false;
@@ -589,26 +584,25 @@ public final class ServiceHelper {
 
     private static void doGetChildServices(Set<Service> services, Service service, boolean includeErrorHandler) {
         services.add(service);
-        if (service instanceof Navigate) {
-            Navigate<?> nav = (Navigate<?>) service;
+        if (service instanceof Navigate nav) {
             if (nav.hasNext()) {
                 List<?> children = nav.next();
                 for (Object child : children) {
-                    if (child instanceof Channel) {
+                    if (child instanceof Channel channel) {
                         if (includeErrorHandler) {
                             // special for error handler as they are tied to the Channel
-                            Processor errorHandler = ((Channel) child).getErrorHandler();
-                            if (errorHandler instanceof Service) {
-                                services.add((Service) errorHandler);
+                            Processor errorHandler = channel.getErrorHandler();
+                            if (errorHandler instanceof Service errService) {
+                                services.add(errService);
                             }
                         }
-                        Processor next = ((Channel) child).getNextProcessor();
-                        if (next instanceof Service) {
-                            services.add((Service) next);
+                        Processor next = channel.getNextProcessor();
+                        if (next instanceof Service nextService) {
+                            services.add(nextService);
                         }
                     }
-                    if (child instanceof Service) {
-                        doGetChildServices(services, (Service) child, includeErrorHandler);
+                    if (child instanceof Service childService) {
+                        doGetChildServices(services, childService, includeErrorHandler);
                     }
                 }
             }

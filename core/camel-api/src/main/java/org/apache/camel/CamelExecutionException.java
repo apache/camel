@@ -38,9 +38,9 @@ public class CamelExecutionException extends RuntimeExchangeException {
      * @return   the wrapper exception
      */
     public static CamelExecutionException wrapCamelExecutionException(Exchange exchange, Throwable e) {
-        if (e instanceof CamelExecutionException) {
+        if (e instanceof CamelExecutionException ce) {
             // don't double wrap
-            return (CamelExecutionException) e;
+            return ce;
         } else {
             return new CamelExecutionException("Exception occurred during execution", exchange, e);
         }
