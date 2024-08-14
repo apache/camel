@@ -1347,7 +1347,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // headers function
-        if ("in.headers".equals(function) || "headers".equals(function) || "header".equals(function)) {
+        if ("in.headers".equals(function) || "headers".equals(function)) {
             return "message.getHeaders()";
         }
 
