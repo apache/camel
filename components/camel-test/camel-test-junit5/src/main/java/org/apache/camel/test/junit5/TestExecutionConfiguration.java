@@ -105,8 +105,7 @@ public class TestExecutionConfiguration {
      *
      * @return <tt>true</tt> if you use advice with in your unit tests.
      */
-    @Deprecated(since = "4.7.0")
-    protected TestExecutionConfiguration withUseAdviceWith(boolean useAdviceWith) {
+    public TestExecutionConfiguration withUseAdviceWith(boolean useAdviceWith) {
         this.useAdviceWith = useAdviceWith;
         return this;
     }
