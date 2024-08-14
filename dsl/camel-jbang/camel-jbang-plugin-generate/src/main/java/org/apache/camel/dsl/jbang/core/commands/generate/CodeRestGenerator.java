@@ -141,8 +141,8 @@ public class CodeRestGenerator extends CamelCommand {
 
     private void generateDto() throws IOException {
         final String code = "code";
-        final String generatorName = "quarkus".equals(runtime) ? "jaxrs-spec" : "java-camel";
-        final String library = "quarkus".equals(runtime) ? "quarkus" : "spring-boot";
+        final String generatorName = RuntimeType.quarkus.equals(runtime) ? "jaxrs-spec" : "java-camel";
+        final String library = RuntimeType.quarkus.equals(runtime) ? "quarkus" : "spring-boot";
         File output = Files.createTempDirectory("gendto").toFile();
 
         final CodegenConfigurator configurator = new CodegenConfigurator()
