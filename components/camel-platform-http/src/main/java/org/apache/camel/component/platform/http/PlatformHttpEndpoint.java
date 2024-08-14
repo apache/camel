@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.platform.http;
 
+import java.util.Set;
+
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.platform.http.cookie.CookieConfiguration;
@@ -46,6 +49,36 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final String PROXY_PATH = "proxy";
+
+    private static final Set<String> COMMON_HTTP_REQUEST_HEADERS = Set.of(
+            "A-IM",
+            "Accept",
+            "Accept-Charset",
+            "Accept-Encoding",
+            "Accept-Language",
+            "Accept-Datetime",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers",
+            "Authorization",
+            "Cookie",
+            "Expect",
+            "Forwarded",
+            "From",
+            "Host",
+            "HTTP2-Settings",
+            "If-Match",
+            "If-Modified-Since",
+            "If-None-Match",
+            "If-Range",
+            "If-Unmodified-Since",
+            "Max-Forwards",
+            "Origin",
+            "Prefer",
+            "Proxy-Authorization",
+            "Range",
+            "Referer",
+            "TE",
+            "User-Agent");
 
     @UriPath(description = "The path under which this endpoint serves the HTTP requests, for proxy use 'proxy'")
     @Metadata(required = true)
@@ -86,6 +119,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
               description = "Whether to enable the Cookie Handler that allows Cookie addition, expiry, and retrieval"
                             + " (currently only supported by camel-platform-http-vertx)")
     private boolean useCookieHandler;
+
+    @UriParam(label = "advanced,consumer", defaultValue = "false",
+              description = "Whether to include HTTP request headers (Accept, User-Agent, etc.) into HTTP response produced by this endpoint.")
+    private boolean returnHttpRequestHeaders = false;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -132,7 +169,28 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (!returnHttpRequestHeaders) {
+            return enhanceHeaderFilterStrategyToSkipHttpRequestHeaders(headerFilterStrategy);
+        }
         return headerFilterStrategy;
+    }
+
+    private HeaderFilterStrategy enhanceHeaderFilterStrategyToSkipHttpRequestHeaders(
+            HeaderFilterStrategy headerFilterStrategy) {
+        return new HeaderFilterStrategy() {
+            @Override
+            public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
+                if (COMMON_HTTP_REQUEST_HEADERS.contains(headerName)) {
+                    return true;
+                }
+                return headerFilterStrategy.applyFilterToExternalHeaders(headerName, headerValue, exchange);
+            }
+
+            @Override
+            public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
+                return headerFilterStrategy.applyFilterToExternalHeaders(headerName, headerValue, exchange);
+            }
+        };
     }
 
     @Override
@@ -232,5 +290,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public boolean isHttpProxy() {
         return this.path.startsWith(PROXY_PATH);
+    }
+
+    public boolean isReturnHttpRequestHeaders() {
+        return returnHttpRequestHeaders;
+    }
+
+    public void setReturnHttpRequestHeaders(boolean returnHttpRequestHeaders) {
+        this.returnHttpRequestHeaders = returnHttpRequestHeaders;
     }
 }

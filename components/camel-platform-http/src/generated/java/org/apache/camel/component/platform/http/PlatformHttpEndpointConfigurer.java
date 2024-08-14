@@ -55,6 +55,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": target.setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
+        case "returnhttprequestheaders":
+        case "returnHttpRequestHeaders": target.setReturnHttpRequestHeaders(property(camelContext, boolean.class, value)); return true;
         case "usecookiehandler":
         case "useCookieHandler": target.setUseCookieHandler(property(camelContext, boolean.class, value)); return true;
         case "usestreaming":
@@ -98,6 +100,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": return org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class;
         case "produces": return java.lang.String.class;
+        case "returnhttprequestheaders":
+        case "returnHttpRequestHeaders": return boolean.class;
         case "usecookiehandler":
         case "useCookieHandler": return boolean.class;
         case "usestreaming":
@@ -142,6 +146,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "platformhttpengine":
         case "platformHttpEngine": return target.getPlatformHttpEngine();
         case "produces": return target.getProduces();
+        case "returnhttprequestheaders":
+        case "returnHttpRequestHeaders": return target.isReturnHttpRequestHeaders();
         case "usecookiehandler":
         case "useCookieHandler": return target.isUseCookieHandler();
         case "usestreaming":

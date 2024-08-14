@@ -173,7 +173,7 @@ public class VertxPlatformHttpSessionTest {
                 @Override
                 public void configure() {
                     from("platform-http:/session")
-                            .setBody().constant("session");
+                            .setBody().simple("Received cookie from platform-http:/session endpoint: ${header.cookie}");
 
                     from("direct:session")
                             .toF("http://localhost:%d/session?cookieHandler=#instanceCookieHander",
@@ -194,8 +194,9 @@ public class VertxPlatformHttpSessionTest {
             // subsequent call reuses session
             exchange = template.request("direct:session", null);
             // 'cookie' header for existing session, e.g. 'vertx-web.session=735944d69685aaf63421fb5b3c116b84'
-            String cookieHeader = getHeader("cookie", exchange);
-            assertEquals(cookieHeader, sessionCookie.substring(0, sessionCookie.indexOf(';')));
+            String receivedCookie = exchange.getMessage().getBody(String.class)
+                    .replace("Received cookie from platform-http:/session endpoint: ", "");
+            assertEquals(receivedCookie, sessionCookie.substring(0, sessionCookie.indexOf(';')));
             assertNull(getHeader("set-cookie", exchange));
             assertEquals("2", getHeader("hitcount", exchange));
 
