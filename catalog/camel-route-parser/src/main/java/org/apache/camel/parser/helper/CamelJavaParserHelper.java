@@ -243,13 +243,7 @@ public final class CamelJavaParserHelper {
                     iterateOverArguments(clazz, block, uris, strings, fields, args, name);
                 }
             }
-            if ("fromF".equals(name)) {
-                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
-            }
-            if ("interceptFrom".equals(name)) {
-                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
-            }
-            if ("pollEnrich".equals(name)) {
+            if ("fromF".equals(name) || "interceptFrom".equals(name) || "pollEnrich".equals(name) || "poll".equals(name)) {
                 parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
             }
         }
@@ -261,10 +255,7 @@ public final class CamelJavaParserHelper {
                     iterateOverArguments(clazz, block, uris, strings, fields, args, name);
                 }
             }
-            if ("toF".equals(name)) {
-                parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
-            }
-            if ("enrich".equals(name) || "wireTap".equals(name)) {
+            if ("toF".equals(name) || "enrich".equals(name) || "wireTap".equals(name)) {
                 parseFirstArgument(clazz, block, mi, uris, strings, fields, name);
             }
         }
