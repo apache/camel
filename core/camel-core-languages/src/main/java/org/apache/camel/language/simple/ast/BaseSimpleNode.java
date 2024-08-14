@@ -24,6 +24,9 @@ import org.apache.camel.language.simple.types.SimpleToken;
  */
 public abstract class BaseSimpleNode implements SimpleNode {
 
+    public static final String CODE_START = "\"@@code[[";
+    public static final String CODE_END = "]]code@@\"";
+
     protected final SimpleToken token;
 
     protected BaseSimpleNode(SimpleToken token) {

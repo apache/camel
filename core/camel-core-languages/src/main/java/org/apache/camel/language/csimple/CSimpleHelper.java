@@ -24,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -355,9 +357,7 @@ public final class CSimpleHelper {
     private static Object doDate(Exchange exchange, String commandWithOffsets, String timezone, String pattern) {
         final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
         final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
-
         Date date = evalDate(exchange, command);
-
         return LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
     }
 
@@ -695,8 +695,17 @@ public final class CSimpleHelper {
         return num;
     }
 
-    public static Object iif(Exchange exchange, Object condition, Object trueResult, Object falseResult) {
-        boolean evaluatedCondition = exchange.getContext().getTypeConverter().convertTo(boolean.class, exchange, condition);
-        return evaluatedCondition ? trueResult : falseResult;
+    public static Object iif(Exchange exchange, Predicate pred, Supplier val1, Supplier val2) {
+        boolean match = pred.test(exchange);
+        if (match) {
+            return val1.get();
+        } else {
+            return val2.get();
+        }
     }
+
+    public static <T> T convert(Exchange exchange, Class<T> type, Object value) {
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+    }
+
 }

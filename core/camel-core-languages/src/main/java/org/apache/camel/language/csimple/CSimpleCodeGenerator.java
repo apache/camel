@@ -121,9 +121,6 @@ public class CSimpleCodeGenerator {
         sb.append(
                 "    public Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) throws Exception {\n");
         sb.append("        ");
-        if (!script.contains("return ")) {
-            sb.append("return ");
-        }
 
         if (predicate) {
             CSimplePredicateParser parser = new CSimplePredicateParser();
@@ -141,6 +138,9 @@ public class CSimpleCodeGenerator {
             }
         }
 
+        if (!script.contains("return ")) {
+            sb.append("return ");
+        }
         sb.append(script);
         if (!script.endsWith("}") && !script.endsWith(";")) {
             sb.append(";");

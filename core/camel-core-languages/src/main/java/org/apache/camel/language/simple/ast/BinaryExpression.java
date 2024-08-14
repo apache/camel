@@ -282,6 +282,10 @@ public class BinaryExpression extends BaseSimpleNode {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
+        return CODE_START + doCreateCode(expression) + CODE_END;
+    }
+
+    private String doCreateCode(String expression) throws SimpleParserException {
         org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
         org.apache.camel.util.ObjectHelper.notNull(right, "right node", this);
 

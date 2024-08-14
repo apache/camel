@@ -2090,13 +2090,22 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testIif() {
-        assertExpression("${iif(true, \"yes\", \"no\")}", "yes");
-        assertExpression("${iif(false, \"yes\", \"no\")}", "no");
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,'positive','negative')}", "positive");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,'positive','negative')}", "negative");
 
-        // above assertion fails
-        //exchange.setVariable("cheese", "gauda");
-        //exchange.getMessage().setHeader("counter", 3);
-        //assertExpression("${iif(true, ${variableAs('cheese', 'String')}, ${headerAs('counter', 'Integer')})}", "no");
+        exchange.getIn().setBody("Hello World");
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,${body},'Bye World')}", "Hello World");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,${body},'Bye World')}", "Bye World");
+        assertExpression("${iif(${headerAs(foo,int)} > 0,${body},${null})}", null);
+
+        exchange.setVariable("cheese", "gauda");
+        exchange.getMessage().setHeader("counter", 3);
+        assertExpression("${iif(true, ${variableAs('cheese', 'String')}, ${headerAs('counter', 'Integer')})}", "gauda");
+        assertExpression("${iif(false, ${variableAs('cheese', 'String')}, ${headerAs('counter', 'Integer')})}", "3");
     }
 
     @Override

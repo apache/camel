@@ -841,6 +841,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return SimpleExpressionBuilder.newEmptyExpression(value);
         }
+        // iif function
+        remainder = ifStartsWithReturnRemainder("iif(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            if (tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+            }
+            return SimpleExpressionBuilder.iifExpression(tokens[0].trim(), tokens[1].trim(), tokens[2].trim());
+        }
 
         return null;
     }
@@ -857,6 +872,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
+        return CODE_START + doCreateCode(expression) + CODE_END;
+    }
+
+    private String doCreateCode(String expression) throws SimpleParserException {
         String function = getText();
 
         // return the function directly if we can create function without analyzing the prefix
@@ -1791,7 +1810,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "empty(exchange, " + value + ")";
         }
 
-        // iif function
+        // iif function (need to work on the original function to know the token positions
         remainder = ifStartsWithReturnRemainder("iif(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
@@ -1799,12 +1818,24 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
-            if (tokens.length > 3) {
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
+            if (tokens.length != 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
             }
-            return "iif(exchange, " + values + ")";
+            // single quotes should be double quotes
+            for (int i = 0; i < 3; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+
+            return "Object o = " + tokens[0]
+                   + ";\n        boolean b = convert(exchange, boolean.class, o);\n        return b ? " + tokens[1] + " : "
+                   + tokens[2];
         }
 
         return null;

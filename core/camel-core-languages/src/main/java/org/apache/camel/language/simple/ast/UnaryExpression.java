@@ -147,6 +147,10 @@ public class UnaryExpression extends BaseSimpleNode {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
+        return CODE_START + doCreateCode(expression) + CODE_END;
+    }
+
+    private String doCreateCode(String expression) throws SimpleParserException {
         ObjectHelper.notNull(left, "left node", this);
 
         final String number = left.createCode(expression);

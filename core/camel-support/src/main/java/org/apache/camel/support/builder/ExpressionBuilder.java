@@ -2556,35 +2556,6 @@ public class ExpressionBuilder {
         };
     }
 
-    public static Expression iifExpression(
-            final Expression predicate, final Expression trueExpression, final Expression falseExpression) {
-        return new ExpressionAdapter() {
-            private Predicate pred;
-
-            @Override
-            public Object evaluate(Exchange exchange) {
-                if (pred.matches(exchange)) {
-                    return trueExpression.evaluate(exchange, Object.class);
-                } else {
-                    return falseExpression.evaluate(exchange, Object.class);
-                }
-            }
-
-            @Override
-            public void init(CamelContext context) {
-                super.init(context);
-                pred = PredicateBuilder.toPredicate(predicate);
-                trueExpression.init(context);
-                falseExpression.init(context);
-            }
-
-            @Override
-            public String toString() {
-                return "iif(" + predicate + ", " + trueExpression + ", " + falseExpression + ")";
-            }
-        };
-    }
-
     private static String prettyXml(String rawXml) {
         try {
             boolean includeDeclaration = rawXml.startsWith("<?xml");
