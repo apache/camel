@@ -100,7 +100,7 @@
         <classgraph-version>4.8.174</classgraph-version>
         <cloudant-version>0.9.1</cloudant-version>
         <cometd-java-client-version>8.0.2</cometd-java-client-version>
-        <cometd-java-server-version>8.0.2</cometd-java-server-version>
+        <cometd-java-server-version>8.0.4</cometd-java-server-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
         <commons-codec-version>1.17.1</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
