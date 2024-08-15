@@ -43,6 +43,7 @@ import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.csimple.CSimpleLanguage;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ExchangeHelper;
@@ -2178,6 +2179,33 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("csimple").createExpression("${hash(${header.unknown})}");
         s = expression.evaluate(exchange, String.class);
         assertNull(s);
+    }
+
+    @Test
+    public void testUuid() {
+        Expression expression = context.resolveLanguage("csimple").createExpression("${uuid}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(default)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(short)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(simple)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(classic)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        // custom generator
+        context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
+        assertExpression("${uuid(mygen)}", "1234");
     }
 
     @Override

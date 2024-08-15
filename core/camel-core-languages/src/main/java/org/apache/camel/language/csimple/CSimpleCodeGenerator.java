@@ -96,6 +96,7 @@ public class CSimpleCodeGenerator {
         sb.append("public class ").append(name).append(" extends org.apache.camel.language.csimple.CSimpleSupport {\n");
         sb.append("\n");
         sb.append("    Language bean;\n");
+        sb.append("    UuidGenerator uuid;\n");
         sb.append("\n");
         sb.append("    public ").append(name).append("() {\n");
         sb.append("    }\n");

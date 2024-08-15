@@ -1882,6 +1882,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "var val = " + tokens[0] + ";\n        return hash(exchange, val, " + algo + ");";
         }
 
+        // uuid function
+        remainder = ifStartsWithReturnRemainder("uuid", function);
+        if (remainder == null && "uuid".equals(function)) {
+            remainder = "(default)";
+        }
+        if (remainder != null) {
+            String generator = StringHelper.between(remainder, "(", ")");
+            if (generator == null) {
+                generator = "default";
+            }
+            generator = StringQuoteHelper.doubleQuote(generator);
+            return "if (uuid == null) uuid = createUuidGenerator(exchange, " + generator + "); return uuid.generateUuid();";
+        }
+
         // iif function
         remainder = ifStartsWithReturnRemainder("iif(", function);
         if (remainder != null) {
