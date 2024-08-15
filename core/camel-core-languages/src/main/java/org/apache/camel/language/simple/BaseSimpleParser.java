@@ -41,6 +41,16 @@ import org.apache.camel.language.simple.types.TokenType;
  */
 public abstract class BaseSimpleParser {
 
+    /**
+     * Marker used for start of generated code for csimple
+     */
+    public static final String CODE_START = "\"@@code[[";
+
+    /**
+     * Marker used for end of generated code for csimple
+     */
+    public static final String CODE_END = "]]code@@\"";
+
     protected final CamelContext camelContext;
     protected final String expression;
     protected final List<SimpleToken> tokens = new ArrayList<>();
@@ -106,7 +116,7 @@ public abstract class BaseSimpleParser {
     }
 
     /**
-     * Prepares blocks, such as functions, single or double quoted texts.
+     * Prepares blocks, such as functions, single or double-quoted texts.
      * <p/>
      * This process prepares the {@link Block}s in the AST. This is done by linking child {@link SimpleNode nodes} which
      * are within the start and end of the blocks, as child to the given block. This is done to have the AST graph

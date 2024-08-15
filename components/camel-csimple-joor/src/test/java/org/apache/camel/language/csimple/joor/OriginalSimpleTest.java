@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.csimple.joor;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,11 +43,13 @@ import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.csimple.CSimpleLanguage;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.apache.camel.util.InetAddressUtil;
+import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -63,11 +67,13 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
+    @SuppressWarnings("unused")
     @BindToRegistry
-    private Animal myAnimal = new Animal("Donkey", 17);
+    private final Animal myAnimal = new Animal("Donkey", 17);
 
+    @SuppressWarnings("unused")
     @BindToRegistry
-    private Greeter greeter = new Greeter();
+    private final Greeter greeter = new Greeter();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -2084,6 +2090,122 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         } catch (Exception e) {
             // expected
         }
+    }
+
+    @Test
+    public void testIif() {
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,'positive','negative')}", "positive");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,'positive','negative')}", "negative");
+
+        exchange.getIn().setBody("Hello World");
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,${body},'Bye World')}", "Hello World");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${iif(${headerAs(foo,int)} > 0,${body},'Bye World')}", "Bye World");
+        assertExpression("${iif(${headerAs(foo,int)} > 0,${body},${null})}", null);
+
+        exchange.setVariable("cheese", "gauda");
+        exchange.getMessage().setHeader("counter", 3);
+        assertExpression("${iif(true, ${variableAs('cheese', 'String')}, ${headerAs('counter', 'Integer')})}", "gauda");
+        assertExpression("${iif(false, ${variableAs('cheese', 'String')}, ${headerAs('counter', 'Integer')})}", "3");
+    }
+
+    @Test
+    public void testJoinBody() {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        exchange.getIn().setBody(data);
+
+        assertExpression("${join()}", "A,B,C");
+        assertExpression("${join(;)}", "A;B;C");
+        assertExpression("${join(' ')}", "A B C");
+        assertExpression("${join(',','id=')}", "id=A,id=B,id=C");
+        assertExpression("${join(&,id=)}", "id=A&id=B&id=C");
+    }
+
+    @Test
+    public void testJoinHeader() {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        exchange.getIn().setHeader("id", data);
+
+        assertExpression("${join('&','id=',${header.id})}", "id=A&id=B&id=C");
+    }
+
+    @Test
+    public void testHash() throws Exception {
+        Expression expression = context.resolveLanguage("csimple").createExpression("${hash('hello')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] bytes = digest.digest("hello".getBytes(StandardCharsets.UTF_8));
+        String expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${hash(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        digest = MessageDigest.getInstance("SHA-256");
+        bytes = digest.digest(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8));
+        expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${hash(${header.foo})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${hash('hello',SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${hash(${body},SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        digest = MessageDigest.getInstance("SHA3-256");
+        bytes = digest.digest(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8));
+        expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${hash(${header.foo},SHA3-256)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${hash(${header.unknown})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+    }
+
+    @Test
+    public void testUuid() {
+        Expression expression = context.resolveLanguage("csimple").createExpression("${uuid}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(default)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(short)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(simple)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uuid(classic)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        // custom generator
+        context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
+        assertExpression("${uuid(mygen)}", "1234");
     }
 
     @Override
