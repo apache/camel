@@ -24,8 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +67,14 @@ public final class CSimpleHelper {
     private static ExchangeFormatter exchangeFormatter;
 
     private CSimpleHelper() {
+    }
+
+    public static <T> T convertTo(Exchange exchange, Class<T> type, Object value) {
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+    }
+
+    public static <T> T tryConvertTo(Exchange exchange, Class<T> type, Object value) {
+        return exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, value);
     }
 
     public static <T> T messageAs(Exchange exchange, Class<T> type) {
@@ -695,17 +701,25 @@ public final class CSimpleHelper {
         return num;
     }
 
-    public static Object iif(Exchange exchange, Predicate pred, Supplier val1, Supplier val2) {
-        boolean match = pred.test(exchange);
-        if (match) {
-            return val1.get();
-        } else {
-            return val2.get();
+    public static Object join(Exchange exchange, Object value, String separator, String prefix) {
+        Iterator<?> it = convertTo(exchange, Iterator.class, value);
+        StringBuilder sb = new StringBuilder();
+        while (it.hasNext()) {
+            Object o = it.next();
+            if (o != null) {
+                String s = tryConvertTo(exchange, String.class, o);
+                if (s != null) {
+                    if (!sb.isEmpty()) {
+                        sb.append(separator);
+                    }
+                    if (prefix != null) {
+                        sb.append(prefix);
+                    }
+                    sb.append(s);
+                }
+            }
         }
-    }
-
-    public static <T> T convert(Exchange exchange, Class<T> type, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+        return sb.toString();
     }
 
 }

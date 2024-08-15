@@ -1799,6 +1799,45 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "messageHistory(exchange, true)";
         }
 
+        // join
+        remainder = ifStartsWithReturnRemainder("join(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            String separator = "\",\"";
+            String prefix = null;
+            String exp = "body";
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false, true);
+                if (tokens.length > 3) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${join(separator,prefix,expression)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                for (int i = 0; i < tokens.length; i++) {
+                    String s = tokens[i];
+                    if (StringHelper.isSingleQuoted(s)) {
+                        s = StringHelper.removeLeadingAndEndingQuotes(s);
+                        s = StringQuoteHelper.doubleQuote(s);
+                        tokens[i] = s;
+                    } else if (i < 2 && !StringHelper.isDoubleQuoted(s)) {
+                        s = StringQuoteHelper.doubleQuote(s);
+                        tokens[i] = s;
+                    }
+                }
+                if (tokens.length == 3) {
+                    separator = tokens[0];
+                    prefix = tokens[1];
+                    exp = tokens[2];
+                } else if (tokens.length == 2) {
+                    separator = tokens[0];
+                    prefix = tokens[1];
+                } else {
+                    separator = tokens[0];
+                }
+            }
+            return "var val = " + exp + ";\n        return join(exchange, val, " + separator + ", " + prefix + ");";
+        }
+
         // empty function
         remainder = ifStartsWithReturnRemainder("empty(", function);
         if (remainder != null) {
@@ -1835,7 +1874,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
 
             return "Object o = " + tokens[0]
-                   + ";\n        boolean b = convert(exchange, boolean.class, o);\n        return b ? "
+                   + ";\n        boolean b = convertTo(exchange, boolean.class, o);\n        return b ? "
                    + tokens[1] + " : " + tokens[2];
         }
 

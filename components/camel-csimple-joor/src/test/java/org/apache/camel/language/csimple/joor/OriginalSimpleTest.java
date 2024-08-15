@@ -2108,6 +2108,33 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${iif(false, ${variableAs('cheese', 'String')}, ${headerAs('counter', 'Integer')})}", "3");
     }
 
+    @Test
+    public void testJoinBody() {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        exchange.getIn().setBody(data);
+
+        assertExpression("${join()}", "A,B,C");
+        assertExpression("${join(;)}", "A;B;C");
+        assertExpression("${join(' ')}", "A B C");
+        assertExpression("${join(',','id=')}", "id=A,id=B,id=C");
+        assertExpression("${join(&,id=)}", "id=A&id=B&id=C");
+    }
+
+    @Test
+    @Disabled("TODO: Fix me")
+    public void testJoinHeader() {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        exchange.getIn().setHeader("id", data);
+
+        assertExpression("${join('&','id=',${header.id})}", "id=A&id=B&id=C");
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";
