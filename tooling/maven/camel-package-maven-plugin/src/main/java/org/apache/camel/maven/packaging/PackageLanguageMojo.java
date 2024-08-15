@@ -162,7 +162,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         SchemaHelper.addModelMetadata(languageModel, project);
                         SchemaHelper.addModelMetadata(languageModel, javaType.getAnnotation(Metadata.class));
 
-                        // build json schema for the data format
+                        // build json schema for the language
                         String schema = JsonMapper.createParameterJsonSchema(languageModel);
                         if (log.isDebugEnabled()) {
                             log.debug("JSON schema\n" + schema);
@@ -258,6 +258,9 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
             option.setDescription(opt.getDescription());
             model.addOption(option);
         }
+
+        // TODO: read class and find functionClass and add each field as a function in the model
+
         return model;
     }
 

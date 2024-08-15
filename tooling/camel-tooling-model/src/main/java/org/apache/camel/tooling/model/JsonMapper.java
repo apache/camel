@@ -413,6 +413,10 @@ public final class JsonMapper {
         JsonObject wrapper = new JsonObject();
         wrapper.put("language", obj);
         wrapper.put("properties", asJsonObject(model.getOptions()));
+        final List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
+        if (!functions.isEmpty()) {
+            wrapper.put("functions", asJsonObject(functions));
+        }
         return wrapper;
     }
 

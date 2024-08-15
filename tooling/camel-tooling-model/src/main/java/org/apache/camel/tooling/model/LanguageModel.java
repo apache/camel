@@ -16,10 +16,14 @@
  */
 package org.apache.camel.tooling.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionModel> {
 
     protected String modelName;
     protected String modelJavaType;
+    protected final List<LanguageFunctionModel> functions = new ArrayList<>();
 
     public static class LanguageOptionModel extends BaseOptionModel {
 
@@ -48,4 +52,29 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
     public void setModelJavaType(String modelJavaType) {
         this.modelJavaType = modelJavaType;
     }
+
+    public List<LanguageFunctionModel> getFunctions() {
+        return functions;
+    }
+
+    public void addFunction(LanguageFunctionModel function) {
+        functions.add(function);
+    }
+
+    public static class LanguageFunctionModel extends BaseOptionModel {
+
+        /**
+         * The name of the constant that defines the function.
+         */
+        private String constantName;
+
+        public String getConstantName() {
+            return constantName;
+        }
+
+        public void setConstantName(String constantName) {
+            this.constantName = constantName;
+        }
+    }
+
 }
