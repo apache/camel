@@ -234,6 +234,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 return "float";
             } else if ("java.lang.Double".equals(to)) {
                 return "double";
+            } else if ("java.lang.Byte".equals(to)) {
+                return "byte";
             }
         }
         return null;
