@@ -43,14 +43,10 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.ClassicUuidGenerator;
-import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.ShortUuidGenerator;
-import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -744,18 +740,7 @@ public final class CSimpleHelper {
         return null;
     }
 
-    public static UuidGenerator createUuidGenerator(Exchange exchange, String generator) {
-        if ("classic".equalsIgnoreCase(generator)) {
-            return new ClassicUuidGenerator();
-        } else if ("short".equals(generator)) {
-            return new ShortUuidGenerator();
-        } else if ("simple".equals(generator)) {
-            return new SimpleUuidGenerator();
-        } else if (generator == null || "default".equals(generator)) {
-            return new DefaultUuidGenerator();
-        } else {
-            // lookup custom generator
-            return CamelContextHelper.mandatoryLookup(exchange.getContext(), generator, UuidGenerator.class);
-        }
+    public static UuidGenerator customUuidGenerator(Exchange exchange, String generator) {
+        return CamelContextHelper.mandatoryLookup(exchange.getContext(), generator, UuidGenerator.class);
     }
 }

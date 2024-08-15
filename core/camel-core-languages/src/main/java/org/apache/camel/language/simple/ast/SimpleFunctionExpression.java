@@ -1892,8 +1892,25 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (generator == null) {
                 generator = "default";
             }
-            generator = StringQuoteHelper.doubleQuote(generator);
-            return "if (uuid == null) uuid = createUuidGenerator(exchange, " + generator + "); return uuid.generateUuid();";
+            StringBuilder sb = new StringBuilder();
+            if ("classic".equals(generator)) {
+                sb.append("    UuidGenerator uuid = new org.apache.camel.support.ClassicUuidGenerator();\n");
+                sb.append("return uuid.generateUuid();");
+            } else if ("short".equals(generator)) {
+                sb.append("    UuidGenerator uuid = new org.apache.camel.support.ShortUuidGenerator();\n");
+                sb.append("return uuid.generateUuid();");
+            } else if ("simple".equals(generator)) {
+                sb.append("    UuidGenerator uuid = new org.apache.camel.support.SimpleUuidGenerator();\n");
+                sb.append("return uuid.generateUuid();");
+            } else if ("default".equals(generator)) {
+                sb.append("    UuidGenerator uuid = new org.apache.camel.support.DefaultUuidGenerator();\n");
+                sb.append("return uuid.generateUuid();");
+            } else {
+                generator = StringQuoteHelper.doubleQuote(generator);
+                sb.append("if (uuid == null) uuid = customUuidGenerator(exchange, ").append(generator)
+                        .append("); return uuid.generateUuid();");
+            }
+            return sb.toString();
         }
 
         // iif function

@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.util.StringHelper;
+
 /**
  * Source code generate for csimple language.
  *
@@ -138,6 +140,11 @@ public class CSimpleCodeGenerator {
                 script = "\"" + script + "\"";
             }
         }
+        String uuid = null;
+        if (script.startsWith("    UuidGenerator uuid")) {
+            uuid = StringHelper.before(script, "\n") + "\n";
+            script = StringHelper.after(script, "\n");
+        }
 
         if (!script.contains("return ")) {
             sb.append("return ");
@@ -162,7 +169,12 @@ public class CSimpleCodeGenerator {
         sb.append("}\n");
         sb.append("\n");
 
-        return new CSimpleGeneratedCode(qn + "." + name, sb.toString());
+        String code = sb.toString();
+        if (uuid != null) {
+            code = code.replace("    UuidGenerator uuid;\n", uuid);
+        }
+
+        return new CSimpleGeneratedCode(qn + "." + name, code);
     }
 
     private String alias(String script) {
