@@ -1850,6 +1850,38 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "empty(exchange, " + value + ")";
         }
 
+        // hash function
+        remainder = ifStartsWithReturnRemainder("hash(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            String algo = "\"SHA-256\"";
+            if (tokens.length == 2) {
+                algo = tokens[1];
+                if (!StringHelper.isQuoted(algo)) {
+                    algo = StringQuoteHelper.doubleQuote(algo);
+                }
+            }
+            return "var val = " + tokens[0] + ";\n        return hash(exchange, val, " + algo + ");";
+        }
+
         // iif function
         remainder = ifStartsWithReturnRemainder("iif(", function);
         if (remainder != null) {

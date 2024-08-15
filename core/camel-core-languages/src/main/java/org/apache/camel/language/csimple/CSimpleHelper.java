@@ -17,6 +17,7 @@
 package org.apache.camel.language.csimple;
 
 import java.lang.reflect.Array;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
@@ -720,6 +722,20 @@ public final class CSimpleHelper {
             }
         }
         return sb.toString();
+    }
+
+    public static Object hash(Exchange exchange, Object value, String algorithm) {
+        byte[] data = convertTo(exchange, byte[].class, value);
+        if (data != null && data.length > 0) {
+            try {
+                MessageDigest digest = MessageDigest.getInstance(algorithm);
+                byte[] bytes = digest.digest(data);
+                return StringHelper.bytesToHex(bytes);
+            } catch (Exception e) {
+                throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+            }
+        }
+        return null;
     }
 
 }
