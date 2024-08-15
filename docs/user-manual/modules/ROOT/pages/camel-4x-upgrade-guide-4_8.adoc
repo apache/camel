@@ -13,6 +13,11 @@ The following components that were marked as deprecated:
 
 * camel-univocity-parsers
 
+=== camel-as2
+
+The header prefixes has been corrected from `CamelAS2.` -> `CamelAs2.` to be consistent with naming convention
+used by other API based components. The documentation uses the correct naming prefix as `CamelAs2.`.
+
 === camel-kafka
 
 The `KafkaIdempotentRepository` will now continue to sync cache updates after Camel has been started.
