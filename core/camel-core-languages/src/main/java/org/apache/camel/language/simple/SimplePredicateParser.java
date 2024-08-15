@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.simple.ast.BaseSimpleNode;
 import org.apache.camel.language.simple.ast.BinaryExpression;
 import org.apache.camel.language.simple.ast.BooleanExpression;
 import org.apache.camel.language.simple.ast.DoubleQuoteEnd;
@@ -189,8 +188,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
             }
         }
         String code = sb.toString();
-        code = code.replace(BaseSimpleNode.CODE_START, "");
-        code = code.replace(BaseSimpleNode.CODE_END, "");
+        code = code.replace(BaseSimpleParser.CODE_START, "");
+        code = code.replace(BaseSimpleParser.CODE_END, "");
         return code;
     }
 

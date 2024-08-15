@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -702,7 +703,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length > 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${replace(num,num,expression)} was: " + function, token.getIndex());
+                        "Valid syntax: ${substring(num,num,expression)} was: " + function, token.getIndex());
             }
             String num1 = tokens[0];
             String num2 = "0";
@@ -872,7 +873,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
-        return CODE_START + doCreateCode(expression) + CODE_END;
+        return BaseSimpleParser.CODE_START + doCreateCode(expression) + BaseSimpleParser.CODE_END;
     }
 
     private String doCreateCode(String expression) throws SimpleParserException {
@@ -1810,7 +1811,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "empty(exchange, " + value + ")";
         }
 
-        // iif function (need to work on the original function to know the token positions
+        // iif function
         remainder = ifStartsWithReturnRemainder("iif(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
@@ -1834,8 +1835,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
 
             return "Object o = " + tokens[0]
-                   + ";\n        boolean b = convert(exchange, boolean.class, o);\n        return b ? " + tokens[1] + " : "
-                   + tokens[2];
+                   + ";\n        boolean b = convert(exchange, boolean.class, o);\n        return b ? "
+                   + tokens[1] + " : " + tokens[2];
         }
 
         return null;

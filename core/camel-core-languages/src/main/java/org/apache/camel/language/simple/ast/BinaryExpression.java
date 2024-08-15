@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -282,7 +283,7 @@ public class BinaryExpression extends BaseSimpleNode {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
-        return CODE_START + doCreateCode(expression) + CODE_END;
+        return BaseSimpleParser.CODE_START + doCreateCode(expression) + BaseSimpleParser.CODE_END;
     }
 
     private String doCreateCode(String expression) throws SimpleParserException {

@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.ast.BaseSimpleNode;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.SimpleFunctionEnd;
@@ -242,8 +241,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             }
         }
         String code = sb.toString();
-        code = code.replace(BaseSimpleNode.CODE_START, "");
-        code = code.replace(BaseSimpleNode.CODE_END, "");
+        code = code.replace(BaseSimpleParser.CODE_START, "");
+        code = code.replace(BaseSimpleParser.CODE_END, "");
         return code;
     }
 

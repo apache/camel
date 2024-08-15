@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.UnaryOperatorType;
@@ -147,7 +148,7 @@ public class UnaryExpression extends BaseSimpleNode {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
-        return CODE_START + doCreateCode(expression) + CODE_END;
+        return BaseSimpleParser.CODE_START + doCreateCode(expression) + BaseSimpleParser.CODE_END;
     }
 
     private String doCreateCode(String expression) throws SimpleParserException {
