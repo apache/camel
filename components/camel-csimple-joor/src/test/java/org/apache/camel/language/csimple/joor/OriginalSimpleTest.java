@@ -2124,7 +2124,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    @Disabled("TODO: Fix me")
     public void testJoinHeader() {
         List<Object> data = new ArrayList<>();
         data.add("A");
