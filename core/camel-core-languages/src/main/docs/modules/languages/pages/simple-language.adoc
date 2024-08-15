@@ -75,7 +75,7 @@ OGNL expression.
 
 |id |String |the message id
 
-|messageTimestamp |String |the message timestamp (millis since epoc) that this message originates from.
+|messageTimestamp |long |the message timestamp (millis since epoc) that this message originates from.
 Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel received. This method returns
 the timestamp if a timestamp exists.
 The message timestamp and exchange created are different. An exchange always has a created timestamp which is the
