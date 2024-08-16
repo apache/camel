@@ -254,7 +254,7 @@ If the number is negative, then the returned string is clipped from the ending.
 If the number is positive, then the returned string is clipped from the beginning.
 If the number is negative, then the returned string is clipped from the ending.
 
-|substring(num1,num2,exp) |String |replace all the string values in the given expression.
+|substring(num1,num2,exp) |String |returns a substring of the given expression.
 If the number is positive, then the returned string is clipped from the beginning.
 If the number is negative, then the returned string is clipped from the ending.
 

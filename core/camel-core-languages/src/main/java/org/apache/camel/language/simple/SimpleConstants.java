@@ -156,5 +156,22 @@ public final class SimpleConstants {
                             + " constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`",
               label = "function", javaType = "Object", displayName = "Java Field Value")
     public static final String TYPE = "type:name.field";
+    @Metadata(description = "Replace all the string values in the message body/expression."
+                            + " To make it easier to replace single and double quotes, then you can use XML escaped values `\\&quot;` as double quote, `\\&apos;` as single quote, and `\\&empty;` as empty value.",
+              label = "function", javaType = "String")
+    public static final String REPLACE = "replace(from,to,exp)";
+    @Metadata(description = "Returns a substring of the message body/expression."
+                            + " If only one positive number, then the returned string is clipped from the beginning."
+                            + " If only one negative number, then the returned string is clipped from the beginning."
+                            + " Otherwise the returned string is clipped between the head and tail positions.",
+              label = "function", javaType = "String")
+    public static final String SUBSTRING = "substring(head,tail)";
+    @Metadata(description = "Returns a random number between min (included) and max (excluded).", label = "function",
+              javaType = "int")
+    public static final String RANDOM = "random(min,max)";
+    @Metadata(description = "The skip function iterates the message body and skips the first number of items."
+                            + " This can be used with the Splitter EIP to split a message body and skip the first N number of items.",
+              label = "function", javaType = "java.util.Iterator")
+    public static final String SKIP = "skip(num)";
 
 }
