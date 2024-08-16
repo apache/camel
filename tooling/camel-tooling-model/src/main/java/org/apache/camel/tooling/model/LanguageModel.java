@@ -68,12 +68,40 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
          */
         private String constantName;
 
+        /**
+         * Optional prefix for the function
+         */
+        private String prefix;
+
+        /**
+         * Optional suffix for the function
+         */
+        private String suffix;
+
         public String getConstantName() {
             return constantName;
         }
 
         public void setConstantName(String constantName) {
             this.constantName = constantName;
+        }
+
+        @Override
+        public String getPrefix() {
+            return prefix;
+        }
+
+        @Override
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getSuffix() {
+            return suffix;
+        }
+
+        public void setSuffix(String suffix) {
+            this.suffix = suffix;
         }
     }
 

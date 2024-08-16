@@ -295,10 +295,21 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
     private void addFunction(LanguageModel model, Field field) throws Exception {
         final Class<?> declaringClass = field.getDeclaringClass();
+        final Metadata cm = declaringClass.getAnnotation(Metadata.class);
+        String prefix = null;
+        String suffix = null;
+        if (cm != null && cm.annotations() != null) {
+            for (String s : cm.annotations()) {
+                prefix = Strings.after(s, "prefix=", prefix);
+                suffix = Strings.after(s, "suffix=", suffix);
+            }
+        }
         final Metadata metadata = field.getAnnotation(Metadata.class);
         LanguageModel.LanguageFunctionModel fun = new LanguageModel.LanguageFunctionModel();
         fun.setConstantName(String.format("%s#%s", declaringClass.getName(), field.getName()));
         fun.setName((String) field.get(null));
+        fun.setPrefix(prefix);
+        fun.setSuffix(suffix);
         fun.setDescription(metadata.description().trim());
         fun.setKind("function");
         String displayName = metadata.displayName();

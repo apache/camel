@@ -415,7 +415,7 @@ public final class JsonMapper {
         wrapper.put("properties", asJsonObject(model.getOptions()));
         final List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
         if (!functions.isEmpty()) {
-            wrapper.put("functions", asJsonObject(functions));
+            wrapper.put("functions", asJsonObjectFunctions(functions));
         }
         return wrapper;
     }
@@ -599,6 +599,23 @@ public final class JsonMapper {
             var o = options.get(i);
             o.setIndex(i);
             json.put(o.getName(), asJsonObject(o));
+        }
+        return json;
+    }
+
+    public static JsonObject asJsonObjectFunctions(List<LanguageModel.LanguageFunctionModel> options) {
+        JsonObject json = new JsonObject();
+        for (int i = 0; i < options.size(); i++) {
+            var o = options.get(i);
+            o.setIndex(i);
+            JsonObject jo = asJsonObject(o);
+            if (o.getPrefix() != null) {
+                jo.put("prefix", o.getPrefix());
+            }
+            if (o.getSuffix() != null) {
+                jo.put("suffix", o.getSuffix());
+            }
+            json.put(o.getName(), jo);
         }
         return json;
     }
