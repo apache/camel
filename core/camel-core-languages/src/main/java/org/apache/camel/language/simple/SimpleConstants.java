@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "function", annotations = { "prefix=${", "suffix=}" })
 public final class SimpleConstants {
 
-    @Metadata(description = "The message body", javaType = "Object", label = "function")
+    @Metadata(description = "The message body", javaType = "Object", label = "function,ognl")
     public static final String BODY = "body";
     @Metadata(description = "Converts the body to a String, and attempts to pretty print if JSon or XML; otherwise the body is returned as the String value.",
               javaType = "String", label = "function")
@@ -44,10 +44,10 @@ public final class SimpleConstants {
     public static final String MESSAGE_TIMESTAMP = "messageTimestamp";
     @Metadata(description = "The exchange id", javaType = "String", label = "function")
     public static final String EXCHANGE_ID = "exchangeId";
-    @Metadata(description = "The exchange", javaType = "org.apache.camel.Exchange", label = "function")
+    @Metadata(description = "The current exchange", javaType = "org.apache.camel.Exchange", label = "function,ognl")
     public static final String EXCHANGE = "exchange";
     @Metadata(description = "The exception object on the exchange (also from caught exceptions), is null if no exception present.",
-              javaType = "java.lang.Exception", label = "function")
+              javaType = "java.lang.Exception", label = "function,ognl")
     public static final String EXCEPTION = "exception";
     @Metadata(description = "The exception message (also from caught exceptions), is null if no exception present.",
               javaType = "String", label = "function", displayName = "Exception Message")
@@ -79,23 +79,32 @@ public final class SimpleConstants {
     public static final String STEP_ID = "stepId";
     @Metadata(description = "Represents a null value", label = "function", javaType = "Object")
     public static final String NULL = "null";
-    @Metadata(description = "Converts the message to the given type (classname).", label = "function", javaType = "Object")
+    @Metadata(description = "Converts the message to the given type (classname).", label = "function,ognl", javaType = "Object")
     public static final String MESSAGE_AS = "messageAs(type)";
-    @Metadata(description = "Converts the message body to the given type (classname).", label = "function", javaType = "Object")
+    @Metadata(description = "Converts the message body to the given type (classname).", label = "function,ognl",
+              javaType = "Object")
     public static final String BODY_AS = "bodyAs(type)";
     @Metadata(description = "Converts the message body to the given type (classname). If the body is null then the function will fail with an exception",
-              label = "function", javaType = "Object")
+              label = "function,ognl", javaType = "Object")
     public static final String MANDATORY_BODY_AS = "mandatoryBodyAs(type)";
     @Metadata(description = "Converts the message header to the given type (classname).", label = "function",
               javaType = "Object")
     public static final String HEADER_AS = "headerAs(key,type)";
     @Metadata(description = "Returns all the message headers in a Map", label = "function", javaType = "java.util.Map")
     public static final String HEADERS = "headers";
+    @Metadata(description = "The message header with the given name", label = "function,ognl", javaType = "Object")
+    public static final String HEADER = "header.name";
     @Metadata(description = "Converts the variable to the given type (classname).", label = "function", javaType = "Object")
     public static final String VARIABLE_AS = "variableAs(key,type)";
     @Metadata(description = "Returns all the variables from the current Exchange in a Map", label = "function",
               javaType = "java.util.Map")
     public static final String VARIABLES = "variables";
+    @Metadata(description = "The variable with the given name", label = "function,ognl", javaType = "Object")
+    public static final String VARIABLE = "variable.name";
+    @Metadata(description = "The exchange property with the given name", label = "function,ognl", javaType = "Object")
+    public static final String EXCHANGE_PROPERTY = "exchangeProperty.name";
+    @Metadata(description = "The Camel Context", label = "function,ognl", javaType = "Object")
+    public static final String CAMEL_CONTEXT = "camelContext";
     @Metadata(description = "When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath."
                             + " For input (optional), you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.",
               label = "function", javaType = "Object", displayName = "JQ")

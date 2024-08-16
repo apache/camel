@@ -69,6 +69,11 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
         private String constantName;
 
         /**
+         * Whether this function allows to do OGNL method calls.
+         */
+        boolean ognl;
+
+        /**
          * Optional prefix for the function
          */
         private String prefix;
@@ -84,6 +89,14 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
 
         public void setConstantName(String constantName) {
             this.constantName = constantName;
+        }
+
+        public boolean isOgnl() {
+            return ognl;
+        }
+
+        public void setOgnl(boolean ognl) {
+            this.ognl = ognl;
         }
 
         @Override

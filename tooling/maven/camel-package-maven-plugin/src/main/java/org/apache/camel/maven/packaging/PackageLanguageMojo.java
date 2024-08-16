@@ -336,9 +336,16 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         fun.setDeprecated(field.isAnnotationPresent(Deprecated.class));
         fun.setDeprecationNote(metadata.deprecationNote());
         fun.setSecret(metadata.secret());
-        String group = EndpointHelper.labelAsGroupName(metadata.label(), false, false);
+        String label = metadata.label();
+        boolean ognl = false;
+        if (label.contains(",ognl")) {
+            ognl = true;
+            label = label.replace(",ognl", "");
+        }
+        String group = EndpointHelper.labelAsGroupName(label, false, false);
         fun.setGroup(group);
-        fun.setLabel(metadata.label());
+        fun.setLabel(label);
+        fun.setOgnl(ognl);
         model.addFunction(fun);
     }
 

@@ -609,6 +609,7 @@ public final class JsonMapper {
             var o = options.get(i);
             o.setIndex(i);
             JsonObject jo = asJsonObject(o);
+            jo.put("ognl", o.isOgnl());
             if (o.getPrefix() != null) {
                 jo.put("prefix", o.getPrefix());
             }
