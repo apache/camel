@@ -156,7 +156,7 @@ public final class SimpleConstants {
     public static final String TYPE = "type:name.field";
     @Metadata(description = "Replace all the string values in the message body/expression."
                             + " To make it easier to replace single and double quotes, then you can use XML escaped values `\\&quot;` as double quote, `\\&apos;` as single quote, and `\\&empty;` as empty value.",
-              label = "function", javaType = "String")
+              label = "function", javaType = "String", displayName = "Replace String Values")
     public static final String REPLACE = "replace(from,to,exp)";
     @Metadata(description = "Returns a substring of the message body/expression."
                             + " If only one positive number, then the returned string is clipped from the beginning."
@@ -165,16 +165,16 @@ public final class SimpleConstants {
               label = "function", javaType = "String")
     public static final String SUBSTRING = "substring(head,tail)";
     @Metadata(description = "Returns a random number between min (included) and max (excluded).", label = "function",
-              javaType = "int")
+              javaType = "int", displayName = "Generate Random Number")
     public static final String RANDOM = "random(min,max)";
     @Metadata(description = "The skip function iterates the message body and skips the first number of items."
                             + " This can be used with the Splitter EIP to split a message body and skip the first N number of items.",
-              label = "function", javaType = "java.util.Iterator")
+              label = "function", javaType = "java.util.Iterator", displayName = "Skip First Items from the Message Body")
     public static final String SKIP = "skip(num)";
     @Metadata(description = "The collate function iterates the message body and groups the data into sub lists of specified size."
                             + " This can be used with the Splitter EIP to split a message body and group/batch"
                             + " the split sub message into a group of N sub lists.",
-              label = "function", javaType = "java.util.Iterator")
+              label = "function", javaType = "java.util.Iterator", displayName = "Group Message Body into Sub Lists")
     public static final String COLLATE = "collate(num)";
     @Metadata(description = "The join function iterates the message body/expression and joins the data into a string."
                             + " The separator is by default a comma. The prefix is optional."
@@ -185,22 +185,22 @@ public final class SimpleConstants {
     @Metadata(description = "The message history of the current exchange (how it has been routed). This is similar to the route stack-trace message history"
                             + " the error handler logs in case of an unhandled exception."
                             + " The boolean can be used to turn off detailed information to be less verbose, and avoid printing sensitive data from the message.",
-              label = "function", javaType = "String")
+              label = "function", javaType = "String", displayName = "Print Message History")
     public static final String MESSAGE_HISTORY = "messageHistory(boolean)";
     @Metadata(description = "Returns a UUID using the Camel `UuidGenerator`."
                             + " You can choose between `default`, `classic`, `short` and `simple` as the type."
                             + " If no type is given, the default is used. It is also possible to use a custom `UuidGenerator`"
                             + " and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}`"
                             + " where the ID is _myGenerator_.",
-              label = "function", javaType = "String", displayName = "UUID")
+              label = "function", javaType = "String", displayName = "Generate UUID")
     public static final String UUID = "uuid(type)";
     @Metadata(description = "Returns a hashed value (string in hex decimal) of the message body/expression using JDK MessageDigest. The algorithm can be SHA-256 (default) or SHA3-256.",
-              label = "function", javaType = "String")
+              label = "function", javaType = "String", displayName = "Compute Hash Value")
     public static final String HASH = "hash(exp,algorithm)";
-    @Metadata(description = "Creates a new empty object (decided by type).  Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.HashMap`.",
-              label = "function", javaType = "Object")
+    @Metadata(description = "Creates a new empty object (decided by type). Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.HashMap`.",
+              label = "function", javaType = "Object", displayName = "Create Empty Object")
     public static final String EMPTY = "empty(type)";
     @Metadata(description = "Evaluates the predicate and returns the value of trueExp or falseExp. This function is similar to the ternary operator in Java.",
-              label = "function", javaType = "Object")
+              label = "function", javaType = "Object", displayName = "If Then Else")
     public static final String IIF = "iif(predicate,trueExp,falseExp)";
 }
