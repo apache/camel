@@ -145,5 +145,22 @@ public final class SimpleConstants {
                             + " Command accepts offsets such as: `now-24h` or `header.xxx+1h` or even `now+1h30m-100`.",
               label = "function", javaType = "String")
     public static final String DATE_WITH_TIMEZONE = "date-with-timezone(command:timezone:pattern)";
+    @Metadata(description = "Calls a Java bean."
+                            + " The name of the bean can also refer to a class name using type prefix as follows `bean:type:com.foo.MyClass`."
+                            + " If no method name is given then Camel will automatic attempt to find the best method to use.",
+              label = "function", javaType = "Object")
+    public static final String BEAN = "bean(name.method)";
+    @Metadata(description = "Checks whether a property placeholder with the given key exists or not. The result can be negated by prefixing the key with !",
+              label = "function", javaType = "boolean")
+    public static final String PROPERTIES_EXIST = "propertiesExist:key";
+    @Metadata(description = "Lookup a property placeholder with the given key. If the key does not exist nor has a value, then an optional default value can be specified.",
+              label = "function", javaType = "String")
+    public static final String PROPERTIES = "properties:key:default";
+    @Metadata(description = "To look up a bean from the Registry with the given name.", label = "function", javaType = "Object")
+    public static final String REF = "ref:name";
+    @Metadata(description = "To refer to a type or field by its classname. To refer to a field, you can append .FIELD_NAME. For example, you can refer to the"
+                            + " constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`",
+              label = "function", javaType = "Object")
+    public static final String TYPE = "type:name.field";
 
 }

@@ -197,7 +197,7 @@ to a bean class (such as calling a static method), then you can prefix with the 
 not exist nor has a value, then an optional default value can be
 specified.
 
-|propertiesExist:key |String |Checks whether a property placeholder with the given key exists or not.
+|propertiesExist:key |boolean |Checks whether a property placeholder with the given key exists or not.
 The result can be negated by prefixing the key with `!`.
 
 |fromRouteId |String |Returns the original route id where this exchange was created.
