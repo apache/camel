@@ -315,7 +315,19 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         String displayName = metadata.displayName();
         // compute a display name if we don't have anything
         if (Strings.isNullOrEmpty(displayName)) {
-            displayName = Strings.asTitle(fun.getName());
+            displayName = fun.getName();
+            int pos = displayName.indexOf('(');
+            if (pos == -1) {
+                pos = displayName.indexOf(':');
+            }
+            if (pos == -1) {
+                pos = displayName.indexOf('.');
+            }
+            if (pos != -1) {
+                displayName = displayName.substring(0, pos);
+            }
+            displayName = displayName.replace('-', ' ');
+            displayName = Strings.asTitle(displayName);
         }
         fun.setDisplayName(displayName);
         fun.setJavaType(metadata.javaType());
