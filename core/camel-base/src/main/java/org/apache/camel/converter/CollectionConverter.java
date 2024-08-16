@@ -154,8 +154,8 @@ public final class CollectionConverter {
      */
     @Converter(order = 14)
     public static <T> List<T> toList(Iterator<T> it) {
-        if (it instanceof List) {
-            return (List<T>) it;
+        if (it instanceof List value) {
+            return value;
         }
         List<T> result = new LinkedList<>();
         while (it.hasNext()) {
@@ -163,5 +163,4 @@ public final class CollectionConverter {
         }
         return result;
     }
-
 }

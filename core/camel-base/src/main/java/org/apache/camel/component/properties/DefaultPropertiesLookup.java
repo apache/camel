@@ -131,13 +131,13 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
 
     private static String location(Properties prop, String name, String defaultLocation) {
         String loc = null;
-        if (prop instanceof OrderedLocationProperties) {
-            loc = ((OrderedLocationProperties) prop).getLocation(name);
+        if (prop instanceof OrderedLocationProperties value) {
+            loc = value.getLocation(name);
         }
+
         if (loc == null) {
             loc = defaultLocation;
         }
         return loc;
     }
-
 }

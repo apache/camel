@@ -31,8 +31,8 @@ public class AsyncProcessorTypeConverter extends TypeConverterSupport {
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.equals(AsyncProcessor.class)) {
-            if (value instanceof Processor) {
-                return type.cast(AsyncProcessorConverterHelper.convert((Processor) value));
+            if (value instanceof Processor p) {
+                return type.cast(AsyncProcessorConverterHelper.convert(p));
             }
         }
         return null;

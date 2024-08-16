@@ -210,8 +210,8 @@ public final class IOConverter {
 
     @Converter(order = 26)
     public static ObjectOutput toObjectOutput(OutputStream stream) throws IOException {
-        if (stream instanceof ObjectOutput) {
-            return (ObjectOutput) stream;
+        if (stream instanceof ObjectOutput out) {
+            return out;
         } else {
             return new ObjectOutputStream(IOHelper.buffered(stream));
         }

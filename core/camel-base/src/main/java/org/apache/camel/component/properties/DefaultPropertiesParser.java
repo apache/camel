@@ -19,7 +19,6 @@ package org.apache.camel.component.properties;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
@@ -27,7 +26,6 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.spi.PropertiesComponent.OPTIONAL_TOKEN;
 import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
 import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
@@ -37,8 +35,11 @@ import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
  * A parser to parse a string which contains property placeholders.
  */
 public class DefaultPropertiesParser implements PropertiesParser {
+
     private static final String UNRESOLVED_PREFIX_TOKEN = "@@[";
+
     private static final String UNRESOLVED_SUFFIX_TOKEN = "]@@";
+
     private static final String GET_OR_ELSE_TOKEN = ":";
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -510,8 +511,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
     private static String location(Properties prop, String name, String defaultLocation) {
         String loc = null;
-        if (prop instanceof OrderedLocationProperties) {
-            loc = ((OrderedLocationProperties) prop).getLocation(name);
+        if (prop instanceof OrderedLocationProperties olp) {
+            loc = olp.getLocation(name);
         }
         if (loc == null) {
             loc = defaultLocation;
