@@ -616,8 +616,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         // route templates supports binding beans that are local for the template only
         // in this local mode then we need to check for side-effects (see further)
         LocalBeanRepositoryAware localBeans = null;
-        if (getCamelContextReference().getRegistry() instanceof LocalBeanRepositoryAware) {
-            localBeans = (LocalBeanRepositoryAware) getCamelContextReference().getRegistry();
+        final Registry registry = getCamelContextReference().getRegistry();
+        if (registry instanceof LocalBeanRepositoryAware localBeanRepositoryAware) {
+            localBeans = localBeanRepositoryAware;
         }
         try {
             RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
