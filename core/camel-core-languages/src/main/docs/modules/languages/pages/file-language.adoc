@@ -60,7 +60,7 @@ directory, see note below)
 
 |file:name.noext.single |String |yes |no |yes |no |refers to the file name with no extension (is
 relative to the starting directory, see note below). If the file
-extension has multiple dots, then this expression strips only the last
+name has multiple dots, then this expression strips only the last
 part, and keeps the others.
 
 |file:onlyname |String |yes |no |yes |no |refers to the file name only with no leading paths.

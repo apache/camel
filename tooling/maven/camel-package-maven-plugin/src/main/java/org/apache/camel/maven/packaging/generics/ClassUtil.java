@@ -81,8 +81,7 @@ public final class ClassUtil {
      * type otherwise it return the casted {@link Class} of the type argument.
      * </p>
      *
-     * @param  type class or parametrized type
-     * @return
+     * @param type class or parametrized type
      */
     public static Class<?> getClass(Type type) {
         return getClazz(type);
@@ -209,4 +208,5 @@ public final class ClassUtil {
                 .map(annotation -> annotation.annotationType().getName())
                 .anyMatch(fqAnnotationName::equals);
     }
+
 }
