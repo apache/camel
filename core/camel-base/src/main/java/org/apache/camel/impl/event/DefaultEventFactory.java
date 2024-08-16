@@ -293,8 +293,8 @@ public class DefaultEventFactory implements EventFactory {
             Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
-        if (handler instanceof DelegateProcessor) {
-            handler = ((DelegateProcessor) handler).getProcessor();
+        if (handler instanceof DelegateProcessor delegateProcessor) {
+            handler = delegateProcessor.getProcessor();
         }
         CamelEvent answer = new ExchangeFailureHandlingEvent(exchange, handler, deadLetterChannel, deadLetterUri);
         if (timestampEnabled) {
@@ -309,8 +309,8 @@ public class DefaultEventFactory implements EventFactory {
             boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
-        if (handler instanceof DelegateProcessor) {
-            handler = ((DelegateProcessor) handler).getProcessor();
+        if (handler instanceof DelegateProcessor delegateProcessor) {
+            handler = delegateProcessor.getProcessor();
         }
         CamelEvent answer = new ExchangeFailureHandledEvent(exchange, handler, deadLetterChannel, deadLetterUri);
         if (timestampEnabled) {

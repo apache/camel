@@ -219,8 +219,8 @@ public final class IOConverter {
 
     @Converter(order = 27)
     public static ObjectInput toObjectInput(final InputStream stream, final Exchange exchange) throws IOException {
-        if (stream instanceof ObjectInput) {
-            return (ObjectInput) stream;
+        if (stream instanceof ObjectInput objectInput) {
+            return objectInput;
         } else {
             return new ObjectInputStream(IOHelper.buffered(stream)) {
                 @Override

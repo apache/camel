@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
@@ -26,6 +27,7 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.spi.PropertiesComponent.OPTIONAL_TOKEN;
 import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
 import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
@@ -425,8 +427,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 if (value != null) {
                     String localDefaultValue = null;
                     String loc = location(local, key, "LocalProperties");
-                    if (local instanceof OrderedLocationProperties) {
-                        Object val = ((OrderedLocationProperties) local).getDefaultValue(key);
+                    if (local instanceof OrderedLocationProperties propSource) {
+                        Object val = propSource.getDefaultValue(key);
                         if (val != null) {
                             localDefaultValue
                                     = propertiesComponent.getCamelContext().getTypeConverter().tryConvertTo(String.class, val);

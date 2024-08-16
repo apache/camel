@@ -205,13 +205,12 @@ public class PropertiesComponent extends ServiceSupport
             // override properties from higher priority ones
             for (int i = sources.size(); i-- > 0;) {
                 PropertiesSource ps = sources.get(i);
-                if (ps instanceof LoadablePropertiesSource) {
-                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                if (ps instanceof LoadablePropertiesSource lps) {
                     Properties p = lps.loadProperties();
-                    if (p instanceof OrderedLocationProperties) {
-                        prop.putAll((OrderedLocationProperties) p);
-                    } else if (ps instanceof LocationPropertiesSource) {
-                        String loc = ((LocationPropertiesSource) ps).getLocation().getPath();
+                    if (p instanceof OrderedLocationProperties propSource) {
+                        prop.putAll(propSource);
+                    } else if (ps instanceof LocationPropertiesSource propSource) {
+                        String loc = propSource.getLocation().getPath();
                         prop.putAll(loc, p);
                     } else {
                         prop.putAll(lps.getName(), p);
@@ -273,11 +272,9 @@ public class PropertiesComponent extends ServiceSupport
             // override properties from higher priority ones
             for (int i = sources.size(); i-- > 0;) {
                 PropertiesSource ps = sources.get(i);
-                if (ps instanceof LoadablePropertiesSource) {
-                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                if (ps instanceof LoadablePropertiesSource lps) {
                     Properties p = lps.loadProperties(filter);
-                    if (p instanceof OrderedLocationProperties) {
-                        OrderedLocationProperties olp = (OrderedLocationProperties) p;
+                    if (p instanceof OrderedLocationProperties olp) {
                         for (String name : olp.stringPropertyNames()) {
                             String loc = olp.getLocation(name);
                             Object value = olp.getProperty(name);
@@ -286,8 +283,7 @@ public class PropertiesComponent extends ServiceSupport
                         }
                     } else {
                         String loc = lps.getName();
-                        if (ps instanceof LocationPropertiesSource) {
-                            LocationPropertiesSource olp = (LocationPropertiesSource) ps;
+                        if (ps instanceof LocationPropertiesSource olp) {
                             loc = olp.getLocation().getPath();
                         }
                         for (String name : p.stringPropertyNames()) {
@@ -711,9 +707,7 @@ public class PropertiesComponent extends ServiceSupport
 
         // find sources with this location to reload
         for (PropertiesSource source : sources) {
-            if (source instanceof LocationPropertiesSource && source instanceof LoadablePropertiesSource) {
-                LocationPropertiesSource loc = (LocationPropertiesSource) source;
-                LoadablePropertiesSource loadable = (LoadablePropertiesSource) source;
+            if (source instanceof LocationPropertiesSource loc && source instanceof LoadablePropertiesSource loadable) {
                 String schemeAndPath = loc.getLocation().getResolver() + ":" + loc.getLocation().getPath();
                 String path = loc.getLocation().getPath();
                 if (PatternHelper.matchPattern(schemeAndPath, pattern) || PatternHelper.matchPattern(path, pattern)) {
@@ -757,8 +751,8 @@ public class PropertiesComponent extends ServiceSupport
         }
 
         // inject the component to the parser
-        if (propertiesParser instanceof DefaultPropertiesParser) {
-            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
+        if (propertiesParser instanceof DefaultPropertiesParser defaultPropertiesParser) {
+            defaultPropertiesParser.setPropertiesComponent(this);
         }
 
         if (isAutoDiscoverPropertiesSources()) {
@@ -774,8 +768,7 @@ public class PropertiesComponent extends ServiceSupport
                 Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
                 if (type != null) {
                     Object obj = getCamelContext().getInjector().newInstance(type, false);
-                    if (obj instanceof PropertiesSource) {
-                        PropertiesSource ps = (PropertiesSource) obj;
+                    if (obj instanceof PropertiesSource ps) {
                         addPropertiesSource(ps);
                         LOG.debug("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
                     } else if (obj != null) {

@@ -79,8 +79,7 @@ public final class FutureTypeConverter extends TypeConverterSupport {
             // maybe from is already the type we want
             if (type.isAssignableFrom(body.getClass())) {
                 return type.cast(body);
-            } else if (body instanceof Exchange) {
-                Exchange result = (Exchange) body;
+            } else if (body instanceof Exchange result) {
                 body = ExchangeHelper.extractResultBody(result, result.getPattern());
             }
 
