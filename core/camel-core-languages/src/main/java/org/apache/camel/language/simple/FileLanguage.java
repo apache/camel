@@ -21,7 +21,7 @@ import org.apache.camel.spi.annotations.Language;
 /**
  * The Camel file language.
  */
-@Language("file")
+@Language(value = "file", functionsClass = FileConstants.class)
 public class FileLanguage extends SimpleLanguage {
 
     public FileLanguage() {
