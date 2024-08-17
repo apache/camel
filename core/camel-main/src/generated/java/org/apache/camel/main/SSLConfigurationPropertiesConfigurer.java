@@ -25,14 +25,32 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "certalias":
         case "certAlias": target.setCertAlias(property(camelContext, java.lang.String.class, value)); return true;
+        case "ciphersuites":
+        case "cipherSuites": target.setCipherSuites(property(camelContext, java.lang.String.class, value)); return true;
+        case "ciphersuitesexclude":
+        case "cipherSuitesExclude": target.setCipherSuitesExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "ciphersuitesinclude":
+        case "cipherSuitesInclude": target.setCipherSuitesInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "clientauthentication":
         case "clientAuthentication": target.setClientAuthentication(property(camelContext, java.lang.String.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "keymanageralgorithm":
+        case "keyManagerAlgorithm": target.setKeyManagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "keymanagerprovider":
+        case "keyManagerProvider": target.setKeyManagerProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "keystore":
         case "keyStore": target.setKeyStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoreprovider":
+        case "keyStoreProvider": target.setKeyStoreProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoretype":
+        case "keyStoreType": target.setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "keystorepassword":
         case "keystorePassword": target.setKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "provider": target.setProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "securerandomalgorithm":
+        case "secureRandomAlgorithm": target.setSecureRandomAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "securerandomprovider":
+        case "secureRandomProvider": target.setSecureRandomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "securesocketprotocol":
         case "secureSocketProtocol": target.setSecureSocketProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
@@ -50,14 +68,32 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "certalias":
         case "certAlias": return java.lang.String.class;
+        case "ciphersuites":
+        case "cipherSuites": return java.lang.String.class;
+        case "ciphersuitesexclude":
+        case "cipherSuitesExclude": return java.lang.String.class;
+        case "ciphersuitesinclude":
+        case "cipherSuitesInclude": return java.lang.String.class;
         case "clientauthentication":
         case "clientAuthentication": return java.lang.String.class;
         case "enabled": return boolean.class;
+        case "keymanageralgorithm":
+        case "keyManagerAlgorithm": return java.lang.String.class;
+        case "keymanagerprovider":
+        case "keyManagerProvider": return java.lang.String.class;
         case "keystore":
         case "keyStore": return java.lang.String.class;
+        case "keystoreprovider":
+        case "keyStoreProvider": return java.lang.String.class;
+        case "keystoretype":
+        case "keyStoreType": return java.lang.String.class;
         case "keystorepassword":
         case "keystorePassword": return java.lang.String.class;
         case "provider": return java.lang.String.class;
+        case "securerandomalgorithm":
+        case "secureRandomAlgorithm": return java.lang.String.class;
+        case "securerandomprovider":
+        case "secureRandomProvider": return java.lang.String.class;
         case "securesocketprotocol":
         case "secureSocketProtocol": return java.lang.String.class;
         case "sessiontimeout":
@@ -76,14 +112,32 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "certalias":
         case "certAlias": return target.getCertAlias();
+        case "ciphersuites":
+        case "cipherSuites": return target.getCipherSuites();
+        case "ciphersuitesexclude":
+        case "cipherSuitesExclude": return target.getCipherSuitesExclude();
+        case "ciphersuitesinclude":
+        case "cipherSuitesInclude": return target.getCipherSuitesInclude();
         case "clientauthentication":
         case "clientAuthentication": return target.getClientAuthentication();
         case "enabled": return target.isEnabled();
+        case "keymanageralgorithm":
+        case "keyManagerAlgorithm": return target.getKeyManagerAlgorithm();
+        case "keymanagerprovider":
+        case "keyManagerProvider": return target.getKeyManagerProvider();
         case "keystore":
         case "keyStore": return target.getKeyStore();
+        case "keystoreprovider":
+        case "keyStoreProvider": return target.getKeyStoreProvider();
+        case "keystoretype":
+        case "keyStoreType": return target.getKeyStoreType();
         case "keystorepassword":
         case "keystorePassword": return target.getKeystorePassword();
         case "provider": return target.getProvider();
+        case "securerandomalgorithm":
+        case "secureRandomAlgorithm": return target.getSecureRandomAlgorithm();
+        case "securerandomprovider":
+        case "secureRandomProvider": return target.getSecureRandomProvider();
         case "securesocketprotocol":
         case "secureSocketProtocol": return target.getSecureSocketProtocol();
         case "sessiontimeout":
