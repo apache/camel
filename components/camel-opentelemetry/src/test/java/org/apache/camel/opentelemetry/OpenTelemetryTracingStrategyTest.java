@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 class OpenTelemetryTracingStrategyTest extends CamelOpenTelemetryTestSupport {
 
-    private static SpanTestData[] testdata = {
+    private static final SpanTestData[] testdata = {
             new SpanTestData().setLabel("camel-process").setOperation("third-party-span")
                     .setParentId(1),
             new SpanTestData().setLabel("camel-process").setOperation("third-party-processor")
@@ -76,7 +76,7 @@ class OpenTelemetryTracingStrategyTest extends CamelOpenTelemetryTestSupport {
                         }).id("direct-processor");
             }
 
-            private void callThirdPartyInstrumentation() throws InterruptedException {
+            private void callThirdPartyInstrumentation() {
                 Span span = getTracer().spanBuilder("third-party-span").startSpan();
                 try (Scope ignored = span.makeCurrent()) {
                     span.setAttribute(COMPONENT_KEY, "third-party-component");

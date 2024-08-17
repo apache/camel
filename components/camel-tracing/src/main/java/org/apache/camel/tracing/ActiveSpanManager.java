@@ -58,7 +58,7 @@ public final class ActiveSpanManager {
     public static void activate(Exchange exchange, SpanAdapter span) {
         exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN,
                 new Holder(exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class), span));
-        if (exchange.getContext().isUseMDCLogging()) {
+        if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
             MDC.put(MDC_TRACE_ID, span.traceId());
             MDC.put(MDC_SPAN_ID, span.spanId());
         }
@@ -74,13 +74,13 @@ public final class ActiveSpanManager {
     public static void deactivate(Exchange exchange) {
         Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
         if (holder != null) {
-            exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN, holder.getParent());
+            Holder parent = holder.getParent();
+            exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN, parent);
 
             holder.closeScope();
-            if (exchange.getContext().isUseMDCLogging()) {
-                Holder parent = holder.getParent();
+            if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
                 if (parent != null) {
-                    SpanAdapter span = holder.getParent().getSpan();
+                    SpanAdapter span = parent.getSpan();
                     MDC.put(MDC_TRACE_ID, span.traceId());
                     MDC.put(MDC_SPAN_ID, span.spanId());
                 } else {
@@ -100,7 +100,7 @@ public final class ActiveSpanManager {
      */
     public static void endScope(Exchange exchange) {
         Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
-        if (holder != null) {
+        if (holder != null && !holder.isClosed()) {
             holder.closeScope();
         }
     }
@@ -114,11 +114,13 @@ public final class ActiveSpanManager {
         private final Holder parent;
         private final SpanAdapter span;
         private final AutoCloseable scope;
+        private boolean closed;
 
-        public Holder(Holder parent, SpanAdapter span) {
+        Holder(Holder parent, SpanAdapter span) {
             this.parent = parent;
             this.span = span;
             this.scope = span.makeCurrent();
+            this.closed = false;
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Tracing: started scope: {}", this.scope);
             }
@@ -132,12 +134,21 @@ public final class ActiveSpanManager {
             return span;
         }
 
+        public boolean isClosed() {
+            return closed;
+        }
+
         private void closeScope() {
+            if (closed) {
+                LOG.error("Tracing: scope already closed: {}", this.scope);
+            }
+
             try {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Tracing: closing scope: {}", this.scope);
                 }
                 scope.close();
+                this.closed = true;
             } catch (Exception e) {
                 LOG.debug("Failed to close span scope. This exception is ignored.", e);
             }

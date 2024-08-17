@@ -26,6 +26,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.instrumentation.log4j.appender.v2_17.OpenTelemetryAppender;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.extension.incubator.trace.LeakDetectingSpanProcessor;
 import io.opentelemetry.sdk.logs.SdkLoggerProvider;
 import io.opentelemetry.sdk.logs.data.LogRecordData;
 import io.opentelemetry.sdk.logs.export.SimpleLogRecordProcessor;
@@ -42,9 +43,7 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -65,6 +64,7 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
     static CamelOpenTelemetryExtension create() {
         InMemorySpanExporter spanExporter = InMemorySpanExporter.create();
         SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(LeakDetectingSpanProcessor.create())
                 .addSpanProcessor(new LoggingSpanProcessor())
                 .addSpanProcessor(SimpleSpanProcessor.create(spanExporter))
                 .build();

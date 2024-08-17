@@ -158,7 +158,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     }
 
     @Override
-    protected void doInit() throws Exception {
+    protected void doInit() {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
@@ -176,7 +176,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     }
 
     @Override
-    protected void doShutdown() throws Exception {
+    protected void doShutdown() {
         // stop event notifier
         camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
         ServiceHelper.stopService(eventNotifier);
@@ -194,15 +194,12 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             String scheme = splitURI[0];
             sd = DECORATORS.get(scheme);
         }
-        if (sd == null) {
-            // okay, there was no decorator found via component name (scheme), then try FQN
-            if (endpoint instanceof DefaultEndpoint de) {
-                Component comp = de.getComponent();
-                String fqn = comp.getClass().getName();
-                // lookup via FQN
-                sd = DECORATORS.values().stream().filter(d -> fqn.equals(d.getComponentClassName())).findFirst()
-                        .orElse(null);
-            }
+        if (sd == null && endpoint instanceof DefaultEndpoint de) {
+            Component comp = de.getComponent();
+            String fqn = comp.getClass().getName();
+            // lookup via FQN
+            sd = DECORATORS.values().stream().filter(d -> fqn.equals(d.getComponentClassName())).findFirst()
+                    .orElse(null);
         }
         if (sd == null) {
             sd = SpanDecorator.DEFAULT;
