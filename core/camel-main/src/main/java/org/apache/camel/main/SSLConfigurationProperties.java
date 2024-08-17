@@ -20,6 +20,9 @@ import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
+import javax.net.ssl.SSLContext;
+import java.security.Security;
+
 /**
  * Global configuration for SSL.
  */
@@ -30,6 +33,14 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean enabled;
+    @Metadata(label = "advanced")
+    private String provider;
+    @Metadata(label = "advanced", defaultValue = "TLSv1.3")
+    private String secureSocketProtocol;
+    @Metadata(label = "advanced")
+    private String certAlias;
+    @Metadata(label = "advanced", defaultValue = "86400")
+    private int sessionTimeout;
     @Metadata
     private String keyStore;
     @Metadata
@@ -63,6 +74,56 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    /**
+     * To use a specific provider for creating SSLContext.
+     *
+     * The list of available providers returned by java.security.Security.getProviders() or null to use the highest
+     * priority provider implementing the secure socket protocol.
+     */
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getSecureSocketProtocol() {
+        return secureSocketProtocol;
+    }
+
+    /**
+     * The optional protocol for the secure sockets created by the SSLContext.
+     *
+     * See Appendix A in the https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html for
+     * information about standard protocol names.
+     */
+    public void setSecureSocketProtocol(String secureSocketProtocol) {
+        this.secureSocketProtocol = secureSocketProtocol;
+    }
+
+    public String getCertAlias() {
+        return certAlias;
+    }
+
+    /**
+     * An optional certificate alias to use. This is useful when the keystore has multiple certificates.
+     */
+    public void setCertAlias(String certAlias) {
+        this.certAlias = certAlias;
+    }
+
+    public int getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    /**
+     * Timeout in seconds to use for SSLContext. The default is 24 hours.
+     */
+    public void setSessionTimeout(int sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
     }
 
     public String getKeyStore() {
@@ -125,6 +186,44 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+
+    /**
+     * To use a specific provider for creating SSLContext.
+     *
+     * The list of available providers returned by java.security.Security.getProviders() or null to use the highest
+     * priority provider implementing the secure socket protocol.
+     */
+    public SSLConfigurationProperties withProvider(String provider) {
+        this.provider = provider;
+        return this;
+    }
+
+    /**
+     * The optional protocol for the secure sockets created by the SSLContext.
+     *
+     * See Appendix A in the https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html for
+     * information about standard protocol names.
+     */
+    public SSLConfigurationProperties withSecureSocketProtocol(String secureSocketProtocol) {
+        this.secureSocketProtocol = secureSocketProtocol;
+        return this;
+    }
+
+    /**
+     * An optional certificate alias to use. This is useful when the keystore has multiple certificates.
+     */
+    public SSLConfigurationProperties withCertAlias(String certAlias) {
+        this.certAlias = certAlias;
+        return this;
+    }
+
+    /**
+     * Timeout in seconds to use for SSLContext. The default is 24 hours.
+     */
+    public SSLConfigurationProperties withSessionTimeoutCertAlias(int sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
         return this;
     }
 

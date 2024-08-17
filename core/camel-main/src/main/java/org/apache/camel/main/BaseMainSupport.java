@@ -1683,6 +1683,12 @@ public abstract class BaseMainSupport extends BaseService {
         scsp.setClientAuthentication(sslConfig.getClientAuthentication());
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setProvider(sslConfig.getProvider());
+        sslContextParameters.setSecureSocketProtocol(sslConfig.getSecureSocketProtocol());
+        sslContextParameters.setCertAlias(sslConfig.getCertAlias());
+        if (sslConfig.getSessionTimeout() > 0) {
+            sslContextParameters.setSessionTimeout("" + sslConfig.getSessionTimeout());
+        }
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);

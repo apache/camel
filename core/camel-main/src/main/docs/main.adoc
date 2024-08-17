@@ -245,15 +245,19 @@ The camel.trace supports 14 options, which are listed below.
 
 
 === Camel SSL configurations
-The camel.ssl supports 6 options, which are listed below.
+The camel.ssl supports 10 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.ssl.certAlias* | An optional certificate alias to use. This is useful when the keystore has multiple certificates. |  | String
 | *camel.ssl.clientAuthentication* | Sets the configuration for server-side client-authentication requirements | NONE | String
 | *camel.ssl.enabled* | Enables SSL in your Camel application. | false | boolean
 | *camel.ssl.keyStore* | Sets the SSL Keystore resource. |  | String
 | *camel.ssl.keystorePassword* | Sets the SSL Keystore password. |  | String
+| *camel.ssl.provider* | To use a specific provider for creating SSLContext. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
+| *camel.ssl.secureSocketProtocol* | The optional protocol for the secure sockets created by the SSLContext. See Appendix A in the \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html for information about standard protocol names. | TLSv1.3 | String
+| *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
 | *camel.ssl.trustStore* | Sets the SSL Truststore resource. |  | String
 | *camel.ssl.trustStorePassword* | Sets the SSL Truststore password. |  | String
 |===
