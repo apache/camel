@@ -1667,16 +1667,14 @@ public abstract class BaseMainSupport extends BaseService {
         }
         ksp.setType(sslConfig.getKeyStoreType());
         ksp.setPassword(sslConfig.getKeystorePassword());
-        String provider = sslConfig.getKeyStoreProvider() != null ? sslConfig.getKeyStoreProvider() : sslConfig.getProvider();
-        ksp.setProvider(provider);
+        ksp.setProvider(sslConfig.getKeyStoreProvider());
 
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setCamelContext(camelContext);
         kmp.setKeyPassword(sslConfig.getKeystorePassword());
         kmp.setKeyStore(ksp);
         kmp.setAlgorithm(sslConfig.getKeyManagerAlgorithm());
-        provider = sslConfig.getKeyManagerProvider() != null ? sslConfig.getKeyManagerProvider() : sslConfig.getProvider();
-        kmp.setProvider(provider);
+        kmp.setProvider(sslConfig.getKeyManagerProvider());
 
         final SSLContextParameters sslContextParameters = createSSLContextParameters(camelContext, sslConfig, kmp);
         camelContext.setSSLContextParameters(sslContextParameters);
@@ -1710,9 +1708,7 @@ public abstract class BaseMainSupport extends BaseService {
             srp = new SecureRandomParameters();
             srp.setCamelContext(camelContext);
             srp.setAlgorithm(sslConfig.getSecureRandomAlgorithm());
-            String provider = sslConfig.getSecureRandomProvider() != null
-                    ? sslConfig.getSecureRandomProvider() : sslConfig.getProvider();
-            srp.setProvider(provider);
+            srp.setProvider(sslConfig.getSecureRandomProvider());
         }
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
