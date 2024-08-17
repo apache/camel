@@ -58,6 +58,10 @@ public class Init extends CamelCommand {
             defaultValue = ".")
     private String directory;
 
+    @Option(names = { "--clean-dir", "--clean-directory" },
+            description = "Whether to clean directory first (deletes all files in directory)")
+    private boolean cleanDirectory;
+
     @Option(names = { "--from-kamelet" },
             description = "To be used when extending an existing Kamelet")
     private String fromKamelet;
@@ -146,6 +150,10 @@ public class Init extends CamelCommand {
         IOHelper.close(is);
 
         if (!directory.equals(".")) {
+            if (cleanDirectory) {
+                // ensure target dir is created after clean
+                CommandHelper.cleanExportDir(directory);
+            }
             File dir = new File(directory);
             dir.mkdirs();
         }
@@ -198,8 +206,10 @@ public class Init extends CamelCommand {
             // okay we downloaded something so prepare export dir
             if (!directory.equals(".")) {
                 File dir = new File(directory);
-                CommandHelper.cleanExportDir(directory);
-                // ensure target dir is created after clean
+                if (cleanDirectory) {
+                    // ensure target dir is created after clean
+                    CommandHelper.cleanExportDir(directory);
+                }
                 dir.mkdirs();
             }
 
@@ -232,8 +242,10 @@ public class Init extends CamelCommand {
             // okay we downloaded something so prepare export dir
             if (!directory.equals(".")) {
                 File dir = new File(directory);
-                CommandHelper.cleanExportDir(directory);
-                // ensure target dir is created after clean
+                if (cleanDirectory) {
+                    // ensure target dir is created after clean
+                    CommandHelper.cleanExportDir(directory);
+                }
                 dir.mkdirs();
             }
 
