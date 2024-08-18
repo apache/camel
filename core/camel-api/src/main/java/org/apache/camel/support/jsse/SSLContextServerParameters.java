@@ -34,14 +34,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextServerParameters.class);
 
-    /**
-     * The optional configuration options for server-side client-authentication requirements.
-     */
     protected String clientAuthentication;
 
-    /**
-     * @see #setClientAuthentication(String)
-     */
     public String getClientAuthentication() {
         return clientAuthentication;
     }
@@ -73,8 +67,6 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * {@inheritDoc}
-     * <p/>
      * This implementation allows for configuration of the need and want settings for client authentication, but ignores
      * the enabled cipher suites and protocols as they are not client and server side specific in an {@code SSLEngine}.
      * Consequently, overriding them here would be a bit odd as the server side specific configuration shouldn't really

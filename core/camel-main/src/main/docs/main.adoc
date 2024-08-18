@@ -258,14 +258,14 @@ The camel.ssl supports 19 options, which are listed below.
 | *camel.ssl.enabled* | Enables SSL in your Camel application. | false | boolean
 | *camel.ssl.keyManagerAlgorithm* | Algorithm name used for creating the KeyManagerFactory. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
 | *camel.ssl.keyManagerProvider* | To use a specific provider for creating KeyManagerFactory. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
-| *camel.ssl.keyStore* | The file path, class path resource, or URL of the resource used to load the key store. An existing java.security.KeyStore can also be referred using #bean:name syntax. |  | String
+| *camel.ssl.keyStore* | The file path, class path resource, or URL of the resource used to load the key store. file:nameOfFile - to refer to the file system classpath:nameOfFile - to refer to the classpath (default) http:uri - to load the resource using HTTP ref:nameOfBean - to lookup an existing KeyStore instance from the registry. |  | String
 | *camel.ssl.keystorePassword* | Sets the SSL Keystore password. |  | String
 | *camel.ssl.keyStoreProvider* | To use a specific provider for creating KeyStore. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.keyStoreType* | The type of the key store to load. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
 | *camel.ssl.provider* | To use a specific provider for creating SSLContext. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.secureRandom{zwsp}Algorithm* | Algorithm name used for creating the SecureRandom. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
 | *camel.ssl.secureRandomProvider* | To use a specific provider for creating SecureRandom. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
-| *camel.ssl.secureSocketProtocol* | The optional protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
+| *camel.ssl.secureSocketProtocol* | The protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
 | *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
 | *camel.ssl.trustStore* | The file path, class path resource, or URL of the resource used to load the trust store. An existing java.security.KeyStore can also be referred using #bean:name syntax. |  | String
 | *camel.ssl.trustStorePassword* | Sets the SSL Truststore password. |  | String

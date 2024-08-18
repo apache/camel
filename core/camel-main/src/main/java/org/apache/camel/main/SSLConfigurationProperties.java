@@ -110,7 +110,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * The optional protocol for the secure sockets created by the SSLContext.
+     * The protocol for the secure sockets created by the SSLContext.
      * <p>
      * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
      */
@@ -190,7 +190,8 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * The file path, class path resource, or URL of the resource used to load the key store.
      *
-     * An existing java.security.KeyStore can also be referred using #bean:name syntax.
+     * file:nameOfFile - to refer to the file system classpath:nameOfFile - to refer to the classpath (default) http:uri
+     * - to load the resource using HTTP ref:nameOfBean - to lookup an existing KeyStore instance from the registry.
      */
     public void setKeyStore(String keyStore) {
         this.keyStore = keyStore;
@@ -405,7 +406,8 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * The file path, class path resource, or URL of the resource used to load the key store.
      *
-     * An existing java.security.KeyStore can also be referred using #bean:name syntax.
+     * file:nameOfFile - to refer to the file system classpath:nameOfFile - to refer to the classpath (default) http:uri
+     * - to load the resource using HTTP ref:nameOfBean - to lookup an existing KeyStore instance from the registry.
      */
     public SSLConfigurationProperties withKeyStore(String keyStore) {
         this.keyStore = keyStore;
