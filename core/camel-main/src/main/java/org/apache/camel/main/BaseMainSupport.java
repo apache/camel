@@ -1659,12 +1659,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setCamelContext(camelContext);
-        String store = sslConfig.getKeyStore();
-        if (store != null && store.startsWith("#bean:")) {
-            ksp.setKeyStore(CamelContextHelper.mandatoryLookup(camelContext, store.substring(6), KeyStore.class));
-        } else {
-            ksp.setResource(store);
-        }
+        ksp.setResource(sslConfig.getKeyStore());
         ksp.setType(sslConfig.getKeyStoreType());
         ksp.setPassword(sslConfig.getKeystorePassword());
         ksp.setProvider(sslConfig.getKeyStoreProvider());

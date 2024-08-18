@@ -36,107 +36,68 @@ public class KeyStoreParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyStoreParameters.class);
 
-    /**
-     * The optional type of the key store to load. See Appendix A in the
-     * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore"> Java
-     * Cryptography Architecture Standard Algorithm Name Documentation</a> for more information on standard names.
-     */
     protected String type;
-
-    /**
-     * The optional password for reading/opening/verifying the key store.
-     */
     protected String password;
-
-    /**
-     * The optional provider identifier for instantiating the key store.
-     */
     protected String provider;
-
-    /**
-     * The optional key store, which has higher priority then value in resource below. If keyStore is non-null, resource
-     * isn't taken into account. This is helpful say for in-memory KeyStore composed by the user "on the fly".
-     */
     protected KeyStore keyStore;
-
-    /**
-     * The optional file path, class path resource, or URL of the resource used to load the key store.
-     */
     protected String resource;
 
-    /**
-     * @see #setType(String)
-     */
     public String getType() {
         return type;
     }
 
     /**
-     * Sets the type of the key store to create and load. See Appendix A in the
-     * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore" >Java
-     * Cryptography Architecture Standard Algorithm Name Documentation</a> for more information on standard names.
+     * The type of the key store to create and load.
      *
-     * @param value the key store type identifier (may be {@code null})
+     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
      */
     public void setType(String value) {
         this.type = value;
     }
 
-    /**
-     * @see #getPassword()
-     */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Set the optional password for reading/opening/verifying the key store.
-     *
-     * @param value the password value (may be {@code null})
+     * The password for reading/opening/verifying the key store.
      */
     public void setPassword(String value) {
         this.password = value;
     }
 
-    /**
-     * @see #setProvider(String)
-     */
     public String getProvider() {
         return provider;
     }
 
     /**
-     * Sets the optional provider identifier for instantiating the key store.
+     * The provider identifier for instantiating the key store.
      *
-     * @param value the provider identifier (may be {@code null})
-     *
-     * @see         Security#getProviders()
+     * @see Security#getProviders()
      */
     public void setProvider(String value) {
         this.provider = value;
     }
 
-    /**
-     * @see #getResource()
-     */
     public String getResource() {
         return resource;
     }
 
     /**
-     * Sets the optional file path, class path resource, or URL of the resource used to load the key store.
+     * The keystore to load.
      *
-     * @param value the resource (may be {@code null})
+     * The keystore is by default loaded from classpath. If you must load from file system, then use file: as prefix.
+     *
+     * file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default) http:uri
+     * (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for
+     * example for testing and development).
      */
     public void setResource(String value) {
         this.resource = value;
     }
 
     /**
-     * Sets the optional key store, which has higher priority then value in resource. NB Don't forget to call
-     * setPassword() for password of this KeyStore.
-     *
-     * @param keyStore the KeyStore (may be {@code null})
+     * To use an existing KeyStore instead of loading. You must also set password so this keystore can be used.
      */
     public void setKeyStore(KeyStore keyStore) {
         this.keyStore = keyStore;
@@ -157,6 +118,14 @@ public class KeyStoreParameters extends JsseParameters {
      * @throws IOException              if there is an error resolving the configured resource to an input stream
      */
     public KeyStore createKeyStore() throws GeneralSecurityException, IOException {
+        if (this.resource != null) {
+            this.resource = this.parsePropertyValue(this.resource);
+        }
+
+        if (this.keyStore == null && this.resource != null && this.resource.startsWith("ref:")) {
+            String ref = this.resource.substring(4);
+            this.keyStore = getCamelContext().getRegistry().lookupByNameAndType(ref, KeyStore.class);
+        }
         if (keyStore != null) {
             if (LOG.isDebugEnabled()) {
                 List<String> aliases = extractAliases(keyStore);
@@ -189,7 +158,7 @@ public class KeyStoreParameters extends JsseParameters {
         if (this.resource == null) {
             ks.load(null, ksPassword);
         } else {
-            InputStream is = this.resolveResource(this.parsePropertyValue(this.resource));
+            InputStream is = this.resolveResource(this.resource);
             if (is == null) {
                 LOG.warn("No keystore could be found at {}.", this.resource);
             } else {

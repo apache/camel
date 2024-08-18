@@ -37,6 +37,9 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextClientParameters.class);
 
+    /**
+     * SNI hostnames to be used for SSL (Server Name Indicator)
+     */
     private final List<SNIServerName> sniHostNames = new ArrayList<>();
 
     public void addAllSniHostNames(List<String> sniHostNames) {
@@ -71,8 +74,6 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * {@inheritDoc}
-     * <p/>
      * This implementation returns the empty list as the enabled cipher suites and protocols are not client and server
      * side specific in an {@code SSLEngine}. Consequently, overriding them here would be a bit odd as the client side
      * specific configuration shouldn't really override a shared client/server configuration option.

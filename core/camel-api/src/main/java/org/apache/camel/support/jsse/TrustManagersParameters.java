@@ -31,30 +31,9 @@ public class TrustManagersParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrustManagersParameters.class);
 
-    /**
-     * The key store configuration used to create the {@link KeyStoreParameters} that the {@link TrustManager}s produced
-     * by this object's configuration expose.
-     */
     protected KeyStoreParameters keyStore;
-
-    /**
-     * The optional provider identifier for the {@link TrustManagerFactory} used to create the {@link TrustManager}s
-     * represented by this object's configuration.
-     */
     protected String provider;
-
-    /**
-     * The optional algorithm name for the {@link TrustManagerFactory} used to create the {@link TrustManager}s
-     * represented by this object's configuration. See the
-     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html" >Java Secure
-     * Socket Extension Reference Guide</a> for information about standard algorithm names.
-     */
     protected String algorithm;
-
-    /**
-     * To use a existing configured trust manager instead of using {@link TrustManagerFactory} to get the
-     * {@link TrustManager}.
-     */
     protected TrustManager trustManager;
 
     /**
@@ -143,12 +122,11 @@ public class TrustManagersParameters extends JsseParameters {
 
     /**
      * Sets optional algorithm name for the {@link TrustManagerFactory} used to create the {@link TrustManager}s
-     * represented by this object's configuration. See the
-     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html" >Java Secure
-     * Socket Extension Reference Guide</a> for information about standard algorithm names.
+     * represented by this object's configuration.
+     *
+     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
      *
      * @param value the desired algorithm or {@code null} to use default
-     *
      * @see         TrustManagerFactory#getDefaultAlgorithm()
      */
     public void setAlgorithm(String value) {
@@ -160,7 +138,7 @@ public class TrustManagersParameters extends JsseParameters {
     }
 
     /**
-     * To use a existing configured trust manager instead of using {@link TrustManagerFactory} to get the
+     * To use an existing configured trust manager instead of using {@link TrustManagerFactory} to get the
      * {@link TrustManager}.
      */
     public void setTrustManager(TrustManager trustManager) {

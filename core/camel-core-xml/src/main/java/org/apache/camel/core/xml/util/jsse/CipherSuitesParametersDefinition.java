@@ -23,10 +23,13 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.spi.Metadata;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cipherSuitesParameters", propOrder = { "cipherSuite" })
 public class CipherSuitesParametersDefinition {
 
+    @Metadata(description = "List of TLS/SSL cipher suite algorithm names")
     private List<String> cipherSuite;
 
     /**
