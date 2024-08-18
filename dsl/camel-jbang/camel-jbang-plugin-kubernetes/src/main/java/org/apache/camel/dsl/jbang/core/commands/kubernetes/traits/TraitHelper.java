@@ -112,7 +112,6 @@ public final class TraitHelper {
                         config.put(traitKey, traitValueMap);
                     } else {
                         if (traitKey.endsWith("annotations")) {
-                            System.out.println("annotations");
                             Map<String, String> map = new LinkedHashMap<>();
                             final String[] traitValueConfig = traitValue.toString().split("=", 2);
                             final String[] existingValueConfig = existingValue.toString().split("=", 2);
