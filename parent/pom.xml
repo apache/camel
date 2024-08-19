@@ -403,7 +403,7 @@
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.25.3</protobuf-version>
-        <protobuf-maven-plugin-version>2.4.0</protobuf-maven-plugin-version>
+        <protobuf-maven-plugin-version>2.4.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.8.Final</protostream-version>
         <prowide-version>SRU2023-10.1.7</prowide-version>
