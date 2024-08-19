@@ -608,8 +608,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private TraceAdviceEventNotifier getOrCreateEventNotifier(CamelContext camelContext) {
             // use a single instance of this event notifier
             for (EventNotifier en : camelContext.getManagementStrategy().getEventNotifiers()) {
-                if (en instanceof TraceAdviceEventNotifier) {
-                    return (TraceAdviceEventNotifier) en;
+                if (en instanceof TraceAdviceEventNotifier traceAdviceEventNotifier) {
+                    return traceAdviceEventNotifier;
                 }
             }
             TraceAdviceEventNotifier answer = new TraceAdviceEventNotifier();
@@ -1111,8 +1111,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         private TraceAdviceEventNotifier getOrCreateEventNotifier(CamelContext camelContext) {
             // use a single instance of this event notifier
             for (EventNotifier en : camelContext.getManagementStrategy().getEventNotifiers()) {
-                if (en instanceof TraceAdviceEventNotifier) {
-                    return (TraceAdviceEventNotifier) en;
+                if (en instanceof TraceAdviceEventNotifier traceAdviceEventNotifier) {
+                    return traceAdviceEventNotifier;
                 }
             }
             TraceAdviceEventNotifier answer = new TraceAdviceEventNotifier();
@@ -1207,8 +1207,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      * Wrap an InstrumentationProcessor into a CamelInternalProcessorAdvice
      */
     public static <T> CamelInternalProcessorAdvice<T> wrap(InstrumentationProcessor<T> instrumentationProcessor) {
-        if (instrumentationProcessor instanceof CamelInternalProcessor) {
-            return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
+        if (instrumentationProcessor instanceof CamelInternalProcessorAdvice camelInternalProcessor) {
+            return camelInternalProcessor;
         } else {
             return new CamelInternalProcessorAdviceWrapper<>(instrumentationProcessor);
         }

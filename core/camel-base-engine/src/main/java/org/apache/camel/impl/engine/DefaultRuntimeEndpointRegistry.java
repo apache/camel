@@ -212,8 +212,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public void notify(CamelEvent event) throws Exception {
-        if (event instanceof RouteAddedEvent) {
-            RouteAddedEvent rse = (RouteAddedEvent) event;
+        if (event instanceof RouteAddedEvent rse) {
             Endpoint endpoint = rse.getRoute().getEndpoint();
             String routeId = rse.getRoute().getId();
 
@@ -224,8 +223,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             // use a LRUCache for outputs as we could potential have unlimited uris if dynamic routing is in use
             // and therefore need to have the limit in use
             outputs.put(routeId, LRUCacheFactory.newLRUCache(limit));
-        } else if (event instanceof RouteRemovedEvent) {
-            RouteRemovedEvent rse = (RouteRemovedEvent) event;
+        } else if (event instanceof RouteRemovedEvent rse) {
             String routeId = rse.getRoute().getId();
             inputs.remove(routeId);
             outputs.remove(routeId);
@@ -236,9 +234,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                     inputUtilization.remove(key);
                 }
             }
-        } else if (extended && event instanceof ExchangeCreatedEvent) {
+        } else if (extended && event instanceof ExchangeCreatedEvent ece) {
             // we only capture details in extended mode
-            ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
             Endpoint endpoint = ece.getExchange().getFromEndpoint();
             if (endpoint != null) {
                 String routeId = ece.getExchange().getFromRouteId();
@@ -248,8 +245,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                     inputUtilization.onHit(key);
                 }
             }
-        } else if (event instanceof ExchangeSendingEvent) {
-            ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
+        } else if (event instanceof ExchangeSendingEvent ese) {
             Endpoint endpoint = ese.getEndpoint();
             String routeId = ExchangeHelper.getRouteId(ese.getExchange());
             String uri = endpoint.getEndpointUri();

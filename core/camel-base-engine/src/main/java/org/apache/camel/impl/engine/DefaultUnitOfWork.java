@@ -239,8 +239,8 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
             boolean handover = true;
             SynchronizationVetoable veto = null;
-            if (synchronization instanceof SynchronizationVetoable) {
-                veto = (SynchronizationVetoable) synchronization;
+            if (synchronization instanceof SynchronizationVetoable v) {
+                veto = v;
                 handover = veto.allowHandover();
             }
 
@@ -287,14 +287,13 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
 
         // the exchange is now done
-        if (exchange instanceof PooledExchange) {
+        if (exchange instanceof PooledExchange pooled) {
             // pooled exchange has its own done logic which will reset this uow for reuse
             // so do not call onDone
             try {
-                PooledExchange pooled = (PooledExchange) exchange;
                 // only trigger done if we should auto-release
                 if (pooled.isAutoRelease()) {
-                    ((PooledExchange) exchange).done();
+                    pooled.done();
                 }
             } catch (Exception e) {
                 // must catch exceptions to ensure synchronizations is also invoked

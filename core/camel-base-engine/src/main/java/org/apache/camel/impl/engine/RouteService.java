@@ -96,8 +96,8 @@ public class RouteService extends ChildServiceSupport {
         Set<Endpoint> answer = new LinkedHashSet<>();
         Set<Service> services = gatherChildServices();
         for (Service service : services) {
-            if (service instanceof EndpointAware) {
-                Endpoint endpoint = ((EndpointAware) service).getEndpoint();
+            if (service instanceof EndpointAware endpointAware) {
+                Endpoint endpoint = endpointAware.getEndpoint();
                 if (endpoint != null) {
                     answer.add(endpoint);
                 }
@@ -161,17 +161,17 @@ public class RouteService extends ChildServiceSupport {
                 for (Service service : services) {
 
                     // inject the route
-                    if (service instanceof RouteAware) {
-                        ((RouteAware) service).setRoute(route);
+                    if (service instanceof RouteAware routeAware) {
+                        routeAware.setRoute(route);
                     }
-                    if (service instanceof RouteIdAware) {
-                        ((RouteIdAware) service).setRouteId(route.getId());
+                    if (service instanceof RouteIdAware routeIdAware) {
+                        routeIdAware.setRouteId(route.getId());
                     }
                     // inject camel context
                     CamelContextAware.trySetCamelContext(service, camelContext);
 
-                    if (service instanceof Consumer) {
-                        this.input = (Consumer) service;
+                    if (service instanceof Consumer consumer) {
+                        this.input = consumer;
                     } else {
                         list.add(service);
                     }
@@ -369,8 +369,8 @@ public class RouteService extends ChildServiceSupport {
         Class<?> type = service instanceof Processor ? Processor.class : Service.class;
         description = description + " " + service.getClass().getSimpleName();
         String id = null;
-        if (service instanceof IdAware) {
-            id = ((IdAware) service).getId();
+        if (service instanceof IdAware idAware) {
+            id = idAware.getId();
         }
         return startupStepRecorder.beginStep(type, id, description);
     }
@@ -449,10 +449,10 @@ public class RouteService extends ChildServiceSupport {
         // only include error handlers if they are route scoped
         List<Service> extra = new ArrayList<>();
         for (Service service : services) {
-            if (service instanceof Channel) {
-                Processor eh = ((Channel) service).getErrorHandler();
-                if (eh instanceof Service) {
-                    extra.add((Service) eh);
+            if (service instanceof Channel channel) {
+                Processor eh = channel.getErrorHandler();
+                if (eh instanceof Service s) {
+                    extra.add(s);
                 }
             }
         }
@@ -466,13 +466,13 @@ public class RouteService extends ChildServiceSupport {
      */
     protected void doGetRouteServices(List<Service> services) {
         for (Processor proc : getRoute().getOnExceptions()) {
-            if (proc instanceof Service) {
-                services.add((Service) proc);
+            if (proc instanceof Service service) {
+                services.add(service);
             }
         }
         for (Processor proc : getRoute().getOnCompletions()) {
-            if (proc instanceof Service) {
-                services.add((Service) proc);
+            if (proc instanceof Service service) {
+                services.add(service);
             }
         }
     }

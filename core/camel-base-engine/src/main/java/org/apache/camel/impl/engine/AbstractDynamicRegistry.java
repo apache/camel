@@ -60,8 +60,8 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
     @Override
     public void start() {
-        if (dynamicMap instanceof LRUCache) {
-            ((LRUCache<K, V>) dynamicMap).resetStatistics();
+        if (dynamicMap instanceof LRUCache<K, V> lruCache) {
+            lruCache.resetStatistics();
         }
     }
 
@@ -174,8 +174,8 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
     }
 
     public void cleanUp() {
-        if (dynamicMap instanceof LRUCache) {
-            ((LRUCache<K, V>) dynamicMap).cleanUp();
+        if (dynamicMap instanceof LRUCache<K, V> cache) {
+            cache.cleanUp();
         }
     }
 

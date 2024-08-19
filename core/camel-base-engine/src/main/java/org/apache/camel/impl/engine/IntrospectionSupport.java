@@ -643,8 +643,8 @@ final class IntrospectionSupport {
                 } catch (InvocationTargetException e) {
                     // lets unwrap the exception
                     Throwable throwable = e.getCause();
-                    if (throwable instanceof Exception) {
-                        throw (Exception) throwable;
+                    if (throwable instanceof Exception exception) {
+                        throw exception;
                     } else {
                         throw (Error) throwable;
                     }
