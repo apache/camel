@@ -6,6 +6,12 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.7 to 4.8
 
+=== camel-core
+
+The `UseOriginalAggregationStrategy` class will now propagate the caught exception stored in the exchange property `Exchange.EXCEPTION_CAUGHT`
+as well. For example when using the Splitter EIP with this, then any caught exception during splitting, would be stored
+as well, which allows access to this information afterward, for example in an `onCompletion` where the caught exception
+can be used to know some error happened during splitting.
 
 === Deprecated Components
 

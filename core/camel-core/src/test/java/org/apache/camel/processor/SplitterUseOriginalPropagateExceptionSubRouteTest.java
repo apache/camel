@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSupport {
+public class SplitterUseOriginalPropagateExceptionSubRouteTest extends ContextTestSupport {
 
     private final MyEventNotifier notifier = new MyEventNotifier();
 
@@ -42,23 +42,23 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
     }
 
     @Test
-    public void testUseOriginalNotPropagateException() throws Exception {
+    public void testUseOriginalPropagateException() throws Exception {
         assertEquals(0, notifier.getErrors());
 
         getMockEndpoint("mock:line").expectedBodiesReceived("Hello", "World");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello,Kaboom,World");
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
             template.sendBody("direct:start", "Hello,Kaboom,World");
+            fail("Should fail");
         } catch (Exception e) {
-            fail("Should not fail");
+            // expected
         }
 
         assertMockEndpointsSatisfied();
 
-        // there should only be 1 error as we do not propagate errors to the
-        // parent
-        assertEquals(1, notifier.getErrors());
+        // there should be 1+1 error as we propagate error back to the parent
+        assertEquals(2, notifier.getErrors());
     }
 
     @Override
@@ -71,12 +71,21 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
                             Exception caught = e.getException();
                             assertNull(caught);
                             caught = e.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                            assertNull(caught);
+                            assertIsInstanceOf(IllegalArgumentException.class, caught);
+                            assertEquals("Forced error", caught.getMessage());
                         }).end()
-                        .split(body()).aggregationStrategy(AggregationStrategies.useOriginal(false))
-                        .filter(simple("${body} == 'Kaboom'"))
-                        .throwException(new IllegalArgumentException("Forced error")).end().to("mock:line").end()
+                        .split(body()).aggregationStrategy(AggregationStrategies.useOriginal(true))
+                        .to("direct:sub")
+                        .end()
                         .to("mock:result");
+
+                from("direct:sub")
+                    // simulate retrying error handler
+                    .errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0))
+                    .filter(simple("${body} == 'Kaboom'"))
+                        .throwException(new IllegalArgumentException("Forced error"))
+                    .end()
+                    .to("mock:line");
             }
         };
     }
