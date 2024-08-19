@@ -76,7 +76,7 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.27.6</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.27.7</aws-java-sdk2-version>
         <aws-xray-version>2.18.1</aws-xray-version>
         <azure-sdk-bom-version>1.2.26</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.24</azure-storage-blob-changefeed-version>
