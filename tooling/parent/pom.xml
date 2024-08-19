@@ -37,7 +37,7 @@
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
         <maven-project-version>2.2.1</maven-project-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
-        <maven-plugin-annotations-version>3.13.1</maven-plugin-annotations-version>
+        <maven-plugin-annotations-version>3.14.0</maven-plugin-annotations-version>
         <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
         <maven-reporting-impl-version>3.2.0</maven-reporting-impl-version>
         <plexus-build-api-version>1.2.0</plexus-build-api-version>
