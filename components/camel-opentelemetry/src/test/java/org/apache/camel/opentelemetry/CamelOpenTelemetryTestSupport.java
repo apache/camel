@@ -31,7 +31,6 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.SpanContext;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.instrumentation.log4j.appender.v2_17.OpenTelemetryAppender;
 import io.opentelemetry.sdk.logs.data.LogRecordData;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
@@ -67,7 +66,6 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     CamelOpenTelemetryTestSupport(SpanTestData[] expected) {
         this.expected = expected;
-        OpenTelemetryAppender.install(otelExtension.getOpenTelemetry());
     }
 
     @AfterEach
