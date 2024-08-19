@@ -347,7 +347,7 @@
         <maven-resolver-version>1.9.22</maven-resolver-version>
         <maven-shade-plugin-version>3.6.0</maven-shade-plugin-version>
         <maven-shared-utils-plugin-version>3.4.2</maven-shared-utils-plugin-version>
-        <maven-surefire-report-plugin-version>3.3.1</maven-surefire-report-plugin-version>
+        <maven-surefire-report-plugin-version>3.4.0</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.27</metrics-version>
