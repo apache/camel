@@ -270,7 +270,7 @@
         <jcache-version>1.1.1</jcache-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.1.4</jedis-client-version>
-        <jetcd-version>0.8.2</jetcd-version>
+        <jetcd-version>0.8.3</jetcd-version>
         <jetty-version>12.0.12</jetty-version>
 		<jetty-for-solr-version>10.0.20</jetty-for-solr-version>        
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
