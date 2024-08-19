@@ -182,7 +182,7 @@
         <gmavenplus-plugin-version>3.0.2</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.24.1</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.6.0</google-api-client-version>
-        <google-api-services-drive-version>v3-rev20240730-2.0.0</google-api-services-drive-version>
+        <google-api-services-drive-version>v3-rev20240809-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20240705-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20240730-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
