@@ -56,9 +56,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         RouteController rc = getCamelContext().getRouteController();
-        if (rc instanceof SupervisingRouteController) {
-            SupervisingRouteController src = (SupervisingRouteController) rc;
-
+        if (rc instanceof SupervisingRouteController src) {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
             routes.addAll(src.getExhaustedRoutes());
@@ -169,9 +167,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
         final List<JsonObject> list = new ArrayList<>();
 
         RouteController rc = getCamelContext().getRouteController();
-        if (rc instanceof SupervisingRouteController) {
-            SupervisingRouteController src = (SupervisingRouteController) rc;
-
+        if (rc instanceof SupervisingRouteController src) {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
             routes.addAll(src.getExhaustedRoutes());
