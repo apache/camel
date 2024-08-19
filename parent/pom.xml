@@ -351,7 +351,7 @@
         <maven-surefire-report-plugin-version>3.3.1</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
-        <metrics-version>4.2.26</metrics-version>
+        <metrics-version>4.2.27</metrics-version>
         <micrometer-version>1.13.3</micrometer-version>
         <micrometer-tracing-version>1.3.3</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
