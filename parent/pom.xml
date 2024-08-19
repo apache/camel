@@ -407,7 +407,7 @@
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.8.Final</protostream-version>
         <prowide-version>SRU2023-10.1.7</prowide-version>
-        <pubnub-version>9.2.3</pubnub-version>
+        <pubnub-version>9.2.4</pubnub-version>
         <pulsar-version>3.3.1</pulsar-version>
         <qdrant-client-version>1.11.0</qdrant-client-version>
         <qpid-broker-version>9.2.0</qpid-broker-version>
