@@ -51,7 +51,8 @@ public interface GoogleMailStreamComponentBuilderFactory {
     interface GoogleMailStreamComponentBuilder extends ComponentBuilder<GoogleMailStreamComponent> {
     
         /**
-         * Google mail application name. Example would be camel-google-mail/1.0.
+         * Google mail application name. Example would be
+         * camel-google-mail/1.0.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -91,7 +91,8 @@ public interface SpringRabbitmqComponentBuilderFactory {
          * that when Camel starts that all the JMS consumers have a valid
          * connection to the JMS broker. If a connection cannot be granted then
          * Camel throws an exception on startup. This ensures that Camel is not
-         * started with failed connections. The JMS producers is tested as well.
+         * started with failed connections. The JMS producers is tested as
+         * well.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -392,7 +393,8 @@ public interface SpringRabbitmqComponentBuilderFactory {
     
         /**
          * Custom retry configuration to use. If this is configured then the
-         * other settings such as maximumRetryAttempts for retry are not in use.
+         * other settings such as maximumRetryAttempts for retry are not in
+         * use.
          * 
          * The option is a:
          * &lt;code&gt;org.springframework.retry.interceptor.RetryOperationsInterceptor&lt;/code&gt; type.
@@ -514,7 +516,8 @@ public interface SpringRabbitmqComponentBuilderFactory {
          * Specify arguments for configuring the different RabbitMQ concepts, a
          * different prefix is required for each element: consumer. exchange.
          * queue. binding. dlq.exchange. dlq.queue. dlq.binding. For example to
-         * declare a queue with message ttl argument: queue.x-message-ttl=60000.
+         * declare a queue with message ttl argument:
+         * queue.x-message-ttl=60000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -588,7 +591,8 @@ public interface SpringRabbitmqComponentBuilderFactory {
     
         /**
          * To use a custom MessagePropertiesConverter so you can be in control
-         * how to map to/from a org.springframework.amqp.core.MessageProperties.
+         * how to map to/from a
+         * org.springframework.amqp.core.MessageProperties.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.springrabbit.MessagePropertiesConverter&lt;/code&gt; type.

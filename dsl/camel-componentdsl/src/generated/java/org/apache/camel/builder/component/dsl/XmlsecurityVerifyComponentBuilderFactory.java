@@ -288,7 +288,8 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
     
         
         /**
-         * Enables secure validation. If true then secure validation is enabled.
+         * Enables secure validation. If true then secure validation is
+         * enabled.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 

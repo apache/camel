@@ -134,7 +134,8 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a custom MessageInterpolator.
          * 
          * The option is a:
-         * &lt;code&gt;jakarta.validation.MessageInterpolator&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.MessageInterpolator&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
          * 
@@ -150,7 +151,8 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a custom TraversableResolver.
          * 
          * The option is a:
-         * &lt;code&gt;jakarta.validation.TraversableResolver&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.TraversableResolver&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
          * 
