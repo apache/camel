@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RuntimeCamelException;
@@ -54,12 +55,7 @@ public class PdfMergeTest extends CamelTestSupport {
         File pdfFile2 = File.createTempFile("pdf2", "pdf");
         document2.save(pdfFile2);
 
-        template.sendBodyAndHeader("direct:start", "", PdfHeaderConstants.FILES_TO_MERGE_HEADER_NAME, new ArrayList<File>() {
-            {
-                add(pdfFile1);
-                add(pdfFile2);
-            }
-        });
+        template.sendBodyAndHeader("direct:start", "", PdfHeaderConstants.FILES_TO_MERGE_HEADER_NAME, List.of(pdfFile1, pdfFile2));
 
         resultEndpoint.setExpectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(exchange -> {

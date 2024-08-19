@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.component.pdf.text.AutoFormattedWriterAbstractFactory;
 import org.apache.camel.component.pdf.text.LineBuilderStrategy;
 import org.apache.camel.component.pdf.text.LineTerminationWriterAbstractFactory;
@@ -29,6 +30,7 @@ import org.apache.camel.component.pdf.text.SplitStrategy;
 import org.apache.camel.component.pdf.text.TextProcessingAbstractFactory;
 import org.apache.camel.component.pdf.text.WriteStrategy;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.pdfbox.io.RandomAccessStreamCacheImpl;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -83,11 +85,11 @@ public class PdfProducer extends DefaultProducer {
         exchange.getMessage().setBody(result);
     }
 
-    private OutputStream doMerge(Exchange exchange) throws IOException {
+    private OutputStream doMerge(Exchange exchange) throws IOException, NoSuchHeaderException {
         LOG.debug("Got {} operation, going to merge multiple files into a single pdf document.",
                 pdfConfiguration.getOperation());
         PDFMergerUtility mergerUtility = new PDFMergerUtility();
-        List<File> files = exchange.getIn().getHeader(FILES_TO_MERGE_HEADER_NAME, new ArrayList<File>(), List.class);
+        List<File> files = ExchangeHelper.getMandatoryHeader(exchange, FILES_TO_MERGE_HEADER_NAME, List.class);
         if (files.size() < 2) {
             throw new IllegalArgumentException("Must provide at least 2 files to merge");
         }
