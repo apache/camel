@@ -23,13 +23,13 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
 
-/**
- * Represents a list of TLS/SSL cipher suite names.
- */
+import org.apache.camel.spi.Metadata;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "secureSocketProtocolsParameters", propOrder = { "secureSocketProtocol" })
 public class SecureSocketProtocolsParametersDefinition {
 
+    @Metadata(description = "The protocol for the secure sockets created by the SSLContext")
     private List<String> secureSocketProtocol;
 
     /**

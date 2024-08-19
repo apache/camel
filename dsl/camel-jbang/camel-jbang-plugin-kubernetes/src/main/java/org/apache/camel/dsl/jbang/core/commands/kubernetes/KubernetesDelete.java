@@ -70,7 +70,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             return 1;
         }
 
-        File manifest = new File(resolvedWorkingDir, "target/kubernetes/kubernetes.yml");
+        File manifest = KubernetesHelper.resolveKubernetesManifest(new File(resolvedWorkingDir, "target/kubernetes"));
         try (FileInputStream fis = new FileInputStream(manifest)) {
             List<StatusDetails> status;
             if (namespace != null) {

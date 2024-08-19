@@ -187,7 +187,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 sb.append(exp);
             }
         }
-        return sb.toString();
+        String code = sb.toString();
+        code = code.replace(BaseSimpleParser.CODE_START, "");
+        code = code.replace(BaseSimpleParser.CODE_END, "");
+        return code;
     }
 
     /**

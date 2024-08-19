@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.util.StringHelper;
+
 /**
  * Source code generate for csimple language.
  *
@@ -60,7 +62,7 @@ public class CSimpleCodeGenerator {
 
     private CSimpleGeneratedCode generateCode(String fqn, String script, boolean predicate) {
         String text = script;
-        // text should be single line and trimmed as it can be multi lined
+        // text should be single line and trimmed as it can be multi-lined
         text = text.replaceAll("\n", "");
         text = text.trim();
 
@@ -96,6 +98,7 @@ public class CSimpleCodeGenerator {
         sb.append("public class ").append(name).append(" extends org.apache.camel.language.csimple.CSimpleSupport {\n");
         sb.append("\n");
         sb.append("    Language bean;\n");
+        sb.append("    UuidGenerator uuid;\n");
         sb.append("\n");
         sb.append("    public ").append(name).append("() {\n");
         sb.append("    }\n");
@@ -111,7 +114,7 @@ public class CSimpleCodeGenerator {
         sb.append("    public String getText() {\n");
         // \ should be escaped
         String escaped = text.replace("\\", "\\\\");
-        // we need to escape all " so its a single literal string
+        // we need to escape all " so it's a single literal string
         escaped = escaped.replace("\"", "\\\"");
         sb.append("        return \"").append(escaped).append("\";\n");
         sb.append("    }\n");
@@ -121,9 +124,6 @@ public class CSimpleCodeGenerator {
         sb.append(
                 "    public Object evaluate(CamelContext context, Exchange exchange, Message message, Object body) throws Exception {\n");
         sb.append("        ");
-        if (!script.contains("return ")) {
-            sb.append("return ");
-        }
 
         if (predicate) {
             CSimplePredicateParser parser = new CSimplePredicateParser();
@@ -136,11 +136,19 @@ public class CSimpleCodeGenerator {
             CSimpleExpressionParser parser = new CSimpleExpressionParser();
             script = parser.parseExpression(script);
             if (script.isBlank()) {
-                // an expression can be whitespace but then we need to wrap this in quotes
+                // an expression can be whitespace, but then we need to wrap this in quotes
                 script = "\"" + script + "\"";
             }
         }
+        String uuid = null;
+        if (script.startsWith("    UuidGenerator uuid")) {
+            uuid = StringHelper.before(script, "\n") + "\n";
+            script = StringHelper.after(script, "\n");
+        }
 
+        if (!script.contains("return ")) {
+            sb.append("return ");
+        }
         sb.append(script);
         if (!script.endsWith("}") && !script.endsWith(";")) {
             sb.append(";");
@@ -161,7 +169,12 @@ public class CSimpleCodeGenerator {
         sb.append("}\n");
         sb.append("\n");
 
-        return new CSimpleGeneratedCode(qn + "." + name, sb.toString());
+        String code = sb.toString();
+        if (uuid != null) {
+            code = code.replace("    UuidGenerator uuid;\n", uuid);
+        }
+
+        return new CSimpleGeneratedCode(qn + "." + name, code);
     }
 
     private String alias(String script) {

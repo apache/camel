@@ -299,26 +299,26 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     }
 
     private void addSignedMessageHeaders(Map<String, Object> headers) {
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.SIGNED);
-        headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
-        headers.put("CamelAS2.signingCertificateChain", new Certificate[] { clientCert });
-        headers.put("CamelAS2.signingPrivateKey", clientKeyPair.getPrivate());
-        headers.put("CamelAS2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.SIGNED);
+        headers.put("CamelAs2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        headers.put("CamelAs2.signingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.signingPrivateKey", clientKeyPair.getPrivate());
+        headers.put("CamelAs2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
     }
 
     // Headers required for a client to call the AS2 'send' api.
     private Map<String, Object> getAS2Headers() {
         final Map<String, Object> headers = new HashMap<>();
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
-        headers.put("CamelAS2.subject", SUBJECT);
-        headers.put("CamelAS2.from", FROM);
-        headers.put("CamelAS2.as2From", AS2_NAME);
-        headers.put("CamelAS2.as2To", AS2_NAME);
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.subject", SUBJECT);
+        headers.put("CamelAs2.from", FROM);
+        headers.put("CamelAs2.as2From", AS2_NAME);
+        headers.put("CamelAs2.as2To", AS2_NAME);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
-        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
 
         return headers;
     }
@@ -326,7 +326,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     // Headers requesting that the AS2-MDN (receipt) be returned asynchronously
     private Map<String, Object> getAS2HeadersForAsyncReceipt() {
         Map<String, Object> headers = getAS2Headers();
-        headers.put("CamelAS2.receiptDeliveryOption", RECIPIENT_DELIVERY_ADDRESS);
+        headers.put("CamelAs2.receiptDeliveryOption", RECIPIENT_DELIVERY_ADDRESS);
 
         return headers;
     }

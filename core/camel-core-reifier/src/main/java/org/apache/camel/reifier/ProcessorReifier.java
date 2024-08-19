@@ -68,6 +68,7 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.PausableDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
+import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -267,6 +268,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new PipelineReifier(route, definition);
         } else if (definition instanceof PolicyDefinition) {
             return new PolicyReifier(route, definition);
+        } else if (definition instanceof PollDefinition) {
+            return new PollReifier(route, definition);
         } else if (definition instanceof PollEnrichDefinition) {
             return new PollEnrichReifier(route, definition);
         } else if (definition instanceof ProcessDefinition) {

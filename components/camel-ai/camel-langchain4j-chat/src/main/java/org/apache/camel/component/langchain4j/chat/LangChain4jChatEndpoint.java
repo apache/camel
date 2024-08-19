@@ -142,4 +142,11 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
     public void setCamelToolParameter(CamelSimpleToolParameter camelToolParameter) {
         this.camelToolParameter = camelToolParameter;
     }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        CamelToolExecutorCache.getInstance().getTools().clear();
+    }
 }

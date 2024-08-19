@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 120 options, which are listed below.
+The camel.main supports 121 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -39,6 +39,7 @@ The camel.main supports 120 options, which are listed below.
 | *camel.main.beanPostProcessor{zwsp}Enabled* | Can be used to turn off bean post processing. Be careful to turn this off, as this means that beans that use Camel annotations such as org.apache.camel.EndpointInject , org.apache.camel.ProducerTemplate , org.apache.camel.Produce , org.apache.camel.Consume etc will not be injected and in use. Turning this off should only be done if you are sure you do not use any of these Camel features. Not all runtimes allow turning this off. The default value is true (enabled). | true | boolean
 | *camel.main.camelEvents{zwsp}TimestampEnabled* | Whether to include timestamps for all emitted Camel Events. Enabling this allows to know fine-grained at what time each event was emitted, which can be used for reporting to report exactly the time of the events. This is by default false to avoid the overhead of including this information. | false | boolean
 | *camel.main.caseInsensitive{zwsp}Headers* | Whether to use case sensitive or insensitive headers. Important: When using case sensitive (this is set to false). Then the map is case sensitive which means headers such as content-type and Content-Type are two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers. However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care. Default is true. | true | boolean
+| *camel.main.cloudProperties{zwsp}Location* | Sets the locations (comma separated values) where to find properties configuration as defined for cloud native environments such as Kubernetes. You should only scan text based mounted configuration. |  | String
 | *camel.main.compileWorkDir* | Work directory for compiler. Can be used to write compiled classes or other resources. |  | String
 | *camel.main.configuration{zwsp}Classes* | Sets classes names that will be used to configure the camel context as example by providing custom beans through org.apache.camel.BindToRegistry annotation. |  | String
 | *camel.main.configurations* | Sets the configuration objects used to configure the camel context. |  | List
@@ -244,16 +245,29 @@ The camel.trace supports 14 options, which are listed below.
 
 
 === Camel SSL configurations
-The camel.ssl supports 6 options, which are listed below.
+The camel.ssl supports 19 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.ssl.certAlias* | An optional certificate alias to use. This is useful when the keystore has multiple certificates. |  | String
+| *camel.ssl.cipherSuites* | List of TLS/SSL cipher suite algorithm names. Multiple names can be separated by comma. |  | String
+| *camel.ssl.cipherSuitesExclude* | Filters TLS/SSL cipher suites algorithms names. This filter is used for excluding algorithms that matches the naming pattern. Multiple names can be separated by comma. Notice that if the cipherSuites option has been configured then the include/exclude filters are not in use. |  | String
+| *camel.ssl.cipherSuitesInclude* | Filters TLS/SSL cipher suites algorithms names. This filter is used for including algorithms that matches the naming pattern. Multiple names can be separated by comma. Notice that if the cipherSuites option has been configured then the include/exclude filters are not in use. |  | String
 | *camel.ssl.clientAuthentication* | Sets the configuration for server-side client-authentication requirements | NONE | String
 | *camel.ssl.enabled* | Enables SSL in your Camel application. | false | boolean
-| *camel.ssl.keyStore* | Sets the SSL Keystore resource. |  | String
+| *camel.ssl.keyManagerAlgorithm* | Algorithm name used for creating the KeyManagerFactory. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
+| *camel.ssl.keyManagerProvider* | To use a specific provider for creating KeyManagerFactory. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
+| *camel.ssl.keyStore* | The file path, class path resource, or URL of the resource used to load the key store. file:nameOfFile - to refer to the file system classpath:nameOfFile - to refer to the classpath (default) http:uri - to load the resource using HTTP ref:nameOfBean - to lookup an existing KeyStore instance from the registry. |  | String
 | *camel.ssl.keystorePassword* | Sets the SSL Keystore password. |  | String
-| *camel.ssl.trustStore* | Sets the SSL Truststore resource. |  | String
+| *camel.ssl.keyStoreProvider* | To use a specific provider for creating KeyStore. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
+| *camel.ssl.keyStoreType* | The type of the key store to load. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
+| *camel.ssl.provider* | To use a specific provider for creating SSLContext. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
+| *camel.ssl.secureRandom{zwsp}Algorithm* | Algorithm name used for creating the SecureRandom. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
+| *camel.ssl.secureRandomProvider* | To use a specific provider for creating SecureRandom. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
+| *camel.ssl.secureSocketProtocol* | The protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
+| *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
+| *camel.ssl.trustStore* | The file path, class path resource, or URL of the resource used to load the trust store. An existing java.security.KeyStore can also be referred using #bean:name syntax. |  | String
 | *camel.ssl.trustStorePassword* | Sets the SSL Truststore password. |  | String
 |===
 

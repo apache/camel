@@ -324,6 +324,38 @@ public interface PlatformHttpEndpointBuilderFactory {
         }
 
         /**
+         * Whether to include HTTP request headers (Accept, User-Agent, etc.)
+         * into HTTP response produced by this endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param returnHttpRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder returnHttpRequestHeaders(boolean returnHttpRequestHeaders) {
+            doSetProperty("returnHttpRequestHeaders", returnHttpRequestHeaders);
+            return this;
+        }
+        /**
+         * Whether to include HTTP request headers (Accept, User-Agent, etc.)
+         * into HTTP response produced by this endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param returnHttpRequestHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder returnHttpRequestHeaders(String returnHttpRequestHeaders) {
+            doSetProperty("returnHttpRequestHeaders", returnHttpRequestHeaders);
+            return this;
+        }
+        /**
          * Whether to enable the Cookie Handler that allows Cookie addition,
          * expiry, and retrieval (currently only supported by
          * camel-platform-http-vertx).

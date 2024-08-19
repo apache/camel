@@ -518,4 +518,14 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         return false;
     }
 
+    private static String asString(AnnotationInstance ai, String name) {
+        if (ai != null) {
+            AnnotationValue av = ai.value(name);
+            if (av != null) {
+                return av.asString();
+            }
+        }
+        return null;
+    }
+
 }

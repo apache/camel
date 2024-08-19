@@ -37,6 +37,13 @@ public class CipherSuitesParameters {
         return this.cipherSuite;
     }
 
+    public void addCipherSuite(String cipher) {
+        if (this.cipherSuite == null) {
+            this.cipherSuite = new ArrayList<>();
+        }
+        this.cipherSuite.add(cipher.trim());
+    }
+
     /**
      * Sets the cipher suite. It creates a copy of the given cipher suite.
      *

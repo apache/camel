@@ -106,10 +106,9 @@ public class DataType {
 
     @Override
     public boolean equals(Object target) {
-        if (target instanceof DataType) {
-            DataType targetdt = (DataType) target;
-            String targetScheme = targetdt.getScheme();
-            String targetName = targetdt.getName();
+        if (target instanceof DataType targetDt) {
+            String targetScheme = targetDt.getScheme();
+            String targetName = targetDt.getName();
             if (targetScheme == null) {
                 return false;
             } else if (targetName == null) {

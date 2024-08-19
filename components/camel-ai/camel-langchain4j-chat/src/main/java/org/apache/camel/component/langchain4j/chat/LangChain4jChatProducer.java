@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.chat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -170,9 +171,12 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
         }
 
-        if (CamelToolExecutorCache.getInstance().getTools().containsKey(langChain4jChatEndpoint.getChatId())) {
-            List<ToolSpecification> toolSpecifications = CamelToolExecutorCache.getInstance().getTools()
-                    .get(langChain4jChatEndpoint.getChatId()).stream()
+        final Map<String, Set<CamelToolSpecification>> tools = CamelToolExecutorCache.getInstance().getTools();
+        if (tools.containsKey(langChain4jChatEndpoint.getChatId())) {
+            final Set<CamelToolSpecification> camelToolSpecificationSet = tools
+                    .get(langChain4jChatEndpoint.getChatId());
+
+            final List<ToolSpecification> toolSpecifications = camelToolSpecificationSet.stream()
                     .map(camelToolSpecification -> camelToolSpecification.getToolSpecification())
                     .collect(Collectors.toList());
 

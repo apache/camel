@@ -40,6 +40,7 @@ import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
@@ -205,6 +206,46 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals("http", ports.get(0).getName());
         Assertions.assertEquals(80, ports.get(0).getPort());
         Assertions.assertEquals("http", ports.get(0).getTargetPort().getStrVal());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddIngressSpec(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "ingress.host=example.com",
+                "--trait", "ingress.path=/something(/|$)(.*)",
+                "--trait", "ingress.pathType=ImplementationSpecific",
+                "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/$2",
+                "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true",
+                "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        Deployment deployment = getDeployment(rt);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("route-service", deployment.getMetadata().getName());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertEquals(1, container.getPorts().size());
+        Assertions.assertEquals("http", container.getPorts().get(0).getName());
+        Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        Ingress ingress = getIngress(rt);
+        Assertions.assertEquals("route-service", ingress.getMetadata().getName());
+        Assertions.assertEquals("example.com", ingress.getSpec().getRules().get(0).getHost());
+        Assertions.assertEquals("/something(/|$)(.*)",
+                ingress.getSpec().getRules().get(0).getHttp().getPaths().get(0).getPath());
+        Assertions.assertEquals("ImplementationSpecific",
+                ingress.getSpec().getRules().get(0).getHttp().getPaths().get(0).getPathType());
+        Assertions.assertEquals("route-service",
+                ingress.getSpec().getRules().get(0).getHttp().getPaths().get(0).getBackend().getService().getName());
+        Assertions.assertEquals("http",
+                ingress.getSpec().getRules().get(0).getHttp().getPaths().get(0).getBackend().getService().getPort().getName());
+        Assertions.assertEquals("/$2",
+                ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/rewrite-target"));
+        Assertions.assertEquals("true", ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/use-regex"));
     }
 
     @ParameterizedTest
@@ -684,6 +725,11 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find service for: %s".formatted(rt.runtime())));
     }
 
+    private Ingress getIngress(RuntimeType rt) throws IOException {
+        return getResource(rt, Ingress.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find ingress for: %s".formatted(rt.runtime())));
+    }
+
     private boolean hasService(RuntimeType rt) throws IOException {
         return getResource(rt, Service.class).isPresent();
     }
@@ -694,7 +740,10 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
     private <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
         if (rt == RuntimeType.quarkus) {
-            try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/kubernetes/kubernetes.yml"))) {
+            try (FileInputStream fis
+                    = new FileInputStream(
+                            KubernetesHelper.getKubernetesManifest(ClusterType.KUBERNETES.name(),
+                                    new File(workingDir, "/src/main/kubernetes")))) {
                 List<HasMetadata> resources = kubernetesClient.load(fis).items();
                 return resources.stream()
                         .filter(it -> type.isAssignableFrom(it.getClass()))

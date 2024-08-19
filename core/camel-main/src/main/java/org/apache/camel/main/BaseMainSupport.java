@@ -20,6 +20,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -85,10 +92,13 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.jsse.CipherSuitesParameters;
+import org.apache.camel.support.jsse.FilterParameters;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.SecureRandomParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
@@ -415,6 +425,15 @@ public abstract class BaseMainSupport extends BaseService {
         if (op != null) {
             pc.setOverrideProperties(op);
         }
+
+        Optional<String> cloudLocations = pc.resolveProperty(MainConstants.CLOUD_PROPERTIES_LOCATION);
+        if (cloudLocations.isPresent()) {
+            LOG.info("Cloud properties location: {}", cloudLocations);
+            final Properties kp = tryLoadCloudProperties(op, cloudLocations.get());
+            if (kp != null) {
+                pc.setOverrideProperties(kp);
+            }
+        }
     }
 
     private Properties tryLoadProperties(
@@ -431,6 +450,43 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
         return ip;
+    }
+
+    private static Properties tryLoadCloudProperties(
+            Properties overridProperties, String cloudPropertiesLocations)
+            throws IOException {
+        final OrderedLocationProperties cp = new OrderedLocationProperties();
+        try {
+            String[] locations = cloudPropertiesLocations.split(",");
+            for (String loc : locations) {
+                Path confPath = Paths.get(loc);
+                if (Files.exists(confPath) && Files.isDirectory(confPath)) {
+                    Files.walkFileTree(confPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            if (!Files.isDirectory(file)) {
+                                try {
+                                    String val = new String(Files.readAllBytes(file));
+                                    cp.put(loc, file.getFileName().toString(), val);
+                                } catch (IOException e) {
+                                    LOG.warn("Some error happened while reading property from cloud configuration file {}",
+                                            file, e);
+                                }
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (overridProperties == null) {
+            return cp;
+        }
+        Properties mergedProperties = new Properties(overridProperties);
+        mergedProperties.putAll(cp);
+        return mergedProperties;
     }
 
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
@@ -1601,39 +1657,88 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
-        String password = sslConfig.getKeystorePassword();
         KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(camelContext);
         ksp.setResource(sslConfig.getKeyStore());
-        ksp.setPassword(password);
+        ksp.setType(sslConfig.getKeyStoreType());
+        ksp.setPassword(sslConfig.getKeystorePassword());
+        ksp.setProvider(sslConfig.getKeyStoreProvider());
 
         KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword(password);
+        kmp.setCamelContext(camelContext);
+        kmp.setKeyPassword(sslConfig.getKeystorePassword());
         kmp.setKeyStore(ksp);
+        kmp.setAlgorithm(sslConfig.getKeyManagerAlgorithm());
+        kmp.setProvider(sslConfig.getKeyManagerProvider());
 
-        final SSLContextParameters sslContextParameters = createSSLContextParameters(sslConfig, kmp);
-
+        final SSLContextParameters sslContextParameters = createSSLContextParameters(camelContext, sslConfig, kmp);
         camelContext.setSSLContextParameters(sslContextParameters);
     }
 
     private static SSLContextParameters createSSLContextParameters(
+            CamelContext camelContext,
             SSLConfigurationProperties sslConfig, KeyManagersParameters kmp) {
+
         TrustManagersParameters tmp = null;
         if (sslConfig.getTrustStore() != null) {
             KeyStoreParameters tsp = new KeyStoreParameters();
-            tsp.setResource(sslConfig.getTrustStore());
+            String store = sslConfig.getTrustStore();
+            if (store != null && store.startsWith("#bean:")) {
+                tsp.setKeyStore(CamelContextHelper.mandatoryLookup(camelContext, store.substring(6), KeyStore.class));
+            } else {
+                tsp.setResource(store);
+            }
             tsp.setPassword(sslConfig.getTrustStorePassword());
-
             tmp = new TrustManagersParameters();
+            tmp.setCamelContext(camelContext);
             tmp.setKeyStore(tsp);
         }
 
         SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setCamelContext(camelContext);
         scsp.setClientAuthentication(sslConfig.getClientAuthentication());
 
+        SecureRandomParameters srp = null;
+        if (sslConfig.getSecureRandomAlgorithm() != null || sslConfig.getSecureRandomProvider() != null) {
+            srp = new SecureRandomParameters();
+            srp.setCamelContext(camelContext);
+            srp.setAlgorithm(sslConfig.getSecureRandomAlgorithm());
+            srp.setProvider(sslConfig.getSecureRandomProvider());
+        }
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setCamelContext(camelContext);
+        sslContextParameters.setProvider(sslConfig.getProvider());
+        sslContextParameters.setSecureSocketProtocol(sslConfig.getSecureSocketProtocol());
+        sslContextParameters.setCertAlias(sslConfig.getCertAlias());
+        if (sslConfig.getSessionTimeout() > 0) {
+            sslContextParameters.setSessionTimeout("" + sslConfig.getSessionTimeout());
+        }
+        if (sslConfig.getCipherSuites() != null) {
+            CipherSuitesParameters csp = new CipherSuitesParameters();
+            for (String c : sslConfig.getCipherSuites().split(",")) {
+                csp.addCipherSuite(c);
+            }
+            sslContextParameters.setCipherSuites(csp);
+        }
+        if (sslConfig.getCipherSuitesInclude() != null || sslConfig.getCipherSuitesExclude() != null) {
+            FilterParameters fp = new FilterParameters();
+            if (sslConfig.getCipherSuitesInclude() != null) {
+                for (String c : sslConfig.getCipherSuitesInclude().split(",")) {
+                    fp.addInclude(c);
+                }
+            }
+            if (sslConfig.getCipherSuitesExclude() != null) {
+                for (String c : sslConfig.getCipherSuitesExclude().split(",")) {
+                    fp.addExclude(c);
+                }
+            }
+            sslContextParameters.setCipherSuitesFilter(fp);
+        }
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
+        sslContextParameters.setSecureRandom(srp);
         return sslContextParameters;
     }
 

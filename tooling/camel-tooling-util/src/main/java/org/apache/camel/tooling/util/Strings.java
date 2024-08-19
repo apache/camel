@@ -70,6 +70,22 @@ public final class Strings {
     }
 
     /**
+     * Returns the string after the given token
+     *
+     * @param  text         the text
+     * @param  after        the token
+     * @param  defaultValue the default value
+     * @return              the text after the token, or default value if text does not contain the token
+     */
+    public static String after(String text, String after, String defaultValue) {
+        int index = text.indexOf(after);
+        if (index < 0) {
+            return defaultValue;
+        }
+        return text.substring(index + after.length());
+    }
+
+    /**
      * Returns the canonical class name by removing any generic type information.
      */
     public static String canonicalClassName(String className) {

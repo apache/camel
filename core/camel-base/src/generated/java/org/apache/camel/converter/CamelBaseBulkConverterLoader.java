@@ -199,7 +199,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof byte[]) {
                 return org.apache.camel.converter.ObjectConverter.toBoolean((byte[]) value, exchange);
             }
-        } else if (to == java.lang.Byte.class) {
+        } else if (to == java.lang.Byte.class || to == byte.class) {
             if (value instanceof java.lang.Number) {
                 Object obj = org.apache.camel.converter.ObjectConverter.toByte((java.lang.Number) value);
                 if (obj == null) {
@@ -765,7 +765,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == byte[].class) {
                 return this;
             }
-        } else if (to == java.lang.Byte.class) {
+        } else if (to == java.lang.Byte.class || to == byte.class) {
             if (from == java.lang.Number.class) {
                 return this;
             }

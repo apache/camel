@@ -46,9 +46,9 @@ public class RuntimeCamelException extends RuntimeException {
      * @return   the wrapper exception
      */
     public static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
-        if (e instanceof RuntimeCamelException) {
+        if (e instanceof RuntimeCamelException re) {
             // don't double wrap
-            return (RuntimeCamelException) e;
+            return re;
         } else {
             return new RuntimeCamelException(e);
         }
@@ -61,9 +61,9 @@ public class RuntimeCamelException extends RuntimeException {
      * @return   the wrapper exception
      */
     public static RuntimeException wrapRuntimeException(Throwable e) {
-        if (e instanceof RuntimeException) {
+        if (e instanceof RuntimeException re) {
             // don't double wrap
-            return (RuntimeException) e;
+            return re;
         } else {
             return new RuntimeCamelException(e);
         }

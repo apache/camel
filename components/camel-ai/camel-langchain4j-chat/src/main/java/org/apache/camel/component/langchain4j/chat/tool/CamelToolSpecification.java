@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.langchain4j.chat.tool;
 
+import java.util.Objects;
+
 import dev.langchain4j.agent.tool.ToolSpecification;
 import org.apache.camel.component.langchain4j.chat.LangChain4jChatConsumer;
 
@@ -47,5 +49,31 @@ public class CamelToolSpecification {
 
     public void setConsumer(LangChain4jChatConsumer consumer) {
         this.consumer = consumer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CamelToolSpecification that = (CamelToolSpecification) o;
+        return Objects.equals(toolSpecification, that.toolSpecification) && Objects.equals(consumer,
+                that.consumer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toolSpecification, consumer);
+    }
+
+    @Override
+    public String toString() {
+        return "CamelToolSpecification{" +
+               "toolSpecification=" + toolSpecification +
+               ", consumer=" + consumer +
+               '}';
     }
 }

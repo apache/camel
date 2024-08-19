@@ -24,16 +24,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
@@ -172,6 +175,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = RUN_PLATFORM_DIR + "/" + projectName;
 
+        printer().println("Exporting application ...");
+
+        // Cache export output in String for later usage in case of error
+        Printer runPrinter = printer();
+        StringPrinter exportPrinter = new StringPrinter();
+        getMain().withPrinter(exportPrinter);
+
         KubernetesExport export = new KubernetesExport(
                 getMain(), new KubernetesExport.ExportConfigurer(
                         runtime,
@@ -185,7 +195,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         openApi,
                         true,
                         true,
-                        true,
+                        false,
                         false,
                         "off"));
 
@@ -206,11 +216,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.labels = labels;
         export.traits = traits;
 
-        printer().println("Exporting application ...");
-
         int exit = export.export();
+
+        // Revert printer to this run command's printer
+        getMain().withPrinter(runPrinter);
         if (exit != 0) {
-            printer().println("Project export failed");
+            // print export command output with error details
+            printer().println(exportPrinter.getOutput());
             return exit;
         }
 
@@ -228,8 +240,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             File manifest;
             switch (output) {
-                case "yaml" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.yml");
-                case "json" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.json");
+                case "yaml" -> manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
+                case "json" ->
+                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes", "json");
                 default -> {
                     printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
                     return 1;
@@ -250,7 +263,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (exit != 0) {
-            printer().println("Deployment to Kubernetes failed!");
+            printer().println("Deployment to %s failed!".formatted(Optional.ofNullable(clusterType)
+                    .map(StringHelper::capitalize).orElse("Kubernetes")));
             return exit;
         }
 
@@ -326,7 +340,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deployQuarkus(String workingDir) throws IOException, InterruptedException {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // Run Quarkus build via Maven
         String mvnw = "/mvnw";
@@ -353,7 +368,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("-Dquarkus.container-image.push=true");
         }
 
-        args.add("-Dquarkus.kubernetes.deploy=true");
+        if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            args.add("-Dquarkus.openshift.deploy=true");
+        } else {
+            args.add("-Dquarkus.kubernetes.deploy=true");
+        }
 
         if (namespace != null) {
             args.add("-Dquarkus.kubernetes.namespace=%s".formatted(namespace));
@@ -382,7 +401,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deploySpringBoot(String workingDir) {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // TODO: implement SpringBoot Kubernetes deployment
         return 0;

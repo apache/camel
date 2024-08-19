@@ -88,6 +88,9 @@
           "policy" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.PolicyDefinition"
           },
+          "poll" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.PollDefinition"
+          },
           "pollEnrich" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.PollEnrichDefinition"
           },
@@ -3809,6 +3812,53 @@
           }
         },
         "required" : [ "ref" ]
+      },
+      "org.apache.camel.model.PollDefinition" : {
+        "title" : "Poll",
+        "description" : "Polls a message from a static endpoint",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "description" : {
+              "type" : "string",
+              "title" : "Description",
+              "description" : "Sets the description of this node"
+            },
+            "disabled" : {
+              "type" : "boolean",
+              "title" : "Disabled",
+              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "Sets the id of this node"
+            },
+            "parameters" : {
+              "type" : "object"
+            },
+            "timeout" : {
+              "type" : "string",
+              "title" : "Timeout",
+              "description" : "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is 20000 (20 seconds).",
+              "default" : "20000"
+            },
+            "uri" : {
+              "type" : "string",
+              "title" : "Uri",
+              "description" : "Sets the uri of the endpoint to poll from."
+            },
+            "variableReceive" : {
+              "type" : "string",
+              "title" : "Variable Receive",
+              "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current Message ."
+            }
+          }
+        } ],
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.PollEnrichDefinition" : {
         "title" : "Poll Enrich",

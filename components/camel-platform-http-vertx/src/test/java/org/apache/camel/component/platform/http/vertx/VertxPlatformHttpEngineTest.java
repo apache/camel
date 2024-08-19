@@ -61,6 +61,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.hc.client5.http.utils.Base64;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -584,7 +585,8 @@ public class VertxPlatformHttpEngineTest {
                 from("platform-http:/secure")
                         .process(exchange -> {
                             Message message = exchange.getMessage();
-                            message.setBody("Secure Route");
+                            message.setBody("Received message with the Authorization="
+                                            + exchange.getMessage().getHeader("Authorization"));
 
                             User user = message.getHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, User.class);
                             assertThat(user).isNotNull();
@@ -614,9 +616,8 @@ public class VertxPlatformHttpEngineTest {
                     .get("/secure")
                     .then()
                     .statusCode(200)
-                    .header("Authorization", notNullValue())
-                    .body(is("Secure Route"));
-
+                    .body(is("Received message with the Authorization=Basic "
+                             + Base64.encodeBase64String("camel:s3cr3t".getBytes())));
         } finally {
             context.stop();
             vertx.close();

@@ -88,6 +88,12 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "retryDelay": target.setRetryDelay(property(camelContext, int.class, value)); return true;
         case "routingkey":
         case "routingKey": target.setRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipbindqueue":
+        case "skipBindQueue": target.setSkipBindQueue(property(camelContext, boolean.class, value)); return true;
+        case "skipdeclareexchange":
+        case "skipDeclareExchange": target.setSkipDeclareExchange(property(camelContext, boolean.class, value)); return true;
+        case "skipdeclarequeue":
+        case "skipDeclareQueue": target.setSkipDeclareQueue(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
@@ -165,6 +171,12 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "retryDelay": return int.class;
         case "routingkey":
         case "routingKey": return java.lang.String.class;
+        case "skipbindqueue":
+        case "skipBindQueue": return boolean.class;
+        case "skipdeclareexchange":
+        case "skipDeclareExchange": return boolean.class;
+        case "skipdeclarequeue":
+        case "skipDeclareQueue": return boolean.class;
         case "synchronous": return boolean.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
@@ -243,6 +255,12 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "retryDelay": return target.getRetryDelay();
         case "routingkey":
         case "routingKey": return target.getRoutingKey();
+        case "skipbindqueue":
+        case "skipBindQueue": return target.isSkipBindQueue();
+        case "skipdeclareexchange":
+        case "skipDeclareExchange": return target.isSkipDeclareExchange();
+        case "skipdeclarequeue":
+        case "skipDeclareQueue": return target.isSkipDeclareQueue();
         case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();

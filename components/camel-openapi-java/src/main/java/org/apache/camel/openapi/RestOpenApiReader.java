@@ -645,11 +645,7 @@ public class RestOpenApiReader {
                     Schema<?> bodySchema = null;
                     if (type != null) {
                         if (type.endsWith("[]")) {
-                            type = type.substring(0, type.length() - 2);
-
-                            //                            Schema arrayModel = (Oas30Schema) bp.createSchema();
                             bodySchema = modelTypeAsProperty(type, openApi);
-
                         } else {
                             String ref = modelTypeAsRef(type, openApi);
                             if (ref != null) {

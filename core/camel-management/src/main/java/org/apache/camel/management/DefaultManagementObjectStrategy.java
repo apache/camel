@@ -63,6 +63,7 @@ import org.apache.camel.management.mbean.ManagedLog;
 import org.apache.camel.management.mbean.ManagedLoop;
 import org.apache.camel.management.mbean.ManagedMarshal;
 import org.apache.camel.management.mbean.ManagedMulticast;
+import org.apache.camel.management.mbean.ManagedPoll;
 import org.apache.camel.management.mbean.ManagedPollEnricher;
 import org.apache.camel.management.mbean.ManagedProcess;
 import org.apache.camel.management.mbean.ManagedProcessor;
@@ -132,6 +133,7 @@ import org.apache.camel.processor.LoopProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.PollEnricher;
+import org.apache.camel.processor.PollProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RemoveHeaderProcessor;
 import org.apache.camel.processor.RemoveHeadersProcessor;
@@ -465,6 +467,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, cast(definition));
             } else if (target instanceof Enricher) {
                 answer = new ManagedEnricher(context, (Enricher) target, cast(definition));
+            } else if (target instanceof PollProcessor) {
+                answer = new ManagedPoll(context, (PollProcessor) target, cast(definition));
             } else if (target instanceof PollEnricher) {
                 answer = new ManagedPollEnricher(context, (PollEnricher) target, cast(definition));
             }

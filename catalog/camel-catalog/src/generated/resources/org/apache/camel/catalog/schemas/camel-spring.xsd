@@ -1159,6 +1159,15 @@ Defines a policy the route will use
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="poll" type="tns:pollDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Polls a message from a static endpoint
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="pollEnrich" type="tns:pollEnrichDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3361,12 +3370,14 @@ the rules must return true. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:abstractJsseUtilFactoryBean">
         <xs:sequence/>
-        <xs:attribute name="type" type="xs:string">
+        <xs:attribute name="resource" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional type of the key store to load. See Appendix A in the Java Cryptography Architecture Standard Algorithm Name
-Documentation for more information on standard names.
+The keystore to load. The keystore is by default loaded from classpath. If you must load from file system, then use
+file: as prefix. file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default)
+http:uri (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry,
+for example for testing and development).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3375,7 +3386,17 @@ Documentation for more information on standard names.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional password for reading/opening/verifying the key store.
+The password for reading/opening/verifying the key store.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The type of the key store to create and load. See
+https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3384,16 +3405,16 @@ The optional password for reading/opening/verifying the key store.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional provider identifier for instantiating the key store.
+The provider identifier for instantiating the key store.
 ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="resource" type="xs:string">
+        <xs:attribute name="keyStore" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional file path, class path resource, or URL of the resource used to load the key store.
+To lookup an existing KeyStore instance from the registry, for example for testing and development.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3410,8 +3431,8 @@ The optional file path, class path resource, or URL of the resource used to load
             <xs:documentation xml:lang="en">
 <![CDATA[
 The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom
-represented by this object's configuration. See Appendix A in the Java Cryptography Architecture API Specification and
-Reference guide for information about standard RNG algorithm names.
+represented by this object's configuration. See
+https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3420,8 +3441,8 @@ Reference guide for information about standard RNG algorithm names.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional provider identifier for the SecureRandom factory method used to create the SecureRandom represented by this
-object's configuration.
+The provider identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's
+configuration.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3592,6 +3613,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4234,6 +4256,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4345,6 +4368,7 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4447,6 +4471,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -4532,6 +4557,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -5006,6 +5032,7 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6176,6 +6203,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6268,6 +6296,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6431,6 +6460,7 @@ Global option value.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6593,6 +6623,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6692,6 +6723,7 @@ intercepted.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6802,6 +6834,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -6903,6 +6936,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -7223,6 +7257,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -10632,6 +10667,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -10857,6 +10893,7 @@ controlling whether a completion callback should be invoked or not.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -11057,6 +11094,7 @@ its considered handled as well.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -11317,6 +11355,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -11399,6 +11438,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -11446,6 +11486,47 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets a reference to use for lookup the policy in the registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="pollDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+        <xs:attribute name="variableReceive" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a variable to store the received message body (only body, not headers). This is handy for easy access to the
+received message body via variables. Important: When using receive variable then the received body is stored only in
+this variable and not on the current Message .
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="uri" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the uri of the endpoint to poll from.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timeout" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It
+basically operations in three different modes: negative value - Waits until a message is available and then returns it.
+Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message
+exchange immediately without waiting and returning null if a message exchange is not available yet. positive value -
+Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available.
+Returns null if timed out The default value is 20000 (20 seconds). Default value: 20000
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12033,6 +12114,7 @@ Name of variable to remove.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -12384,6 +12466,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -12823,6 +12906,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -13282,6 +13366,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -13514,6 +13599,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -14138,6 +14224,7 @@ Whether to auto startup components when toD is starting up. Default value: true
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -14282,6 +14369,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:pausable"/>
             <xs:element ref="tns:pipeline"/>
             <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
             <xs:element ref="tns:pollEnrich"/>
             <xs:element ref="tns:process"/>
             <xs:element ref="tns:recipientList"/>
@@ -18101,7 +18189,7 @@ The optional SSLSessionContext timeout time for javax.net.ssl.SSLSession in seco
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional provider identifier for the JSSE implementation to use when constructing an SSLContext.
+The provider identifier for the JSSE implementation to use when constructing an SSLContext.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -18110,8 +18198,8 @@ The optional provider identifier for the JSSE implementation to use when constru
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See
-Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names.
+The protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See
+https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>

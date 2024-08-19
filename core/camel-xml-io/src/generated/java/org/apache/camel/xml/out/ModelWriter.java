@@ -181,6 +181,9 @@ public class ModelWriter extends BaseWriter {
     public void writePolicyDefinition(PolicyDefinition def) throws IOException {
         doWritePolicyDefinition("policy", def);
     }
+    public void writePollDefinition(PollDefinition def) throws IOException {
+        doWritePollDefinition("poll", def);
+    }
     public void writePollEnrichDefinition(PollEnrichDefinition def) throws IOException {
         doWritePollEnrichDefinition("pollEnrich", def);
     }
@@ -1293,6 +1296,14 @@ public class ModelWriter extends BaseWriter {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("ref", def.getRef());
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        endElement(name);
+    }
+    protected void doWritePollDefinition(String name, PollDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("variableReceive", def.getVariableReceive());
+        doWriteAttribute("uri", def.getUri());
+        doWriteAttribute("timeout", def.getTimeout());
         endElement(name);
     }
     protected void doWritePollEnrichDefinition(String name, PollEnrichDefinition def) throws IOException {
@@ -3651,6 +3662,7 @@ public class ModelWriter extends BaseWriter {
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);
                 case "PolicyDefinition" -> doWritePolicyDefinition("policy", (PolicyDefinition) v);
+                case "PollDefinition" -> doWritePollDefinition("poll", (PollDefinition) v);
                 case "PollEnrichDefinition" -> doWritePollEnrichDefinition("pollEnrich", (PollEnrichDefinition) v);
                 case "ProcessDefinition" -> doWriteProcessDefinition("process", (ProcessDefinition) v);
                 case "RecipientListDefinition" -> doWriteRecipientListDefinition("recipientList", (RecipientListDefinition) v);
@@ -3753,6 +3765,7 @@ public class ModelWriter extends BaseWriter {
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);
                 case "PolicyDefinition" -> doWritePolicyDefinition("policy", (PolicyDefinition) v);
+                case "PollDefinition" -> doWritePollDefinition("poll", (PollDefinition) v);
                 case "PollEnrichDefinition" -> doWritePollEnrichDefinition("pollEnrich", (PollEnrichDefinition) v);
                 case "ProcessDefinition" -> doWriteProcessDefinition("process", (ProcessDefinition) v);
                 case "RecipientListDefinition" -> doWriteRecipientListDefinition("recipientList", (RecipientListDefinition) v);

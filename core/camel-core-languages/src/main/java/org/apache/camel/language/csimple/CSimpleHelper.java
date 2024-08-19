@@ -17,6 +17,7 @@
 package org.apache.camel.language.csimple;
 
 import java.lang.reflect.Array;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
@@ -39,6 +41,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
@@ -67,6 +71,14 @@ public final class CSimpleHelper {
     private static ExchangeFormatter exchangeFormatter;
 
     private CSimpleHelper() {
+    }
+
+    public static <T> T convertTo(Exchange exchange, Class<T> type, Object value) {
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+    }
+
+    public static <T> T tryConvertTo(Exchange exchange, Class<T> type, Object value) {
+        return exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, value);
     }
 
     public static <T> T messageAs(Exchange exchange, Class<T> type) {
@@ -355,9 +367,7 @@ public final class CSimpleHelper {
     private static Object doDate(Exchange exchange, String commandWithOffsets, String timezone, String pattern) {
         final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
         final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
-
         Date date = evalDate(exchange, command);
-
         return LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
     }
 
@@ -695,4 +705,42 @@ public final class CSimpleHelper {
         return num;
     }
 
+    public static Object join(Exchange exchange, Object value, String separator, String prefix) {
+        Iterator<?> it = convertTo(exchange, Iterator.class, value);
+        StringBuilder sb = new StringBuilder();
+        while (it.hasNext()) {
+            Object o = it.next();
+            if (o != null) {
+                String s = tryConvertTo(exchange, String.class, o);
+                if (s != null) {
+                    if (!sb.isEmpty()) {
+                        sb.append(separator);
+                    }
+                    if (prefix != null) {
+                        sb.append(prefix);
+                    }
+                    sb.append(s);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static Object hash(Exchange exchange, Object value, String algorithm) {
+        byte[] data = convertTo(exchange, byte[].class, value);
+        if (data != null && data.length > 0) {
+            try {
+                MessageDigest digest = MessageDigest.getInstance(algorithm);
+                byte[] bytes = digest.digest(data);
+                return StringHelper.bytesToHex(bytes);
+            } catch (Exception e) {
+                throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+            }
+        }
+        return null;
+    }
+
+    public static UuidGenerator customUuidGenerator(Exchange exchange, String generator) {
+        return CamelContextHelper.mandatoryLookup(exchange.getContext(), generator, UuidGenerator.class);
+    }
 }

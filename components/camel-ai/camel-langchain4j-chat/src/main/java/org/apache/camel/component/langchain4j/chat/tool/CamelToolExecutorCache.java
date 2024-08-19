@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.langchain4j.chat.tool;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,32 +27,31 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class CamelToolExecutorCache {
 
-    private static CamelToolExecutorCache INSTANCE;
-    private Map<String, List<CamelToolSpecification>> tools;
+    private Map<String, Set<CamelToolSpecification>> tools;
 
     private CamelToolExecutorCache() {
         tools = new ConcurrentHashMap<>();
     }
 
-    public synchronized static CamelToolExecutorCache getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new CamelToolExecutorCache();
-        }
+    private static final class SingletonHolder {
+        private static final CamelToolExecutorCache INSTANCE = new CamelToolExecutorCache();
+    }
 
-        return INSTANCE;
+    public static CamelToolExecutorCache getInstance() {
+        return SingletonHolder.INSTANCE;
     }
 
     public void put(String chatId, CamelToolSpecification specification) {
         if (tools.get(chatId) != null) {
             tools.get(chatId).add(specification);
         } else {
-            List<CamelToolSpecification> camelToolSpecifications = new ArrayList<>();
+            Set<CamelToolSpecification> camelToolSpecifications = new LinkedHashSet<>();
             camelToolSpecifications.add(specification);
             tools.put(chatId, camelToolSpecifications);
         }
     }
 
-    public Map<String, List<CamelToolSpecification>> getTools() {
+    public Map<String, Set<CamelToolSpecification>> getTools() {
         return tools;
     }
 

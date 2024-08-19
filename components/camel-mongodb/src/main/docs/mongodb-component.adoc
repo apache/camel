@@ -146,7 +146,7 @@ from("direct:findById")
 *Supports optional parameters*
 
 This operation supports projection operators.
-See <<Specifying a fields filter (projection)>>.
+See <<Specifying a `fields` filter (projection)>>.
 ====
 
 ===== findOneByQuery
@@ -183,7 +183,7 @@ from("direct:findOneByQuery")
 *Supports optional parameters*
 
 This operation supports projection operators and sort clauses.
-See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
+See <<Specifying a `fields` filter (projection)>>, <<Specifying a sort clause>>.
 ====
 
 ===== findAll
@@ -231,7 +231,7 @@ from("direct:findAll")
 *Supports optional parameters*
 
 This operation supports projection operators and sort clauses.
-See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
+See <<Specifying a `fields` filter (projection)>>, <<Specifying a sort clause>>.
 ====
 
 ===== count

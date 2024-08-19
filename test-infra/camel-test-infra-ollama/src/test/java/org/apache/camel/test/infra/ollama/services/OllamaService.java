@@ -20,7 +20,7 @@ import org.apache.camel.test.infra.common.services.TestService;
 
 public interface OllamaService extends TestService {
 
-    String getBaseUrl();
+    String getEndpoint();
 
     String getModel();
 }

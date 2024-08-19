@@ -151,7 +151,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     @Override
     public String createCode(String expression) throws SimpleParserException {
         String answer;
-        // a function can either be a simple literal function, or contain nested functions
+        // a function can either be a simple literal function or contain nested functions
         if (block.getChildren().size() == 1 && block.getChildren().get(0) instanceof LiteralNode) {
             answer = doCreateLiteralCode(expression);
         } else {

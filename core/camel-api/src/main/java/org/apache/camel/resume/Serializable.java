@@ -43,16 +43,16 @@ public interface Serializable {
     default ByteBuffer serialize(Object obj) {
         ObjectHelper.notNull(obj, "Cannot perform serialization on a null object");
 
-        if (obj instanceof Long) {
+        if (obj instanceof Long value) {
             ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES + Long.BYTES);
             buffer.putInt(TYPE_LONG);
 
-            long data = ((Long) obj).longValue();
+            long data = value.longValue();
             buffer.putLong(data);
             return buffer;
         }
-        if (obj instanceof String) {
-            byte[] data = ((String) obj).getBytes();
+        if (obj instanceof String str) {
+            byte[] data = str.getBytes();
 
             ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES + data.length);
             buffer.putInt(TYPE_STRING);
@@ -60,9 +60,9 @@ public interface Serializable {
 
             return buffer;
         }
-        if (obj instanceof File) {
+        if (obj instanceof File file) {
 
-            byte[] data = ((File) obj).getPath().getBytes();
+            byte[] data = file.getPath().getBytes();
             ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES + data.length);
 
             buffer.putInt(TYPE_FILE);

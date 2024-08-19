@@ -54,8 +54,13 @@ public class Init extends CamelCommand {
 
     @Option(names = {
             "--dir",
-            "--directory" }, description = "Directory where the project will be saved", defaultValue = ".")
+            "--directory" }, description = "Directory relative path where the new Camel integration will be saved",
+            defaultValue = ".")
     private String directory;
+
+    @Option(names = { "--clean-dir", "--clean-directory" },
+            description = "Whether to clean directory first (deletes all files in directory)")
+    private boolean cleanDirectory;
 
     @Option(names = { "--from-kamelet" },
             description = "To be used when extending an existing Kamelet")
@@ -145,9 +150,11 @@ public class Init extends CamelCommand {
         IOHelper.close(is);
 
         if (!directory.equals(".")) {
+            if (cleanDirectory) {
+                // ensure target dir is created after clean
+                CommandHelper.cleanExportDir(directory);
+            }
             File dir = new File(directory);
-            CommandHelper.cleanExportDir(directory);
-            // ensure target dir is created after clean
             dir.mkdirs();
         }
         File target = new File(directory, file);
@@ -199,8 +206,10 @@ public class Init extends CamelCommand {
             // okay we downloaded something so prepare export dir
             if (!directory.equals(".")) {
                 File dir = new File(directory);
-                CommandHelper.cleanExportDir(directory);
-                // ensure target dir is created after clean
+                if (cleanDirectory) {
+                    // ensure target dir is created after clean
+                    CommandHelper.cleanExportDir(directory);
+                }
                 dir.mkdirs();
             }
 
@@ -233,8 +242,10 @@ public class Init extends CamelCommand {
             // okay we downloaded something so prepare export dir
             if (!directory.equals(".")) {
                 File dir = new File(directory);
-                CommandHelper.cleanExportDir(directory);
-                // ensure target dir is created after clean
+                if (cleanDirectory) {
+                    // ensure target dir is created after clean
+                    CommandHelper.cleanExportDir(directory);
+                }
                 dir.mkdirs();
             }
 

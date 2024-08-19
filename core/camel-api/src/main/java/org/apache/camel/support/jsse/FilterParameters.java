@@ -56,6 +56,20 @@ public class FilterParameters extends JsseParameters {
         return this.exclude;
     }
 
+    public void addInclude(String pattern) {
+        if (this.include == null) {
+            this.include = new ArrayList<>();
+        }
+        this.include.add(pattern.trim());
+    }
+
+    public void addExclude(String pattern) {
+        if (this.exclude == null) {
+            this.exclude = new ArrayList<>();
+        }
+        this.exclude.add(pattern.trim());
+    }
+
     /**
      * Returns a list of compiled {@code Pattern}s based on the values of the include list.
      *

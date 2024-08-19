@@ -25,13 +25,20 @@ public final class OllamaServiceFactory {
     }
 
     public static SimpleTestServiceBuilder<OllamaService> builder() {
-        return new SimpleTestServiceBuilder<>("org/apache/camel/test/infra/ollama");
+        return new SimpleTestServiceBuilder<>("ollama");
     }
 
     public static OllamaService createService() {
         return builder()
                 .addLocalMapping(OllamaLocalContainerService::new)
                 .addRemoteMapping(OllamaRemoteService::new)
+                .build();
+    }
+
+    public static OllamaService createServiceWithConfiguration(OllamaServiceConfiguration serviceConfiguration) {
+        return builder()
+                .addLocalMapping(() -> new OllamaLocalContainerService(serviceConfiguration))
+                .addRemoteMapping(() -> new OllamaRemoteService(serviceConfiguration))
                 .build();
     }
 }

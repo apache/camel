@@ -22,6 +22,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,11 +33,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
+import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -107,6 +116,9 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
                         String body = JettyCustomPlatformHttpConsumer.toString(responseStream);
                         exchange.getMessage().setBody(body);
                     }
+
+                    copyMessageHeadersToResponse(response, exchange.getMessage(), getEndpoint().getHeaderFilterStrategy(),
+                            exchange);
                     response.write(true,
                             ByteBuffer.wrap(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8)),
                             callback);
@@ -129,6 +141,36 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
         return contextHandler;
     }
 
+    private void copyMessageHeadersToResponse(
+            Response response,
+            Message message,
+            HeaderFilterStrategy headerFilterStrategy,
+            Exchange exchange) {
+        final TypeConverter tc = exchange.getContext().getTypeConverter();
+        for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
+            final String key = entry.getKey();
+            final Object value = entry.getValue();
+            final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
+
+            Set<String> responseHeadersFilledByJetty = Set.of("content-length");
+            if (responseHeadersFilledByJetty.contains(entry.getKey().toLowerCase())) {
+                continue;
+            }
+
+            HttpUtil.applyHeader(headerFilterStrategy, exchange, it, tc, key,
+                    (values, firstValue) -> applyHeader(response, key, values, firstValue));
+        }
+
+    }
+
+    private void applyHeader(Response response, String key, List<String> values, String firstValue) {
+        if (values != null) {
+            response.getHeaders().put(key, values);
+        } else if (firstValue != null) {
+            response.getHeaders().put(key, firstValue);
+        }
+    }
+
     private Exchange toExchange(Request request, String body) {
         final Exchange exchange = getEndpoint().createExchange();
         final Message message = new DefaultMessage(exchange);
@@ -137,6 +179,15 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
         if (charset != null) {
             exchange.setProperty(Exchange.CHARSET_NAME, charset);
             message.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
+        }
+
+        for (HttpField header : request.getHeaders()) {
+            String headerName = header.getName();
+            String headerValue = header.getValue();
+            if (getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(headerName, headerValue, exchange)) {
+                continue;
+            }
+            message.setHeader(header.getName(), header.getValue());
         }
 
         message.setBody(!body.isEmpty() ? body : null);

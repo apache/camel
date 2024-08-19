@@ -187,7 +187,8 @@ public class KubernetesExport extends Export {
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
             if (!quiet) {
-                printer().printf("Project export failed - %s%n", e.getMessage());
+                printer().printf("Project export failed: %s - %s%n", e.getMessage(),
+                        Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("unknown reason"));
             }
             return 1;
         }
@@ -270,33 +271,30 @@ public class KubernetesExport extends Export {
         if (runtime == RuntimeType.quarkus) {
 
             // Quarkus specific dependencies
-            if (clusterType != null && clusterType.equals("openshift")) {
+            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
                 addDependencies("io.quarkus:quarkus-openshift");
-                if (imageBuilder == null) {
-                    // use s2i image builder as a default on OpenShift
-                    imageBuilder = "s2i";
-                }
             } else {
                 addDependencies("io.quarkus:quarkus-kubernetes");
+
+                // on clusters other than OpenShift we need a default image builder
+                if (imageBuilder == null) {
+                    imageBuilder = "jib";
+                }
             }
 
-            // TODO: remove when fixed kubernetes-client version is part of the Quarkus platform
-            // pin kubernetes-client to this version because of https://github.com/fabric8io/kubernetes-client/issues/6059
-            addDependencies("io.fabric8:kubernetes-client:6.13.1");
+            // auto translate s2i image builder to openshift
+            if ("s2i".equals(imageBuilder)) {
+                imageBuilder = "openshift";
+            }
 
-            // Configure image builder - use Jib by default
-            if (imageBuilder == null) {
-                addDependencies("io.quarkus:quarkus-container-image-jib");
-            } else if (imageBuilder.equals("s2i")) {
-                addDependencies("io.quarkus:quarkus-container-image-openshift");
-            } else {
+            // Configure image builder
+            if (imageBuilder != null) {
                 addDependencies("io.quarkus:quarkus-container-image-%s".formatted(imageBuilder));
+                buildProperties.add("quarkus.container-image.builder=%s".formatted(imageBuilder));
             }
 
             // Quarkus specific properties
             buildProperties.add("quarkus.container-image.build=true");
-            buildProperties
-                    .add("quarkus.container-image.builder=%s".formatted(Optional.ofNullable(imageBuilder).orElse("jib")));
         }
 
         // SpringBoot Runtime specific
@@ -329,7 +327,7 @@ public class KubernetesExport extends Export {
         if (runtime == RuntimeType.quarkus) {
             var kubeManifest = kubeFragments.stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---\n"));
             safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)),
-                    new File(exportDir + "/src/main/kubernetes/kubernetes.yml"));
+                    KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes"));
         }
 
         // SpringBoot: dump each fragment to its respective kind
@@ -434,12 +432,10 @@ public class KubernetesExport extends Export {
             }
         }
 
-        if (clusterType != null) {
-            if (clusterType.equals("kind")) {
-                return "localhost:5001";
-            } else if (clusterType.equals("minikube")) {
-                return "localhost:5000";
-            }
+        if (ClusterType.KIND.isEqualTo(clusterType)) {
+            return "localhost:5001";
+        } else if (ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+            return "localhost:5000";
         }
 
         return null;

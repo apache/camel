@@ -3,16 +3,16 @@
 This plugin helps you to get started with running Camel applications on Kubernetes.
 Please make sure to meet these prerequisites for running Camel integrations on Kubernetes:
 
+* Install a Kubernetes command line tooling (https://kubernetes.io/docs/tasks/tools/#kubectl[kubectl])
 * Connect to a running Kubernetes cluster where you want to run the Camel integration
 
-To set up a local Kubernetes cluster you have several options.
-Camel JBang is able to interact with all of these Kubernetes platforms.
+You can connect to a remote Kubernetes cluster or set up a local cluster.
+To set up a local Kubernetes cluster you have a variety of options.
 
-* Kind
-* Minikube
-* any other local Kubernetes platform
+* https://kind.sigs.k8s.io/docs/user/quick-start/[Kind]
+* https://minikube.sigs.k8s.io/docs/start/[Minikube]
 
-Of course, you may also connect to a remote Kubernetes cluster.
+Camel JBang is able to interact with any of these Kubernetes platforms (remote or local).
 
 Running Camel routes on Kubernetes is quite simple with Camel JBang.
 In fact, you can develop and test your Camel route locally with Camel JBang and then promote the same source to running it as an integration on Kubernetes.
@@ -39,24 +39,33 @@ camel plugin get
 ----
 
 Now Camel JBang is able to run the subcommands offered by the plugin.
+You can inspect the help page to see the list of available plugin subcommands.
+
+[source,bash]
+----
+camel kubernetes --help
+----
 
 == Kubernetes export
 
 The Kubernetes plugin works with the Camel JBang export functionality.
 The project export generates a proper Maven/Gradle project following one of the available runtime types Quarkus, SpringBoot or camel-main.
 
-The exported project holds all information (e.g. sources, properties, dependencies, etc.) and is ready to build, push and deploy the application to Kubernetes.
-The Kubenretes export also generates a Kubernetes manifest (kubernetes.yml) that holds all resources (e.g. Deployment, Service, ConfigMap) required to run the application on Kubernetes.
+In case you export the project with the Kubernetes plugin the exported project holds all information (e.g. sources, properties, dependencies, etc.) and is ready to build, push and deploy the application to Kubernetes, too.
+The export generates a Kubernetes manifest (kubernetes.yml) that holds all resources (e.g. Deployment, Service, ConfigMap) required to run the application on Kubernetes.
 
-You can run the export with following command.
+You can create a project export with following command.
 
 [source,bash]
 ----
-camel kubernetes export route.yaml --runtime=quarkus --dir some/path/to/project
+camel kubernetes export route.yaml --dir some/path/to/project
 ----
 
 The command receives one or more source files (e.g. Camel routes) and performs the export.
 As a result you will find the Maven/Gradle project sources generated into the given project path.
+
+The default runtime of the project is Quarkus.
+You can adjust the runtime with an additional command option `--runtime=quarkus`.
 
 If you want to run this application on Kubernetes you need to build the container image, push it to a registry and deploy the application to Kubernetes.
 
@@ -102,6 +111,9 @@ The Camel JBang Kubernetes export command provides several options to customize 
 
 |--dependency
 |Adds dependency that should be included, use "camel:" prefix for a Camel component, "mvn:org.my:app:1.0" for a Maven dependency.
+
+|--build-property
+|Maven/Gradle build properties (syntax: --build-property=prop1=foo)
 
 |--property
 |Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]).
@@ -154,6 +166,10 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |--profile
 |The developer xref:manual::camel-jbang.adoc#_using_profiles[profile] to use a specific configuration in configuration files using the naming style `application-<profile>.properties`.
 |=======================================================================
+
+The Kubernetes plugin export command also inherits all options from the arbitrary Camel JBang export command.
+
+TIP: See the possible options by running: `camel kubernetes export --help` for more details.
 
 == Kubernetes manifest options
 
@@ -908,6 +924,93 @@ spec:
 
 The trait volume mounts follow some best practices in specifying the mount paths in the container. Configurations and resources, secrets and configmaps do use different paths in the container. The Camel application is automatically configured to read these paths as resource folders, so you can use the mounted data in the Camel routes via classpath reference for instance.
 
+=== Ingress trait options
+
+The ingress trait enhance the Kubernetes manifest with an Ingress resource to expose the application to the outside world. This requires the presence in the Kubernetes manifest of a Service Resource.
+
+The Camel JBang plugin automatically creates an Ingress Resource if the Service Resource is generated for the Camel route's service trait application.
+
+The ingress trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| ingress.enabled
+| bool
+| Can be used to enable or disable a trait. All traits share this common property (default `true`).
+
+| ingress.annotations
+| map[string]string
+| The annotations added to the ingress. This can be used to set controller specific annotations, e.g., when using the https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md[NGINX Ingress controller].
+
+| ingress.host
+| string
+| To configure the host exposed by the ingress.
+
+| ingress.path
+| string
+| To configure the path exposed by the ingress (default `/`).
+
+| ingress.pathType
+| string
+| To configure the https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types[path type] exposed by the ingress. One of Exact, Prefix, ImplementationSpecific (default to Prefix).
+
+| ingress.auto
+| bool
+| To automatically add an Ingress Resource whenever the route uses an HTTP endpoint consumer (default `true`).
+
+|===
+
+he syntax to specify container trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait ingress.[key]=[value]
+----
+
+You may specify these options with the export command to customize the Ingress Resource specification.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait ingress.host=example.com --trait ingress.path=/sample(/|$)(.*) --trait ingress.pathType=ImplementationSpecific --trait ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/\$2 --trait ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true
+----
+
+
+This results in the following container specification in the Ingress resource.
+
+[source,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations: #<1>
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app.kubernetes.io/name: sample
+  name: sample
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: route-service
+            port:
+              name: http #<2>
+        path: /sample(/|$)(.*) #<3>
+        pathType: ImplementationSpecific #<4>
+
+
+----
+<1> Custom annotations configuration for ingress behavior
+<2> Service port name
+<3> Custom ingress backend path
+<4> Custom ingress backend path type
+
 === OpenApi specifications
 
 You can mount OpenAPI specifications to the application container with this trait.
@@ -978,6 +1081,24 @@ spec:
 <1> OpenAPI specification volume mount
 <2> Volume referencing the config map holding the OpenAPI specification
 
+== Deploy to OpenShift
+
+By default, the Kubernetes manifest is suited for plain Kubernetes platforms.
+In case you are targeting OpenShift as a platform you may want to leverage special resources such as Route, ImageStream or BuildConfig.
+
+You can set the `cluster-type=openshift` option on the export command in order to tell the Kubernetes plugin to create a Kubernetes manifest specifically suited for OpenShift.
+
+Also, the default image builder is S2I for OpenShift clusters.
+This means by setting the cluster type you will automatically switch from default Jib to S2I.
+Of course, you can tell the plugin to use Jib with `--image-builder=jib` option.
+The image may then get pushed to an external registry (docker.io or quay.io) so OpenShift can pull as part of the deployment in the cluster.
+
+TIP: When using S2I you may need to explicitly set the `--image-group` option to the project/namespace name in the OpenShift cluster.
+This is because S2I will push the container image to an image repository that uses the OpenShift project/namespace name as part of the image coordinates in the registry: `image-registry.openshift-image-registry.svc:5000/<project name>/<name>:<tag>`
+
+When using S2I as an image build option the Kubernetes manifest also contains an ImageStream and BuildConfig resource.
+Both resources are automatically added/removed when creating/deleting the deployment with the Camel Kubernetes JBang plugin.
+
 == Kubernetes run
 
 The run command combines several steps into one single command.
@@ -1014,9 +1135,9 @@ You may want to add environment variables, mount secrets and configmaps, adjust 
 
 === Auto reload with --dev option
 
-The `--dev` option runs the application on Kubenretes and automatically adds a file watcher to listen for changes on the Camel route source files.
+The `--dev` option runs the application on Kubernetes and automatically adds a file watcher to listen for changes on the Camel route source files.
 In case the sources get changed the process will automatically perform a rebuild and redeployment.
-The command constantly prints the logs to the output so you may see the changes directly being applied to the Kubernetes deployment.
+The command constantly prints the logs to the output, so you may see the changes directly being applied to the Kubernetes deployment.
 
 [source,bash]
 ----
@@ -1025,6 +1146,9 @@ camel kubernetes run route.yaml --image-registry=kind --dev
 
 You need to terminate the process to stop the dev mode.
 This automatically removes the Kubernetes deployment from the cluster on shutdown.
+
+NOTE: On MacOS hosts the file watch mechanism is known to be much slower and less stable compared to using the `--dev` option on other operating systems like Linux.
+This is due to limited native file operations on MacOS for Java processes.
 
 == Show logs
 

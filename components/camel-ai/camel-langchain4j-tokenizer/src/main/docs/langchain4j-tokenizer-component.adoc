@@ -12,8 +12,6 @@
 
 *Since Camel {since}*
 
-*{component-header}*
-
 The LangChain4j tokenizer component provides support to tokenize (chunk) larger blocks of texts into text segments
 that can be used when interacting with LLMs. Tokenization is particularly helpful when used with
 https://en.wikipedia.org/wiki/Vector_database[vector databases] to provide better and more contextual search results

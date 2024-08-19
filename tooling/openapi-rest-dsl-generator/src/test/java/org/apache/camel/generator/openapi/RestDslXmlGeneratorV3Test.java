@@ -43,14 +43,6 @@ public class RestDslXmlGeneratorV3Test {
     static OpenAPI document;
 
     @Test
-    public void shouldGenerateBlueprintXml() throws Exception {
-        try (CamelContext context = new DefaultCamelContext()) {
-            final String xml = RestDslGenerator.toXml(document).withBlueprint().generate(context);
-            assertThat(xml).contains("http://camel.apache.org/schema/blueprint");
-        }
-    }
-
-    @Test
     public void shouldGenerateSpringXml() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             final String xml = RestDslGenerator.toXml(document).generate(context);

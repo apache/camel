@@ -34,30 +34,9 @@ public class KeyManagersParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyManagersParameters.class);
 
-    /**
-     * The key store configuration used to create the {@link KeyStoreParameters} that the {@link KeyManager}s produced
-     * by this object's configuration expose.
-     */
     protected KeyStoreParameters keyStore;
-
-    /**
-     * The optional password for recovering keys in the key store. Used by the {@link KeyManagerFactory} that creates
-     * the {@link KeyManager}s represented by this object's configuration.
-     */
     protected String keyPassword;
-
-    /**
-     * The optional provider identifier for the {@link KeyManagerFactory} used to create the {@link KeyManager}s
-     * represented by this object's configuration.
-     */
     protected String provider;
-
-    /**
-     * The optional algorithm name for the {@link KeyManagerFactory} used to create the {@link KeyManager}s represented
-     * by this object's configuration. See the
-     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html" >Java Secure
-     * Socket Extension Reference Guide</a> for information about standard algorithm names.
-     */
     protected String algorithm;
 
     /**
@@ -74,9 +53,7 @@ public class KeyManagersParameters extends JsseParameters {
      * @see                             KeyStoreParameters#createKeyStore()
      */
     public KeyManager[] createKeyManagers() throws GeneralSecurityException, IOException {
-
         LOG.trace("Creating KeyManager[] from KeyManagersParameters [{}].", this);
-
         KeyManager[] keyManagers;
 
         String kmfAlgorithm = this.parsePropertyValue(this.getAlgorithm());
@@ -109,16 +86,13 @@ public class KeyManagersParameters extends JsseParameters {
         return keyManagers;
     }
 
-    /**
-     * @see #setKeyStore(KeyStoreParameters)
-     */
     public KeyStoreParameters getKeyStore() {
         return keyStore;
     }
 
     /**
-     * Sets the key store configuration used to create the {@link KeyStore} that the {@link KeyManager}s produced by
-     * this object's configuration expose.
+     * The key store configuration used to create the {@link KeyStore} that the {@link KeyManager}s produced by this
+     * object's configuration expose.
      *
      * @param value the configuration to use
      */
@@ -126,16 +100,13 @@ public class KeyManagersParameters extends JsseParameters {
         this.keyStore = value;
     }
 
-    /**
-     * @see #setKeyPassword(String)
-     */
     public String getKeyPassword() {
         return keyPassword;
     }
 
     /**
-     * Sets the optional password for recovering keys in the key store. Used by the {@link KeyManagerFactory} that
-     * creates the {@link KeyManager}s represented by this object's configuration.
+     * The password for recovering keys in the key store. Used by the {@link KeyManagerFactory} that creates the
+     * {@link KeyManager}s represented by this object's configuration.
      *
      * @param value the value to use
      */
@@ -143,16 +114,13 @@ public class KeyManagersParameters extends JsseParameters {
         this.keyPassword = value;
     }
 
-    /**
-     * @see #setProvider(String)
-     */
     public String getProvider() {
         return provider;
     }
 
     /**
-     * Sets the optional provider identifier for the {@link KeyManagerFactory} used to create the {@link KeyManager}s
-     * represented by this object's configuration.
+     * The provider identifier for the {@link KeyManagerFactory} used to create the {@link KeyManager}s represented by
+     * this object's configuration.
      *
      * @param value the desired provider identifier or {@code null} to use the highest priority provider implementing
      *              the algorithm
@@ -163,21 +131,17 @@ public class KeyManagersParameters extends JsseParameters {
         this.provider = value;
     }
 
-    /**
-     * @see KeyManagerFactory#getDefaultAlgorithm()
-     */
     public String getAlgorithm() {
         return algorithm;
     }
 
     /**
-     * Sets optional algorithm name for the {@link KeyManagerFactory} used to create the {@link KeyManager}s represented
-     * by this object's configuration. See the
-     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html" >Java Secure
-     * Socket Extension Reference Guide</a> for information about standard algorithm names.
+     * The algorithm name for the {@link KeyManagerFactory} used to create the {@link KeyManager}s represented by this
+     * object's configuration. See the
+     *
+     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
      *
      * @param value the desired algorithm or {@code null} to use default
-     *
      * @see         KeyManagerFactory#getDefaultAlgorithm()
      */
     public void setAlgorithm(String value) {
