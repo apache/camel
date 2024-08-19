@@ -57,8 +57,8 @@ public class DefaultEndpointRegistry extends AbstractDynamicRegistry<NormalizedE
 
     @Override
     public boolean containsKey(Object key) {
-        if (key instanceof String) {
-            key = NormalizedUri.newNormalizedUri(key.toString(), false);
+        if (key instanceof String str) {
+            key = NormalizedUri.newNormalizedUri(str, false);
         }
         return super.containsKey(key);
     }

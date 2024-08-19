@@ -500,8 +500,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
                 FactoryFinder finder = camelContext.createFactoryFinder("META-INF/services/org/apache/camel/management/");
                 if (finder != null) {
                     Object object = finder.newInstance("ManagementStrategyFactory").orElse(null);
-                    if (object instanceof ManagementStrategyFactory) {
-                        factory = (ManagementStrategyFactory) object;
+                    if (object instanceof ManagementStrategyFactory managementStrategyFactory) {
+                        factory = managementStrategyFactory;
                     }
                 }
             } catch (Exception e) {

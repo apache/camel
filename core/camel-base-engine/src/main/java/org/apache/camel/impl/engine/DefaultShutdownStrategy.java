@@ -503,10 +503,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         for (Service child : list) {
-            if (child instanceof ShutdownPrepared) {
+            if (child instanceof ShutdownPrepared shutdownPrepared) {
                 try {
                     LOG.trace("Preparing (forced: {}) shutdown on: {}", forced, child);
-                    ((ShutdownPrepared) child).prepareShutdown(suspendOnly, forced);
+                    shutdownPrepared.prepareShutdown(suspendOnly, forced);
                 } catch (Exception e) {
                     if (suppressLogging) {
                         LOG.trace("Error during prepare shutdown on {}. This exception will be ignored.", child, e);
@@ -606,8 +606,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                     // some consumers do not support shutting down so let them decide
                     // if a consumer is suspendable then prefer to use that and then shutdown later
-                    if (consumer instanceof ShutdownAware) {
-                        shutdown = !((ShutdownAware) consumer).deferShutdown(shutdownRunningTask);
+                    if (consumer instanceof ShutdownAware shutdownAware) {
+                        shutdown = !shutdownAware.deferShutdown(shutdownRunningTask);
                     }
                     if (shutdown && consumer instanceof Suspendable) {
                         // we prefer to suspend over shutdown
@@ -773,8 +773,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         for (Service service : order.getServices()) {
             Set<Service> children = ServiceHelper.getChildServices(service);
             for (Service child : children) {
-                if (child instanceof ShutdownAware) {
-                    inflight += ((ShutdownAware) child).getPendingExchangesSize();
+                if (child instanceof ShutdownAware shutdownAware) {
+                    inflight += shutdownAware.getPendingExchangesSize();
                 }
             }
         }

@@ -356,10 +356,10 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     private void doRemove(ExecutorService executorService, boolean failSafe) {
         // let lifecycle strategy be notified as well which can let it be managed in JMX as well
         ThreadPoolExecutor threadPool = null;
-        if (executorService instanceof ThreadPoolExecutor) {
-            threadPool = (ThreadPoolExecutor) executorService;
-        } else if (executorService instanceof SizedScheduledExecutorService) {
-            threadPool = ((SizedScheduledExecutorService) executorService).getScheduledThreadPoolExecutor();
+        if (executorService instanceof ThreadPoolExecutor threadPoolExecutor) {
+            threadPool = threadPoolExecutor;
+        } else if (executorService instanceof SizedScheduledExecutorService sizedScheduledExecutorService) {
+            threadPool = sizedScheduledExecutorService.getScheduledThreadPoolExecutor();
         }
         if (threadPool != null) {
             for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
@@ -524,12 +524,12 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         String routeId = null;
 
         // extract id from source
-        if (source instanceof NamedNode) {
-            id = ((NamedNode) source).getId();
+        if (source instanceof NamedNode namedNode) {
+            id = namedNode.getId();
             // and let source be the short name of the pattern
-            sourceId = ((NamedNode) source).getShortName();
-        } else if (source instanceof String) {
-            id = (String) source;
+            sourceId = namedNode.getShortName();
+        } else if (source instanceof String str) {
+            id = str;
         } else if (source != null) {
             if (source instanceof StaticService) {
                 // the source is static service so its name would be unique
@@ -547,16 +547,16 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         StringHelper.notEmpty(id, "id for thread pool " + executorService);
 
         // extract route id if possible
-        if (source instanceof NamedNode) {
-            routeId = CamelContextHelper.getRouteId((NamedNode) source);
+        if (source instanceof NamedNode namedNode) {
+            routeId = CamelContextHelper.getRouteId(namedNode);
         }
 
         // let lifecycle strategy be notified as well which can let it be managed in JMX as well
         ThreadPoolExecutor threadPool = null;
-        if (executorService instanceof ThreadPoolExecutor) {
-            threadPool = (ThreadPoolExecutor) executorService;
-        } else if (executorService instanceof SizedScheduledExecutorService) {
-            threadPool = ((SizedScheduledExecutorService) executorService).getScheduledThreadPoolExecutor();
+        if (executorService instanceof ThreadPoolExecutor threadPoolExecutor) {
+            threadPool = threadPoolExecutor;
+        } else if (executorService instanceof SizedScheduledExecutorService scheduledExecutorService) {
+            threadPool = scheduledExecutorService.getScheduledThreadPoolExecutor();
         }
         if (threadPool != null) {
             for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {

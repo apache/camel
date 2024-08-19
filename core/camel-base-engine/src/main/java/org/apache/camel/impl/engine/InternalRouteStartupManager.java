@@ -140,16 +140,16 @@ final class InternalRouteStartupManager {
         boolean startable = false;
 
         Consumer consumer = entry.getValue().getRoute().getConsumer();
-        if (consumer instanceof SuspendableService) {
+        if (consumer instanceof SuspendableService suspendableService) {
             // consumer could be suspended, which is not reflected in
             // the BaseRouteService status
-            startable = ((SuspendableService) consumer).isSuspended();
+            startable = suspendableService.isSuspended();
         }
 
-        if (!startable && consumer instanceof StatefulService) {
+        if (!startable && consumer instanceof StatefulService statefulService) {
             // consumer could be stopped, which is not reflected in the
             // BaseRouteService status
-            startable = ((StatefulService) consumer).getStatus().isStartable();
+            startable = statefulService.getStatus().isStartable();
         } else if (!startable) {
             // no consumer so use state from route service
             startable = entry.getValue().getStatus().isStartable();
@@ -478,8 +478,8 @@ final class InternalRouteStartupManager {
     private boolean doCheckMultipleConsumerSupportClash(Endpoint endpoint, List<Endpoint> routeInputs) {
         // is multiple consumers supported
         boolean multipleConsumersSupported = false;
-        if (endpoint instanceof MultipleConsumersSupport) {
-            multipleConsumersSupported = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
+        if (endpoint instanceof MultipleConsumersSupport consumersSupport) {
+            multipleConsumersSupported = consumersSupport.isMultipleConsumersSupported();
         }
 
         if (multipleConsumersSupported) {

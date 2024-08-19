@@ -58,8 +58,8 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
         // its a bootstrap service
         for (Service service : set) {
             try {
-                if (service instanceof BootstrapCloseable) {
-                    ((BootstrapCloseable) service).close();
+                if (service instanceof BootstrapCloseable closeable) {
+                    closeable.close();
                 }
                 // service is no longer needed as it was only intended during bootstrap
                 camelContext.removeService(service);
@@ -70,9 +70,9 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
 
         // clear bootstrap configurer resolver
         ConfigurerResolver cr = PluginHelper.getBootstrapConfigurerResolver(camelContextExtension);
-        if (cr instanceof BootstrapCloseable) {
+        if (cr instanceof BootstrapCloseable closeable) {
             try {
-                ((BootstrapCloseable) cr).close();
+                closeable.close();
             } catch (Exception e) {
                 LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
             }
@@ -80,9 +80,9 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
 
         // clear processor factory
         ProcessorFactory pf = PluginHelper.getProcessorFactory(camelContextExtension);
-        if (pf instanceof BootstrapCloseable) {
+        if (pf instanceof BootstrapCloseable closeable) {
             try {
-                ((BootstrapCloseable) pf).close();
+                closeable.close();
             } catch (Exception e) {
                 LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
             }
@@ -90,9 +90,9 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
 
         // clear bootstrap factory finder
         FactoryFinder ff = camelContextExtension.getBootstrapFactoryFinder();
-        if (ff instanceof BootstrapCloseable) {
+        if (ff instanceof BootstrapCloseable closeable) {
             try {
-                ((BootstrapCloseable) ff).close();
+                closeable.close();
             } catch (Exception e) {
                 LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
             }

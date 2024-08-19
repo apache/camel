@@ -50,13 +50,12 @@ public class DefaultExecutorServiceManager extends BaseExecutorServiceManager {
     }
 
     protected Object forceId(Object source) {
-        if (source instanceof NamedNode && source instanceof IdAware) {
-            NamedNode node = (NamedNode) source;
+        if (source instanceof NamedNode node && source instanceof IdAware idAware) {
             NodeIdFactory factory = getCamelContext().getCamelContextExtension().getContextPlugin(NodeIdFactory.class);
             if (node.getId() == null) {
                 String id = factory.createId(node);
                 // we auto generated an id to be assigned
-                ((IdAware) source).setGeneratedId(id);
+                idAware.setGeneratedId(id);
             }
         }
         return source;

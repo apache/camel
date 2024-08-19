@@ -854,8 +854,8 @@ public abstract class AbstractCamelContext extends BaseService
         if (endpoint == null) {
             throw new NoSuchEndpointException(name);
         }
-        if (endpoint instanceof InterceptSendToEndpoint) {
-            endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
+        if (endpoint instanceof InterceptSendToEndpoint interceptSendToEndpoint) {
+            endpoint = interceptSendToEndpoint.getOriginalEndpoint();
         }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
@@ -986,8 +986,8 @@ public abstract class AbstractCamelContext extends BaseService
     public void addRoutes(RoutesBuilder builder) throws Exception {
         // in case the builder is also a route configuration builder
         // then we need to add the configuration first
-        if (builder instanceof RouteConfigurationsBuilder) {
-            addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+        if (builder instanceof RouteConfigurationsBuilder rcBuilder) {
+            addRoutesConfigurations(rcBuilder);
         }
         try (LifecycleHelper helper = new LifecycleHelper()) {
             build();
@@ -1336,8 +1336,8 @@ public abstract class AbstractCamelContext extends BaseService
                     // must suspend route service as well
                     suspendRouteService(routeService);
                     // must suspend the route as well
-                    if (route instanceof SuspendableService) {
-                        ((SuspendableService) route).suspend();
+                    if (route instanceof SuspendableService suspendableService) {
+                        suspendableService.suspend();
                     }
                 }
             } catch (Exception e) {
@@ -1371,12 +1371,11 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public boolean removeService(Object object) throws Exception {
-        if (object instanceof Endpoint) {
-            removeEndpoint((Endpoint) object);
+        if (object instanceof Endpoint endpoint) {
+            removeEndpoint(endpoint);
             return true;
         }
-        if (object instanceof Service) {
-            Service service = (Service) object;
+        if (object instanceof Service service) {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onServiceRemove(this, service, null);
             }
@@ -1592,9 +1591,8 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         if (language != null) {
-            if (language instanceof Service) {
+            if (language instanceof Service service) {
                 try {
-                    Service service = (Service) language;
                     // init service first
                     CamelContextAware.trySetCamelContext(service, camelContext);
                     ServiceHelper.initService(service);
@@ -2065,8 +2063,8 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             super.init();
         } catch (RuntimeCamelException e) {
-            if (e.getCause() instanceof VetoCamelContextStartException) {
-                vetoed = (VetoCamelContextStartException) e.getCause();
+            if (e.getCause() instanceof VetoCamelContextStartException veto) {
+                vetoed = veto;
             } else {
                 throw e;
             }
@@ -2259,9 +2257,9 @@ public abstract class AbstractCamelContext extends BaseService
         // ensure additional type converters is loaded (either if enabled or we should use package scanning from the base)
         boolean load = loadTypeConverters || camelContextExtension.getBasePackageScan() != null;
         final TypeConverter typeConverter = camelContextExtension.getTypeConverter();
-        if (load && typeConverter instanceof AnnotationScanTypeConverters) {
+        if (load && typeConverter instanceof AnnotationScanTypeConverters annotationScanTypeConverters) {
             StartupStep step2 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan TypeConverters");
-            ((AnnotationScanTypeConverters) typeConverter).scanTypeConverters();
+            annotationScanTypeConverters.scanTypeConverters();
             startupStepRecorder.endStep(step2);
         }
 
@@ -2365,8 +2363,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // start notifiers as services
         for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
-            if (notifier instanceof Service) {
-                Service service = (Service) notifier;
+            if (notifier instanceof Service service) {
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
                     strategy.onServiceAdd(getCamelContextReference(), service, null);
                 }
@@ -2820,8 +2817,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         // start notifiers as services
         for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
-            if (notifier instanceof Service) {
-                startService((Service) notifier);
+            if (notifier instanceof Service service) {
+                startService(service);
             }
         }
 
@@ -3203,8 +3200,7 @@ public abstract class AbstractCamelContext extends BaseService
     void startService(Service service) throws Exception {
         // and register startup aware so they can be notified when
         // camel context has been started
-        if (service instanceof StartupListener) {
-            StartupListener listener = (StartupListener) service;
+        if (service instanceof StartupListener listener) {
             addStartupListener(listener);
         }
 
@@ -3214,8 +3210,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     private void startServices(Collection<?> services) throws Exception {
         for (Object element : services) {
-            if (element instanceof Service) {
-                startService((Service) element);
+            if (element instanceof Service service) {
+                startService(service);
             }
         }
     }
@@ -3438,10 +3434,10 @@ public abstract class AbstractCamelContext extends BaseService
      */
     protected Endpoint createEndpoint(String uri) {
         Object value = camelContextExtension.getRegistry().lookupByName(uri);
-        if (value instanceof Endpoint) {
-            return (Endpoint) value;
-        } else if (value instanceof Processor) {
-            return new ProcessorEndpoint(uri, getCamelContextReference(), (Processor) value);
+        if (value instanceof Endpoint endpoint) {
+            return endpoint;
+        } else if (value instanceof Processor processor) {
+            return new ProcessorEndpoint(uri, getCamelContextReference(), processor);
         } else if (value != null) {
             return convertBeanToEndpoint(uri, value);
         }
@@ -4008,8 +4004,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void failOnStartup(Exception e) {
-        if (e instanceof VetoCamelContextStartException) {
-            VetoCamelContextStartException vetoException = (VetoCamelContextStartException) e;
+        if (e instanceof VetoCamelContextStartException vetoException) {
             if (vetoException.isRethrowException()) {
                 fail(e);
             } else {
