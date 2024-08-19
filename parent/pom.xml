@@ -359,7 +359,7 @@
         <mina-version>2.2.3</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
-        <minio-version>8.5.11</minio-version>
+        <minio-version>8.5.12</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>6.13.3</mockwebserver-version>
         <mockito-version>5.12.0</mockito-version>
