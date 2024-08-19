@@ -106,8 +106,7 @@ public interface ServiceComponentBuilderFactory {
          * Inject the service to use.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.cloud.ServiceRegistry&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.apache.camel.cloud.ServiceRegistry&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

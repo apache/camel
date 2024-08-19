@@ -167,8 +167,7 @@ public interface JmsComponentBuilderFactory {
          * that when Camel starts that all the JMS consumers have a valid
          * connection to the JMS broker. If a connection cannot be granted then
          * Camel throws an exception on startup. This ensures that Camel is not
-         * started with failed connections. The JMS producers is tested as
-         * well.
+         * started with failed connections. The JMS producers is tested as well.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -736,8 +735,7 @@ public interface JmsComponentBuilderFactory {
          * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
          * options are applied to the current endpoint. This contrasts with the
          * preserveMessageQos option, which operates at message granularity,
-         * reading QoS properties exclusively from the Camel In message
-         * headers.
+         * reading QoS properties exclusively from the Camel In message headers.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
@@ -1505,8 +1503,7 @@ public interface JmsComponentBuilderFactory {
         
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as jakarta.jms.TextMessage to a String
-         * etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1872,8 +1869,7 @@ public interface JmsComponentBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
-         * set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
          * @return the dsl builder
          */
         default JmsComponentBuilder waitForProvisionCorrelationToBeUpdatedCounter(int waitForProvisionCorrelationToBeUpdatedCounter) {

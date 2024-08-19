@@ -304,8 +304,7 @@ public interface AwsSecretsManagerComponentBuilderFactory {
         }
     
         /**
-         * To define a proxy host when instantiating the Secrets Manager
-         * client.
+         * To define a proxy host when instantiating the Secrets Manager client.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -320,8 +319,7 @@ public interface AwsSecretsManagerComponentBuilderFactory {
         }
     
         /**
-         * To define a proxy port when instantiating the Secrets Manager
-         * client.
+         * To define a proxy port when instantiating the Secrets Manager client.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 

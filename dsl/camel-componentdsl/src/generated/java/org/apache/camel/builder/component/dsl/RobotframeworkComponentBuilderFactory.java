@@ -251,8 +251,7 @@ public interface RobotframeworkComponentBuilderFactory {
     
         /**
          * Sets multiple listeners for monitoring tests execution. Use the
-         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs
-         * List.
+         * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

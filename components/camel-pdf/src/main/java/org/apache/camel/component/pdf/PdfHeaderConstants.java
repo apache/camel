@@ -40,11 +40,11 @@ public final class PdfHeaderConstants {
     public static final String DECRYPTION_MATERIAL_HEADER_NAME = "decryption-material";
 
     @Metadata(description = """
-            *Mandatory* header for `merge` operation and ignored in all other
-            operations.
-            The array of pdf files that will be merged.
-            """,
-              javaType = "java.util.List<java.io.File>")
+                            *Mandatory* header for `merge` operation and ignored in all other
+                            operations.
+                            The array of pdf files that will be merged.
+                            """,
+            javaType = "java.util.List<java.io.File>")
     public static final String FILES_TO_MERGE_HEADER_NAME = "files-to-merge";
 
     private PdfHeaderConstants() {

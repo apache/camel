@@ -356,8 +356,8 @@ public interface PdfEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation type
-         * There are 4 enums and the value can be one of: create, append,
-         * extractText, merge
+         * There are 3 enums and the value can be one of: create, append,
+         * extractText
          * 
          * @param path operation
          * @return the dsl builder
@@ -377,8 +377,8 @@ public interface PdfEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation type
-         * There are 4 enums and the value can be one of: create, append,
-         * extractText, merge
+         * There are 3 enums and the value can be one of: create, append,
+         * extractText
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -441,19 +441,6 @@ public interface PdfEndpointBuilderFactory {
          */
         public String decryptionMaterial() {
             return "decryption-material";
-        }
-        /**
-         * Mandatory header for merge operation and ignored in all other
-         * operations. The array of pdf files that will be merged.
-         * 
-         * The option is a: {@code java.util.List<java.io.File>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code files-to-merge}.
-         */
-        public String filesToMerge() {
-            return "files-to-merge";
         }
     }
     static PdfEndpointBuilder endpointBuilder(String componentName, String path) {
