@@ -25,6 +25,7 @@ import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
+import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -142,7 +143,9 @@ public class ServiceBusConsumer extends DefaultConsumer {
         @Override
         public void onComplete(Exchange exchange) {
             super.onComplete(exchange);
-            messageContext.complete();
+            if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+                messageContext.complete();
+            }
         }
 
         @Override
@@ -152,21 +155,23 @@ public class ServiceBusConsumer extends DefaultConsumer {
                 getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
             }
 
-            if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue()) ||
-                    ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
-                DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
-                if (cause != null) {
-                    deadLetterOptions
-                            .setDeadLetterReason(String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
-                    deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
-                            .map(StackTraceElement::toString)
-                            .collect(Collectors.joining("\n")));
-                    messageContext.deadLetter(deadLetterOptions);
+            if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+                if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue())
+                        || ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
+                    DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
+                    if (cause != null) {
+                        deadLetterOptions
+                                .setDeadLetterReason(String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
+                        deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
+                                .map(StackTraceElement::toString)
+                                .collect(Collectors.joining("\n")));
+                        messageContext.deadLetter(deadLetterOptions);
+                    } else {
+                        messageContext.deadLetter();
+                    }
                 } else {
-                    messageContext.deadLetter();
+                    messageContext.abandon();
                 }
-            } else {
-                messageContext.abandon();
             }
         }
     }
