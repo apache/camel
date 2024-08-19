@@ -70,6 +70,14 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
                     oldExchange.setException(exception);
                 }
             }
+            exception = checkCaughtException(oldExchange, newExchange);
+            if (exception != null) {
+                if (original != null) {
+                    original.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+                } else {
+                    oldExchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+                }
+            }
         }
         return original != null ? original : oldExchange;
     }
@@ -82,6 +90,14 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
                     ? newExchange.getException()
                     : oldExchange.getException();
         }
+    }
+
+    protected Exception checkCaughtException(Exchange oldExchange, Exchange newExchange) {
+        Exception caught = newExchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        if (caught == null && oldExchange != null) {
+            caught = oldExchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        }
+        return caught;
     }
 
     public Exchange getOriginal() {
