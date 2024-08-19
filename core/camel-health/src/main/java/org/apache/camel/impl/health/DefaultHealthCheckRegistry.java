@@ -205,8 +205,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         // inject context
         CamelContextAware.trySetCamelContext(obj, camelContext);
 
-        if (obj instanceof HealthCheck) {
-            HealthCheck healthCheck = (HealthCheck) obj;
+        if (obj instanceof HealthCheck healthCheck) {
             // do we have this already
             if (getCheck(healthCheck.getId()).isPresent()) {
                 return false;
@@ -243,8 +242,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
         checkIfAccepted(obj);
 
-        if (obj instanceof HealthCheck) {
-            HealthCheck healthCheck = (HealthCheck) obj;
+        if (obj instanceof HealthCheck healthCheck) {
             result = checks.remove(healthCheck);
             if (result) {
                 LOG.debug("HealthCheck with id {} successfully un-registered", healthCheck.getId());
