@@ -33,7 +33,7 @@
     <description>Camel Tooling Parent POM</description>
 
     <properties>
-        <maven-version>3.9.8</maven-version>
+        <maven-version>3.9.9</maven-version>
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
         <maven-project-version>2.2.1</maven-project-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
