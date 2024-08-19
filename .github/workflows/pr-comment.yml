@@ -25,7 +25,7 @@ jobs:
     name: PR comment
     if: ${{ github.repository == 'apache/camel' && github.event.issue.pull_request && (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'CONTRIBUTOR') && startsWith(github.event.comment.body, '/component-test') }}
     permissions:
-      pull-requests: write # to comment on a pull request
+      # pull-requests: write # to comment on a pull request
       actions: read # to download artifact
     runs-on: ubuntu-latest
     strategy:
