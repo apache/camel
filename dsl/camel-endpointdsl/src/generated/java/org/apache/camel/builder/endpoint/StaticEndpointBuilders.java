@@ -11338,8 +11338,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * There are 3 enums and the value can be one of: create, append,
-     * extractText
+     * There are 4 enums and the value can be one of: create, append,
+     * extractText, merge
      * 
      * @param path operation
      * @return the dsl builder
@@ -11359,8 +11359,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * There are 3 enums and the value can be one of: create, append,
-     * extractText
+     * There are 4 enums and the value can be one of: create, append,
+     * extractText, merge
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
