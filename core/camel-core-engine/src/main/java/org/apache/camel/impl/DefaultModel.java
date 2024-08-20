@@ -214,8 +214,8 @@ public class DefaultModel implements Model {
                             if (def.isAbstract()) {
                                 continue;
                             }
-                            if (def instanceof ToDefinition) {
-                                to = (ToDefinition) def;
+                            if (def instanceof ToDefinition toDefinition) {
+                                to = toDefinition;
                             }
                             break;
                         }
