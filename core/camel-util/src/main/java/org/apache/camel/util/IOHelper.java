@@ -154,26 +154,71 @@ public final class IOHelper {
         return sb.toString();
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses {@link InputStream#transferTo(OutputStream)}.
+     *
+     * @param  input       the input stream buffer
+     * @param  output      the output stream buffer
+     * @return             the number of bytes copied
+     * @throws IOException for I/O errors
+     */
     public static int copy(InputStream input, OutputStream output) throws IOException {
-        return copy(input, output, DEFAULT_BUFFER_SIZE);
+        int copied = (int) input.transferTo(output);
+        output.flush();
+        return copied;
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
+     * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
+     *
+     * @param      input       the input stream buffer
+     * @param      output      the output stream buffer
+     * @param      bufferSize  the size of the buffer used for the copies
+     * @return                 the number of bytes copied
+     * @deprecated             Prefer using {@link IOHelper#copy(InputStream, OutputStream)}
+     * @throws     IOException for I/O errors
+     */
+    @Deprecated(since = "4.8.0")
     public static int copy(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
         return copy(input, output, bufferSize, false);
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
+     * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
+     *
+     * @param  input            the input stream buffer
+     * @param  output           the output stream buffer
+     * @param  bufferSize       the size of the buffer used for the copies
+     * @param  flushOnEachWrite whether to flush the data everytime that data is written to the buffer
+     * @return                  the number of bytes copied
+     * @throws IOException      for I/O errors
+     */
     public static int copy(final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite)
             throws IOException {
         return copy(input, output, bufferSize, flushOnEachWrite, -1);
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
+     * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
+     *
+     * @param      input            the input stream buffer
+     * @param      output           the output stream buffer
+     * @param      bufferSize       the size of the buffer used for the copies
+     * @param      flushOnEachWrite whether to flush the data everytime that data is written to the buffer
+     * @return                      the number of bytes copied
+     * @deprecated                  Prefer using {@link IOHelper#copy(InputStream, OutputStream)}
+     * @throws     IOException      for I/O errors
+     */
     public static int copy(
             final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite,
             long maxSize)
             throws IOException {
 
         if (input instanceof ByteArrayInputStream) {
-            // optimized for byte array as we only need the max size it can be
+            // optimized for byte arrays as we only need the max size it can be
             input.mark(0);
             input.reset();
             bufferSize = input.available();
@@ -202,7 +247,7 @@ public final class IOHelper {
         if (ZERO_BYTE_EOL_ENABLED) {
             // workaround issue on some application servers which can return 0
             // (instead of -1)
-            // as first byte to indicate end of stream (CAMEL-11672)
+            // as first byte to indicate the end of stream (CAMEL-11672)
             hasData = n > 0;
         } else {
             hasData = n > -1;
@@ -227,10 +272,29 @@ public final class IOHelper {
         return total;
     }
 
+    /**
+     * Copies the data from the input stream to the output stream and closes the input stream afterward. Uses
+     * {@link InputStream#transferTo(OutputStream)}.
+     *
+     * @param  input       the input stream buffer
+     * @param  output      the output stream buffer
+     * @throws IOException
+     */
     public static void copyAndCloseInput(InputStream input, OutputStream output) throws IOException {
-        copyAndCloseInput(input, output, DEFAULT_BUFFER_SIZE);
+        copy(input, output);
+        close(input, null, LOG);
     }
 
+    /**
+     * Copies the data from the input stream to the output stream and closes the input stream afterward. Uses Camel's
+     * own copying logic. Prefer using {@link IOHelper#copyAndCloseInput(InputStream, OutputStream)} unless you need a
+     * specific buffer size.
+     *
+     * @param  input       the input stream buffer
+     * @param  output      the output stream buffer
+     * @param  bufferSize  the size of the buffer used for the copies
+     * @throws IOException
+     */
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
         copy(input, output, bufferSize);
         close(input, null, LOG);

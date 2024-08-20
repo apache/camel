@@ -13,6 +13,10 @@ as well. For example when using the Splitter EIP with this, then any caught exce
 as well, which allows access to this information afterward, for example in an `onCompletion` where the caught exception
 can be used to know some error happened during splitting.
 
+Internally, Camel will now use Java's own `InputStream.transferTo` for copying data between streams whenever such copies don't
+require customized buffer sizes or data flushing policies. Additionally, the size of the data buffer used by Camel when
+performing these copies has increased from 4096 bytes to 16384 bytes (the default buffer size used by Java 21).
+
 === Deprecated Components
 
 The following components that were marked as deprecated:
