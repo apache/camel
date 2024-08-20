@@ -17,7 +17,6 @@
 package org.apache.camel.component.pdf;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
