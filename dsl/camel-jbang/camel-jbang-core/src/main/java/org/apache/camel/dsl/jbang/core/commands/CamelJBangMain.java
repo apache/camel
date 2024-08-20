@@ -36,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.commands.config.ConfigGet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigSet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigUnset;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.MissingPluginParameterExceptionHandler;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
@@ -155,7 +156,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("version", new CommandLine(new VersionCommand(main))
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main)))
-                        .addSubcommand("list", new CommandLine(new VersionList(main))));
+                        .addSubcommand("list", new CommandLine(new VersionList(main))))
+                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
 
         PluginHelper.addPlugins(commandLine, main, args);
 
