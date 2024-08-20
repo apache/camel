@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +34,6 @@ public class FromFtpConsumerTemplateIT extends FtpServerTestSupport {
     }
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         prepareFtpServer();
     }

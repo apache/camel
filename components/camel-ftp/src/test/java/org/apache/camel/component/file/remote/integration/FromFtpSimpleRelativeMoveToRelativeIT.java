@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote.integration;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FromFtpSimpleRelativeMoveToRelativeIT extends FtpServerTestSupport {
@@ -30,7 +29,6 @@ public class FromFtpSimpleRelativeMoveToRelativeIT extends FtpServerTestSupport 
     }
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         prepareFtpServer();
     }

@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FtpConsumerAsyncStressIT extends FtpServerTestSupport {
@@ -34,7 +33,6 @@ public class FtpConsumerAsyncStressIT extends FtpServerTestSupport {
     }
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         for (int i = 0; i < files; i++) {
             template.sendBodyAndHeader("file://{{ftp.root.dir}}/filestress", "Hello World", Exchange.FILE_NAME,

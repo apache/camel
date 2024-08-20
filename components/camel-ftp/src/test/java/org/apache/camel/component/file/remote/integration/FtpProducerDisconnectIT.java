@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.component.file.remote.FtpEndpoint;
 import org.apache.commons.net.ftp.FTPClient;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerDisconnectIT extends FtpServerTestSupport {
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         // ask the singleton FtpEndpoint to make use of a custom FTPClient
         // so that we can hold a reference on it inside the test below
