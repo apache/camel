@@ -71,8 +71,7 @@ public enum AS2MicAlgorithm {
 
     public static String getAS2AlgorithmName(String jdkAlgorithmName) {
         return Optional.ofNullable(jdkAlgorithmName)
-                .map(alg -> alg.replaceAll("-", ""))
-                .map(alg -> switch (jdkAlgorithmName) {
+                .map(alg -> switch (alg) {
                     case Constants.MD5_JDK_ALGORITHM_NAME -> Constants.MD5_AS2_ALGORITHM_NAME;
                     case Constants.SHA_1_JDK_ALGORITHM_NAME -> Constants.SHA_1_AS2_ALGORITHM_NAME;
                     case Constants.SHA_256_JDK_ALGORITHM_NAME -> Constants.SHA_256_AS2_ALGORITHM_NAME;
