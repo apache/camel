@@ -211,8 +211,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             }
             if (value == null) {
                 return null;
-            } else if (value instanceof Endpoint) {
-                return (Endpoint) value;
+            } else if (value instanceof Endpoint endpoint) {
+                return endpoint;
             } else {
                 String uriOrRef = getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
                 return getCamelContext().getEndpoint(uriOrRef);
