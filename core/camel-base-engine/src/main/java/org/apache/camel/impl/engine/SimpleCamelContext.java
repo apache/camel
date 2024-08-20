@@ -177,8 +177,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
         if (typeConverter == null) {
             typeConverter = createTypeConverter();
         }
-        if (typeConverter instanceof TypeConverterRegistry) {
-            return (TypeConverterRegistry) typeConverter;
+        if (typeConverter instanceof TypeConverterRegistry typeConverterRegistry) {
+            return typeConverterRegistry;
         }
         return null;
     }

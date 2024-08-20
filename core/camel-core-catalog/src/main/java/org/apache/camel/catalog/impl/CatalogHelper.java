@@ -117,8 +117,7 @@ public final class CatalogHelper {
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
             return false;
-        } else if (value instanceof String) {
-            String text = (String) value;
+        } else if (value instanceof String text) {
             return !text.isBlank();
         } else {
             return true;
@@ -278,8 +277,8 @@ public final class CatalogHelper {
     @SuppressWarnings("unchecked")
     private static Object replaceWithList(Object oldValue, String newValue) {
         List<String> list;
-        if (oldValue instanceof List) {
-            list = (List<String>) oldValue;
+        if (oldValue instanceof List oldValueList) {
+            list = oldValueList;
             list.add(newValue);
 
         } else {

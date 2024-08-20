@@ -228,8 +228,19 @@ public class DefaultModel implements Model {
                                 FromDefinition inlinedFrom = toBeInlined.getInput();
                                 from.setLocation(inlinedFrom.getLocation());
                                 from.setLineNumber(inlinedFrom.getLineNumber());
-                                // inline by replacing the outputs
-                                r.getOutputs().clear();
+                                // inline by replacing the outputs (preserve all abstracts such as interceptors)
+                                List<ProcessorDefinition<?>> toBeRemovedOut = new ArrayList<>();
+                                for (ProcessorDefinition<?> out : r.getOutputs()) {
+                                    // should be removed if to be added via inlined
+                                    boolean remove = toBeInlined.getOutputs().stream().anyMatch(o -> o == out);
+                                    if (!remove) {
+                                        remove = !out.isAbstract(); // remove all non abstract
+                                    }
+                                    if (remove) {
+                                        toBeRemovedOut.add(out);
+                                    }
+                                }
+                                r.getOutputs().removeAll(toBeRemovedOut);
                                 r.getOutputs().addAll(toBeInlined.getOutputs());
                                 // and copy over various configurations
                                 if (toBeInlined.getRouteId() != null) {

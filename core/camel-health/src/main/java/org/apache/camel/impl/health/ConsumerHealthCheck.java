@@ -50,9 +50,9 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
         boolean up = builder.state().compareTo(State.UP) == 0;
         // if a route is configured to not to automatically start, then skip consumer checks
         boolean external = route.getRouteController() == null && !route.isAutoStartup();
-        if (up && !external && consumer instanceof HealthCheckAware) {
+        if (up && !external && consumer instanceof HealthCheckAware healthCheckAware) {
             // health check is optional
-            HealthCheck hc = ((HealthCheckAware) consumer).getHealthCheck();
+            HealthCheck hc = healthCheckAware.getHealthCheck();
             if (hc != null) {
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Calling HealthCheck on consumer route: {}", route.getRouteId());
@@ -73,8 +73,8 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
                     Throwable cause = result.getError().get();
                     builder.error(cause);
                     // if the caused exception is HTTP response aware then include the response status code
-                    if (cause instanceof HttpResponseAware) {
-                        int code = ((HttpResponseAware) cause).getHttpResponseCode();
+                    if (cause instanceof HttpResponseAware httpResponseAware) {
+                        int code = httpResponseAware.getHttpResponseCode();
                         if (code > 0) {
                             builder.detail(HealthCheck.HTTP_RESPONSE_CODE, code);
                         }

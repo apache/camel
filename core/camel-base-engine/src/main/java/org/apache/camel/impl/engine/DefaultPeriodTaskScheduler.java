@@ -39,8 +39,8 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
     public <T> T getTaskByType(Class<T> type) {
         for (TimerListener listener : getListeners()) {
             Object task = listener;
-            if (listener instanceof TaskWrapper) {
-                task = ((TaskWrapper) listener).getTask();
+            if (listener instanceof TaskWrapper wrapper) {
+                task = wrapper.getTask();
             }
             if (type.isInstance(task)) {
                 return type.cast(task);

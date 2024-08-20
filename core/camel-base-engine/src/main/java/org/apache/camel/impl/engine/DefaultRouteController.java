@@ -179,8 +179,8 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
 
     @Override
     public SupervisingRouteController supervising() {
-        if (this instanceof SupervisingRouteController) {
-            return (SupervisingRouteController) this;
+        if (this instanceof SupervisingRouteController src) {
+            return src;
         } else {
             // change current route controller to be supervising
             SupervisingRouteController src = new DefaultSupervisingRouteController();

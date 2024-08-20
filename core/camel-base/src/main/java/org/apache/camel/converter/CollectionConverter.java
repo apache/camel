@@ -72,8 +72,8 @@ public final class CollectionConverter {
      */
     @Converter(order = 4)
     public static <T> ArrayList<T> toArrayList(Iterator<T> it) {
-        if (it instanceof ArrayList) {
-            return (ArrayList<T>) it;
+        if (it instanceof ArrayList list) {
+            return list;
         }
         ArrayList<T> list = new ArrayList<>();
         while (it.hasNext()) {
@@ -87,8 +87,8 @@ public final class CollectionConverter {
      */
     @Converter(order = 5)
     public static <T> ArrayList<T> toArrayList(Iterable<T> it) {
-        if (it instanceof ArrayList) {
-            return (ArrayList<T>) it;
+        if (it instanceof ArrayList list) {
+            return list;
         }
         ArrayList<T> list = new ArrayList<>();
         for (T value : it) {
@@ -139,8 +139,8 @@ public final class CollectionConverter {
      */
     @Converter(order = 13)
     public static <T> List<T> toList(Iterable<T> iterable) {
-        if (iterable instanceof List) {
-            return (List<T>) iterable;
+        if (iterable instanceof List list) {
+            return list;
         }
         List<T> result = new LinkedList<>();
         for (T value : iterable) {
@@ -154,8 +154,8 @@ public final class CollectionConverter {
      */
     @Converter(order = 14)
     public static <T> List<T> toList(Iterator<T> it) {
-        if (it instanceof List) {
-            return (List<T>) it;
+        if (it instanceof List value) {
+            return value;
         }
         List<T> result = new LinkedList<>();
         while (it.hasNext()) {
@@ -163,5 +163,4 @@ public final class CollectionConverter {
         }
         return result;
     }
-
 }

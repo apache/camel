@@ -106,8 +106,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointProperty, injectionPointName, true);
         if (endpoint != null) {
             boolean multipleConsumer = false;
-            if (endpoint instanceof MultipleConsumersSupport) {
-                multipleConsumer = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
+            if (endpoint instanceof MultipleConsumersSupport consumersSupport) {
+                multipleConsumer = consumersSupport.isMultipleConsumersSupported();
             }
             try {
                 SubscribeMethodProcessor processor = getConsumerProcessor(endpoint);
@@ -170,8 +170,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             answer = doGetEndpointInjection(uri, injectionPointName, mandatory);
         }
         // it may be a delegate endpoint via ref component
-        if (answer instanceof DelegateEndpoint) {
-            answer = ((DelegateEndpoint) answer).getEndpoint();
+        if (answer instanceof DelegateEndpoint delegateEndpoint) {
+            answer = delegateEndpoint.getEndpoint();
         }
         return answer;
     }
@@ -691,8 +691,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * @return      <tt>true</tt> if its singleton scoped, for prototype scoped <tt>false</tt> is returned.
      */
     protected boolean isSingleton(Object bean, String beanName) {
-        if (bean instanceof IsSingleton) {
-            IsSingleton singleton = (IsSingleton) bean;
+        if (bean instanceof IsSingleton singleton) {
             return singleton.isSingleton();
         }
         return true;
