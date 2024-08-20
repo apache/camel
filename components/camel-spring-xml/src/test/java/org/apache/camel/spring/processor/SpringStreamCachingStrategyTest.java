@@ -17,6 +17,7 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -39,7 +40,7 @@ public class SpringStreamCachingStrategyTest extends SpringTestSupport {
         assertTrue(context.getStreamCachingStrategy().isEnabled());
         assertEquals(normalizePath("target/cachedir"),
                 normalizePath(context.getStreamCachingStrategy().getSpoolDirectory().toString()));
-        assertEquals(Integer.valueOf(4096).intValue(), context.getStreamCachingStrategy().getBufferSize());
+        assertEquals(Integer.valueOf(IOHelper.DEFAULT_BUFFER_SIZE).intValue(), context.getStreamCachingStrategy().getBufferSize());
         assertEquals(Long.valueOf(8192).longValue(), context.getStreamCachingStrategy().getSpoolThreshold());
         assertEquals("java.io.ByteArrayInputStream",
                 context.getStreamCachingStrategy().getAllowClasses().iterator().next().getName());
