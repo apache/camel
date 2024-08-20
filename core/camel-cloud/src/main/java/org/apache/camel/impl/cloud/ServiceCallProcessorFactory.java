@@ -77,14 +77,14 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         CamelContextAware.trySetCamelContext(serviceChooser, camelContext);
         CamelContextAware.trySetCamelContext(loadBalancer, camelContext);
 
-        if (loadBalancer instanceof ServiceDiscoveryAware) {
-            ((ServiceDiscoveryAware) loadBalancer).setServiceDiscovery(serviceDiscovery);
+        if (loadBalancer instanceof ServiceDiscoveryAware serviceDiscoveryAware) {
+            serviceDiscoveryAware.setServiceDiscovery(serviceDiscovery);
         }
-        if (loadBalancer instanceof ServiceFilterAware) {
-            ((ServiceFilterAware) loadBalancer).setServiceFilter(serviceFilter);
+        if (loadBalancer instanceof ServiceFilterAware serviceFilterAware) {
+            serviceFilterAware.setServiceFilter(serviceFilter);
         }
-        if (loadBalancer instanceof ServiceChooserAware) {
-            ((ServiceChooserAware) loadBalancer).setServiceChooser(serviceChooser);
+        if (loadBalancer instanceof ServiceChooserAware serviceChooserAware) {
+            serviceChooserAware.setServiceChooser(serviceChooser);
         }
 
         // The component is used to configure the default scheme to use (eg
@@ -131,8 +131,8 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         ExchangePattern pattern = CamelContextHelper.parse(camelContext, ExchangePattern.class, definition.getPattern());
 
         Expression expression = retrieveExpression(camelContext, endpointScheme);
-        if (expression instanceof ExpressionFactory) {
-            expression = ((ExpressionFactory) expression).createExpression(camelContext);
+        if (expression instanceof ExpressionFactory expressionFactory) {
+            expression = expressionFactory.createExpression(camelContext);
         }
         return new DefaultServiceCallProcessor(
                 camelContext, camelContext.resolvePropertyPlaceholders(definition.getName()), endpointScheme, endpointUri,
