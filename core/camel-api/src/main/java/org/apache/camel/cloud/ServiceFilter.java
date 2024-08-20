@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
  * @see ServiceDiscovery
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceFilter {
 
     /**

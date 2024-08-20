@@ -25,5 +25,6 @@ import org.apache.camel.Expression;
  * @see Expression
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceExpressionFactory extends ServiceFactory<Expression> {
 }

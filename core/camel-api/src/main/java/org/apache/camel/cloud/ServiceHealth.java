@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+@Deprecated(since = "4.8.0")
 public interface ServiceHealth {
 
     /**

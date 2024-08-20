@@ -19,6 +19,7 @@ package org.apache.camel.cloud;
 import org.apache.camel.CamelContext;
 
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceFactory<T> {
     /**
      * Creates an instance of a service.

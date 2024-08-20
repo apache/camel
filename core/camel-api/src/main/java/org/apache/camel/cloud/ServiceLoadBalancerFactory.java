@@ -23,5 +23,6 @@ package org.apache.camel.cloud;
  * @see ServiceLoadBalancer
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceLoadBalancerFactory extends ServiceFactory<ServiceLoadBalancer> {
 }

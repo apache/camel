@@ -16,6 +16,7 @@
  */
 package org.apache.camel.cloud;
 
+@Deprecated(since = "4.8.0")
 public interface ServiceCallConstants {
     String SERVICE_CALL_SCHEME = "CamelServiceCallScheme";
     String SERVICE_CALL_URI = "CamelServiceCallUri";
