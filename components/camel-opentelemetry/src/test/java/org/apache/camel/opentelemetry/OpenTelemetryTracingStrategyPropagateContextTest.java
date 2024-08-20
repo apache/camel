@@ -102,7 +102,7 @@ public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenT
                 // The Context should be propagated
                 Assertions.assertNotSame(Context.root(), Context.current(), "OpenTelemetry was not propagated !");
                 // build and start a custom Span similar to what @WithSpan would do
-                SpanBuilder builder = getOttracer().getTracer().spanBuilder("WithSpan.secondMethod");
+                SpanBuilder builder = getOtTracer().getTracer().spanBuilder("WithSpan.secondMethod");
                 Span span = builder.setParent(Context.current())
                         .setAttribute(COMPONENT_KEY, "custom")
                         .startSpan();

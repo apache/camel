@@ -18,7 +18,7 @@ package org.apache.camel.opentelemetry;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +40,12 @@ final class SpanTreePrinter {
 
     // Method to print the spans in a tree view
     public static void printSpanTree(List<SpanData> spans) {
-        if (!LOGGER.isDebugEnabled()) {
+        if (!LOGGER.isInfoEnabled()) {
             return;
         }
 
         // Map to hold child spans against their parent span id
-        Map<String, List<SpanData>> spanMap = new HashMap<>();
+        Map<String, List<SpanData>> spanMap = new LinkedHashMap<>();
         SpanData rootSpan = null;
 
         // Populate the spanMap with the spans
@@ -62,9 +62,10 @@ final class SpanTreePrinter {
 
         // Print the tree starting from the root span
         if (rootSpan != null) {
+            LOGGER.info("Span tree:");
             printSpan(rootSpan, spanMap, "", true);
         } else {
-            System.out.println("No root span found!");
+            LOGGER.warn("No root span found!");
         }
     }
 
@@ -79,7 +80,7 @@ final class SpanTreePrinter {
                 attributes.get(CAMEL_URI_ATTRIBUTE),
                 humanReadableFormat(Duration.ofNanos(span.getEndEpochNanos() - span.getStartEpochNanos())));
 
-        LOGGER.debug("{}{}{}", indent, last ? "└─ " : "├─ ", routeDescription);
+        LOGGER.info("{}{}{}", indent, last ? "└─ " : "├─ ", routeDescription);
 
         List<SpanData> children = spanMap.get(context.getSpanId());
         if (children != null) {

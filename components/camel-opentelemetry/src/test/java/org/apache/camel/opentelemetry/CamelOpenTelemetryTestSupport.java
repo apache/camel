@@ -62,7 +62,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     SpanTestData[] expected;
     Tracer tracer;
-    OpenTelemetryTracer ottracer;
+    OpenTelemetryTracer otTracer;
 
     CamelOpenTelemetryTestSupport(SpanTestData[] expected) {
         this.expected = expected;
@@ -74,20 +74,20 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     }
 
     protected void initTracer(CamelContext context) {
-        ottracer = new OpenTelemetryTracer();
-        CamelContextAware.trySetCamelContext(ottracer, context);
+        otTracer = new OpenTelemetryTracer();
+        CamelContextAware.trySetCamelContext(otTracer, context);
 
         tracer = otelExtension.getOpenTelemetry().getTracer("tracerTest");
-        ottracer.setTracer(tracer);
-        ottracer.setExcludePatterns(getExcludePatterns());
-        ottracer.addDecorator(new TestSEDASpanDecorator());
+        otTracer.setTracer(tracer);
+        otTracer.setExcludePatterns(getExcludePatterns());
+        otTracer.addDecorator(new TestSEDASpanDecorator());
         if (isTraceProcessor()) {
-            ottracer.setTraceProcessors(true);
-            ottracer.initTracer();
+            otTracer.setTraceProcessors(true);
+            otTracer.initTracer();
         } else {
-            ottracer.setTracingStrategy(getTracingStrategy().apply(ottracer));
+            otTracer.setTracingStrategy(getTracingStrategy().apply(otTracer));
         }
-        ottracer.init(context);
+        otTracer.init(context);
     }
 
     @Override
@@ -105,8 +105,8 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         return null;
     }
 
-    protected OpenTelemetryTracer getOttracer() {
-        return ottracer;
+    protected OpenTelemetryTracer getOtTracer() {
+        return otTracer;
     }
 
     protected void verify() {
