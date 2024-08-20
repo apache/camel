@@ -58,7 +58,8 @@ public final class IOHelper {
 
     public static Supplier<Charset> defaultCharset = Charset::defaultCharset;
 
-    public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+    // Use the same default buffer size as the JVM
+    public static final int DEFAULT_BUFFER_SIZE = 16384;
 
     public static final long INITIAL_OFFSET = 0;
 
