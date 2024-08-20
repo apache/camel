@@ -127,9 +127,7 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
         final Endpoint endpoint = route.getConsumer().getEndpoint();
         final Map<String, String> properties = new HashMap<>();
 
-        if (endpoint instanceof DiscoverableService) {
-            final DiscoverableService service = (DiscoverableService) endpoint;
-
+        if (endpoint instanceof DiscoverableService service) {
             // first load all the properties from the endpoint
             properties.putAll(service.getServiceProperties());
         }
