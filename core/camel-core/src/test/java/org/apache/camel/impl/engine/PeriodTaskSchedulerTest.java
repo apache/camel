@@ -42,9 +42,9 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         counter.set(0);
 
         PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
-        if (scheduler instanceof TimerListenerManager) {
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
             // speedup unit test
-            ((TimerListenerManager) scheduler).setInterval(10);
+            timerListenerManager.setInterval(10);
         }
         scheduler.schedulePeriodTask(counter::incrementAndGet, 10);
         context.start();
@@ -59,9 +59,9 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         MyTask task = new MyTask();
 
         PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
-        if (scheduler instanceof TimerListenerManager) {
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
             // speedup unit test
-            ((TimerListenerManager) scheduler).setInterval(10);
+            timerListenerManager.setInterval(10);
         }
         scheduler.schedulePeriodTask(task, 10);
         context.start();

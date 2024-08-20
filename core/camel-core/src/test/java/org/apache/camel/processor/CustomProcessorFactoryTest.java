@@ -81,14 +81,12 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
 
         @Override
         public Processor createProcessor(Route route, NamedNode definition) throws Exception {
-            if (definition instanceof SplitDefinition) {
+            if (definition instanceof SplitDefinition split) {
                 // add additional output to the splitter
-                SplitDefinition split = (SplitDefinition) definition;
                 split.addOutput(new ToDefinition("mock:extra"));
             }
 
-            if (definition instanceof SetBodyDefinition) {
-                SetBodyDefinition set = (SetBodyDefinition) definition;
+            if (definition instanceof SetBodyDefinition set) {
                 set.setExpression(new ConstantExpression("body was altered"));
             }
 

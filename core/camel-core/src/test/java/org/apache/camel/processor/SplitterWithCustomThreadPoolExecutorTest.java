@@ -68,8 +68,8 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         SplitDefinition result = null;
 
         for (ProcessorDefinition<?> processorType : outputs) {
-            if (processorType instanceof SplitDefinition) {
-                result = (SplitDefinition) processorType;
+            if (processorType instanceof SplitDefinition splitDefinition) {
+                result = splitDefinition;
             } else {
                 result = firstSplitterType(processorType.getOutputs());
             }

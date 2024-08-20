@@ -73,8 +73,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+            if (builder instanceof RouteConfigurationsBuilder rcb) {
                 context.addRoutesConfigurations(rcb);
             }
         }
@@ -135,8 +134,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+            if (builder instanceof RouteConfigurationsBuilder rcb) {
                 context.addRoutesConfigurations(rcb);
             }
         }
@@ -192,8 +190,7 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+            if (builder instanceof RouteConfigurationsBuilder rcb) {
                 context.addRoutesConfigurations(rcb);
             }
         }

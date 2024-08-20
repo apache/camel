@@ -147,8 +147,7 @@ public class DefaultComponentAutowiredFalseTest extends ContextTestSupport {
         @Override
         public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if ("contentHandlerFactory".equals(name)) {
-                if (target instanceof MyComponent) {
-                    MyComponent comp = (MyComponent) target;
+                if (target instanceof MyComponent comp) {
                     comp.setContentHandlerFactory((ContentHandlerFactory) value);
                 } else {
                     MyEndpoint endp = (MyEndpoint) target;
