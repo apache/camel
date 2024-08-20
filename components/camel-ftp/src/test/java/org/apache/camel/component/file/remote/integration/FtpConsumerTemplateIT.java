@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -38,7 +37,6 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
     }
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         prepareFtpServer();
     }

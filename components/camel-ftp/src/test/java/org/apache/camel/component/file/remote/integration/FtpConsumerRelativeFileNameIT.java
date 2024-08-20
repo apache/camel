@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertDirectoryEquals;
@@ -35,7 +34,6 @@ public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
     }
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "out/filename-consumer-hello.txt");
         sendFile(getFtpUrl(), "Bye World", "out/filename-consumer-bye.txt");

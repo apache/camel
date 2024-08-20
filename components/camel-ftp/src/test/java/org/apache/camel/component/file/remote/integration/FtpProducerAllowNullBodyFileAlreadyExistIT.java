@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote.integration;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class FtpProducerAllowNullBodyFileAlreadyExistIT extends FtpServerTestSupport {
@@ -29,7 +28,6 @@ public class FtpProducerAllowNullBodyFileAlreadyExistIT extends FtpServerTestSup
     }
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello world", Exchange.FILE_NAME, "hello.txt");
     }
