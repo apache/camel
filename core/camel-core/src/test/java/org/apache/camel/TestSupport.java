@@ -433,8 +433,8 @@ public abstract class TestSupport {
      */
     public static Processor unwrap(Processor processor) {
         while (true) {
-            if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor) processor).getProcessor();
+            if (processor instanceof DelegateProcessor delegateProcessor) {
+                processor = delegateProcessor.getProcessor();
             } else {
                 return processor;
             }
@@ -449,15 +449,15 @@ public abstract class TestSupport {
      */
     public static Channel unwrapChannel(Processor processor) {
         while (true) {
-            if (processor instanceof Pipeline) {
-                processor = ((Pipeline) processor).next().get(0);
+            if (processor instanceof Pipeline pipeline) {
+                processor = pipeline.next().get(0);
             }
-            if (processor instanceof Channel) {
-                return (Channel) processor;
-            } else if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor) processor).getProcessor();
-            } else if (processor instanceof ErrorHandlerSupport) {
-                processor = ((ErrorHandlerSupport) processor).getOutput();
+            if (processor instanceof Channel channel) {
+                return channel;
+            } else if (processor instanceof DelegateProcessor delegateProcessor) {
+                processor = delegateProcessor.getProcessor();
+            } else if (processor instanceof ErrorHandlerSupport errorHandlerSupport) {
+                processor = errorHandlerSupport.getOutput();
             } else {
                 return null;
             }

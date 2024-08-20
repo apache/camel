@@ -70,8 +70,7 @@ public class DebugTest extends ContextTestSupport {
         mockCondition = new ConditionSupport() {
             public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
                 // match when sending to mocks
-                if (definition instanceof ToDefinition) {
-                    ToDefinition to = (ToDefinition) definition;
+                if (definition instanceof ToDefinition to) {
                     return to.getUri().startsWith("mock");
                 }
                 return false;

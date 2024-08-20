@@ -456,9 +456,9 @@ public abstract class ContextTestSupport extends TestSupport
             RoutesBuilder[] builders = createRouteBuilders();
             // add configuration before routes
             for (RoutesBuilder builder : builders) {
-                if (builder instanceof RouteConfigurationsBuilder) {
+                if (builder instanceof RouteConfigurationsBuilder routeConfigurationsBuilder) {
                     log.debug("Using created route configuration: {}", builder);
-                    context.addRoutesConfigurations((RouteConfigurationsBuilder) builder);
+                    context.addRoutesConfigurations(routeConfigurationsBuilder);
                 }
             }
             for (RoutesBuilder builder : builders) {
@@ -677,8 +677,7 @@ public abstract class ContextTestSupport extends TestSupport
         if (camelContextService != null) {
             camelContextService.start();
         } else {
-            if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+            if (context instanceof DefaultCamelContext defaultCamelContext) {
                 if (!defaultCamelContext.isStarted()) {
                     defaultCamelContext.start();
                 }

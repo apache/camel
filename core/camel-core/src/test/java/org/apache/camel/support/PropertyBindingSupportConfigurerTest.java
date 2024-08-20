@@ -385,8 +385,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
             if (ignoreCase) {
                 name = name.toLowerCase(Locale.ENGLISH);
             }
-            if (target instanceof Bar) {
-                Bar bar = (Bar) target;
+            if (target instanceof Bar bar) {
                 if ("age".equals(name)) {
                     bar.withAge(Integer.parseInt(value.toString()));
                     counter++;
@@ -441,8 +440,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
             if (ignoreCase) {
                 name = name.toLowerCase(Locale.ENGLISH);
             }
-            if (target instanceof Bar) {
-                Bar bar = (Bar) target;
+            if (target instanceof Bar bar) {
                 if ("age".equals(name)) {
                     counter++;
                     return bar.getAge();

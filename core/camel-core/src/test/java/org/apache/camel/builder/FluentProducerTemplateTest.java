@@ -475,8 +475,8 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 from("direct:in").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
                 from("direct:sum").process(exchange -> {
                     Object body = exchange.getIn().getBody();
-                    if (body instanceof Integer) {
-                        exchange.getIn().setBody((Integer) body + 1);
+                    if (body instanceof Integer integer) {
+                        exchange.getIn().setBody(integer + 1);
                     } else {
                         throw new IllegalArgumentException("Expected body of type Integer");
                     }

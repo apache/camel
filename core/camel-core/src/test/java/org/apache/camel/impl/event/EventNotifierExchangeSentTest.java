@@ -157,14 +157,12 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         boolean found = false;
         boolean found2 = false;
         for (CamelEvent event : events) {
-            if (event instanceof ExchangeSendingEvent) {
-                ExchangeSendingEvent sending = (ExchangeSendingEvent) event;
+            if (event instanceof ExchangeSendingEvent sending) {
                 String uri = sending.getEndpoint().getEndpointUri();
                 if ("log://foo".equals(uri)) {
                     found = true;
                 }
-            } else if (event instanceof ExchangeSentEvent) {
-                ExchangeSentEvent sent = (ExchangeSentEvent) event;
+            } else if (event instanceof ExchangeSentEvent sent) {
                 String uri = sent.getEndpoint().getEndpointUri();
                 if ("log://foo".equals(uri)) {
                     found2 = true;

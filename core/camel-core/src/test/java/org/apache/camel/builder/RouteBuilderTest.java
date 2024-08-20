@@ -537,8 +537,7 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected Processor unwrapDelegateProcessor(Processor processor) {
-        if (processor instanceof DelegateProcessor) {
-            DelegateProcessor delegate = (DelegateProcessor) processor;
+        if (processor instanceof DelegateProcessor delegate) {
             return delegate.getProcessor();
         } else {
             return processor;

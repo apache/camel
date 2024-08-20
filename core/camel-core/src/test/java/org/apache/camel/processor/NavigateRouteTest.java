@@ -63,13 +63,11 @@ public class NavigateRouteTest extends ContextTestSupport {
         for (Processor child : nav.next()) {
             processors.add(child);
 
-            if (child instanceof SendProcessor) {
-                SendProcessor send = (SendProcessor) child;
+            if (child instanceof SendProcessor send) {
                 assertEquals("mock://result", send.getDestination().getEndpointUri());
             }
 
-            if (child instanceof ConvertBodyProcessor) {
-                ConvertBodyProcessor convert = (ConvertBodyProcessor) child;
+            if (child instanceof ConvertBodyProcessor convert) {
                 assertEquals(String.class, convert.getType());
             }
 

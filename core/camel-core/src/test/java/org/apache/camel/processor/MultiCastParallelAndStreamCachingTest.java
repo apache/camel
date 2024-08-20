@@ -82,20 +82,18 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                 Thread.sleep(50);
             }
             Object body = exchange.getIn().getBody();
-            if (body instanceof InputStream) {
+            if (body instanceof InputStream inputStream) {
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                IOHelper.copy((InputStream) body, output);
+                IOHelper.copy(inputStream, output);
                 exchange.getMessage().setBody(output.toByteArray());
-            } else if (body instanceof Reader) {
-                Reader reader = (Reader) body;
+            } else if (body instanceof Reader reader) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = reader.read(); i > -1; i = reader.read()) {
                     sb.append((char) i);
                 }
                 reader.close();
                 exchange.getMessage().setBody(sb.toString());
-            } else if (body instanceof StreamSource) {
-                StreamSource ss = (StreamSource) body;
+            } else if (body instanceof StreamSource ss) {
                 if (ss.getInputStream() != null) {
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     IOHelper.copy(ss.getInputStream(), output);
