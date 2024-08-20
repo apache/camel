@@ -24,6 +24,7 @@ import java.util.List;
  * @see ServiceDiscovery
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceChooser {
 
     /**

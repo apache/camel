@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
  * @see ServiceChooser
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceLoadBalancer {
     <T> T process(Exchange exchange, String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception;
 }

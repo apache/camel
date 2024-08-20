@@ -23,5 +23,6 @@ package org.apache.camel.cloud;
  * @see ServiceChooser
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceChooserFactory extends ServiceFactory<ServiceChooser> {
 }

@@ -20,6 +20,7 @@ package org.apache.camel.cloud;
  * Represents a load balancer function to be executed by the LoadBalancer.
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceLoadBalancerFunction<T> {
     T apply(ServiceDefinition serviceDefinition) throws Exception;
 }

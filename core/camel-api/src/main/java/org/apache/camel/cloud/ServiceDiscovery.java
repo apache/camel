@@ -24,6 +24,7 @@ import java.util.List;
  * @see ServiceChooser
  * @see ServiceDefinition
  */
+@Deprecated(since = "4.8.0")
 public interface ServiceDiscovery {
 
     /**
