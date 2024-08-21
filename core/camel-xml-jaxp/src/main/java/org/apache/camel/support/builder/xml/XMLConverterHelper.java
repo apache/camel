@@ -88,11 +88,10 @@ public class XMLConverterHelper {
         ObjectHelper.notNull(node, "node");
 
         // If the node is the document, just cast it
-        if (node instanceof Document) {
-            return (Document) node;
+        if (node instanceof Document document) {
+            return document;
             // If the node is an element
-        } else if (node instanceof Element) {
-            Element elem = (Element) node;
+        } else if (node instanceof Element elem) {
             // If this is the root element, return its owner document
             if (elem.getOwnerDocument().getDocumentElement() == elem) {
                 return elem.getOwnerDocument();

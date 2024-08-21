@@ -236,10 +236,10 @@ public class XmlConverter {
     public String toString(Source source, Exchange exchange) throws TransformerException {
         if (source == null) {
             return null;
-        } else if (source instanceof StringSource) {
-            return ((StringSource) source).getText();
-        } else if (source instanceof BytesSource) {
-            return new String(((BytesSource) source).getData());
+        } else if (source instanceof StringSource stringSource) {
+            return stringSource.getText();
+        } else if (source instanceof BytesSource bytesSource) {
+            return new String(bytesSource.getData());
         } else {
             StringWriter buffer = new StringWriter();
             if (exchange != null) {
@@ -262,8 +262,8 @@ public class XmlConverter {
      */
     @Converter(order = 12)
     public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
-        if (source instanceof BytesSource) {
-            return ((BytesSource) source).getData();
+        if (source instanceof BytesSource bytesSource) {
+            return bytesSource.getData();
         } else {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             if (exchange != null) {
@@ -608,8 +608,8 @@ public class XmlConverter {
         ObjectHelper.notNull(node, "node");
 
         // If the node is the document, just cast it
-        if (node instanceof Document) {
-            return (Document) node;
+        if (node instanceof Document document) {
+            return document;
             // If the node is an element
         } else if (node instanceof Element elem) {
             // If this is the root element, return its owner document
@@ -657,11 +657,11 @@ public class XmlConverter {
     @Converter(order = 49)
     public Element toDOMElement(Node node) throws TransformerException {
         // If the node is an document, return the root element
-        if (node instanceof Document) {
-            return ((Document) node).getDocumentElement();
+        if (node instanceof Document document) {
+            return document.getDocumentElement();
             // If the node is an element, just cast it
-        } else if (node instanceof Element) {
-            return (Element) node;
+        } else if (node instanceof Element element) {
+            return element;
             // Other node types are not handled
         } else {
             throw new TransformerException("Unable to convert DOM node to an Element");
@@ -786,10 +786,10 @@ public class XmlConverter {
     public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
         if (nl.getLength() == 1) {
             return toDOMDocument(nl.item(0));
-        } else if (nl instanceof Node) {
+        } else if (nl instanceof Node node) {
             // as XML parsers may often have nodes that implement both Node and NodeList then the type converter lookup
             // may lookup either a type converter from NodeList or Node. So let's fallback and try with Node
-            return toDOMDocument((Node) nl);
+            return toDOMDocument(node);
         } else {
             return null;
         }
@@ -823,14 +823,14 @@ public class XmlConverter {
     @Converter(order = 63)
     public DOMSource toDOMSource(Source source, Exchange exchange)
             throws ParserConfigurationException, IOException, SAXException, TransformerException {
-        if (source instanceof DOMSource) {
-            return (DOMSource) source;
-        } else if (source instanceof SAXSource) {
-            return toDOMSourceFromSAX((SAXSource) source);
-        } else if (source instanceof StreamSource) {
-            return toDOMSourceFromStream((StreamSource) source, exchange);
-        } else if (source instanceof StAXSource) {
-            return toDOMSourceFromStAX((StAXSource) source);
+        if (source instanceof DOMSource domSource) {
+            return domSource;
+        } else if (source instanceof SAXSource saxSource) {
+            return toDOMSourceFromSAX(saxSource);
+        } else if (source instanceof StreamSource streamSource) {
+            return toDOMSourceFromStream(streamSource, exchange);
+        } else if (source instanceof StAXSource staxSource) {
+            return toDOMSourceFromStAX(staxSource);
         } else {
             return null;
         }
@@ -842,14 +842,14 @@ public class XmlConverter {
      */
     @Converter(order = 64)
     public SAXSource toSAXSource(Source source, Exchange exchange) throws SAXException, TransformerException {
-        if (source instanceof SAXSource) {
-            return (SAXSource) source;
-        } else if (source instanceof DOMSource) {
-            return toSAXSourceFromDOM((DOMSource) source, exchange);
-        } else if (source instanceof StreamSource) {
-            return toSAXSourceFromStream((StreamSource) source, exchange);
-        } else if (source instanceof StAXSource) {
-            return toSAXSourceFromStAX((StAXSource) source, exchange);
+        if (source instanceof SAXSource saxSource) {
+            return saxSource;
+        } else if (source instanceof DOMSource domSource) {
+            return toSAXSourceFromDOM(domSource, exchange);
+        } else if (source instanceof StreamSource streamSource) {
+            return toSAXSourceFromStream(streamSource, exchange);
+        } else if (source instanceof StAXSource stAXSource) {
+            return toSAXSourceFromStAX(stAXSource, exchange);
         } else {
             return null;
         }
@@ -857,14 +857,14 @@ public class XmlConverter {
 
     @Converter(order = 65)
     public StreamSource toStreamSource(Source source, Exchange exchange) throws TransformerException {
-        if (source instanceof StreamSource) {
-            return (StreamSource) source;
-        } else if (source instanceof DOMSource) {
-            return toStreamSourceFromDOM((DOMSource) source, exchange);
-        } else if (source instanceof SAXSource) {
-            return toStreamSourceFromSAX((SAXSource) source, exchange);
-        } else if (source instanceof StAXSource) {
-            return toStreamSourceFromStAX((StAXSource) source, exchange);
+        if (source instanceof StreamSource streamSource) {
+            return streamSource;
+        } else if (source instanceof DOMSource domSource) {
+            return toStreamSourceFromDOM(domSource, exchange);
+        } else if (source instanceof SAXSource saxSource) {
+            return toStreamSourceFromSAX(saxSource, exchange);
+        } else if (source instanceof StAXSource stAXSource) {
+            return toStreamSourceFromStAX(stAXSource, exchange);
         } else {
             return null;
         }
