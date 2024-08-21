@@ -90,8 +90,7 @@ public class MainIoCBeanConfigInjectConfigurerTest {
 
         @Override
         public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-            if (target instanceof MyBarConfig) {
-                MyBarConfig config = (MyBarConfig) target;
+            if (target instanceof MyBarConfig config) {
                 if ("name".equals(name)) {
                     // ensure the configurer was in use by prefix
                     config.setName("The " + value.toString());
