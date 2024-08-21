@@ -339,8 +339,7 @@ public final class URISupport {
             }
             // if the value is a list then we need to iterate
             Object value = entry.getValue();
-            if (value instanceof List) {
-                List list = (List) value;
+            if (value instanceof List list) {
                 for (int i = 0; i < list.size(); i++) {
                     Object obj = list.get(i);
                     if (obj == null) {

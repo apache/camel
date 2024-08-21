@@ -38,8 +38,8 @@ public enum ThreadPoolRejectedPolicy {
             return new RejectedExecutionHandler() {
                 @Override
                 public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-                    if (r instanceof Rejectable) {
-                        ((Rejectable) r).reject();
+                    if (r instanceof Rejectable rejectable) {
+                        rejectable.reject();
                     } else {
                         throw new RejectedExecutionException("Task " + r.toString() + " rejected from " + executor.toString());
                     }

@@ -95,8 +95,8 @@ public class RejectableThreadPoolExecutor extends ThreadPoolExecutor {
     @Override
     public String toString() {
         // the thread factory often have more precise details what the thread pool is used for
-        if (getThreadFactory() instanceof CamelThreadFactory) {
-            String name = ((CamelThreadFactory) getThreadFactory()).getName();
+        if (getThreadFactory() instanceof CamelThreadFactory camelThreadFactory) {
+            String name = camelThreadFactory.getName();
             return super.toString() + "[" + name + "]";
         } else {
             return super.toString();

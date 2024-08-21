@@ -84,8 +84,8 @@ public final class ObjectHelper {
         }
 
         if (ignoreCase) {
-            if (a instanceof String && b instanceof String) {
-                return ((String) a).equalsIgnoreCase((String) b);
+            if (a instanceof String strA && b instanceof String strB) {
+                return strA.equalsIgnoreCase(strB);
             }
         }
 
@@ -118,24 +118,23 @@ public final class ObjectHelper {
     }
 
     public static Boolean toBoolean(Object value) {
-        if (value instanceof Boolean) {
-            return (Boolean) value;
+        if (value instanceof Boolean booleanValue) {
+            return booleanValue;
         }
-        if (value instanceof byte[]) {
-            String str = new String((byte[]) value);
+        if (value instanceof byte[] bytes) {
+            String str = new String(bytes);
             if (isBoolean(str)) {
                 return Boolean.valueOf(str);
             }
         }
-        if (value instanceof String) {
+        if (value instanceof String str) {
             // we only want to accept true or false as accepted values
-            String str = (String) value;
             if (isBoolean(str)) {
                 return Boolean.valueOf(str);
             }
         }
-        if (value instanceof Integer) {
-            return (Integer) value > 0 ? Boolean.TRUE : Boolean.FALSE;
+        if (value instanceof Integer integer) {
+            return integer > 0 ? Boolean.TRUE : Boolean.FALSE;
         }
         return null;
     }
@@ -230,12 +229,12 @@ public final class ObjectHelper {
     public static <T> boolean isEmpty(T value) {
         if (value == null) {
             return true;
-        } else if (value instanceof String) {
-            return isEmpty((String) value);
-        } else if (value instanceof Collection) {
-            return isEmpty((Collection<?>) value);
-        } else if (value instanceof Map) {
-            return isEmpty((Map<?, ?>) value);
+        } else if (value instanceof String str) {
+            return isEmpty(str);
+        } else if (value instanceof Collection<?> collection) {
+            return isEmpty(collection);
+        } else if (value instanceof Map<?, ?> valueMap) {
+            return isEmpty(valueMap);
         } else {
             return false;
         }
@@ -328,13 +327,13 @@ public final class ObjectHelper {
      * Returns the predicate matching boolean on a {@link List} result set where if the first element is a boolean its
      * value is used otherwise this method returns true if the collection is not empty
      *
-     * @return <tt>true</tt> if the first element is a boolean and its value is true or if the list is non empty
+     * @return <tt>true</tt> if the first element is a boolean, and its value is true or if the list is non-empty
      */
     public static boolean matches(List<?> list) {
         if (!list.isEmpty()) {
             Object value = list.get(0);
-            if (value instanceof Boolean) {
-                return (Boolean) value;
+            if (value instanceof Boolean booleanValue) {
+                return booleanValue;
             } else {
                 // lets assume non-empty results are true
                 return true;
@@ -1166,15 +1165,15 @@ public final class ObjectHelper {
      * the value is not null
      */
     public static boolean evaluateValuePredicate(Object value) {
-        if (value instanceof Boolean) {
-            return (Boolean) value;
-        } else if (value instanceof String) {
-            return evaluateString((String) value);
+        if (value instanceof Boolean booleanValue) {
+            return booleanValue;
+        } else if (value instanceof String str) {
+            return evaluateString(str);
         } else if (value instanceof NodeList) {
             return evaluateNodeList(value);
-        } else if (value instanceof Collection) {
+        } else if (value instanceof Collection<?> collection) {
             // is it an empty collection
-            return !((Collection<?>) value).isEmpty();
+            return !collection.isEmpty();
         }
         return value != null;
     }
@@ -1194,7 +1193,7 @@ public final class ObjectHelper {
 
     private static boolean evaluateNodeList(Object value) {
         // is it an empty dom with empty attributes
-        if (value instanceof Node && ((Node) value).hasAttributes()) {
+        if (value instanceof Node node && node.hasAttributes()) {
             return true;
         }
         NodeList list = (NodeList) value;

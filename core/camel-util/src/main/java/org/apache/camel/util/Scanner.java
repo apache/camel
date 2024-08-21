@@ -303,9 +303,9 @@ public final class Scanner implements Iterator<String>, Closeable {
     public void close() throws IOException {
         if (!closed) {
             closed = true;
-            if (source instanceof Closeable) {
+            if (source instanceof Closeable closeable) {
                 try {
-                    ((Closeable) source).close();
+                    closeable.close();
                 } catch (IOException e) {
                     lastIOException = e;
                 }
