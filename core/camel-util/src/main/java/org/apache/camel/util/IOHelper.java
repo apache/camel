@@ -84,7 +84,7 @@ public final class IOHelper {
      * @return    the passed <code>in</code> decorated through a {@link BufferedInputStream} object as wrapper
      */
     public static BufferedInputStream buffered(InputStream in) {
-        return (in instanceof BufferedInputStream) ? (BufferedInputStream) in : new BufferedInputStream(in);
+        return (in instanceof BufferedInputStream bi) ? bi : new BufferedInputStream(in);
     }
 
     /**
@@ -96,7 +96,7 @@ public final class IOHelper {
      * @return     the passed <code>out</code> decorated through a {@link BufferedOutputStream} object as wrapper
      */
     public static BufferedOutputStream buffered(OutputStream out) {
-        return (out instanceof BufferedOutputStream) ? (BufferedOutputStream) out : new BufferedOutputStream(out);
+        return (out instanceof BufferedOutputStream bo) ? bo : new BufferedOutputStream(out);
     }
 
     /**
@@ -108,7 +108,7 @@ public final class IOHelper {
      * @return        the passed <code>reader</code> decorated through a {@link BufferedReader} object as wrapper
      */
     public static BufferedReader buffered(Reader reader) {
-        return (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
+        return (reader instanceof BufferedReader br) ? br : new BufferedReader(reader);
     }
 
     /**
@@ -120,7 +120,7 @@ public final class IOHelper {
      * @return        the passed <code>writer</code> decorated through a {@link BufferedWriter} object as wrapper
      */
     public static BufferedWriter buffered(Writer writer) {
-        return (writer instanceof BufferedWriter) ? (BufferedWriter) writer : new BufferedWriter(writer);
+        return (writer instanceof BufferedWriter bw) ? bw : new BufferedWriter(writer);
     }
 
     public static String toString(Reader reader) throws IOException {
@@ -494,11 +494,11 @@ public final class IOHelper {
     }
 
     public static void closeIterator(Object it) throws IOException {
-        if (it instanceof Closeable) {
-            IOHelper.closeWithException((Closeable) it);
+        if (it instanceof Closeable closeable) {
+            IOHelper.closeWithException(closeable);
         }
-        if (it instanceof java.util.Scanner) {
-            IOException ioException = ((java.util.Scanner) it).ioException();
+        if (it instanceof java.util.Scanner scanner) {
+            IOException ioException = scanner.ioException();
             if (ioException != null) {
                 throw ioException;
             }
