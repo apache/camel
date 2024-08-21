@@ -129,7 +129,7 @@ public class BaseParser {
             boolean supportsExternalNamespaces)
             throws IOException, XmlPullParserException {
         setLocation(definition);
-        if (definition instanceof NamespaceAware) {
+        if (definition instanceof NamespaceAware namespaceAware) {
             final Map<String, String> namespaces = new LinkedHashMap<>();
             for (int i = 0; i < parser.getNamespaceCount(parser.getDepth()); i++) {
                 final String prefix = parser.getNamespacePrefix(i);
@@ -137,7 +137,7 @@ public class BaseParser {
                     namespaces.put(prefix, parser.getNamespaceUri(i));
                 }
             }
-            ((NamespaceAware) definition).setNamespaces(namespaces);
+            namespaceAware.setNamespaces(namespaces);
         }
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             String name = parser.getAttributeName(i);
@@ -239,15 +239,15 @@ public class BaseParser {
     }
 
     private <T> void setLocation(T definition) {
-        if (definition instanceof LineNumberAware) {
+        if (definition instanceof LineNumberAware lineNumberAware) {
             // we want to get the line number where the tag starts (in case its multi-line)
             int line = parser.getStartLineNumber();
             if (line == -1) {
                 line = parser.getLineNumber();
             }
-            ((LineNumberAware) definition).setLineNumber(line);
+            lineNumberAware.setLineNumber(line);
             if (resource != null) {
-                ((LineNumberAware) definition).setLocation(resource.getLocation());
+                lineNumberAware.setLocation(resource.getLocation());
             }
         }
     }
