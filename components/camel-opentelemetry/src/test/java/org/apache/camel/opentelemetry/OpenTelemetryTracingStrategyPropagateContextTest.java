@@ -44,7 +44,7 @@ public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenT
     @TempDir
     private static Path tempDirectory;
 
-    private final static SpanTestData[] testdata = {
+    private static final SpanTestData[] testdata = {
             new SpanTestData().setLabel("camel-process").setOperation("delayed")
                     .setParentId(2),
             new SpanTestData().setLabel("camel-process").setOperation("WithSpan.secondMethod")
@@ -62,7 +62,7 @@ public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenT
     }
 
     @Test
-    void testTracingOfProcessors() throws IOException, InterruptedException {
+    void testTracingOfProcessors() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         assertTrue(notify.matches(30, TimeUnit.SECONDS));
         verify(true);
@@ -102,7 +102,7 @@ public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenT
                 // The Context should be propagated
                 Assertions.assertNotSame(Context.root(), Context.current(), "OpenTelemetry was not propagated !");
                 // build and start a custom Span similar to what @WithSpan would do
-                SpanBuilder builder = getOttracer().getTracer().spanBuilder("WithSpan.secondMethod");
+                SpanBuilder builder = getOtTracer().getTracer().spanBuilder("WithSpan.secondMethod");
                 Span span = builder.setParent(Context.current())
                         .setAttribute(COMPONENT_KEY, "custom")
                         .startSpan();

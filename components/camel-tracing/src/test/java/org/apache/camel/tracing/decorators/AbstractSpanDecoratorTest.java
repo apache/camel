@@ -20,7 +20,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
-import org.apache.camel.tracing.Tag;
 import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -59,6 +58,7 @@ public class AbstractSpanDecoratorTest {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn(TEST_URI);
+        Mockito.when(endpoint.toString()).thenReturn(TEST_URI);
 
         SpanDecorator decorator = new AbstractSpanDecorator() {
             @Override
@@ -76,7 +76,6 @@ public class AbstractSpanDecoratorTest {
 
         decorator.pre(span, null, endpoint);
 
-        assertEquals("camel-test", span.tags().get(Tag.COMPONENT.name()));
         assertEquals("camel-test", span.tags().get(TagConstants.COMPONENT));
         assertEquals("test", span.tags().get(TagConstants.URL_SCHEME));
         assertEquals("uri", span.tags().get(TagConstants.URL_PATH));
@@ -108,7 +107,6 @@ public class AbstractSpanDecoratorTest {
 
         decorator.post(span, exchange, null);
 
-        assertEquals(true, span.tags().get(Tag.ERROR.name()));
         assertEquals(true, span.tags().get(TagConstants.ERROR));
         assertEquals(1, span.logEntries().size());
         assertEquals("error", span.logEntries().get(0).fields().get("event"));

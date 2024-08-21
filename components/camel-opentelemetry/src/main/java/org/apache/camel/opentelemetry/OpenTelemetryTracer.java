@@ -188,11 +188,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
         OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) span;
         Span otelSpan = spanFromExchange.getOpenTelemetrySpan();
-        Context ctx;
+        Context ctx = Context.current().with(otelSpan);
         if (spanFromExchange.getBaggage() != null) {
-            ctx = Context.current().with(otelSpan).with(spanFromExchange.getBaggage());
-        } else {
-            ctx = Context.current().with(otelSpan);
+            ctx = ctx.with(spanFromExchange.getBaggage());
         }
         getContextPropagators().getTextMapPropagator().inject(ctx, adapter, new OpenTelemetrySetter());
     }

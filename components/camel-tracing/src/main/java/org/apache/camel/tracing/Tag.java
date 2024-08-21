@@ -16,6 +16,11 @@
  */
 package org.apache.camel.tracing;
 
+/**
+ * This enum represents the tags that can be used to decorate spans.
+ *
+ * @deprecated Use one of the constants available in {@link TagConstants} instead.
+ */
 @Deprecated
 public enum Tag {
     COMPONENT(TagConstants.COMPONENT),

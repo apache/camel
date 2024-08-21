@@ -72,8 +72,8 @@ NOTE: You would still need OpenTelemetry to instrument your code, which can be d
 
 == Spring Boot
 
-If you are using Spring Boot then you can add
-the `camel-opentelemetry-starter` dependency, and turn on OpenTracing by annotating
+If you are using Spring Boot, then you can add
+the `camel-opentelemetry-starter` dependency, and turn on OpenTelemetry by annotating
 the main class with `@CamelOpenTelemetry`.
 
 The `OpenTelemetryTracer` will be implicitly obtained from the camel context's `Registry`, unless
@@ -95,7 +95,7 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
      -jar myapp.jar
 ----
 
-By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4317`.
+By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4318`.
 
 Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/agent-config.md[the configuration documentation] for the full list of configuration items. For example:
 
@@ -103,7 +103,7 @@ Configuration parameters are passed as Java system properties (`-D` flags) or as
 ----
 java -javaagent:path/to/opentelemetry-javaagent.jar \
      -Dotel.service.name=your-service-name \
-     -Dotel.traces.exporter=jaeger \
+     -Dotel.traces.exporter=otlp \
      -jar myapp.jar
 ----
 

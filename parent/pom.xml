@@ -373,7 +373,9 @@
         <opensearch-testcontainers-version>2.0.1</opensearch-testcontainers-version>
         <openstack4j-version>3.11</openstack4j-version>
         <opentelemetry-version>1.34.1</opentelemetry-version>
+        <opentelemetry-log4j2-version>2.7.0-alpha</opentelemetry-log4j2-version>
         <opentelemetry-alpha-version>1.23.1-alpha</opentelemetry-alpha-version>
+        <opentelemetry-incubator-version>1.41.0-alpha</opentelemetry-incubator-version>
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.1</os-maven-plugin-version>
         <paho-version>1.2.5</paho-version>
