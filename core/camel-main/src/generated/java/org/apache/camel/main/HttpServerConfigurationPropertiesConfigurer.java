@@ -31,6 +31,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "basicPropertiesFile": target.setBasicPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsoleenabled":
         case "devConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
+        case "downloadenabled":
+        case "downloadEnabled": target.setDownloadEnabled(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckenabled":
         case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
@@ -72,6 +74,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "basicPropertiesFile": return java.lang.String.class;
         case "devconsoleenabled":
         case "devConsoleEnabled": return boolean.class;
+        case "downloadenabled":
+        case "downloadEnabled": return boolean.class;
         case "enabled": return boolean.class;
         case "healthcheckenabled":
         case "healthCheckEnabled": return boolean.class;
@@ -114,6 +118,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "basicPropertiesFile": return target.getBasicPropertiesFile();
         case "devconsoleenabled":
         case "devConsoleEnabled": return target.isDevConsoleEnabled();
+        case "downloadenabled":
+        case "downloadEnabled": return target.isDownloadEnabled();
         case "enabled": return target.isEnabled();
         case "healthcheckenabled":
         case "healthCheckEnabled": return target.isHealthCheckEnabled();

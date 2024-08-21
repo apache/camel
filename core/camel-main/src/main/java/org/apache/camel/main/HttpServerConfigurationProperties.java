@@ -46,6 +46,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private boolean metricsEnabled;
     private boolean uploadEnabled;
     private String uploadSourceDir;
+    private boolean downloadEnabled;
 
     @Metadata(label = "security")
     private boolean authenticationEnabled;
@@ -223,6 +224,19 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.uploadSourceDir = uploadSourceDir;
     }
 
+    public boolean isDownloadEnabled() {
+        return downloadEnabled;
+    }
+
+    /**
+     * Whether to enable file download via HTTP. This makes it possible to browse and download resource source files
+     * such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for
+     * management and monitoring.
+     */
+    public void setDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
+    }
+
     public boolean isAuthenticationEnabled() {
         return authenticationEnabled;
     }
@@ -398,6 +412,16 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withUploadSourceDir(String uploadSourceDir) {
         this.uploadSourceDir = uploadSourceDir;
+        return this;
+    }
+
+    /**
+     * Whether to enable file download via HTTP. This makes it possible to browse and download resource source files
+     * such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for
+     * management and monitoring.
+     */
+    public HttpServerConfigurationProperties withDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
         return this;
     }
 
