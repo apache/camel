@@ -132,11 +132,11 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (definition.getCompletionPredicate() != null) {
             Predicate predicate = createPredicate(definition.getCompletionPredicate());
             answer.setCompletionPredicate(predicate);
-        } else if (strategy instanceof Predicate) {
+        } else if (strategy instanceof Predicate predicate) {
             // if aggregation strategy implements predicate and was not
             // configured then use as fallback
             LOG.debug("Using AggregationStrategy as completion predicate: {}", strategy);
-            answer.setCompletionPredicate((Predicate) strategy);
+            answer.setCompletionPredicate(predicate);
         }
         if (definition.getCompletionTimeoutExpression() != null) {
             Expression expression = createExpression(definition.getCompletionTimeoutExpression());

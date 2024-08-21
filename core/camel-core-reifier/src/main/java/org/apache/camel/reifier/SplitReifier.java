@@ -85,11 +85,11 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategy() != null) {
             Object aggStrategy = lookupByName(definition.getAggregationStrategy());
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy instanceof BiFunction) {
+            if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
+                strategy = aggregationStrategy;
+            } else if (aggStrategy instanceof BiFunction biFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                        = new AggregationStrategyBiFunctionAdapter(biFunction);
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));

@@ -45,8 +45,7 @@ public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XP
     }
 
     protected void configureNamespaceAware(Object builder) {
-        if (definition.getNamespaces() != null && builder instanceof NamespaceAware) {
-            NamespaceAware namespaceAware = (NamespaceAware) builder;
+        if (definition.getNamespaces() != null && builder instanceof NamespaceAware namespaceAware) {
             namespaceAware.setNamespaces(definition.getNamespaces());
         }
     }

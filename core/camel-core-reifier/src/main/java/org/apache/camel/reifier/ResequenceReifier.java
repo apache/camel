@@ -44,10 +44,10 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         ResequencerConfig resequencer = definition.getResequencerConfig();
         StreamResequencerConfig stream = definition.getStreamConfig();
         BatchResequencerConfig batch = definition.getBatchConfig();
-        if (resequencer instanceof StreamResequencerConfig) {
-            stream = (StreamResequencerConfig) resequencer;
-        } else if (resequencer instanceof BatchResequencerConfig) {
-            batch = (BatchResequencerConfig) resequencer;
+        if (resequencer instanceof StreamResequencerConfig streamResequencerConfig) {
+            stream = streamResequencerConfig;
+        } else if (resequencer instanceof BatchResequencerConfig batchResequencerConfig) {
+            batch = batchResequencerConfig;
         }
 
         if (stream != null) {
