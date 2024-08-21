@@ -469,12 +469,16 @@ public class HttpProducer extends DefaultProducer {
      * @throws IOException can be thrown
      */
     protected <T> T executeMethod(HttpHost httpHost, HttpUriRequest httpRequest, HttpClientResponseHandler<T> handler)
-            throws IOException {
-        HttpContext localContext = HttpClientContext.create();
+            throws IOException, HttpException {
+        HttpContext localContext;
         if (httpContext != null) {
             localContext = new BasicHttpContext(httpContext);
+        } else {
+            localContext = HttpClientContext.create();
         }
-        return httpClient.execute(httpHost, httpRequest, localContext, handler);
+        // execute open that does not automatic close response input-stream (this is done in exchange on-completion by Camel)
+        ClassicHttpResponse res = httpClient.executeOpen(httpHost, httpRequest, localContext);
+        return handler.handleResponse(res);
     }
 
     /**
@@ -545,10 +549,8 @@ public class HttpProducer extends DefaultProducer {
         } else {
             if (entity.isStreaming()) {
                 if (getEndpoint().isDisableStreamCache()) {
-                    // write to in-memory buffer
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream(BUFFER_SIZE);
-                    entity.writeTo(bos);
-                    return bos.toByteArray();
+                    // use the response as-is
+                    return is;
                 } else {
                     int max = getEndpoint().getComponent().getResponsePayloadStreamingThreshold();
                     if (max > 0) {
