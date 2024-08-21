@@ -106,8 +106,7 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(target.getClass().getName(), context);
         // use reflection free configurer (if possible)
-        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
-            ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
+        if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
             Set<String> all = getter.getAllOptions(target).keySet();
             for (String name : all) {
                 Object value = getter.getOptionValue(target, name, true);

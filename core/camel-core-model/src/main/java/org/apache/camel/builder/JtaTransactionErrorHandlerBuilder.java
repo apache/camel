@@ -27,8 +27,8 @@ public class JtaTransactionErrorHandlerBuilder extends JtaTransactionErrorHandle
     }
 
     public JtaTransactionErrorHandlerBuilder(Object transactedPolicy) {
-        if (transactedPolicy instanceof String) {
-            setTransactedPolicyRef((String) transactedPolicy);
+        if (transactedPolicy instanceof String str) {
+            setTransactedPolicyRef(str);
         } else {
             setTransactedPolicy(transactedPolicy);
         }

@@ -247,8 +247,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
             exp = getExpression().getExpressionValue();
         }
 
-        if (exp instanceof ExpressionClause) {
-            ExpressionClause<?> clause = (ExpressionClause<?>) exp;
+        if (exp instanceof ExpressionClause clause) {
             if (clause.getExpressionType() != null) {
                 // if using the Java DSL then the expression may have been set
                 // using the
@@ -259,9 +258,9 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
                 // reset the expression to the expression type the
                 // ExpressionClause did build for us
                 ExpressionFactory model = clause.getExpressionType();
-                if (model instanceof ExpressionDefinition) {
+                if (model instanceof ExpressionDefinition expressionDefinition) {
                     correlationExpression = new ExpressionSubElementDefinition();
-                    correlationExpression.setExpressionType((ExpressionDefinition) model);
+                    correlationExpression.setExpressionType(expressionDefinition);
                 }
             }
         }

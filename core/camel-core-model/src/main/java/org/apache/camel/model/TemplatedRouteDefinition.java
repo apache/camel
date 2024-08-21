@@ -181,9 +181,9 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
             def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
         } else if (bean instanceof Supplier) {
             def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
-        } else if (bean instanceof String) {
-            // its a string type
-            def.setType((String) bean);
+        } else if (bean instanceof String str) {
+            // it is a string type
+            def.setType(str);
         } else {
             def.setBeanSupplier(ctx -> bean);
         }

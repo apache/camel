@@ -248,9 +248,9 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
             def.setBeanSupplier((RouteTemplateContext.BeanSupplier<Object>) bean);
         } else if (bean instanceof Supplier) {
             def.setBeanSupplier(ctx -> ((Supplier<?>) bean).get());
-        } else if (bean instanceof String) {
+        } else if (bean instanceof String str) {
             // its a string type
-            def.setType((String) bean);
+            def.setType(str);
         } else {
             def.setBeanSupplier(ctx -> bean);
         }

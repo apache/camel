@@ -113,8 +113,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
         }
 
         ProcessorDefinition<?> first = getOutputs().get(0);
-        if (first instanceof WhenDefinition) {
-            WhenDefinition when = (WhenDefinition) first;
+        if (first instanceof WhenDefinition when) {
             // move this outputs to the when, expect the first one
             // as the first one is the interceptor itself
             for (int i = 1; i < outputs.size(); i++) {

@@ -1053,8 +1053,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
 
         // are we already a choice?
-        if (def instanceof ChoiceDefinition) {
-            return (ChoiceDefinition) def;
+        if (def instanceof ChoiceDefinition choiceDefinition) {
+            return choiceDefinition;
         }
 
         // okay end this and get back to the choice
@@ -1077,9 +1077,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         ProcessorDefinition<?> def = this;
 
         // are we already a try?
-        if (def instanceof TryDefinition) {
+        if (def instanceof TryDefinition td) {
             // then we need special logic to end
-            TryDefinition td = (TryDefinition) def;
             return (TryDefinition) td.onEndDoTry();
         }
 
@@ -1097,8 +1096,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         ProcessorDefinition<?> def = this;
 
         // are we already a doCatch?
-        if (def instanceof CatchDefinition) {
-            return (CatchDefinition) def;
+        if (def instanceof CatchDefinition catchDefinition) {
+            return catchDefinition;
         }
 
         // okay end this and get back to the try
@@ -1115,8 +1114,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         ProcessorDefinition<?> def = this;
 
         // are we already a try?
-        if (def instanceof CircuitBreakerDefinition) {
-            return (CircuitBreakerDefinition) def;
+        if (def instanceof CircuitBreakerDefinition circuitBreakerDefinition) {
+            return circuitBreakerDefinition;
         }
 
         // okay end this and get back to the try
@@ -2355,8 +2354,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String) {
-            answer.setRef((String) bean);
+        if (bean instanceof String str) {
+            answer.setRef(str);
         } else {
             answer.setBean(bean);
         }
@@ -2386,8 +2385,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean, String method) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String) {
-            String str = (String) bean;
+        if (bean instanceof String str) {
             if (str.startsWith("type:")) {
                 answer.setBeanType(str.substring(5));
             } else {
@@ -2436,8 +2434,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String) {
-            answer.setRef((String) bean);
+        if (bean instanceof String str) {
+            answer.setRef(str);
         } else {
             answer.setBean(bean);
         }
@@ -2457,8 +2455,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type bean(Object bean, String method, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
-        if (bean instanceof String) {
-            answer.setRef((String) bean);
+        if (bean instanceof String str) {
+            answer.setRef(str);
         } else {
             answer.setBean(bean);
         }

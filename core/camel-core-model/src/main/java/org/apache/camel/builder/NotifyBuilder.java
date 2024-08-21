@@ -1331,14 +1331,14 @@ public class NotifyBuilder {
 
         @Override
         public void notify(CamelEvent event) throws Exception {
-            if (event instanceof ExchangeCreatedEvent) {
-                onExchangeCreated((ExchangeCreatedEvent) event);
-            } else if (event instanceof ExchangeCompletedEvent) {
-                onExchangeCompleted((ExchangeCompletedEvent) event);
-            } else if (event instanceof ExchangeFailedEvent) {
-                onExchangeFailed((ExchangeFailedEvent) event);
-            } else if (event instanceof ExchangeSentEvent) {
-                onExchangeSent((ExchangeSentEvent) event);
+            if (event instanceof ExchangeCreatedEvent exchangeCreatedEvent) {
+                onExchangeCreated(exchangeCreatedEvent);
+            } else if (event instanceof ExchangeCompletedEvent exchangeCompletedEvent) {
+                onExchangeCompleted(exchangeCompletedEvent);
+            } else if (event instanceof ExchangeFailedEvent exchangeFailedEvent) {
+                onExchangeFailed(exchangeFailedEvent);
+            } else if (event instanceof ExchangeSentEvent exchangeSentEvent) {
+                onExchangeSent(exchangeSentEvent);
             }
 
             // now compute whether we matched

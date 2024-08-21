@@ -91,8 +91,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (output instanceof OnFallbackDefinition) {
-            onFallback = (OnFallbackDefinition) output;
+        if (output instanceof OnFallbackDefinition onFallbackDefinition) {
+            onFallback = onFallbackDefinition;
         } else {
             if (onFallback != null) {
                 onFallback.addOutput(output);
@@ -118,8 +118,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         Iterator<ProcessorDefinition<?>> it = outputs.iterator();
         while (it.hasNext()) {
             ProcessorDefinition<?> out = it.next();
-            if (out instanceof OnFallbackDefinition) {
-                onFallback = (OnFallbackDefinition) out;
+            if (out instanceof OnFallbackDefinition onFallbackDefinition) {
+                onFallback = onFallbackDefinition;
                 it.remove();
             }
         }
