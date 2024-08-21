@@ -27,8 +27,8 @@ public class SpringTransactionErrorHandlerBuilder extends SpringTransactionError
     }
 
     public SpringTransactionErrorHandlerBuilder(Object transactedPolicy) {
-        if (transactedPolicy instanceof String) {
-            setTransactedPolicyRef((String) transactedPolicy);
+        if (transactedPolicy instanceof String string) {
+            setTransactedPolicyRef(string);
         } else {
             setTransactedPolicy(transactedPolicy);
         }

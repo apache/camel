@@ -231,13 +231,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             }
             int doFinallyCounter = 0;
             for (ProcessorDefinition<?> output : outputs) {
-                if (output instanceof CatchDefinition) {
+                if (output instanceof CatchDefinition catchDefinition) {
                     if (!catchClauses.contains(output)) {
-                        catchClauses.add((CatchDefinition) output);
+                        catchClauses.add(catchDefinition);
                     }
-                } else if (output instanceof FinallyDefinition) {
+                } else if (output instanceof FinallyDefinition finallyDefinition) {
                     ++doFinallyCounter;
-                    finallyClause = (FinallyDefinition) output;
+                    finallyClause = finallyDefinition;
                 } else {
                     outputsWithoutCatches.add(output);
                 }

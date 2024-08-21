@@ -127,11 +127,11 @@ public final class AdviceWithTasks {
 
         @Override
         public boolean match(ProcessorDefinition<?> processor) {
-            if (processor instanceof EndpointRequiredDefinition) {
-                String uri = ((EndpointRequiredDefinition) processor).getEndpointUri();
+            if (processor instanceof EndpointRequiredDefinition endpointRequiredDefinition) {
+                String uri = endpointRequiredDefinition.getEndpointUri();
                 return PatternHelper.matchPattern(uri, toUri);
-            } else if (processor instanceof ToDynamicDefinition) {
-                String uri = ((ToDynamicDefinition) processor).getUri();
+            } else if (processor instanceof ToDynamicDefinition toDynamicDefinition) {
+                String uri = toDynamicDefinition.getUri();
                 return PatternHelper.matchPattern(uri, toUri);
             }
             return false;
@@ -613,8 +613,7 @@ public final class AdviceWithTasks {
     }
 
     private static ProcessorDefinition<?> flatternOutput(ProcessorDefinition<?> output) {
-        if (output instanceof AdviceWithDefinition) {
-            AdviceWithDefinition advice = (AdviceWithDefinition) output;
+        if (output instanceof AdviceWithDefinition advice) {
             if (advice.getOutputs().size() == 1) {
                 return advice.getOutputs().get(0);
             } else {

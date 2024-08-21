@@ -669,8 +669,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // this will add the routes to camel
         populateRoutes();
 
-        if (this instanceof OnCamelContextEvent) {
-            context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
+        if (this instanceof OnCamelContextEvent onCamelContextEvent) {
+            context.addLifecycleStrategy(LifecycleStrategySupport.adapt(onCamelContextEvent));
         }
     }
 
@@ -709,8 +709,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             src.startRoutes(true);
         }
 
-        if (this instanceof OnCamelContextEvent) {
-            context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
+        if (this instanceof OnCamelContextEvent onCamelContextEvent) {
+            context.addLifecycleStrategy(LifecycleStrategySupport.adapt(onCamelContextEvent));
         }
 
         for (RouteDefinition route : routeCollection.getRoutes()) {
