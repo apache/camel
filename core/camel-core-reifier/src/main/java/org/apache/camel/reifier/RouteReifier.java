@@ -404,8 +404,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     private void prepareErrorHandlerAware(Route route, Processor errorHandler) {
         List<Processor> processors = route.filter("*");
         for (Processor p : processors) {
-            if (p instanceof ErrorHandlerAware) {
-                ((ErrorHandlerAware) p).setErrorHandler(errorHandler);
+            if (p instanceof ErrorHandlerAware errorHandlerAware) {
+                errorHandlerAware.setErrorHandler(errorHandler);
             }
         }
     }

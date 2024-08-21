@@ -92,10 +92,10 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(Route route, ErrorHandlerFactory definition) {
-        if (definition instanceof DeadLetterChannelDefinition) {
-            return new DeadLetterChannelReifier(route, (DeadLetterChannelDefinition) definition);
-        } else if (definition instanceof DefaultErrorHandlerDefinition) {
-            return new DefaultErrorHandlerReifier(route, (DefaultErrorHandlerDefinition) definition);
+        if (definition instanceof DeadLetterChannelDefinition deadLetterChannelDefinition) {
+            return new DeadLetterChannelReifier(route, deadLetterChannelDefinition);
+        } else if (definition instanceof DefaultErrorHandlerDefinition defaultErrorHandlerDefinition) {
+            return new DefaultErrorHandlerReifier(route, defaultErrorHandlerDefinition);
         } else if (definition instanceof NoErrorHandlerDefinition) {
             return new NoErrorHandlerReifier(route, definition);
         } else if (definition instanceof RefErrorHandlerDefinition) {
@@ -343,9 +343,9 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
                 addExceptionPolicy(handlerSupport, (OnExceptionDefinition) exception);
             }
         }
-        if (handler instanceof RedeliveryErrorHandler) {
-            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy()
-                    || ((RedeliveryErrorHandler) handler).isUseOriginalBodyPolicy();
+        if (handler instanceof RedeliveryErrorHandler redeliveryErrorHandler) {
+            boolean original = redeliveryErrorHandler.isUseOriginalMessagePolicy()
+                    || redeliveryErrorHandler.isUseOriginalBodyPolicy();
             if (original) {
                 // ensure allow original is turned on
                 route.setAllowUseOriginalMessage(true);

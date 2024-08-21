@@ -237,8 +237,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         // allows to perform additional logic after the properties has been
         // configured which may be needed
         // in the various camel components outside camel-core
-        if (predicate instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured) predicate).afterPropertiesConfigured(camelContext);
+        if (predicate instanceof AfterPropertiesConfigured afterPropertiesConfigured) {
+            afterPropertiesConfigured.afterPropertiesConfigured(camelContext);
         }
     }
 
@@ -246,8 +246,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         // allows to perform additional logic after the properties has been
         // configured which may be needed
         // in the various camel components outside camel-core
-        if (expression instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured) expression).afterPropertiesConfigured(camelContext);
+        if (expression instanceof AfterPropertiesConfigured afterPropertiesConfigured) {
+            afterPropertiesConfigured.afterPropertiesConfigured(camelContext);
         }
     }
 

@@ -468,8 +468,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // prefer to use explicit configured executor on the definition
         if (definition.getExecutorServiceBean() != null) {
             ExecutorService executorService = definition.getExecutorServiceBean();
-            if (executorService instanceof ScheduledExecutorService) {
-                return (ScheduledExecutorService) executorService;
+            if (executorService instanceof ScheduledExecutorService scheduledExecutorService) {
+                return scheduledExecutorService;
             }
             throw new IllegalArgumentException(
                     "ExecutorServiceRef " + definition.getExecutorServiceRef()
@@ -651,8 +651,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      */
     public Channel wrapProcessor(Processor processor) throws Exception {
         // don't double wrap
-        if (processor instanceof Channel) {
-            return (Channel) processor;
+        if (processor instanceof Channel channel) {
+            return channel;
         }
         return wrapChannel(processor, null);
     }
@@ -794,8 +794,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         Processor errorHandler = ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route,
                 builder, output);
 
-        if (output instanceof ErrorHandlerAware) {
-            ((ErrorHandlerAware) output).setErrorHandler(errorHandler);
+        if (output instanceof ErrorHandlerAware errorHandlerAware) {
+            errorHandlerAware.setErrorHandler(errorHandler);
         }
 
         return errorHandler;
@@ -823,12 +823,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             Processor processor = createProcessor(output);
 
             // inject id
-            if (processor instanceof IdAware) {
+            if (processor instanceof IdAware idAware) {
                 String id = getId(output);
-                ((IdAware) processor).setId(id);
+                idAware.setId(id);
             }
-            if (processor instanceof RouteIdAware) {
-                ((RouteIdAware) processor).setRouteId(route.getRouteId());
+            if (processor instanceof RouteIdAware routeIdAware) {
+                routeIdAware.setRouteId(route.getRouteId());
             }
 
             if (output instanceof Channel && processor == null) {
@@ -894,12 +894,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         }
 
         // inject id
-        if (processor instanceof IdAware) {
+        if (processor instanceof IdAware idAware) {
             String id = getId(definition);
-            ((IdAware) processor).setId(id);
+            idAware.setId(id);
         }
-        if (processor instanceof RouteIdAware) {
-            ((RouteIdAware) processor).setRouteId(route.getRouteId());
+        if (processor instanceof RouteIdAware routeIdAware) {
+            routeIdAware.setRouteId(route.getRouteId());
         }
 
         if (processor == null) {
@@ -951,11 +951,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = lookupByName(definition.getAggregationStrategyRef());
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy instanceof BiFunction) {
+            if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
+                strategy = aggregationStrategy;
+            } else if (aggStrategy instanceof BiFunction biFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                        = new AggregationStrategyBiFunctionAdapter(biFunction);
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
