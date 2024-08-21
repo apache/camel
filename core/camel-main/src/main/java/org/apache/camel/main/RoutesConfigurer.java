@@ -182,8 +182,8 @@ public class RoutesConfigurer {
                     .findImplementations(RoutesBuilder.class, pkgs);
             for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
-                if (builder instanceof RoutesBuilder) {
-                    routes.add((RoutesBuilder) builder);
+                if (builder instanceof RoutesBuilder routesBuilder) {
+                    routes.add(routesBuilder);
                 } else {
                     LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
                 }
@@ -242,8 +242,7 @@ public class RoutesConfigurer {
 
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+            if (builder instanceof RouteConfigurationsBuilder rcb) {
                 LOG.debug("Adding routes configurations into CamelContext from RouteConfigurationsBuilder: {}", rcb);
                 camelContext.addRoutesConfigurations(rcb);
             }
@@ -355,9 +354,8 @@ public class RoutesConfigurer {
         // the resource may also have additional configurations which we need to detect via pre-parsing
         for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
             RoutesBuilderLoader loader = entry.getKey();
-            if (loader instanceof ExtendedRoutesBuilderLoader) {
+            if (loader instanceof ExtendedRoutesBuilderLoader extLoader) {
                 // extended loader can pre-parse all resources ine one unit
-                ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
                 List<Resource> files = entry.getValue();
                 try {
                     extLoader.preParseRoutes(files);
