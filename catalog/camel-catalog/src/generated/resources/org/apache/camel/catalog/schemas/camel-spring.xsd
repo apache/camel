@@ -3370,12 +3370,14 @@ the rules must return true. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:abstractJsseUtilFactoryBean">
         <xs:sequence/>
-        <xs:attribute name="type" type="xs:string">
+        <xs:attribute name="resource" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional type of the key store to load. See Appendix A in the Java Cryptography Architecture Standard Algorithm Name
-Documentation for more information on standard names.
+The keystore to load. The keystore is by default loaded from classpath. If you must load from file system, then use
+file: as prefix. file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default)
+http:uri (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry,
+for example for testing and development).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3384,7 +3386,17 @@ Documentation for more information on standard names.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional password for reading/opening/verifying the key store.
+The password for reading/opening/verifying the key store.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The type of the key store to create and load. See
+https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3393,16 +3405,16 @@ The optional password for reading/opening/verifying the key store.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional provider identifier for instantiating the key store.
+The provider identifier for instantiating the key store.
 ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="resource" type="xs:string">
+        <xs:attribute name="keyStore" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional file path, class path resource, or URL of the resource used to load the key store.
+To lookup an existing KeyStore instance from the registry, for example for testing and development.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3419,8 +3431,8 @@ The optional file path, class path resource, or URL of the resource used to load
             <xs:documentation xml:lang="en">
 <![CDATA[
 The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom
-represented by this object's configuration. See Appendix A in the Java Cryptography Architecture API Specification and
-Reference guide for information about standard RNG algorithm names.
+represented by this object's configuration. See
+https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3429,8 +3441,8 @@ Reference guide for information about standard RNG algorithm names.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional provider identifier for the SecureRandom factory method used to create the SecureRandom represented by this
-object's configuration.
+The provider identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's
+configuration.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -18177,7 +18189,7 @@ The optional SSLSessionContext timeout time for javax.net.ssl.SSLSession in seco
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional provider identifier for the JSSE implementation to use when constructing an SSLContext.
+The provider identifier for the JSSE implementation to use when constructing an SSLContext.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -18186,8 +18198,8 @@ The optional provider identifier for the JSSE implementation to use when constru
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The optional protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See
-Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names.
+The protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See
+https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
