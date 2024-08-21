@@ -30,8 +30,8 @@ import org.apache.camel.spi.annotations.ConstantProvider;
  * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the current (not the
  * original) request and response {@link Message} messages. The {@link Exchange} also holds meta-data during its entire
  * lifetime stored as properties accessible using the various {@link #getProperty(String)} methods. The
- * {@link #setProperty(String, Object)} is used to store a property. For example, you can use this to store security, SLA
- * related data or any other information deemed useful throughout processing. If an {@link Exchange} failed during
+ * {@link #setProperty(String, Object)} is used to store a property. For example, you can use this to store security,
+ * SLA related data or any other information deemed useful throughout processing. If an {@link Exchange} failed during
  * routing the {@link Exception} that caused the failure is stored and accessible via the {@link #getException()}
  * method.
  * <p/>
