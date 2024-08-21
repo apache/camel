@@ -50,9 +50,7 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.builder.PredicateBuilder;
-import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
 import static org.apache.camel.support.ObjectHelper.isNumber;
@@ -168,24 +166,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         StringBuilder sb = new StringBuilder();
         for (SimpleNode node : nodes) {
             String exp = node.createCode(expression);
-            if (node instanceof LiteralNode) {
-                exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-                sb.append("\"");
-                // " should be escaped to \"
-                exp = LanguageHelper.escapeQuotes(exp);
-                // \n \t \r should be escaped
-                exp = exp.replaceAll("\n", "\\\\n");
-                exp = exp.replaceAll("\t", "\\\\t");
-                exp = exp.replaceAll("\r", "\\\\r");
-                if (exp.endsWith("\\") && !exp.endsWith("\\\\")) {
-                    // there is a single trailing slash which we need to escape
-                    exp += "\\";
-                }
-                sb.append(exp);
-                sb.append("\"");
-            } else {
-                sb.append(exp);
-            }
+            SimpleExpressionParser.parseLiteralNode(sb, node, exp);
         }
         String code = sb.toString();
         code = code.replace(BaseSimpleParser.CODE_START, "");
