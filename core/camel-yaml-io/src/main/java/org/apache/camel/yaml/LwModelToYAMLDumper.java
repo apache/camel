@@ -262,10 +262,10 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
         NamespaceAware na = null;
         Expression exp = ed.getExpressionValue();
-        if (exp instanceof NamespaceAware) {
-            na = (NamespaceAware) exp;
-        } else if (ed instanceof NamespaceAware) {
-            na = (NamespaceAware) ed;
+        if (exp instanceof NamespaceAware namespaceAware) {
+            na = namespaceAware;
+        } else if (ed instanceof NamespaceAware namespaceAware) {
+            na = namespaceAware;
         }
 
         return na;
