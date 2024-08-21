@@ -50,6 +50,11 @@ public class SourceDevConsole extends AbstractDevConsole {
      */
     public static final String LIMIT = "limit";
 
+    /**
+     * Whether to dump or list file names only
+     */
+    public static final String DUMP = "dump";
+
     public SourceDevConsole() {
         super("camel", "source", "Source", "Dump route source code");
     }
@@ -57,6 +62,9 @@ public class SourceDevConsole extends AbstractDevConsole {
     @Override
     protected String doCallText(Map<String, Object> options) {
         final StringBuilder sb = new StringBuilder();
+
+        boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
+
         Function<ManagedRouteMBean, Object> task = mrb -> {
             String loc = mrb.getSourceLocation();
             if (loc != null) {
@@ -69,17 +77,19 @@ public class SourceDevConsole extends AbstractDevConsole {
                             sb.append("\n");
                         }
 
-                        LineNumberReader reader = new LineNumberReader(resource.getReader());
-                        int i = 0;
-                        String t;
-                        do {
-                            t = reader.readLine();
-                            if (t != null) {
-                                i++;
-                                code.append(String.format("\n    #%s %s", i, t));
-                            }
-                        } while (t != null);
-                        IOHelper.close(reader);
+                        if (dump) {
+                            LineNumberReader reader = new LineNumberReader(resource.getReader());
+                            int i = 0;
+                            String t;
+                            do {
+                                t = reader.readLine();
+                                if (t != null) {
+                                    i++;
+                                    code.append(String.format("\n    #%s %s", i, t));
+                                }
+                            } while (t != null);
+                            IOHelper.close(reader);
+                        }
                     }
                 } catch (Exception e) {
                     // ignore
@@ -87,6 +97,7 @@ public class SourceDevConsole extends AbstractDevConsole {
                 sb.append(String.format("    Id: %s", mrb.getRouteId()));
                 if (mrb.getSourceLocation() != null) {
                     sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                    sb.append(String.format("\n    File: %s", LoggerHelper.sourceNameOnly(loc)));
                 }
                 if (!code.isEmpty()) {
                     sb.append("\n");
@@ -103,6 +114,8 @@ public class SourceDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
+        boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
+
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
 
@@ -112,14 +125,16 @@ public class SourceDevConsole extends AbstractDevConsole {
 
             jo.put("routeId", mrb.getRouteId());
             jo.put("from", mrb.getEndpointUri());
-            if (mrb.getSourceLocation() != null) {
-                jo.put("source", mrb.getSourceLocation());
-            }
-
             String loc = mrb.getSourceLocation();
-            List<JsonObject> code = ConsoleHelper.loadSourceAsJson(getCamelContext(), loc);
-            if (code != null) {
-                jo.put("code", code);
+            if (loc != null) {
+                jo.put("source", loc);
+                jo.put("file", LoggerHelper.sourceNameOnly(loc));
+                if (dump) {
+                    List<JsonObject> code = ConsoleHelper.loadSourceAsJson(getCamelContext(), loc);
+                    if (code != null) {
+                        jo.put("code", code);
+                    }
+                }
             }
             return null;
         };
@@ -155,9 +170,11 @@ public class SourceDevConsole extends AbstractDevConsole {
             return true;
         }
 
+        String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
         return PatternHelper.matchPattern(mrb.getRouteId(), filter)
                 || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
-                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter);
+                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter)
+                || PatternHelper.matchPattern(onlyName, filter);
     }
 
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
