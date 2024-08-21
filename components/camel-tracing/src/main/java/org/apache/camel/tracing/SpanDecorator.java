@@ -76,7 +76,7 @@ public interface SpanDecorator {
     String getOperationName(Exchange exchange, Endpoint endpoint);
 
     /**
-     * This method adds appropriate details (tags/logs) to the supplied span based on the pre processing of the
+     * This method adds appropriate details (tags/logs) to the supplied span based on the pre-processing of the
      * exchange.
      *
      * @param span     The span
@@ -86,7 +86,7 @@ public interface SpanDecorator {
     void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint);
 
     /**
-     * This method adds appropriate details (tags/logs) to the supplied span based on the post processing of the
+     * This method adds appropriate details (tags/logs) to the supplied span based on the post-processing of the
      * exchange.
      *
      * @param span     The span
@@ -110,7 +110,7 @@ public interface SpanDecorator {
     SpanKind getReceiverSpanKind();
 
     /**
-     * This method returns the map to be used for headers extraction when the component is receiving a communication.
+     * This method returns the map to be used for header extraction when the component is receiving a communication.
      *
      * @param  map      a map containing the objects
      * @param  encoding whether the headers are encoded
@@ -119,7 +119,7 @@ public interface SpanDecorator {
     ExtractAdapter getExtractAdapter(Map<String, Object> map, boolean encoding);
 
     /**
-     * This method returns the map to be used for headers injection when the component is receiving a communication.
+     * This method returns the map to be used for header injection when the component is receiving a communication.
      *
      * @param  map      a map containing the objects
      * @param  encoding whether the headers are encoded

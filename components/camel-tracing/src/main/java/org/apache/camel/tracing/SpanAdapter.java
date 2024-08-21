@@ -19,15 +19,26 @@ package org.apache.camel.tracing;
 import java.util.Map;
 
 public interface SpanAdapter {
+
     void setComponent(String component);
 
     void setError(boolean error);
 
+    /**
+     * @deprecated use {@link #setTag(String, String)} instead.
+     */
     @Deprecated
-    void setTag(Tag key, String value);
+    default void setTag(Tag key, String value) {
+        setTag(key.getAttribute(), value);
+    }
 
+    /**
+     * @deprecated use {@link #setTag(String, Number)} instead.
+     */
     @Deprecated
-    void setTag(Tag key, Number value);
+    default void setTag(Tag key, Number value) {
+        setTag(key.getAttribute(), value);
+    }
 
     void setTag(String key, String value);
 
@@ -35,14 +46,20 @@ public interface SpanAdapter {
 
     void setTag(String key, Boolean value);
 
+    /**
+     * @deprecated use {@link #setLowCardinalityTag(String, String)} instead.
+     */
     @Deprecated
     default void setLowCardinalityTag(Tag key, String value) {
-        setTag(key, value);
+        setLowCardinalityTag(key.getAttribute(), value);
     }
 
+    /**
+     * @deprecated use {@link #setLowCardinalityTag(String, Number)} instead.
+     */
     @Deprecated
     default void setLowCardinalityTag(Tag key, Number value) {
-        setTag(key, value);
+        setLowCardinalityTag(key.getAttribute(), value);
     }
 
     default void setLowCardinalityTag(String key, String value) {

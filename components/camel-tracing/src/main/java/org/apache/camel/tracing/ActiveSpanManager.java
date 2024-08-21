@@ -41,7 +41,7 @@ public final class ActiveSpanManager {
      * @return          The current active span, or null if none exists
      */
     public static SpanAdapter getSpan(Exchange exchange) {
-        Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
+        Holder holder = exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class);
         if (holder != null) {
             return holder.getSpan();
         }
@@ -57,8 +57,8 @@ public final class ActiveSpanManager {
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
-                new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span));
-        if (exchange.getContext().isUseMDCLogging()) {
+                new Holder(exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class), span));
+        if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
             MDC.put(MDC_TRACE_ID, span.traceId());
             MDC.put(MDC_SPAN_ID, span.spanId());
         }
@@ -72,15 +72,15 @@ public final class ActiveSpanManager {
      * @param exchange The exchange
      */
     public static void deactivate(Exchange exchange) {
-        Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
+        Holder holder = exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class);
         if (holder != null) {
-            exchange.setProperty(ACTIVE_SPAN_PROPERTY, holder.getParent());
+            Holder parent = holder.getParent();
+            exchange.setProperty(ACTIVE_SPAN_PROPERTY, parent);
 
             holder.closeScope();
-            if (exchange.getContext().isUseMDCLogging()) {
-                Holder parent = holder.getParent();
+            if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
                 if (parent != null) {
-                    SpanAdapter span = holder.getParent().getSpan();
+                    SpanAdapter span = parent.getSpan();
                     MDC.put(MDC_TRACE_ID, span.traceId());
                     MDC.put(MDC_SPAN_ID, span.spanId());
                 } else {
@@ -92,33 +92,35 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * If underlying span is active, closes its scope without ending the span. This methods should be called after async
-     * execution is started on the same thread on which span was activated. ExchangeAsyncStartedEvent is used to notify
-     * about it.
+     * If the underlying span is active, closes its scope without ending the span. This method should be called after
+     * async execution is started on the same thread on which span was activated. ExchangeAsyncStartedEvent is used to
+     * notify about it.
      *
      * @param exchange The exchange
      */
     public static void endScope(Exchange exchange) {
-        Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
-        if (holder != null) {
+        Holder holder = exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class);
+        if (holder != null && !holder.isClosed()) {
             holder.closeScope();
         }
     }
 
     /**
      * Simple holder for the currently active span and an optional reference to the parent holder. This will be used to
-     * maintain a stack for spans, built up during the execution of a series of chained camel exchanges, and then
-     * unwound when the responses are processed.
+     * maintain a stack for spans, built up during the execution of multiple chained camel exchanges, and then unwound
+     * when the responses are processed.
      */
     public static class Holder {
-        private Holder parent;
-        private SpanAdapter span;
-        private AutoCloseable scope;
+        private final Holder parent;
+        private final SpanAdapter span;
+        private final AutoCloseable scope;
+        private boolean closed;
 
-        public Holder(Holder parent, SpanAdapter span) {
+        Holder(Holder parent, SpanAdapter span) {
             this.parent = parent;
             this.span = span;
             this.scope = span.makeCurrent();
+            this.closed = false;
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Tracing: started scope: {}", this.scope);
             }
@@ -132,12 +134,21 @@ public final class ActiveSpanManager {
             return span;
         }
 
+        public boolean isClosed() {
+            return closed;
+        }
+
         private void closeScope() {
+            if (closed) {
+                LOG.error("Tracing: scope already closed: {}", this.scope);
+            }
+
             try {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Tracing: closing scope: {}", this.scope);
                 }
                 scope.close();
+                this.closed = true;
             } catch (Exception e) {
                 LOG.debug("Failed to close span scope. This exception is ignored.", e);
             }

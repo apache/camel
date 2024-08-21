@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ActiveSpanManagerTest extends ExchangeTestSupport {
+class ActiveSpanManagerTest extends ExchangeTestSupport {
 
     @Test
-    public void testNoSpan() {
+    void testNoSpan() {
         Exchange exchange = createExchange();
         assertNull(ActiveSpanManager.getSpan(exchange));
 
@@ -38,7 +38,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testCurrentSpan() {
+    void testCurrentSpan() {
         Exchange exchange = createExchange();
         MockSpanAdapter span = MockSpanAdapter.buildSpan("test");
         ActiveSpanManager.activate(exchange, span);
@@ -51,7 +51,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testSEndScope() {
+    void testSEndScope() {
         Exchange exchange = createExchange();
         MockSpanAdapter span = MockSpanAdapter.buildSpan("test");
         ActiveSpanManager.activate(exchange, span);
@@ -65,7 +65,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testCreateChild() {
+    void testCreateChild() {
         Exchange exchange = createExchange();
         SpanAdapter parent = MockSpanAdapter.buildSpan("parent");
         ActiveSpanManager.activate(exchange, parent);
@@ -78,7 +78,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testIsolatedConcurrentExchanges() {
+    void testIsolatedConcurrentExchanges() {
         Exchange exchange = createExchange();
         SpanAdapter parent = MockSpanAdapter.buildSpan("parent");
         ActiveSpanManager.activate(exchange, parent);
@@ -104,13 +104,13 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testMDCSupport() {
+    void testMDCSupport() {
         Exchange exchange = createExchange();
         exchange.getContext().setUseMDCLogging(true);
 
-        SpanAdapter parent = MockSpanAdapter.buildSpan("parent");
-        ((MockSpanAdapter) parent).setTraceId("0");
-        ((MockSpanAdapter) parent).setSpanId("1");
+        MockSpanAdapter parent = MockSpanAdapter.buildSpan("parent");
+        parent.setTraceId("0");
+        parent.setSpanId("1");
 
         // no MDC entries before
         // 0 and 1 after activating parent
@@ -121,9 +121,9 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
         assertEquals("1", MDC.get(ActiveSpanManager.MDC_SPAN_ID));
 
         // 1 and 2 after activating child1
-        SpanAdapter child1 = MockSpanAdapter.buildSpan("child1");
-        ((MockSpanAdapter) child1).setTraceId("1");
-        ((MockSpanAdapter) child1).setSpanId("2");
+        MockSpanAdapter child1 = MockSpanAdapter.buildSpan("child1");
+        child1.setTraceId("1");
+        child1.setSpanId("2");
         ActiveSpanManager.activate(exchange, child1);
         assertEquals("1", MDC.get(ActiveSpanManager.MDC_TRACE_ID));
         assertEquals("2", MDC.get(ActiveSpanManager.MDC_SPAN_ID));

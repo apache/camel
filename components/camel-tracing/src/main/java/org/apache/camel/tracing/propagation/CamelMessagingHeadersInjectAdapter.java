@@ -24,8 +24,8 @@ public final class CamelMessagingHeadersInjectAdapter implements InjectAdapter {
 
     // As per the JMS specs, header names must be valid Java identifier part
     // characters.
-    // This means that any header names that contain illegal characters (- for
-    // example) should be handled correctly
+    // This means that any header names that contain illegal characters ("-", for
+    // example) should be handled correctly,
     // Opentracing java-jms does it as follows.
     static final String JMS_DASH = "_$dash$_";
 
@@ -46,7 +46,7 @@ public final class CamelMessagingHeadersInjectAdapter implements InjectAdapter {
     }
 
     /**
-     * Encode all dashes because JMS specification doesn't allow them in property name
+     * Encode all dashes because JMS specification doesn't allow them in property names
      */
     private String encodeDash(String key) {
         if (key == null || key.isEmpty() || !jmsEncoding) {
