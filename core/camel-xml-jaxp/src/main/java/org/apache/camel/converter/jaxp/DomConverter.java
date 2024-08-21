@@ -58,8 +58,7 @@ public final class DomConverter {
 
         // use XML converter at first since it preserves tag names
         boolean found = false;
-        if (nodeList instanceof Node) {
-            Node node = (Node) nodeList;
+        if (nodeList instanceof Node node) {
             String s = toString(node, exchange);
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(s)) {
                 found = true;
@@ -90,15 +89,13 @@ public final class DomConverter {
     @Converter(order = 2)
     public String toString(Node node, Exchange exchange) throws TransformerException {
         String s;
-        if (node instanceof Text) {
-            Text textnode = (Text) node;
-
+        if (node instanceof Text textNode) {
             StringBuilder b = new StringBuilder(128);
-            b.append(textnode.getNodeValue());
-            textnode = (Text) textnode.getNextSibling();
-            while (textnode != null) {
-                b.append(textnode.getNodeValue());
-                textnode = (Text) textnode.getNextSibling();
+            b.append(textNode.getNodeValue());
+            textNode = (Text) textNode.getNextSibling();
+            while (textNode != null) {
+                b.append(textNode.getNodeValue());
+                textNode = (Text) textNode.getNextSibling();
             }
             s = b.toString();
         } else {
@@ -153,14 +150,11 @@ public final class DomConverter {
     }
 
     private static void append(StringBuilder buffer, Node node) {
-        if (node instanceof Text) {
-            Text text = (Text) node;
+        if (node instanceof Text text) {
             buffer.append(text.getTextContent());
-        } else if (node instanceof Attr) {
-            Attr attribute = (Attr) node;
+        } else if (node instanceof Attr attribute) {
             buffer.append(attribute.getTextContent());
-        } else if (node instanceof Element) {
-            Element element = (Element) node;
+        } else if (node instanceof Element element) {
             append(buffer, element.getChildNodes());
         }
     }
