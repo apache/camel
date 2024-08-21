@@ -400,9 +400,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
             SimpleNode token = nodes.get(i);
             SimpleNode right = i < nodes.size() - 1 ? nodes.get(i + 1) : null;
 
-            if (token instanceof BinaryExpression) {
-                BinaryExpression binary = (BinaryExpression) token;
-
+            if (token instanceof BinaryExpression binary) {
                 // remember the binary operator
                 String operator = binary.getOperator().toString();
 
@@ -465,9 +463,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
             SimpleNode token = nodes.get(i);
             SimpleNode right = i < nodes.size() - 1 ? nodes.get(i + 1) : null;
 
-            if (token instanceof LogicalExpression) {
-                LogicalExpression logical = (LogicalExpression) token;
-
+            if (token instanceof LogicalExpression logical) {
                 // remember the logical operator
                 String operator = logical.getOperator().toString();
 
