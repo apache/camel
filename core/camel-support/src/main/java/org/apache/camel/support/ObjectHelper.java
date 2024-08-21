@@ -96,17 +96,17 @@ public final class ObjectHelper {
         // optimize for common combinations of comparing numbers
         if (leftValue instanceof String) {
             return typeCoerceString(converter, leftValue, rightValue, ignoreCase);
-        } else if (rightValue instanceof String &&
-                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue)) {
-            return typeCoerceIntLong(leftValue, (String) rightValue);
+        } else if (rightValue instanceof String str &&
+                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber(str)) {
+            return typeCoerceIntLong(leftValue, str);
         } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
             return integerPairComparison(leftValue, rightValue);
         } else if (leftValue instanceof Long && rightValue instanceof Long) {
             return longPairComparison(leftValue, rightValue);
         } else if (leftValue instanceof Double && rightValue instanceof Double) {
             return doublePairComparison(leftValue, rightValue);
-        } else if (rightValue instanceof String && leftValue instanceof Boolean) {
-            return booleanStringComparison((Boolean) leftValue, (String) rightValue);
+        } else if (rightValue instanceof String string && leftValue instanceof Boolean booleanValue) {
+            return booleanStringComparison(booleanValue, string);
         }
 
         // try without type coerce
@@ -114,13 +114,13 @@ public final class ObjectHelper {
     }
 
     private static boolean typeCoerceString(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
-        if (rightValue instanceof String) {
-            return typeCoerceStringPair((String) leftValue, (String) rightValue, ignoreCase);
+        if (rightValue instanceof String string) {
+            return typeCoerceStringPair((String) leftValue, string, ignoreCase);
         } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
                 isNumber((String) leftValue)) {
             return typeCoerceILString((String) leftValue, rightValue);
-        } else if (rightValue instanceof Double && isFloatingNumber((String) leftValue)) {
-            return stringDoubleComparison((String) leftValue, (Double) rightValue);
+        } else if (rightValue instanceof Double doubleValue && isFloatingNumber((String) leftValue)) {
+            return stringDoubleComparison((String) leftValue, doubleValue);
         } else if (rightValue instanceof Boolean) {
             return stringBooleanComparison(leftValue, rightValue);
         }
@@ -151,8 +151,8 @@ public final class ObjectHelper {
         // convert left to right
         StreamCache sc = null;
         try {
-            if (leftValue instanceof StreamCache) {
-                sc = (StreamCache) leftValue;
+            if (leftValue instanceof StreamCache streamCache) {
+                sc = streamCache;
             }
             Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
             final boolean isEqualLeftToRight = org.apache.camel.util.ObjectHelper.equal(value, rightValue, ignoreCase);
@@ -161,8 +161,8 @@ public final class ObjectHelper {
             }
 
             // convert right to left
-            if (rightValue instanceof StreamCache) {
-                sc = (StreamCache) rightValue;
+            if (rightValue instanceof StreamCache streamCache) {
+                sc = streamCache;
             }
             value = converter.tryConvertTo(leftValue.getClass(), rightValue);
             return org.apache.camel.util.ObjectHelper.equal(leftValue, value, ignoreCase);
@@ -261,52 +261,23 @@ public final class ObjectHelper {
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
         // optimize for common combinations of comparing numbers
-        if (leftValue instanceof String && rightValue instanceof String) {
-            String leftNum = (String) leftValue;
-            String rightNum = (String) rightValue;
-            // prioritize non-floating numbers first
-            Long num1 = isNumber(leftNum) ? Long.parseLong(leftNum) : null;
-            Long num2 = isNumber(rightNum) ? Long.parseLong(rightNum) : null;
-            Double dec1 = num1 == null && isFloatingNumber(leftNum) ? Double.parseDouble(leftNum) : null;
-            Double dec2 = num2 == null && isFloatingNumber(rightNum) ? Double.parseDouble(rightNum) : null;
-            if (num1 != null && num2 != null) {
-                return num1.compareTo(num2);
-            } else if (dec1 != null && dec2 != null) {
-                return dec1.compareTo(dec2);
-            }
-            // okay mixed but we need to convert to floating
-            if (num1 != null && dec2 != null) {
-                dec1 = Double.parseDouble(leftNum);
-                return dec1.compareTo(dec2);
-            } else if (num2 != null && dec1 != null) {
-                dec2 = Double.parseDouble(rightNum);
-                return dec1.compareTo(dec2);
-            }
-            // fallback to string comparison
+        if (leftValue instanceof String leftNum && rightValue instanceof String rightNum) {
+            return typeCoerceCompareStringString(leftNum, rightNum);
+        } else if (leftValue instanceof Integer leftNum && rightValue instanceof Integer rightNum) {
             return leftNum.compareTo(rightNum);
-        } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
-            Integer leftNum = (Integer) leftValue;
-            Integer rightNum = (Integer) rightValue;
+        } else if (leftValue instanceof Long leftNum && rightValue instanceof Long rightNum) {
             return leftNum.compareTo(rightNum);
-        } else if (leftValue instanceof Long && rightValue instanceof Long) {
-            Long leftNum = (Long) leftValue;
-            Long rightNum = (Long) rightValue;
+        } else if (leftValue instanceof Double leftNum && rightValue instanceof Double rightNum) {
             return leftNum.compareTo(rightNum);
-        } else if (leftValue instanceof Double && rightValue instanceof Double) {
-            Double leftNum = (Double) leftValue;
-            Double rightNum = (Double) rightValue;
-            return leftNum.compareTo(rightNum);
-        } else if (leftValue instanceof Float && rightValue instanceof Float) {
-            Float leftNum = (Float) leftValue;
-            Float rightNum = (Float) rightValue;
+        } else if (leftValue instanceof Float leftNum && rightValue instanceof Float rightNum) {
             return leftNum.compareTo(rightNum);
         } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
-                leftValue instanceof String && isNumber((String) leftValue)) {
+                leftValue instanceof String leftStr && isNumber(leftStr)) {
             if (rightValue instanceof Integer rightNum) {
-                Integer leftNum = Integer.valueOf((String) leftValue);
+                Integer leftNum = Integer.valueOf(leftStr);
                 return leftNum.compareTo(rightNum);
             } else {
-                Long leftNum = Long.valueOf((String) leftValue);
+                Long leftNum = Long.valueOf(leftStr);
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum);
             }
@@ -361,23 +332,46 @@ public final class ObjectHelper {
         }
 
         // prefer to coerce to the right hand side at first
-        if (rightValue instanceof Comparable) {
+        if (rightValue instanceof Comparable rightComparable) {
             Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
             if (value != null) {
-                return ((Comparable) rightValue).compareTo(value) * -1;
+                return rightComparable.compareTo(value) * -1;
             }
         }
 
         // then fallback to the left hand side
-        if (leftValue instanceof Comparable) {
+        if (leftValue instanceof Comparable leftComparable) {
             Object value = converter.tryConvertTo(leftValue.getClass(), rightValue);
             if (value != null) {
-                return ((Comparable) leftValue).compareTo(value);
+                return leftComparable.compareTo(value);
             }
         }
 
         // use regular compare
         return compare(leftValue, rightValue);
+    }
+
+    private static int typeCoerceCompareStringString(String leftNum, String rightNum) {
+        // prioritize non-floating numbers first
+        Long num1 = isNumber(leftNum) ? Long.parseLong(leftNum) : null;
+        Long num2 = isNumber(rightNum) ? Long.parseLong(rightNum) : null;
+        Double dec1 = num1 == null && isFloatingNumber(leftNum) ? Double.parseDouble(leftNum) : null;
+        Double dec2 = num2 == null && isFloatingNumber(rightNum) ? Double.parseDouble(rightNum) : null;
+        if (num1 != null && num2 != null) {
+            return num1.compareTo(num2);
+        } else if (dec1 != null && dec2 != null) {
+            return dec1.compareTo(dec2);
+        }
+        // okay mixed but we need to convert to floating
+        if (num1 != null && dec2 != null) {
+            dec1 = Double.parseDouble(leftNum);
+            return dec1.compareTo(dec2);
+        } else if (num2 != null && dec1 != null) {
+            dec2 = Double.parseDouble(rightNum);
+            return dec1.compareTo(dec2);
+        }
+        // fallback to string comparison
+        return leftNum.compareTo(rightNum);
     }
 
     /**
@@ -571,14 +565,13 @@ public final class ObjectHelper {
         if (b == null) {
             return 1;
         }
-        if (a instanceof Ordered && b instanceof Ordered) {
-            return ((Ordered) a).getOrder() - ((Ordered) b).getOrder();
+        if (a instanceof Ordered orderedA && b instanceof Ordered orderedB) {
+            return orderedA.getOrder() - orderedB.getOrder();
         }
-        if (ignoreCase && a instanceof String && b instanceof String) {
-            return ((String) a).compareToIgnoreCase((String) b);
+        if (ignoreCase && a instanceof String strA && b instanceof String strB) {
+            return strA.compareToIgnoreCase(strB);
         }
-        if (a instanceof Comparable) {
-            Comparable comparable = (Comparable) a;
+        if (a instanceof Comparable comparable) {
             return comparable.compareTo(b);
         }
         int answer = a.getClass().getName().compareTo(b.getClass().getName());
@@ -742,8 +735,8 @@ public final class ObjectHelper {
      * @return                  the iterator
      */
     public static Iterator<?> createIterator(Object value, String delimiter, boolean allowEmptyValues) {
-        if (value instanceof Stream) {
-            return ((Stream) value).iterator();
+        if (value instanceof Stream stream) {
+            return stream.iterator();
         }
         return createIterable(value, delimiter, allowEmptyValues, false).iterator();
     }
@@ -767,8 +760,8 @@ public final class ObjectHelper {
     public static Iterator<?> createIterator(
             Object value, String delimiter,
             boolean allowEmptyValues, boolean pattern) {
-        if (value instanceof Stream) {
-            return ((Stream) value).iterator();
+        if (value instanceof Stream stream) {
+            return stream.iterator();
         }
         return createIterable(value, delimiter, allowEmptyValues, pattern).iterator();
     }
@@ -816,8 +809,8 @@ public final class ObjectHelper {
             final boolean allowEmptyValues, final boolean pattern) {
 
         // if its a message than we want to iterate its body
-        if (value instanceof Message) {
-            value = ((Message) value).getBody();
+        if (value instanceof Message message) {
+            value = message.getBody();
         }
 
         if (value == null) {
@@ -1032,11 +1025,10 @@ public final class ObjectHelper {
             } else {
                 return collection.contains(value);
             }
-        } else if (collectionOrArray instanceof String) {
-            String str = (String) collectionOrArray;
+        } else if (collectionOrArray instanceof String str) {
             String subStr;
-            if (value instanceof String) {
-                subStr = (String) value;
+            if (value instanceof String strValue) {
+                subStr = strValue;
             } else {
                 subStr = typeConverter.tryConvertTo(String.class, value);
             }

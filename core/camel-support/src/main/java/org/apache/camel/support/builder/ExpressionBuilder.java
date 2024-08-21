@@ -2121,8 +2121,8 @@ public class ExpressionBuilder {
                     boolean constantsOnly = true;
                     for (Expression expression : expressions) {
                         expression.init(context);
-                        if (expression instanceof ConstantExpressionAdapter) {
-                            Object value = ((ConstantExpressionAdapter) expression).getValue();
+                        if (expression instanceof ConstantExpressionAdapter constantExpressionAdapter) {
+                            Object value = constantExpressionAdapter.getValue();
                             preprocessedExpression.add(value.toString());
                         } else {
                             preprocessedExpression.add(expression);

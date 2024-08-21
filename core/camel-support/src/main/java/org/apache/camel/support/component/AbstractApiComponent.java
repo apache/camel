@@ -153,8 +153,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
             PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(getCamelContext())
                     .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
             // use reflection free configurer (if possible)
-            if (configurer instanceof ExtendedPropertyConfigurerGetter) {
-                ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
+            if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
                 for (String key : getter.getAllOptions(configuration).keySet()) {
                     Object value = getter.getOptionValue(configuration, key, true);
                     if (value != null) {

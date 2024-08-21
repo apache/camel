@@ -82,11 +82,11 @@ public final class ResumeStrategyHelper {
             return;
         }
 
-        if (resumeAdapter instanceof ResumeActionAware) {
+        if (resumeAdapter instanceof ResumeActionAware resumeActionAware) {
             ResumeAction action = (ResumeAction) context.getRegistry().lookupByName(actionName);
             ObjectHelper.notNull(action, "The resume action cannot be null", on);
 
-            ((ResumeActionAware) resumeAdapter).setResumeAction(action);
+            resumeActionAware.setResumeAction(action);
         }
 
         resumeAdapter.resume();

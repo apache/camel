@@ -46,10 +46,10 @@ public final class PropertyConfigurerHelper {
 
         PropertyConfigurer configurer = null;
 
-        if (target instanceof Component) {
+        if (target instanceof Component component) {
             // the component needs to be initialized to have the configurer ready
             ServiceHelper.initService(target);
-            configurer = ((Component) target).getComponentPropertyConfigurer();
+            configurer = component.getComponentPropertyConfigurer();
         }
 
         if (configurer == null) {

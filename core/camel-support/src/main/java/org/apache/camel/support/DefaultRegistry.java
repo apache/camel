@@ -384,11 +384,11 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (supplierRegistry instanceof Closeable) {
-            IOHelper.close((Closeable) supplierRegistry);
+        if (supplierRegistry instanceof Closeable closeable) {
+            IOHelper.close(closeable);
         }
-        if (fallbackRegistry instanceof Closeable) {
-            IOHelper.close((Closeable) fallbackRegistry);
+        if (fallbackRegistry instanceof Closeable closeable) {
+            IOHelper.close(closeable);
         }
         ServiceHelper.stopAndShutdownServices(supplierRegistry, fallbackRegistry);
     }

@@ -562,8 +562,8 @@ public final class CamelContextHelper {
         while (parent != null && parent.getParent() != null) {
             parent = parent.getParent();
         }
-        if (parent instanceof NamedRoute) {
-            return (NamedRoute) parent;
+        if (parent instanceof NamedRoute namedRoute) {
+            return namedRoute;
         }
         return null;
     }

@@ -43,18 +43,18 @@ public class SupplierRegistry extends SimpleRegistry {
         }
 
         Object answer = map.get(type);
-        if (answer instanceof Supplier) {
+        if (answer instanceof Supplier<?> supplier) {
             // okay then eval the supplier to get the actual value
-            answer = ((Supplier<?>) answer).get();
+            answer = supplier.get();
         }
         if (answer == null) {
             // no direct type match then check if assignable
             for (Map.Entry<Class<?>, Object> entry : map.entrySet()) {
                 if (type.isAssignableFrom(entry.getKey())) {
                     Object value = entry.getValue();
-                    if (value instanceof Supplier) {
+                    if (value instanceof Supplier<?> supplier) {
                         // okay then eval the supplier to get the actual value
-                        value = ((Supplier<?>) value).get();
+                        value = supplier.get();
                     }
                     answer = value;
                     break;
@@ -66,9 +66,9 @@ public class SupplierRegistry extends SimpleRegistry {
             for (Map.Entry<Class<?>, Object> entry : map.entrySet()) {
                 if (Object.class == entry.getKey()) {
                     Object value = entry.getValue();
-                    if (value instanceof Supplier) {
+                    if (value instanceof Supplier<?> supplier) {
                         // okay then eval the supplier to get the actual value
-                        value = ((Supplier<?>) value).get();
+                        value = supplier.get();
                     }
                     if (type.isInstance(value)) {
                         answer = value;
@@ -97,9 +97,9 @@ public class SupplierRegistry extends SimpleRegistry {
             for (Map.Entry<Class<?>, Object> subEntry : entry.getValue().entrySet()) {
                 if (type.isAssignableFrom(subEntry.getKey())) {
                     Object value = subEntry.getValue();
-                    if (value instanceof Supplier) {
+                    if (value instanceof Supplier<?> supplier) {
                         // okay then eval the supplier to get the actual value
-                        value = ((Supplier<?>) value).get();
+                        value = supplier.get();
                     }
                     result.add(type.cast(value));
                 }
@@ -115,9 +115,9 @@ public class SupplierRegistry extends SimpleRegistry {
             for (Map.Entry<Class<?>, Object> subEntry : entry.getValue().entrySet()) {
                 if (type.isAssignableFrom(subEntry.getKey())) {
                     Object value = subEntry.getValue();
-                    if (value instanceof Supplier) {
+                    if (value instanceof Supplier<?> supplier) {
                         // okay then eval the supplier to get the actual value
-                        value = ((Supplier<?>) value).get();
+                        value = supplier.get();
                     }
                     result.put(entry.getKey(), type.cast(value));
                 }

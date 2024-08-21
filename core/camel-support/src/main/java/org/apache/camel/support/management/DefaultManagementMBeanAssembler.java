@@ -58,9 +58,9 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         Object custom = null;
 
         // prefer to use the managed instance if it has been annotated with JMX annotations
-        if (obj instanceof ManagedInstance) {
+        if (obj instanceof ManagedInstance managedInstance) {
             // there may be a custom embedded instance which have additional methods
-            custom = ((ManagedInstance) obj).getInstance();
+            custom = managedInstance.getInstance();
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
                 LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info into different groups (mbi = both, standard = standard out of the box mbi)
@@ -110,8 +110,8 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         }
 
         // Allows the managed object to send notifications
-        if (obj instanceof NotificationSenderAware) {
-            ((NotificationSenderAware) obj).setNotificationSender(new NotificationSenderAdapter(mbean));
+        if (obj instanceof NotificationSenderAware notificationSenderAware) {
+            notificationSenderAware.setNotificationSender(new NotificationSenderAdapter(mbean));
         }
 
         return mbean;

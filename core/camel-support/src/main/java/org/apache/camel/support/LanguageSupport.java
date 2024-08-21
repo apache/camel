@@ -124,8 +124,8 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
             value = defaultValue;
         }
 
-        if (camelContext != null && value instanceof String) {
-            value = getCamelContext().resolvePropertyPlaceholders(value.toString());
+        if (camelContext != null && value instanceof String str) {
+            value = getCamelContext().resolvePropertyPlaceholders(str);
         }
 
         // if the type is not string based and the value is a bean reference, then we need to lookup
@@ -169,8 +169,7 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
         }
 
         // special for boolean values with string values as we only want to accept "true" or "false"
-        if ((type == Boolean.class || type == boolean.class) && value instanceof String) {
-            String text = (String) value;
+        if ((type == Boolean.class || type == boolean.class) && value instanceof String text) {
             if (!text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
                 throw new IllegalArgumentException(
                         "Cannot convert the String value: " + value + " to type: " + type

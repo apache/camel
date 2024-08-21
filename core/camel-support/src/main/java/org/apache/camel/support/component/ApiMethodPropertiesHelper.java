@@ -62,8 +62,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         // use reflection free configurer (if possible)
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(componentConfiguration.getName(), context);
-        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
-            ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
+        if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
             Set<String> names = getter.getAllOptions(null).keySet();
             for (String name : names) {
                 // lower case the first letter which is what the properties map expects
@@ -109,8 +108,8 @@ public abstract class ApiMethodPropertiesHelper<C> {
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
-        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
-            useGetters(endpointConfiguration, properties, (ExtendedPropertyConfigurerGetter) configurer);
+        if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
+            useGetters(endpointConfiguration, properties, getter);
         } else {
             PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties,
                     null, false);
@@ -136,8 +135,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
-        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
-            ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
+        if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
             Set<String> names = getter.getAllOptions(endpointConfiguration).keySet();
             for (String name : names) {
                 // lower case the first letter which is what the properties map expects
@@ -157,8 +155,8 @@ public abstract class ApiMethodPropertiesHelper<C> {
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
-        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
-            useGetters(endpointConfiguration, properties, (ExtendedPropertyConfigurerGetter) configurer);
+        if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
+            useGetters(endpointConfiguration, properties, getter);
         } else {
             PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties,
                     null, false);

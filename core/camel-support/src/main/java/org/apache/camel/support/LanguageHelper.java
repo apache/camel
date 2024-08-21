@@ -214,50 +214,37 @@ public final class LanguageHelper {
         return date;
     }
 
-    public static Date dateFromExchangeProperty(
-            Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
-        final String key = command.substring(command.lastIndexOf('.') + 1);
-        final Object obj = exchange.getProperty(key);
-        if (obj instanceof Date) {
-            return (Date) obj;
-        } else if (obj instanceof Long) {
-            return new Date((Long) obj);
+    private static Date toDate(Exchange exchange, BiFunction<Exchange, Object, Date> orElseFunction, Object obj) {
+        if (obj instanceof Date date) {
+            return date;
+        } else if (obj instanceof Long date) {
+            return new Date(date);
         } else {
             if (orElseFunction != null) {
                 return orElseFunction.apply(exchange, obj);
             }
         }
         return null;
+    }
+
+    public static Date dateFromExchangeProperty(
+            Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
+        final String key = command.substring(command.lastIndexOf('.') + 1);
+        final Object obj = exchange.getProperty(key);
+
+        return toDate(exchange, orElseFunction, obj);
     }
 
     public static Date dateFromHeader(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
         final String key = command.substring(command.lastIndexOf('.') + 1);
         final Object obj = exchange.getMessage().getHeader(key);
-        if (obj instanceof Date) {
-            return (Date) obj;
-        } else if (obj instanceof Long) {
-            return new Date((Long) obj);
-        } else {
-            if (orElseFunction != null) {
-                return orElseFunction.apply(exchange, obj);
-            }
-        }
-        return null;
+        return toDate(exchange, orElseFunction, obj);
     }
 
     public static Date dateFromVariable(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
         final String key = command.substring(command.lastIndexOf('.') + 1);
         final Object obj = exchange.getVariable(key);
-        if (obj instanceof Date) {
-            return (Date) obj;
-        } else if (obj instanceof Long) {
-            return new Date((Long) obj);
-        } else {
-            if (orElseFunction != null) {
-                return orElseFunction.apply(exchange, obj);
-            }
-        }
-        return null;
+        return toDate(exchange, orElseFunction, obj);
     }
 
     /**

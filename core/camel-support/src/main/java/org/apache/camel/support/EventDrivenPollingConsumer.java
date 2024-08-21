@@ -239,8 +239,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     protected long beforePoll(long timeout) {
-        if (consumer instanceof PollingConsumerPollingStrategy) {
-            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+        if (consumer instanceof PollingConsumerPollingStrategy strategy) {
             try {
                 timeout = strategy.beforePoll(timeout);
             } catch (Exception e) {
@@ -251,8 +250,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     protected void afterPoll() {
-        if (consumer instanceof PollingConsumerPollingStrategy) {
-            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+        if (consumer instanceof PollingConsumerPollingStrategy strategy) {
             try {
                 strategy.afterPoll();
             } catch (Exception e) {
@@ -285,8 +283,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     @Override
     protected void doStart() throws Exception {
         // if the consumer has a polling strategy then invoke that
-        if (consumer instanceof PollingConsumerPollingStrategy) {
-            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+        if (consumer instanceof PollingConsumerPollingStrategy strategy) {
             strategy.onInit();
         } else {
             ServiceHelper.startService(consumer);

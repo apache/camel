@@ -245,8 +245,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                 // so force reading the body as a String which we can work with
                 body = MessageHelper.extractBodyAsString(exchange.getIn());
                 if (ObjectHelper.isNotEmpty(body)) {
-                    if (exchange.getIn() instanceof DataTypeAware) {
-                        ((DataTypeAware) exchange.getIn()).setBody(body, new DataType(isJson ? "json" : "xml"));
+                    if (exchange.getIn() instanceof DataTypeAware dataTypeAware) {
+                        dataTypeAware.setBody(body, new DataType(isJson ? "json" : "xml"));
                     } else {
                         exchange.getIn().setBody(body);
                     }
@@ -468,8 +468,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
 
     private void setOutputDataType(Exchange exchange, DataType type) {
         Message target = exchange.getMessage();
-        if (target instanceof DataTypeAware) {
-            ((DataTypeAware) target).setDataType(type);
+        if (target instanceof DataTypeAware dataTypeAware) {
+            dataTypeAware.setDataType(type);
         }
     }
 

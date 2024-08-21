@@ -270,8 +270,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             errorCounter.incrementAndGet();
             lastError = cause;
             // enrich last error with http response code if possible
-            if (cause instanceof HttpResponseAware) {
-                int code = ((HttpResponseAware) cause).getHttpResponseCode();
+            if (cause instanceof HttpResponseAware httpResponseAware) {
+                int code = httpResponseAware.getHttpResponseCode();
                 if (code > 0) {
                     addLastErrorDetail(HealthCheck.HTTP_RESPONSE_CODE, code);
                 }

@@ -62,11 +62,11 @@ public final class OrderedComparator implements Comparator<Object> {
     public int compare(Object o1, Object o2) {
         int num1 = 0;
         int num2 = 0;
-        if (o1 instanceof Ordered) {
-            num1 = ((Ordered) o1).getOrder();
+        if (o1 instanceof Ordered ordered1) {
+            num1 = ordered1.getOrder();
         }
-        if (o2 instanceof Ordered) {
-            num2 = ((Ordered) o2).getOrder();
+        if (o2 instanceof Ordered ordered2) {
+            num2 = ordered2.getOrder();
         }
         int answer = Integer.compare(num1, num2);
         return reverse ? -1 * answer : answer;
