@@ -100,8 +100,8 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
     @Override
     public boolean isManagedName(Object name) {
         try {
-            if (name instanceof ObjectName) {
-                return getManagementAgent().isRegistered((ObjectName) name);
+            if (name instanceof ObjectName objectName) {
+                return getManagementAgent().isRegistered(objectName);
             }
         } catch (Exception e) {
             LOG.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);

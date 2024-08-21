@@ -55,16 +55,16 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     @Override
     public void setCounter(Object counter) {
         ManagedPerformanceCounter mpc = null;
-        if (counter instanceof ManagedPerformanceCounter) {
-            mpc = (ManagedPerformanceCounter) counter;
+        if (counter instanceof ManagedPerformanceCounter managedPerformanceCounter) {
+            mpc = managedPerformanceCounter;
         }
 
-        if (this.counter instanceof DelegatePerformanceCounter) {
-            ((DelegatePerformanceCounter) this.counter).setCounter(mpc);
+        if (this.counter instanceof DelegatePerformanceCounter delegatePerformanceCounter) {
+            delegatePerformanceCounter.setCounter(mpc);
         } else if (mpc != null) {
             this.counter = mpc;
-        } else if (counter instanceof PerformanceCounter) {
-            this.counter = (PerformanceCounter) counter;
+        } else if (counter instanceof PerformanceCounter performanceCounter) {
+            this.counter = performanceCounter;
         }
     }
 

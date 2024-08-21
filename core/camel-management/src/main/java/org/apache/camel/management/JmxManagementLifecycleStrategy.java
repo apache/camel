@@ -238,8 +238,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
-        if (mc instanceof ManagedCamelContext) {
-            camelContextMBean = (ManagedCamelContext) mc;
+        if (mc instanceof ManagedCamelContext managedCamelContext) {
+            camelContextMBean = managedCamelContext;
         }
 
         // register any pre-registered now that we are initialized
@@ -520,61 +520,61 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 managedBacklogDebuggers.put(backlogDebugger, md);
             }
             return md;
-        } else if (service instanceof Tracer) {
-            ManagedTracer mt = new ManagedTracer(camelContext, (Tracer) service);
+        } else if (service instanceof Tracer tracer) {
+            ManagedTracer mt = new ManagedTracer(camelContext, tracer);
             mt.init(getManagementStrategy());
             answer = mt;
-        } else if (service instanceof DumpRoutesStrategy) {
-            ManagedDumpRouteStrategy mdrs = new ManagedDumpRouteStrategy(camelContext, (DumpRoutesStrategy) service);
+        } else if (service instanceof DumpRoutesStrategy dumpRoutesStrategy) {
+            ManagedDumpRouteStrategy mdrs = new ManagedDumpRouteStrategy(camelContext, dumpRoutesStrategy);
             mdrs.init(getManagementStrategy());
             answer = mdrs;
-        } else if (service instanceof DataFormat) {
-            answer = getManagementObjectStrategy().getManagedObjectForDataFormat(context, (DataFormat) service);
-        } else if (service instanceof Producer) {
-            answer = getManagementObjectStrategy().getManagedObjectForProducer(context, (Producer) service);
-        } else if (service instanceof Consumer) {
-            answer = getManagementObjectStrategy().getManagedObjectForConsumer(context, (Consumer) service);
-        } else if (service instanceof Processor) {
+        } else if (service instanceof DataFormat dataFormat) {
+            answer = getManagementObjectStrategy().getManagedObjectForDataFormat(context, dataFormat);
+        } else if (service instanceof Producer producer) {
+            answer = getManagementObjectStrategy().getManagedObjectForProducer(context, producer);
+        } else if (service instanceof Consumer consumer) {
+            answer = getManagementObjectStrategy().getManagedObjectForConsumer(context, consumer);
+        } else if (service instanceof Processor processor) {
             // special for processors as we need to do some extra work
-            return getManagedObjectForProcessor(context, (Processor) service, route);
-        } else if (service instanceof ThrottlingInflightRoutePolicy) {
-            answer = new ManagedThrottlingInflightRoutePolicy(context, (ThrottlingInflightRoutePolicy) service);
-        } else if (service instanceof ThrottlingExceptionRoutePolicy) {
-            answer = new ManagedThrottlingExceptionRoutePolicy(context, (ThrottlingExceptionRoutePolicy) service);
-        } else if (service instanceof ConsumerCache) {
-            answer = new ManagedConsumerCache(context, (ConsumerCache) service);
-        } else if (service instanceof ProducerCache) {
-            answer = new ManagedProducerCache(context, (ProducerCache) service);
-        } else if (service instanceof ExchangeFactoryManager) {
-            answer = new ManagedExchangeFactoryManager(context, (ExchangeFactoryManager) service);
+            return getManagedObjectForProcessor(context, processor, route);
+        } else if (service instanceof ThrottlingInflightRoutePolicy throttlingInflightRoutePolicy) {
+            answer = new ManagedThrottlingInflightRoutePolicy(context, throttlingInflightRoutePolicy);
+        } else if (service instanceof ThrottlingExceptionRoutePolicy throttlingExceptionRoutePolicy) {
+            answer = new ManagedThrottlingExceptionRoutePolicy(context, throttlingExceptionRoutePolicy);
+        } else if (service instanceof ConsumerCache consumerCache) {
+            answer = new ManagedConsumerCache(context, consumerCache);
+        } else if (service instanceof ProducerCache producerCache) {
+            answer = new ManagedProducerCache(context, producerCache);
+        } else if (service instanceof ExchangeFactoryManager exchangeFactoryManager) {
+            answer = new ManagedExchangeFactoryManager(context, exchangeFactoryManager);
         } else if (service instanceof EndpointRegistry endpointRegistry) {
             answer = new ManagedEndpointRegistry(context, endpointRegistry);
-        } else if (service instanceof BeanIntrospection) {
-            answer = new ManagedBeanIntrospection(context, (BeanIntrospection) service);
-        } else if (service instanceof TypeConverterRegistry) {
-            answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
-        } else if (service instanceof RestRegistry) {
-            answer = new ManagedRestRegistry(context, (RestRegistry) service);
-        } else if (service instanceof EndpointServiceRegistry) {
-            answer = new ManagedEndpointServiceRegistry(context, (EndpointServiceRegistry) service);
-        } else if (service instanceof InflightRepository) {
-            answer = new ManagedInflightRepository(context, (InflightRepository) service);
-        } else if (service instanceof AsyncProcessorAwaitManager) {
-            answer = new ManagedAsyncProcessorAwaitManager(context, (AsyncProcessorAwaitManager) service);
-        } else if (service instanceof RuntimeEndpointRegistry) {
-            answer = new ManagedRuntimeEndpointRegistry(context, (RuntimeEndpointRegistry) service);
-        } else if (service instanceof StreamCachingStrategy) {
-            answer = new ManagedStreamCachingStrategy(context, (StreamCachingStrategy) service);
-        } else if (service instanceof EventNotifier) {
+        } else if (service instanceof BeanIntrospection beanIntrospection) {
+            answer = new ManagedBeanIntrospection(context, beanIntrospection);
+        } else if (service instanceof TypeConverterRegistry typeConverterRegistry) {
+            answer = new ManagedTypeConverterRegistry(context, typeConverterRegistry);
+        } else if (service instanceof RestRegistry restRegistry) {
+            answer = new ManagedRestRegistry(context, restRegistry);
+        } else if (service instanceof EndpointServiceRegistry endpointServiceRegistry) {
+            answer = new ManagedEndpointServiceRegistry(context, endpointServiceRegistry);
+        } else if (service instanceof InflightRepository inflightRepository) {
+            answer = new ManagedInflightRepository(context, inflightRepository);
+        } else if (service instanceof AsyncProcessorAwaitManager asyncProcessorAwaitManager) {
+            answer = new ManagedAsyncProcessorAwaitManager(context, asyncProcessorAwaitManager);
+        } else if (service instanceof RuntimeEndpointRegistry runtimeEndpointRegistry) {
+            answer = new ManagedRuntimeEndpointRegistry(context, runtimeEndpointRegistry);
+        } else if (service instanceof StreamCachingStrategy streamCachingStrategy) {
+            answer = new ManagedStreamCachingStrategy(context, streamCachingStrategy);
+        } else if (service instanceof EventNotifier eventNotifier)
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
-        } else if (service instanceof TransformerRegistry transformerRegistry) {
+        else if (service instanceof TransformerRegistry transformerRegistry) {
             answer = new ManagedTransformerRegistry(context, transformerRegistry);
         } else if (service instanceof ValidatorRegistry validatorRegistry) {
             answer = new ManagedValidatorRegistry(context, validatorRegistry);
         } else if (service instanceof BrowsableVariableRepository variableRepository) {
             answer = new ManagedVariableRepository(context, variableRepository);
-        } else if (service instanceof CamelClusterService) {
-            answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService) service);
+        } else if (service instanceof CamelClusterService camelClusterService) {
+            answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, camelClusterService);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
@@ -898,8 +898,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      * @throws Exception is thrown if error unregistering the managed object
      */
     protected void unmanageObject(Object me) throws Exception {
-        if (me instanceof TimerListener) {
-            TimerListener timer = (TimerListener) me;
+        if (me instanceof TimerListener timer) {
             loadTimer.removeTimerListener(timer);
         }
         getManagementStrategy().unmanageObject(me);

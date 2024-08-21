@@ -68,8 +68,8 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
     @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (service instanceof StatefulService) {
-            ServiceStatus status = ((StatefulService) service).getStatus();
+        if (service instanceof StatefulService statefulService) {
+            ServiceStatus status = statefulService.getStatus();
             return status.name();
         }
 
