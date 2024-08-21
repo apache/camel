@@ -50,8 +50,8 @@ public class ManagedProcess extends ManagedProcessor implements ManagedProcessMB
             return processorClassName;
         }
         Processor target = processor;
-        if (target instanceof DelegateProcessor) {
-            target = ((DelegateProcessor) target).getProcessor();
+        if (target instanceof DelegateProcessor delegateProcessor) {
+            target = delegateProcessor.getProcessor();
         }
         processorClassName = ObjectHelper.className(target);
         return processorClassName;

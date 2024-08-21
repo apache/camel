@@ -120,68 +120,48 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             return null;
         }
         ObjectName objectName = null;
-        if (managedObject instanceof ManagedCamelContext) {
-            ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
+        if (managedObject instanceof ManagedCamelContext mcc) {
             objectName = getObjectNameForCamelContext(mcc.getContext());
-        } else if (managedObject instanceof ManagedCamelHealth) {
-            ManagedCamelHealth mch = (ManagedCamelHealth) managedObject;
+        } else if (managedObject instanceof ManagedCamelHealth mch) {
             objectName = getObjectNameForCamelHealth(mch.getContext());
-        } else if (managedObject instanceof ManagedRouteController) {
-            ManagedRouteController mrc = (ManagedRouteController) managedObject;
+        } else if (managedObject instanceof ManagedRouteController mrc) {
             objectName = getObjectNameForRouteController(mrc.getContext(), mrc.getRouteController());
-        } else if (managedObject instanceof ManagedSupervisingRouteController) {
-            ManagedSupervisingRouteController mrc = (ManagedSupervisingRouteController) managedObject;
+        } else if (managedObject instanceof ManagedSupervisingRouteController mrc) {
             objectName = getObjectNameForRouteController(mrc.getContext(), mrc.getRouteController());
-        } else if (managedObject instanceof ManagedComponent) {
-            ManagedComponent mc = (ManagedComponent) managedObject;
+        } else if (managedObject instanceof ManagedComponent mc) {
             objectName = getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
-        } else if (managedObject instanceof ManagedDataFormat) {
-            ManagedDataFormat md = (ManagedDataFormat) managedObject;
+        } else if (managedObject instanceof ManagedDataFormat md) {
             objectName = getObjectNameForDataFormat(md.getContext(), md.getDataFormat());
-        } else if (managedObject instanceof ManagedEndpoint) {
-            ManagedEndpoint me = (ManagedEndpoint) managedObject;
+        } else if (managedObject instanceof ManagedEndpoint me) {
             objectName = getObjectNameForEndpoint(me.getEndpoint());
-        } else if (managedObject instanceof Endpoint) {
-            objectName = getObjectNameForEndpoint((Endpoint) managedObject);
-        } else if (managedObject instanceof ManagedRoute) {
-            ManagedRoute mr = (ManagedRoute) managedObject;
+        } else if (managedObject instanceof Endpoint endpoint) {
+            objectName = getObjectNameForEndpoint(endpoint);
+        } else if (managedObject instanceof ManagedRoute mr) {
             objectName = getObjectNameForRoute(mr.getRoute());
-        } else if (managedObject instanceof ManagedStep) {
-            ManagedStep mp = (ManagedStep) managedObject;
+        } else if (managedObject instanceof ManagedStep mp) {
             objectName = getObjectNameForStep(mp.getContext(), mp.getProcessor(), mp.getDefinition());
-        } else if (managedObject instanceof ManagedProcessor) {
-            ManagedProcessor mp = (ManagedProcessor) managedObject;
+        } else if (managedObject instanceof ManagedProcessor mp) {
             objectName = getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
-        } else if (managedObject instanceof ManagedConsumer) {
-            ManagedConsumer ms = (ManagedConsumer) managedObject;
+        } else if (managedObject instanceof ManagedConsumer ms) {
             objectName = getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
-        } else if (managedObject instanceof ManagedProducer) {
-            ManagedProducer ms = (ManagedProducer) managedObject;
+        } else if (managedObject instanceof ManagedProducer ms) {
             objectName = getObjectNameForProducer(ms.getContext(), ms.getProducer());
-        } else if (managedObject instanceof ManagedBacklogTracer) {
-            ManagedBacklogTracer mt = (ManagedBacklogTracer) managedObject;
+        } else if (managedObject instanceof ManagedBacklogTracer mt) {
             objectName = getObjectNameForTracer(mt.getContext(), mt.getBacklogTracer());
-        } else if (managedObject instanceof ManagedBacklogDebugger) {
-            ManagedBacklogDebugger md = (ManagedBacklogDebugger) managedObject;
+        } else if (managedObject instanceof ManagedBacklogDebugger md) {
             objectName = getObjectNameForTracer(md.getContext(), md.getBacklogDebugger());
-        } else if (managedObject instanceof ManagedDumpRouteStrategy) {
-            ManagedDumpRouteStrategy md = (ManagedDumpRouteStrategy) managedObject;
+        } else if (managedObject instanceof ManagedDumpRouteStrategy md) {
             objectName = getObjectNameForService(md.getContext(), md.getDumpRoutesStrategy());
-        } else if (managedObject instanceof ManagedEventNotifier) {
-            ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
+        } else if (managedObject instanceof ManagedEventNotifier men) {
             objectName = getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
-        } else if (managedObject instanceof ManagedTracer) {
-            ManagedTracer mt = (ManagedTracer) managedObject;
+        } else if (managedObject instanceof ManagedTracer mt) {
             objectName = getObjectNameForTracer(mt.getContext(), mt.getTracer());
-        } else if (managedObject instanceof ManagedThreadPool) {
-            ManagedThreadPool mes = (ManagedThreadPool) managedObject;
+        } else if (managedObject instanceof ManagedThreadPool mes) {
             objectName = getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());
-        } else if (managedObject instanceof ManagedClusterService) {
-            ManagedClusterService mcs = (ManagedClusterService) managedObject;
+        } else if (managedObject instanceof ManagedClusterService mcs) {
             objectName = getObjectNameForClusterService(mcs.getContext(), mcs.getService());
-        } else if (managedObject instanceof ManagedService) {
+        } else if (managedObject instanceof ManagedService ms) {
             // check for managed service should be last
-            ManagedService ms = (ManagedService) managedObject;
             // skip endpoints as they are already managed
             if (ms.getService() instanceof Endpoint) {
                 return null;

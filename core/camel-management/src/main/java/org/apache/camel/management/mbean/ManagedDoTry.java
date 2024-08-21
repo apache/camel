@@ -108,8 +108,8 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
         // drill down and find
         while (nav.hasNext()) {
             for (Processor p : nav.next()) {
-                if (p instanceof CatchProcessor) {
-                    return (CatchProcessor) p;
+                if (p instanceof CatchProcessor catchProcessor) {
+                    return catchProcessor;
                 }
                 if (p instanceof Navigate<?>) {
                     Navigate<Processor> child = (Navigate<Processor>) p;

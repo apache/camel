@@ -69,8 +69,8 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (component instanceof StatefulService) {
-            ServiceStatus status = ((StatefulService) component).getStatus();
+        if (component instanceof StatefulService statefulService) {
+            ServiceStatus status = statefulService.getStatus();
             return status.name();
         }
 
@@ -100,16 +100,16 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
     @Override
     public boolean isHealthCheckConsumerEnabled() {
-        if (component instanceof HealthCheckComponent) {
-            return ((HealthCheckComponent) component).isHealthCheckConsumerEnabled();
+        if (component instanceof HealthCheckComponent healthCheckComponent) {
+            return healthCheckComponent.isHealthCheckConsumerEnabled();
         }
         return false;
     }
 
     @Override
     public boolean isHealthCheckProducerEnabled() {
-        if (component instanceof HealthCheckComponent) {
-            return ((HealthCheckComponent) component).isHealthCheckProducerEnabled();
+        if (component instanceof HealthCheckComponent healthCheckComponent) {
+            return healthCheckComponent.isHealthCheckProducerEnabled();
         }
         return false;
     }

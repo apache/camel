@@ -229,8 +229,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             return null;
         }
 
-        if (endpoint instanceof BrowsableEndpoint) {
-            ManagedBrowsableEndpoint me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
+        if (endpoint instanceof BrowsableEndpoint browsableEndpoint) {
+            ManagedBrowsableEndpoint me = new ManagedBrowsableEndpoint(browsableEndpoint);
             me.init(context.getManagementStrategy());
             return me;
         } else {
@@ -243,8 +243,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     @Override
     public Object getManagedObjectForRouteController(CamelContext context, RouteController routeController) {
         ManagedService mrc;
-        if (routeController instanceof SupervisingRouteController) {
-            mrc = new ManagedSupervisingRouteController(context, (SupervisingRouteController) routeController);
+        if (routeController instanceof SupervisingRouteController supervisingRouteController) {
+            mrc = new ManagedSupervisingRouteController(context, supervisingRouteController);
         } else {
             mrc = new ManagedRouteController(context, routeController);
         }
@@ -283,8 +283,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     @Override
     public Object getManagedObjectForConsumer(CamelContext context, Consumer consumer) {
         ManagedConsumer mc;
-        if (consumer instanceof ScheduledPollConsumer) {
-            mc = new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) consumer);
+        if (consumer instanceof ScheduledPollConsumer scheduledPollConsumer) {
+            mc = new ManagedScheduledPollConsumer(context, scheduledPollConsumer);
         } else {
             mc = new ManagedConsumer(context, consumer);
         }
