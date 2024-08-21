@@ -35,7 +35,6 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
-import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
@@ -440,11 +439,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             return true;
         }
 
-        String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
         return PatternHelper.matchPattern(mrb.getRouteId(), filter)
                 || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
-                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter)
-                || PatternHelper.matchPattern(onlyName, filter);
+                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter);
     }
 
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {

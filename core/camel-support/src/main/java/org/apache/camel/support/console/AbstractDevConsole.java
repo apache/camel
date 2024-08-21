@@ -57,8 +57,7 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
 
     @Override
     public boolean supportMediaType(MediaType mediaType) {
-        // text and json supported by default
-        return mediaType == MediaType.TEXT || mediaType == MediaType.JSON;
+        return true;
     }
 
     @Override
@@ -106,25 +105,12 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
         try {
             if (mediaType == MediaType.JSON) {
                 return doCallJson(options);
-            } else if (mediaType == MediaType.RAW && supportMediaType(MediaType.RAW)) {
-                return doCallRaw(options);
             } else {
                 return doCallText(options);
             }
         } finally {
             lock.unlock();
         }
-    }
-
-    /**
-     * Invokes and gets the output from this console in raw format.
-     *
-     * The returned object can for example be binary data for file downloads
-     *
-     * @see DevConsole#call(MediaType, Map)
-     */
-    protected Object doCallRaw(Map<String, Object> options) {
-        return null;
     }
 
     /**

@@ -319,11 +319,9 @@ public class TopDevConsole extends AbstractDevConsole {
             return true;
         }
 
-        String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
         return PatternHelper.matchPattern(mrb.getRouteId(), filter)
                 || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
-                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter)
-                || PatternHelper.matchPattern(onlyName, filter);
+                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter);
     }
 
     private static boolean acceptProcessor(ManagedProcessorMBean mpb, String filter) {

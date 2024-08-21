@@ -99,14 +99,6 @@ public final class LoggerHelper {
         }
     }
 
-    public static String stripScheme(String location) {
-        return StringHelper.after(location, ":", location);
-    }
-
-    public static String sourceNameOnly(String location) {
-        return stripScheme(stripSourceLocationLineNumber(location));
-    }
-
     public static Integer extractSourceLocationLineNumber(String location) {
         int cnt = StringHelper.countChar(location, ':');
         if (cnt > 1) {
