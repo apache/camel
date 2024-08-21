@@ -97,6 +97,7 @@ public class RabbitMQLocalContainerService implements RabbitMQService, Container
     @Override
     public void initialize() {
         LOG.info("Trying to start RabbitMQ container");
+        container.withStartupAttempts(5);
         container.start();
         LOG.info("RabbitMQ container running on {}", container.getAmqpUrl());
 
