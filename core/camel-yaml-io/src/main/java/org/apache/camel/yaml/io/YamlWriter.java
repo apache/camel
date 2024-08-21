@@ -310,16 +310,15 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     exp = expressionName(model, key);
                 }
                 Object v = entry.getValue();
-                if (v instanceof EipModel) {
-                    EipModel m = (EipModel) entry.getValue();
+                if (v instanceof EipModel m) {
                     if (exp == null || "expression".equals(exp)) {
                         v = asExpressionNode(m, m.getName());
                     } else {
                         v = asExpressionNode(m, exp);
                     }
                 }
-                if (exp != null && v instanceof EipNode) {
-                    node.addExpression((EipNode) v);
+                if (exp != null && v instanceof EipNode eipNode) {
+                    node.addExpression(eipNode);
                 } else {
                     node.addProperty(key, v);
                     if ("expression".equals(key)) {
@@ -385,8 +384,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     List<Object> list = new ArrayList<>();
                     for (Object v : col) {
                         Object r = v;
-                        if (r instanceof EipModel) {
-                            EipNode en = asNode((EipModel) r);
+                        if (r instanceof EipModel eipModel) {
+                            EipNode en = asNode(eipModel);
                             value = en.asJsonObject();
                             JsonObject wrap = new JsonObject();
                             wrap.put(en.getName(), value);
@@ -403,8 +402,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     }
                     jo.put(key, list);
                 } else {
-                    if (value instanceof EipModel) {
-                        EipNode r = asNode((EipModel) value);
+                    if (value instanceof EipModel eipModel) {
+                        EipNode r = asNode(eipModel);
                         value = r.asJsonObject();
                         jo.put(r.getName(), value);
                     } else {
