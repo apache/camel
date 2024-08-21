@@ -155,9 +155,11 @@ public class SourceDevConsole extends AbstractDevConsole {
             return true;
         }
 
+        String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
         return PatternHelper.matchPattern(mrb.getRouteId(), filter)
                 || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
-                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter);
+                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter)
+                || PatternHelper.matchPattern(onlyName, filter);
     }
 
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
