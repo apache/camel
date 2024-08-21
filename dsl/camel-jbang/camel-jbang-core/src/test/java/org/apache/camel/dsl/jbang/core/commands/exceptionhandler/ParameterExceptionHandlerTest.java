@@ -36,7 +36,9 @@ class ParameterExceptionHandlerTest {
                 "First line mentioning unmatched argument");
         Assertions.assertEquals("Did you mean: camel bind or camel plugin or camel version?", lines[1],
                 "Second line with suggestion in case it is a typo");
-        Assertions.assertEquals("Maybe a specific plugin must be installed?", lines[4], "Last line suggesting new plugin");
+        Assertions.assertEquals(
+                "Maybe a specific Camel JBang plugin must be installed? (Try camel plugin --help' for more information)",
+                lines[4], "Last line suggesting new plugin");
     }
 
     @Test
