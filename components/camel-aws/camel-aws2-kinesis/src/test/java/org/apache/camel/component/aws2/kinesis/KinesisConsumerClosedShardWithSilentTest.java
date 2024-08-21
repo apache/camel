@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,22 +71,23 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     @BeforeEach
     public void setup() {
-        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
+        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("2").build();
         Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
+        var r1 = GetRecordsResponse.builder()
+                .nextShardIterator(null)
+                .records(
+                        Record.builder().sequenceNumber("1")
+                                .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
+                                .build(),
+                        Record.builder().sequenceNumber("2")
+                                .data(SdkBytes.fromString("Bye", Charset.defaultCharset()))
+                                .build())
+                .build();
         when(kinesisClient
-                .getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder()
-                        .nextShardIterator("nextShardIterator")
-                        .records(
-                                Record.builder().sequenceNumber("1")
-                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                        .build(),
-                                Record.builder().sequenceNumber("2")
-                                        .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
-                                        .build())
-                        .build());
+                .getRecords(any(GetRecordsRequest.class))).thenReturn(r1);
         when(kinesisClient
                 .getShardIterator(any(GetShardIteratorRequest.class)))
                 .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
@@ -179,15 +181,20 @@ public class KinesisConsumerClosedShardWithSilentTest {
     }
 
     @Test
-    public void itUsesTheShardIteratorOnSubsiquentPolls() throws Exception {
-        underTest.poll();
-        underTest.poll();
+    public void itUsesTheShardIteratorOnSubsequentPolls() throws Exception {
+        // should not be closed on start
+        Assertions.assertFalse(underTest.isShardClosed("shardId"));
+
+        underTest.poll(); // pull records and reached EOL of shard
+        underTest.poll(); // the shard is now closed
 
         final ArgumentCaptor<GetRecordsRequest> getRecordsReqCap = ArgumentCaptor.forClass(GetRecordsRequest.class);
         // On second call it uses the one returned from the first call
         verify(kinesisClient, times(1)).getShardIterator(any(GetShardIteratorRequest.class));
-        verify(kinesisClient, times(2)).getRecords(getRecordsReqCap.capture());
+        verify(kinesisClient, times(1)).getRecords(getRecordsReqCap.capture());
         assertThat(getRecordsReqCap.getAllValues().get(0).shardIterator(), is("shardIterator"));
-        assertThat(getRecordsReqCap.getAllValues().get(1).shardIterator(), is("nextShardIterator"));
+
+        // should be closed
+        Assertions.assertTrue(underTest.isShardClosed("shardId"));
     }
 }

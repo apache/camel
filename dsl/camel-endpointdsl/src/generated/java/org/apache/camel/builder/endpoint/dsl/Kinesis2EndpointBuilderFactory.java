@@ -248,11 +248,11 @@ public interface Kinesis2EndpointBuilderFactory {
         }
         /**
          * Define what will be the behavior in case of shard closed. Possible
-         * value are ignore, silent and fail. In case of ignore a message will
-         * be logged and the consumer will restart from the beginning,in case of
-         * silent there will be no logging and the consumer will start from the
-         * beginning,in case of fail a ReachedClosedStateException will be
-         * raised.
+         * value are ignore, silent and fail. In case of ignore a WARN message
+         * will be logged once and the consumer will not process new messages
+         * until restarted,in case of silent there will be no logging and the
+         * consumer will not process new messages until restarted,in case of
+         * fail a ReachedClosedStateException will be thrown.
          * 
          * The option is a:
          * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.
@@ -269,11 +269,11 @@ public interface Kinesis2EndpointBuilderFactory {
         }
         /**
          * Define what will be the behavior in case of shard closed. Possible
-         * value are ignore, silent and fail. In case of ignore a message will
-         * be logged and the consumer will restart from the beginning,in case of
-         * silent there will be no logging and the consumer will start from the
-         * beginning,in case of fail a ReachedClosedStateException will be
-         * raised.
+         * value are ignore, silent and fail. In case of ignore a WARN message
+         * will be logged once and the consumer will not process new messages
+         * until restarted,in case of silent there will be no logging and the
+         * consumer will not process new messages until restarted,in case of
+         * fail a ReachedClosedStateException will be thrown.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.

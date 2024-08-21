@@ -53,6 +53,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private ResumeStrategy resumeStrategy;
 
     private final Map<String, String> currentShardIterators = new java.util.HashMap<>();
+    private final Set<String> warnLogged = new HashSet<>();
 
     private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
@@ -71,11 +72,23 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         this.connection = connection;
     }
 
+    public boolean isShardClosed(String shardId) {
+        return currentShardIterators.get(shardId) == null && currentShardIterators.containsKey(shardId);
+    }
+
     @Override
     protected int poll() throws Exception {
         var processedExchangeCount = new AtomicInteger(0);
 
-        if (!getEndpoint().getConfiguration().getShardId().isEmpty()) {
+        String shardId = getEndpoint().getConfiguration().getShardId();
+        if (!shardId.isEmpty()) {
+            // skip if the shard is closed
+            if (isShardClosed(shardId)) {
+                // There was previously a shardIterator but shard is now closed
+                handleClosedShard(shardId);
+                return 0;
+            }
+
             var request = DescribeStreamRequest
                     .builder()
                     .streamName(getEndpoint().getConfiguration().getStreamName())
@@ -129,7 +142,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             final Shard shard,
             final KinesisConnection kinesisConnection,
             AtomicInteger processedExchangeCount) {
-        String shardIterator = null;
+        String shardIterator;
         try {
             shardIterator = getShardIterator(shard, kinesisConnection);
         } catch (InterruptedException e) {
@@ -222,6 +235,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             if (currentShardIterators.containsKey(shardId)) {
                 // There was previously a shardIterator but shard is now closed
                 handleClosedShard(shardId);
+                return null; // we cannot get the shard again as its closed
             }
 
             GetShardIteratorRequest.Builder request = GetShardIteratorRequest.builder()
@@ -264,8 +278,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private void handleClosedShard(String shardId) {
         switch (getEndpoint().getConfiguration().getShardClosed()) {
             case ignore:
-                LOG.warn("The shard with id={} on stream {} reached CLOSE status",
-                        shardId, getEndpoint().getConfiguration().getStreamName());
+                if (warnLogged.add(shardId)) {
+                    LOG.warn("The shard with id={} on stream {} reached CLOSE status",
+                            shardId, getEndpoint().getConfiguration().getStreamName());
+                }
                 break;
             case silent:
                 break;
