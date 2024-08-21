@@ -120,8 +120,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
         @Override
         public Producer getProducer() {
-            if (processor instanceof Producer) {
-                return (Producer) processor;
+            if (processor instanceof Producer producer) {
+                return producer;
             }
             return null;
         }
@@ -755,8 +755,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     protected ScheduledFuture<?> schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
-        if (executor instanceof ScheduledExecutorService) {
-            return ((ScheduledExecutorService) executor).schedule(runnable, delay, unit);
+        if (executor instanceof ScheduledExecutorService scheduledExecutorService) {
+            return scheduledExecutorService.schedule(runnable, delay, unit);
         } else {
             executor.execute(() -> {
                 try {
@@ -872,8 +872,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
             }
         }
         // we are done so close the pairs iterator
-        if (pairs instanceof Closeable) {
-            IOHelper.close((Closeable) pairs, "pairs", LOG);
+        if (pairs instanceof Closeable closeable) {
+            IOHelper.close(closeable, "pairs", LOG);
         }
 
         // .. and then if there was an exception we need to configure the redelivery exhaust
@@ -963,9 +963,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
         Map<String, Object> txData = null;
 
         StreamCache streamCache = null;
-        if (isParallelProcessing() && exchange.getIn().getBody() instanceof StreamCache) {
-            // in parallel processing case, the stream must be copied, therefore get the stream
-            streamCache = (StreamCache) exchange.getIn().getBody();
+        if (isParallelProcessing() && exchange.getIn().getBody() instanceof StreamCache streamCacheBody) {
+            // in parallel processing case, the stream must be copied, therefore, get the stream
+            streamCache = streamCacheBody;
         }
 
         int index = 0;
@@ -1108,8 +1108,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
     private Processor wrapInErrorHandler(Route route, Processor processor) throws Exception {
         // use the error handler from multicast and clone it to use the new processor as its output
-        if (errorHandler instanceof ErrorHandlerSupport) {
-            return ((ErrorHandlerSupport) errorHandler).clone(processor);
+        if (errorHandler instanceof ErrorHandlerSupport errorHandlerSupport) {
+            return errorHandlerSupport.clone(processor);
         }
         // fallback and use reifier to create the error handler
         return camelContext.getCamelContextExtension().createErrorHandler(route, processor);
@@ -1201,8 +1201,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     }
 
     protected static void setToEndpoint(Exchange exchange, Processor processor) {
-        if (processor instanceof Producer) {
-            Producer producer = (Producer) processor;
+        if (processor instanceof Producer producer) {
             exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
         }
     }

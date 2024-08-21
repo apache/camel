@@ -48,9 +48,7 @@ public class ResumableCompletion implements Synchronization {
 
         Object offset = ExchangeHelper.getResultMessage(exchange).getHeader(Exchange.OFFSET);
 
-        if (offset instanceof Resumable) {
-            Resumable resumable = (Resumable) offset;
-
+        if (offset instanceof Resumable resumable) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing the resumable: {}", resumable.getOffsetKey());
                 LOG.trace("Processing the resumable of type: {}", resumable.getLastOffset().getValue());
@@ -75,9 +73,7 @@ public class ResumableCompletion implements Synchronization {
         Exception e = exchange.getException();
         Object resObj = exchange.getMessage().getHeader(Exchange.OFFSET);
 
-        if (resObj instanceof Resumable) {
-            Resumable resumable = (Resumable) resObj;
-
+        if (resObj instanceof Resumable resumable) {
             String logMessage = String.format(
                     "Skipping offset update with address '%s' and offset value '%s' due to failure in processing: %s",
                     resumable.getOffsetKey(), resumable.getLastOffset().getValue(), e.getMessage());

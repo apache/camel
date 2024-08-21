@@ -133,8 +133,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
             // tell Camel routing engine we continue routing asynchronous
             return false;
         } catch (Exception e) {
-            if (executorService instanceof ThreadPoolExecutor) {
-                ThreadPoolExecutor tpe = (ThreadPoolExecutor) executorService;
+            if (executorService instanceof ThreadPoolExecutor tpe) {
                 // process the call in synchronous mode
                 ProcessCall call = new ProcessCall(exchange, callback, true);
                 rejectedPolicy.asRejectedExecutionHandler().rejectedExecution(call, tpe);

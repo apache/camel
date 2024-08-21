@@ -54,8 +54,8 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
 
     @Override
     public void close() throws IOException {
-        if (finder instanceof BootstrapCloseable) {
-            ((BootstrapCloseable) finder).close();
+        if (finder instanceof BootstrapCloseable bootstrapCloseable) {
+            bootstrapCloseable.close();
             finder = null;
         }
     }
@@ -69,8 +69,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
         }
         try {
             Object object = finder.newInstance(name).orElse(null);
-            if (object instanceof ProcessorFactory) {
-                ProcessorFactory pc = (ProcessorFactory) object;
+            if (object instanceof ProcessorFactory pc) {
                 Processor processor = pc.createChildProcessor(route, definition, mandatory);
                 LineNumberAware.trySetLineNumberAware(processor, definition);
                 return processor;
