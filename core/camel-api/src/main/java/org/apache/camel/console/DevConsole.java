@@ -29,7 +29,8 @@ public interface DevConsole {
 
     enum MediaType {
         TEXT,
-        JSON
+        JSON,
+        RAW
     }
 
     /**

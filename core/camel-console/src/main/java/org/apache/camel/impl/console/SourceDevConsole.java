@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
@@ -55,16 +57,32 @@ public class SourceDevConsole extends AbstractDevConsole {
      */
     public static final String DUMP = "dump";
 
+    /**
+     * Whether to make downloading the source file easier from a web browser
+     */
+    public static final String DOWNLOAD = "download";
+
     public SourceDevConsole() {
         super("camel", "source", "Source", "Dump route source code");
+    }
+
+    @Override
+    public boolean supportMediaType(MediaType mediaType) {
+        // also supports raw
+        return true;
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
         final StringBuilder sb = new StringBuilder();
 
-        boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
+        boolean download = "true".equals(options.getOrDefault(DOWNLOAD, "false"));
+        if (download) {
+            // use raw mode instead
+            return doCallRaw(options);
+        }
 
+        boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
         Function<ManagedRouteMBean, Object> task = mrb -> {
             String loc = mrb.getSourceLocation();
             if (loc != null) {
@@ -73,11 +91,10 @@ public class SourceDevConsole extends AbstractDevConsole {
                 try {
                     Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
                     if (resource != null) {
-                        if (!sb.isEmpty()) {
-                            sb.append("\n");
-                        }
-
                         if (dump) {
+                            if (!sb.isEmpty()) {
+                                sb.append("\n");
+                            }
                             LineNumberReader reader = new LineNumberReader(resource.getReader());
                             int i = 0;
                             String t;
@@ -141,6 +158,59 @@ public class SourceDevConsole extends AbstractDevConsole {
         doCall(options, task);
         root.put("routes", list);
         return root;
+    }
+
+    @Override
+    protected String doCallRaw(Map<String, Object> options) {
+        final StringBuilder sb = new StringBuilder();
+
+        boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
+        final AtomicInteger counter = new AtomicInteger();
+        final AtomicReference<String> name = new AtomicReference<>();
+
+        Function<ManagedRouteMBean, Object> task = mrb -> {
+            String loc = mrb.getSourceLocation();
+            if (loc != null) {
+                loc = LoggerHelper.stripSourceLocationLineNumber(loc);
+                StringBuilder code = new StringBuilder();
+                try {
+                    String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
+                    Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
+                    if (resource != null) {
+                        if (dump) {
+                            // if we select only 1 file then remember the filename
+                            if (counter.incrementAndGet() == 1) {
+                                name.set(onlyName);
+                            } else {
+                                name.set(null);
+                            }
+                            if (!sb.isEmpty()) {
+                                sb.append("\n");
+                            }
+                            String text = IOHelper.loadText(resource.getInputStream());
+                            code.append(text);
+                        } else {
+                            // list of names
+                            sb.append(onlyName);
+                        }
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+                if (!code.isEmpty()) {
+                    sb.append(code);
+                }
+            }
+            sb.append("\n");
+            return null;
+        };
+        doCall(options, task);
+
+        if (name.get() != null) {
+            options.put("Content-Disposition", String.format("attachment; filename=\"%s\"", name.get()));
+        }
+
+        return sb.toString();
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
