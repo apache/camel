@@ -32,15 +32,15 @@ final class ProcessorHelper {
     static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
         if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
             return recipient;
-        } else if (recipient instanceof String) {
+        } else if (recipient instanceof String string) {
             // trim strings as end users might have added spaces between separators
-            recipient = ((String) recipient).trim();
+            recipient = string.trim();
         }
         if (recipient != null) {
             CamelContext ecc = exchange.getContext();
             String uri;
-            if (recipient instanceof String) {
-                uri = (String) recipient;
+            if (recipient instanceof String string) {
+                uri = string;
             } else {
                 // convert to a string type we can work with
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
@@ -56,12 +56,11 @@ final class ProcessorHelper {
     }
 
     static Endpoint getExistingEndpoint(CamelContext context, Object recipient) {
-        if (recipient instanceof Endpoint) {
-            return (Endpoint) recipient;
+        if (recipient instanceof Endpoint endpoint) {
+            return endpoint;
         }
         if (recipient != null) {
-            if (recipient instanceof NormalizedEndpointUri) {
-                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+            if (recipient instanceof NormalizedEndpointUri nu) {
                 ExtendedCamelContext ecc = context.getCamelContextExtension();
                 return ecc.hasEndpoint(nu);
             } else {

@@ -185,8 +185,8 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         Expression exp = expression;
         Object slip = exchange.removeProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT);
         if (slip != null) {
-            if (slip instanceof Expression) {
-                exp = (Expression) slip;
+            if (slip instanceof Expression expression) {
+                exp = expression;
             } else {
                 exp = ExpressionBuilder.constantExpression(slip);
             }
