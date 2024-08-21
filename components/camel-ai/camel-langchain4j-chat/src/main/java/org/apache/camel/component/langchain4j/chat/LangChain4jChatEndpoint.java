@@ -34,6 +34,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
 
@@ -97,7 +98,15 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(
                     "In order to use the langchain4j component as a consumer, you need to specify at least description, or a camelToolParameter");
         }
-        ToolSpecification toolSpecification = toolSpecificationBuilder.build();
+
+        String simpleDescription = null;
+        if (description != null) {
+            simpleDescription = StringHelper.dashToCamelCase(description.replace(" ", "-"));
+        }
+
+        ToolSpecification toolSpecification = toolSpecificationBuilder
+                .name(simpleDescription)
+                .build();
 
         CamelToolSpecification camelToolSpecification
                 = new CamelToolSpecification(toolSpecification, new LangChain4jChatConsumer(this, processor));
