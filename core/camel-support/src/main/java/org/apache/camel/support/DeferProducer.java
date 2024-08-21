@@ -56,8 +56,8 @@ public class DeferProducer extends ServiceSupport implements Producer, AsyncProc
             return true;
         }
 
-        if (delegate instanceof AsyncProcessor) {
-            return ((AsyncProcessor) delegate).process(exchange, callback);
+        if (delegate instanceof AsyncProcessor asyncProcessor) {
+            return asyncProcessor.process(exchange, callback);
         }
 
         // fallback to sync mode

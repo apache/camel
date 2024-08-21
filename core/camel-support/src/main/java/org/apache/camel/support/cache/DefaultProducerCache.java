@@ -216,8 +216,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         CompletableFuture<Exchange> future = f != null ? f : new CompletableFuture<>();
         AsyncProducerCallback cb = (p, e, c) -> asyncDispatchExchange(endpoint, p, resultProcessor, e, c);
         try {
-            if (processor instanceof AsyncProcessor) {
-                ((AsyncProcessor) processor).process(exchange,
+            if (processor instanceof AsyncProcessor asyncProcessor) {
+                asyncProcessor.process(exchange,
                         doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
             } else {
                 if (processor != null) {

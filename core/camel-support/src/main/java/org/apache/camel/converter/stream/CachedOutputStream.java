@@ -142,8 +142,8 @@ public class CachedOutputStream extends OutputStream {
         flush();
 
         if (inMemory) {
-            if (currentStream instanceof CachedByteArrayOutputStream) {
-                return ((CachedByteArrayOutputStream) currentStream).newInputStreamCache();
+            if (currentStream instanceof CachedByteArrayOutputStream cachedByteArrayOutputStream) {
+                return cachedByteArrayOutputStream.newInputStreamCache();
             } else {
                 throw new IllegalStateException(
                         "CurrentStream should be an instance of CachedByteArrayOutputStream but is: "

@@ -45,8 +45,8 @@ public class CamelInitialContextFactory implements InitialContextFactory {
         try {
             return new JndiContext(CastUtils.cast(environment, String.class, Object.class));
         } catch (Exception e) {
-            if (e instanceof NamingException) {
-                throw (NamingException) e;
+            if (e instanceof NamingException namingException) {
+                throw namingException;
             }
             NamingException exception = new NamingException(e.getMessage());
             exception.initCause(e);

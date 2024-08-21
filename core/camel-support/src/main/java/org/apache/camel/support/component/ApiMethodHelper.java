@@ -485,12 +485,11 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             if (value != null && types[index].isArray()) {
                 Class<?> type = types[index];
 
-                if (value instanceof Collection) {
+                if (value instanceof Collection<?> collection) {
                     // convert collection to array
-                    Collection<?> collection = (Collection<?>) value;
                     Object array = Array.newInstance(type.getComponentType(), collection.size());
-                    if (array instanceof Object[]) {
-                        collection.toArray((Object[]) array);
+                    if (array instanceof Object[] objects) {
+                        collection.toArray(objects);
                     } else {
                         int i = 0;
                         for (Object el : collection) {

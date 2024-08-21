@@ -127,8 +127,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof DefaultEndpoint) {
-            DefaultEndpoint that = (DefaultEndpoint) object;
+        if (object instanceof DefaultEndpoint that) {
             // must also match the same CamelContext in case we compare endpoints from different contexts
             String thisContextName = this.getCamelContext() != null ? this.getCamelContext().getName() : null;
             String thatContextName = that.getCamelContext() != null ? that.getCamelContext().getName() : null;
@@ -414,8 +413,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             configurer = getComponent().getComponentPropertyConfigurer();
         } else if (bean instanceof Endpoint) {
             configurer = getComponent().getEndpointPropertyConfigurer();
-        } else if (bean instanceof PropertyConfigurerAware) {
-            configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
+        } else if (bean instanceof PropertyConfigurerAware propertyConfigurerAware) {
+            configurer = propertyConfigurerAware.getPropertyConfigurer(bean);
         }
         // use configurer and ignore case as end users may type an option name with mixed case
         PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true)
@@ -469,8 +468,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         CamelContextAware.trySetCamelContext(consumer, camelContext);
 
         if (bridgeErrorHandler) {
-            if (consumer instanceof DefaultConsumer) {
-                DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
+            if (consumer instanceof DefaultConsumer defaultConsumer) {
                 defaultConsumer.setExceptionHandler(new BridgeExceptionHandlerToErrorHandler(defaultConsumer));
             } else {
                 throw new IllegalArgumentException(
@@ -480,8 +478,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             }
         }
         if (exceptionHandler != null) {
-            if (consumer instanceof DefaultConsumer) {
-                DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
+            if (consumer instanceof DefaultConsumer defaultConsumer) {
                 defaultConsumer.setExceptionHandler(exceptionHandler);
             }
         }
@@ -497,8 +494,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
         if (autowiredEnabled && getComponent() != null && getComponent().isAutowiredEnabled()) {
             PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
-            if (configurer instanceof PropertyConfigurerGetter) {
-                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            if (configurer instanceof PropertyConfigurerGetter getter) {
                 String[] names = getter.getAutowiredNames();
                 if (names != null) {
                     for (String name : names) {

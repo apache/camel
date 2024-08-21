@@ -120,8 +120,7 @@ public abstract class AbstractVariableRepository extends ServiceSupport
         // check if body is already cached
         if (body == null) {
             return null;
-        } else if (body instanceof StreamCache) {
-            StreamCache sc = (StreamCache) body;
+        } else if (body instanceof StreamCache sc) {
             // reset so the cache is ready to be used before processing
             sc.reset();
             return sc;

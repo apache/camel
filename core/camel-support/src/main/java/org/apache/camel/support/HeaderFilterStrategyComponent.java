@@ -56,8 +56,8 @@ public abstract class HeaderFilterStrategyComponent extends DefaultComponent imp
      * {@link HeaderFilterStrategyAware} type.
      */
     public void setEndpointHeaderFilterStrategy(Endpoint endpoint) {
-        if (headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware) endpoint).setHeaderFilterStrategy(headerFilterStrategy);
+        if (headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware aware) {
+            aware.setHeaderFilterStrategy(headerFilterStrategy);
         }
     }
 }

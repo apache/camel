@@ -77,8 +77,8 @@ public final class MessageHelper {
 
         // optimize if the body is a String type already
         Object body = message.getBody();
-        if (body instanceof String) {
-            return (String) body;
+        if (body instanceof String string) {
+            return string;
         }
 
         // we need to favor using stream cache so the body can be re-read later
@@ -135,8 +135,8 @@ public final class MessageHelper {
         } catch (Exception e) {
             // ignore
         }
-        if (body instanceof StreamCache) {
-            ((StreamCache) body).reset();
+        if (body instanceof StreamCache streamCache) {
+            streamCache.reset();
         }
     }
 
@@ -375,10 +375,10 @@ public final class MessageHelper {
         // is the body a stream cache or input stream
         StreamCache cache = null;
         InputStream is = null;
-        if (obj instanceof StreamCache) {
-            cache = (StreamCache) obj;
-        } else if (obj instanceof InputStream) {
-            is = (InputStream) obj;
+        if (obj instanceof StreamCache streamCache) {
+            cache = streamCache;
+        } else if (obj instanceof InputStream inputStream) {
+            is = inputStream;
         }
 
         // grab the message body as a string
@@ -630,8 +630,8 @@ public final class MessageHelper {
                 int size = Array.getLength(body);
                 sb.append(" size=\"").append(size).append("\"");
             }
-            if (body instanceof StreamCache) {
-                long pos = ((StreamCache) body).position();
+            if (body instanceof StreamCache streamCache) {
+                long pos = streamCache.position();
                 if (pos != -1) {
                     sb.append(" position=\"").append(pos).append("\"");
                 }
@@ -1081,8 +1081,8 @@ public final class MessageHelper {
                 int size = Array.getLength(body);
                 jb.put("size", size);
             }
-            if (body instanceof StreamCache) {
-                long pos = ((StreamCache) body).position();
+            if (body instanceof StreamCache streamCache) {
+                long pos = streamCache.position();
                 if (pos != -1) {
                     jb.put("position", pos);
                 }

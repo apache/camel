@@ -110,10 +110,10 @@ public final class ApiConsumerHelper {
                     }
 
                     return size;
-                } else if (results instanceof Iterable) {
+                } else if (results instanceof Iterable<?> iterable) {
                     // Optimized for iterable
                     int size = 0;
-                    for (Object singleResult : (Iterable<?>) results) {
+                    for (Object singleResult : iterable) {
                         processResult(consumer, result, singleResult);
                         size++;
                     }

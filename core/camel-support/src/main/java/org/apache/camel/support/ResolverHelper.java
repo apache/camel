@@ -60,8 +60,8 @@ public final class ResolverHelper {
         Object bean
                 = lookupInRegistry(context, Component.class, false, exceptionHandler, name, name + COMPONENT_FALLBACK_SUFFIX);
         if (bean != null) {
-            if (bean instanceof Component) {
-                return (Component) bean;
+            if (bean instanceof Component component) {
+                return component;
             } else {
                 // let's use Camel's type conversion mechanism to convert things like CamelContext
                 // and other types into a valid Component
@@ -86,8 +86,8 @@ public final class ResolverHelper {
             CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
         Object bean = lookupInRegistry(context, DataFormat.class, false, exceptionHandler, name,
                 name + DATA_FORMAT_FALLBACK_SUFFIX);
-        if (bean instanceof DataFormat) {
-            return (DataFormat) bean;
+        if (bean instanceof DataFormat dataFormat) {
+            return dataFormat;
         }
 
         if (bean != null) {
@@ -104,8 +104,8 @@ public final class ResolverHelper {
             CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
         Object bean = lookupInRegistry(context, DataFormatFactory.class, false, exceptionHandler, name,
                 name + DATA_FORMAT_FACTORY_FALLBACK_SUFFIX);
-        if (bean instanceof DataFormatFactory) {
-            return (DataFormatFactory) bean;
+        if (bean instanceof DataFormatFactory dataFormatFactory) {
+            return dataFormatFactory;
         }
 
         if (bean != null) {
@@ -121,8 +121,8 @@ public final class ResolverHelper {
     public static Language lookupLanguageInRegistryWithFallback(
             CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
         Object bean = lookupInRegistry(context, Language.class, false, exceptionHandler, name, name + LANGUAGE_FALLBACK_SUFFIX);
-        if (bean instanceof Language) {
-            return (Language) bean;
+        if (bean instanceof Language language) {
+            return language;
         }
 
         if (bean != null) {

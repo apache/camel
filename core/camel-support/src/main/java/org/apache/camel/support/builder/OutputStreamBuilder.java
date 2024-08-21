@@ -83,8 +83,8 @@ public final class OutputStreamBuilder extends OutputStream {
      * if stream caching is enabled, otherwise byte[].
      */
     public Object build() throws IOException {
-        if (outputStream instanceof CachedOutputStream) {
-            return ((CachedOutputStream) outputStream).newStreamCache();
+        if (outputStream instanceof CachedOutputStream cachedOutputStream) {
+            return cachedOutputStream.newStreamCache();
         }
         return ((ByteArrayOutputStream) outputStream).toByteArray();
     }

@@ -175,8 +175,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
                 try {
                     // attempt to find out type via configurer so we avoid using reflection
                     PropertyConfigurer configurer = endpoint.getComponent().getEndpointPropertyConfigurer();
-                    if (configurer instanceof PropertyConfigurerGetter) {
-                        PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                    if (configurer instanceof PropertyConfigurerGetter getter) {
                         Class<?> type = getter.getOptionType(inBodyProperty, true);
                         if (type != null) {
                             value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);

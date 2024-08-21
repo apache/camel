@@ -132,13 +132,13 @@ public abstract class ChildServiceSupport extends ServiceSupport {
     }
 
     protected void addChildService(Object childService) {
-        if (childService instanceof Service) {
+        if (childService instanceof Service service) {
             lock.lock();
             try {
                 if (childServices == null) {
                     childServices = new ArrayList<>();
                 }
-                childServices.add((Service) childService);
+                childServices.add(service);
             } finally {
                 lock.unlock();
             }

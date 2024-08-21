@@ -147,9 +147,9 @@ public class DefaultConsumer extends ServiceSupport
     @Override
     public void releaseExchange(Exchange exchange, boolean autoRelease) {
         if (exchange != null) {
-            if (!autoRelease && exchange instanceof PooledExchange) {
+            if (!autoRelease && exchange instanceof PooledExchange pooledExchange) {
                 // if not auto release we must manually force done
-                ((PooledExchange) exchange).done();
+                pooledExchange.done();
             }
             exchangeFactory.release(exchange);
         }

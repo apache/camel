@@ -86,8 +86,7 @@ public abstract class PropertyConfigurerSupport {
         }
 
         // special for boolean values with string values as we only want to accept "true" or "false"
-        if ((type == Boolean.class || type == boolean.class) && value instanceof String) {
-            String text = (String) value;
+        if ((type == Boolean.class || type == boolean.class) && value instanceof String text) {
             if (!MAGIC_VALUE.equals(value) && !text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
                 throw new IllegalArgumentException(
                         "Cannot convert the String value: " + value + " to type: " + type

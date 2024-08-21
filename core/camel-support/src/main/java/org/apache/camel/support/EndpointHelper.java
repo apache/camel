@@ -136,8 +136,7 @@ public final class EndpointHelper {
                 continue;
             }
             Object value = entry.getValue();
-            if (value instanceof String) {
-                String s = value.toString();
+            if (value instanceof String s) {
                 if (s.startsWith(prefix)) {
                     continue;
                 }
@@ -443,9 +442,9 @@ public final class EndpointHelper {
         List<String> elements = Arrays.asList(value.split(","));
         if (elements.size() == 1) {
             Object bean = resolveReferenceParameter(context, elements.get(0).trim(), Object.class);
-            if (bean instanceof List) {
+            if (bean instanceof List list) {
                 // The bean is a list
-                return (List) bean;
+                return list;
             } else {
                 // The bean is a list element
                 List<T> singleElementList = new ArrayList<>();
@@ -525,8 +524,8 @@ public final class EndpointHelper {
 
         // it may be a delegate endpoint, which we need to match as well
         Endpoint delegate = null;
-        if (endpoint instanceof DelegateEndpoint) {
-            delegate = ((DelegateEndpoint) endpoint).getEndpoint();
+        if (endpoint instanceof DelegateEndpoint delegateEndpoint) {
+            delegate = delegateEndpoint.getEndpoint();
         }
 
         Map<String, Endpoint> map = endpoint.getCamelContext().getRegistry().findByTypeWithName(Endpoint.class);
