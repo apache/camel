@@ -39,6 +39,9 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
     @EndpointInject("mock:result-read")
     private MockEndpoint mockRead;
 
+    @EndpointInject("mock:result-read-with-param")
+    private MockEndpoint mockReadWithParam;
+
     @Test
     public void createSecretTest() throws InterruptedException {
 
@@ -58,11 +61,15 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
                 exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH, "test");
             }
         });
+        exchange = template.request("direct:readSecretWithPathParam", null);
 
         MockEndpoint.assertIsSatisfied(context);
         Exchange ret = mockRead.getExchanges().get(0);
         assertNotNull(ret);
         assertEquals("30", ((Map) ret.getMessage().getBody(Map.class).get("data")).get("integer"));
+        Exchange retWithParam = mockReadWithParam.getExchanges().get(0);
+        assertNotNull(retWithParam);
+        assertEquals("30", ((Map) retWithParam.getMessage().getBody(Map.class).get("data")).get("integer"));
     }
 
     @Override
@@ -79,6 +86,11 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
                         .toF("hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-read");
+
+                from("direct:readSecretWithPathParam")
+                        .toF("hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                                service.token(), service.host(), service.port())
+                        .to("mock:result-read-with-param");
             }
         };
     }
