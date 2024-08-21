@@ -160,7 +160,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private String generateOperationId(String path, HttpMethod httpMethod) {
         final String sanitizedPath = path.replace('/', '.').replaceAll("[{}]", "_");
         final String opId = GEN_OPID + httpMethod.name() + sanitizedPath;
-        LOG.warn("Generated operationId {} for path {} and method {}", opId, path, httpMethod.name());
+        LOG.debug("Generated operationId {} for path {} and method {}", opId, path, httpMethod.name());
         return opId;
     }
 

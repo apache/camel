@@ -59,7 +59,6 @@ class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // from("direct:GENOPID_GETusers").to("mock:getUsers");
                 from("direct:getUsers").to("mock:getUsers");
             }
         };
@@ -70,7 +69,6 @@ class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
 
         camelContext = new DefaultCamelContext();
         PlatformHttpComponent httpCmpn = mock(PlatformHttpComponent.class);
-        //        camelContext.addComponent("platform-http", new PlatformHttpComponent());
         camelContext.addComponent("platform-http", httpCmpn);
         return camelContext;
     }
