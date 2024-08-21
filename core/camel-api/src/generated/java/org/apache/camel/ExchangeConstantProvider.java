@@ -13,8 +13,9 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(156);
+        Map<String, String> map = new HashMap<>(157);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
+        map.put("ACTIVE_SPAN", "OpenTracing.activeSpan");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
         map.put("AGGREGATED_CORRELATION_KEY", "CamelAggregatedCorrelationKey");

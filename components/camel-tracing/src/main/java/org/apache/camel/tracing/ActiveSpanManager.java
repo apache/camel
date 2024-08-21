@@ -17,6 +17,7 @@
 package org.apache.camel.tracing;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -28,7 +29,6 @@ public final class ActiveSpanManager {
 
     public static final String MDC_TRACE_ID = "trace_id";
     public static final String MDC_SPAN_ID = "span_id";
-    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
     private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
 
     private ActiveSpanManager() {
@@ -41,7 +41,7 @@ public final class ActiveSpanManager {
      * @return          The current active span, or null if none exists
      */
     public static SpanAdapter getSpan(Exchange exchange) {
-        Holder holder = exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
         if (holder != null) {
             return holder.getSpan();
         }
@@ -56,8 +56,8 @@ public final class ActiveSpanManager {
      * @param span     The span
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
-        exchange.setProperty(ACTIVE_SPAN_PROPERTY,
-                new Holder(exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class), span));
+        exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN,
+                new Holder(exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class), span));
         if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
             MDC.put(MDC_TRACE_ID, span.traceId());
             MDC.put(MDC_SPAN_ID, span.spanId());
@@ -72,10 +72,10 @@ public final class ActiveSpanManager {
      * @param exchange The exchange
      */
     public static void deactivate(Exchange exchange) {
-        Holder holder = exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
         if (holder != null) {
             Holder parent = holder.getParent();
-            exchange.setProperty(ACTIVE_SPAN_PROPERTY, parent);
+            exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN, parent);
 
             holder.closeScope();
             if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
@@ -99,7 +99,7 @@ public final class ActiveSpanManager {
      * @param exchange The exchange
      */
     public static void endScope(Exchange exchange) {
-        Holder holder = exchange.getProperty(ACTIVE_SPAN_PROPERTY, Holder.class);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
         if (holder != null && !holder.isClosed()) {
             holder.closeScope();
         }
