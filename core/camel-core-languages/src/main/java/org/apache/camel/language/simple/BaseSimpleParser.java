@@ -131,9 +131,9 @@ public abstract class BaseSimpleParser {
         Deque<Block> stack = new ArrayDeque<>();
 
         for (SimpleNode token : nodes) {
-            if (token instanceof BlockStart) {
+            if (token instanceof BlockStart blockStart) {
                 // a new block is started, so push on the stack
-                stack.push((Block) token);
+                stack.push(blockStart);
             } else if (token instanceof BlockEnd) {
                 // end block is just an abstract mode, so we should not add it
                 if (stack.isEmpty()) {
@@ -183,9 +183,7 @@ public abstract class BaseSimpleParser {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
         for (SimpleNode node : nodes) {
-            if (node instanceof UnaryExpression) {
-                UnaryExpression token = (UnaryExpression) node;
-
+            if (node instanceof UnaryExpression token) {
                 // remember the logical operator
                 String operator = token.getOperator().toString();
 

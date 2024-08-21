@@ -86,13 +86,13 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                 for (SimpleNode child : block.getChildren()) {
                     // whether a nested function should be lazy evaluated or not
                     boolean lazy = true;
-                    if (child instanceof SimpleFunctionStart) {
-                        lazy = ((SimpleFunctionStart) child).lazyEval(child);
+                    if (child instanceof SimpleFunctionStart simpleFunctionStart) {
+                        lazy = simpleFunctionStart.lazyEval(child);
                     }
-                    if (child instanceof LiteralNode) {
-                        String text = ((LiteralNode) child).getText();
+                    if (child instanceof LiteralNode literal) {
+                        String text = literal.getText();
                         sb.append(text);
-                        quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
+                        quoteEmbeddedFunctions |= literal.quoteEmbeddedNodes();
                         // if its quoted literal then embed that as text
                     } else if (!lazy || child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                         try {
@@ -173,10 +173,10 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
 
         // we need to concat the block, so we have the expression
         for (SimpleNode child : block.getChildren()) {
-            if (child instanceof LiteralNode) {
-                String text = ((LiteralNode) child).getText();
+            if (child instanceof LiteralNode literal) {
+                String text = literal.getText();
                 sb.append(text);
-                quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
+                quoteEmbeddedFunctions |= literal.quoteEmbeddedNodes();
                 // if its quoted literal then embed that as text
             } else if (child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                 try {
