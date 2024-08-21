@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Handler;
@@ -442,7 +443,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
             @Override
             public void handle(RoutingContext ctx) {
-                ctx.response().putHeader("content-type", "application/json");
+                ctx.response().putHeader("Content-Type", "application/json");
 
                 JsonObject root = new JsonObject();
                 JsonObject jo = new JsonObject();
@@ -543,7 +544,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
-                ctx.response().putHeader("content-type", "application/json");
+                ctx.response().putHeader("Content-Type", "application/json");
 
                 HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
                 String level = ctx.request().getParam("exposureLevel");
@@ -740,10 +741,22 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         devSub.method(HttpMethod.GET);
         devSub.produces("text/plain");
         devSub.produces("application/json");
+        devSub.produces("application/octet-stream");
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
+                if (!camelContext.isDevConsole()) {
+                    ctx.response().putHeader("Content-Type", "text/plain");
+                    ctx.end("Developer Console is not enabled on CamelContext. Set camel.context.dev-console=true in application.properties");
+                }
+                DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
+                if (dcr == null || !dcr.isEnabled()) {
+                    ctx.response().putHeader("Content-Type", "text/plain");
+                    ctx.end("Developer Console is not enabled");
+                    return;
+                }
+
                 String acp = ctx.request().getHeader("Accept");
                 int pos1 = acp != null ? acp.indexOf("html") : Integer.MAX_VALUE;
                 if (pos1 == -1) {
@@ -753,20 +766,13 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 if (pos2 == -1) {
                     pos2 = Integer.MAX_VALUE;
                 }
-                final boolean html = pos1 < pos2;
-                final boolean json = pos2 < pos1;
-                final DevConsole.MediaType mediaType = json ? DevConsole.MediaType.JSON : DevConsole.MediaType.TEXT;
-
-                ctx.response().putHeader("content-type", "text/plain");
-
-                if (!camelContext.isDevConsole()) {
-                    ctx.end("Developer Console is not enabled on CamelContext. Set camel.context.dev-console=true in application.properties");
-                }
-                DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
-                if (dcr == null || !dcr.isEnabled()) {
-                    ctx.end("Developer Console is not enabled");
-                    return;
-                }
+                // special for download mode where we want to make it easy from a web-browser
+                final boolean download = "true".equals(ctx.request().getParam("download"));
+                final boolean raw = download || acp != null && acp.contains("application/octet-stream");
+                final boolean html = !raw && pos1 < pos2;
+                final boolean json = !raw && pos2 < pos1;
+                final DevConsole.MediaType mediaType
+                        = raw ? DevConsole.MediaType.RAW : json ? DevConsole.MediaType.JSON : DevConsole.MediaType.TEXT;
 
                 String path = StringHelper.after(ctx.request().path(), "/q/dev/");
                 String s = path;
@@ -805,11 +811,13 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     if (!sb.isEmpty()) {
                         String out = sb.toString();
                         if (html) {
-                            ctx.response().putHeader("content-type", "text/html");
+                            ctx.response().putHeader("Content-Type", "text/html");
+                        } else {
+                            ctx.response().putHeader("Content-Type", "text/plain");
                         }
                         ctx.end(out);
                     } else if (!root.isEmpty()) {
-                        ctx.response().putHeader("content-type", "application/json");
+                        ctx.response().putHeader("Content-Type", "application/json");
                         String out = root.toJson();
                         ctx.end(out);
                     } else {
@@ -821,6 +829,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     params.put(Exchange.HTTP_PATH, path);
                     StringBuilder sb = new StringBuilder();
                     JsonObject root = new JsonObject();
+                    final AtomicBoolean found = new AtomicBoolean();
 
                     // sort according to index by given id
                     dcr.stream().sorted((o1, o2) -> {
@@ -831,25 +840,45 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                         boolean include = "all".equals(id) || c.getId().equalsIgnoreCase(id);
                         if (include && c.supportMediaType(mediaType)) {
                             Object out = c.call(mediaType, params);
+                            found.set(true);
                             if (out != null && mediaType == DevConsole.MediaType.TEXT) {
                                 sb.append(c.getDisplayName()).append(":");
                                 sb.append("\n\n");
                                 sb.append(out);
                                 sb.append("\n\n");
+                            } else if (out != null && mediaType == DevConsole.MediaType.RAW) {
+                                sb.append(out);
                             } else if (out != null && mediaType == DevConsole.MediaType.JSON) {
                                 root.put(c.getId(), out);
                             }
                         }
                     });
                     if (!sb.isEmpty()) {
+                        if (raw) {
+                            ctx.response().putHeader("Content-Type", "application/octet-stream");
+                            // in raw mode we may download files so put this into header information
+                            String disposition = (String) params.get("Content-Disposition");
+                            if (disposition != null) {
+                                ctx.response().putHeader("Content-Disposition", disposition);
+                            }
+                        } else {
+                            ctx.response().putHeader("Content-Type", "text/plain");
+                        }
                         String out = sb.toString();
                         ctx.end(out);
                     } else if (!root.isEmpty()) {
-                        ctx.response().putHeader("content-type", "application/json");
+                        // root is json object
+                        ctx.response().putHeader("Content-Type", "application/json");
                         String out = root.toJson();
                         ctx.end(out);
                     } else {
-                        ctx.end("Developer Console not found: " + id);
+                        if (!found.get()) {
+                            ctx.response().putHeader("Content-Type", "text/plain");
+                            ctx.end("Developer Console not found: " + id);
+                        } else {
+                            ctx.response().setStatusCode(204);
+                            ctx.end();
+                        }
                     }
                 }
             }
