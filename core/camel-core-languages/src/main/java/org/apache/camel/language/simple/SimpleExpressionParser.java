@@ -220,30 +220,34 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                     }
                     sb.append(" + ");
                 }
-                if (node instanceof LiteralNode) {
-                    exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-                    sb.append("\"");
-                    // " should be escaped to \"
-                    exp = LanguageHelper.escapeQuotes(exp);
-                    // \n \t \r should be escaped
-                    exp = exp.replaceAll("\n", "\\\\n");
-                    exp = exp.replaceAll("\t", "\\\\t");
-                    exp = exp.replaceAll("\r", "\\\\r");
-                    if (exp.endsWith("\\") && !exp.endsWith("\\\\")) {
-                        // there is a single trailing slash which we need to escape
-                        exp += "\\";
-                    }
-                    sb.append(exp);
-                    sb.append("\"");
-                } else {
-                    sb.append(exp);
-                }
+                parseLiteralNode(sb, node, exp);
             }
         }
         String code = sb.toString();
         code = code.replace(BaseSimpleParser.CODE_START, "");
         code = code.replace(BaseSimpleParser.CODE_END, "");
         return code;
+    }
+
+    static void parseLiteralNode(StringBuilder sb, SimpleNode node, String exp) {
+        if (node instanceof LiteralNode) {
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+            sb.append("\"");
+            // " should be escaped to \"
+            exp = LanguageHelper.escapeQuotes(exp);
+            // \n \t \r should be escaped
+            exp = exp.replaceAll("\n", "\\\\n");
+            exp = exp.replaceAll("\t", "\\\\t");
+            exp = exp.replaceAll("\r", "\\\\r");
+            if (exp.endsWith("\\") && !exp.endsWith("\\\\")) {
+                // there is a single trailing slash which we need to escape
+                exp += "\\";
+            }
+            sb.append(exp);
+            sb.append("\"");
+        } else {
+            sb.append(exp);
+        }
     }
 
     // --------------------------------------------------------------
