@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,9 +165,9 @@ public class GenerateMojo extends AbstractExecMojo {
     }
 
     private void generatePropertiesFile(List<CSimpleGeneratedCode> classes) {
-        StringWriter w = new StringWriter();
-        w.append("# " + GENERATED_MSG + "\n");
-        classes.forEach(c -> w.write(c.getFqn() + "\n"));
+        StringBuilder w = new StringBuilder(4096);
+        w.append("# ").append(GENERATED_MSG).append("\n");
+        classes.forEach(c -> w.append(c.getFqn()).append("\n"));
         String fileName = RESOURCE_FILE;
         outputResourceDir.mkdirs();
         boolean saved = updateResource(outputResourceDir.toPath().resolve(fileName), w.toString());

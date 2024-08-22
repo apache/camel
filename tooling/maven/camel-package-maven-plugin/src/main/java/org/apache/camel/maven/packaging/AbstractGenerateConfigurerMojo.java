@@ -17,9 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -489,16 +486,14 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String en = targetFqn.substring(pos + 1);
-        try (Writer w = new StringWriter()) {
-            w.append("# ").append(GENERATED_MSG).append("\n");
-            w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
-            String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
-            boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
-            if (updated) {
-                getLog().info("Updated " + fileName);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        StringBuilder w = new StringBuilder();
+        w.append("# ").append(GENERATED_MSG).append("\n");
+        w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
+        String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
+        boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
+        if (updated) {
+            getLog().info("Updated " + fileName);
         }
     }
 
