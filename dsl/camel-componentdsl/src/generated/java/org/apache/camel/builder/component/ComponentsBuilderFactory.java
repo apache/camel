@@ -4217,6 +4217,32 @@ public interface ComponentsBuilderFactory {
         return StubComponentBuilderFactory.stub();
     }
     /**
+     * Tahu Edge Node / Device (camel-tahu)
+     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * @return the dsl builder
+     */
+    static TahuEdgeComponentBuilderFactory.TahuEdgeComponentBuilder tahuEdge() {
+        return TahuEdgeComponentBuilderFactory.tahuEdge();
+    }
+    /**
+     * Tahu Host Application (camel-tahu)
+     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * @return the dsl builder
+     */
+    static TahuHostComponentBuilderFactory.TahuHostComponentBuilder tahuHost() {
+        return TahuHostComponentBuilderFactory.tahuHost();
+    }
+    /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
      * 

@@ -14170,6 +14170,98 @@ public class StaticEndpointBuilders {
         return StubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Tahu Edge Node / Device (camel-tahu)
+     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * Syntax: <code>tahu-edge:groupId/edgeNode</code>
+     * 
+     * Path parameter: groupId (required)
+     * ID of the group
+     * 
+     * Path parameter: edgeNode (required)
+     * ID of the edge node
+     * 
+     * Path parameter: deviceId
+     * ID of this edge node device
+     * 
+     * @param path groupId/edgeNode
+     * @return the dsl builder
+     */
+    public static TahuEdgeEndpointBuilderFactory.TahuEdgeEndpointBuilder tahuEdge(String path) {
+        return tahuEdge("tahu-edge", path);
+    }
+    /**
+     * Tahu Edge Node / Device (camel-tahu)
+     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * Syntax: <code>tahu-edge:groupId/edgeNode</code>
+     * 
+     * Path parameter: groupId (required)
+     * ID of the group
+     * 
+     * Path parameter: edgeNode (required)
+     * ID of the edge node
+     * 
+     * Path parameter: deviceId
+     * ID of this edge node device
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path groupId/edgeNode
+     * @return the dsl builder
+     */
+    public static TahuEdgeEndpointBuilderFactory.TahuEdgeEndpointBuilder tahuEdge(String componentName, String path) {
+        return TahuEdgeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Tahu Host Application (camel-tahu)
+     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * Syntax: <code>tahu-host:hostId</code>
+     * 
+     * Path parameter: hostId (required)
+     * ID for the host application
+     * 
+     * @param path hostId
+     * @return the dsl builder
+     */
+    public static TahuHostEndpointBuilderFactory.TahuHostEndpointBuilder tahuHost(String path) {
+        return tahuHost("tahu-host", path);
+    }
+    /**
+     * Tahu Host Application (camel-tahu)
+     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * Syntax: <code>tahu-host:hostId</code>
+     * 
+     * Path parameter: hostId (required)
+     * ID for the host application
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path hostId
+     * @return the dsl builder
+     */
+    public static TahuHostEndpointBuilderFactory.TahuHostEndpointBuilder tahuHost(String componentName, String path) {
+        return TahuHostEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
      * 

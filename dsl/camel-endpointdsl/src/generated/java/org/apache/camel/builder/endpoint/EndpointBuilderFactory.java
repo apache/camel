@@ -326,6 +326,8 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.StringTemplateBuilders,
             org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory.StubBuilders,
             org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.SwiftBuilders,
+            org.apache.camel.builder.endpoint.dsl.TahuEdgeEndpointBuilderFactory.TahuEdgeBuilders,
+            org.apache.camel.builder.endpoint.dsl.TahuHostEndpointBuilderFactory.TahuHostBuilders,
             org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.TelegramBuilders,
             org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.ThriftBuilders,
             org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafBuilders,

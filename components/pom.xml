@@ -298,6 +298,7 @@
         <module>camel-opensearch</module>
         <module>camel-optaplanner</module>
         <module>camel-syslog</module>
+        <module>camel-tahu</module>
         <module>camel-tarfile</module>
         <module>camel-telegram</module>
         <module>camel-threadpoolfactory-vertx</module>
