@@ -97,8 +97,8 @@ To:
 
 === camel-file
 
-When using `idempontent=true` then the file consumer will now run in eager mode, and `add` the file to the repository
-before processing, and call `confirm` when done. Setting `idempontentEager=false` will use the old behaviour.
+When using `idempotent=true` then the file consumer will now run in eager mode, and `add` the file to the repository
+before processing, and call `confirm` when done. Setting `idempotentEager=false` will use the old behaviour.
 
 === camel-jbang
 
