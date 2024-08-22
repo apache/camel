@@ -356,6 +356,36 @@ A variation to the minimum permissions is related to the usage of Bucket autocre
 }
 --------------------------------------------------------------------------------
 
+=== AWS S3 Consumer minimum permissions
+
+For making the producer work, you'll need at least GetObject, ListBuckets and DeleteObject permissions. The following policy will be enough:
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::*/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "s3:DeleteObject",
+            "Resource": "arn:aws:s3:::*/*"
+        }
+    ]
+}
+--------------------------------------------------------------------------------
+
+By Default the consumer will use the deleteAfterRead option, this means the object will be deleted once consumed, this is why the DeleteObject permission is required.
+
 === Streaming Upload mode
 
 With the stream mode enabled, users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
