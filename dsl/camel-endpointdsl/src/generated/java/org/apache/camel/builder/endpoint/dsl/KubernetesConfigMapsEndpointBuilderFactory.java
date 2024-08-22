@@ -1511,6 +1511,19 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
             return "CamelKubernetesConfigData";
         }
         /**
+         * The ConfigMap annotations.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesConfigMapsAnnotations}.
+         */
+        public String kubernetesConfigMapsAnnotations() {
+            return "CamelKubernetesConfigMapsAnnotations";
+        }
+        /**
          * Action watched by the consumer.
          * 
          * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
