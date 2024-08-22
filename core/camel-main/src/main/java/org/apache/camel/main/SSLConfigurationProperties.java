@@ -188,10 +188,13 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * The file path, class path resource, or URL of the resource used to load the key store.
+     * The key store to load.
      *
-     * file:nameOfFile - to refer to the file system classpath:nameOfFile - to refer to the classpath (default) http:uri
-     * - to load the resource using HTTP ref:nameOfBean - to lookup an existing KeyStore instance from the registry.
+     * The key store is by default loaded from classpath. If you must load from file system, then use file: as prefix.
+     *
+     * file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default) http:uri
+     * (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for
+     * example for testing and development).
      */
     public void setKeyStore(String keyStore) {
         this.keyStore = keyStore;
@@ -240,9 +243,13 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * The file path, class path resource, or URL of the resource used to load the trust store.
+     * The trust store to load.
      *
-     * An existing java.security.KeyStore can also be referred using #bean:name syntax.
+     * The trust store is by default loaded from classpath. If you must load from file system, then use file: as prefix.
+     *
+     * file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default) http:uri
+     * (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for
+     * example for testing and development).
      */
     public void setTrustStore(String trustStore) {
         this.trustStore = trustStore;
@@ -404,10 +411,13 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * The file path, class path resource, or URL of the resource used to load the key store.
+     * The keystore to load.
      *
-     * file:nameOfFile - to refer to the file system classpath:nameOfFile - to refer to the classpath (default) http:uri
-     * - to load the resource using HTTP ref:nameOfBean - to lookup an existing KeyStore instance from the registry.
+     * The keystore is by default loaded from classpath. If you must load from file system, then use file: as prefix.
+     *
+     * file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default) http:uri
+     * (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for
+     * example for testing and development).
      */
     public SSLConfigurationProperties withKeyStore(String keyStore) {
         this.keyStore = keyStore;
@@ -444,9 +454,13 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * The file path, class path resource, or URL of the resource used to load the trust store.
+     * The trust store to load.
      *
-     * An existing java.security.KeyStore can also be referred using #bean:name syntax.
+     * The trust store is by default loaded from classpath. If you must load from file system, then use file: as prefix.
+     *
+     * file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default) http:uri
+     * (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for
+     * example for testing and development).
      */
     public SSLConfigurationProperties withTrustStore(String trustStore) {
         this.trustStore = trustStore;
