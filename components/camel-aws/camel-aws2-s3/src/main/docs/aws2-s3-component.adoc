@@ -307,6 +307,55 @@ Parameters (`accessKey`, `secretKey` and `region`) are mandatory for this operat
 
 NOTE: If checksum validations are enabled, the url will no longer be browser compatible because it adds a signed header that must be included in the HTTP request.
 
+=== AWS S3 Producer minimum permissions
+
+For making the producer work, you'll need at least PutObject and ListBuckets permissions. The following policy will be enough:
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "s3:PutObject",
+            "Resource": "arn:aws:s3:::*/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::*"
+        }
+    ]
+}
+--------------------------------------------------------------------------------
+
+A variation to the minimum permissions is related to the usage of Bucket autocreation. In that case the permissions will need to be increased with CreateBucket permission
+
+[source,json]
+--------------------------------------------------------------------------------
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "s3:PutObject",
+            "Resource": "arn:aws:s3:::*/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "s3:CreateBucket",
+            "Resource": "arn:aws:s3:::*"
+        }
+    ]
+}
+--------------------------------------------------------------------------------
+
 === Streaming Upload mode
 
 With the stream mode enabled, users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
