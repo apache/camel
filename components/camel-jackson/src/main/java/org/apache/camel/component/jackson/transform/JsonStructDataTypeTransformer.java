@@ -39,6 +39,8 @@ import org.apache.camel.spi.Transformer;
                      description = "Transforms to generic JSonNode using Jackson")
 public class JsonStructDataTypeTransformer extends Transformer {
 
+    private static final byte[] EMPTY = "{}".getBytes(StandardCharsets.UTF_8);
+
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         if (message.getBody() instanceof JsonNode) {
@@ -67,7 +69,7 @@ public class JsonStructDataTypeTransformer extends Transformer {
 
     private InputStream getBodyAsStream(Message message) throws InvalidPayloadException {
         if (message.getBody() == null) {
-            return new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8));
+            return new ByteArrayInputStream(EMPTY);
         }
 
         InputStream bodyStream = message.getBody(InputStream.class);
