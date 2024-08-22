@@ -17,6 +17,7 @@
 package org.apache.camel.component.paho;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
@@ -130,7 +131,7 @@ public class PahoComponentTest extends PahoTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        String payload = new String((byte[]) exchange.getIn().getBody(), "utf-8");
+        String payload = new String((byte[]) exchange.getIn().getBody(), StandardCharsets.UTF_8);
 
         assertEquals("queue", exchange.getIn().getHeader(PahoConstants.MQTT_TOPIC));
         assertEquals(msg, payload);
