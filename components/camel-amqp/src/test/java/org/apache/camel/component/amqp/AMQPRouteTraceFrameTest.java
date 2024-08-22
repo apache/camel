@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.amqp;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +36,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
 
@@ -46,6 +50,7 @@ public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
 
     private final String expectedBody = "Hello there!";
     private ProducerTemplate template;
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     @BeforeEach
     void setupTemplate() {
@@ -59,6 +64,7 @@ public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         template.sendBodyAndHeader("amqp-with-trace:queue:ping", expectedBody, "cheese", 123);
+        assertTrue(latch.await(30, TimeUnit.SECONDS));
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -81,6 +87,7 @@ public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("amqp-with-trace:queue:ping")
+                        .process(exchange -> latch.countDown())
                         .to("log:routing")
                         .to("mock:result");
             }
