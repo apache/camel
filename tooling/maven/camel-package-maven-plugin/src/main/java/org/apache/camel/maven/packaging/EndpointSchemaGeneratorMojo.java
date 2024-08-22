@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -1682,13 +1680,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     protected void generateMetaInfConfigurer(String name, String fqn) {
-        try (Writer w = new StringWriter()) {
-            w.append("# " + GENERATED_MSG + "\n");
-            w.append("class=").append(fqn).append("\n");
-            updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        StringBuilder w = new StringBuilder();
+
+        w.append("# ").append(GENERATED_MSG).append("\n");
+        w.append("class=").append(fqn).append("\n");
+        updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
     }
 
     private IndexView getIndex() {
