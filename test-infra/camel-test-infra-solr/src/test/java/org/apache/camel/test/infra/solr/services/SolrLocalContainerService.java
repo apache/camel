@@ -38,6 +38,7 @@ public class SolrLocalContainerService implements SolrService, ContainerService<
     @Override
     public void initialize() {
         LOG.info("Trying to start solr container");
+        container.withStartupAttempts(5);
         container.start();
 
         registerProperties();
