@@ -232,7 +232,90 @@ class ExportCamelMain extends Export {
 
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
+        // include docker/kubernetes with jib/jkube
+        context = enrichMavenPomJib(context, settings, profile);
+
         IOHelper.writeText(context, new FileOutputStream(pom, false));
+    }
+
+    protected String enrichMavenPomJib(String context, File settings, File profile) throws Exception {
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+
+        // is kubernetes included?
+        Properties prop = new CamelCaseOrderedProperties();
+        if (profile.exists()) {
+            RuntimeUtil.loadProperties(prop, profile);
+        }
+        // include additional build properties
+        boolean jib = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib."));
+        boolean jkube = prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jkube."));
+        // jib is used for docker and kubernetes, jkube is only used for kubernetes
+        if (jib || jkube) {
+            // include all jib/jkube/label properties
+            String fromImage = null;
+            for (String key : prop.stringPropertyNames()) {
+                String value = prop.getProperty(key);
+                if ("jib.from.image".equals(key)) {
+                    fromImage = value;
+                }
+                boolean accept = key.startsWith("jkube.") || key.startsWith("jib.") || key.startsWith("label.");
+                if (accept) {
+                    sb1.append(String.format("        <%s>%s</%s>%n", key, value, key));
+                }
+            }
+            // from image is mandatory so use a default image if none provided
+            if (fromImage == null) {
+                fromImage = "eclipse-temurin:" + javaVersion + "-jre";
+                sb1.append(String.format("        <%s>%s</%s>%n", "jib.from.image", fromImage, "jib.from.image"));
+            }
+
+            InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-pom.tmpl");
+            String context2 = IOHelper.loadText(is);
+            IOHelper.close(is);
+
+            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings, prop));
+
+            // image from/to auth
+            String auth = "";
+            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth."))) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-from-auth-pom.tmpl");
+                auth = IOHelper.loadText(is);
+                IOHelper.close(is);
+            }
+            context2 = context2.replace("{{ .JibFromImageAuth }}", auth);
+            auth = "";
+            if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.to.auth."))) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-to-auth-pom.tmpl");
+                auth = IOHelper.loadText(is);
+                IOHelper.close(is);
+            }
+            context2 = context2.replace("{{ .JibToImageAuth }}", auth);
+            // http port setting
+            int port = httpServerPort(settings);
+            if (port == -1) {
+                port = 8080;
+            }
+            context2 = context2.replaceFirst("\\{\\{ \\.Port }}", String.valueOf(port));
+            sb2.append(context2);
+            // jkube is only used for kubernetes
+            if (jkube) {
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-jkube-pom.tmpl");
+                String context3 = IOHelper.loadText(is);
+                IOHelper.close(is);
+                context3 = context3.replaceFirst("\\{\\{ \\.JkubeMavenPluginVersion }}",
+                        jkubeMavenPluginVersion(settings, prop));
+                sb2.append(context3);
+            }
+        }
+
+        // remove empty lines
+        String s1 = sb1.toString().replaceAll("(\\r?\\n){2,}", "\n");
+        String s2 = sb2.toString().replaceAll("(\\r?\\n){2,}", "\n");
+
+        context = context.replace("{{ .CamelKubernetesProperties }}", s1);
+        context = context.replace("{{ .CamelKubernetesPlugins }}", s2);
+        return context;
     }
 
     @Override

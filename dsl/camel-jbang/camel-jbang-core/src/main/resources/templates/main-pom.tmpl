@@ -10,6 +10,7 @@
     <properties>
         <java.version>{{ .JavaVersion }}</java.version>
 {{ .BuildProperties }}
+{{ .CamelKubernetesProperties }}
     </properties>
 
     <dependencyManagement>
@@ -125,6 +126,7 @@
                     </execution>
                 </executions>
             </plugin>
+{{ .CamelKubernetesPlugins }}
         </plugins>
     </build>
 
