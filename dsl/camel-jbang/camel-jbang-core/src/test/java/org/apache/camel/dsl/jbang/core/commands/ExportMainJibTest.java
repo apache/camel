@@ -63,7 +63,7 @@ class ExportMainJibTest {
     @MethodSource("runtimeProvider")
     public void shouldGenerateProjectWithJib(RuntimeType rt) throws Exception {
         // prepare as we need application.properties that contains jib settings
-        Files.copy(new File("src/test/resources/application.properties").toPath(), profile.toPath(),
+        Files.copy(new File("src/test/resources/application-jib.properties").toPath(), profile.toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
 
         Export command = new ExportCamelMain(new CamelJBangMain());
