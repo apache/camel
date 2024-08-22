@@ -1,0 +1,24 @@
+            <plugin>
+                <groupId>org.eclipse.jkube</groupId>
+                <artifactId>kubernetes-maven-plugin</artifactId>
+                <version>{{ .JkubeMavenPluginVersion }}</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${jib.to.image}</name>
+                            <build>
+                            </build>
+                        </image>
+                    </images>
+                    <resources>
+                        <labels>
+                            <all>
+                                <property>
+                                    <name>${label.runtime}</name>
+                                    <value>camel</value>
+                                </property>
+                            </all>
+                        </labels>
+                    </resources>
+                </configuration>
+            </plugin>

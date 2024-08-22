@@ -300,7 +300,7 @@ class ExportCamelMain extends Export {
             sb2.append(context2);
             // jkube is only used for kubernetes
             if (jkube) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-kubernetes-pom.tmpl");
+                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-jkube-pom.tmpl");
                 String context3 = IOHelper.loadText(is);
                 IOHelper.close(is);
                 context3 = context3.replaceFirst("\\{\\{ \\.JkubeMavenPluginVersion }}",
