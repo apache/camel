@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.jms.issues.error.ncd;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,11 +47,7 @@ public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
             template.requestBody("activemq:NoClassDefFoundErrorWrapExceptionTest?transferException=true", "Hello World");
             fail("Should throw exception");
         } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-
-            String s = sw.toString();
+            final String s = ExceptionHelper.stackTraceToString(e);
             assertTrue(s.contains("java.lang.LinkageError"));
             assertTrue(s.contains("Cannot do this"));
             assertTrue(s.contains("org.apache.camel.component.jms.issues.error.ncd.ProcessorFail.process"));

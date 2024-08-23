@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -1119,9 +1117,7 @@ public final class MessageHelper {
                 sb.append(" message=\"").append(msg).append("\"");
             }
             sb.append(">\n");
-            StringWriter sw = new StringWriter();
-            exception.printStackTrace(new PrintWriter(sw));
-            String trace = sw.toString();
+            final String trace = ExceptionHelper.stackTraceToString(exception);
             // must always xml encode
             sb.append(StringHelper.xmlEncode(trace));
             sb.append(prefix).append("</exception>");
@@ -1168,9 +1164,8 @@ public final class MessageHelper {
         }
         String msg = exception.getMessage();
         jo.put("message", msg);
-        StringWriter sw = new StringWriter();
-        exception.printStackTrace(new PrintWriter(sw));
-        String trace = sw.toString();
+
+        final String trace = ExceptionHelper.stackTraceToString(exception);
         try {
             jo.put("stackTrace", Jsoner.escape(trace));
         } catch (Exception e) {
