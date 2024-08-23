@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,6 +33,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -108,11 +107,10 @@ public class RouteDevConsole extends AbstractDevConsole {
                 Throwable cause = mrb.getLastError().getException();
                 if (cause != null) {
                     sb.append(String.format("\n    Error Message: %s", cause.getMessage()));
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    cause.printStackTrace(pw);
+
+                    final String stackTrace = ExceptionHelper.stackTraceToString(cause);
                     sb.append("\n\n");
-                    sb.append(sw);
+                    sb.append(stackTrace);
                     sb.append("\n\n");
                 }
             }
@@ -273,10 +271,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 if (cause != null) {
                     eo.put("message", cause.getMessage());
                     JsonArray arr2 = new JsonArray();
-                    StringWriter writer = new StringWriter();
-                    cause.printStackTrace(new PrintWriter(writer));
-                    writer.flush();
-                    String trace = writer.toString();
+                    final String trace = ExceptionHelper.stackTraceToString(cause);
                     eo.put("stackTrace", arr2);
                     Collections.addAll(arr2, trace.split("\n"));
                 }

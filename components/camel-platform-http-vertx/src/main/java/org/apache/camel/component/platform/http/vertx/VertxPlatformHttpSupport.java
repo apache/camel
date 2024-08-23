@@ -17,8 +17,6 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -42,6 +40,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -115,12 +114,10 @@ public final class VertxPlatformHttpSupport {
             message.setHeader(Exchange.CONTENT_TYPE, DEFAULT_CONTENT_TYPE_ON_EXCEPTION);
         } else {
             // we failed due an exception so print it as plain text
-            final StringWriter sw = new StringWriter();
-            final PrintWriter pw = new PrintWriter(sw);
-            exception.printStackTrace(pw);
+            final String stackTrace = ExceptionHelper.stackTraceToString(exception);
 
             // the body should then be the stacktrace
-            body = ByteBuffer.wrap(sw.toString().getBytes(StandardCharsets.UTF_8));
+            body = ByteBuffer.wrap(stackTrace.getBytes(StandardCharsets.UTF_8));
             // force content type to be text/plain as that is what the stacktrace is
             message.setHeader(Exchange.CONTENT_TYPE, DEFAULT_CONTENT_TYPE_ON_EXCEPTION);
         }

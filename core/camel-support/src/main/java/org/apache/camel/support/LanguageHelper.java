@@ -17,8 +17,6 @@
 
 package org.apache.camel.support;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +32,6 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 
 public final class LanguageHelper {
@@ -79,15 +76,7 @@ public final class LanguageHelper {
      */
     public static String exceptionStacktrace(Exchange exchange) {
         Exception exception = exception(exchange);
-        if (exception != null) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            exception.printStackTrace(pw);
-            IOHelper.close(pw, sw);
-            return sw.toString();
-        } else {
-            return null;
-        }
+        return ExceptionHelper.stackTraceToString(exception);
     }
 
     /**

@@ -19,8 +19,6 @@ package org.apache.camel.component.platform.http.main;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -71,6 +69,7 @@ import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
@@ -743,10 +742,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     }
 
     private static String errorStackTrace(Throwable e) {
-        StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
-
-        String trace = sw.toString();
+        String trace = ExceptionHelper.stackTraceToString(e);
         // because the stacktrace is printed in json we need to make it safe
         trace = trace.replace('"', '\'');
         trace = trace.replace('\t', ' ');

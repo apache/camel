@@ -22,8 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +36,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
@@ -804,17 +803,17 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         Exception e = (Exception) mock.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT);
         assertNotNull(e, "Expected excpetion " + cl.getName() + " missing");
         if (e.getClass() != cl) {
-            String stackTrace = getStrackTrace(e);
+            String stackTrace = ExceptionHelper.stackTraceToString(e);
             fail("Exception  " + cl.getName() + " excpected, but was " + e.getClass().getName() + ": " + stackTrace);
         }
         if (expectedMessagePart != null) {
             if (e.getMessage() == null) {
-                fail("Expected excption does not contain a message. Stack trace: " + getStrackTrace(e));
+                fail("Expected excption does not contain a message. Stack trace: " + ExceptionHelper.stackTraceToString(e));
             } else {
                 if (!e.getMessage().contains(expectedMessagePart)) {
                     fail("Expected excption message does not contain a expected message part " + expectedMessagePart
                          + ".  Stack trace: "
-                         + getStrackTrace(e));
+                         + ExceptionHelper.stackTraceToString(e));
                 }
             }
         }
@@ -824,18 +823,9 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
             if (expectedCauseClass != cause.getClass()) {
                 fail("Cause exception " + expectedCauseClass.getName() + " expected, but was " + cause.getClass().getName()
                      + ": "
-                     + getStrackTrace(e));
+                     + ExceptionHelper.stackTraceToString(e));
             }
         }
-    }
-
-    public static String getStrackTrace(Exception e) throws UnsupportedEncodingException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintWriter w = new PrintWriter(os);
-        e.printStackTrace(w);
-        w.close();
-        String stackTrace = new String(os.toByteArray(), "UTF-8");
-        return stackTrace;
     }
 
 }

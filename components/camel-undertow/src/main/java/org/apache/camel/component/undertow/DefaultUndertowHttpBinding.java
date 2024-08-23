@@ -19,8 +19,6 @@ package org.apache.camel.component.undertow;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
@@ -51,6 +49,7 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -372,12 +371,10 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 message.setHeader(UndertowConstants.CONTENT_TYPE, "application/x-java-serialized-object");
             } else {
                 // we failed due an exception so print it as plain text
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                exception.printStackTrace(pw);
+                final String stackTrace = ExceptionHelper.stackTraceToString(exception);
 
                 // the body should then be the stacktrace
-                body = ByteBuffer.wrap(sw.toString().getBytes());
+                body = ByteBuffer.wrap(stackTrace.getBytes());
                 // force content type to be text/plain as that is what the stacktrace is
                 message.setHeader(UndertowConstants.CONTENT_TYPE, "text/plain");
             }

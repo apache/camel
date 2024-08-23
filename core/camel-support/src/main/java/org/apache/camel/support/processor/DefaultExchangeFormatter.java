@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support.processor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
@@ -30,6 +28,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -235,9 +234,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     style(sb, "ExceptionMessage").append(exception.getMessage());
                 }
                 if (showAll || showStackTrace) {
-                    StringWriter sw = new StringWriter();
-                    exception.printStackTrace(new PrintWriter(sw));
-                    style(sb, "StackTrace").append(sw);
+                    final String stackTrace = ExceptionHelper.stackTraceToString(exception);
+                    style(sb, "StackTrace").append(stackTrace);
                 }
             }
         }

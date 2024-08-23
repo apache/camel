@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty12.JettyHttpComponent12;
+import org.apache.camel.support.ExceptionHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -45,11 +43,10 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
                         if (t == null) {
                             t = new Throwable("Unable to find connector creation");
                         }
-                        StringWriter sw = new StringWriter();
-                        try (PrintWriter pw = new PrintWriter(sw)) {
-                            t.printStackTrace(pw);
-                        }
-                        sb.append(key).append(": ").append(sw);
+
+                        final String stackTrace = ExceptionHelper.stackTraceToString(t);
+
+                        sb.append(key).append(": ").append(stackTrace);
                     }
                     return sb.toString();
                 });
