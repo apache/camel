@@ -24,8 +24,8 @@ public enum RuntimeType {
     quarkus,
     main;
 
-    public static final String QUARKUS_VERSION = "3.13.2";
-    public static final String SPRING_BOOT_VERSION = "3.3.2";
+    public static final String QUARKUS_VERSION = "3.13.3";
+    public static final String SPRING_BOOT_VERSION = "3.3.3";
 
     public static RuntimeType fromValue(String value) {
         return switch (value) {
