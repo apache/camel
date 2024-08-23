@@ -25,6 +25,12 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumerkey":
@@ -34,6 +40,9 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "jiraurl":
         case "jiraUrl": target.getConfiguration().setJiraUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "jql": target.setJql(property(camelContext, java.lang.String.class, value)); return true;
@@ -42,10 +51,29 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxresults":
         case "maxResults": target.setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "privatekey":
         case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "sendonlyupdatedfield":
         case "sendOnlyUpdatedField": target.setSendOnlyUpdatedField(property(camelContext, boolean.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "verificationcode":
         case "verificationCode": target.getConfiguration().setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
@@ -60,6 +88,12 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "consumerkey":
@@ -69,6 +103,9 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
         case "jiraurl":
         case "jiraUrl": return java.lang.String.class;
         case "jql": return java.lang.String.class;
@@ -77,10 +114,29 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxresults":
         case "maxResults": return java.lang.Integer.class;
         case "password": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "privatekey":
         case "privateKey": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
         case "sendonlyupdatedfield":
         case "sendOnlyUpdatedField": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
         case "username": return java.lang.String.class;
         case "verificationcode":
         case "verificationCode": return java.lang.String.class;
@@ -96,6 +152,12 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getConfiguration().getAccessToken();
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
+        case "backoffmultiplier":
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumerkey":
@@ -105,6 +167,9 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "greedy": return target.isGreedy();
+        case "initialdelay":
+        case "initialDelay": return target.getInitialDelay();
         case "jiraurl":
         case "jiraUrl": return target.getConfiguration().getJiraUrl();
         case "jql": return target.getJql();
@@ -113,15 +178,43 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxresults":
         case "maxResults": return target.getMaxResults();
         case "password": return target.getConfiguration().getPassword();
+        case "pollstrategy":
+        case "pollStrategy": return target.getPollStrategy();
         case "privatekey":
         case "privateKey": return target.getConfiguration().getPrivateKey();
+        case "repeatcount":
+        case "repeatCount": return target.getRepeatCount();
+        case "runlogginglevel":
+        case "runLoggingLevel": return target.getRunLoggingLevel();
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
+        case "schedulerproperties":
+        case "schedulerProperties": return target.getSchedulerProperties();
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "sendonlyupdatedfield":
         case "sendOnlyUpdatedField": return target.isSendOnlyUpdatedField();
+        case "startscheduler":
+        case "startScheduler": return target.isStartScheduler();
+        case "timeunit":
+        case "timeUnit": return target.getTimeUnit();
+        case "usefixeddelay":
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "username": return target.getConfiguration().getUsername();
         case "verificationcode":
         case "verificationCode": return target.getConfiguration().getVerificationCode();
         case "watchedfields":
         case "watchedFields": return target.getWatchedFields();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }
