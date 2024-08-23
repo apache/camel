@@ -14,49 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry;
+package org.apache.camel.tracing;
 
-import io.opentelemetry.api.trace.Span;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A processor which adds a attribute on the active {@link io.opentelemetry.api.trace.Span} with an
- * {@link org.apache.camel.Expression}
- */
-public class AttributeProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class GetCorrelationContextProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AttributeProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GetCorrelationContextProcessor.class);
 
-    private final String attributeName;
-    private final Expression expression;
+    private final String headerName;
+    private final String keyName;
     private String id;
     private String routeId;
 
-    public AttributeProcessor(String tagName, Expression expression) {
-        this.attributeName = ObjectHelper.notNull(tagName, "tagName");
-        this.expression = ObjectHelper.notNull(expression, "expression");
+    public GetCorrelationContextProcessor(String keyName, String headerName) {
+        this.keyName = ObjectHelper.notNull(keyName, "keyName");
+        this.headerName = ObjectHelper.notNull(headerName, "headerName");
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            OpenTelemetrySpanAdapter camelSpan = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
-            Span span = camelSpan.getOpenTelemetrySpan();
-            if (span != null) {
-                String tag = expression.evaluate(exchange, String.class);
-                span.setAttribute(attributeName, tag);
+            SpanAdapter camelSpan = ActiveSpanManager.getSpan(exchange);
+            if (camelSpan != null) {
+                String item = camelSpan.getContextPropagationItem(keyName);
+                exchange.getMessage().setHeader(headerName, item);
             } else {
-                LOG.warn("OpenTelemetry: Cannot find managed span for exchange: {}", exchange);
+                LOG.warn("Cannot find managed span for exchange: {}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -70,7 +62,7 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
 
     @Override
     public String getTraceLabel() {
-        return "attribute[" + attributeName + ", " + expression + "]";
+        return "getCorrelationContext[" + keyName + ", " + headerName + "]";
     }
 
     @Override
@@ -93,12 +85,12 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
         this.routeId = routeId;
     }
 
-    public String getAttributeName() {
-        return attributeName;
+    public String getKeyName() {
+        return keyName;
     }
 
-    public Expression getExpression() {
-        return expression;
+    public String getHeaderName() {
+        return headerName;
     }
 
     @Override

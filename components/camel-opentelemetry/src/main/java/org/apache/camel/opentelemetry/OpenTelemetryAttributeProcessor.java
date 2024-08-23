@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.observation;
+package org.apache.camel.opentelemetry;
 
+import io.opentelemetry.api.trace.Span;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -28,29 +29,34 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SetCorrelationContextProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+/**
+ * A processor which adds a attribute on the active {@link io.opentelemetry.api.trace.Span} with an
+ * {@link org.apache.camel.Expression}
+ */
+public class OpenTelemetryAttributeProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetCorrelationContextProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryAttributeProcessor.class);
 
+    private final String attributeName;
+    private final Expression expression;
     private String id;
     private String routeId;
-    private final String baggageName;
-    private final Expression expression;
 
-    public SetCorrelationContextProcessor(String baggageName, Expression expression) {
-        this.baggageName = ObjectHelper.notNull(baggageName, "baggageName");
+    public OpenTelemetryAttributeProcessor(String tagName, Expression expression) {
+        this.attributeName = ObjectHelper.notNull(tagName, "tagName");
         this.expression = ObjectHelper.notNull(expression, "expression");
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            MicrometerObservationSpanAdapter camelSpan = (MicrometerObservationSpanAdapter) ActiveSpanManager.getSpan(exchange);
-            if (camelSpan != null) {
-                String item = expression.evaluate(exchange, String.class);
-                camelSpan.setCorrelationContextItem(baggageName, item);
+            OpenTelemetrySpanAdapter camelSpan = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
+            Span span = camelSpan.getOpenTelemetrySpan();
+            if (span != null) {
+                String tag = expression.evaluate(exchange, String.class);
+                span.setAttribute(attributeName, tag);
             } else {
-                LOG.warn("Micrometer Observation: Cannot find managed span for exchange: {}", exchange);
+                LOG.warn("OpenTelemetry: Cannot find managed span for exchange: {}", exchange);
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -64,7 +70,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
 
     @Override
     public String getTraceLabel() {
-        return "setCorrelationContext[" + baggageName + ", " + expression + "]";
+        return "attribute[" + attributeName + ", " + expression + "]";
     }
 
     @Override
@@ -87,8 +93,8 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
         this.routeId = routeId;
     }
 
-    public String getBaggageName() {
-        return baggageName;
+    public String getAttributeName() {
+        return attributeName;
     }
 
     public Expression getExpression() {

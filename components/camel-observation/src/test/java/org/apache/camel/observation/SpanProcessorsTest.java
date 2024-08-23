@@ -20,6 +20,8 @@ import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.tracing.GetCorrelationContextProcessor;
+import org.apache.camel.tracing.SetCorrelationContextProcessor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,7 +88,7 @@ class SpanProcessorsTest extends CamelMicrometerObservationTestSupport {
 
                 from("seda:b").routeId("b")
                         .log("routing at ${routeId}")
-                        .process(new AttributeProcessor("b-tag", simple("${header.request-header}")))
+                        .process(new MicrometerAttributeProcessor("b-tag", simple("${header.request-header}")))
                         .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
