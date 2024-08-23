@@ -264,12 +264,25 @@ public final class ObjectHelper {
         if (leftValue instanceof String && rightValue instanceof String) {
             String leftNum = (String) leftValue;
             String rightNum = (String) rightValue;
-            if (isNumber(leftNum) && isNumber(rightNum)) {
-                // favour to use numeric comparison
-                Long num1 = Long.parseLong(leftNum);
-                Long num2 = Long.parseLong(rightNum);
+            // prioritize non-floating numbers first
+            Long num1 = isNumber(leftNum) ? Long.parseLong(leftNum) : null;
+            Long num2 = isNumber(rightNum) ? Long.parseLong(rightNum) : null;
+            Double dec1 = num1 == null && isFloatingNumber(leftNum) ? Double.parseDouble(leftNum) : null;
+            Double dec2 = num2 == null && isFloatingNumber(rightNum) ? Double.parseDouble(rightNum) : null;
+            if (num1 != null && num2 != null) {
                 return num1.compareTo(num2);
+            } else if (dec1 != null && dec2 != null) {
+                return dec1.compareTo(dec2);
             }
+            // okay mixed but we need to convert to floating
+            if (num1 != null && dec2 != null) {
+                dec1 = Double.parseDouble(leftNum);
+                return dec1.compareTo(dec2);
+            } else if (num2 != null && dec1 != null) {
+                dec2 = Double.parseDouble(rightNum);
+                return dec1.compareTo(dec2);
+            }
+            // fallback to string comparison
             return leftNum.compareTo(rightNum);
         } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
             Integer leftNum = (Integer) leftValue;
@@ -282,6 +295,10 @@ public final class ObjectHelper {
         } else if (leftValue instanceof Double && rightValue instanceof Double) {
             Double leftNum = (Double) leftValue;
             Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if (leftValue instanceof Float && rightValue instanceof Float) {
+            Float leftNum = (Float) leftValue;
+            Float rightNum = (Float) rightValue;
             return leftNum.compareTo(rightNum);
         } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
                 leftValue instanceof String && isNumber((String) leftValue)) {
@@ -308,6 +325,10 @@ public final class ObjectHelper {
         } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
             Double leftNum = Double.valueOf((String) leftValue);
             Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if (rightValue instanceof Float rightNum && leftValue instanceof String
+                && isFloatingNumber((String) leftValue)) {
+            Float leftNum = Float.valueOf((String) leftValue);
             return leftNum.compareTo(rightNum);
         } else if (rightValue instanceof Boolean && leftValue instanceof String) {
             Boolean leftBool = Boolean.valueOf((String) leftValue);
