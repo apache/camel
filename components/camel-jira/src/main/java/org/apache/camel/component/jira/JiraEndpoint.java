@@ -48,7 +48,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
  */
 @UriEndpoint(firstVersion = "3.0", scheme = "jira", title = "Jira", syntax = "jira:type",
              category = { Category.DOCUMENT }, headersClass = JiraConstants.class)
-public class JiraEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(JiraEndpoint.class);
 
@@ -238,7 +238,7 @@ public class JiraEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         this.jql = jql;
     }
 
-    public int getDelay() {
+    public long getDelay() {
         return configuration.getDelay();
     }
 
