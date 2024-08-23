@@ -92,7 +92,7 @@
         <dependency>
             <groupId>io.opentelemetry.semconv</groupId>
             <artifactId>opentelemetry-semconv-incubating</artifactId>
-            <version>1.25.0-alpha</version>
+            <version>${opentelemetry-semconv-alpha-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

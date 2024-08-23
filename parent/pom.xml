@@ -387,6 +387,7 @@
         <opensearch-testcontainers-version>2.1.0</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
         <opentelemetry-instrumentation-bom-alpha-version>2.7.0-alpha</opentelemetry-instrumentation-bom-alpha-version>
+        <opentelemetry-semconv-alpha-version>1.25.0-alpha</opentelemetry-semconv-alpha-version>
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <paho-version>1.2.5</paho-version>
         <parson-version>1.1.7</parson-version>
