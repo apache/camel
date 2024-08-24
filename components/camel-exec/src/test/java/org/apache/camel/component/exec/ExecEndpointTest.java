@@ -219,8 +219,12 @@ public class ExecEndpointTest {
         String outFile = "target/outfile.xml";
         long timeout = 10000;
         StringBuilder builder = new StringBuilder();
-        builder.append("exec:executable.exe").append("?workingDir=" + workingDir).append("&timeout=" + timeout);
-        builder.append("&outFile=" + outFile);
+        builder.append("exec:executable.exe")
+                .append("?workingDir=")
+                .append(workingDir)
+                .append("&timeout=")
+                .append(timeout);
+        builder.append("&outFile=").append(outFile);
         builder.append("&commandExecutor=#customExecutor&binding=#customBinding");
 
         ExecEndpoint e = createExecEndpoint(UnsafeUriCharactersEncoder.encode(builder.toString()));
