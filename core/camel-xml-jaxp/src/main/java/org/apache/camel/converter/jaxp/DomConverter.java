@@ -54,7 +54,7 @@ public final class DomConverter {
         // sometimes the NodeList is a Node which we can then leverage
         // the XML converter to turn into XML incl. tags
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(128);
 
         // use XML converter at first since it preserves tag names
         boolean found = false;
@@ -93,7 +93,7 @@ public final class DomConverter {
         if (node instanceof Text) {
             Text textnode = (Text) node;
 
-            StringBuilder b = new StringBuilder();
+            StringBuilder b = new StringBuilder(128);
             b.append(textnode.getNodeValue());
             textnode = (Text) textnode.getNextSibling();
             while (textnode != null) {
@@ -109,7 +109,7 @@ public final class DomConverter {
 
     @Converter(order = 3)
     public static Integer toInteger(NodeList nodeList) {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(128);
         append(buffer, nodeList);
         String s = buffer.toString();
         return Integer.valueOf(s);
@@ -117,7 +117,7 @@ public final class DomConverter {
 
     @Converter(order = 4)
     public static Long toLong(NodeList nodeList) {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(128);
         append(buffer, nodeList);
         String s = buffer.toString();
         return Long.valueOf(s);

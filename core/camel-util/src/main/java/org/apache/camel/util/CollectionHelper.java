@@ -105,7 +105,7 @@ public final class CollectionHelper {
             return "";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         Iterator<?> it = col.iterator();
         while (it.hasNext()) {
             sb.append(it.next().toString());

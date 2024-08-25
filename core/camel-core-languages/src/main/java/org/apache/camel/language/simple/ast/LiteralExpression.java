@@ -27,7 +27,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  */
 public class LiteralExpression extends BaseSimpleNode implements LiteralNode {
 
-    protected final StringBuilder text = new StringBuilder();
+    protected final StringBuilder text = new StringBuilder(256);
 
     public LiteralExpression(SimpleToken token) {
         super(token);

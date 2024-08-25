@@ -75,7 +75,7 @@ public class CompositeNodes extends BaseSimpleNode {
         } else if (children.size() == 1) {
             return children.get(0).createCode(expression);
         } else {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(256);
             for (SimpleNode child : children) {
                 String code = child.createCode(expression);
                 if (code != null) {

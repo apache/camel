@@ -203,7 +203,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
      * Second step parsing into code
      */
     protected String doParseCode() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         boolean firstIsLiteral = false;
         for (SimpleNode node : nodes) {
             String exp = node.createCode(expression);

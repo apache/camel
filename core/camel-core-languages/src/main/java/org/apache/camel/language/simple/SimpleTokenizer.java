@@ -158,7 +158,7 @@ public final class SimpleTokenizer {
         boolean numericAllowed = acceptType(TokenType.numericValue, filters);
         if (numericAllowed) {
             // is it a numeric value
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(256);
             boolean digit = true;
             while (digit && index < expression.length()) {
                 digit = Character.isDigit(expression.charAt(index));
@@ -186,7 +186,7 @@ public final class SimpleTokenizer {
 
         boolean escapeAllowed = allowEscape && acceptType(TokenType.escape, filters);
         if (escapeAllowed) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(256);
             char ch = expression.charAt(index);
             boolean escaped = '\\' == ch;
             if (escaped && index < expression.length() - 1) {

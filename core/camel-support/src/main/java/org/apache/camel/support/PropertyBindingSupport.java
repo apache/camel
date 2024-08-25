@@ -1664,7 +1664,7 @@ public final class PropertyBindingSupport {
         List<String> parts = new ArrayList<>();
 
         boolean mapKey = false;
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(key.length() + 16);
         for (char ch : key.toCharArray()) {
             if (ch == '[') {
                 mapKey = true;

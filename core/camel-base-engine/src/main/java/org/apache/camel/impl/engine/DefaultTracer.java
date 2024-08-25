@@ -98,7 +98,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
             // characters in the sanitizeUri method and will be reasonably fast
             String label = URISupport.sanitizeUri(StringHelper.limitLength(node.getLabel(), 50));
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(512);
             sb.append(String.format(tracingFormat, "   ", routeId, label));
             sb.append(" ");
             String data = exchangeFormatter.format(exchange);
@@ -127,7 +127,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         if (shouldTrace(node)) {
             String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(128);
             sb.append(String.format(tracingFormat, "   ", routeId, ""));
             sb.append(" ");
 

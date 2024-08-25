@@ -129,12 +129,11 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     public String format(Exchange exchange) {
         Message in = exchange.getIn();
 
-        StringBuilder sb = new StringBuilder();
-
         if (plain) {
             return getBodyAsString(in);
         }
 
+        StringBuilder sb = new StringBuilder(512);
         if (showAll || showExchangeId) {
             if (multiline) {
                 sb.append(SEPARATOR);
@@ -242,7 +241,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
         // only cut if we hit max-chars limit (or are using multiline
         if (multiline || maxChars > 0 && sb.length() > maxChars) {
-            StringBuilder answer = new StringBuilder();
+            StringBuilder answer = new StringBuilder(sb.length());
             for (String s : sb.toString().split(SEPARATOR)) {
                 if (s != null) {
                     if (s.length() > maxChars) {

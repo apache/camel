@@ -54,7 +54,7 @@ public class CamelExchangeException extends CamelException {
      * @return          an error message (without stacktrace from exception)
      */
     public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
         if (message != null) {
             sb.append(message);
         }

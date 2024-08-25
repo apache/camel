@@ -142,7 +142,7 @@ public final class XmlLineNumberParser {
         doc = docBuilder.newDocument();
 
         final ArrayDeque<Element> elementStack = new ArrayDeque<>();
-        final StringBuilder textBuffer = new StringBuilder();
+        final StringBuilder textBuffer = new StringBuilder(256);
         final DefaultHandler handler = new DefaultHandler() {
             private Locator locator;
             private boolean found;

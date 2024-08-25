@@ -917,7 +917,8 @@ public final class ObjectHelper {
         if (objects == null) {
             return "null";
         } else {
-            StringBuilder buffer = new StringBuilder("{");
+            StringBuilder buffer = new StringBuilder(256);
+            buffer.append("{");
             int counter = 0;
             for (Object object : objects) {
                 if (counter++ > 0) {

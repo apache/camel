@@ -74,7 +74,7 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         for (Class<?> parent : parents) {
             sb.append(parent.getSimpleName()).append(", ");
         }

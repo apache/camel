@@ -79,7 +79,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(256);
                 boolean quoteEmbeddedFunctions = false;
 
                 // we need to concat the block so we have the expression
@@ -168,7 +168,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     private String doCreateCompositeCode(String expression) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         boolean quoteEmbeddedFunctions = false;
 
         // we need to concat the block, so we have the expression

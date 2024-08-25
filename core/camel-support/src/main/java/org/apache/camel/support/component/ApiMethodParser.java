@@ -399,7 +399,7 @@ public abstract class ApiMethodParser<T> {
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder(256);
             builder.append(resultType.getName()).append(" ");
             builder.append(name).append("(");
             for (ApiMethodArg argument : arguments) {

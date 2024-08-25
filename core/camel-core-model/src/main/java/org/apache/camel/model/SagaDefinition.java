@@ -296,7 +296,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     // Utils
 
     protected String description() {
-        StringBuilder desc = new StringBuilder();
+        StringBuilder desc = new StringBuilder(256);
         addField(desc, "compensation", compensation);
         addField(desc, "completion", completion);
         addField(desc, "propagation", propagation);

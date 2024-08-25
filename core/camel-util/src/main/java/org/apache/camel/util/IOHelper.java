@@ -523,7 +523,7 @@ public final class IOHelper {
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(2048);
         InputStreamReader isr = new InputStreamReader(in);
         try {
             BufferedReader reader = buffered(isr);
@@ -856,7 +856,7 @@ public final class IOHelper {
      * @return                 the filtered content of the file
      */
     public static String stripLineComments(Path path, String commentPrefix, boolean stripBlankLines) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(2048);
         try (Stream<String> lines = Files.lines(path)) {
             lines
                     .filter(l -> !stripBlankLines || !l.isBlank())

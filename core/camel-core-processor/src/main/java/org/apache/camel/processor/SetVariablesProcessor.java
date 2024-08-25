@@ -71,7 +71,9 @@ public class SetVariablesProcessor extends AsyncProcessorSupport implements Trac
 
     @Override
     public String getTraceLabel() {
-        StringBuilder sb = new StringBuilder("setVariables[");
+        StringBuilder sb = new StringBuilder(256);
+
+        sb.append("setVariables[");
         int variableIndex = 0;
         for (Expression expression : expressions) {
             if (variableIndex > 0) {

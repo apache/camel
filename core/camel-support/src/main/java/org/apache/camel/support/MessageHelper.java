@@ -490,10 +490,9 @@ public final class MessageHelper {
             Message message, boolean includeExchangeProperties, boolean includeExchangeVariables,
             boolean includeBody, int indent, boolean allowCachedStreams, boolean allowStreams,
             boolean allowFiles, int maxChars) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
 
-        StringBuilder prefix = new StringBuilder();
-        prefix.append(" ".repeat(indent));
+        final String prefix = " ".repeat(indent);
 
         // include exchangeId/exchangePattern/type as attribute on the <message> tag
         sb.append(prefix);
@@ -753,7 +752,7 @@ public final class MessageHelper {
         boolean enabled = list != null;
         boolean source = !loc.isEmpty();
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(2048);
         sb.append("\n");
         sb.append("Message History");
         if (!source && !enabled) {
@@ -1101,10 +1100,9 @@ public final class MessageHelper {
      * @return        the XML
      */
     public static String dumpExceptionAsXML(Throwable exception, int indent) {
-        StringBuilder prefix = new StringBuilder();
-        prefix.append(" ".repeat(indent));
+        final String prefix = " ".repeat(indent);
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(512);
         try {
             sb.append(prefix).append("<exception");
             String type = ObjectHelper.classCanonicalName(exception);
