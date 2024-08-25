@@ -141,7 +141,7 @@ public final class Strings {
      * @return      as a title
      */
     public static String asTitle(String name) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(name.length() + 16);
         for (char c : name.toCharArray()) {
             boolean upper = Character.isUpperCase(c);
             boolean first = sb.isEmpty();
@@ -170,7 +170,7 @@ public final class Strings {
     }
 
     public static String indentCollection(String indent, Collection<String> list) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         for (String text : list) {
             sb.append(indent).append(text);
         }

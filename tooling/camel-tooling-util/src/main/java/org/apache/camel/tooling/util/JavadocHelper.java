@@ -37,7 +37,7 @@ public final class JavadocHelper {
         }
 
         // lets just use what java accepts as identifiers
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(javadoc.length());
 
         // split into lines
         String[] lines = javadoc.split("\n");
@@ -101,7 +101,7 @@ public final class JavadocHelper {
         s = s.replaceAll("\\{@\\w+\\s#?([\\w.#(\\d,)]+)}", "$1");
 
         // create a new line
-        StringBuilder cb = new StringBuilder();
+        StringBuilder cb = new StringBuilder(s.length() + 16);
         for (char c : s.toCharArray()) {
             if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
                 cb.append(c);

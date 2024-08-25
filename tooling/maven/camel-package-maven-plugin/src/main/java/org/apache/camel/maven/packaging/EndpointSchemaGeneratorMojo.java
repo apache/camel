@@ -665,8 +665,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     public String getDocumentationWithNotes(BaseOptionModel option) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(option.getDescription());
+        String description = option.getDescription();
+        StringBuilder sb = new StringBuilder(description.length() * 64);
+        sb.append(description);
 
         if (!Strings.isNullOrEmpty(option.getDefaultValueNote())) {
             if (sb.charAt(sb.length() - 1) != '.') {
@@ -1680,7 +1681,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     protected void generateMetaInfConfigurer(String name, String fqn) {
-        StringBuilder w = new StringBuilder();
+        StringBuilder w = new StringBuilder(256);
 
         w.append("# ").append(GENERATED_MSG).append("\n");
         w.append("class=").append(fqn).append("\n");

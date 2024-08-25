@@ -205,7 +205,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         StringJoiner sb = new StringJoiner("\n");
         boolean first = true;
         for (String name : secrets) {
-            StringBuilder line = new StringBuilder();
+            StringBuilder line = new StringBuilder(name.length() + 32);
             line.append(spaces52);
             line.append("+ \"");
             if (!first) {

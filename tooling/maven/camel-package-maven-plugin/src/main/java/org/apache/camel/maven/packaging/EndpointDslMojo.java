@@ -417,7 +417,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     public String javadoc(String indent, String doc) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(doc.length() * 2);
         List<String> lines = formatJavadocOrCommentStringAsList(doc, indent);
         if (!lines.isEmpty()) {
             sb.append("/**\n");

@@ -487,7 +487,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         String pn = targetFqn.substring(0, pos);
         String en = targetFqn.substring(pos + 1);
 
-        StringBuilder w = new StringBuilder();
+        StringBuilder w = new StringBuilder(256);
         w.append("# ").append(GENERATED_MSG).append("\n");
         w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
         String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;

@@ -161,7 +161,7 @@ public class GenericType {
         if (parameters.length == 0 && boundType == BoundType.Extends && clazz == Object.class) {
             return "?";
         }
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         if (boundType == BoundType.Extends) {
             sb.append("? extends ");
         } else if (boundType == BoundType.Super) {

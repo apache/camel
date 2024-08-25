@@ -150,7 +150,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 for (String pval : pvals.split(",")) {
                     pval = sanitizeFileName(pval);
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder(256);
                     sb.append("# ").append(GENERATED_MSG).append(NL).append("class=").append(className).append(NL);
                     if (ServiceFactory.JDK_SERVICE.equals(sfa.value().asString())) {
                         updateResource(resourcesOutputDir.toPath(),
