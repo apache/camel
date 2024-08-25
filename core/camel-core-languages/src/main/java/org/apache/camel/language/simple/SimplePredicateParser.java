@@ -163,7 +163,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * Second step parsing into code
      */
     protected String doParseCode() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         for (SimpleNode node : nodes) {
             String exp = node.createCode(expression);
             SimpleExpressionParser.parseLiteralNode(sb, node, exp);

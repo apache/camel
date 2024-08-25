@@ -1273,7 +1273,7 @@ public class NotifyBuilder {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         for (EventPredicateHolder eventPredicateHolder : predicates) {
             if (!sb.isEmpty()) {
                 sb.append(".");
@@ -1653,7 +1653,7 @@ public class NotifyBuilder {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(256);
             for (EventPredicate eventPredicate : predicates) {
                 if (!sb.isEmpty()) {
                     sb.append(".");

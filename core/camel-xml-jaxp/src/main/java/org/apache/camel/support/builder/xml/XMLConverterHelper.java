@@ -309,7 +309,7 @@ public class XMLConverterHelper {
             }
         }
         if (!features.isEmpty()) {
-            StringBuilder featureString = new StringBuilder();
+            StringBuilder featureString = new StringBuilder(256);
             // just log the configured feature
             for (String feature : features) {
                 if (!featureString.isEmpty()) {

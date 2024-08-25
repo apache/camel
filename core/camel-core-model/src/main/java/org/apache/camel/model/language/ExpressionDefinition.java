@@ -121,7 +121,7 @@ public class ExpressionDefinition
             return getExpressionValue().toString();
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         if (getLanguage() != null) {
             sb.append(getLanguage()).append("{");
         }

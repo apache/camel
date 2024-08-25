@@ -57,7 +57,7 @@ public class WhenDefinition extends OutputExpressionNode {
     }
 
     protected String description() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         if (getExpression() != null) {
             String language = getExpression().getLanguage();
             if (language != null) {

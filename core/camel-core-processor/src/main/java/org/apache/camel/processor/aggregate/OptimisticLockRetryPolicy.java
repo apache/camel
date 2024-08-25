@@ -147,7 +147,8 @@ public class OptimisticLockRetryPolicy {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("OptimisticLockRetryPolicy[");
+        final StringBuilder sb = new StringBuilder(256);
+        sb.append("OptimisticLockRetryPolicy[");
         sb.append("maximumRetries=").append(maximumRetries);
         sb.append(", retryDelay=").append(retryDelay);
         sb.append(", maximumRetryDelay=").append(maximumRetryDelay);

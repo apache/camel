@@ -338,7 +338,7 @@ public final class FileUtil {
         }
 
         // build path based on stack
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         if (scheme != null) {
             sb.append(scheme);
             sb.append(":");

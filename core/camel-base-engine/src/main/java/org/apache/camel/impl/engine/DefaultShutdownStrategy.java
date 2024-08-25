@@ -817,7 +817,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             return;
         }
 
-        StringBuilder sb = new StringBuilder("There are " + size + " inflight exchanges:");
+        StringBuilder sb = new StringBuilder(512);
+
+        sb.append("There are ").append(size).append(" inflight exchanges:");
         for (InflightRepository.InflightExchange inflight : filtered) {
             sb.append("\n\tInflightExchange: [exchangeId=").append(inflight.getExchange().getExchangeId())
                     .append(", fromRouteId=").append(inflight.getExchange().getFromRouteId())

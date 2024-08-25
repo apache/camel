@@ -111,7 +111,7 @@ public final class BackOff {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         sb.append("BackOff[");
         sb.append("delay=").append(delay.toMillis());
         if (maxDelay != MAX_DURATION) {

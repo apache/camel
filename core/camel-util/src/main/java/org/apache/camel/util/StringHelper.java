@@ -1152,7 +1152,7 @@ public final class StringHelper {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        StringBuilder answer = new StringBuilder();
+        StringBuilder answer = new StringBuilder(text.length() + 16);
 
         Character prev = null;
         Character next;

@@ -1892,7 +1892,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (generator == null) {
                 generator = "default";
             }
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(128);
             if ("classic".equals(generator)) {
                 sb.append("    UuidGenerator uuid = new org.apache.camel.support.ClassicUuidGenerator();\n");
                 sb.append("return uuid.generateUuid();");
@@ -1971,7 +1971,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private static String ognlCodeMethods(String remainder, String type) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         if (remainder != null) {
             List<String> methods = splitOgnl(remainder);
@@ -2072,7 +2072,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         List<String> answer = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         int codeLevel = 0;
         boolean singleQuoted = false;

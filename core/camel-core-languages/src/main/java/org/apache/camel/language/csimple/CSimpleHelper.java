@@ -707,7 +707,7 @@ public final class CSimpleHelper {
 
     public static Object join(Exchange exchange, Object value, String separator, String prefix) {
         Iterator<?> it = convertTo(exchange, Iterator.class, value);
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         while (it.hasNext()) {
             Object o = it.next();
             if (o != null) {

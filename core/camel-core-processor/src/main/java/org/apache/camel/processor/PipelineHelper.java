@@ -45,7 +45,7 @@ public final class PipelineHelper {
             // The errorErrorHandler is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(256);
                 sb.append("Message exchange has failed: ").append(message).append(" for exchange: ").append(exchange);
                 if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
                     sb.append(" Marked as rollback only.");

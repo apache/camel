@@ -119,7 +119,7 @@ public final class StringQuoteHelper {
         }
 
         List<String> answer = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(input.length());
 
         boolean singleQuoted = false;
         boolean doubleQuoted = false;

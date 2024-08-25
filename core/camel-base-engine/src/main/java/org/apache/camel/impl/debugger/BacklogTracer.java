@@ -378,7 +378,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     }
 
     private static String wrapAroundRootTag(List<BacklogTracerEventMessage> events) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(512);
         sb.append("<").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         for (BacklogTracerEventMessage event : events) {
             sb.append("\n").append(event.toXml(2));

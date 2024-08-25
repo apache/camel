@@ -83,7 +83,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         StringBuffer result; // Aggregate in StringBuffer instead of StringBuilder, to make it thread safe
-        StringBuilder value = new StringBuilder();
+        StringBuilder value = new StringBuilder(512);
         if (oldExchange == null) {
             result = getStringBuffer(newExchange); // do not prepend delimiter for first invocation
         } else {

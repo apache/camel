@@ -53,7 +53,7 @@ public class ApiMethodArg {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(128);
         builder.append(type.getCanonicalName());
         if (typeArgs != null) {
             builder.append("<").append(typeArgs).append(">");

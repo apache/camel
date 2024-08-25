@@ -107,7 +107,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     ObjectHelper.notNullOrEmpty(alias, "alias");
                     final char firstChar = alias.charAt(0);
                     if (!Character.isLowerCase(firstChar)) {
-                        final StringBuilder builder = new StringBuilder();
+                        final StringBuilder builder = new StringBuilder(alias.length() + 2);
                         builder.append(Character.toLowerCase(firstChar)).append(alias, 1, alias.length());
                         alias = builder.toString();
                     }

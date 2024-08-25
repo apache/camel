@@ -241,7 +241,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                     head = head.substring(0, head.length() - 1);
                     empty = true;
                 }
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(256);
                 // append root namespaces to local start token
                 // grab the text
                 String tail = StringHelper.after(next, ">");
@@ -250,7 +250,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                         .toString();
             } else if (wrapToken) {
                 // wrap the token
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(256);
                 next = sb.append(wrapHead).append(next).append(wrapTail).toString();
             }
 
@@ -258,7 +258,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         }
 
         private String getMissingInherritNamespaces(final String text) {
-            final StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder(256);
             if (text != null) {
                 boolean first = true;
                 final String[] containedNamespaces = getNamespacesFromNamespaceTokenSplitter(text);
@@ -304,7 +304,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             }
 
             // build namespace String
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(256);
             for (Map.Entry<String, String> entry : namespaces.entrySet()) {
                 String key = entry.getKey();
                 // note the value is already quoted
@@ -401,7 +401,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                 p = ep;
             }
         }
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         for (int i = tags.size() - 1; i >= 0; i--) {
             sb.append("</").append(tags.get(i)).append(">");
         }

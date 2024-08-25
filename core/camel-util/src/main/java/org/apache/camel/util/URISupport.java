@@ -879,7 +879,7 @@ public final class URISupport {
             return "";
         }
 
-        final StringBuilder joined = new StringBuilder();
+        final StringBuilder joined = new StringBuilder(paths.length * 64);
 
         boolean addedLast = false;
         for (int i = paths.length - 1; i >= 0; i--) {
@@ -907,7 +907,7 @@ public final class URISupport {
     }
 
     public static String buildMultiValueQuery(String key, Iterable<Object> values) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         for (Object v : values) {
             if (!sb.isEmpty()) {
                 sb.append("&");
