@@ -98,7 +98,7 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
     }
 
     private static String evaluateTemplate(final String templateName, final MainModel model) throws MojoExecutionException {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = PackageHelper.loadText(templateStream);

@@ -48,7 +48,7 @@ public final class SchemaHelper {
             return text;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(text.length());
 
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
@@ -73,7 +73,7 @@ public final class SchemaHelper {
             return text;
         }
 
-        StringBuilder answer = new StringBuilder();
+        StringBuilder answer = new StringBuilder(text.length());
 
         Character prev = null;
         Character next;

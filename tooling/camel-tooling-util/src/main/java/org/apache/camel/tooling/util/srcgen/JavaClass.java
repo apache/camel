@@ -256,7 +256,7 @@ public class JavaClass {
     }
 
     public String printClass(boolean innerClassesLast) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(4096);
 
         Set<String> imports = new TreeSet<>(Comparator.comparing(JavaClass::importOrder));
         imports.addAll(this.imports);
@@ -311,7 +311,7 @@ public class JavaClass {
 
         }
 
-        StringBuilder sb2 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder(4096);
         sb2.append(indent);
         if (isPublic) {
             sb2.append("public ");
@@ -464,7 +464,7 @@ public class JavaClass {
                 sb.append(" {");
             }
         } else {
-            StringBuilder sb2 = new StringBuilder();
+            StringBuilder sb2 = new StringBuilder(2048);
             sb2.append(indent);
             if (method.isPublic) {
                 sb2.append("public ");

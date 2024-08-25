@@ -223,7 +223,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     }
 
     public String javadoc(String indent, String doc) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(doc.length() * 2);
         sb.append("/**\n");
         int len = 78 - indent.length();
         String rem = xmlEncode(doc);

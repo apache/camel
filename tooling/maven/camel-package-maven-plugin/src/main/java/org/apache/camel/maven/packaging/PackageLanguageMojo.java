@@ -125,7 +125,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
         Map<String, String> javaTypes = new HashMap<>();
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(256);
         int count = 0;
 
         File f = new File(project.getBasedir(), "target/classes");

@@ -345,7 +345,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         }
 
         public String asString(String pad) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(256);
             sb.append(pad).append("<dependency>\n");
             sb.append(pad).append("    <groupId>").append(groupId).append("</groupId>\n");
             sb.append(pad).append("    <artifactId>").append(artifactId).append("</artifactId>\n");

@@ -121,7 +121,7 @@ public final class JavadocUtil {
                 String doc = sourceCode.substring(pos, pos + len);
                 LineNumberReader ln = new LineNumberReader(new StringReader(doc));
                 String line;
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(256);
                 while ((line = ln.readLine()) != null) {
                     line = line.trim();
                     if (line.startsWith("/**") || line.startsWith("*/")) {
