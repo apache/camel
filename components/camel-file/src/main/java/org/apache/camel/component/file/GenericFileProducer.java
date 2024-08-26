@@ -369,8 +369,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // expression support
         Expression expression = endpoint.getFileName();
-        if (value instanceof Expression) {
-            expression = (Expression) value;
+        if (value instanceof Expression expression1) {
+            expression = expression1;
         }
 
         // evaluate the name as a String from the value
