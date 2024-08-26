@@ -380,7 +380,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     @Override
     public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(256);
         Map<Integer, List<String>> results = new HashMap<>();
 
         for (Class<?> clazz : models) {

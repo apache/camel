@@ -429,7 +429,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     @Override
     public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(256);
 
         Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<>(keyValuePairFields);
         Iterator<Integer> it = keyValuePairFieldsSorted.keySet().iterator();
