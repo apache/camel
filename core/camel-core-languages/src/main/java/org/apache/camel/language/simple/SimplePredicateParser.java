@@ -239,18 +239,22 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         // validate the single, double quote pairs and functions is in balance
         if (startSingle.get()) {
-            int index = lastSingle != null ? lastSingle.getToken().getIndex() : 0;
+            int index = evalIndex(lastSingle);
             throw new SimpleParserException("single quote has no ending quote", index);
         }
         if (startDouble.get()) {
-            int index = lastDouble != null ? lastDouble.getToken().getIndex() : 0;
+            int index = evalIndex(lastDouble);
             throw new SimpleParserException("double quote has no ending quote", index);
         }
         if (startFunction.get()) {
             // we have a start function, but no ending function
-            int index = lastFunction != null ? lastFunction.getToken().getIndex() : 0;
+            int index = evalIndex(lastFunction);
             throw new SimpleParserException("function has no ending token", index);
         }
+    }
+
+    private static int evalIndex(SimpleNode node) {
+        return node != null ? node.getToken().getIndex() : 0;
     }
 
     private void addImageToken(LiteralNode imageToken) {
@@ -305,27 +309,9 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         // okay so far we also want to support quotes
         if (token.getType().isSingleQuote()) {
-            SimpleNode answer;
-            boolean start = startSingle.get();
-            if (!start) {
-                answer = new SingleQuoteStart(token);
-            } else {
-                answer = new SingleQuoteEnd(token);
-            }
-            // flip state on start/end flag
-            startSingle.set(!start);
-            return answer;
+            return createSingleQuoted(token, startSingle);
         } else if (token.getType().isDoubleQuote()) {
-            SimpleNode answer;
-            boolean start = startDouble.get();
-            if (!start) {
-                answer = new DoubleQuoteStart(token);
-            } else {
-                answer = new DoubleQuoteEnd(token);
-            }
-            // flip state on start/end flag
-            startDouble.set(!start);
-            return answer;
+            return createDoubleQuoted(token, startDouble);
         }
 
         // if we are inside a quote, then we do not support any further kind of tokens
@@ -350,6 +336,32 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         // by returning null, we will let the parser determine what to do
         return null;
+    }
+
+    private static SimpleNode createDoubleQuoted(SimpleToken token, AtomicBoolean startDouble) {
+        SimpleNode answer;
+        boolean start = startDouble.get();
+        if (!start) {
+            answer = new DoubleQuoteStart(token);
+        } else {
+            answer = new DoubleQuoteEnd(token);
+        }
+        // flip state on start/end flag
+        startDouble.set(!start);
+        return answer;
+    }
+
+    private static SimpleNode createSingleQuoted(SimpleToken token, AtomicBoolean startSingle) {
+        SimpleNode answer;
+        boolean start = startSingle.get();
+        if (!start) {
+            answer = new SingleQuoteStart(token);
+        } else {
+            answer = new SingleQuoteEnd(token);
+        }
+        // flip state on start/end flag
+        startSingle.set(!start);
+        return answer;
     }
 
     /**
