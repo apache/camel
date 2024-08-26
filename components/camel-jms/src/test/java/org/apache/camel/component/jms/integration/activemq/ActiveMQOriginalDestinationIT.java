@@ -129,10 +129,7 @@ public class ActiveMQOriginalDestinationIT extends AbstractJMSTest {
         @Override
         public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {
             if (exchange.getIn() instanceof JmsMessage) {
-                JmsMessage msg = exchange.getIn(JmsMessage.class);
-                Message jms = msg.getJmsMessage();
-                if (message instanceof ActiveMQMessage) {
-                    ActiveMQMessage amq = (ActiveMQMessage) jms;
+                if (message instanceof ActiveMQMessage amq) {
                     ActiveMQDestination from = null;
                     try {
                         from = (ActiveMQDestination) amq.getJMSDestination();
@@ -140,9 +137,9 @@ public class ActiveMQOriginalDestinationIT extends AbstractJMSTest {
                         throw new RuntimeException(e);
                     }
 
-                    if (from != null && message instanceof ActiveMQMessage) {
+                    if (from != null) {
                         try {
-                            ((ActiveMQMessage) message).setJMSDestination(amq.getJMSDestination());
+                            amq.setJMSDestination(amq.getJMSDestination());
                         } catch (JMSException e) {
                             throw new RuntimeException(e);
                         }

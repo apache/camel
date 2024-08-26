@@ -749,8 +749,7 @@ public class JmsConfiguration implements Cloneable {
                 LOG.debug(
                         "You are overloading the destinationResolver property on a DestinationEndpoint; are you sure you want to do that?");
             }
-        } else if (endpoint instanceof DestinationEndpoint) {
-            DestinationEndpoint destinationEndpoint = (DestinationEndpoint) endpoint;
+        } else if (endpoint instanceof DestinationEndpoint destinationEndpoint) {
             template.setDestinationResolver(createDestinationResolver(destinationEndpoint));
         }
         template.setDefaultDestinationName(destination);
@@ -1633,8 +1632,8 @@ public class JmsConfiguration implements Cloneable {
             AbstractMessageListenerContainer container,
             JmsEndpoint endpoint) {
         container.setConnectionFactory(getOrCreateListenerConnectionFactory());
-        if (endpoint instanceof DestinationEndpoint) {
-            container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
+        if (endpoint instanceof DestinationEndpoint destinationEndpoint) {
+            container.setDestinationResolver(createDestinationResolver(destinationEndpoint));
         } else if (destinationResolver != null) {
             container.setDestinationResolver(destinationResolver);
         }
@@ -1678,11 +1677,9 @@ public class JmsConfiguration implements Cloneable {
             container.setMessageSelector(endpoint.getSelector());
         }
 
-        if (container instanceof DefaultMessageListenerContainer) {
-            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer) container;
+        if (container instanceof DefaultMessageListenerContainer listenerContainer) {
             configureDefaultMessageListenerContainer(endpoint, listenerContainer);
-        } else if (container instanceof SimpleMessageListenerContainer) {
-            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
+        } else if (container instanceof SimpleMessageListenerContainer listenerContainer) {
             configureSimpleMessageListenerContainer(listenerContainer);
         }
     }
@@ -1773,8 +1770,7 @@ public class JmsConfiguration implements Cloneable {
         }
 
         JmsOperations operations = listener.getTemplate();
-        if (operations instanceof JmsTemplate) {
-            JmsTemplate template = (JmsTemplate) operations;
+        if (operations instanceof JmsTemplate template) {
             template.setDeliveryPersistent(isReplyToDeliveryPersistent());
         }
     }

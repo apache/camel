@@ -134,8 +134,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         }
         super.stop();
 
-        if (taskExecutor instanceof ThreadPoolTaskExecutor) {
-            ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) taskExecutor;
+        if (taskExecutor instanceof ThreadPoolTaskExecutor executor) {
             executor.destroy();
         }
     }
@@ -148,8 +147,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         }
         super.destroy();
 
-        if (taskExecutor instanceof ThreadPoolTaskExecutor) {
-            ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) taskExecutor;
+        if (taskExecutor instanceof ThreadPoolTaskExecutor executor) {
             executor.destroy();
         }
     }

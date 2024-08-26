@@ -52,6 +52,7 @@ import org.springframework.jms.support.converter.SimpleMessageConverter;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -229,7 +230,7 @@ public class JmsEndpointConfigurationTest implements CamelTestSupportHelper {
         assertNotNull(producer, "The producer should not be null");
         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
         JmsOperations operations = consumer.getEndpointMessageListener().getTemplate();
-        assertTrue(operations instanceof JmsTemplate);
+        assertInstanceOf(JmsTemplate.class, operations);
         JmsTemplate template = (JmsTemplate) operations;
         assertEquals(DeliveryMode.NON_PERSISTENT, template.getDeliveryMode(),
                 "Wrong delivery mode on reply template; expected  " + " DeliveryMode.NON_PERSISTENT but was DeliveryMode.PERSISTENT");

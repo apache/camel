@@ -42,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Timeout(60)
 public class JmsInOutTransferExchangeTest extends AbstractJMSTest {
@@ -97,12 +97,12 @@ public class JmsInOutTransferExchangeTest extends AbstractJMSTest {
 
         Exchange transferExchange = transfer.getExchanges().get(0);
         Exchange exchange = createExchangeWithBody(null);
-        assertTrue(transferExchange.getIn() instanceof JmsMessage);
+        assertInstanceOf(JmsMessage.class, transferExchange.getIn());
 
         JmsMessage transferMessage = transferExchange.getIn(JmsMessage.class);
         ActiveMQObjectMessage transferActiveMQMessage = (ActiveMQObjectMessage) transferMessage.getJmsMessage();
 
-        assertTrue(transferActiveMQMessage.getObject() instanceof DefaultExchangeHolder);
+        assertInstanceOf(DefaultExchangeHolder.class, transferActiveMQMessage.getObject());
         DefaultExchangeHolder exchangeHolder = (DefaultExchangeHolder) transferActiveMQMessage.getObject();
         DefaultExchangeHolder.unmarshal(exchange, exchangeHolder);
 
@@ -114,7 +114,7 @@ public class JmsInOutTransferExchangeTest extends AbstractJMSTest {
         assertEquals("PropertyValue", exchange.getProperty("PropertyName"));
 
         Exchange resultExchange = result.getExchanges().get(0);
-        assertTrue(resultExchange.getIn() instanceof JmsMessage);
+        assertInstanceOf(JmsMessage.class, resultExchange.getIn());
 
         JmsMessage resultMessage = resultExchange.getIn(JmsMessage.class);
         ActiveMQObjectMessage resultActiveMQMessage = (ActiveMQObjectMessage) resultMessage.getJmsMessage();

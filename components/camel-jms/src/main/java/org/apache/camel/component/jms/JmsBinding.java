@@ -137,12 +137,10 @@ public class JmsBinding {
                 return message;
             }
 
-            if (message instanceof ObjectMessage) {
+            if (message instanceof ObjectMessage objectMessage) {
                 LOG.trace("Extracting body as a ObjectMessage from JMS message: {}", message);
-                ObjectMessage objectMessage = (ObjectMessage) message;
                 Object payload = objectMessage.getObject();
-                if (payload instanceof DefaultExchangeHolder) {
-                    DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
+                if (payload instanceof DefaultExchangeHolder holder) {
                     DefaultExchangeHolder.unmarshal(exchange, holder);
                     // enrich with JMS headers also as otherwise they will get lost when use the transferExchange option.
                     Map<String, Object> jmsHeaders = extractHeadersFromJms(message, exchange);
@@ -151,19 +149,17 @@ public class JmsBinding {
                 } else {
                     return objectMessage.getObject();
                 }
-            } else if (message instanceof TextMessage) {
+            } else if (message instanceof TextMessage textMessage) {
                 LOG.trace("Extracting body as a TextMessage from JMS message: {}", message);
-                TextMessage textMessage = (TextMessage) message;
                 return textMessage.getText();
-            } else if (message instanceof MapMessage) {
+            } else if (message instanceof MapMessage mapMessage) {
                 LOG.trace("Extracting body as a MapMessage from JMS message: {}", message);
-                return createMapFromMapMessage((MapMessage) message);
-            } else if (message instanceof BytesMessage) {
+                return createMapFromMapMessage(mapMessage);
+            } else if (message instanceof BytesMessage bytesMessage) {
                 LOG.trace("Extracting body as a BytesMessage from JMS message: {}", message);
-                return createByteArrayFromBytesMessage(exchange, (BytesMessage) message);
-            } else if (message instanceof StreamMessage) {
+                return createByteArrayFromBytesMessage(exchange, bytesMessage);
+            } else if (message instanceof StreamMessage streamMessage) {
                 LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
-                StreamMessage streamMessage = (StreamMessage) message;
                 return createInputStreamFromStreamMessage(streamMessage);
             } else {
                 return null;
@@ -313,8 +309,7 @@ public class JmsBinding {
 
         boolean alwaysCopy = endpoint != null && endpoint.getConfiguration().isAlwaysCopyMessage();
         boolean force = endpoint != null && endpoint.getConfiguration().isForceSendOriginalMessage();
-        if (!alwaysCopy && camelMessage instanceof JmsMessage) {
-            JmsMessage jmsMessage = (JmsMessage) camelMessage;
+        if (!alwaysCopy && camelMessage instanceof JmsMessage jmsMessage) {
             if (!jmsMessage.shouldCreateNewMessage() || force) {
                 answer = jmsMessage.getJmsMessage();
 
@@ -386,10 +381,10 @@ public class JmsBinding {
                     && (endpoint == null || !endpoint.isUseMessageIDAsCorrelationID())) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals(JmsConstants.JMS_HEADER_REPLY_TO) && headerValue != null) {
-                if (headerValue instanceof String) {
+                if (headerValue instanceof String string) {
                     // if the value is a String we must normalize it first, and must include the prefix
                     // as ActiveMQ requires that when converting the String to a jakarta.jms.Destination type
-                    headerValue = normalizeDestinationName((String) headerValue, true);
+                    headerValue = normalizeDestinationName(string, true);
                 }
                 Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
                 JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
@@ -503,11 +498,11 @@ public class JmsBinding {
             return headerValue.toString();
         } else if (headerValue instanceof Boolean) {
             return headerValue;
-        } else if (headerValue instanceof Date) {
+        } else if (headerValue instanceof Date date) {
             if (this.endpoint.getConfiguration().isFormatDateHeadersToIso8601()) {
-                return ZonedDateTime.ofInstant(((Date) headerValue).toInstant(), ZoneOffset.UTC).toString();
+                return ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC).toString();
             } else {
-                return headerValue.toString();
+                return date.toString();
             }
         }
         return null;
