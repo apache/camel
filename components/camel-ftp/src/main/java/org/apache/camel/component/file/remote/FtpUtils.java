@@ -90,7 +90,7 @@ public final class FtpUtils {
         }
 
         // build path based on stack
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         if (startsWithSlash) {
             sb.append(File.separator);
