@@ -274,7 +274,7 @@ public class SpringCamelContext extends DefaultCamelContext
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         sb.append("SpringCamelContext(").append(getName()).append(")");
         if (applicationContext != null) {
             sb.append(" with spring id ").append(applicationContext.getId());
