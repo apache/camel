@@ -84,7 +84,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
             public boolean handle(Request request, Response response, Callback callback) throws Exception {
                 Exchange exchg = null;
                 try {
-                    StringBuilder bodyRequest = new StringBuilder();
+                    StringBuilder bodyRequest = new StringBuilder(1024);
                     while (true) {
                         Content.Chunk chunk = request.read();
                         if (chunk.isLast()) {
