@@ -239,7 +239,7 @@ public class JdbcAggregationRepository extends ServiceSupport
     protected void update(
             final CamelContext camelContext, final String key, final Exchange exchange, String repositoryName, Long version)
             throws Exception {
-        StringBuilder queryBuilder = new StringBuilder()
+        StringBuilder queryBuilder = new StringBuilder(256)
                 .append("UPDATE ").append(repositoryName)
                 .append(" SET ")
                 .append(EXCHANGE).append(" = ?")
@@ -279,7 +279,7 @@ public class JdbcAggregationRepository extends ServiceSupport
             throws Exception {
         // The default totalParameterIndex is 3 for ID, Exchange and version. Depending on logic this will be increased.
         int totalParameterIndex = 3;
-        StringBuilder queryBuilder = new StringBuilder()
+        StringBuilder queryBuilder = new StringBuilder(256)
                 .append("INSERT INTO ").append(repositoryName)
                 .append('(').append(EXCHANGE)
                 .append(", ").append(ID)
