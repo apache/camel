@@ -3068,7 +3068,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "marshallerFactoryRef", type = "string", description = "Sets the implementation of the CsvMarshallerFactory interface which is able to customize marshalling/unmarshalling behavior by extending CsvMarshaller or creating it from scratch.", displayName = "Marshaller Factory Ref"),
                     @YamlProperty(name = "nullString", type = "string", description = "Sets the null string", displayName = "Null String"),
                     @YamlProperty(name = "nullStringDisabled", type = "boolean", description = "Used to disable null strings", displayName = "Null String Disabled"),
-                    @YamlProperty(name = "quote", type = "string", description = "Sets the quote which by default is", displayName = "Quote"),
+                    @YamlProperty(name = "quote", type = "string", description = "Sets the quote to use which by default is double-quote character", displayName = "Quote"),
                     @YamlProperty(name = "quoteDisabled", type = "boolean", description = "Used to disable quotes", displayName = "Quote Disabled"),
                     @YamlProperty(name = "quoteMode", type = "enum:ALL,ALL_NON_NULL,MINIMAL,NON_NUMERIC,NONE", description = "Sets the quote mode", displayName = "Quote Mode"),
                     @YamlProperty(name = "recordConverterRef", type = "string", description = "Refers to a custom CsvRecordConverter to lookup from the registry to use.", displayName = "Record Converter Ref"),

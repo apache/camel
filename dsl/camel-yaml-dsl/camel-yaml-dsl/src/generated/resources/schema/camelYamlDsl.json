@@ -10342,7 +10342,7 @@
             "quote" : {
               "type" : "string",
               "title" : "Quote",
-              "description" : "Sets the quote which by default is"
+              "description" : "Sets the quote to use which by default is double-quote character"
             },
             "quoteDisabled" : {
               "type" : "boolean",
