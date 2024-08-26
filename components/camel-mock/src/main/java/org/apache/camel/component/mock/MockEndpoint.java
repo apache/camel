@@ -210,11 +210,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted, we should get the delegate
-            if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
+            if (endpoint instanceof InterceptSendToEndpoint interceptSendToEndpoint) {
+                endpoint = interceptSendToEndpoint.getOriginalEndpoint();
             }
-            if (endpoint instanceof MockEndpoint) {
-                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+            if (endpoint instanceof MockEndpoint mockEndpoint) {
                 mockEndpoint.assertIsSatisfied();
             }
         }
@@ -234,11 +233,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         long millis = unit.toMillis(timeout);
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted, we should get the delegate
-            if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
+            if (endpoint instanceof InterceptSendToEndpoint interceptSendToEndpoint) {
+                endpoint = interceptSendToEndpoint.getOriginalEndpoint();
             }
-            if (endpoint instanceof MockEndpoint) {
-                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+            if (endpoint instanceof MockEndpoint mockEndpoint) {
                 mockEndpoint.setResultWaitTime(millis);
                 mockEndpoint.assertIsSatisfied();
             }
@@ -257,11 +255,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted, we should get the delegate
-            if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
+            if (endpoint instanceof InterceptSendToEndpoint interceptSendToEndpoint) {
+                endpoint = interceptSendToEndpoint.getOriginalEndpoint();
             }
-            if (endpoint instanceof MockEndpoint) {
-                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+            if (endpoint instanceof MockEndpoint mockEndpoint) {
                 mockEndpoint.setAssertPeriod(period);
             }
         }
@@ -277,11 +274,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted, we should get the delegate
-            if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
+            if (endpoint instanceof InterceptSendToEndpoint interceptSendToEndpoint) {
+                endpoint = interceptSendToEndpoint.getOriginalEndpoint();
             }
-            if (endpoint instanceof MockEndpoint) {
-                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+            if (endpoint instanceof MockEndpoint mockEndpoint) {
                 mockEndpoint.reset();
             }
         }
@@ -1967,8 +1963,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 LOG.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
             }
         }
-        if (message instanceof Throwable) {
-            Throwable cause = (Throwable) message;
+        if (message instanceof Throwable cause) {
             String msg = "Caught exception on " + getEndpointUri() + " due to: " + cause.getMessage();
             throw new AssertionError(msg, cause);
         } else {

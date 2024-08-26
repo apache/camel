@@ -337,8 +337,8 @@ public class MockValueBuilder implements Expression, Predicate {
     }
 
     protected Expression asExpression(Object value) {
-        if (value instanceof Expression) {
-            return (Expression) value;
+        if (value instanceof Expression expression1) {
+            return expression1;
         } else {
             return ExpressionBuilder.constantExpression(value);
         }
