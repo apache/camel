@@ -257,8 +257,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         public String getState() {
             // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
             ServiceStatus status = null;
-            if (consumer instanceof StatefulService) {
-                status = ((StatefulService) consumer).getStatus();
+            if (consumer instanceof StatefulService statefulService) {
+                status = statefulService.getStatus();
             }
             // if no status exists then its stopped
             if (status == null) {
@@ -284,8 +284,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             super.onServiceRemove(context, service, route);
 
             // if its a consumer then de-register it from the rest registry
-            if (service instanceof Consumer) {
-                removeRestService((Consumer) service);
+            if (service instanceof Consumer consumer) {
+                removeRestService(consumer);
             }
         }
     }
