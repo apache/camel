@@ -55,13 +55,13 @@ public final class ProducerUtil {
         return answer != null ? answer : object;
     }
 
-    static void setException(Object body, Exception e) {
+    static void setException(Object object, Exception e) {
         if (e != null) {
-            if (body instanceof Exchange) {
-                ((Exchange) body).setException(e);
+            if (object instanceof Exchange exchange) {
+                exchange.setException(e);
             }
-            if (body instanceof Message && ((Message) body).getExchange() != null) {
-                ((Message) body).getExchange().setException(e);
+            if (object instanceof Message message && message.getExchange() != null) {
+                message.getExchange().setException(e);
             }
         }
     }
@@ -73,12 +73,10 @@ public final class ProducerUtil {
     }
 
     public static void setRecordMetadata(Object body, List<RecordMetadata> recordMetadataList) {
-        if (body instanceof Exchange) {
-            Exchange ex = (Exchange) body;
+        if (body instanceof Exchange ex) {
             ex.getMessage().setHeader(KafkaConstants.KAFKA_RECORD_META, recordMetadataList);
         }
-        if (body instanceof Message) {
-            Message msg = (Message) body;
+        if (body instanceof Message msg) {
             msg.setHeader(KafkaConstants.KAFKA_RECORD_META, recordMetadataList);
         }
     }
