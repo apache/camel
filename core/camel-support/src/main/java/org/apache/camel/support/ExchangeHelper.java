@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -997,7 +1000,7 @@ public final class ExchangeHelper {
                 value = body;
             } else {
                 // generic file is just a wrapper for the real file so call again with the real file
-                return getScanner(exchange, gf.getFile(), delimiter);
+                value = gf.getFile();
             }
         }
 
@@ -1008,7 +1011,14 @@ public final class ExchangeHelper {
             scanner = new Scanner(str, delimiter);
         } else {
             String charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
-            if (value instanceof File file) {
+            if (value instanceof Path path) {
+                try {
+                    scanner = new Scanner(
+                            Files.newByteChannel(path, StandardOpenOption.READ), charset, delimiter);
+                } catch (IOException e) {
+                    throw new RuntimeCamelException(e);
+                }
+            } else if (value instanceof File file) {
                 try {
                     scanner = new Scanner(file, charset, delimiter);
                 } catch (IOException e) {

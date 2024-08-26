@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Array;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -345,7 +346,7 @@ public final class MessageHelper {
         }
 
         if (!allowFiles) {
-            if (obj instanceof WrappedFile || obj instanceof File) {
+            if (obj instanceof WrappedFile || obj instanceof File || obj instanceof Path) {
                 return "[Body is file based: " + obj + "]";
             }
         }

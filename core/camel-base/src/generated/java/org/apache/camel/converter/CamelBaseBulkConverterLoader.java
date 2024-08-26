@@ -41,7 +41,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 122;
+        return 129;
     }
 
     @Override
@@ -76,6 +76,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toByteArray((java.io.File) value);
+            }
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.IOConverter.toByteArray((java.nio.file.Path) value);
             }
             if (value instanceof java.io.BufferedReader) {
                 return org.apache.camel.converter.IOConverter.toByteArray((java.io.BufferedReader) value, exchange);
@@ -118,9 +121,15 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toReader((java.io.File) value, exchange);
             }
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.IOConverter.toReader((java.nio.file.Path) value, exchange);
+            }
         } else if (to == java.io.BufferedWriter.class) {
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toWriter((java.io.File) value, exchange);
+            }
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.IOConverter.toWriter((java.nio.file.Path) value, exchange);
             }
         } else if (to == java.io.File.class) {
             if (value instanceof java.nio.file.Path) {
@@ -139,14 +148,17 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.io.File) value);
             }
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.IOConverter.toInputStream((java.nio.file.Path) value);
+            }
+            if (value instanceof java.nio.ByteBuffer) {
+                return org.apache.camel.converter.NIOConverter.toInputStream((java.nio.ByteBuffer) value);
+            }
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.lang.String) value, exchange);
             }
             if (value instanceof java.lang.StringBuffer) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.lang.StringBuffer) value, exchange);
-            }
-            if (value instanceof java.nio.ByteBuffer) {
-                return org.apache.camel.converter.NIOConverter.toInputStream((java.nio.ByteBuffer) value);
             }
             if (value instanceof java.lang.StringBuilder) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.lang.StringBuilder) value, exchange);
@@ -171,6 +183,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         } else if (to == java.io.OutputStream.class) {
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toOutputStream((java.io.File) value);
+            }
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.IOConverter.toOutputStream((java.nio.file.Path) value);
             }
         } else if (to == java.io.Reader.class) {
             if (value instanceof org.apache.camel.spi.Resource) {
@@ -332,6 +347,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toString((java.io.File) value, exchange);
             }
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.IOConverter.toString((java.nio.file.Path) value, exchange);
+            }
             if (value instanceof java.net.URL) {
                 return org.apache.camel.converter.IOConverter.toString((java.net.URL) value, exchange);
             }
@@ -343,9 +361,6 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.io.InputStream) {
                 return org.apache.camel.converter.IOConverter.toString((java.io.InputStream) value, exchange);
-            }
-            if (value instanceof java.io.ByteArrayOutputStream) {
-                return org.apache.camel.converter.IOConverter.toString((java.io.ByteArrayOutputStream) value, exchange);
             }
             if (value instanceof java.lang.Integer) {
                 return org.apache.camel.converter.ObjectConverter.toString((java.lang.Integer) value);
@@ -361,6 +376,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.lang.StringBuilder) {
                 return org.apache.camel.converter.ObjectConverter.toString((java.lang.StringBuilder) value);
+            }
+            if (value instanceof java.io.ByteArrayOutputStream) {
+                return org.apache.camel.converter.IOConverter.toString((java.io.ByteArrayOutputStream) value, exchange);
             }
         } else if (to == java.math.BigInteger.class) {
             if (value instanceof java.lang.Object) {
@@ -384,6 +402,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.NIOConverter.toByteBuffer((java.io.File) value);
+            }
+            if (value instanceof java.nio.file.Path) {
+                return org.apache.camel.converter.NIOConverter.toByteBuffer((java.nio.file.Path) value);
             }
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.NIOConverter.toByteBuffer((java.lang.String) value, exchange);
@@ -511,6 +532,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, byte[].class), this);
         registry.addConverter(new TypeConvertible<>(org.apache.camel.spi.Resource.class, byte[].class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, byte[].class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, byte[].class), this);
         registry.addConverter(new TypeConvertible<>(java.io.BufferedReader.class, byte[].class), this);
         registry.addConverter(new TypeConvertible<>(java.io.Reader.class, byte[].class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, byte[].class), this);
@@ -523,15 +545,18 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, char.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, char.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.BufferedReader.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.io.BufferedReader.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.BufferedWriter.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.io.BufferedWriter.class), this);
         registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.io.File.class), this);
         registry.addConverter(new TypeConvertible<>(java.util.stream.Stream.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(org.apache.camel.spi.Resource.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.net.URL.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuffer.class, java.io.InputStream.class), this);
-        registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuilder.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.BufferedReader.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, java.io.InputStream.class), this);
@@ -539,6 +564,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.io.ObjectInput.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.OutputStream.class, java.io.ObjectOutput.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, java.io.OutputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.io.OutputStream.class), this);
         registry.addConverter(new TypeConvertible<>(org.apache.camel.spi.Resource.class, java.io.Reader.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.io.Reader.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, java.io.Reader.class), this);
@@ -581,21 +607,23 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(char[].class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.net.URL.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.BufferedReader.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.Reader.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.lang.String.class), this);
-        registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Integer.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Boolean.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuffer.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuilder.class, java.lang.String.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.lang.String.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Object.class, java.math.BigInteger.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.CharSequence.class, java.net.URI.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Short.class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Integer.class, java.nio.ByteBuffer.class), this);
@@ -643,6 +671,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.io.File.class) {
                 return this;
             }
+            if (from == java.nio.file.Path.class) {
+                return this;
+            }
             if (from == java.io.BufferedReader.class) {
                 return this;
             }
@@ -684,8 +715,14 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.io.File.class) {
                 return this;
             }
+            if (from == java.nio.file.Path.class) {
+                return this;
+            }
         } else if (to == java.io.BufferedWriter.class) {
             if (from == java.io.File.class) {
+                return this;
+            }
+            if (from == java.nio.file.Path.class) {
                 return this;
             }
         } else if (to == java.io.File.class) {
@@ -705,13 +742,16 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.io.File.class) {
                 return this;
             }
+            if (from == java.nio.file.Path.class) {
+                return this;
+            }
+            if (from == java.nio.ByteBuffer.class) {
+                return this;
+            }
             if (from == java.lang.String.class) {
                 return this;
             }
             if (from == java.lang.StringBuffer.class) {
-                return this;
-            }
-            if (from == java.nio.ByteBuffer.class) {
                 return this;
             }
             if (from == java.lang.StringBuilder.class) {
@@ -736,6 +776,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
         } else if (to == java.io.OutputStream.class) {
             if (from == java.io.File.class) {
+                return this;
+            }
+            if (from == java.nio.file.Path.class) {
                 return this;
             }
         } else if (to == java.io.Reader.class) {
@@ -878,6 +921,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.io.File.class) {
                 return this;
             }
+            if (from == java.nio.file.Path.class) {
+                return this;
+            }
             if (from == java.net.URL.class) {
                 return this;
             }
@@ -888,9 +934,6 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.io.InputStream.class) {
-                return this;
-            }
-            if (from == java.io.ByteArrayOutputStream.class) {
                 return this;
             }
             if (from == java.lang.Integer.class) {
@@ -906,6 +949,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.lang.StringBuilder.class) {
+                return this;
+            }
+            if (from == java.io.ByteArrayOutputStream.class) {
                 return this;
             }
         } else if (to == java.math.BigInteger.class) {
@@ -924,6 +970,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.io.File.class) {
+                return this;
+            }
+            if (from == java.nio.file.Path.class) {
                 return this;
             }
             if (from == java.lang.String.class) {
