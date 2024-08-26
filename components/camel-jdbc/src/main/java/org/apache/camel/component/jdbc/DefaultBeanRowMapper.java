@@ -31,7 +31,7 @@ public class DefaultBeanRowMapper implements BeanRowMapper {
     }
 
     protected String mapRowName(String row) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(row.length());
         boolean toUpper = false;
         for (char ch : row.toCharArray()) {
             if (ch == '_' || ch == '-') {
