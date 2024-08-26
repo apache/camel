@@ -259,10 +259,9 @@ public class DisruptorReference {
             //we need to shut down our executor
             component.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
-        } else if (executor instanceof ThreadPoolExecutor) {
+        } else if (executor instanceof ThreadPoolExecutor threadPoolExecutor) {
             LOGGER.debug("Resizing existing executor to {} threads", newSize);
             //our thread pool executor is of type ThreadPoolExecutor, we know how to resize it
-            final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
             //Java 9 support, checkout http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int-
             // and http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setMaximumPoolSize-int-
             //for more information
@@ -291,10 +290,9 @@ public class DisruptorReference {
         if (currentDisruptor != null) {
             //check if we had a blocking event handler to keep an empty disruptor 'busy'
             if (handlers != null && handlers.length == 1
-                    && handlers[0] instanceof BlockingExchangeEventHandler) {
+                    && handlers[0] instanceof BlockingExchangeEventHandler blockingExchangeEventHandler) {
                 // yes we did, unblock it so we can get rid of our backlog,
                 // The eventhandler will empty its pending exchanges in our temporary buffer
-                final BlockingExchangeEventHandler blockingExchangeEventHandler = (BlockingExchangeEventHandler) handlers[0];
                 blockingExchangeEventHandler.unblock();
             }
 
