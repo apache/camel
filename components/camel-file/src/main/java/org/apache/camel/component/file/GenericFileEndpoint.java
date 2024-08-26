@@ -1616,7 +1616,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         // remove trailing slash
         expression = FileUtil.stripTrailingSeparator(expression);
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(64);
 
         // if relative then insert start with the parent folder
         if (!isAbsolute(expression)) {

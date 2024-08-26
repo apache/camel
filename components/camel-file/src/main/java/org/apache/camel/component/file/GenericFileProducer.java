@@ -484,7 +484,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
             answer = tempName;
         } else {
             // path should be prefixed before the temp name
-            StringBuilder sb = new StringBuilder(answer.substring(0, pos + 1));
+            final String prefix = answer.substring(0, pos + 1);
+            StringBuilder sb = new StringBuilder(tempName.length() + prefix.length() + 1);
+            sb.append(prefix);
             sb.append(tempName);
             answer = sb.toString();
         }
