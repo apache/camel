@@ -128,8 +128,8 @@ public class DefaultHttpRegistry implements HttpRegistry {
         synchronized (lock) {
             providers.clear();
             for (Servlet servlet : servlets) {
-                if (servlet instanceof HttpRegistryProvider) {
-                    providers.add((HttpRegistryProvider) servlet);
+                if (servlet instanceof HttpRegistryProvider httpRegistryProvider) {
+                    providers.add(httpRegistryProvider);
                 }
             }
         }
