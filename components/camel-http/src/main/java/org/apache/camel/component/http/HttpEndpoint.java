@@ -641,8 +641,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")
     public int getClientConnectionsPoolStatsMax() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -656,8 +656,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @ManagedAttribute(description = "Number of available idle persistent connections")
     public int getClientConnectionsPoolStatsAvailable() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -671,8 +671,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @ManagedAttribute(description = "Number of persistent connections tracked by the connection manager currently being used to execute requests")
     public int getClientConnectionsPoolStatsLeased() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -687,8 +687,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                                     + " This can happen only if there are more worker threads contending for fewer connections.")
     public int getClientConnectionsPoolStatsPending() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
