@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanWithXPathInjectionPreCompileTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanWithXPathInjectionPreCompileTest.class);
     protected final MyBean myBean = new MyBean();
 
     @Test

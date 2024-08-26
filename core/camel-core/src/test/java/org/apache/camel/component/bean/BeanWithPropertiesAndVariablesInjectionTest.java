@@ -25,7 +25,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Variables;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithPropertiesAndVariablesInjectionTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanWithPropertiesAndVariablesInjectionTest.class);
     protected final MyBean myBean = new MyBean();
 
     @Test
