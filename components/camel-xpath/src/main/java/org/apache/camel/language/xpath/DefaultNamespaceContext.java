@@ -115,7 +115,9 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[me: ");
+        StringBuilder sb = new StringBuilder(128);
+
+        sb.append("[me: ");
         for (Entry<String, String> nsEntry : map.entrySet()) {
             sb.append('{').append(nsEntry.getKey()).append(" -> ").append(nsEntry.getValue()).append("},");
         }
