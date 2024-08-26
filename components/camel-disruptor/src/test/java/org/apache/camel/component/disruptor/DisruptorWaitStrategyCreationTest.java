@@ -19,8 +19,8 @@ package org.apache.camel.component.disruptor;
 import com.lmax.disruptor.WaitStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests correct creation of all supposedly possible wait strategies.
@@ -32,7 +32,7 @@ public class DisruptorWaitStrategyCreationTest {
             final WaitStrategy waitStrategyInstance = strategy.createWaitStrategyInstance();
 
             assertNotNull(waitStrategyInstance);
-            assertTrue(waitStrategyInstance instanceof WaitStrategy);
+            assertInstanceOf(WaitStrategy.class, waitStrategyInstance);
         }
     }
 }
