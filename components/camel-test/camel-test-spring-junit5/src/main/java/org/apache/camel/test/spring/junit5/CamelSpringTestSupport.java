@@ -327,7 +327,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         }
 
         private String readBefore() throws IOException {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(32768);
             try (InputStreamReader r = new InputStreamReader(delegate.getInputStream(), StandardCharsets.UTF_8)) {
                 char[] buf = new char[32768];
                 int l;

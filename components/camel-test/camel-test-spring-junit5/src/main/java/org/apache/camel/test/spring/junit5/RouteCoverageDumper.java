@@ -82,7 +82,7 @@ public final class RouteCoverageDumper {
      * Gathers test details as xml
      */
     private static String gatherTestDetailsAsXml(String testClassName, String testName) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(512);
         sb.append("<test>\n");
         sb.append("  <class>").append(testClassName).append("</class>\n");
         sb.append("  <method>").append(testName).append("</method>\n");
