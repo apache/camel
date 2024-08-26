@@ -218,10 +218,9 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
         private void configureDebuggerIfNeeded(ModelCamelContext context) {
             // Get the instance of the outer class
             Object instance = getOuterClassInstance();
-            if (instance instanceof DebuggerCallback) {
+            if (instance instanceof DebuggerCallback callback) {
                 context.setDebugging(true);
                 context.setDebugger(new DefaultDebugger());
-                DebuggerCallback callback = (DebuggerCallback) instance;
                 context.getDebugger().addBreakpoint(new BreakpointSupport() {
                     @Override
                     public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
