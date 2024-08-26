@@ -31,8 +31,7 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
 
     @Override
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
-        if (consumer instanceof RemoteFileConsumer) {
-            RemoteFileConsumer<?> rfc = (RemoteFileConsumer<?>) consumer;
+        if (consumer instanceof RemoteFileConsumer<?> rfc) {
 
             // only try to recover if we are allowed to run
             if (rfc.isRunAllowed()) {

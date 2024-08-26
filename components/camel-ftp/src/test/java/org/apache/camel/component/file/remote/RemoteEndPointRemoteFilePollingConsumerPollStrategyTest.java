@@ -19,14 +19,14 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class RemoteEndPointRemoteFilePollingConsumerPollStrategyTest extends CamelTestSupport {
 
     @Test
     public void testPollStrategy() {
         RemoteFileEndpoint<?> endpoint = context.getEndpoint("ftp://hostname", RemoteFileEndpoint.class);
-        assertTrue(endpoint.getPollStrategy() instanceof RemoteFilePollingConsumerPollStrategy);
+        assertInstanceOf(RemoteFilePollingConsumerPollStrategy.class, endpoint.getPollStrategy());
     }
 
 }

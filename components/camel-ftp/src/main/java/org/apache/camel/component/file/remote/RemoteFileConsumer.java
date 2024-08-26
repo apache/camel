@@ -269,8 +269,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                 return true;
             } else {
                 LOG.trace("Not ignoring file error {} for {}", e.getMessage(), absolutePath);
-                if (e instanceof GenericFileOperationFailedException) {
-                    throw (GenericFileOperationFailedException) e;
+                if (e instanceof GenericFileOperationFailedException genericFileOperationFailedException) {
+                    throw genericFileOperationFailedException;
                 } else {
                     throw new GenericFileOperationFailedException(
                             "Cannot poll sub-directory: " + absolutePath + " from: " + endpoint, e);

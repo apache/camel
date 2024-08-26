@@ -124,8 +124,8 @@ public class CamelFTPParserFactory extends DefaultFTPFileEntryParserFactory {
             }
         }
 
-        if (parser instanceof Configurable) {
-            ((Configurable) parser).configure(config);
+        if (parser instanceof Configurable configurable) {
+            configurable.configure(config);
         }
 
         return parser;

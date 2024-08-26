@@ -146,8 +146,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
             if (payload.exception != null) {
-                if (payload.exception instanceof GenericFileOperationFailedException) {
-                    throw (GenericFileOperationFailedException) payload.exception;
+                if (payload.exception instanceof GenericFileOperationFailedException genericFileOperationFailedException) {
+                    throw genericFileOperationFailedException;
                 } else {
                     throw new GenericFileOperationFailedException(
                             client.getReplyCode(), client.getReplyString(), payload.exception.getMessage(), payload.exception);
