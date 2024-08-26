@@ -555,18 +555,6 @@ public interface TahuEdgeEndpointBuilderFactory {
         private static final TahuEdgeHeaderNameBuilder INSTANCE = new TahuEdgeHeaderNameBuilder();
 
         /**
-         * The Camel Message Header prefix denoting a Sparkplug metric.
-         * 
-         * The option is a: {@code org.eclipse.tahu.message.model.Metric} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code TahuMetric.}.
-         */
-        public String tahumetric() {
-            return "CamelTahuMetric.";
-        }
-        /**
          * The Sparkplug message type of the message.
          * 
          * The option is a: {@code String} type.

@@ -42,8 +42,6 @@ public final class TahuConstants {
 
     public static final String HOST_APP_ENDPOINT_URI_SYNTAX = HOST_APP_SCHEME + ":hostId";
 
-    @Metadata(description = "The Camel Message Header prefix denoting a Sparkplug metric",
-              javaType = "org.eclipse.tahu.message.model.Metric")
     public static final String METRIC_HEADER_PREFIX = "CamelTahuMetric.";
 
     @Metadata(description = "The Sparkplug message type of the message", javaType = "String",
