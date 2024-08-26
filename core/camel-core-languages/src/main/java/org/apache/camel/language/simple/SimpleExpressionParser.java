@@ -223,6 +223,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 parseLiteralNode(sb, node, exp);
             }
         }
+
         String code = sb.toString();
         code = code.replace(BaseSimpleParser.CODE_START, "");
         code = code.replace(BaseSimpleParser.CODE_END, "");
