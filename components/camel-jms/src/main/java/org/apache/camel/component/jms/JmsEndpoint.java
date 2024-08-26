@@ -237,8 +237,8 @@ public class JmsEndpoint extends DefaultEndpoint
             // we are using a shared thread pool that this listener container is using.
             // store a reference to the consumer, but we should not shutdown the thread pool when the consumer stops
             // as the lifecycle of the shared thread pool is handled elsewhere
-            if (configuration.getTaskExecutor() instanceof ExecutorService) {
-                consumer.setListenerContainerExecutorService((ExecutorService) configuration.getTaskExecutor(), false);
+            if (configuration.getTaskExecutor() instanceof ExecutorService executorService) {
+                consumer.setListenerContainerExecutorService(executorService, false);
             }
         } else if (!(listenerContainer instanceof DefaultJmsMessageListenerContainer)
                 || configuration.getDefaultTaskExecutorType() == null) {
@@ -260,8 +260,8 @@ public class JmsEndpoint extends DefaultEndpoint
 
         // set a default transaction name if none provided
         if (configuration.getTransactionName() == null) {
-            if (listenerContainer instanceof DefaultMessageListenerContainer) {
-                ((DefaultMessageListenerContainer) listenerContainer).setTransactionName(consumerName);
+            if (listenerContainer instanceof DefaultMessageListenerContainer defaultMessageListenerContainer) {
+                defaultMessageListenerContainer.setTransactionName(consumerName);
             }
         }
 
@@ -278,10 +278,10 @@ public class JmsEndpoint extends DefaultEndpoint
     }
 
     private void setContainerTaskExecutor(AbstractMessageListenerContainer listenerContainer, Executor executor) {
-        if (listenerContainer instanceof SimpleMessageListenerContainer) {
-            ((SimpleMessageListenerContainer) listenerContainer).setTaskExecutor(executor);
-        } else if (listenerContainer instanceof DefaultMessageListenerContainer) {
-            ((DefaultMessageListenerContainer) listenerContainer).setTaskExecutor(executor);
+        if (listenerContainer instanceof SimpleMessageListenerContainer container) {
+            container.setTaskExecutor(executor);
+        } else if (listenerContainer instanceof DefaultMessageListenerContainer defaultMessageListenerContainer) {
+            defaultMessageListenerContainer.setTaskExecutor(executor);
         }
     }
 
