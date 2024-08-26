@@ -214,12 +214,12 @@ public class RestApiEndpoint extends DefaultEndpoint {
         // the API then uses the api component (eg usually camel-openapi-java) to build the API
         if (getConsumerComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getConsumerComponentName());
-            if (comp instanceof RestApiConsumerFactory) {
-                factory = (RestApiConsumerFactory) comp;
+            if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                factory = restApiConsumerFactory;
             } else {
                 comp = getCamelContext().getComponent(getConsumerComponentName());
-                if (comp instanceof RestApiConsumerFactory) {
-                    factory = (RestApiConsumerFactory) comp;
+                if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                    factory = restApiConsumerFactory;
                 }
             }
 
@@ -238,8 +238,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
                 Component comp = getCamelContext().getComponent(name);
-                if (comp instanceof RestApiConsumerFactory) {
-                    factory = (RestApiConsumerFactory) comp;
+                if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                    factory = restApiConsumerFactory;
                     cname = name;
                     break;
                 }
@@ -259,8 +259,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
             String foundName = null;
             for (String name : DEFAULT_REST_API_CONSUMER_COMPONENTS) {
                 Object comp = getCamelContext().getComponent(name, true);
-                if (comp instanceof RestApiConsumerFactory) {
-                    found = (RestApiConsumerFactory) comp;
+                if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                    found = restApiConsumerFactory;
                     foundName = name;
                     break;
                 }

@@ -98,17 +98,17 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
     @Override
     protected void doStart() throws Exception {
         // inject CamelContext before starting
-        if (jsonMarshal instanceof CamelContextAware) {
-            ((CamelContextAware) jsonMarshal).setCamelContext(camelContext);
+        if (jsonMarshal instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(camelContext);
         }
-        if (jsonUnmarshal instanceof CamelContextAware) {
-            ((CamelContextAware) jsonUnmarshal).setCamelContext(camelContext);
+        if (jsonUnmarshal instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(camelContext);
         }
-        if (xmlMarshal instanceof CamelContextAware) {
-            ((CamelContextAware) xmlMarshal).setCamelContext(camelContext);
+        if (xmlMarshal instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(camelContext);
         }
-        if (xmlUnmarshal instanceof CamelContextAware) {
-            ((CamelContextAware) xmlUnmarshal).setCamelContext(camelContext);
+        if (xmlUnmarshal instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(camelContext);
         }
         ServiceHelper.startService(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
     }
