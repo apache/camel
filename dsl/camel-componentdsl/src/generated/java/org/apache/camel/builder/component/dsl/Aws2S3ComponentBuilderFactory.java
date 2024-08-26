@@ -122,6 +122,25 @@ public interface Aws2S3ComponentBuilderFactory {
     
         
         /**
+         * If it is true, the S3 Object Body will be ignored completely if it is
+         * set to false, the S3 Object will be put in the body. Setting this to
+         * true will override any behavior defined by includeBody option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder ignoreBody(boolean ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+    
+        
+        /**
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
@@ -395,25 +414,6 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder fileName(java.lang.String fileName) {
             doSetProperty("fileName", fileName);
-            return this;
-        }
-    
-        
-        /**
-         * If it is true, the S3 Object Body will be ignored completely if it is
-         * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param ignoreBody the value to set
-         * @return the dsl builder
-         */
-        default Aws2S3ComponentBuilder ignoreBody(boolean ignoreBody) {
-            doSetProperty("ignoreBody", ignoreBody);
             return this;
         }
     
@@ -1124,6 +1124,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "configuration": ((AWS2S3Component) component).setConfiguration((org.apache.camel.component.aws2.s3.AWS2S3Configuration) value); return true;
             case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
             case "forcePathStyle": getOrCreateConfiguration((AWS2S3Component) component).setForcePathStyle((boolean) value); return true;
+            case "ignoreBody": getOrCreateConfiguration((AWS2S3Component) component).setIgnoreBody((boolean) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((AWS2S3Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((AWS2S3Component) component).setPojoRequest((boolean) value); return true;
             case "policy": getOrCreateConfiguration((AWS2S3Component) component).setPolicy((java.lang.String) value); return true;
@@ -1140,7 +1141,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "destinationBucketSuffix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketSuffix((java.lang.String) value); return true;
             case "doneFileName": getOrCreateConfiguration((AWS2S3Component) component).setDoneFileName((java.lang.String) value); return true;
             case "fileName": getOrCreateConfiguration((AWS2S3Component) component).setFileName((java.lang.String) value); return true;
-            case "ignoreBody": getOrCreateConfiguration((AWS2S3Component) component).setIgnoreBody((boolean) value); return true;
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setMoveAfterRead((boolean) value); return true;
