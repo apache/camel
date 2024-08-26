@@ -300,7 +300,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // if the separator char is also inside a quoted token, therefore we
         // need
         // to fix this afterwards
-        StringBuilder current = new StringBuilder();
+        StringBuilder current = new StringBuilder(256);
         boolean inProgress = false;
         List<String> answer = new ArrayList<>();
         int idxSeparator = 0;
