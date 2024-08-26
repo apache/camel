@@ -120,7 +120,7 @@ Before the Kubernetes property placeholder functions can be used they need to be
 
 Camel will first use _mount paths_ (if configured) to lookup, and then fallback to use the `KubernetesClient`.
 
-==== Using configmap with Kubernetes
+=== Using configmap with Kubernetes
 
 Given a configmap named `myconfig` in Kubernetes that has two entries:
 
