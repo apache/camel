@@ -85,7 +85,7 @@ public class SplitterParallelAggregateManualTest extends ContextTestSupport {
             }
             stopWatch.taken();
 
-            log.info(String.format("test%d.%s=%d\n", numberOfRequests, endpoint, stopWatch.taken()));
+            log.info("test{}.{}={}\n", numberOfRequests, endpoint, stopWatch.taken());
         }
     }
 

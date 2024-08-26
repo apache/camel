@@ -2696,7 +2696,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (disabled > 0) {
                 sj.add("disabled:" + disabled);
             }
-            LOG.info(String.format("Routes startup (%s)", sj));
+            LOG.info("Routes startup ({})", sj);
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
                 for (String line : lines) {
