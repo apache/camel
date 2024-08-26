@@ -60,7 +60,7 @@ final class ParameterInfo {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         sb.append("ParameterInfo");
         sb.append("[index=").append(index);
         sb.append(", type=").append(type);
