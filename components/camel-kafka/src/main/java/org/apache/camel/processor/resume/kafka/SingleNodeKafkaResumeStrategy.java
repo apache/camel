@@ -123,9 +123,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
     }
 
     protected void doAdd(OffsetKey<?> key, Offset<?> offsetValue) {
-        if (adapter instanceof Cacheable) {
-            Cacheable cacheable = (Cacheable) adapter;
-
+        if (adapter instanceof Cacheable cacheable) {
             cacheable.add(key, offsetValue);
         }
     }
@@ -344,8 +342,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
     }
 
     private void subscribe(Consumer<byte[], byte[]> consumer) {
-        if (adapter instanceof Cacheable) {
-            ResumeCache<?> cache = ((Cacheable) adapter).getCache();
+        if (adapter instanceof Cacheable cacheable) {
+            ResumeCache<?> cache = cacheable.getCache();
 
             if (cache.capacity() >= 1) {
                 checkAndSubscribe(consumer, resumeStrategyConfiguration.getTopic(), cache.capacity());
@@ -454,8 +452,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
     @Override
     public void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration) {
-        if (resumeStrategyConfiguration instanceof KafkaResumeStrategyConfiguration) {
-            this.resumeStrategyConfiguration = (KafkaResumeStrategyConfiguration) resumeStrategyConfiguration;
+        if (resumeStrategyConfiguration instanceof KafkaResumeStrategyConfiguration kafkaResumeStrategyConfiguration) {
+            this.resumeStrategyConfiguration = kafkaResumeStrategyConfiguration;
         } else {
             throw new RuntimeCamelException(
                     "Invalid resume strategy configuration of type " +

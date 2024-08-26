@@ -30,24 +30,24 @@ public class DefaultKafkaHeaderSerializer implements KafkaHeaderSerializer, Came
 
     @Override
     public byte[] serialize(final String key, final Object value) {
-        if (value instanceof String) {
-            return ((String) value).getBytes();
-        } else if (value instanceof Long) {
+        if (value instanceof String string) {
+            return string.getBytes();
+        } else if (value instanceof Long aLong) {
             ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-            buffer.putLong((Long) value);
+            buffer.putLong(aLong);
             return buffer.array();
-        } else if (value instanceof Integer) {
+        } else if (value instanceof Integer integer) {
             ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-            buffer.putInt((Integer) value);
+            buffer.putInt(integer);
             return buffer.array();
-        } else if (value instanceof Double) {
+        } else if (value instanceof Double aDouble) {
             ByteBuffer buffer = ByteBuffer.allocate(Double.BYTES);
-            buffer.putDouble((Double) value);
+            buffer.putDouble(aDouble);
             return buffer.array();
-        } else if (value instanceof Boolean) {
-            return value.toString().getBytes();
-        } else if (value instanceof byte[]) {
-            return (byte[]) value;
+        } else if (value instanceof Boolean b) {
+            return b.toString().getBytes();
+        } else if (value instanceof byte[] bytes) {
+            return bytes;
         }
         if (camelContext != null) {
             byte[] converted = camelContext.getTypeConverter().tryConvertTo(byte[].class, value);

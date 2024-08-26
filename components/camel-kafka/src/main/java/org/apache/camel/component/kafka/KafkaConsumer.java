@@ -138,8 +138,8 @@ public class KafkaConsumer extends DefaultConsumer
 
         // is the offset repository already started?
         StateRepository<String, String> repo = endpoint.getConfiguration().getOffsetRepository();
-        if (repo instanceof ServiceSupport) {
-            boolean started = ((ServiceSupport) repo).isStarted();
+        if (repo instanceof ServiceSupport serviceSupport) {
+            boolean started = serviceSupport.isStarted();
             // if not already started then we would do that and also stop it
             if (!started) {
                 stopOffsetRepo = true;
