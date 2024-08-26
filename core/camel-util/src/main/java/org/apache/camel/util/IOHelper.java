@@ -24,7 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -694,14 +693,14 @@ public final class IOHelper {
     public static class EncodingInputStream extends InputStream {
 
         private final Lock lock = new ReentrantLock();
-        private final File file;
+        private final Path file;
         private final BufferedReader reader;
         private final Charset defaultStreamCharset;
 
         private ByteBuffer bufferBytes;
         private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
 
-        public EncodingInputStream(File file, String charset) throws IOException {
+        public EncodingInputStream(Path file, String charset) throws IOException {
             this.file = file;
             reader = toReader(file, charset);
             defaultStreamCharset = defaultCharset.get();
@@ -736,8 +735,8 @@ public final class IOHelper {
             }
         }
 
-        public InputStream toOriginalInputStream() throws FileNotFoundException {
-            return new FileInputStream(file);
+        public InputStream toOriginalInputStream() throws IOException {
+            return Files.newInputStream(file);
         }
     }
 
@@ -819,21 +818,42 @@ public final class IOHelper {
      * @return         the input stream with the JVM default charset
      */
     public static InputStream toInputStream(File file, String charset) throws IOException {
+        return toInputStream(file.toPath(), charset);
+    }
+
+    /**
+     * Converts the given {@link File} with the given charset to {@link InputStream} with the JVM default charset
+     *
+     * @param  file    the file to be converted
+     * @param  charset the charset the file is read with
+     * @return         the input stream with the JVM default charset
+     */
+    public static InputStream toInputStream(Path file, String charset) throws IOException {
         if (charset != null) {
             return new EncodingInputStream(file, charset);
         } else {
-            return buffered(new FileInputStream(file));
+            return buffered(Files.newInputStream(file));
         }
     }
 
+    public static BufferedReader toReader(Path file, String charset) throws IOException {
+        return toReader(file, charset != null ? Charset.forName(charset) : null);
+    }
+
     public static BufferedReader toReader(File file, String charset) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        return IOHelper.buffered(new EncodingFileReader(in, charset));
+        return toReader(file, charset != null ? Charset.forName(charset) : null);
     }
 
     public static BufferedReader toReader(File file, Charset charset) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        return IOHelper.buffered(new EncodingFileReader(in, charset));
+        return toReader(file.toPath(), charset);
+    }
+
+    public static BufferedReader toReader(Path file, Charset charset) throws IOException {
+        if (charset != null) {
+            return Files.newBufferedReader(file, charset);
+        } else {
+            return Files.newBufferedReader(file);
+        }
     }
 
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
