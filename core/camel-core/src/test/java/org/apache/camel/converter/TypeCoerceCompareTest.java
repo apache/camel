@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeCoerceCompareTest extends ContextTestSupport {
@@ -32,32 +33,32 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", "7") > 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", "7.5") > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", "40") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "40", "40"));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7", "40") < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", "40") < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", "7.5") == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", "7.5") == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.0", "7") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", "7.5"));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", "7.5"));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.0", "7"));
     }
 
     @Test
     public void testCompareStringInteger() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 7) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 40) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "40", 40));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7", 40) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 40) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.0", 7) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.0", 7));
     }
 
     @Test
     public void testCompareStringLong() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 7L) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 40L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "40", 40L));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7", 40L) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 40L) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.0", 7L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.0", 7L));
     }
 
     @Test
@@ -65,12 +66,12 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 7d) > 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 7.5d) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 40d) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "40", 40d));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7", 40d) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 40d) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5d) == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5d) == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.0", 7d) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5d));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5d));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.0", 7d));
     }
 
     @Test
@@ -78,12 +79,12 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 7f) > 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 7.5f) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 40f) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "40", 40f));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7", 40f) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 40f) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5f) == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5f) == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7.0", 7f) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5f));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", 7.5f));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.0", 7f));
     }
 
     @Test
@@ -91,10 +92,10 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, "7") > 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, "7.5") > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, "40") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40, "40"));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, "40") < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, "7.5") < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, "7") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7, "7"));
     }
 
     @Test
@@ -102,10 +103,10 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, "7") > 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, "7.5") > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, "40") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40L, "40"));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, "40") < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, "7.5") < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, "7") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7L, "7"));
     }
 
     @Test
@@ -113,12 +114,12 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40d, "7") > 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40.5d, "7.5") > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40d, "40") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40d, "40"));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7d, "40.5") < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5d, "40") < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5d, "7.5") == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5d, "7.5") == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.0d, "7") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7.5d, "7.5"));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7.5d, "7.5"));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7.0d, "7"));
     }
 
     @Test
@@ -126,135 +127,135 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40f, "7") > 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40.5f, "7.5") > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40f, "40") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40f, "40"));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7f, "40.5") < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5f, "40") < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5f, "7.5") == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5f, "7.5") == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.0f, "7") == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7.5f, "7.5"));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7.5f, "7.5"));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7.0f, "7"));
     }
 
     @Test
     public void testCompareIntegerInteger() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 7) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 40) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40, 40));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 40) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8, 40) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 7) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7, 7));
     }
 
     @Test
     public void testCompareLongLong() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 7L) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 40L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40L, 40L));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 40L) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8L, 40L) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 7L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7L, 7L));
     }
 
     @Test
     public void testCompareIntegerLong() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 7L) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 40L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40, 40L));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 40L) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8, 40L) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 7L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7, 7L));
     }
 
     @Test
     public void testCompareLongInteger() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 7) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 40) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40L, 40));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 40) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8L, 40) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 7) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7L, 7));
     }
 
     @Test
     public void testCompareDoubleInteger() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40.5d, 7) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40d, 40) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40d, 40));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5d, 40) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8d, 40) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7d, 7) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7d, 7));
     }
 
     @Test
     public void testCompareIntegerDouble() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 7.5d) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 40.0d) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40, 40.0d));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 40d) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8, 40d) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 7d) == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 7.0d) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7, 7d));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7, 7.0d));
     }
 
     @Test
     public void testCompareDoubleLong() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40.5d, 7L) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40d, 40L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40d, 40L));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5d, 40L) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8d, 40L) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7d, 7L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7d, 7L));
     }
 
     @Test
     public void testCompareLongDouble() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 7.5d) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 40d) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40L, 40d));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 40.5d) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8L, 40d) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 7d) == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 7.0d) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7L, 7d));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7L, 7.0d));
     }
 
     @Test
     public void testCompareFloatInteger() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40.5f, 7) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40f, 40) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40f, 40));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5f, 40) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8f, 40) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7f, 7) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7f, 7));
     }
 
     @Test
     public void testCompareIntegerFloat() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 7.5f) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40, 40f) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40, 40f));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 40.0f) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8, 40f) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, 7.0f) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7, 7.0f));
     }
 
     @Test
     public void testCompareFloatLong() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40.5f, 7L) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40f, 40L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40f, 40L));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7.5f, 40L) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8f, 40L) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7f, 7L) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7f, 7L));
     }
 
     @Test
     public void testCompareLongFloat() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 7.5f) > 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 40L, 40.0f) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 40L, 40.0f));
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 40f) < 0);
         assertTrue(ObjectHelper.typeCoerceCompare(tc, 8L, 40f) < 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 7f) == 0);
-        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, 7.0f) == 0);
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7L, 7f));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 7L, 7.0f));
     }
 
     @Test
