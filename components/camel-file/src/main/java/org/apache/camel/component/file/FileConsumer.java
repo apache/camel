@@ -115,9 +115,9 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             if (resumeStrategy != null) {
                 final ResumeAdapter adapter = setupResumeStrategy(gf);
 
-                if (adapter instanceof DirectoryEntriesResumeAdapter) {
+                if (adapter instanceof DirectoryEntriesResumeAdapter directoryEntriesResumeAdapter) {
                     LOG.trace("Running the resume process for file {}", file);
-                    if (((DirectoryEntriesResumeAdapter) adapter).resume(file)) {
+                    if (directoryEntriesResumeAdapter.resume(file)) {
                         LOG.trace("Skipping file {} because it has been marked previously consumed", file);
                         continue;
                     }
@@ -175,9 +175,9 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     private ResumeAdapter setupResumeStrategy(GenericFile<File> gf) {
         ResumeAdapter adapter = resumeStrategy.getAdapter();
         LOG.trace("Checking the resume adapter: {}", adapter);
-        if (adapter instanceof FileOffsetResumeAdapter) {
+        if (adapter instanceof FileOffsetResumeAdapter fileOffsetResumeAdapter) {
             LOG.trace("The resume adapter is for offsets: {}", adapter);
-            ((FileOffsetResumeAdapter) adapter).setResumePayload(gf);
+            fileOffsetResumeAdapter.setResumePayload(gf);
             adapter.resume();
         }
         return adapter;

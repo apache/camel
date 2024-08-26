@@ -278,8 +278,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 // if no charset and not in appending mode, then we can try
                 // using file directly (optimized)
                 final Object body = extractBodyFromExchange(exchange);
-                if (body instanceof File) {
-                    source = (File) body;
+                if (body instanceof File fileBody) {
+                    source = fileBody;
                     fileBased = true;
                 }
             }

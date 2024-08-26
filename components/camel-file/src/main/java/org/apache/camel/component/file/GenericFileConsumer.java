@@ -828,8 +828,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected void doInit() throws Exception {
         super.doInit();
         // inject CamelContext before starting as it may be needed
-        if (processStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) processStrategy).setCamelContext(getEndpoint().getCamelContext());
+        if (processStrategy instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(getEndpoint().getCamelContext());
         }
     }
 
