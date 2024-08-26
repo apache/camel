@@ -69,8 +69,8 @@ public final class ApiConsumerHelper {
             result = filteredMethods.get(0);
         } else {
             result = ApiMethodHelper.getHighestPriorityMethod(filteredMethods);
-            LOG.warn(String.format("Using highest priority operation %s from operations %s for endpoint %s",
-                    result, filteredMethods, endpoint.getEndpointUri()));
+            LOG.warn("Using highest priority operation {} from operations {} for endpoint {}", result, filteredMethods,
+                    endpoint.getEndpointUri());
         }
 
         return result;
