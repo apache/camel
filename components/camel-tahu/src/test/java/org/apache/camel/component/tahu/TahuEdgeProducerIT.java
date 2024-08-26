@@ -27,7 +27,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TahuEdgeProducerTest extends TahuTestSupport {
+public class TahuEdgeProducerIT extends TahuTestSupport {
 
     static enum EdgeNodeTestProfile {
 

@@ -49,9 +49,9 @@ import org.slf4j.LoggerFactory;
 
 @Disabled("Manual test for underlying TahuHostApplication implementation complies with Sparkplug B TCK for Host Applications")
 @SuppressWarnings("unused")
-public class TahuHostApplicationManualTest {
+public class TahuHostApplicationManualIT {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TahuHostApplicationManualTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TahuHostApplicationManualIT.class);
 
     @RegisterExtension
     public static SparkplugTCKService spTckService = new SparkplugTCKService();

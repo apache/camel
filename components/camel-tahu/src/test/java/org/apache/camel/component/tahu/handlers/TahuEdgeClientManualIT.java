@@ -56,9 +56,9 @@ import org.slf4j.LoggerFactory;
 
 @Disabled("Manual test for underlying TahuEdgeClient implementation complies with Sparkplug B TCK for Edge Nodes and Devices")
 @SuppressWarnings("unused")
-public class TahuEdgeClientManualTest {
+public class TahuEdgeClientManualIT {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TahuEdgeClientManualTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TahuEdgeClientManualIT.class);
 
     @RegisterExtension
     public static SparkplugTCKService spTckService = new SparkplugTCKService();

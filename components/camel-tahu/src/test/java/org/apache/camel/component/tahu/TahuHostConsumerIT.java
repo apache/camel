@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TahuHostConsumerTest extends TahuTestSupport {
+public class TahuHostConsumerIT extends TahuTestSupport {
 
     @Test
     public void hostSessionEstablishmentTest() throws Exception {

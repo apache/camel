@@ -36,6 +36,9 @@
     <description>Camel Eclipse Tahu support for Sparkplug B</description>
 
     <properties>
+        <!-- HiveMQ container exists only for x86-->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
