@@ -126,7 +126,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     private void createZipEntries(ZipOutputStream zos, String filepath) throws IOException {
         Iterator<Path> elements = Paths.get(filepath).iterator();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         while (elements.hasNext()) {
             Path path = elements.next();
