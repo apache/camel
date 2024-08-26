@@ -92,6 +92,24 @@ public class Aws2S3UriDsl(
   }
 
   /**
+   * If it is true, the S3 Object Body will be ignored completely if it is set to false, the S3
+   * Object will be put in the body. Setting this to true will override any behavior defined by
+   * includeBody option.
+   */
+  public fun ignoreBody(ignoreBody: String) {
+    it.property("ignoreBody", ignoreBody)
+  }
+
+  /**
+   * If it is true, the S3 Object Body will be ignored completely if it is set to false, the S3
+   * Object will be put in the body. Setting this to true will override any behavior defined by
+   * includeBody option.
+   */
+  public fun ignoreBody(ignoreBody: Boolean) {
+    it.property("ignoreBody", ignoreBody.toString())
+  }
+
+  /**
    * Set the need for overriding the endpoint. This option needs to be used in combination with the
    * uriEndpointOverride option
    */
@@ -234,24 +252,6 @@ public class Aws2S3UriDsl(
    */
   public fun fileName(fileName: String) {
     it.property("fileName", fileName)
-  }
-
-  /**
-   * If it is true, the S3 Object Body will be ignored completely if it is set to false, the S3
-   * Object will be put in the body. Setting this to true will override any behavior defined by
-   * includeBody option.
-   */
-  public fun ignoreBody(ignoreBody: String) {
-    it.property("ignoreBody", ignoreBody)
-  }
-
-  /**
-   * If it is true, the S3 Object Body will be ignored completely if it is set to false, the S3
-   * Object will be put in the body. Setting this to true will override any behavior defined by
-   * includeBody option.
-   */
-  public fun ignoreBody(ignoreBody: Boolean) {
-    it.property("ignoreBody", ignoreBody.toString())
   }
 
   /**

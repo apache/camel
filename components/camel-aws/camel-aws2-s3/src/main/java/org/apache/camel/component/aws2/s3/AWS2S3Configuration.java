@@ -85,7 +85,7 @@ public class AWS2S3Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private boolean ignoreBody;
     @UriParam(label = "producer",
               enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink")

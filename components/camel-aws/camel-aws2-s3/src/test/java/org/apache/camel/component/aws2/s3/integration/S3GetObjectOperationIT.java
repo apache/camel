@@ -30,8 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.utils.IoUtils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class S3GetObjectOperationIT extends Aws2S3Base {
 
@@ -40,6 +39,9 @@ public class S3GetObjectOperationIT extends Aws2S3Base {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    @EndpointInject("mock:result-ignore-body")
+    private MockEndpoint resultIgnoreBody;
 
     @Test
     public void sendIn() throws Exception {
@@ -69,6 +71,22 @@ public class S3GetObjectOperationIT extends Aws2S3Base {
         assertEquals("Camel rocks!", new String(IoUtils.toByteArray(resp.getBody(InputStream.class))));
         assertEquals("application/text", resp.getHeader(AWS2S3Constants.CONTENT_TYPE));
         assertNotNull(resp.getHeader(AWS2S3Constants.E_TAG));
+
+        resultIgnoreBody.expectedMessageCount(1);
+
+        template.request("direct:getObjectIgnoreBody", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, name.get());
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.getObject);
+            }
+        });
+
+        Message respIgnoreBody = resultIgnoreBody.getExchanges().get(0).getMessage();
+        assertNull(respIgnoreBody.getBody());
+        assertEquals("application/text", respIgnoreBody.getHeader(AWS2S3Constants.CONTENT_TYPE));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -78,11 +96,13 @@ public class S3GetObjectOperationIT extends Aws2S3Base {
             @Override
             public void configure() {
                 String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
+                String awsEndpointIgnoreBody = "aws2-s3://" + name.get() + "?autoCreateBucket=true&ignoreBody=true";
 
                 from("direct:putObject").to(awsEndpoint);
 
                 from("direct:getObject").to(awsEndpoint).to("mock:result");
 
+                from("direct:getObjectIgnoreBody").to(awsEndpointIgnoreBody).to("mock:result-ignore-body");
             }
         };
     }

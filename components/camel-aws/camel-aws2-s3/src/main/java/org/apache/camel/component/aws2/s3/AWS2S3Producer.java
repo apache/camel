@@ -524,7 +524,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 ResponseInputStream<GetObjectResponse> res
                         = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
-                message.setBody(res);
+                if (!getConfiguration().isIgnoreBody()) {
+                    message.setBody(res);
+                }
                 populateMetadata(res, message);
             }
         } else {
@@ -534,7 +536,9 @@ public class AWS2S3Producer extends DefaultProducer {
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
-            message.setBody(res);
+            if (!getConfiguration().isIgnoreBody()) {
+                message.setBody(res);
+            }
             populateMetadata(res, message);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
