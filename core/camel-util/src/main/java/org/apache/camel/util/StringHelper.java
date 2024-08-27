@@ -1153,25 +1153,33 @@ public final class StringHelper {
             return text;
         }
         Character prev = null;
-        Character next;
+
         char[] arr = text.toCharArray();
         StringBuilder answer = new StringBuilder(arr.length < 13 ? 16 : arr.length + 8);
 
         for (int i = 0; i < arr.length; i++) {
             char ch = arr[i];
-            if (i < arr.length - 1) {
-                next = arr[i + 1];
-            } else {
-                next = null;
-            }
+
             if (ch == '-' || ch == '_') {
                 answer.append("-");
-            } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
-                applyDashPrefix(prev, answer, ch);
-            } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
-                applyDashPrefix(prev, answer, ch);
             } else {
-                answer.append(Character.toLowerCase(ch));
+                if (Character.isUpperCase(ch) && prev != null) {
+                    Character next;
+
+                    if (i < arr.length - 1) {
+                        next = arr[i + 1];
+                    } else {
+                        next = null;
+                    }
+
+                    if (!Character.isUpperCase(prev) || next != null && Character.isLowerCase(next)) {
+                        applyDashPrefix(prev, answer, ch);
+                    } else {
+                        answer.append(Character.toLowerCase(ch));
+                    }
+                } else {
+                    answer.append(Character.toLowerCase(ch));
+                }
             }
             prev = ch;
         }
