@@ -8191,7 +8191,7 @@ Used to disable quotes. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets the quote which by default is.
+Sets the quote to use which by default is double-quote character.
 ]]>
             </xs:documentation>
           </xs:annotation>
