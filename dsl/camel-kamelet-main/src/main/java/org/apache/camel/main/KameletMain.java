@@ -67,6 +67,7 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.PromptPropertyPlaceholderSource;
 import org.apache.camel.main.download.StubBeanRepository;
+import org.apache.camel.main.download.TransactedDownloader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.reload.OpenApiGeneratorReloadStrategy;
@@ -452,6 +453,9 @@ public class KameletMain extends MainCommandLineSupport {
 
         // in case we use circuit breakers
         CircuitBreakerDownloader.registerDownloadReifiers();
+
+        // in case we use transacted
+        TransactedDownloader.registerDownloadReifiers(this);
 
         if (silent || "*".equals(stubPattern)) {
             // turn off auto-wiring when running in silent mode (or stub = *)
