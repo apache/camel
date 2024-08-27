@@ -96,7 +96,8 @@ public abstract class JBangTestSupport {
         TEST_PROFILE_PROP("application-test.properties", "/jbang/it/application-test.properties"),
         HELLO_NAME("helloName.xml", "/jbang/it/helloName.xml"),
         JOKE("joke.yaml", "/jbang/it/joke.yaml"),
-        MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml");
+        MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml"),
+        BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle");
 
         private String name;
         private String resPath;
