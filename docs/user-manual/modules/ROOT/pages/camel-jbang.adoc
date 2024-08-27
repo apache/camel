@@ -2069,8 +2069,6 @@ There is basic support for including regular Java source files together with Cam
 and let Camel JBang runtime compile the Java source. This means you can include smaller utility
 classes, POJOs, Camel Processors and whatnot that the application needs.
 
-IMPORTANT: The Java source files cannot use package names. This may change in the future.
-
 === Dependency Injection in Java classes
 
 When running Camel integrations with camel-jbang, then the runtime is `camel-main` based. This means
