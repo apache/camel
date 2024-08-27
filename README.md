@@ -44,6 +44,8 @@ The up to date list is available online at GitHub:
 
 * Examples: <https://github.com/apache/camel-examples/tree/main#welcome-to-the-apache-camel-examples>
 
+
+
 ## Getting Started
 
 To help you get started, try the following links:
