@@ -1152,11 +1152,11 @@ public final class StringHelper {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        StringBuilder answer = new StringBuilder(text.length() + 16);
-
         Character prev = null;
         Character next;
         char[] arr = text.toCharArray();
+        StringBuilder answer = new StringBuilder(arr.length < 13 ? 16 : arr.length + 8);
+
         for (int i = 0; i < arr.length; i++) {
             char ch = arr[i];
             if (i < arr.length - 1) {
