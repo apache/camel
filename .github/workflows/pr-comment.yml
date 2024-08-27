@@ -35,8 +35,6 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
-      - name: Check Permission
-        uses: ./.github/actions/check-user-permission
       - name: Retrieve sha
         id: pr
         env:
@@ -56,6 +54,8 @@ jobs:
         with:
           ref: ${{ env.pr_sha }}
           submodules: recursive
+      - name: Check Permission
+        uses: ./.github/actions/check-user-permission
       - uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
         with:
           issue-number: ${{ github.event.issue.number }}
