@@ -58,15 +58,18 @@ public final class AvailablePortFinder {
             AvailablePortFinder.this.release(this);
         }
 
+        @Override
         public String toString() {
             return Integer.toString(port);
         }
 
+        @Override
         public void beforeEach(ExtensionContext context) throws Exception {
             testClass = context.getTestClass().map(Class::getName).orElse(null);
             LOG.info("Registering port {} for test {}", port, testClass);
         }
 
+        @Override
         public void afterAll(ExtensionContext context) throws Exception {
             release();
         }
