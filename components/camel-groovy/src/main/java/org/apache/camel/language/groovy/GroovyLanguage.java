@@ -29,16 +29,18 @@ import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypedLanguageSupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 @Language("groovy")
-public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLanguage {
+public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     /**
      * In case the expression is referring to an external resource, it indicates whether it is still needed to load the
      * resource.
      */
     private final boolean loadExternalResource;
+
     /**
      * Cache used to stores the compiled scripts (aka their classes)
      */
@@ -51,6 +53,17 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
 
     public GroovyLanguage() {
         this(LRUCacheFactory.newLRUSoftCache(16, 1000, true), true);
+    }
+
+    @Override
+    public void start() {
+        // noop
+    }
+
+    @Override
+    public void stop() {
+        ServiceHelper.stopService(scriptCache.values());
+        scriptCache.clear();
     }
 
     private static final class GroovyClassService implements Service {
@@ -111,11 +124,9 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
 
     Class<Script> getScriptFromCache(String script) {
         final GroovyClassService cached = scriptCache.get(script);
-
         if (cached == null) {
             return null;
         }
-
         return cached.script;
     }
 
