@@ -549,16 +549,6 @@ public final class StringHelper {
     }
 
     /**
-     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
-     *
-     * @param  text the string
-     * @return      the string camel cased
-     */
-    public static String dashToCamelCase(final String text) {
-        return dashToCamelCase(text, false);
-    }
-
-    /**
      * Whether the string contains dashes or not
      *
      * @param  text the string to check
@@ -572,11 +562,46 @@ public final class StringHelper {
     /**
      * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
      *
-     * @param  text              the string
-     * @param  skipQuotedOrKeyed flag to skip converting within quoted or keyed text
-     * @return                   the string camel cased
+     * @param  text the string
+     * @return      the string camel cased
      */
-    public static String dashToCamelCase(final String text, boolean skipQuotedOrKeyed) {
+    public static String dashToCamelCase(final String text) {
+        if (text == null) {
+            return null;
+        }
+        if (!isDashed(text)) {
+            return text;
+        }
+
+        // there is at least 1 dash so the capacity can be shorter
+        int length = text.length();
+        StringBuilder sb = new StringBuilder(length - 1);
+        boolean upper = false;
+        for (int i = 0; i < length; i++) {
+            char c = text.charAt(i);
+
+            if (c == '-') {
+                upper = true;
+            } else {
+                if (upper) {
+                    c = Character.toUpperCase(c);
+                }
+                sb.append(c);
+                upper = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Converts the string from dash format into camel case, using the special for skip mode where we should keep text
+     * inside quotes or keys as-is. Where an input such as "camel.component.rabbitmq.args[queue.x-queue-type]" is
+     * transformed into camel.component.rabbitmq.args[queue.xQueueType]
+     *
+     * @param  text the string
+     * @return      the string camel cased
+     */
+    private static String skippingDashToCamelCase(final String text) {
         if (text == null) {
             return null;
         }
@@ -594,27 +619,25 @@ public final class StringHelper {
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
 
-            // special for skip mode where we should keep text inside quotes or keys as-is
-            if (skipQuotedOrKeyed) {
-                if (c == ']') {
-                    skip = false;
-                } else if (c == '[') {
-                    skip = true;
-                } else if (c == '\'') {
-                    singleQuotes++;
-                } else if (c == '"') {
-                    doubleQuotes++;
-                }
-                if (singleQuotes > 0) {
-                    skip = singleQuotes % 2 == 1;
-                }
-                if (doubleQuotes > 0) {
-                    skip = doubleQuotes % 2 == 1;
-                }
-                if (skip) {
-                    sb.append(c);
-                    continue;
-                }
+            if (c == ']') {
+                skip = false;
+            } else if (c == '[') {
+                skip = true;
+            } else if (c == '\'') {
+                singleQuotes++;
+            } else if (c == '"') {
+                doubleQuotes++;
+            }
+
+            if (singleQuotes > 0) {
+                skip = singleQuotes % 2 == 1;
+            }
+            if (doubleQuotes > 0) {
+                skip = doubleQuotes % 2 == 1;
+            }
+            if (skip) {
+                sb.append(c);
+                continue;
             }
 
             if (c == '-') {
@@ -628,6 +651,21 @@ public final class StringHelper {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
+     *
+     * @param  text              the string
+     * @param  skipQuotedOrKeyed flag to skip converting within a quoted or keyed text
+     * @return                   the string camel cased
+     */
+    public static String dashToCamelCase(final String text, boolean skipQuotedOrKeyed) {
+        if (!skipQuotedOrKeyed) {
+            return dashToCamelCase(text);
+        } else {
+            return skippingDashToCamelCase(text);
+        }
     }
 
     /**
