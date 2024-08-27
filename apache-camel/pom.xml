@@ -39,6 +39,7 @@
         <!-- we do not need remote resources in assembly -->
         <remoteresources.skip>true</remoteresources.skip>
         <tarLongFileMode>gnu</tarLongFileMode>
+        <enforcer.phase>none</enforcer.phase><!-- Save some time -->
     </properties>
 
     <repositories>

@@ -47,11 +47,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl-version}</version>
-        </dependency>
-        <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
             <version>${jakarta-xml-ws-api-version}</version>
@@ -112,15 +107,6 @@
             <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- needed by jetty http server to load class: org.jvnet.staxex.util.XMLStreamReaderToXMLStreamWriter -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-osgi</artifactId>
-            <version>${jaxb-osgi-version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

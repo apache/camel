@@ -45,6 +45,16 @@
             <groupId>com.prowidesoftware</groupId>
             <artifactId>pw-iso20022</artifactId>
             <version>${prowide-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
         </dependency>
 
         <!-- testing -->

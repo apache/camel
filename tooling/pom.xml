@@ -42,6 +42,7 @@
         <module>openapi-rest-dsl-generator</module>
         <module>maven</module>
         <module>camel-tooling-maven</module>
+        <module>enforcer-rules</module>
     </modules>
 
     <properties>

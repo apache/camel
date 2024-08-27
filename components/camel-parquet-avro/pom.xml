@@ -31,6 +31,10 @@
     <name>Camel :: Parquet Avro</name>
     <description>Camel ParquetAvro DataFormat</description>
 
+    <properties>
+        <enforcer.phase>none</enforcer.phase><!-- hadoop-common seems to require com.sun.xml.bind:jaxb-impl via com.github.pjfanning:jersey-json -->
+    </properties>
+
     <dependencies>
 
         <dependency>

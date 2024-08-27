@@ -47,18 +47,6 @@
             <artifactId>camel-xml-jaxp</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${jaxb-core-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl-version}</version>
-            <optional>true</optional>
-        </dependency>
-
         <!-- for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
