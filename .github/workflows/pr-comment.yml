@@ -26,7 +26,7 @@ permissions:
 jobs:
   pr_commented:
     name: PR comment
-    if: ${{ github.repository == 'apache/camel' && github.event.issue.pull_request && (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'COLLABORATOR') && startsWith(github.event.comment.body, '/component-test') }}
+    if: ${{ github.repository == 'apache/camel' && github.event.issue.pull_request && (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'CONTRIBUTOR') && startsWith(github.event.comment.body, '/component-test') }}
     permissions:
       pull-requests: write # to comment on a pull request
       actions: read # to download artifact
@@ -35,6 +35,8 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
+      - name: Check Permission
+        uses: actions-cool/check-user-permission@956b2e73cdfe3bcb819bb7225e490cb3b18fd76e
       - name: Retrieve sha
         id: pr
         env:
