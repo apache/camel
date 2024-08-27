@@ -137,6 +137,8 @@
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
         <invoker.skip>${skipTests}</invoker.skip>
+
+        <enforcer.phase>none</enforcer.phase><!-- We do not enforce with -Dquickly, the property is overridden in the full profile -->
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->
@@ -164,13 +166,21 @@
                 <executions>
                     <execution>
                         <id>enforce-maven-version</id>
-                        <phase>none
-                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>${enforcer.phase}</phase>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.5.0</version>
+                                </requireMavenVersion>
+                                <externalRules>
+                                    <location>${maven.multiModuleProjectDirectory}/tooling/enforcer-rules/src/main/resources/camel-banned-dependencies.xml</location>
+                                </externalRules>
+                            </rules>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>enforce-java-version</id>
-                        <phase>none
-                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>${enforcer.phase}</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -860,6 +870,9 @@
                     <name>!quickly</name>
                 </property>
             </activation>
+            <properties>
+                <enforcer.phase>validate</enforcer.phase><!-- We do not enforce with -Dquickly, but we enforce otherwise -->
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -872,25 +885,6 @@
                                     <goal>format</goal>
                                 </goals>
                                 <phase>process-sources</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>enforce-maven-version</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireMavenVersion>
-                                            <version>3.5.0</version>
-                                        </requireMavenVersion>
-                                    </rules>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

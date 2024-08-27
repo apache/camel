@@ -32,6 +32,10 @@
     <name>Camel :: All Components Sync point</name>
     <description>Depends on all components to ensure correct build ordering</description>
 
+    <properties>
+        <enforcer.phase>none</enforcer.phase><!-- We enforce all dependencies individuall, so there is no point enforcing here again -->
+    </properties>
+
     <repositories>
         <repository>
             <id>atlassian</id>

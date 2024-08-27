@@ -33,7 +33,9 @@
 
     <properties>
         <skipOnUnsupported>true</skipOnUnsupported>
+        <enforcer.phase>none</enforcer.phase><!-- Save some time -->
     </properties>
+
 
     <repositories>
         <repository>
