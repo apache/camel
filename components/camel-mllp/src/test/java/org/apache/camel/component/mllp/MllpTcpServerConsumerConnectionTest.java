@@ -137,8 +137,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         Awaitility.await().untilAsserted(() -> {
 
-            MllpJUnitResourceException ex = assertThrows(MllpJUnitResourceException.class, () ->
-                    mllpClient.checkConnection(),
+            MllpJUnitResourceException ex = assertThrows(MllpJUnitResourceException.class, () -> mllpClient.checkConnection(),
                     "The MllpClientResource should have thrown an exception when writing to the reset socket");
 
             assertEquals("checkConnection failed - read() returned END_OF_STREAM", ex.getMessage());
