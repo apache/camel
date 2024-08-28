@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.awaitility.Awaitility;
 
 import static org.apache.camel.component.mllp.MllpExceptionTestSupport.LOG_PHI_TRUE;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -139,6 +138,8 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         setExpectedCounts();
 
         mllpClient.connect();
+
+        Thread.sleep(5000);
         mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
     }
 
@@ -186,6 +187,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
             log.info("Expected exception reading response");
         }
         mllpClient.disconnect();
+        Thread.sleep(1000);
         mllpClient.connect();
 
         log.info("Sending TEST_MESSAGE_4");
@@ -241,22 +243,20 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         log.info("Sending first message");
         mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage(10001));
 
-        Awaitility.await().atMost(RECEIVE_TIMEOUT * 5, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> {
-            mllpClient.setSendEndOfBlock(true);
-            mllpClient.setSendEndOfData(true);
+        Thread.sleep(RECEIVE_TIMEOUT * 5);
 
-            try {
-                log.info("Attempting to send second message");
-                String acknowledgement
-                        = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10002));
-                assertEquals("", acknowledgement,
-                        "If the send doesn't throw an exception, the acknowledgement should be empty");
-            } catch (MllpJUnitResourceException expected) {
-                assertThat("If the send throws an exception, the cause should be a SocketException", expected.getCause(),
-                        instanceOf(SocketException.class));
-            }
-        });
+        mllpClient.setSendEndOfBlock(true);
+        mllpClient.setSendEndOfData(true);
+
+        try {
+            log.info("Attempting to send second message");
+            String acknowledgement
+                    = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10002));
+            assertEquals("", acknowledgement, "If the send doesn't throw an exception, the acknowledgement should be empty");
+        } catch (MllpJUnitResourceException expected) {
+            assertThat("If the send throws an exception, the cause should be a SocketException", expected.getCause(),
+                    instanceOf(SocketException.class));
+        }
 
         mllpClient.disconnect();
         mllpClient.connect();

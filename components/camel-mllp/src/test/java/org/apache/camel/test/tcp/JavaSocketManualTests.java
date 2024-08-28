@@ -26,13 +26,13 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.awaitility.Awaitility;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -286,15 +286,15 @@ public class JavaSocketManualTests {
             log.info("Client Socket read() timed-out before close");
         }
         clientSocket.getOutputStream().write(27);
+        log.info("Client Socket available() returned {} after close", clientSocket.getInputStream().available());
+        log.info("Client Socket read() returned {} after close", clientSocket.getInputStream().read());
+        // Javadoc for Socket says closing the InputStream will close the connection
+        clientSocket.getInputStream().close();
+        if (!clientSocket.isClosed()) {
+            log.warn("Closing input stream didn't close socket");
+            clientSocket.close();
+        }
         Awaitility.await().atMost(1000, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-            log.info("Client Socket available() returned {} after close", clientSocket.getInputStream().available());
-            log.info("Client Socket read() returned {} after close", clientSocket.getInputStream().read());
-            // Javadoc for Socket says closing the InputStream will close the connection
-            clientSocket.getInputStream().close();
-            if (!clientSocket.isClosed()) {
-                log.warn("Closing input stream didn't close socket");
-                clientSocket.close();
-            }
             assertTrue(clientSocket.isClosed());
         });
 
