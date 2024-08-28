@@ -137,9 +137,9 @@ public class RestBindingAdviceFactory {
             RestConfiguration config, String type, Class<?> typeClass, String outType, Class<?> outTypeClass, DataFormat json,
             DataFormat outJson)
             throws Exception {
+
         Class<?> clazz = null;
         boolean useList = false;
-
         if (typeClass != null) {
             useList = typeClass.isArray();
             clazz = useList ? typeClass.getComponentType() : typeClass;
@@ -155,29 +155,27 @@ public class RestBindingAdviceFactory {
             beanIntrospection.setProperty(camelContext, json, "useList",
                     useList);
         }
-
         setAdditionalConfiguration(camelContext, config, json, "json.in.");
 
-        Class<?> outClazz = null;
-        boolean outUseList = false;
-
-        if (outTypeClass != null) {
-            outUseList = outTypeClass.isArray();
-            outClazz = outUseList ? outTypeClass.getComponentType() : outTypeClass;
-        } else if (outType != null) {
-            outUseList = outType.endsWith("[]");
-            String typeName = outUseList ? outType.substring(0, outType.length() - 2) : outType;
-            outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+        if (outJson != null) {
+            Class<?> outClazz = null;
+            boolean outUseList = false;
+            if (outTypeClass != null) {
+                outUseList = outTypeClass.isArray();
+                outClazz = outUseList ? outTypeClass.getComponentType() : outTypeClass;
+            } else if (outType != null) {
+                outUseList = outType.endsWith("[]");
+                String typeName = outUseList ? outType.substring(0, outType.length() - 2) : outType;
+                outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            }
+            if (outClazz != null) {
+                beanIntrospection.setProperty(camelContext, outJson,
+                        "unmarshalType", outClazz);
+                beanIntrospection.setProperty(camelContext, outJson, "useList",
+                        outUseList);
+            }
+            setAdditionalConfiguration(camelContext, config, outJson, "json.out.");
         }
-
-        if (outClazz != null) {
-            beanIntrospection.setProperty(camelContext, outJson,
-                    "unmarshalType", outClazz);
-            beanIntrospection.setProperty(camelContext, outJson, "useList",
-                    outUseList);
-        }
-
-        setAdditionalConfiguration(camelContext, config, outJson, "json.out.");
     }
 
     protected static RestClientRequestValidator lookupRestClientRequestValidator(CamelContext camelContext) {
