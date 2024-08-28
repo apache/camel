@@ -34,7 +34,7 @@ import org.apache.camel.util.URISupport;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "poll")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PollDefinition extends NoOutputDefinition<PollDefinition> {
+public class PollDefinition extends NoOutputDefinition<PollDefinition> implements EndpointRequiredDefinition {
 
     @XmlTransient
     private String endpointUriToString;
