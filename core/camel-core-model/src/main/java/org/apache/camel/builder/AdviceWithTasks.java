@@ -25,17 +25,20 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.model.AdviceWithDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.EndpointRequiredDefinition;
+import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PipelineDefinition;
+import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +136,18 @@ public final class AdviceWithTasks {
             } else if (processor instanceof ToDynamicDefinition toDynamicDefinition) {
                 String uri = toDynamicDefinition.getUri();
                 return PatternHelper.matchPattern(uri, toUri);
+            } else if (processor instanceof EnrichDefinition enrichDefinition) {
+                var exp = enrichDefinition.getExpression();
+                if (exp != null) {
+                    String uri = exp.getExpression();
+                    return PatternHelper.matchPattern(uri, toUri);
+                }
+            } else if (processor instanceof PollEnrichDefinition pollEnrichDefinition) {
+                var exp = pollEnrichDefinition.getExpression();
+                if (exp != null) {
+                    String uri = exp.getExpression();
+                    return PatternHelper.matchPattern(uri, toUri);
+                }
             }
             return false;
         }
