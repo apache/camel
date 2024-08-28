@@ -1,0 +1,187 @@
+= LangChain4j Tools Component
+:doctitle: LangChain4j Tools
+:shortname: langchain4j-tools
+:artifactid: camel-langchain4j-tools
+:description: LangChain4j Tools and Function Calling Features
+:since: 4.8
+:supportlevel: Experimental
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: langchain4j-tools
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The LangChain4j Tools Component allows you to use function calling features from Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[LangChain4j].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-langchain4j-tools</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+.Producer
+----
+langchain4j-tools:toolSet[?options]
+----
+
+.Consumer
+----
+langchain4j-tools:toolSet[?options]
+----
+
+Where *toolSet* can be any string to uniquely identify the endpoint
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+include::spring-boot:partial$starter.adoc[]
+
+== Usage
+
+This component helps to use function-calling features from LLMs so that models can decide what functions (routes, in case of Camel)
+can be called (i.e.; routed).
+
+Consider, for instance, two consumer routes capable of query an user database by user ID or by social security number (SSN).
+
+.Queries user by ID
+[source, java]
+----
+from("langchain4j-tool:userInfo?tags=users&description=Query database by user ID")
+    .to("sql:SELECT name FROM users WHERE id = :#number");
+----
+
+.Queries user by SSN
+[source, java]
+----
+from("langchain4j-tool:userInfo?tags=users&description=Query database by user social security ID")
+    .to("sql:SELECT name FROM users WHERE ssn = :#ssn");
+----
+
+Now, consider a producer route that receives unstructured data as input. Such a route could consume
+this data, pass it to a LLM with function-calling capabilities (such as https://huggingface.co/meta-llama/Meta-Llama-3.1-8B[llama3.1],
+https://huggingface.co/ibm-granite/granite-20b-functioncalling[Granite Code 20b function calling, etc]) and have
+the model decide which route to call.
+
+Such a route could receive questions in english such as:
+
+- _"What is the name of the user with user ID 1?"_
+- _"What is the name of the user with SSN 34.400.96?"_
+
+.Produce
+[source, java]
+----
+from(source)
+    .to("langchain4j-tool:userInfo?tags=users");
+----
+
+=== Tool Tags
+
+Consumer routes must define tags that groups https://en.wikipedia.org/wiki/Set_theory[together]. The aforementioned routes would be
+part have the `users` tag. The `users` tag has two routes: `queryById` and `queryBySSN`
+
+=== Parameters
+
+The Tool Input parameter can be defined as an Endpoint multiValue option in the form of `parameter.<name>=<type>`,
+or via the endpoint option `camelToolParameter` for a programmatic approach.
+The parameters can be found as headers in the consumer route, in particular, if you define `parameter.userId=5`,
+in the consumer route `${header.userId}` can be used.
+
+.Producer and consumer example:
+[source, java]
+----
+from("direct:test")
+    .to("langchain4j-tools:test1?tags=users");
+
+from("langchain4j-chat:test1?tags=users&description=Query user database by user ID&parameter.userId=integer")
+    .to("sql:SELECT name FROM users WHERE id = :#userId");
+----
+
+.Usage example:
+[source, java]
+----
+List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new SystemMessage("""
+                You provide information about specific user name querying the database given a number.
+                """));
+        messages.add(new UserMessage("""
+                What is the name of the user 1?
+                """));
+
+        Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
+----
+
+=== Using a specific Model
+
+The Camel LangChain4j tools component provides an abstraction for interacting with various types of Large Language Models (LLMs)
+supported by https://github.com/langchain4j/langchain4j[LangChain4j].
+
+==== Integrating with specific LLM
+
+To integrate with a specific LLM, users should follow the steps described below, which explain
+how to integrate with OpenAI.
+
+Add the dependency for LangChain4j OpenAI support:
+
+.Example
+[source,xml]
+----
+<dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-open-ai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+Initialize the OpenAI Chat Language Model, and add it to the Camel Registry:
+
+[source, java]
+----
+ChatLanguageModel model = OpenAiChatModel.builder()
+                .apiKey("NO_API_KEY")
+                .modelName("llama3.1:latest")
+                .temperature(0.0)
+                .timeout(ofSeconds(60000))
+                .build();
+context.getRegistry().bind("chatModel", model);
+----
+
+Use the model in the Camel LangChain4j Chat Producer
+
+[source, java]
+----
+ from("direct:chat")
+      .to("langchain4j-tools:test?tags=users&chatModel=#chatModel");
+----
+
+[NOTE]
+====
+To switch to another Large Language Model and its corresponding dependency, replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
+====

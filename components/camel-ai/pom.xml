@@ -44,6 +44,7 @@
         <module>camel-pinecone</module>
         <module>camel-qdrant</module>
         <module>camel-langchain4j-tokenizer</module>
+        <module>camel-langchain4j-tools</module>
     </modules>
 
 </project>
