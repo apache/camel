@@ -362,7 +362,7 @@
         <minio-version>8.5.12</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>6.13.3</mockwebserver-version>
-        <mockito-version>5.12.0</mockito-version>
+        <mockito-version>5.13.0</mockito-version>
         <mongo-java-driver-version>5.1.3</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.17.0</msal4j-version>
