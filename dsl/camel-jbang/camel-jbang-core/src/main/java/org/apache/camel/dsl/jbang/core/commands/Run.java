@@ -906,7 +906,7 @@ public class Run extends CamelCommand {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "quarkus:dev");
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "package", "quarkus:" + (dev ? "dev" : "run"));
 
         if (background) {
             Process p = pb.start();
