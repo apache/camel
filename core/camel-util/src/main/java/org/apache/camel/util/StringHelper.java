@@ -555,8 +555,7 @@ public final class StringHelper {
      * @return      true if it contains dashes or false otherwise
      */
     public static boolean isDashed(String text) {
-        int length = text.length();
-        return length != 0 && text.indexOf('-') != -1;
+        return !text.isEmpty() && text.indexOf('-') != -1;
     }
 
     /**
