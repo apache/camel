@@ -640,10 +640,11 @@ public class KameletMain extends MainCommandLineSupport {
             // reloader
             if (sourceDir != null) {
                 if (console || health) {
-                    // allow to upload source via http when HTTP console enabled
+                    // allow to upload/download source (source-dir is intended to be dynamic) via http when HTTP console enabled
                     configure().httpServer().withEnabled(true);
                     configure().httpServer().withUploadEnabled(true);
                     configure().httpServer().withUploadSourceDir(sourceDir);
+                    configure().httpServer().withDownloadEnabled(true);
                 }
                 RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
                 reloader.setPattern("*");
