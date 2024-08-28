@@ -1192,7 +1192,7 @@ public final class StringHelper {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        Character prev = null;
+        char prev = 0;
 
         char[] arr = text.toCharArray();
         StringBuilder answer = new StringBuilder(arr.length < 13 ? 16 : arr.length + 8);
@@ -1203,16 +1203,16 @@ public final class StringHelper {
             if (ch == '-' || ch == '_') {
                 answer.append("-");
             } else {
-                if (Character.isUpperCase(ch) && prev != null) {
-                    Character next;
+                if (Character.isUpperCase(ch) && prev != 0) {
+                    char next;
 
                     if (i < arr.length - 1) {
                         next = arr[i + 1];
                     } else {
-                        next = null;
+                        next = 0;
                     }
 
-                    if (!Character.isUpperCase(prev) || next != null && Character.isLowerCase(next)) {
+                    if (!Character.isUpperCase(prev) || next != 0 && Character.isLowerCase(next)) {
                         applyDashPrefix(prev, answer, ch);
                     } else {
                         answer.append(Character.toLowerCase(ch));
@@ -1227,7 +1227,7 @@ public final class StringHelper {
         return answer.toString();
     }
 
-    private static void applyDashPrefix(Character prev, StringBuilder answer, char ch) {
+    private static void applyDashPrefix(char prev, StringBuilder answer, char ch) {
         if (prev != '-' && prev != '_') {
             answer.append("-");
         }
