@@ -786,6 +786,13 @@ public class KameletMain extends MainCommandLineSupport {
         }
         routesLoader.setIgnoreLoadingError(this.mainConfigurationProperties.isRoutesCollectorIgnoreLoadingError());
 
+        // routes loader should ignore unknown extensions when using --source-dir as users may drop files
+        // in this folder that are not Camel routes but resource files.
+        String sourceDir = getInitialProperties().getProperty("camel.jbang.sourceDir");
+        if (sourceDir != null) {
+            routesLoader.setIgnoreUnknownExtensions(true);
+        }
+
         // use resolvers that can auto downloaded
         ecc.addContextPlugin(RoutesLoader.class, routesLoader);
     }

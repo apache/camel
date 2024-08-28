@@ -34,6 +34,7 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
     private final DependencyDownloader downloader;
     private final String camelVersion;
     private final String kameletsVersion;
+    private boolean ignoreUnknownExtensions;
 
     public DependencyDownloaderRoutesLoader(CamelContext camelContext) {
         this(camelContext, null, null);
@@ -44,6 +45,14 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.camelVersion = camelVersion;
         this.kameletsVersion = kameletsVersion;
+    }
+
+    public boolean isIgnoreUnknownExtensions() {
+        return ignoreUnknownExtensions;
+    }
+
+    public void setIgnoreUnknownExtensions(boolean ignoreUnknownExtensions) {
+        this.ignoreUnknownExtensions = ignoreUnknownExtensions;
     }
 
     @Override
@@ -96,6 +105,9 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
                 // allows for custom initialization
                 initRoutesBuilderLoader(loader);
                 ServiceHelper.startService(loader);
+            } else if (ignoreUnknownExtensions) {
+                // use a dummy loader to avoid camel to fail
+                loader = new NoopRoutesBuilderLoader(extension);
             }
         }
         return loader;
