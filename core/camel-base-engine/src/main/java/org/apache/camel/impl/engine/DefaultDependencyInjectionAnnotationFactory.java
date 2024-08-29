@@ -61,8 +61,7 @@ public class DefaultDependencyInjectionAnnotationFactory
                 }
             }
             CamelContextAware.trySetCamelContext(bean, camelContext);
-            if (bean instanceof Supplier) {
-                Supplier<Object> sup = (Supplier<Object>) bean;
+            if (bean instanceof Supplier<?> sup) {
                 camelContext.getRegistry().bind(id, beanType, sup);
             } else {
                 camelContext.getRegistry().bind(id, bean);
