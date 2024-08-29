@@ -22,14 +22,17 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "CAMEL-21143: requires too much resources and blocks the CI")
 public class TahuEdgeProducerIT extends TahuTestSupport {
 
-    static enum EdgeNodeTestProfile {
+    enum EdgeNodeTestProfile {
 
         SESSION_ESTABLISHMENT_TEST("edge SessionEstablishmentTest IamHost G2 E2 D2", false, 0),
         SESSION_TERMINATION_TEST("edge SessionTerminationTest IamHost G2 E2 D2", false, 3),
