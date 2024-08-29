@@ -18,37 +18,23 @@
 -->
 <configuration>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d %.-1level [%-15.15t] %40.40logger{40} %8.8marker %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>target/camel-tahu-test.log</file>
+        <append>true</append>
         <encoder>
             <pattern>%d [%-15.15t] %-5p %-30.30c{1} - %m%n</pattern>
         </encoder>
     </appender>
 
-    <!-- <logger name="org.apache.camel.component.tahu" level="TRACE" /> -->
-
-    <!-- <logger name="org.apache.camel.component.tahu.TahuEdgeProducer" level="TRACE" /> -->
-
-    <!-- <logger name="org.apache.camel.component.tahu.TahuEdgeClient" level="TRACE" /> -->
-
-    <!-- <logger name="org.apache.camel.component.tahu.TahuTestSupport" level="DEBUG" /> -->
-
-    <!-- <logger name="org.apache.camel.component.tahu" level="DEBUG" /> -->
-
-    <logger name="org.apache.camel.builder.NotifyBuilder" level="ERROR" />
-
     <logger name="org.eclipse.tahu.edge" level="OFF" />
     <logger name="org.eclipse.tahu.mqtt" level="OFF" />
 
+    <logger name="org.apache.camel.component.tahu" level="DEBUG" additivity="false" >
+        <appender-ref ref="FILE" />
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" />
     </root>
 
 </configuration>
