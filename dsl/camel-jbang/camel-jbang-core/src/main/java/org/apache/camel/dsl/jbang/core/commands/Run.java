@@ -319,6 +319,7 @@ public class Run extends CamelCommand {
     protected Integer runExport(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.exportRun = true;
+        this.ignoreLoadingError = ignoreLoadingError;
         return run();
     }
 
@@ -891,6 +892,7 @@ public class Run extends CamelCommand {
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
+        eq.ignoreLoadingError = this.ignoreLoadingError;
 
         // run export
         int exit = eq.export();
@@ -962,6 +964,7 @@ public class Run extends CamelCommand {
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
+        eq.ignoreLoadingError = this.ignoreLoadingError;
 
         // run export
         int exit = eq.export();

@@ -307,6 +307,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.springBootVersion = springBootVersion;
         run.kameletsVersion = kameletsVersion;
         run.localKameletDir = localKameletDir;
+        run.ignoreLoadingError = ignoreLoadingError;
         return run.runExport(ignoreLoadingError);
     }
 
