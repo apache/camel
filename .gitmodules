@@ -1,3 +1,0 @@
-[submodule ".github/actions/check-user-permission"]
-	path = .github/actions/check-user-permission
-	url = git@github.com:actions-cool/check-user-permission.git

@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Check Permission
-        uses: ./.github/actions/check-user-permission
+        uses: actions-cool/check-user-permission@956b2e73cdfe3bcb819bb7225e490cb3b18fd76e
       - name: Retrieve sha
         id: pr
         env:
