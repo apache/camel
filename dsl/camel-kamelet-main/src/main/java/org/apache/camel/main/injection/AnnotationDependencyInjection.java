@@ -159,7 +159,7 @@ public final class AnnotationDependencyInjection {
                 camelContext.getRegistry().unbind(beanName);
                 // use dependency injection factory to perform the task of binding the bean to registry
                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                        .createBindToRegistryFactory(name, instance, clazz, beanName, false);
+                        .createBindToRegistryFactory(name, instance, clazz, beanName, false, bir.initMethod(), bir.destroyMethod());
                 task.run();
             } else {
                 if (bir != null || cfg != null || instance instanceof CamelConfiguration) {

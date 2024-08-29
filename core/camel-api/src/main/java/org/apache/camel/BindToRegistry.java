@@ -55,11 +55,17 @@ public @interface BindToRegistry {
 
     /**
      * The optional name of a method to call on the bean instance during initialization.
+     *
+     * If the bean is an {@link Service} instance then Camel will automatically use start as init method, if none
+     * explicit configured.
      */
     String initMethod() default "";
 
     /**
      * The optional name of a method to call on the bean instance during destruction.
+     *
+     * If the bean is an {@link Service} instance then Camel will automatically use stop as destroy method, if none
+     * explicit configured.
      */
     String destroyMethod() default "";
 }

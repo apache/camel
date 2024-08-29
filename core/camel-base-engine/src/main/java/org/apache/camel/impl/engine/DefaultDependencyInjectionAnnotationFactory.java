@@ -68,7 +68,11 @@ public class DefaultDependencyInjectionAnnotationFactory
                 Supplier<Object> sup = (Supplier<Object>) bean;
                 camelContext.getRegistry().bind(id, beanType, sup);
             } else {
-                camelContext.getRegistry().bind(id, bean, initMethod, destroyMethod);
+                if (initMethod != null || destroyMethod != null) {
+                    camelContext.getRegistry().bind(id, bean, initMethod, destroyMethod);
+                } else {
+                    camelContext.getRegistry().bind(id, bean);
+                }
             }
         };
     }

@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -117,13 +118,22 @@ public class PackageScanHelper {
                                 }
                                 Object bean = entry.getValue();
                                 String beanName = c.getName();
+                                // special for init method as we need to defer calling it at a late phase
+                                String initMethod = ann.initMethod();
+                                if (isEmpty(initMethod) && bean instanceof Service) {
+                                    initMethod = "start";
+                                }
+                                String destroyMethod = ann.destroyMethod();
+                                if (isEmpty(destroyMethod) && bean instanceof Service) {
+                                    destroyMethod = "stop";
+                                }
                                 // - bind to registry if @org.apache.camel.BindToRegistry is present
                                 // use dependency injection factory to perform the task of binding the bean to registry
                                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, ann.destroyMethod());
+                                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, destroyMethod);
                                 // defer calling init methods until dependency injection in phase-4 is complete
-                                if (isNotEmpty(ann.initMethod())) {
-                                    initMethods.put(bean, ann.initMethod());
+                                if (isNotEmpty(initMethod)) {
+                                    initMethods.put(bean, initMethod);
                                 }
                                 task.run();
                             }
