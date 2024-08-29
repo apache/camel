@@ -26,6 +26,8 @@ jbang app install camel@apache/camel
 This will install Apache Camel as the `camel` command within JBang, meaning that you can run Camel from the command line
 by just executing `camel` (see more next).
 
+Note: It requires an access to internet, in case of the use of a proxy, please ensure that the proxy is configured for your system. If Camel JBang is not working with your current configuration, please look to https://www.jbang.dev/documentation/guide/latest/configuration.html#proxy-configuration[Proxy configuration in JBang documentation].
+
 == Container Image
 
 There is also a container image available in https://hub.docker.com/r/apache/camel-jbang/[Dockerhub]
