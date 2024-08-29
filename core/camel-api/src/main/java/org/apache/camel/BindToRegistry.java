@@ -48,8 +48,8 @@ public @interface BindToRegistry {
     boolean beanPostProcess() default false;
 
     /**
-     * Whether to create the bean instance lazy (on-demand) instead of creating eager.
-     * Using lazy can be useful when you only need to create beans if they are explicit in-use.
+     * Whether to create the bean instance lazy (on-demand) instead of creating eager. Using lazy can be useful when you
+     * only need to create beans if they are explicit in-use.
      */
     boolean lazy() default false;
 }

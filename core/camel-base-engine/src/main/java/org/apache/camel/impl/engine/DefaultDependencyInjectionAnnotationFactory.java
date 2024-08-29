@@ -48,6 +48,7 @@ public class DefaultDependencyInjectionAnnotationFactory
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Runnable createBindToRegistryFactory(
             String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess) {
         return () -> {
@@ -61,7 +62,9 @@ public class DefaultDependencyInjectionAnnotationFactory
                 }
             }
             CamelContextAware.trySetCamelContext(bean, camelContext);
-            if (bean instanceof Supplier<?> sup) {
+            if (bean instanceof Supplier) {
+                // must be Supplier<Object> to ensure correct binding
+                Supplier<Object> sup = (Supplier<Object>) bean;
                 camelContext.getRegistry().bind(id, beanType, sup);
             } else {
                 camelContext.getRegistry().bind(id, bean);
