@@ -6,6 +6,11 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.7 to 4.8
 
+=== camel-api
+
+Added `void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod)` method to `org.apache.camel.spi.Registry`
+to support init and destroy method on beans.
+
 === camel-core
 
 The `UseOriginalAggregationStrategy` class will now propagate the caught exception stored in the exchange property `Exchange.EXCEPTION_CAUGHT`
