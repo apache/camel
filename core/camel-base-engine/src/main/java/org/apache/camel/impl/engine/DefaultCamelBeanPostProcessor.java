@@ -589,7 +589,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             postProcess = false; // we do post-processing lazy
             value = (Supplier<Object>) () -> {
                 Object answer = getPostProcessorHelper()
-                        .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName);
+                        .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName, "BindToRegistry");
                 if (answer != null && beanPostProcess) {
                     try {
                         final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(camelContext);
@@ -603,7 +603,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             };
         } else {
             value = getPostProcessorHelper()
-                    .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName);
+                    .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName, "BindToRegistry");
         }
         if (value != null) {
             if (unbindEnabled) {

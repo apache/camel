@@ -520,11 +520,11 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     public Object getInjectionBeanMethodValue(
             CamelContext context,
-            Method method, Object bean, String beanName) {
+            Method method, Object bean, String beanName, String annotationName) {
         Class<?> returnType = method.getReturnType();
         if (returnType == Void.TYPE) {
             throw new IllegalArgumentException(
-                    "@BindToRegistry on class: " + method.getDeclaringClass()
+                    "@" + annotationName + " on class: " + method.getDeclaringClass()
                                                + " method: " + method.getName() + " with void return type is not allowed");
         }
 

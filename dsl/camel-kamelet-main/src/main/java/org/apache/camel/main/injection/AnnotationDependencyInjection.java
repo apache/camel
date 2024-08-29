@@ -251,7 +251,7 @@ public final class AnnotationDependencyInjection {
         public void onMethodInject(Method method, Object bean, String beanName) {
             Bean bi = method.getAnnotation(Bean.class);
             if (bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
+                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Bean");
                 if (instance != null) {
                     String name = method.getName();
                     if (bi.name().length > 0) {
@@ -323,7 +323,7 @@ public final class AnnotationDependencyInjection {
             Produces produces = method.getAnnotation(Produces.class);
             Named bi = method.getAnnotation(Named.class);
             if (produces != null || bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
+                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Produces");
                 if (instance != null) {
                     String name = method.getName();
                     if (bi != null && !bi.value().isBlank()) {
