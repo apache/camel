@@ -584,9 +584,9 @@ public final class StringHelper {
             } else {
                 if (upper) {
                     c = Character.toUpperCase(c);
+                    upper = false;
                 }
                 sb.append(c);
-                upper = false;
             }
         }
         return sb.toString();
