@@ -37,7 +37,10 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.function.Suppliers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default {@link Registry} which supports using a given first-choice repository to lookup the beans, such as
@@ -49,12 +52,14 @@ import org.apache.camel.util.function.Suppliers;
  */
 public class DefaultRegistry extends ServiceSupport implements Registry, LocalBeanRepositoryAware, CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultRegistry.class);
     protected CamelContext camelContext;
     protected final ThreadLocal<BeanRepository> localRepository = new ThreadLocal<>();
     protected volatile boolean localRepositoryEnabled; // flag to keep track if local is in use or not
     protected List<BeanRepository> repositories;
     protected Registry fallbackRegistry = new SimpleRegistry();
     protected Registry supplierRegistry = new SupplierRegistry();
+    protected final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
 
     /**
      * Creates a default registry that uses {@link SimpleRegistry} as the fallback registry. The fallback registry can
@@ -183,6 +188,26 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     }
 
     @Override
+    public void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod)
+            throws RuntimeCamelException {
+        if (bean != null) {
+            // automatic inject camel context in bean if its aware
+            CamelContextAware.trySetCamelContext(bean, camelContext);
+            if (initMethod != null) {
+                try {
+                    org.apache.camel.support.ObjectHelper.invokeMethodSafe(initMethod, bean);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            }
+            fallbackRegistry.bind(id, type, bean);
+            if (destroyMethod != null) {
+                beansToDestroy.put(id, new KeyValueHolder<>(bean, destroyMethod));
+            }
+        }
+    }
+
+    @Override
     public void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
         if (bean != null) {
             // wrap in cached supplier (memorize)
@@ -201,6 +226,21 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     public void unbind(String id) {
         supplierRegistry.unbind(id);
         fallbackRegistry.unbind(id);
+        destroyBean(id, true);
+    }
+
+    protected void destroyBean(String name, boolean remove) {
+        var holder = remove ? beansToDestroy.remove(name) : beansToDestroy.get(name);
+        if (holder != null) {
+            String destroyMethod = holder.getValue();
+            Object target = holder.getKey();
+            try {
+                org.apache.camel.support.ObjectHelper.invokeMethodSafe(destroyMethod, target);
+            } catch (Exception e) {
+                LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
+                        destroyMethod, target, e.getMessage(), e);
+            }
+        }
     }
 
     @Override
@@ -391,5 +431,10 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
             IOHelper.close(closeable);
         }
         ServiceHelper.stopAndShutdownServices(supplierRegistry, fallbackRegistry);
+        // beans should trigger destroy methods on shutdown
+        for (String name : beansToDestroy.keySet()) {
+            destroyBean(name, false);
+        }
+        beansToDestroy.clear();
     }
 }
