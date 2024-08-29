@@ -17,13 +17,16 @@
 package org.apache.camel.support.scan;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
@@ -55,18 +58,55 @@ public class PackageScanHelper {
                 Injector injector = camelContext.getInjector();
                 if (scanner != null && injector != null) {
                     Map<Class<?>, Object> created = new HashMap<>();
+                    Set<Class<?>> lazy = new HashSet<>();
                     for (String pkg : packages) {
                         Set<Class<?>> classes = scanner.findAnnotated(BindToRegistry.class, pkg);
                         for (Class<?> c : classes) {
-                            // phase-1: create empty bean instance without any bean post-processing
-                            Object b = injector.newInstance(c, false);
-                            if (b != null) {
-                                created.put(c, b);
+                            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
+                            if (ann != null && ann.lazy()) {
+                                // phase-1: remember lazy creating beans
+                                lazy.add(c);
+                            } else {
+                                // phase-1: create empty bean instance without any bean post-processing
+                                Object b = injector.newInstance(c, false);
+                                if (b != null) {
+                                    created.put(c, b);
+                                }
+                            }
+                        }
+                        for (Class<?> c : lazy) {
+                            // phase-2: special for lazy beans that must be registered and created on-demand
+                            BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
+                            if (ann != null) {
+                                String name = ann.value();
+                                if (isEmpty(name)) {
+                                    name = c.getSimpleName();
+                                }
+                                String beanName = c.getName();
+                                Object bean = (Supplier<Object>) () -> {
+                                    Object answer = injector.newInstance(c);
+                                    if (answer != null && ann.beanPostProcess()) {
+                                        try {
+                                            final CamelBeanPostProcessor beanPostProcessor
+                                                    = PluginHelper.getBeanPostProcessor(camelContext);
+                                            beanPostProcessor.postProcessBeforeInitialization(answer, beanName);
+                                            beanPostProcessor.postProcessAfterInitialization(answer, beanName);
+                                        } catch (Exception e) {
+                                            throw RuntimeCamelException.wrapRuntimeException(e);
+                                        }
+                                    }
+                                    return answer;
+                                };
+                                // - bind to registry if @org.apache.camel.BindToRegistry is present
+                                // use dependency injection factory to perform the task of binding the bean to registry
+                                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
+                                        .createBindToRegistryFactory(name, bean, c, beanName, false);
+                                task.run();
                             }
                         }
                         for (Entry<Class<?>, Object> entry : created.entrySet()) {
                             Class<?> c = entry.getKey();
-                            // phase-2: discover any created beans has @BindToRegistry to register them eager
+                            // phase-3: discover any created beans has @BindToRegistry to register them eager
                             BindToRegistry ann = c.getAnnotation(BindToRegistry.class);
                             if (ann != null) {
                                 String name = ann.value();
@@ -78,13 +118,13 @@ public class PackageScanHelper {
                                 // - bind to registry if @org.apache.camel.BindToRegistry is present
                                 // use dependency injection factory to perform the task of binding the bean to registry
                                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                                        .createBindToRegistryFactory(name, bean, beanName, false);
+                                        .createBindToRegistryFactory(name, bean, c, beanName, false);
                                 task.run();
                             }
                         }
                         for (Entry<Class<?>, Object> entry : created.entrySet()) {
                             Class<?> c = entry.getKey();
-                            // phase-3: now we can do bean post-processing on the created beans
+                            // phase-4: now we can do bean post-processing on the created beans
                             Object bean = entry.getValue();
                             String beanName = c.getName();
                             try {
