@@ -406,7 +406,8 @@ camel run hello.java --dev
 ----
 
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
-such as JVM class loading issues, then you may need to restart the integration.
+such as JVM class loading issues, then you may need to restart the integration. Java files can not
+be supported in Spring Boot runtime since they have to be recompiled to trigger a restart.
 
 You can also run dev mode when running Camel with `--source-dir`, such as:
 
