@@ -30,10 +30,13 @@ public interface CamelDependencyInjectionAnnotationFactory {
      * @param  beanName        the bean name
      * @param  beanType        the bean type (optional)
      * @param  beanPostProcess whether bean post processor should be performed
+     * @param  initMethod      optional init method (invoked at bind)
+     * @param  destroyMethod   optional destroy method (invoked at unbind or stopping Camel)
      * @return                 the created task to use for binding the bean
      */
     Runnable createBindToRegistryFactory(
             String id, Object bean, Class<?> beanType,
-            String beanName, boolean beanPostProcess);
+            String beanName, boolean beanPostProcess,
+            String initMethod, String destroyMethod);
 
 }

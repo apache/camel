@@ -43,6 +43,23 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean to the repository (if possible).
+     *
+     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     *
+     * @param  id                    the id of the bean
+     * @param  bean                  the bean
+     * @param  initMethod            optional init method (invoked at bind)
+     * @param  destroyMethod         optional destroy method (invoked at unbind or stopping Camel)
+     * @throws RuntimeCamelException is thrown if binding is not possible
+     */
+    default void bind(String id, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException {
+        if (bean != null) {
+            bind(id, bean.getClass(), bean, initMethod, destroyMethod);
+        }
+    }
+
+    /**
+     * Binds the bean to the repository (if possible).
      * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
@@ -54,6 +71,22 @@ public interface Registry extends BeanRepository {
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
     void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException;
+
+    /**
+     * Binds the bean to the repository (if possible).
+     * <p/>
+     * Binding by id and type allows to bind multiple entries with the same id but with different type.
+     *
+     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     *
+     * @param  id                    the id of the bean
+     * @param  type                  the type of the bean to associate the binding
+     * @param  bean                  the bean
+     * @param  initMethod            optional init method (invoked at bind)
+     * @param  destroyMethod         optional destroy method (invoked at unbind or stopping Camel)
+     * @throws RuntimeCamelException is thrown if binding is not possible
+     */
+    void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException;
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).

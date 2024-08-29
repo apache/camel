@@ -33,6 +33,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Helper for Camel package scanning.
@@ -58,6 +59,7 @@ public class PackageScanHelper {
                 Injector injector = camelContext.getInjector();
                 if (scanner != null && injector != null) {
                     Map<Class<?>, Object> created = new HashMap<>();
+                    Map<Object, String> initMethods = new HashMap<>();
                     Set<Class<?>> lazy = new HashSet<>();
                     for (String pkg : packages) {
                         Set<Class<?>> classes = scanner.findAnnotated(BindToRegistry.class, pkg);
@@ -100,7 +102,7 @@ public class PackageScanHelper {
                                 // - bind to registry if @org.apache.camel.BindToRegistry is present
                                 // use dependency injection factory to perform the task of binding the bean to registry
                                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                                        .createBindToRegistryFactory(name, bean, c, beanName, false);
+                                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, null);
                                 task.run();
                             }
                         }
@@ -118,7 +120,11 @@ public class PackageScanHelper {
                                 // - bind to registry if @org.apache.camel.BindToRegistry is present
                                 // use dependency injection factory to perform the task of binding the bean to registry
                                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                                        .createBindToRegistryFactory(name, bean, c, beanName, false);
+                                        .createBindToRegistryFactory(name, bean, c, beanName, false, null, ann.destroyMethod());
+                                // defer calling init methods until dependency injection in phase-4 is complete
+                                if (isNotEmpty(ann.initMethod())) {
+                                    initMethods.put(bean, ann.initMethod());
+                                }
                                 task.run();
                             }
                         }
@@ -136,6 +142,16 @@ public class PackageScanHelper {
                                         beanName);
                             } catch (Exception e) {
                                 throw new RuntimeCamelException("Error post-processing bean: " + beanName, e);
+                            }
+                        }
+                        for (Entry<Object, String> entry : initMethods.entrySet()) {
+                            Object bean = entry.getKey();
+                            String method = entry.getValue();
+                            // phase-5: now call init method on created beans
+                            try {
+                                org.apache.camel.support.ObjectHelper.invokeMethodSafe(method, bean);
+                            } catch (Exception e) {
+                                throw RuntimeCamelException.wrapRuntimeCamelException(e);
                             }
                         }
                     }

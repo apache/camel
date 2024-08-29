@@ -50,7 +50,8 @@ public class DefaultDependencyInjectionAnnotationFactory
     @Override
     @SuppressWarnings("unchecked")
     public Runnable createBindToRegistryFactory(
-            String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess) {
+            String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess,
+            String initMethod, String destroyMethod) {
         return () -> {
             if (beanPostProcess) {
                 try {
@@ -67,7 +68,7 @@ public class DefaultDependencyInjectionAnnotationFactory
                 Supplier<Object> sup = (Supplier<Object>) bean;
                 camelContext.getRegistry().bind(id, beanType, sup);
             } else {
-                camelContext.getRegistry().bind(id, bean);
+                camelContext.getRegistry().bind(id, bean, initMethod, destroyMethod);
             }
         };
     }

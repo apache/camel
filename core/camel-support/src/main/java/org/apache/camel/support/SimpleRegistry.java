@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 
 /**
@@ -104,6 +105,12 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
         if (bean != null) {
             computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
         }
+    }
+
+    @Override
+    public void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod)
+            throws RuntimeCamelException {
+        throw new UnsupportedOperationException("Use DefaultRegistry");
     }
 
     @Override

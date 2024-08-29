@@ -52,4 +52,14 @@ public @interface BindToRegistry {
      * only need to create beans if they are explicit in-use.
      */
     boolean lazy() default false;
+
+    /**
+     * The optional name of a method to call on the bean instance during initialization.
+     */
+    String initMethod() default "";
+
+    /**
+     * The optional name of a method to call on the bean instance during destruction.
+     */
+    String destroyMethod() default "";
 }
