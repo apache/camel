@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
@@ -138,8 +139,9 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
             Class<?> clazz = result.getClass(className);
             if (clazz != null) {
+                BindToRegistry bir = clazz.getAnnotation(BindToRegistry.class);
                 boolean skip = clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())
-                        || Modifier.isPrivate(clazz.getModifiers());
+                        || Modifier.isPrivate(clazz.getModifiers()) || (bir != null && bir.lazy());
                 // must have a default no-arg constructor to be able to create an instance
                 boolean ctr = ObjectHelper.hasDefaultNoArgConstructor(clazz);
                 if (ctr && !skip) {
