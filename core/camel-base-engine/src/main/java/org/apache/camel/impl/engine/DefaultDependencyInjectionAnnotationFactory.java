@@ -64,7 +64,6 @@ public class DefaultDependencyInjectionAnnotationFactory
             }
             CamelContextAware.trySetCamelContext(bean, camelContext);
             if (bean instanceof Supplier) {
-                // TODO: supplier/lazy does not support init/destroy
                 // must be Supplier<Object> to ensure correct binding
                 Supplier<Object> sup = (Supplier<Object>) bean;
                 camelContext.getRegistry().bind(id, beanType, sup);

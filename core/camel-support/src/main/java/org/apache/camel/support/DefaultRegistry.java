@@ -224,6 +224,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     public void unbind(String id) {
         supplierRegistry.unbind(id);
         fallbackRegistry.unbind(id);
+        // destroy on unbind
         destroyBean(id, true);
     }
 
@@ -429,7 +430,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
             IOHelper.close(closeable);
         }
         ServiceHelper.stopAndShutdownServices(supplierRegistry, fallbackRegistry);
-        // beans should trigger destroy methods on shutdown
+        // destroy beans on shutdown
         for (String name : beansToDestroy.keySet()) {
             destroyBean(name, false);
         }
