@@ -42,6 +42,8 @@ import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * The default {@link Registry} which supports using a given first-choice repository to lookup the beans, such as
  * Spring, JNDI, OSGi etc. And to use a secondary {@link SimpleRegistry} as the fallback repository to lookup and bind
@@ -180,11 +182,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
 
     @Override
     public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
-        if (bean != null) {
-            // automatic inject camel context in bean if its aware
-            CamelContextAware.trySetCamelContext(bean, camelContext);
-            fallbackRegistry.bind(id, type, bean);
-        }
+        bind(id, type, bean, null, null);
     }
 
     @Override
@@ -193,7 +191,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         if (bean != null) {
             // automatic inject camel context in bean if its aware
             CamelContextAware.trySetCamelContext(bean, camelContext);
-            if (initMethod != null) {
+            if (isNotEmpty(initMethod)) {
                 try {
                     org.apache.camel.support.ObjectHelper.invokeMethodSafe(initMethod, bean);
                 } catch (Exception e) {
@@ -201,7 +199,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
                 }
             }
             fallbackRegistry.bind(id, type, bean);
-            if (destroyMethod != null) {
+            if (isNotEmpty(destroyMethod)) {
                 beansToDestroy.put(id, new KeyValueHolder<>(bean, destroyMethod));
             }
         }

@@ -50,7 +50,8 @@ public class DefaultDependencyInjectionAnnotationFactory
     @Override
     @SuppressWarnings("unchecked")
     public Runnable createBindToRegistryFactory(
-            String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess) {
+            String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess,
+            String initMethod, String destroyMethod) {
         return () -> {
             if (beanPostProcess) {
                 try {
@@ -63,11 +64,12 @@ public class DefaultDependencyInjectionAnnotationFactory
             }
             CamelContextAware.trySetCamelContext(bean, camelContext);
             if (bean instanceof Supplier) {
+                // TODO: supplier/lazy does not support init/destroy
                 // must be Supplier<Object> to ensure correct binding
                 Supplier<Object> sup = (Supplier<Object>) bean;
                 camelContext.getRegistry().bind(id, beanType, sup);
             } else {
-                camelContext.getRegistry().bind(id, bean);
+                camelContext.getRegistry().bind(id, bean, initMethod, destroyMethod);
             }
         };
     }
