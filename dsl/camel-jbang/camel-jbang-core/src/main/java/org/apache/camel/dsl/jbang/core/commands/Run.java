@@ -869,7 +869,8 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
-        eq.symbolicLink = true;
+        eq.javaLiveReload = this.dev;
+        eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.gradleWrapper = false;
         eq.quarkusVersion = this.quarkusVersion;
@@ -936,7 +937,9 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
-        eq.symbolicLink = true;
+        // Java codes reload is not supported in Spring Boot since it has to be recompiled to trigger the restart
+        eq.javaLiveReload = false;
+        eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
