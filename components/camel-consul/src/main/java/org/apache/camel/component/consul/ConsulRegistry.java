@@ -161,7 +161,8 @@ public class ConsulRegistry implements Registry {
     }
 
     @Override
-    public void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException {
+    public void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod)
+            throws RuntimeCamelException {
         throw new UnsupportedOperationException("Binding with init/destroy method not supported");
     }
 
