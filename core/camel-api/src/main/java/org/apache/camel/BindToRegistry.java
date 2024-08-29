@@ -48,8 +48,8 @@ public @interface BindToRegistry {
     boolean beanPostProcess() default false;
 
     /**
-     * If this annotation is on class or method level, where Camel would create a bean instance, then this option can be
-     * used to make this lazy (on-demand) instead of creating the bean eager.
+     * Whether to create the bean instance lazy (on-demand) instead of creating eager.
+     * Using lazy can be useful when you only need to create beans if they are explicit in-use.
      */
     boolean lazy() default false;
 }
