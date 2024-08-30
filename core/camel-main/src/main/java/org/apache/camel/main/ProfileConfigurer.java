@@ -46,7 +46,6 @@ public class ProfileConfigurer {
         if ("dev".equals(profile)) {
             // make tracing enabled and limit to not capture too much data
             config.tracerConfig().withEnabled(true);
-            config.tracerConfig().withBacklogSize(50);
         }
 
         configureCommon(camelContext, profile, config);
