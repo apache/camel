@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.job;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -140,6 +141,8 @@ public class KubernetesJobProducer extends DefaultProducer {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
+        HashMap<String, String> annotations
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_ANNOTATIONS, HashMap.class);
         if (ObjectHelper.isEmpty(jobName)) {
             LOG.error("{} a specific job require specify a job name", operationName);
             throw new IllegalArgumentException(String.format("%s a specific job require specify a job name", operationName));
@@ -155,10 +158,17 @@ public class KubernetesJobProducer extends DefaultProducer {
                     String.format("%s a specific job require specify a hpa spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
-        Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
-                .withSpec(jobSpec).build();
+        JobBuilder jobCreatingBuilder = new JobBuilder();
+        if (ObjectHelper.isEmpty(annotations)) {
+            jobCreatingBuilder.withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
+                    .withSpec(jobSpec);
+        } else {
+            jobCreatingBuilder.withNewMetadata().withName(jobName).withLabels(labels).withAnnotations(annotations).endMetadata()
+                    .withSpec(jobSpec);
+        }
         Job job = operation.apply(
-                getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).resource(jobCreating));
+                getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName)
+                        .resource(jobCreatingBuilder.build()));
 
         prepareOutboundMessage(exchange, job);
     }

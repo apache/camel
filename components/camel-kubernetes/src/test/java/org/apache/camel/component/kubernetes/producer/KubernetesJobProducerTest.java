@@ -118,6 +118,33 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createJobWithAnnotationsTest() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Map<String, String> annotations = Map.of("my.annotation.key", "my.annotation.value");
+        JobSpec spec = new JobSpecBuilder().withBackoffLimit(13).build();
+        Job j1 = new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").withLabels(labels)
+                .withAnnotations(annotations).and()
+                .withSpec(spec).build();
+        server.expect().post().withPath("/apis/batch/v1/namespaces/test/jobs").andReturn(200, j1).once();
+
+        Exchange ex = template.request("direct:createWithAnnotations", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_ANNOTATIONS, annotations);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_NAME, "j1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, spec);
+        });
+
+        Job result = ex.getMessage().getBody(Job.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("j1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(annotations, result.getMetadata().getAnnotations());
+        assertEquals(13, result.getSpec().getBackoffLimit());
+    }
+
+    @Test
     void updateJobTest() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         JobSpec spec = new JobSpecBuilder().withBackoffLimit(13).withSelector(new LabelSelector())
@@ -172,6 +199,7 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels").to("kubernetes-job:foo?operation=listJobByLabels");
                 from("direct:get").to("kubernetes-job:foo?operation=getJob");
                 from("direct:create").to("kubernetes-job:foo?operation=createJob");
+                from("direct:createWithAnnotations").to("kubernetes-job:foo?operation=createJob");
                 from("direct:update").to("kubernetes-job:foo?operation=updateJob");
                 from("direct:delete").to("kubernetes-job:foo?operation=deleteJob");
             }
