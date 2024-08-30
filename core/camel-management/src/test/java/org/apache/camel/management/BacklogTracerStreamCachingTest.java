@@ -82,7 +82,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
                      + "      <exchangeProperties>\n"
                      + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
                      + "      </exchangeProperties>\n"
-                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" position=\"0\">Bye World</body>\n"
+                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" size=\"9\" position=\"0\">Bye World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
     }
