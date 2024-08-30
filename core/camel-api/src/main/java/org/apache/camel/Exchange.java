@@ -175,6 +175,7 @@ public interface Exchange extends VariableAware {
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";
+    String FILE_EXCHANGE_FILE = "CamelFileExchangeFile";
     @Deprecated(since = "3.9.0")
     String FILTER_MATCHED = "CamelFilterMatched";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";

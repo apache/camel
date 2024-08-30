@@ -21,7 +21,7 @@ NOTE: This requires to enabled JMX by including `camel-management` JAR in the cl
 |Option |Default |Description
 |`bodyIncludeFiles` |`true` |Whether to include the message body of file based messages. The overhead is that the file content has to be read from the file.
 |`bodyIncludeStreams` |`false` |Whether to include the message body of stream based messages. If enabled then beware the stream may not be re-readable later. See more about Stream Caching.
-|`bodyMaxChars` |`128kb` |To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size.
+|`bodyMaxChars` |`32kb` |To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size.
 |`includeExchangeProperties` |`true`|Whether to include the exchange properties in the traced message.
 |`includeExchangeVariables` |`true`|Whether to include the exchange variables in the traced message.
 |`standby` | `false` |Whether the debugger is standby. If a debugger is in standby then the debugger is activated during startup and are ready to be enabled manually via JMX or calling the enableDebugger method.

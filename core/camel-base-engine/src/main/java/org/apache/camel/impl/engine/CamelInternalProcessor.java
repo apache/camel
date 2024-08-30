@@ -75,6 +75,7 @@ import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -629,14 +630,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String exchangeId = exchange.getExchangeId();
                 boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
                 boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
-                String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties,
-                        includeExchangeVariables, true, 4,
+                JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties,
+                        includeExchangeVariables, true,
                         true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars());
-                String messageAsJSon = MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties,
-                        includeExchangeVariables, true, 4,
-                        true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
-                        backlogTracer.getBodyMaxChars(), true);
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
                 String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
@@ -646,7 +643,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     final long created = exchange.getClock().getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
-                            rest, template, messageAsXml, messageAsJSon);
+                            rest, template, data);
                     if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
                         pseudoFirst.setEndpointServiceUrl(esl.getServiceUrl());
                         pseudoFirst.setEndpointServiceProtocol(esl.getServiceProtocol());
@@ -658,7 +655,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                         false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, exchangeId,
-                        rest, template, messageAsXml, messageAsJSon);
+                        rest, template, data);
                 backlogTracer.traceEvent(event);
 
                 return event;
@@ -677,18 +674,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
                     boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
                     long created = exchange.getClock().getCreated();
-                    String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties,
-                            includeExchangeVariables, true, 4,
+                    JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties,
+                            includeExchangeVariables, true,
                             true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                             backlogTracer.getBodyMaxChars());
-                    String messageAsJSon
-                            = MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, includeExchangeVariables,
-                                    true, 4,
-                                    true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
-                                    backlogTracer.getBodyMaxChars(), true);
                     DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
                             false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null,
-                            exchangeId, rest, template, messageAsXml, messageAsJSon);
+                            exchangeId, rest, template, data);
                     backlogTracer.traceEvent(pseudoLast);
                     doneProcessing(exchange, pseudoLast);
                     doneProcessing(exchange, pseudoFirst);
@@ -740,10 +732,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 // we want to capture if there was an exception
                 Throwable e = exchange.getException();
                 if (e != null) {
-                    String xml = MessageHelper.dumpExceptionAsXML(e, 4);
-                    data.setExceptionAsXml(xml);
-                    String json = MessageHelper.dumpExceptionAsJSon(e, 4, true);
-                    data.setExceptionAsJSon(json);
+                    data.setException(e);
                 }
             }
         }

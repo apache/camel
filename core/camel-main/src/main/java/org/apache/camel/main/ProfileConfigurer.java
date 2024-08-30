@@ -44,7 +44,7 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
-            // enable backlog tracing
+            // make tracing enabled and limit to not capture too much data
             config.tracerConfig().withEnabled(true);
         }
 

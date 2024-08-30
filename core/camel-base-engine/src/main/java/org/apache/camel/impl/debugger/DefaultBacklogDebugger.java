@@ -53,6 +53,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private boolean suspendMode;
     private String initialBreakpoints;
     private boolean singleStepIncludeStartEnd;
-    private int bodyMaxChars = 128 * 1024;
+    private int bodyMaxChars = 32 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
     private boolean includeExchangeProperties = true;
@@ -832,32 +833,12 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                         message.getToNode(),
                         message.getExchangeId(),
                         false, false,
-                        dumpAsXml(suspendedExchange.getExchange()),
-                        dumpAsJSon(suspendedExchange.getExchange())));
+                        dumpAsJSonObject(suspendedExchange.getExchange())));
     }
 
-    /**
-     * Dumps the message as a generic XML structure.
-     *
-     * @param  exchange the exchange to dump as XML
-     * @return          the XML
-     */
-    private String dumpAsXml(Exchange exchange) {
-        return MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true, 2, true,
-                isBodyIncludeStreams(), isBodyIncludeFiles(),
-                getBodyMaxChars());
-    }
-
-    /**
-     * Dumps the message as a generic JSon structure.
-     *
-     * @param  exchange the exchange to dump as JSon
-     * @return          the JSon
-     */
-    private String dumpAsJSon(Exchange exchange) {
-        return MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true, 2, true,
-                isBodyIncludeStreams(), isBodyIncludeFiles(),
-                getBodyMaxChars(), true);
+    private JsonObject dumpAsJSonObject(Exchange exchange) {
+        return MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true, true,
+                isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
     }
 
     /**
@@ -888,16 +869,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = dumpAsXml(exchange);
-            String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(definition);
             boolean first = "from".equals(definition.getShortName());
-
+            JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
-                            first, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, messageAsXml,
-                            messageAsJSon);
+                            first, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // suspend at this breakpoint
@@ -964,15 +942,12 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = dumpAsXml(exchange);
-            String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(definition);
-
+            JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
-                            false, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, messageAsXml,
-                            messageAsJSon);
+                            false, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
@@ -1056,23 +1031,15 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String toNode = CamelContextHelper.getRouteId(definition);
             String routeId = route != null ? route.getRouteId() : toNode;
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = dumpAsXml(exchange);
-            String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(route != null ? route : definition);
-
+            JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
-                            false, true, uid, timestamp, source, routeId, toNode, exchangeId, false, false,
-                            messageAsXml,
-                            messageAsJSon);
-
+                            false, true, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
             // we want to capture if there was an exception
             if (cause != null) {
-                String xml = MessageHelper.dumpExceptionAsXML(cause, 4);
-                msg.setExceptionAsXml(xml);
-                String json = MessageHelper.dumpExceptionAsJSon(cause, 4, true);
-                msg.setExceptionAsJSon(json);
+                msg.setException(cause);
             }
 
             suspendedBreakpointMessages.put(toNode, msg);

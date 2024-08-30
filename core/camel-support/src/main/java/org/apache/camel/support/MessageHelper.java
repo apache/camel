@@ -547,8 +547,9 @@ public final class MessageHelper {
             Map<String, Object> properties = new TreeMap<>(message.getExchange().getAllProperties());
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 String key = entry.getKey();
-                // skip message history
-                if (Exchange.MESSAGE_HISTORY.equals(key)) {
+                // skip some special that are too big
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                        || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 Object value = entry.getValue();
@@ -999,8 +1000,9 @@ public final class MessageHelper {
                 String type = ObjectHelper.classCanonicalName(value);
                 JsonObject jh = new JsonObject();
                 String key = entry.getKey();
-                // skip message history
-                if (Exchange.MESSAGE_HISTORY.equals(key)) {
+                // skip some special that are too big
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                        || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 jh.put("key", key);
@@ -1079,10 +1081,23 @@ public final class MessageHelper {
                 int size = Array.getLength(body);
                 jb.put("size", size);
             }
+            if (body instanceof WrappedFile<?> wf) {
+                if (wf.getFile() instanceof File f) {
+                    jb.put("size", f.length());
+                }
+            } else if (body instanceof File f) {
+                jb.put("size", f.length());
+            } else if (body instanceof Path p) {
+                jb.put("size", p.toFile().length());
+            }
             if (body instanceof StreamCache streamCache) {
                 long pos = streamCache.position();
                 if (pos != -1) {
                     jb.put("position", pos);
+                }
+                long size = streamCache.length();
+                if (size > 0) {
+                    jb.put("size", size);
                 }
             }
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);

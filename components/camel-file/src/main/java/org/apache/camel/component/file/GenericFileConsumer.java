@@ -267,7 +267,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         while (exchanges.size() > limit) {
             // must remove last
             Exchange exchange = exchanges.removeLast();
-            GenericFile<?> file = exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE, GenericFile.class);
+            GenericFile<?> file = exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, GenericFile.class);
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
             releaseExchange(exchange, true);
@@ -821,7 +821,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     @SuppressWarnings("unchecked")
     private GenericFile<T> getExchangeFileProperty(Exchange exchange) {
-        return (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        return (GenericFile<T>) exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE);
     }
 
     @Override
