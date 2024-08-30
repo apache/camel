@@ -497,7 +497,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             }
             jo.put("endpointService", es);
         }
-        jo.put("message", data);
+        jo.put("message", data.getMap("message"));
         if (exception != null) {
             if (exceptionAsJsonObject == null) {
                 try {
