@@ -547,8 +547,8 @@ public final class MessageHelper {
             Map<String, Object> properties = new TreeMap<>(message.getExchange().getAllProperties());
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 String key = entry.getKey();
-                // skip message history
-                if (Exchange.MESSAGE_HISTORY.equals(key)) {
+                // skip some special that are too big
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key) || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 Object value = entry.getValue();
@@ -999,8 +999,8 @@ public final class MessageHelper {
                 String type = ObjectHelper.classCanonicalName(value);
                 JsonObject jh = new JsonObject();
                 String key = entry.getKey();
-                // skip message history
-                if (Exchange.MESSAGE_HISTORY.equals(key)) {
+                // skip some special that are too big
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key) || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 jh.put("key", key);

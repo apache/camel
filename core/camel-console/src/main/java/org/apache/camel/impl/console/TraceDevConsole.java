@@ -37,6 +37,11 @@ public class TraceDevConsole extends AbstractDevConsole {
               description = "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
     private int capacity = 50;
 
+    /**
+     * Whether to enable or disable tracing
+     */
+    public static final String ACTION = "action";
+
     private Queue<BacklogTracerEventMessage> queue;
 
     public TraceDevConsole() {
@@ -61,15 +66,25 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
+        String action = (String) options.get(ACTION);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
-                addMessage(t);
-            }
-            for (BacklogTracerEventMessage t : queue) {
-                String xml = t.toXml(0);
-                sb.append(xml).append("\n");
+            if ("start".equals(action) || "enable".equals(action)) {
+                tracer.setEnabled(true);
+                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
+            } else if ("stop".equals(action) || "disable".equals(action)) {
+                tracer.setEnabled(false);
+                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
+            } else {
+                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
+                for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
+                    addMessage(t);
+                }
+                for (BacklogTracerEventMessage t : queue) {
+                    String json = t.toJSon(0);
+                    sb.append(json).append("\n");
+                }
             }
         }
 
@@ -89,18 +104,28 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
+        String action = (String) options.get(ACTION);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
-                addMessage(t);
-            }
+            if ("start".equals(action) || "enable".equals(action)) {
+                tracer.setEnabled(true);
+                root.put("enabled", tracer.isEnabled());
+            } else if ("stop".equals(action) || "disable".equals(action)) {
+                tracer.setEnabled(false);
+                root.put("enabled", tracer.isEnabled());
+            } else {
+                for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
+                    addMessage(t);
+                }
 
-            JsonArray arr = new JsonArray();
-            root.put("traces", arr);
-            for (BacklogTracerEventMessage t : queue) {
-                JsonObject jo = (JsonObject) t.asJSon();
-                arr.add(jo);
+                JsonArray arr = new JsonArray();
+                root.put("enabled", tracer.isEnabled());
+                root.put("traces", arr);
+                for (BacklogTracerEventMessage t : queue) {
+                    JsonObject jo = (JsonObject) t.asJSon();
+                    arr.add(jo);
+                }
             }
         }
 
