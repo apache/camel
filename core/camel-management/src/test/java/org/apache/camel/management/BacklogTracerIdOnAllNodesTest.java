@@ -55,7 +55,7 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals(1000, size.intValue(), "Should be 1000");
+        assertEquals(100, size.intValue(), "Should be 100");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));

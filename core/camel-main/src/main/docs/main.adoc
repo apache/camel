@@ -206,7 +206,7 @@ The camel.debug supports 15 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.debug.bodyIncludeFiles* | Whether to include the message body of file based messages. The overhead is that the file content has to be read from the file. | true | boolean
 | *camel.debug.bodyIncludeStreams* | Whether to include the message body of stream based messages. If enabled then beware the stream may not be re-readable later. See more about Stream Caching. | false | boolean
-| *camel.debug.bodyMaxChars* | To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size. | 131072 | int
+| *camel.debug.bodyMaxChars* | To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size. | 32768 | int
 | *camel.debug.breakpoints* | Allows to pre-configure breakpoints (node ids) to use with debugger on startup. Multiple ids can be separated by comma. Use special value _all_routes_ to add a breakpoint for the first node for every route, in other words this makes it easy to debug from the beginning of every route without knowing the exact node ids. |  | String
 | *camel.debug.enabled* | Enables Debugger in your Camel application. | false | boolean
 | *camel.debug.fallbackTimeout* | Fallback Timeout in seconds (300 seconds as default) when block the message processing in Camel. A timeout used for waiting for a message to arrive at a given breakpoint. | 300 | long
@@ -231,7 +231,7 @@ The camel.trace supports 14 options, which are listed below.
 | *camel.trace.backlogSize* | Defines how many of the last messages to keep in the tracer (should be between 1 - 1000). | 100 | int
 | *camel.trace.bodyIncludeFiles* | Whether to include the message body of file based messages. The overhead is that the file content has to be read from the file. | true | boolean
 | *camel.trace.bodyIncludeStreams* | Whether to include the message body of stream based messages. If enabled then beware the stream may not be re-readable later. See more about Stream Caching. | false | boolean
-| *camel.trace.bodyMaxChars* | To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size. | 131072 | int
+| *camel.trace.bodyMaxChars* | To limit the message body to a maximum size in the traced message. Use 0 or negative value to use unlimited size. | 32768 | int
 | *camel.trace.enabled* | Enables tracer in your Camel application. | false | boolean
 | *camel.trace.includeException* | Trace messages to include exception if the message failed | true | boolean
 | *camel.trace.includeExchange{zwsp}Properties* | Whether to include the exchange properties in the traced message | true | boolean

@@ -79,7 +79,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private boolean suspendMode;
     private String initialBreakpoints;
     private boolean singleStepIncludeStartEnd;
-    private int bodyMaxChars = 128 * 1024;
+    private int bodyMaxChars = 32 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
     private boolean includeExchangeProperties = true;

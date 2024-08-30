@@ -1081,10 +1081,23 @@ public final class MessageHelper {
                 int size = Array.getLength(body);
                 jb.put("size", size);
             }
+            if (body instanceof WrappedFile<?> wf) {
+                if (wf.getFile() instanceof File f) {
+                    jb.put("size", f.length());
+                }
+            } else if (body instanceof File f) {
+                jb.put("size", f.length());
+            } else if (body instanceof Path p) {
+                jb.put("size", p.toFile().length());
+            }
             if (body instanceof StreamCache streamCache) {
                 long pos = streamCache.position();
                 if (pos != -1) {
                     jb.put("position", pos);
+                }
+                long size = streamCache.length();
+                if (size > 0) {
+                    jo.put("size", size);
                 }
             }
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);

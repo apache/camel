@@ -56,7 +56,7 @@ Turning this on increases the verbosity of tracing by including events from inte
 |removeOnDump |`true` |Whether to remove the traced messages that was returned when invoking
 the dump methods.
 
-|bodyMaxChars |`128kb` |To limit the message body to a maximum size in the traced message. Use 0
+|bodyMaxChars |`32kb` |To limit the message body to a maximum size in the traced message. Use 0
 or negative value to use unlimited size.
 
 |bodyIncludeStreams |`false` |Whether to include the message body of stream based messages. If enabled

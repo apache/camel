@@ -57,7 +57,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 100;
     private boolean removeOnDump = true;
-    private int bodyMaxChars = 128 * 1024;
+    private int bodyMaxChars = 32 * 1024;
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
     private boolean includeExchangeProperties = true;

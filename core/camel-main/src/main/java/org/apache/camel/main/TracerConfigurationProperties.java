@@ -36,8 +36,8 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     private int backlogSize = 100;
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean removeOnDump = true;
-    @Metadata(label = "advanced", defaultValue = "131072")
-    private int bodyMaxChars = 128 * 1024;
+    @Metadata(label = "advanced", defaultValue = "32768")
+    private int bodyMaxChars = 32 * 1024;
     @Metadata
     private boolean bodyIncludeStreams;
     @Metadata(defaultValue = "true")
