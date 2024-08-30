@@ -35,7 +35,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.support.DefaultEndpoint;
@@ -540,11 +539,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         if (unbindEnabled) {
             getOrLookupCamelContext().getRegistry().unbind(name);
         }
-        if (isEmpty(initMethod) && bean instanceof Service) {
-            initMethod = "start";
+        if (isEmpty(initMethod)) {
+            initMethod = CamelPostProcessorHelper.initMethodCandidate(bean);
         }
-        if (isEmpty(destroyMethod) && bean instanceof Service) {
-            destroyMethod = "stop";
+        if (isEmpty(destroyMethod)) {
+            destroyMethod = CamelPostProcessorHelper.destroyMethodCandidate(bean);
         }
         // use dependency injection factory to perform the task of binding the bean to registry
         Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getOrLookupCamelContext())
@@ -580,12 +579,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             value = ReflectionHelper.getField(field, bean);
         }
         if (value != null) {
-            // automatic support Service for init/destroy methods
-            if (isEmpty(initMethod) && bean instanceof Service) {
-                initMethod = "start";
+            if (isEmpty(initMethod)) {
+                initMethod = CamelPostProcessorHelper.initMethodCandidate(bean);
             }
-            if (isEmpty(destroyMethod) && bean instanceof Service) {
-                destroyMethod = "stop";
+            if (isEmpty(destroyMethod)) {
+                destroyMethod = CamelPostProcessorHelper.destroyMethodCandidate(bean);
             }
             if (unbindEnabled) {
                 getOrLookupCamelContext().getRegistry().unbind(name);

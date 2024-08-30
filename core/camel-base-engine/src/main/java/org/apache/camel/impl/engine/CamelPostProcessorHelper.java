@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.io.Closeable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -695,5 +696,27 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             return singleton.isSingleton();
         }
         return true;
+    }
+
+    /**
+     * Find the best init method to use for the given bean
+     */
+    public static String initMethodCandidate(Object bean) {
+        if (bean instanceof Service) {
+            return "start";
+        }
+        return null;
+    }
+
+    /**
+     * Find the best destroy method to use for the given bean
+     */
+    public static String destroyMethodCandidate(Object bean) {
+        if (bean instanceof Service) {
+            return "stop";
+        } else if (bean instanceof Closeable) {
+            return "close";
+        }
+        return null;
     }
 }

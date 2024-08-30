@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.scan;
 
+import java.io.Closeable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -118,7 +119,6 @@ public class PackageScanHelper {
                                 }
                                 Object bean = entry.getValue();
                                 String beanName = c.getName();
-                                // special for init method as we need to defer calling it at a late phase
                                 String initMethod = ann.initMethod();
                                 if (isEmpty(initMethod) && bean instanceof Service) {
                                     initMethod = "start";
@@ -126,9 +126,12 @@ public class PackageScanHelper {
                                 String destroyMethod = ann.destroyMethod();
                                 if (isEmpty(destroyMethod) && bean instanceof Service) {
                                     destroyMethod = "stop";
+                                } else if (isEmpty(destroyMethod) && bean instanceof Closeable) {
+                                    destroyMethod = "close";
                                 }
                                 // - bind to registry if @org.apache.camel.BindToRegistry is present
                                 // use dependency injection factory to perform the task of binding the bean to registry
+                                // use null for init method as we need to defer calling it at a late phase
                                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
                                         .createBindToRegistryFactory(name, bean, c, beanName, false, null, destroyMethod);
                                 // defer calling init methods until dependency injection in phase-4 is complete

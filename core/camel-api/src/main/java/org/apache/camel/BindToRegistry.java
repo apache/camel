@@ -50,22 +50,24 @@ public @interface BindToRegistry {
     /**
      * Whether to create the bean instance lazy (on-demand) instead of creating eager. Using lazy can be useful when you
      * only need to create beans if they are explicit in-use.
+     *
+     * NOTE: lazy does not support init or destroy methods.
      */
     boolean lazy() default false;
 
     /**
      * The optional name of a method to call on the bean instance during initialization.
      *
-     * If the bean is an {@link Service} instance then Camel will automatically use start as init method, if none
-     * explicit configured.
+     * If no destroy method has been configured, then Camel will auto-detect as follows: If the bean is {@link Service}
+     * then start method is used.
      */
     String initMethod() default "";
 
     /**
      * The optional name of a method to call on the bean instance during destruction.
      *
-     * If the bean is an {@link Service} instance then Camel will automatically use stop as destroy method, if none
-     * explicit configured.
+     * If no destroy method has been configured, then Camel will auto-detect as follows: If the bean is {@link Service}
+     * then stop method is used. If the bean is {@link java.io.Closeable} then close method is used.
      */
     String destroyMethod() default "";
 }
