@@ -48,6 +48,10 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     private boolean includeExchangeVariables = true;
     @Metadata(defaultValue = "true")
     private boolean includeException = true;
+    @Metadata(defaultValue = "true")
+    private boolean traceAsXml = true;
+    @Metadata(defaultValue = "true")
+    private boolean traceAsJSon = true;
     @Metadata(label = "advanced")
     private boolean traceRests;
     @Metadata(label = "advanced")
@@ -184,6 +188,34 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
         this.includeException = includeException;
     }
 
+    /**
+     * Whether to support tracing messages and outputting as XML.
+     */
+    public boolean isTraceAsXml() {
+        return traceAsXml;
+    }
+
+    /**
+     * Whether to support tracing messages and outputting as XML.
+     */
+    public void setTraceAsXml(boolean traceAsXml) {
+        this.traceAsXml = traceAsXml;
+    }
+
+    /**
+     * Whether to support tracing messages and outputting as JSon.
+     */
+    public boolean isTraceAsJSon() {
+        return traceAsJSon;
+    }
+
+    /**
+     * Whether to support tracing messages and outputting as JSon.
+     */
+    public void setTraceAsJSon(boolean traceAsJSon) {
+        this.traceAsJSon = traceAsJSon;
+    }
+
     public boolean isTraceRests() {
         return traceRests;
     }
@@ -259,6 +291,22 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
      */
     public TracerConfigurationProperties withRemoveOnDump(boolean removeOnDump) {
         this.removeOnDump = removeOnDump;
+        return this;
+    }
+
+    /**
+     * Whether to support tracing messages and outputting as XML.
+     */
+    public TracerConfigurationProperties withTraceAsXml(boolean traceAsXml) {
+        this.traceAsXml = traceAsXml;
+        return this;
+    }
+
+    /**
+     * Whether to support tracing messages and outputting as JSon.
+     */
+    public TracerConfigurationProperties withTraceAsJSon(boolean traceAsJSon) {
+        this.traceAsJSon = traceAsJSon;
         return this;
     }
 

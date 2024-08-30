@@ -63,6 +63,8 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     private boolean includeExchangeProperties = true;
     private boolean includeExchangeVariables = true;
     private boolean includeException = true;
+    private boolean traceAsXml = true;
+    private boolean traceAsJSon = true;
     private boolean traceRests;
     private boolean traceTemplates;
     // a pattern to filter tracing nodes
@@ -255,6 +257,22 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     @Override
     public void setIncludeException(boolean includeException) {
         this.includeException = includeException;
+    }
+
+    public boolean isTraceAsXml() {
+        return traceAsXml;
+    }
+
+    public void setTraceAsXml(boolean traceAsXml) {
+        this.traceAsXml = traceAsXml;
+    }
+
+    public boolean isTraceAsJSon() {
+        return traceAsJSon;
+    }
+
+    public void setTraceAsJSon(boolean traceAsJSon) {
+        this.traceAsJSon = traceAsJSon;
     }
 
     public boolean isTraceRests() {

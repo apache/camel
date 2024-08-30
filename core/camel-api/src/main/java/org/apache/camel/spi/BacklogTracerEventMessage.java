@@ -85,11 +85,15 @@ public interface BacklogTracerEventMessage {
 
     /**
      * The content of the message as XML (body and headers)
+     *
+     * This requires having XML enabled on {@link BacklogTracer}.
      */
     String getMessageAsXml();
 
     /**
      * The content of the message as JSon (body and headers)
+     *
+     * This requires having JSon enabled on {@link BacklogTracer}.
      */
     String getMessageAsJSon();
 
@@ -115,21 +119,29 @@ public interface BacklogTracerEventMessage {
 
     /**
      * The exception as XML (exception type, message and stacktrace)
+     *
+     * This requires having XML enabled on {@link BacklogTracer}.
      */
     String getExceptionAsXml();
 
     /**
      * The exception as XML (exception type, message and stacktrace)
+     *
+     * This requires having XML enabled on {@link BacklogTracer}.
      */
     void setExceptionAsXml(String exceptionAsXml);
 
     /**
      * The exception as JSon (exception type, message and stacktrace)
+     *
+     * This requires having JSon enabled on {@link BacklogTracer}.
      */
     String getExceptionAsJSon();
 
     /**
      * The exception as JSon (exception type, message and stacktrace)
+     *
+     * This requires having JSon enabled on {@link BacklogTracer}.
      */
     void setExceptionAsJSon(String exceptionAsJSon);
 
@@ -177,6 +189,8 @@ public interface BacklogTracerEventMessage {
      * <p/>
      * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}
      *
+     * This requires having XML enabled on {@link BacklogTracer}.
+     *
      * @param  indent number of spaces to indent
      * @return        xml representation of this event
      */
@@ -185,6 +199,8 @@ public interface BacklogTracerEventMessage {
     /**
      * Dumps the event message as JSon.
      *
+     * This requires having XML enabled on {@link BacklogTracer}.
+     *
      * @param  indent number of spaces to indent
      * @return        JSon representation of this event
      */
@@ -192,6 +208,8 @@ public interface BacklogTracerEventMessage {
 
     /**
      * The event message as an org.apache.camel.util.json.JsonObject object.
+     *
+     * This requires having JSon enabled on {@link BacklogTracer}.
      */
     Map<String, Object> asJSon();
 

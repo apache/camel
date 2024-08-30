@@ -223,7 +223,7 @@ The camel.debug supports 15 options, which are listed below.
 
 
 === Camel Tracer configurations
-The camel.trace supports 14 options, which are listed below.
+The camel.trace supports 16 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -238,6 +238,8 @@ The camel.trace supports 14 options, which are listed below.
 | *camel.trace.includeExchange{zwsp}Variables* | Whether to include the exchange variables in the traced message | true | boolean
 | *camel.trace.removeOnDump* | Whether all traced messages should be removed when the tracer is dumping. By default, the messages are removed, which means that dumping will not contain previous dumped messages. | true | boolean
 | *camel.trace.standby* | To set the tracer in standby mode, where the tracer will be installed by not automatic enabled. The tracer can then later be enabled explicit from Java, JMX or tooling. | false | boolean
+| *camel.trace.traceAsJSon* | Whether to support tracing messages and outputting as JSon. | true | boolean
+| *camel.trace.traceAsXml* | Whether to support tracing messages and outputting as XML. | true | boolean
 | *camel.trace.traceFilter* | Filter for tracing messages |  | String
 | *camel.trace.tracePattern* | Filter for tracing by route or node id |  | String
 | *camel.trace.traceRests* | Whether to trace routes that is created from Rest DSL. | false | boolean

@@ -182,6 +182,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public boolean isTraceAsXml() {
+        return backlogTracer.isTraceAsXml();
+    }
+
+    @Override
+    public boolean isTraceAsJSon() {
+        return backlogTracer.isTraceAsJSon();
+    }
+
+    @Override
     public boolean isTraceRests() {
         return backlogTracer.isTraceRests();
     }

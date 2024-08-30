@@ -44,8 +44,10 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
-            // enable backlog tracing
+            // enable backlog tracing and we only need JSon
             config.tracerConfig().withEnabled(true);
+            config.tracerConfig().withTraceAsJSon(true);
+            config.tracerConfig().withTraceAsXml(false);
         }
 
         configureCommon(camelContext, profile, config);

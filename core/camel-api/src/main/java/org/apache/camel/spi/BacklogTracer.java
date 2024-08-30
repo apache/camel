@@ -130,7 +130,27 @@ public interface BacklogTracer {
     void setIncludeException(boolean includeException);
 
     /**
-     * Whether to trace routes that is created from Rest DSL.
+     * Trace messages as XML data for {@link BacklogTracerEventMessage}.
+     */
+    boolean isTraceAsXml();
+
+    /**
+     * Whether to support tracing messages and outputting as XML.
+     */
+    void setTraceAsXml(boolean traceAsXml);
+
+    /**
+     * Whether to support tracing messages and outputting as XML.
+     */
+    boolean isTraceAsJSon();
+
+    /**
+     * Whether to support tracing messages and outputting as JSon.
+     */
+    void setTraceAsJSon(boolean traceAsJSon);
+
+    /**
+     * Whether to support tracing messages and outputting as JSon.
      */
     boolean isTraceRests();
 
@@ -196,21 +216,29 @@ public interface BacklogTracer {
 
     /**
      * Dumps all tracing data as XML
+     *
+     * This requires having {@link #setTraceAsXml(boolean)} enabled.
      */
     String dumpAllTracedMessagesAsXml();
 
     /**
      * Dumps tracing data for the given route id / node id as XML
+     *
+     * This requires having {@link #setTraceAsXml(boolean)} enabled.
      */
     String dumpTracedMessagesAsXml(String nodeId);
 
     /**
      * Dumps all tracing data as JSon
+     *
+     * This requires having {@link #setTraceAsJSon(boolean)} enabled.
      */
     String dumpAllTracedMessagesAsJSon();
 
     /**
      * Dumps tracing data for the given route id / node id as JSon
+     *
+     * This requires having {@link #setTraceAsJSon(boolean)} enabled.
      */
     String dumpTracedMessagesAsJSon(String nodeId);
 

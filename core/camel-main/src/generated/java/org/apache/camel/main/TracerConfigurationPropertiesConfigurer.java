@@ -41,6 +41,10 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "removeondump":
         case "removeOnDump": target.setRemoveOnDump(property(camelContext, boolean.class, value)); return true;
         case "standby": target.setStandby(property(camelContext, boolean.class, value)); return true;
+        case "traceasjson":
+        case "traceAsJSon": target.setTraceAsJSon(property(camelContext, boolean.class, value)); return true;
+        case "traceasxml":
+        case "traceAsXml": target.setTraceAsXml(property(camelContext, boolean.class, value)); return true;
         case "tracefilter":
         case "traceFilter": target.setTraceFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "tracepattern":
@@ -74,6 +78,10 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "removeondump":
         case "removeOnDump": return boolean.class;
         case "standby": return boolean.class;
+        case "traceasjson":
+        case "traceAsJSon": return boolean.class;
+        case "traceasxml":
+        case "traceAsXml": return boolean.class;
         case "tracefilter":
         case "traceFilter": return java.lang.String.class;
         case "tracepattern":
@@ -108,6 +116,10 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "removeondump":
         case "removeOnDump": return target.isRemoveOnDump();
         case "standby": return target.isStandby();
+        case "traceasjson":
+        case "traceAsJSon": return target.isTraceAsJSon();
+        case "traceasxml":
+        case "traceAsXml": return target.isTraceAsXml();
         case "tracefilter":
         case "traceFilter": return target.getTraceFilter();
         case "tracepattern":
