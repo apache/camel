@@ -91,7 +91,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
     protected List<String> repositories = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies")
+    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
+                        split = ",")
     protected List<String> dependencies = new ArrayList<>();
 
     @CommandLine.Option(names = { "--runtime" },
