@@ -152,7 +152,8 @@ public class Run extends CamelCommand {
             description = "Profile to run (dev, test, or prod).")
     String profile = "dev";
 
-    @Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies")
+    @Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
+            split = ",")
     List<String> dependencies = new ArrayList<>();
 
     @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
