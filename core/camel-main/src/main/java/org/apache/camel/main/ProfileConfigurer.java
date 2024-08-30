@@ -44,8 +44,11 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
-            // make tracing enabled and limit to not capture too much data
-            config.tracerConfig().withEnabled(true);
+            boolean standby = config.tracerConfig().isStandby();
+            if (!standby) {
+                // make tracing enabled (if not configured to be standby) and limit to not capture too much data
+                config.tracerConfig().withEnabled(true);
+            }
         }
 
         configureCommon(camelContext, profile, config);

@@ -40,7 +40,7 @@ public class TraceDevConsole extends AbstractDevConsole {
     /**
      * Whether to enable or disable tracing
      */
-    public static final String ACTION = "action";
+    public static final String ENABLED = "enabled";
 
     private Queue<BacklogTracerEventMessage> queue;
 
@@ -66,14 +66,14 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
-        String action = (String) options.get(ACTION);
+        String enabled = (String) options.get(ENABLED);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            if ("start".equals(action) || "enable".equals(action)) {
+            if ("true".equals(enabled)) {
                 tracer.setEnabled(true);
                 sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
-            } else if ("stop".equals(action) || "disable".equals(action)) {
+            } else if ("false".equals(enabled)) {
                 tracer.setEnabled(false);
                 sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
             } else {
@@ -104,14 +104,14 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
-        String action = (String) options.get(ACTION);
+        String enabled = (String) options.get(ENABLED);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            if ("start".equals(action) || "enable".equals(action)) {
+            if ("true".equals(enabled)) {
                 tracer.setEnabled(true);
                 root.put("enabled", tracer.isEnabled());
-            } else if ("stop".equals(action) || "disable".equals(action)) {
+            } else if ("false".equals(enabled)) {
                 tracer.setEnabled(false);
                 root.put("enabled", tracer.isEnabled());
             } else {
