@@ -1097,7 +1097,7 @@ public final class MessageHelper {
                 }
                 long size = streamCache.length();
                 if (size > 0) {
-                    jo.put("size", size);
+                    jb.put("size", size);
                 }
             }
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
