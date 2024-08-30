@@ -51,12 +51,6 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Whether to remove traced message from backlog when dumping trace messages")
     void setRemoveOnDump(boolean removeOnDump);
 
-    @ManagedAttribute(description = "Whether tracing is capturing data for XML output")
-    boolean isTraceAsXml();
-
-    @ManagedAttribute(description = "Whether tracing is capturing data for JSon output")
-    boolean isTraceAsJSon();
-
     @ManagedAttribute(description = "To filter tracing by nodes (pattern)")
     void setTracePattern(String pattern);
 

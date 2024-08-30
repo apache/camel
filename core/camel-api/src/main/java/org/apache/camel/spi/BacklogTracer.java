@@ -130,26 +130,6 @@ public interface BacklogTracer {
     void setIncludeException(boolean includeException);
 
     /**
-     * Trace messages as XML data for {@link BacklogTracerEventMessage}.
-     */
-    boolean isTraceAsXml();
-
-    /**
-     * Whether to support tracing messages and outputting as XML.
-     */
-    void setTraceAsXml(boolean traceAsXml);
-
-    /**
-     * Whether to support tracing messages and outputting as XML.
-     */
-    boolean isTraceAsJSon();
-
-    /**
-     * Whether to support tracing messages and outputting as JSon.
-     */
-    void setTraceAsJSon(boolean traceAsJSon);
-
-    /**
      * Whether to support tracing messages and outputting as JSon.
      */
     boolean isTraceRests();

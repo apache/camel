@@ -1837,8 +1837,6 @@ public abstract class BaseMainSupport extends BaseService {
         tracer.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
         tracer.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
         tracer.setIncludeException(config.isIncludeException());
-        tracer.setTraceAsXml(config.isTraceAsXml());
-        tracer.setTraceAsJSon(config.isTraceAsJSon());
         tracer.setTraceRests(config.isTraceRests());
         tracer.setTraceTemplates(config.isTraceTemplates());
         tracer.setTracePattern(config.getTracePattern());
