@@ -24,10 +24,13 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Service;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.codehaus.groovy.runtime.InvokerHelper;
@@ -46,6 +49,8 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
      */
     private final Map<String, GroovyClassService> scriptCache;
 
+    private EventNotifier notifier;
+
     private GroovyLanguage(Map<String, GroovyClassService> scriptCache, boolean loadExternalResource) {
         this.scriptCache = scriptCache;
         this.loadExternalResource = loadExternalResource;
@@ -57,13 +62,38 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
 
     @Override
     public void start() {
-        // noop
+        // are we in dev mode then support flushing cache on reload
+        if (getCamelContext() != null) {
+            String profile = getCamelContext().getCamelContextExtension().getProfile();
+            if ("dev".equals(profile)) {
+                if (notifier == null) {
+                    notifier = new ReloadNotifier();
+                    getCamelContext().getManagementStrategy().addEventNotifier(notifier);
+                }
+            }
+        }
     }
 
     @Override
     public void stop() {
         ServiceHelper.stopService(scriptCache.values());
         scriptCache.clear();
+        if (notifier != null) {
+            getCamelContext().getManagementStrategy().removeEventNotifier(notifier);
+            notifier = null;
+        }
+    }
+
+    private final class ReloadNotifier extends SimpleEventNotifierSupport {
+
+        @Override
+        public void notify(CamelEvent event) throws Exception {
+            // if context or route is reloading then clear cache to ensure old scripts are removed from memory.
+            if (event instanceof CamelEvent.CamelContextReloadingEvent || event instanceof CamelEvent.RouteReloadedEvent) {
+                ServiceHelper.stopService(scriptCache.values());
+                scriptCache.clear();
+            }
+        }
     }
 
     private static final class GroovyClassService implements Service {
