@@ -118,6 +118,11 @@ public interface BacklogTracerEventMessage {
     boolean hasException();
 
     /**
+     * The tracing caused an exception which can be captured
+     */
+    void setException(Throwable cause);
+
+    /**
      * The exception as XML (exception type, message and stacktrace)
      *
      * This requires having XML enabled on {@link BacklogTracer}.
@@ -125,25 +130,11 @@ public interface BacklogTracerEventMessage {
     String getExceptionAsXml();
 
     /**
-     * The exception as XML (exception type, message and stacktrace)
-     *
-     * This requires having XML enabled on {@link BacklogTracer}.
-     */
-    void setExceptionAsXml(String exceptionAsXml);
-
-    /**
      * The exception as JSon (exception type, message and stacktrace)
      *
      * This requires having JSon enabled on {@link BacklogTracer}.
      */
     String getExceptionAsJSon();
-
-    /**
-     * The exception as JSon (exception type, message and stacktrace)
-     *
-     * This requires having JSon enabled on {@link BacklogTracer}.
-     */
-    void setExceptionAsJSon(String exceptionAsJSon);
 
     /**
      * The endpoint uri if this trace is either from a route input (from), or the exchange was sent to an endpoint such

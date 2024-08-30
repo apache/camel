@@ -732,10 +732,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 // we want to capture if there was an exception
                 Throwable e = exchange.getException();
                 if (e != null) {
-                    String xml = MessageHelper.dumpExceptionAsXML(e, 4);
-                    data.setExceptionAsXml(xml);
-                    String json = MessageHelper.dumpExceptionAsJSon(e, 4, true);
-                    data.setExceptionAsJSon(json);
+                    data.setException(e);
                 }
             }
         }

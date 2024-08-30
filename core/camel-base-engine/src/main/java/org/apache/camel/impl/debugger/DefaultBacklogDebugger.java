@@ -1037,14 +1037,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             false, true, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
-
             // we want to capture if there was an exception
             if (cause != null) {
-                // TODO: capture as json object
-                String xml = MessageHelper.dumpExceptionAsXML(cause, 4);
-                msg.setExceptionAsXml(xml);
-                String json = MessageHelper.dumpExceptionAsJSon(cause, 4, true);
-                msg.setExceptionAsJSon(json);
+                msg.setException(cause);
             }
 
             suspendedBreakpointMessages.put(toNode, msg);

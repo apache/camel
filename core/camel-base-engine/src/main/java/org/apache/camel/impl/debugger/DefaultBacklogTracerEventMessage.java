@@ -16,22 +16,19 @@
  */
 package org.apache.camel.impl.debugger;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.StreamCache;
 import org.apache.camel.spi.BacklogTracerEventMessage;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
 import org.apache.camel.util.json.Jsoner;
+
+import static org.apache.camel.support.MessageHelper.dumpExceptionAsJSonObject;
 
 /**
  * An event message holding the traced message by the {@link BacklogTracer}.
@@ -58,8 +55,10 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final JsonObject data;
     private volatile String dataAsJson;
     private volatile String dataAsXml;
-    private String exceptionAsXml; // TOOD: JsonObject to store exception
-    private String exceptionAsJSon;
+    private Throwable exception;
+    private volatile JsonObject exceptionAsJsonObject;
+    private volatile String exceptionAsXml;
+    private volatile String exceptionAsJSon;
     private long duration;
     private boolean done;
 
@@ -180,27 +179,28 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     @Override
     public boolean hasException() {
-        return exceptionAsXml != null || exceptionAsJSon != null;
+        return exception != null;
+    }
+
+    @Override
+    public void setException(Throwable exception) {
+        this.exception = exception;
     }
 
     @Override
     public String getExceptionAsXml() {
+        if (exceptionAsXml == null && exception != null) {
+            exceptionAsXml = MessageHelper.dumpExceptionAsXML(exception, 4);
+        }
         return exceptionAsXml;
     }
 
     @Override
-    public void setExceptionAsXml(String exceptionAsXml) {
-        this.exceptionAsXml = exceptionAsXml;
-    }
-
-    @Override
     public String getExceptionAsJSon() {
+        if (exceptionAsJSon == null && exception != null) {
+            exceptionAsJSon = MessageHelper.dumpExceptionAsJSon(exception, 4, true);
+        }
         return exceptionAsJSon;
-    }
-
-    @Override
-    public void setExceptionAsJSon(String exceptionAsJSon) {
-        this.exceptionAsJSon = exceptionAsJSon;
     }
 
     public String getEndpointUri() {
@@ -306,8 +306,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             sb.append(prefix).append("  </endpointService>\n");
         }
         sb.append(prefix).append(getMessageAsXml()).append("\n");
-        if (exceptionAsXml != null) {
-            sb.append(prefix).append(exceptionAsXml).append("\n");
+        if (getExceptionAsXml() != null) {
+            sb.append(prefix).append(getExceptionAsXml()).append("\n");
         }
         sb.append(prefix).append("</").append(ROOT_TAG).append(">");
         return sb.toString();
@@ -498,13 +498,16 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             jo.put("endpointService", es);
         }
         jo.put("message", data);
-        if (exceptionAsJSon != null) {
-            try {
-                // parse back to json object and avoid double message root
-                JsonObject msg = (JsonObject) Jsoner.deserialize(exceptionAsJSon);
-                jo.put("exception", msg.get("exception"));
-            } catch (Exception e) {
-                // ignore
+        if (exception != null) {
+            if (exceptionAsJsonObject == null) {
+                try {
+                    exceptionAsJsonObject = dumpExceptionAsJSonObject(exception);
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+            if (exceptionAsJsonObject != null) {
+                jo.put("exception", exceptionAsJsonObject.get("exception"));
             }
         }
         return jo;
