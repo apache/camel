@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.secrets;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -138,6 +139,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     private void doCreateOrUpdateSecret(Exchange exchange, String operationName, Function<Resource<Secret>, Secret> operation) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Secret secretToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET, Secret.class);
+        HashMap<String, String> secretAnnotations
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_ANNOTATIONS, HashMap.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("{} a specific secret require specify a namespace name", operationName);
             throw new IllegalArgumentException(
@@ -147,6 +150,9 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             LOG.error("{} a specific secret require specify a secret bean", operationName);
             throw new IllegalArgumentException(
                     String.format("%s a specific secret require specify a secret bean", operationName));
+        }
+        if (ObjectHelper.isNotEmpty(secretAnnotations)) {
+            secretToCreate.getMetadata().setAnnotations(secretAnnotations);
         }
         Secret secret
                 = operation.apply(

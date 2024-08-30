@@ -135,6 +135,9 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "A secret object", javaType = "io.fabric8.kubernetes.api.model.Secret",
               applicableFor = SCHEME_SECRETS)
     public static final String KUBERNETES_SECRET = "CamelKubernetesSecret";
+    @Metadata(label = "producer", description = "The secret annotations", javaType = "Map<String, String>",
+              applicableFor = SCHEME_SECRETS)
+    public static final String KUBERNETES_SECRETS_ANNOTATIONS = "CamelKubernetesSecretsAnnotations";
     @Metadata(label = "producer", description = "The resource quota labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_RESOURCES_QUOTA)
     public static final String KUBERNETES_RESOURCES_QUOTA_LABELS = "CamelKubernetesResourcesQuotaLabels";
