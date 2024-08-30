@@ -422,8 +422,10 @@ public final class ObjectHelper {
         }
 
         boolean dots = false;
+        boolean digits = false;
+        char ch = 0;
         for (int i = startPos; i < text.length(); i++) {
-            char ch = text.charAt(i);
+            ch = text.charAt(i);
             if (!Character.isDigit(ch)) {
                 if (ch == '.') {
                     if (dots) {
@@ -433,9 +435,12 @@ public final class ObjectHelper {
                 } else {
                     return false;
                 }
+            } else {
+                digits = true;
             }
         }
-        return true;
+        // there must be digits and not start or end with a dot
+        return digits && text.charAt(startPos) != '.' && ch != '.';
     }
 
     /**

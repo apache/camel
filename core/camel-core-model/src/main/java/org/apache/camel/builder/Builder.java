@@ -333,7 +333,7 @@ public final class Builder {
     }
 
     /**
-     * Wasm TODO.
+     * Call a wasm (web assembly) function.
      */
     public static ValueBuilder wasm(String value) {
         WasmExpression exp = new WasmExpression(value);
@@ -341,7 +341,7 @@ public final class Builder {
     }
 
     /**
-     * Wasm TODO.
+     * Call a wasm (web assembly) function.
      */
     public static ValueBuilder wasm(String value, Class<?> resultType) {
         WasmExpression exp = new WasmExpression(value);
