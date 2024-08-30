@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
@@ -47,17 +48,16 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private Map<String, String> endpointServiceMetadata;
     private final boolean rest;
     private final boolean template;
-    private final String messageAsXml;
-    private final String messageAsJSon;
-    private String exceptionAsXml;
+    private final JsonObject data;
+    private volatile String dataAsJson;
+    private String exceptionAsXml; // TOOD: JsonObject to store exception
     private String exceptionAsJSon;
     private long duration;
     private boolean done;
 
     public DefaultBacklogTracerEventMessage(boolean first, boolean last, long uid, long timestamp,
                                             String location, String routeId, String toNode, String exchangeId,
-                                            boolean rest, boolean template,
-                                            String messageAsXml, String messageAsJSon) {
+                                            boolean rest, boolean template, JsonObject data) {
         this.watch = new StopWatch();
         this.first = first;
         this.last = last;
@@ -69,9 +69,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.exchangeId = exchangeId;
         this.rest = rest;
         this.template = template;
-        this.messageAsXml = messageAsXml;
-        this.messageAsJSon = messageAsJSon;
         this.threadName = Thread.currentThread().getName();
+        this.data = data;
     }
 
     /**
@@ -139,12 +138,15 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     @Override
     public String getMessageAsXml() {
-        return messageAsXml;
+        return "TODO";
     }
 
     @Override
     public String getMessageAsJSon() {
-        return messageAsJSon;
+        if (dataAsJson == null) {
+            dataAsJson = data.toJson();
+        }
+        return dataAsJson;
     }
 
     @Override
@@ -292,7 +294,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             }
             sb.append(prefix).append("  </endpointService>\n");
         }
-        sb.append(prefix).append(messageAsXml).append("\n");
+        // TODO: data as XML
+        sb.append(prefix).append("TODO").append("\n");
         if (exceptionAsXml != null) {
             sb.append(prefix).append(exceptionAsXml).append("\n");
         }
@@ -354,16 +357,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         try {
             // parse back to json object and avoid double message root
-            JsonObject msg = (JsonObject) Jsoner.deserialize(messageAsJSon);
-            msg = msg.getMap("message");
-            jo.put("message", msg);
-
-            // [Body is null] -> null
-            msg = msg.getMap("body");
-            Object body = msg.get("value");
-            if ("[Body is null]".equals(body)) {
-                msg.replace("value", null);
-            }
+            jo.put("message", data);
         } catch (Exception e) {
             // ignore
         }

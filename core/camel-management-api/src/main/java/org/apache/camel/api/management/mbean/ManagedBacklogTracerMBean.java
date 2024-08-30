@@ -117,14 +117,22 @@ public interface ManagedBacklogTracerMBean {
     @ManagedOperation(description = "Dumps the traced messages for the given node or route")
     List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId);
 
-    @ManagedOperation(description = "Dumps the traced messages for the given node or route in xml format")
+    @ManagedOperation(description = "Dumps the traced messages for the given node or route in XML format")
+    @Deprecated(since = "4.8.0")
     String dumpTracedMessagesAsXml(String nodeOrRouteId);
+
+    @ManagedOperation(description = "Dumps the traced messages for the given node or route in JSon format")
+    String dumpTracedMessagesAsJSon(String nodeOrRouteId);
 
     @ManagedOperation(description = "Dumps all the traced messages")
     List<BacklogTracerEventMessage> dumpAllTracedMessages();
 
-    @ManagedOperation(description = "Dumps all the traced messages in xml format")
+    @ManagedOperation(description = "Dumps all the traced messages in XML format")
+    @Deprecated(since = "4.8.0")
     String dumpAllTracedMessagesAsXml();
+
+    @ManagedOperation(description = "Dumps all the traced messages in JSon format")
+    String dumpAllTracedMessagesAsJSon();
 
     @ManagedOperation(description = "Clears the backlog")
     void clear();
