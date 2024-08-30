@@ -16,11 +16,19 @@
  */
 package org.apache.camel.impl.debugger;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
 import org.apache.camel.util.json.Jsoner;
@@ -49,6 +57,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final boolean template;
     private final JsonObject data;
     private volatile String dataAsJson;
+    private volatile String dataAsXml;
     private String exceptionAsXml; // TOOD: JsonObject to store exception
     private String exceptionAsJSon;
     private long duration;
@@ -137,7 +146,10 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     @Override
     public String getMessageAsXml() {
-        return "TODO";
+        if (dataAsXml == null) {
+            dataAsXml = toXML(data, 4);
+        }
+        return dataAsXml;
     }
 
     @Override
@@ -293,12 +305,143 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             }
             sb.append(prefix).append("  </endpointService>\n");
         }
-        // TODO: data as XML
-        sb.append(prefix).append("TODO").append("\n");
+        sb.append(prefix).append(getMessageAsXml()).append("\n");
         if (exceptionAsXml != null) {
             sb.append(prefix).append(exceptionAsXml).append("\n");
         }
         sb.append(prefix).append("</").append(ROOT_TAG).append(">");
+        return sb.toString();
+    }
+
+    private String toXML(JsonObject data, int indent) {
+        StringBuilder sb = new StringBuilder(1024);
+
+        final String prefix = " ".repeat(indent);
+
+        JsonObject root = data.getMap("message");
+
+        // include exchangeId/exchangePattern/type as attribute on the <message> tag
+        sb.append(prefix);
+        sb.append("<message exchangeId=\"").append(root.getString("exchangeId"))
+                .append("\" exchangePattern=\"").append(root.getString("exchangePattern"))
+                .append("\" exchangeType=\"").append(root.getString("exchangeType"))
+                .append("\" messageType=\"").append(root.getString("messageType")).append("\">\n");
+
+        // exchange variables
+        JsonArray arr = root.getCollection("exchangeVariables");
+        if (arr != null && !arr.isEmpty()) {
+            sb.append(prefix);
+            sb.append("  <exchangeVariables>\n");
+            for (var entry : arr) {
+                JsonObject jo = (JsonObject) entry;
+                sb.append(prefix);
+                sb.append("    <exchangeVariable key=\"").append(jo.getString("key")).append("\"");
+                String type = jo.getString("type");
+                if (type != null) {
+                    sb.append(" type=\"").append(type).append("\"");
+                }
+                sb.append(">");
+                String value = jo.getString("value");
+                if (value != null) {
+                    try {
+                        // must always xml encode
+                        sb.append(StringHelper.xmlEncode(value));
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+                sb.append("</exchangeVariable>\n");
+            }
+            sb.append(prefix);
+            sb.append("  </exchangeVariables>\n");
+        }
+        // exchange properties
+        arr = root.getCollection("exchangeProperties");
+        if (arr != null && !arr.isEmpty()) {
+            sb.append(prefix);
+            sb.append("  <exchangeProperties>\n");
+            for (var entry : arr) {
+                JsonObject jo = (JsonObject) entry;
+                sb.append(prefix);
+                sb.append("    <exchangeProperty key=\"").append(jo.getString("key")).append("\"");
+                String type = jo.getString("type");
+                if (type != null) {
+                    sb.append(" type=\"").append(type).append("\"");
+                }
+                sb.append(">");
+                String value = jo.getString("value");
+                if (value != null) {
+                    try {
+                        // must always xml encode
+                        sb.append(StringHelper.xmlEncode(value));
+                    } catch (Exception e) {
+                        // ignore as the body is for logging purpose
+                    }
+                }
+                sb.append("</exchangeProperty>\n");
+            }
+            sb.append(prefix);
+            sb.append("  </exchangeProperties>\n");
+        }
+        // headers
+        arr = root.getCollection("headers");
+        if (arr != null && !arr.isEmpty()) {
+            sb.append(prefix);
+            sb.append("  <headers>\n");
+            for (var entry : arr) {
+                JsonObject jo = (JsonObject) entry;
+                sb.append(prefix);
+                sb.append("    <header key=\"").append(jo.getString("key")).append("\"");
+                String type = jo.getString("type");
+                if (type != null) {
+                    sb.append(" type=\"").append(type).append("\"");
+                }
+                sb.append(">");
+                String value = jo.getString("value");
+                if (value != null) {
+                    try {
+                        // must always xml encode
+                        sb.append(StringHelper.xmlEncode(value));
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+                sb.append("</header>\n");
+            }
+            sb.append(prefix);
+            sb.append("  </headers>\n");
+        }
+        JsonObject jo = root.getMap("body");
+        if (jo != null) {
+            sb.append(prefix);
+            sb.append("  <body");
+            String type = jo.getString("type");
+            if (type != null) {
+                sb.append(" type=\"").append(type).append("\"");
+            }
+            Long size = jo.getLong("size");
+            if (size != null) {
+                sb.append(" size=\"").append(size).append("\"");
+            }
+            Long position = jo.getLong("position");
+            if (position != null) {
+                sb.append(" position=\"").append(position).append("\"");
+            }
+            sb.append(">");
+            String value = jo.getString("value");
+            if (value != null) {
+                try {
+                    // must always xml encode
+                    sb.append(StringHelper.xmlEncode(value));
+                } catch (Exception e) {
+                    // ignore as the body is for logging purpose
+                }
+            }
+            sb.append("</body>\n");
+        }
+
+        sb.append(prefix);
+        sb.append("</message>");
         return sb.toString();
     }
 
@@ -354,12 +497,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             }
             jo.put("endpointService", es);
         }
-        try {
-            // parse back to json object and avoid double message root
-            jo.put("message", data);
-        } catch (Exception e) {
-            // ignore
-        }
+        jo.put("message", data);
         if (exceptionAsJSon != null) {
             try {
                 // parse back to json object and avoid double message root

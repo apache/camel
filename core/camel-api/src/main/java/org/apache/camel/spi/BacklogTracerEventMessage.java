@@ -88,7 +88,6 @@ public interface BacklogTracerEventMessage {
      *
      * This requires having XML enabled on {@link BacklogTracer}.
      */
-    @Deprecated
     String getMessageAsXml();
 
     /**
@@ -195,7 +194,6 @@ public interface BacklogTracerEventMessage {
      * @param  indent number of spaces to indent
      * @return        xml representation of this event
      */
-    @Deprecated
     String toXml(int indent);
 
     /**
