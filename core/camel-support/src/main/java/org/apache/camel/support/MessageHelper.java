@@ -548,7 +548,8 @@ public final class MessageHelper {
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 String key = entry.getKey();
                 // skip some special that are too big
-                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key) || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                        || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 Object value = entry.getValue();
@@ -1000,7 +1001,8 @@ public final class MessageHelper {
                 JsonObject jh = new JsonObject();
                 String key = entry.getKey();
                 // skip some special that are too big
-                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key) || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                        || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 jh.put("key", key);

@@ -20,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.apache.camel.spi.BacklogTracerEventMessage;
-import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;

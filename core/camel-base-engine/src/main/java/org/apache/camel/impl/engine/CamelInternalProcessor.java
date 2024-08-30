@@ -630,7 +630,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String exchangeId = exchange.getExchangeId();
                 boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
                 boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
-                JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true,
+                JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties,
+                        includeExchangeVariables, true,
                         true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars());
 
@@ -673,7 +674,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
                     boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
                     long created = exchange.getClock().getCreated();
-                    JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true,
+                    JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties,
+                            includeExchangeVariables, true,
                             true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                             backlogTracer.getBodyMaxChars());
                     DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
