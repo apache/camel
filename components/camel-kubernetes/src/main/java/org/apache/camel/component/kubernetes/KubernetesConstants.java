@@ -213,6 +213,9 @@ public final class KubernetesConstants {
     public static final String KUBERNETES_JOB_SPEC = "CamelKubernetesJobSpec";
     @Metadata(label = "producer", description = "The Job labels.", javaType = "Map<String, String>", applicableFor = SCHEME_JOB)
     public static final String KUBERNETES_JOB_LABELS = "CamelKubernetesJobLabels";
+    @Metadata(label = "producer", description = "The Job annotations.", javaType = "Map<String, String>",
+              applicableFor = SCHEME_JOB)
+    public static final String KUBERNETES_JOB_ANNOTATIONS = "CamelKubernetesJobAnnotations";
     @Metadata(label = "producer", description = "The deployment name", javaType = "String",
               applicableFor = SCHEME_CUSTOM_RESOURCES)
     public static final String KUBERNETES_CRD_INSTANCE_NAME = "CamelKubernetesCRDInstanceName";
