@@ -45,8 +45,8 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
 
-    // lets limit the tracer to 10 thousand messages in total
-    public static final int MAX_BACKLOG_SIZE = 10 * 1000;
+    // limit the tracer to a thousand messages in total
+    public static final int MAX_BACKLOG_SIZE = 1000;
     private final CamelContext camelContext;
     private final Language simple;
     private boolean enabled;
@@ -55,7 +55,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     // use a queue with an upper limit to avoid storing too many messages
     private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
-    private int backlogSize = 1000;
+    private int backlogSize = 100;
     private boolean removeOnDump = true;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;

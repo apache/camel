@@ -32,8 +32,8 @@ messages in either a POJO or XML format.
 |standby | `false` |Whether the tracer is standby. If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via JMX or calling the enabled method.
 |enabled |`false` |Flag to enable or disable this tracer
 
-|backlogSize |`1000` |Maximum number of total traced messages to keep in the backlog (FIFO
-queue).
+|backlogSize |`100` |Maximum number of total traced messages to keep in the backlog (FIFO
+queue). Should be between 1 - 1000.
 
 |tracePattern |`null` |Allows to filter tracing using a pattern that matches against the node
 id and route id. For example use `"to1,to2"` to match only nodes with

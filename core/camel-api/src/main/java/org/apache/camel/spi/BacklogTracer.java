@@ -50,12 +50,12 @@ public interface BacklogTracer {
     void setStandby(boolean standby);
 
     /**
-     * Number of messages to keep in the backlog. Default is 1000.
+     * Number of messages to keep in the backlog. Default is 100.
      */
     int getBacklogSize();
 
     /**
-     * Number of messages to keep in the backlog. Default is 1000.
+     * Number of messages to keep in the backlog (should be between 1 - 1000). Default is 100.
      */
     void setBacklogSize(int backlogSize);
 
@@ -196,29 +196,21 @@ public interface BacklogTracer {
 
     /**
      * Dumps all tracing data as XML
-     *
-     * This requires having {@link #setTraceAsXml(boolean)} enabled.
      */
     String dumpAllTracedMessagesAsXml();
 
     /**
      * Dumps tracing data for the given route id / node id as XML
-     *
-     * This requires having {@link #setTraceAsXml(boolean)} enabled.
      */
     String dumpTracedMessagesAsXml(String nodeId);
 
     /**
      * Dumps all tracing data as JSon
-     *
-     * This requires having {@link #setTraceAsJSon(boolean)} enabled.
      */
     String dumpAllTracedMessagesAsJSon();
 
     /**
      * Dumps tracing data for the given route id / node id as JSon
-     *
-     * This requires having {@link #setTraceAsJSon(boolean)} enabled.
      */
     String dumpTracedMessagesAsJSon(String nodeId);
 

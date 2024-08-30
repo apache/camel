@@ -33,9 +33,9 @@ import org.apache.camel.util.json.JsonObject;
 @Configurer(bootstrap = true)
 public class TraceDevConsole extends AbstractDevConsole {
 
-    @Metadata(defaultValue = "1000",
+    @Metadata(defaultValue = "100",
               description = "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
-    private int capacity = 1000;
+    private int capacity = 100;
 
     /**
      * Whether to enable or disable tracing

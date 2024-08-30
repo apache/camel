@@ -22,6 +22,9 @@ Internally, Camel will now use Java's own `InputStream.transferTo` for copying d
 require customized buffer sizes or data flushing policies. Additionally, the size of the data buffer used by Camel when
 performing these copies has increased from 4096 bytes to 16384 bytes (the default buffer size used by Java 21).
 
+The tracer (`BacklogTracer`) has changed the `backlogSize` default value from `1000` to `100`. This reduces the amount of
+data captured and stored and helps reduce the tracing overhead.
+
 === Deprecated Components
 
 The following components that were marked as deprecated:
