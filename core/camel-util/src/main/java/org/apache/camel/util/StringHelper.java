@@ -515,6 +515,10 @@ public final class StringHelper {
         if (dashToCamelCase) {
             ret = dashToCamelCase(text);
         }
+        return doCapitalize(ret);
+    }
+
+    private static String doCapitalize(String ret) {
         if (ret == null) {
             return null;
         }
@@ -542,7 +546,7 @@ public final class StringHelper {
         final char[] chars = text.toCharArray();
 
         // We are OK with the limitations of Character.toLowerCase. The symbols and ideographs
-        // for which it does not return the lower case value should not be used here (this is
+        // for which it does not return the lower case value should not be used here (this isap
         // mostly used to convert part of setters/getters to properties)
         chars[0] = Character.toLowerCase(chars[0]);
         return new String(chars);
