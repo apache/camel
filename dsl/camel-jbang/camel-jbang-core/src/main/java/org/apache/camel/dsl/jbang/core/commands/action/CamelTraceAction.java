@@ -23,6 +23,7 @@ import java.io.LineNumberReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,9 +36,15 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -75,16 +82,20 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         @Override
         public Iterator<String> iterator() {
-            return List.of("start", "stop", "status").iterator();
+            return List.of("dump", "start", "stop", "status", "clear").iterator();
         }
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
-            description = "Action for start, stop, or show status of tracing")
+    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class, defaultValue = "status",
+                        description = "Action to start, stop, clear, list status, or dump traces")
     String action;
+
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
+                        description = "Sort by pid, name or age for showing status of tracing", defaultValue = "pid")
+    String sort;
 
     @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
                         description = "Print timestamp.")
@@ -180,21 +191,30 @@ public class CamelTraceAction extends ActionBaseCommand {
         super(main);
     }
 
-    protected Integer doActionCall() throws Exception {
-        List<Long> pids = findPids(name);
+    @Override
+    public Integer doCall() throws Exception {
+        if ("dump".equals(action)) {
+            return doDumpCall();
+        } else if ("status".equals(action)) {
+            return doStatusCall();
+        }
 
-        if ("status".equals(action)) {
-            // TODO: show table of trace status per pid (like processor status)
-        } else {
-            for (long pid : pids) {
+        List<Long> pids = findPids(name);
+        for (long pid : pids) {
+            if ("clear".equals(action)) {
+                File f = getTraceFile("" + pid);
+                if (f.exists()) {
+                    IOHelper.writeText("{}", f);
+                }
+            } else {
                 JsonObject root = new JsonObject();
                 root.put("action", "trace");
-                File f = getActionFile(Long.toString(pid));
                 if ("start".equals(action)) {
                     root.put("enabled", "true");
                 } else if ("stop".equals(action)) {
                     root.put("enabled", "false");
                 }
+                File f = getActionFile(Long.toString(pid));
                 IOHelper.writeText(root.toJson(), f);
             }
         }
@@ -202,12 +222,88 @@ public class CamelTraceAction extends ActionBaseCommand {
         return 0;
     }
 
-    @Override
-    public Integer doCall() throws Exception {
-        if (action != null) {
-            return doActionCall();
+    protected Integer doStatusCall() {
+        List<StatusRow> rows = new ArrayList<>();
+
+        List<Long> pids = findPids(name);
+        ProcessHandle.allProcesses()
+                .filter(ph -> pids.contains(ph.pid()))
+                .forEach(ph -> {
+                    JsonObject root = loadStatus(ph.pid());
+                    if (root != null) {
+                        StatusRow row = new StatusRow();
+                        JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
+                        }
+                        row.pid = Long.toString(ph.pid());
+                        row.uptime = extractSince(ph);
+                        row.age = TimeUtils.printSince(row.uptime);
+                        JsonObject jo = root.getMap("trace");
+                        if (jo != null) {
+                            row.enabled = jo.getBoolean("enabled");
+                            row.standby = jo.getBoolean("standby");
+                            row.counter = jo.getLong("counter");
+                            row.queueSize = jo.getLong("queueSize");
+                            row.filter = jo.getString("traceFilter");
+                            row.pattern = jo.getString("tracePattern");
+                        }
+                        rows.add(row);
+                    }
+                });
+
+        // sort rows
+        rows.sort(this::sortStatusRow);
+
+        if (!rows.isEmpty()) {
+            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.name),
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                    new Column().header("STATUS").with(this::getTraceStatus),
+                    new Column().header("TOTAL").with(r -> "" + r.counter),
+                    new Column().header("QUEUE").with(r -> "" + r.queueSize),
+                    new Column().header("FILTER").with(r -> r.filter),
+                    new Column().header("PATTERN").with(r -> r.pattern))));
         }
 
+        return 0;
+    }
+
+    private String getTraceStatus(StatusRow r) {
+        if (r.enabled) {
+            return "Started";
+        } else if (r.standby) {
+            return "Standby";
+        }
+        return "Stopped";
+    }
+
+    protected int sortStatusRow(StatusRow o1, StatusRow o2) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
+            case "pid":
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
+            case "name":
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
+            case "age":
+                return Long.compare(o1.uptime, o2.uptime) * negate;
+            default:
+                return 0;
+        }
+    }
+
+    protected Integer doDumpCall() throws Exception {
         // setup table helper
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
@@ -864,6 +960,19 @@ public class CamelTraceAction extends ActionBaseCommand {
             this.parent = parent;
         }
 
+    }
+
+    private static class StatusRow {
+        String pid;
+        String name;
+        String age;
+        long uptime;
+        boolean enabled;
+        boolean standby;
+        long counter;
+        long queueSize;
+        String filter;
+        String pattern;
     }
 
 }
