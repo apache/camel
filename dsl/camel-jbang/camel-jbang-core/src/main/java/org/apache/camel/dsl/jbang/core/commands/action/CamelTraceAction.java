@@ -44,7 +44,6 @@ import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -89,7 +88,8 @@ public class CamelTraceAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class, defaultValue = "status",
+    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
+                        defaultValue = "status",
                         description = "Action to start, stop, clear, list status, or dump traces")
     String action;
 
