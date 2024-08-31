@@ -740,7 +740,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 .resolveById("trace");
         if (dc != null) {
             String enabled = root.getString("enabled");
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("enabled", enabled));
+            JsonObject json;
+            if (enabled != null) {
+                json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("enabled", enabled));
+            } else {
+                json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+            }
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -1091,7 +1096,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             DevConsole dc12 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                     .resolveById("trace");
             if (dc12 != null) {
-                JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
+                JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON, Map.of("dump", "true"));
                 JsonArray arr = json.getCollection("traces");
                 // filter based on last uid
                 if (traceFilePos > 0) {

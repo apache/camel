@@ -44,14 +44,10 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
-            // make tracing/debugger at least standby so we can use it in dev-mode
+            // make tracing at least standby so we can use it in dev-mode
             boolean enabled = config.tracerConfig().isEnabled();
             if (!enabled) {
                 config.tracerConfig().withStandby(true);
-            }
-            enabled = config.debuggerConfig().isEnabled();
-            if (!enabled) {
-                config.debuggerConfig().withStandby(true);
             }
         }
 

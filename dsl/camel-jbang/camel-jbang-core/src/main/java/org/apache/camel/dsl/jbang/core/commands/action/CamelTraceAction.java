@@ -68,8 +68,23 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
     }
 
+    public static class ActionCompletionCandidates implements Iterable<String> {
+
+        public ActionCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("start", "stop", "status").iterator();
+        }
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
+
+    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
+            description = "Action for start, stop, or show status of tracing")
+    String action;
 
     @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
                         description = "Print timestamp.")
@@ -165,8 +180,34 @@ public class CamelTraceAction extends ActionBaseCommand {
         super(main);
     }
 
+    protected Integer doActionCall() throws Exception {
+        List<Long> pids = findPids(name);
+
+        if ("status".equals(action)) {
+            // TODO: show table of trace status per pid (like processor status)
+        } else {
+            for (long pid : pids) {
+                JsonObject root = new JsonObject();
+                root.put("action", "trace");
+                File f = getActionFile(Long.toString(pid));
+                if ("start".equals(action)) {
+                    root.put("enabled", "true");
+                } else if ("stop".equals(action)) {
+                    root.put("enabled", "false");
+                }
+                IOHelper.writeText(root.toJson(), f);
+            }
+        }
+
+        return 0;
+    }
+
     @Override
     public Integer doCall() throws Exception {
+        if (action != null) {
+            return doActionCall();
+        }
+
         // setup table helper
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
