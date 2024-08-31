@@ -274,6 +274,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionBeanTask(root);
             } else if ("kafka".equals(action)) {
                 doActionKafkaTask();
+            } else if ("trace".equals(action)) {
+                doActionTraceTask(root);
             }
         } catch (Exception e) {
             // ignore
@@ -733,6 +735,19 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
+    private void doActionTraceTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("trace");
+        if (dc != null) {
+            String enabled = root.getString("enabled");
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("enabled", enabled));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
     private void doActionBeanTask(JsonObject root) throws IOException {
         String filter = root.getStringOrDefault("filter", "");
         String properties = root.getStringOrDefault("properties", "true");
@@ -977,11 +992,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("fault-tolerance", json);
                     }
                 }
-                DevConsole dc12a = dcr.resolveById("circuit-breaker");
-                if (dc12a != null) {
-                    JsonObject json = (JsonObject) dc12a.call(DevConsole.MediaType.JSON);
+                DevConsole dc12 = dcr.resolveById("circuit-breaker");
+                if (dc12 != null) {
+                    JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
                     if (json != null && !json.isEmpty()) {
                         root.put("circuit-breaker", json);
+                    }
+                }
+                DevConsole dc13 = dcr.resolveById("trace");
+                if (dc13 != null) {
+                    JsonObject json = (JsonObject) dc13.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("trace", json);
                     }
                 }
                 DevConsole dc14 = dcr.resolveById("consumer");
