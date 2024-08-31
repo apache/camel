@@ -16,7 +16,7 @@
 *{component-header}*
 
 The Spring WS component allows you to integrate with
-http://static.springsource.org/spring-ws/sites/1.5/[Spring Web
+https://docs.spring.io/spring-ws/docs/4.0.x/reference/html/[Spring Web
 Services]. It offers both _client_-side support, for accessing web
 services, and _server_-side support for creating your own contract-first
 web services.
@@ -59,6 +59,8 @@ the header of the message.
 
 |`uri` |To map web service requests that target a specific URI.
 
+|`uripath` |To map web service requests that target a specific path in URI.
+
 |`xpathresult` |Used to map web service requests based on the evaluation of an XPath
 `expression` against the incoming message. The result of the evaluation
 should match the XPath result specified in the endpoint URI.
@@ -66,14 +68,14 @@ should match the XPath result specified in the endpoint URI.
 |`beanname` |Allows you to reference an
 `org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher`
 object to integrate with existing (legacy)
-http://static.springsource.org/spring-ws/sites/1.5/reference/html/server.html#server-endpoint-mapping[endpoint
+https://docs.spring.io/spring-ws/docs/4.0.x/reference/html/#server-endpoint-mapping[endpoint
 mappings] like `PayloadRootQNameEndpointMapping`,
 `SoapActionEndpointMapping`, etc.
 |=======================================================================
 
 As a consumer, the *address* should contain a value relevant to the
 specified mapping-type (e.g. a SOAP action, XPath expression). As a
- producer, the address should be set to the URI of the web service your
+producer, the address should be set to the URI of the web service your
 calling upon.
 
 
@@ -161,16 +163,16 @@ Likewise, the spring-ws consumer will also enrich the Camel Message with
 the SOAP header.
 
 For example, see this
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-ws/src/test/java/org/apache/camel/component/spring/ws/SoapHeaderTest.java[unit
+https://github.com/apache/camel/blob/main/components/camel-spring-ws/src/test/java/org/apache/camel/component/spring/ws/SoapHeaderTest.java[unit
 test].
 
 === The header and attachment propagation
 
 Spring WS Camel supports propagation of the headers and attachments into
-Spring-WS WebServiceMessage response. The
-endpoint will use so-called "hook" the MessageFilter (default
-implementation is provided by BasicMessageFilter) to propagate the
-exchange headers and attachments into WebServiceMessage response. Now
+Spring-WS `WebServiceMessage` response. The
+endpoint will use so-called "hook" the `MessageFilter` (default
+implementation is provided by `BasicMessageFilter`) to propagate the
+exchange headers and attachments into `WebServiceMessage` response. Now
 you can use
 
 [source,java]
@@ -188,7 +190,7 @@ a QName class directly and put any key into header.
 
 === How to transform the soap header using a stylesheet
 
-The header transformation filter (HeaderTransformationMessageFilter.java)
+The header transformation filter (`HeaderTransformationMessageFilter`)
 can be used to transform the soap header for a soap request. If you want to use 
 the header transformation filter, see the below example:
 
@@ -212,9 +214,9 @@ Use the bead defined above in the camel endpoint
 === The custom header and attachment filtering
 
 If you need to provide your custom processing of either headers or
-attachments, extend existing BasicMessageFilter and override the
+attachments, extend existing `BasicMessageFilter` and override the
 appropriate methods or write a brand-new implementation of the
-MessageFilter interface.
+`MessageFilter` interface.
 To use your custom filter, add this into your spring context:
 
 You can specify either a global a or a local message filter as
@@ -275,20 +277,13 @@ Spring configuration:
         </bean>
     </property>
 </bean>
-
-<!-- force use of Sun SAAJ implementation, https://static.springsource.org/spring-ws/sites/1.5/faq.html#saaj-jboss -->
-<bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
-    <property name="messageFactory">
-        <bean class="com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl"/>
-    </property>
-</bean>
 ---------------------------------------------------------------------------------------------------------------------
 
 === Exposing web services
 
 To expose a web service using this component, you first need to
 set up a
-http://static.springsource.org/spring-ws/sites/1.5/reference/html/server.html[MessageDispatcher]
+https://docs.spring.io/spring-ws/docs/4.0.x/reference/html/#_the_messagedispatcher[MessageDispatcher]
 to look for endpoint mappings in a Spring XML file. If you plan on
 running inside a servlet container, you probably want to use a
 `MessageDispatcherServlet` configured in `web.xml`.
@@ -335,7 +330,7 @@ _spring-ws-servlet.xml_
 ----------------------------------------------------------------------------------------------------
 
 More information on setting up Spring-WS can be found in
-http://static.springsource.org/spring-ws/sites/1.5/reference/html/tutorial.html[Writing
+https://docs.spring.io/spring-ws/docs/4.0.x/reference/html/#tutorial[Writing
 Contract-First Web Services]. Basically paragraph 3.6 "Implementing the
 Endpoint" is handled by this component (specifically paragraph 3.6.2
 "Routing the Message to the Endpoint" is where `CamelEndpointMapping`
@@ -389,9 +384,9 @@ from("spring-ws:xpathresult:abc?expression=//foobar&endpointMapping=#endpointMap
 
 For every endpoint with mapping-type `beanname` one bean of type
 `CamelEndpointDispatcher` with a corresponding name is required in the
-Registry/ApplicationContext. This bean acts as a bridge between the
+`Registry`/`ApplicationContext`. This bean acts as a bridge between the
 Camel endpoint and an existing
-http://static.springsource.org/spring-ws/sites/1.5/reference/html/server.html#server-endpoint-mapping[endpoint
+https://docs.spring.io/spring-ws/docs/4.0.x/reference/html/#server-endpoint-mapping[endpoint
 mapping] like `PayloadRootQNameEndpointMapping`.
 
 [NOTE]

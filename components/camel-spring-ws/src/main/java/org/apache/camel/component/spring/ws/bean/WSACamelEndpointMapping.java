@@ -31,8 +31,9 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.AbstractAddressingEndpointMapping;
-import org.springframework.ws.soap.addressing.server.AnnotationActionEndpointMapping;
 import org.springframework.ws.transport.WebServiceMessageSender;
+
+import static org.springframework.ws.soap.addressing.server.AbstractActionEndpointMapping.DEFAULT_OUTPUT_ACTION_SUFFIX;
 
 /**
  * Provides support for full WS-Addressing. Supported are faultAction and response action. For more details look at @see
@@ -45,32 +46,26 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
 
     private static final Logger LOG = LoggerFactory.getLogger(WSACamelEndpointMapping.class);
 
-    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<>();
+    private final Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<>();
 
-    private String outputActionSuffix = AnnotationActionEndpointMapping.DEFAULT_OUTPUT_ACTION_SUFFIX;
+    private String outputActionSuffix = DEFAULT_OUTPUT_ACTION_SUFFIX;
 
-    private String faultActionSuffix = AnnotationActionEndpointMapping.DEFAULT_OUTPUT_ACTION_SUFFIX;
+    private String faultActionSuffix = DEFAULT_OUTPUT_ACTION_SUFFIX;
 
     @Override
     protected Object getEndpointInternal(MessageAddressingProperties map) {
         // search the endpoint with compositeKeyFirst
         for (Map.Entry<EndpointMappingKey, MessageEndpoint> endpointEntry : endpoints.entrySet()) {
             EndpointMappingKey key = endpointEntry.getKey();
-            String compositeOrSimpleKey = null;
-            switch (key.getType()) {
-                case ACTION:
-                    compositeOrSimpleKey = getActionCompositeLookupKey(map);
-                    break;
-                case TO:
-                    compositeOrSimpleKey = getToCompositeLookupKey(map);
-                    break;
-                default:
-                    throw new RuntimeCamelException(
-                            "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
-            }
+            String compositeOrSimpleKey = switch (key.getType()) {
+                case ACTION -> getActionCompositeLookupKey(map);
+                case TO -> getToCompositeLookupKey(map);
+                default -> throw new RuntimeCamelException(
+                        "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
+                        + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+            };
             // lookup for specific endpoint
-            if (compositeOrSimpleKey != null && key.getLookupKey().equals(compositeOrSimpleKey)) {
+            if (key.getLookupKey().equals(compositeOrSimpleKey)) {
                 LOG.debug("Found mapping for key {}", key);
                 return endpointEntry.getValue();
             }
@@ -97,7 +92,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
                                                     + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             }
             // look up for less specific endpoint
-            if (simpleKey != null && key.getLookupKey().equals(simpleKey)) {
+            if (key.getLookupKey().equals(simpleKey)) {
                 LOG.debug("Found mapping for key {}", key);
                 return endpointEntry.getValue();
             }
@@ -106,7 +101,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     }
 
     /**
-     * Generate a lookupKey for a given WS-Addressing message using action property. The possible combination are:
+     * Generate a lookupKey for a given WS-Addressing message using action property. The possible combination is:
      * <ul>
      * <li>wsaAction</li>
      * <li>wsaAction:wsaGetTo</li>
@@ -222,7 +217,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     protected URI getDefaultResponseAction(Object endpoint, MessageAddressingProperties requestMap) {
         URI requestAction = requestMap.getAction();
         if (requestAction != null) {
-            return URI.create(requestAction.toString() + getOutputActionSuffix());
+            return URI.create(requestAction + getOutputActionSuffix());
         } else {
             return null;
         }
@@ -231,7 +226,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     protected URI getDefaultFaultAction(Object endpoint, MessageAddressingProperties requestMap) {
         URI requestAction = requestMap.getAction();
         if (requestAction != null) {
-            return URI.create(requestAction.toString() + getFaultActionSuffix());
+            return URI.create(requestAction + getFaultActionSuffix());
         } else {
             return null;
         }
@@ -257,7 +252,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     /**
      * Sets the suffix to add to request <code>Action</code>s for reply messages.
      *
-     * @see #DEFAULT_OUTPUT_ACTION_SUFFIX
+     * @see org.springframework.ws.soap.addressing.server.AbstractActionEndpointMapping#DEFAULT_OUTPUT_ACTION_SUFFIX
      */
     public void setOutputActionSuffix(String outputActionSuffix) {
         Assert.hasText(outputActionSuffix, "'outputActionSuffix' must not be empty");
@@ -274,7 +269,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     /**
      * Sets the suffix to add to request <code>Action</code>s for reply fault messages.
      *
-     * @see #DEFAULT_FAULT_ACTION_SUFFIX
+     * @see org.springframework.ws.soap.addressing.server.AbstractActionEndpointMapping#DEFAULT_FAULT_ACTION_SUFFIX
      */
     public void setFaultActionSuffix(String faultActionSuffix) {
         Assert.hasText(faultActionSuffix, "'faultActionSuffix' must not be empty");

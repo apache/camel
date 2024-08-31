@@ -83,7 +83,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
 
     private static final String DOUBLE_QUOTE = "\"";
     private static final String URI_PATH_WILDCARD = "*";
-    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<>();
+    private final Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<>();
     private TransformerFactory transformerFactory;
     private CamelContext camelContext;
 
@@ -157,8 +157,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
     }
 
     private String getSoapAction(MessageContext messageContext) {
-        if (messageContext.getRequest() instanceof SoapMessage) {
-            SoapMessage request = (SoapMessage) messageContext.getRequest();
+        if (messageContext.getRequest() instanceof SoapMessage request) {
             String soapAction = request.getSoapAction();
             if (StringUtils.hasLength(soapAction) && soapAction.startsWith(DOUBLE_QUOTE) && soapAction.endsWith(DOUBLE_QUOTE)) {
                 return soapAction.substring(1, soapAction.length() - 1);

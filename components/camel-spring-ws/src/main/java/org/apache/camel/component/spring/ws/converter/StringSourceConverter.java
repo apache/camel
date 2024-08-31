@@ -28,7 +28,7 @@ import org.apache.camel.util.xml.StringSource;
  * {@link org.springframework.xml.transform.StringSource} implementations, this converter handles these (corner)cases.
  * <p/>
  * Note that conversion options are limited by Spring's {@link org.springframework.xml.transform.StringSource} since
- * it's the most simple one. It has just one constructor that accepts a String as input.
+ * it's the simplest one. It has just one constructor that accepts a String as input.
  */
 @Converter(generateLoader = true)
 public final class StringSourceConverter {
@@ -38,7 +38,7 @@ public final class StringSourceConverter {
 
     /**
      * Converts a Spring-WS {@link org.springframework.xml.transform.StringSource} to a Camel
-     * {@link org.apache.camel.converter.jaxp.StringSource}
+     * {@link StringSource}
      */
     @Converter
     public static StringSource toStringSourceFromSpring(org.springframework.xml.transform.StringSource springStringSource) {
@@ -46,7 +46,7 @@ public final class StringSourceConverter {
     }
 
     /**
-     * Converts a Camel {@link org.apache.camel.converter.jaxp.StringSource} to a Spring-WS
+     * Converts a Camel {@link StringSource} to a Spring-WS
      * {@link org.springframework.xml.transform.StringSource}
      */
     @Converter

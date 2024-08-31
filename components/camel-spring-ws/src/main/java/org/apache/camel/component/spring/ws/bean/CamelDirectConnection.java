@@ -34,7 +34,7 @@ import org.springframework.ws.transport.WebServiceConnection;
 public class CamelDirectConnection implements WebServiceConnection {
     private static final Logger LOG = LoggerFactory.getLogger(CamelDirectConnection.class);
     private CamelContext camelContext;
-    private URI destination;
+    private final URI destination;
 
     public CamelDirectConnection(CamelContext camelContext, URI uri) throws URISyntaxException {
         this.camelContext = camelContext;
