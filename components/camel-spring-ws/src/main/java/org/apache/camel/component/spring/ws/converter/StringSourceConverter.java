@@ -37,8 +37,7 @@ public final class StringSourceConverter {
     }
 
     /**
-     * Converts a Spring-WS {@link org.springframework.xml.transform.StringSource} to a Camel
-     * {@link StringSource}
+     * Converts a Spring-WS {@link org.springframework.xml.transform.StringSource} to a Camel {@link StringSource}
      */
     @Converter
     public static StringSource toStringSourceFromSpring(org.springframework.xml.transform.StringSource springStringSource) {
@@ -46,8 +45,7 @@ public final class StringSourceConverter {
     }
 
     /**
-     * Converts a Camel {@link StringSource} to a Spring-WS
-     * {@link org.springframework.xml.transform.StringSource}
+     * Converts a Camel {@link StringSource} to a Spring-WS {@link org.springframework.xml.transform.StringSource}
      */
     @Converter
     public static org.springframework.xml.transform.StringSource toStringSourceFromCamel(StringSource camelStringSource) {

@@ -62,7 +62,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
                 case TO -> getToCompositeLookupKey(map);
                 default -> throw new RuntimeCamelException(
                         "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                        + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+                                                           + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             };
             // lookup for specific endpoint
             if (key.getLookupKey().equals(compositeOrSimpleKey)) {
