@@ -1611,19 +1611,50 @@ command but only display message tracing information. This allows you to see eve
 The `trace` command has many options and can be used to _filter_, _grep_ or output on different detail _levels`.
 The _exchange id_ is logged (and grouped by colour), so you can use that to correlate the events, when traces are interleaved.
 
-For example if an existing integration is running named chuck, you can trace it as follows:
-
-[source,bash]
-----
-camel trace chuck
-----
-
-You can also trace all running integrations
+The trace command will by default list the status of whether tracing is enabled or not in the integrations:
 
 [source,bash]
 ----
 camel trace
+ PID   NAME   AGE  STATUS   TOTAL  QUEUE  FILTER  PATTERN
+ 6911  chuck   5s  Standby      0      0
 ----
+
+Here we can see that the tracer is in standby mode, and you need to start the tracer before Camel will capture messages:
+
+TIP: Camel 4.8 onwards has tracing in standby mode (when using dev profile). You can enable tracing on startup by setting the configuration `camel.trace.enabled=true` in `application.properties`.
+
+[source,bash]
+----
+camel trace --action=start
+----
+
+And if you run `camel trace` again you can see the tracer is started:
+
+[source,bash]
+----
+camel trace
+PID   NAME   AGE   STATUS   TOTAL  QUEUE  FILTER  PATTERN
+6911  chuck  1m5s  Started     16      4
+----
+
+And to show the traces you need to use the `dump` action as follows:
+
+[source,bash]
+----
+camel trace chuck --action=dump
+----
+
+You can also dump traces from all running integrations:
+
+[source,bash]
+----
+camel trace --action=dump
+----
+
+To stop tracing use `--action=stop`.
+
+And you can also clear the already traced messages with `--action=clear`.
 
 ==== Running Camel integrations in background
 

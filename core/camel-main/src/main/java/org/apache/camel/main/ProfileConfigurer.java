@@ -44,10 +44,10 @@ public class ProfileConfigurer {
         }
 
         if ("dev".equals(profile)) {
-            boolean standby = config.tracerConfig().isStandby();
-            if (!standby) {
-                // make tracing enabled (if not configured to be standby) and limit to not capture too much data
-                config.tracerConfig().withEnabled(true);
+            // make tracing at least standby so we can use it in dev-mode
+            boolean enabled = config.tracerConfig().isEnabled();
+            if (!enabled) {
+                config.tracerConfig().withStandby(true);
             }
         }
 

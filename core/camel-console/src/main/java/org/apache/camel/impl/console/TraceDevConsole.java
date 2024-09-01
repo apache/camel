@@ -42,6 +42,11 @@ public class TraceDevConsole extends AbstractDevConsole {
      */
     public static final String ENABLED = "enabled";
 
+    /**
+     * Whether to dump trace messages
+     */
+    public static final String DUMP = "dump";
+
     private Queue<BacklogTracerEventMessage> queue;
 
     public TraceDevConsole() {
@@ -67,17 +72,11 @@ public class TraceDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
         String enabled = (String) options.get(ENABLED);
+        String dump = (String) options.get(DUMP);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            if ("true".equals(enabled)) {
-                tracer.setEnabled(true);
-                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
-            } else if ("false".equals(enabled)) {
-                tracer.setEnabled(false);
-                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
-            } else {
-                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
+            if (dump != null) {
                 for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                     addMessage(t);
                 }
@@ -85,6 +84,32 @@ public class TraceDevConsole extends AbstractDevConsole {
                     String json = t.toJSon(0);
                     sb.append(json).append("\n");
                 }
+            } else {
+                if ("true".equals(enabled)) {
+                    tracer.setEnabled(true);
+                } else if ("false".equals(enabled)) {
+                    tracer.setEnabled(false);
+                }
+                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
+                sb.append("Standby: ").append(tracer.isStandby()).append("\n");
+                sb.append("Trace Counter: ").append(tracer.getTraceCounter()).append("\n");
+                sb.append("Backlog Size: ").append(tracer.getBacklogSize()).append("\n");
+                sb.append("Queue Size: ").append(tracer.getQueueSize()).append("\n");
+                sb.append("Remove On Dump: ").append(tracer.isRemoveOnDump()).append("\n");
+                if (tracer.getTraceFilter() != null) {
+                    sb.append("Trace Filter: ").append(tracer.getTraceFilter()).append("\n");
+                }
+                if (tracer.getTracePattern() != null) {
+                    sb.append("Trace Pattern: ").append(tracer.getTracePattern()).append("\n");
+                }
+                sb.append("Trace Rests: ").append(tracer.isTraceRests()).append("\n");
+                sb.append("Trace Templates: ").append(tracer.isTraceTemplates()).append("\n");
+                sb.append("Body Max Chars: ").append(tracer.getBodyMaxChars()).append("\n");
+                sb.append("Body Include Files: ").append(tracer.isBodyIncludeFiles()).append("\n");
+                sb.append("Body Include Streams: ").append(tracer.isBodyIncludeStreams()).append("\n");
+                sb.append("Include Exchange Properties: ").append(tracer.isIncludeExchangeProperties()).append("\n");
+                sb.append("Include Exchange Variables: ").append(tracer.isIncludeExchangeVariables()).append("\n");
+                sb.append("Include Exception: ").append(tracer.isIncludeException()).append("\n");
             }
         }
 
@@ -105,20 +130,14 @@ public class TraceDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
         String enabled = (String) options.get(ENABLED);
+        String dump = (String) options.get(DUMP);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            if ("true".equals(enabled)) {
-                tracer.setEnabled(true);
-                root.put("enabled", tracer.isEnabled());
-            } else if ("false".equals(enabled)) {
-                tracer.setEnabled(false);
-                root.put("enabled", tracer.isEnabled());
-            } else {
+            if (dump != null) {
                 for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                     addMessage(t);
                 }
-
                 JsonArray arr = new JsonArray();
                 root.put("enabled", tracer.isEnabled());
                 root.put("traces", arr);
@@ -126,6 +145,32 @@ public class TraceDevConsole extends AbstractDevConsole {
                     JsonObject jo = (JsonObject) t.asJSon();
                     arr.add(jo);
                 }
+            } else {
+                if ("true".equals(enabled)) {
+                    tracer.setEnabled(true);
+                } else if ("false".equals(enabled)) {
+                    tracer.setEnabled(false);
+                }
+                root.put("enabled", tracer.isEnabled());
+                root.put("standby", tracer.isStandby());
+                root.put("counter", tracer.getTraceCounter());
+                root.put("backlogSize", tracer.getBacklogSize());
+                root.put("queueSize", tracer.getQueueSize());
+                root.put("removeOnDump", tracer.isRemoveOnDump());
+                if (tracer.getTraceFilter() != null) {
+                    root.put("traceFilter", tracer.getTraceFilter());
+                }
+                if (tracer.getTracePattern() != null) {
+                    root.put("tracePattern", tracer.getTracePattern());
+                }
+                root.put("traceRests", tracer.isTraceRests());
+                root.put("traceTemplates", tracer.isTraceTemplates());
+                root.put("bodyMaxChars", tracer.getBodyMaxChars());
+                root.put("bodyIncludeFiles", tracer.isBodyIncludeFiles());
+                root.put("bodyIncludeStreams", tracer.isBodyIncludeStreams());
+                root.put("includeExchangeProperties", tracer.isIncludeExchangeProperties());
+                root.put("includeExchangeVariables", tracer.isIncludeExchangeVariables());
+                root.put("includeException", tracer.isIncludeException());
             }
         }
 

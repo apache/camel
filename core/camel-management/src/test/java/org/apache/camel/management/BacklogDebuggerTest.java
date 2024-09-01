@@ -349,10 +349,10 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<body>[Body is null]</body>"), "Should not contain our body");
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
         assertFalse(xml.contains("<header"), "Should not contain any headers");
         assertFalse(xml.contains("<exchangeProperty key=\"food\""), "Should not contain exchange property 'food'");
+        assertTrue(xml.contains("<body></body>"), "Should not contain our body");
 
         resetMocks();
         mock.expectedMessageCount(1);
