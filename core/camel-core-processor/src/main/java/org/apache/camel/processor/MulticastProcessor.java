@@ -684,7 +684,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 } catch (Exception e) {
                     original.setException(e);
                     doDone(null, false);
-                    next = false;
+                    return;
                 }
             }
         }
@@ -705,7 +705,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
             ProcessorExchangePair pair = iterator.next();
             if (pair == null) {
-                return true;
+                return true; // go again to check hasNext
             }
 
             boolean hasNext = iterator.hasNext();
