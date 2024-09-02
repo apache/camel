@@ -41,6 +41,7 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
+import io.fabric8.openshift.api.model.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
@@ -212,6 +213,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
     @MethodSource("runtimeProvider")
     public void shouldAddIngressSpec(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait-profile", "kubernetes",
                 "--trait", "ingress.host=example.com",
                 "--trait", "ingress.path=/something(/|$)(.*)",
                 "--trait", "ingress.pathType=ImplementationSpecific",
@@ -222,6 +224,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertFalse(hasRoute(rt));
 
         Deployment deployment = getDeployment(rt);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
@@ -246,6 +249,42 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals("/$2",
                 ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/rewrite-target"));
         Assertions.assertEquals("true", ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/use-regex"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddRouteSpec(RuntimeType rt) throws Exception {
+        String certificate = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.pem"));
+        String key = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.key"));
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait-profile", "openshift",
+                "--trait", "route.host=example.com",
+                "--trait", "route.tls-termination=edge",
+                "--trait", "route.tls-certificate=" + certificate,
+                "--trait", "route.tls-key=" + key,
+                "--runtime=" + rt.runtime());
+        command.doCall();
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertFalse(hasIngress(rt));
+
+        Deployment deployment = getDeployment(rt);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("route-service", deployment.getMetadata().getName());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertEquals(1, container.getPorts().size());
+        Assertions.assertEquals("http", container.getPorts().get(0).getName());
+        Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        Route route = getRoute(rt);
+        Assertions.assertEquals("route-service", route.getMetadata().getName());
+        Assertions.assertEquals("example.com", route.getSpec().getHost());
+        Assertions.assertEquals("edge", route.getSpec().getTls().getTermination());
+        Assertions.assertEquals("route-service", route.getSpec().getTo().getName());
+        Assertions.assertTrue(certificate.startsWith(route.getSpec().getTls().getCertificate()));
+        Assertions.assertTrue(key.startsWith(route.getSpec().getTls().getKey()));
     }
 
     @ParameterizedTest
@@ -728,6 +767,19 @@ class KubernetesExportTest extends KubernetesBaseTest {
     private Ingress getIngress(RuntimeType rt) throws IOException {
         return getResource(rt, Ingress.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find ingress for: %s".formatted(rt.runtime())));
+    }
+
+    private boolean hasIngress(RuntimeType rt) throws IOException {
+        return getResource(rt, Ingress.class).isPresent();
+    }
+
+    private Route getRoute(RuntimeType rt) throws IOException {
+        return getResource(rt, Route.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find route for: %s".formatted(rt.runtime())));
+    }
+
+    private boolean hasRoute(RuntimeType rt) throws IOException {
+        return getResource(rt, Route.class).isPresent();
     }
 
     private boolean hasService(RuntimeType rt) throws IOException {

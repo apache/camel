@@ -40,6 +40,7 @@ public class TraitCatalog {
         register(new KnativeTrait());
         register(new KnativeServiceTrait());
         register(new ServiceTrait());
+        register(new RouteTrait());
         register(new IngressTrait());
         register(new ContainerTrait());
         register(new EnvTrait());

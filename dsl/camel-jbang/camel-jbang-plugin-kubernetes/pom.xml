@@ -54,6 +54,13 @@
             <version>${kubernetes-client-version}</version>
         </dependency>
 
+        <!-- Openshift -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-model</artifactId>
+            <version>${kubernetes-client-version}</version>
+        </dependency>
+
         <!-- Knative model -->
         <dependency>
             <groupId>io.fabric8</groupId>

@@ -102,4 +102,9 @@ public class IngressTrait extends BaseTrait {
 
         context.add(ingressBuilder);
     }
+
+    @Override
+    public boolean accept(TraitProfile profile) {
+        return TraitProfile.KUBERNETES == profile;
+    }
 }
