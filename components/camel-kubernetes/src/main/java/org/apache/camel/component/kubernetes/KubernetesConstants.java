@@ -167,6 +167,9 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "The deployment labels", javaType = "Map<String, String>",
               applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_DEPLOYMENTS_LABELS = "CamelKubernetesDeploymentsLabels";
+    @Metadata(label = "producer", description = "The deployment labels", javaType = "Map<String, String>",
+              applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
+    public static final String KUBERNETES_DEPLOYMENTS_ANNOTATIONS = "CamelKubernetesDeploymentsAnnotations";
     @Metadata(label = "producer", description = "The deployment name", javaType = "String",
               applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_DEPLOYMENT_NAME = "CamelKubernetesDeploymentName";

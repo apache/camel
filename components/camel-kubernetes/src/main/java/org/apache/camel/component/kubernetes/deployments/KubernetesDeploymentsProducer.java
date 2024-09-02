@@ -169,11 +169,20 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
                     String.format("%s a specific Deployment require specify a Deployment spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
-        Deployment deploymentCreating = new DeploymentBuilder().withNewMetadata().withName(deploymentName).withLabels(labels)
-                .endMetadata().withSpec(deSpec).build();
+        Map<String, String> annotations
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_ANNOTATIONS, Map.class);
+        DeploymentBuilder deploymentCreating;
+        if (ObjectHelper.isEmpty(annotations)) {
+            deploymentCreating = new DeploymentBuilder().withNewMetadata().withName(deploymentName).withLabels(labels)
+                    .endMetadata().withSpec(deSpec);
+        } else {
+            deploymentCreating = new DeploymentBuilder().withNewMetadata().withName(deploymentName).withLabels(labels)
+                    .withAnnotations(annotations)
+                    .endMetadata().withSpec(deSpec);
+        }
         Deployment deployment
                 = operation.apply(getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
-                        .resource(deploymentCreating));
+                        .resource(deploymentCreating.build()));
 
         prepareOutboundMessage(exchange, deployment);
     }
