@@ -159,8 +159,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether serving static files is enabled. If enabled then Camel can host html/js and other web files
-     * that makes it possible to include small web applications.
+     * Whether serving static files is enabled. If enabled then Camel can host html/js and other web files that makes it
+     * possible to include small web applications.
      */
     public void setStaticEnabled(boolean staticEnabled) {
         this.staticEnabled = staticEnabled;
@@ -168,6 +168,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     public String getStaticContextPath() {
         return staticContextPath;
+    }
+
+    /**
+     * The context-path to use for serving static content. By default, the root path is used. And if there is an
+     * index.html page then this is automatically loaded.
+     */
+    public void setStaticContextPath(String staticContextPath) {
+        this.staticContextPath = staticContextPath;
     }
 
     public boolean isDevConsoleEnabled() {
@@ -380,8 +388,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether serving static files is enabled. If enabled then Camel can host html/js and other web files
-     * that makes it possible to include small web applications.
+     * Whether serving static files is enabled. If enabled then Camel can host html/js and other web files that makes it
+     * possible to include small web applications.
      */
     public HttpServerConfigurationProperties withStaticEnabled(boolean staticEnabled) {
         this.staticEnabled = staticEnabled;
@@ -389,8 +397,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * The context-path to use for serving static content. By default, the root path is used.
-     * And if there is an index.html page then this is automatically loaded.
+     * The context-path to use for serving static content. By default, the root path is used. And if there is an
+     * index.html page then this is automatically loaded.
      */
     public HttpServerConfigurationProperties withStaticContextPath(String staticContextPath) {
         this.staticContextPath = staticContextPath;
