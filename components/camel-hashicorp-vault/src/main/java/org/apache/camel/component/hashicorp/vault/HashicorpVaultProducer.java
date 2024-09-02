@@ -78,7 +78,11 @@ public class HashicorpVaultProducer extends DefaultProducer {
             completePath = completePath + "?version=" + secretVersion;
         }
         VaultResponse rawSecret = getEndpoint().getVaultTemplate().read(completePath);
-        exchange.getMessage().setBody(rawSecret.getData());
+        if (rawSecret != null) {
+            exchange.getMessage().setBody(rawSecret.getData());
+        } else {
+            exchange.getMessage().setBody(null);
+        }
     }
 
     private void deleteSecret() {

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
 
@@ -46,8 +47,8 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
     public void createSecretTest() throws InterruptedException {
 
         mockWrite.expectedMessageCount(1);
-        mockRead.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:createSecret", new Processor() {
+        mockRead.expectedMessageCount(2);
+        template.request("direct:createSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
                 HashMap map = new HashMap();
@@ -55,13 +56,21 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
                 exchange.getIn().setBody(map);
             }
         });
-        exchange = template.request("direct:readSecret", new Processor() {
+        template.request("direct:readSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH, "test");
             }
         });
-        exchange = template.request("direct:readSecretWithPathParam", null);
+        template.request("direct:readSecretWithPathParam", null);
+
+        Exchange result = template.request("direct:readSecret", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH, "invalid");
+            }
+        });
+        assertNull(result.getMessage().getBody());
 
         MockEndpoint.assertIsSatisfied(context);
         Exchange ret = mockRead.getExchanges().get(0);
