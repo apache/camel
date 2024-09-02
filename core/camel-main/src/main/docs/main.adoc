@@ -170,7 +170,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 20 options, which are listed below.
+The camel.server supports 21 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -192,6 +192,7 @@ The camel.server supports 20 options, which are listed below.
 | *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics | false | boolean
 | *camel.server.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.server.port* | Port to use for binding embedded HTTP server | 8080 | int
+| *camel.server.staticEnabled* | Whether serving static files is enabled. If enabled then Camel can host html/js and other web files that makes it possible to include small web applications. | false | boolean
 | *camel.server.uploadEnabled* | Whether to enable file upload via HTTP (not intended for production use). This functionality is for development to be able to reload Camel routes and code with source changes (if reload is enabled). If enabled then you can upload/delete files via HTTP PUT/DELETE on context-path: /q/upload/\{name}. You must also configure the uploadSourceDir option. | false | boolean
 | *camel.server.uploadSourceDir* | Source directory when upload is enabled. |  | String
 | *camel.server.useGlobalSsl{zwsp}ContextParameters* | Whether to use global SSL configuration for securing the embedded HTTP server. | false | boolean
