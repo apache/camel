@@ -42,7 +42,10 @@ public class ZipSplitAggregateTransactedIssueTest extends CamelTestSupport {
     @Test
     public void testIfAllSplitsAggregated() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+
         template.sendBody("direct:start", "");
+
+        mock.assertIsSatisfied();
 
         // Check if second file was processed in aggregate() method of AggregationStrategy
         assertEquals("Orders2.xml", mock.getExchanges().get(0).getMessage().getHeader("CamelFileName", String.class));
