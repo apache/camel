@@ -486,7 +486,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
 
         protected void aggregate() {
-            System.out.println("aggregate");
             Lock lock = this.lock;
             if (lock.tryLock()) {
                 try {
@@ -688,10 +687,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     next = false;
                 }
             }
-            // execute any pending tasks
-            //            while (reactiveExecutor.executeFromQueue()) {
-            //                System.out.println("pending work");
-            //            }
             // fail-safe to ensure we trigger done
             doDone(null, false);
         }
