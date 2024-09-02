@@ -75,20 +75,19 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         if (type != null) {
             LOG.debug("Building Spring Web Services consumer of type {}", type);
             String lookupKey = getLookupKey(remaining, type);
+            configuration.setEndpointMappingType(type);
+            configuration.setEndpointMappingLookupKey(lookupKey);
             if (EndpointMappingType.BEANNAME.equals(type)) {
                 addEndpointDispatcherToConfiguration(configuration, lookupKey);
             } else {
                 addEndpointMappingToConfiguration(parameters, configuration);
+                if (type.equals(EndpointMappingType.XPATHRESULT)) {
+                    String expression = getAndRemoveParameter(parameters, "expression", String.class);
+                    configuration.setExpression(expression);
+                    XPathExpression xPathExpression = createXPathExpression(expression);
+                    configuration.setxPathExpression(xPathExpression);
+                }
             }
-            XPathExpression xPathExpression = null;
-            if (type.equals(EndpointMappingType.XPATHRESULT)) {
-                String expression = getAndRemoveParameter(parameters, "expression", String.class);
-                configuration.setExpression(expression);
-                xPathExpression = createXPathExpression(expression);
-                configuration.setxPathExpression(xPathExpression);
-            }
-            configuration.setEndpointMappingType(type);
-            configuration.setEndpointMappingLookupKey(lookupKey);
         }
     }
 
@@ -131,8 +130,7 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         if (xpathExpression == null) {
             throw new RuntimeCamelException("Expression parameter is required when using XPath endpoint mapping");
         }
-        XPathExpression expression = XPathExpressionFactory.createXPathExpression(xpathExpression);
-        return expression;
+        return XPathExpressionFactory.createXPathExpression(xpathExpression);
     }
 
     private void addEndpointMappingToConfiguration(
@@ -159,7 +157,7 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     /**
      * Configures the messageFilter's factory. The factory is looked up in the endpoint's URI and then in the Spring's
      * context. The bean search mechanism looks for a bean with the name messageFilter. The endpoint's URI search
-     * mechanism looks for the URI's key parameter name messageFilter, for instance like this:
+     * mechanism looks for the URI's key parameter name messageFilter, for instance, like this:
      * spring-ws:http://yourdomain.com?messageFilter=<beanName>
      */
     private void configureMessageFilter(SpringWebserviceConfiguration configuration) {

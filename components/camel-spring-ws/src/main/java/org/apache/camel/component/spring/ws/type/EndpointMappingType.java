@@ -43,7 +43,7 @@ public enum EndpointMappingType {
      * Find {@link EndpointMappingType} that corresponds with the prefix of the given uri. Matching of uri prefix
      * against enum values is case-insensitive
      *
-     * @param  uri remaining uri part of Spring-WS component
+     * @param  uri remaining uri part of the Spring-WS component
      * @return     EndpointMappingType corresponding to uri prefix
      */
     public static EndpointMappingType getTypeFromUriPrefix(String uri) {
