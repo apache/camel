@@ -179,3 +179,5 @@ This approach will return the route secret value with version '2' or default val
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
+
+include::spring-boot:partial$starter.adoc[]
