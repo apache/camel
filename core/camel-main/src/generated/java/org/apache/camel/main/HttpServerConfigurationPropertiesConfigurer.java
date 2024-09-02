@@ -53,6 +53,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "metricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "staticcontextpath":
+        case "staticContextPath": target.setStaticContextPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "staticenabled":
+        case "staticEnabled": target.setStaticEnabled(property(camelContext, boolean.class, value)); return true;
         case "uploadenabled":
         case "uploadEnabled": target.setUploadEnabled(property(camelContext, boolean.class, value)); return true;
         case "uploadsourcedir":
@@ -96,6 +100,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "metricsEnabled": return boolean.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
+        case "staticcontextpath":
+        case "staticContextPath": return java.lang.String.class;
+        case "staticenabled":
+        case "staticEnabled": return boolean.class;
         case "uploadenabled":
         case "uploadEnabled": return boolean.class;
         case "uploadsourcedir":
@@ -140,6 +148,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "metricsEnabled": return target.isMetricsEnabled();
         case "path": return target.getPath();
         case "port": return target.getPort();
+        case "staticcontextpath":
+        case "staticContextPath": return target.getStaticContextPath();
+        case "staticenabled":
+        case "staticEnabled": return target.isStaticEnabled();
         case "uploadenabled":
         case "uploadEnabled": return target.isUploadEnabled();
         case "uploadsourcedir":

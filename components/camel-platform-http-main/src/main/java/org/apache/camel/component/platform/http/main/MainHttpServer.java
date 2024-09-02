@@ -17,8 +17,10 @@
 package org.apache.camel.component.platform.http.main;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.impl.MimeMapping;
 import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
@@ -102,6 +105,8 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     private VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
     private boolean infoEnabled;
+    private boolean staticEnabled;
+    private String staticContextPath;
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
@@ -135,6 +140,29 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     public void setInfoEnabled(boolean infoEnabled) {
         this.infoEnabled = infoEnabled;
+    }
+
+    @ManagedAttribute(description = "Whether serving static content is enabled (such as html pages)")
+    public boolean isStaticEnabled() {
+        return staticEnabled;
+    }
+
+    public void setStaticEnabled(boolean staticEnabled) {
+        this.staticEnabled = staticEnabled;
+    }
+
+    @ManagedAttribute(description = "The context-path for serving static content")
+    public String getStaticContextPath() {
+        return staticContextPath;
+    }
+
+    public void setStaticContextPath(String staticContextPath) {
+        this.staticContextPath = staticContextPath;
+    }
+
+    @ManagedAttribute(description = "Whether serving static content is enabled (such as html pages)")
+    public boolean isStaticFilePattern() {
+        return staticEnabled;
     }
 
     @ManagedAttribute(description = "Whether dev console is enabled (/q/dev)")
@@ -336,6 +364,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         if (infoEnabled) {
             setupInfo();
         }
+        if (staticEnabled) {
+            setupStatic();
+        }
         if (devConsoleEnabled) {
             setupDevConsole();
         }
@@ -435,6 +466,66 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 });
             }
         });
+    }
+
+    protected void setupStatic() {
+        String path = staticContextPath;
+        if (!path.endsWith("*")) {
+            path = path + "*";
+        }
+        final Route web = router.route(path);
+        web.produces("*");
+        web.consumes("*");
+        web.order(Integer.MAX_VALUE); // run this last so all other are served first
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                String u = ctx.normalizedPath();
+                if (u.isBlank() || u.endsWith("/") || u.equals("index.html")) {
+                    u = "index.html";
+                } else {
+                    u = FileUtil.stripLeadingSeparator(u);
+                }
+
+                InputStream is = null;
+                File f = new File(u);
+                if (f.exists()) {
+                    // load directly from file system first
+                    try {
+                        is = new FileInputStream(f);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                } else {
+                    is = camelContext.getClassResolver().loadResourceAsStream(u);
+                }
+                if (is != null) {
+                    String mime = MimeMapping.getMimeTypeForFilename(f.getName());
+                    if (mime != null) {
+                        ctx.response().putHeader("content-type", mime);
+                    }
+                    String text = null;
+                    try {
+                        text = IOHelper.loadText(is);
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        IOHelper.close(is);
+                    }
+                    ctx.response().setStatusCode(200);
+                    ctx.end(text);
+                } else {
+                    ctx.response().setStatusCode(404);
+                    ctx.end();
+                }
+            }
+        };
+
+        // use blocking handler as the task can take longer time to complete
+        web.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint(staticContextPath, null, null, null, null);
     }
 
     protected void setupInfo() {
