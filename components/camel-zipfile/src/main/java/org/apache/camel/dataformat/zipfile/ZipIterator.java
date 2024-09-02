@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * <a href="http://camel.465427.n5.nabble.com/zip-file-best-practices-td5713437.html">zip file best practices</a>
  */
 public class ZipIterator implements Iterator<Message>, Closeable {
-    static final Logger LOGGER = LoggerFactory.getLogger(ZipIterator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZipIterator.class);
 
     private final Exchange exchange;
     private boolean allowEmptyDirectory;
@@ -68,7 +68,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     @Override
     public boolean hasNext() {
         boolean answer = doHasNext();
-        System.out.println("hasNext: " + answer);
+        LOG.trace("hasNext: {}", answer);
         return answer;
     }
 
@@ -100,7 +100,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     @Override
     public Message next() {
         Message answer = doNext();
-        System.out.println("next: " + answer);
+        LOG.trace("next: {}", answer);
         return answer;
     }
 
@@ -130,7 +130,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             ZipEntry current = getNextEntry();
 
             if (current != null) {
-                LOGGER.debug("read zipEntry {}", current.getName());
+                LOG.debug("read zipEntry {}", current.getName());
                 Message answer = new DefaultMessage(exchange.getContext());
                 answer.getHeaders().putAll(exchange.getIn().getHeaders());
                 answer.setHeader("zipFileName", current.getName());
@@ -138,7 +138,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 answer.setBody(new ZipInputStreamWrapper(zipInputStream));
                 return answer;
             } else {
-                LOGGER.trace("close zipInputStream");
+                LOG.trace("close zipInputStream");
                 return null;
             }
         } catch (IOException exception) {

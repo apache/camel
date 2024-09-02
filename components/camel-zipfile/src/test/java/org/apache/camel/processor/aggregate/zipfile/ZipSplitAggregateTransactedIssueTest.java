@@ -72,7 +72,6 @@ public class ZipSplitAggregateTransactedIssueTest extends CamelTestSupport {
 
                 getContext().getRegistry().bind("transacted", springTransactionPolicy);
                 getContext().getRegistry().bind("zipSplitter", new ZipSplitter());
-                //                getContext().getRegistry().bind("zipSplitter", new DummyZip());
 
                 from("direct:start")
                         .transacted("transacted")
@@ -90,7 +89,6 @@ public class ZipSplitAggregateTransactedIssueTest extends CamelTestSupport {
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             String name = newExchange.getMessage().getHeader("CamelFileName", String.class);
-            //            String name = newExchange.getMessage().getBody(String.class);
             LOG.info("Aggregating {}", name);
             return newExchange;
         }

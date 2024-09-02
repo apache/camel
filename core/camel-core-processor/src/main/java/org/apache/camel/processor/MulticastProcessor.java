@@ -687,8 +687,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     next = false;
                 }
             }
-            // fail-safe to ensure we trigger done
-            doDone(null, false);
         }
 
         boolean doRun() throws Exception {
