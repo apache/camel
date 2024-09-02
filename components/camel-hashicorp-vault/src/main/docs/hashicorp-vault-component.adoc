@@ -67,6 +67,9 @@ camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
 
+NOTE: `camel.vault.hashicorp` configuration only applies to the Hashicorp Vault properties function (E.g when resolving properties).
+When using the `operation` option to create, get, list secrets etc., you should provide the `host`, `port`, `scheme` (if required) & `token` options.
+
 At this point, you'll be able to reference a property in the following way:
 
 [source,xml]
