@@ -67,6 +67,12 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
     @Override
     public boolean hasNext() {
+        boolean answer = doHasNext();
+        System.out.println("hasNext: " + answer);
+        return answer;
+    }
+
+    protected boolean doHasNext() {
         try {
             if (zipInputStream == null) {
                 return false;
@@ -93,6 +99,12 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
     @Override
     public Message next() {
+        Message answer = doNext();
+        System.out.println("next: " + answer);
+        return answer;
+    }
+
+    protected Message doNext() {
         if (parent == null) {
             parent = getNextElement();
         }

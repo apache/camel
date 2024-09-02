@@ -469,6 +469,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
 
         protected void aggregate() {
+            System.out.println("aggregate");
             Lock lock = this.lock;
             if (lock.tryLock()) {
                 try {
@@ -667,9 +668,15 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 } catch (Exception e) {
                     original.setException(e);
                     doDone(null, false);
-                    return;
+                    next = false;
                 }
             }
+            // execute any pending tasks
+            //            while (reactiveExecutor.executeFromQueue()) {
+            //                System.out.println("pending work");
+            //            }
+            // fail-safe to ensure we trigger done
+            doDone(null, false);
         }
 
         boolean doRun() throws Exception {
@@ -687,8 +694,11 @@ public class MulticastProcessor extends AsyncProcessorSupport
             }
 
             ProcessorExchangePair pair = iterator.next();
-            boolean hasNext = iterator.hasNext();
+            if (pair == null) {
+                return true;
+            }
 
+            boolean hasNext = iterator.hasNext();
             Exchange exchange = pair.getExchange();
             int index = nbExchangeSent.getAndIncrement();
             updateNewExchange(exchange, index, pairs, hasNext);
