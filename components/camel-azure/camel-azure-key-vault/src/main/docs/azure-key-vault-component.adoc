@@ -89,6 +89,9 @@ camel.vault.azure.azureIdentityEnabled = true
 camel.vault.azure.vaultName = vaultName
 ----
 
+NOTE: `camel.vault.azure` configuration only applies to the Azure Key Vault properties function (E.g when resolving properties).
+When using the `operation` option to create, get, list secrets etc., you should provide the usual options for connecting to Azure Services.
+
 At this point, you'll be able to reference a property in the following way:
 
 [source,xml]
