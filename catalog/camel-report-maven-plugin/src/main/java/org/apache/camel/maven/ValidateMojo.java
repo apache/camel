@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.inject.Inject;
+
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -57,8 +59,6 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-
-import javax.inject.Inject;
 
 import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
 import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
