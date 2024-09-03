@@ -16,20 +16,10 @@
  */
 package org.apache.camel.component.langchain4j.tools;
 
-import org.apache.camel.spi.Metadata;
-
 public class LangChain4jTools {
 
     public static final String SCHEME = "langchain4j-tools";
 
     private LangChain4jTools() {
-    }
-
-    public static class Headers {
-        @Metadata(description = "The prompt Template.", javaType = "String")
-        public static final String PROMPT_TEMPLATE = "CamelLangChain4jChatPromptTemplate";
-
-        @Metadata(description = "Augmented Data for RAG", javaType = "String")
-        public static final String AUGMENTED_DATA = "CamelLangChain4jChatAugmentedData";
     }
 }
