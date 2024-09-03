@@ -1456,13 +1456,17 @@ In Spring Boot you add the following dependency:
 </dependency>
 ----
 
-In Quarkus you need to add the following dependency:
+In Quarkus you need to add the following dependencies:
 
 [source,xml]
 ----
 <dependency>
     <groupId>org.apache.camel.quarkus</groupId>
     <artifactId>camel-quarkus-cli-connector</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel.quarkus</groupId>
+    <artifactId>camel-quarkus-rest</artifactId>
 </dependency>
 ----
 

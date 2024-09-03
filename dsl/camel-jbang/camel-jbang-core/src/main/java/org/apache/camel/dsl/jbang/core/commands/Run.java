@@ -888,6 +888,7 @@ public class Run extends CamelCommand {
         eq.dependencies = this.dependencies;
         if (!this.exportRun) {
             eq.addDependencies("camel:cli-connector");
+            eq.addDependencies("camel:rest");
         }
         eq.fresh = this.fresh;
         eq.download = this.download;
