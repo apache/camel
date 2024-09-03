@@ -25,6 +25,7 @@ import org.apache.camel.component.langchain4j.chat.LangChain4jChatConsumer;
  * Holds ToolSpecification needed by langchain4j and the associated Camel Consumer. In this way, a specific route can be
  * invoked by a specific Tool
  */
+@Deprecated(since = "4.8.0")
 public class CamelToolSpecification {
 
     private ToolSpecification toolSpecification;

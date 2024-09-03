@@ -20,6 +20,7 @@ import java.util.List;
 
 import dev.langchain4j.agent.tool.JsonSchemaProperty;
 
+@Deprecated(since = "4.8.0")
 public class NamedJsonSchemaProperty {
 
     private final String name;
