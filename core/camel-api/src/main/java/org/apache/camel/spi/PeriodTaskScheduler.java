@@ -35,6 +35,15 @@ public interface PeriodTaskScheduler {
     void schedulePeriodTask(Runnable task, long period);
 
     /**
+     * Schedules the task once so the task keeps running always.
+     * This is to be used for tasks that is not triggered in periods, but need to run forever.
+     *
+     * @param task  the task (the task can extend {@link org.apache.camel.support.service.ServiceSupport} to
+     *                  have lifecycle)
+     */
+    void scheduledTask(Runnable task);
+
+    /**
      * Gets an existing task by a given type, assuming there is only one task of the given type.
      *
      * @param  type the type of the task
