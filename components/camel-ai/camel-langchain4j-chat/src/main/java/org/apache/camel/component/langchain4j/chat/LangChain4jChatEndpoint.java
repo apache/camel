@@ -40,7 +40,7 @@ import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME
 
 @UriEndpoint(firstVersion = "4.5.0", scheme = SCHEME,
              title = "LangChain4j Chat",
-             syntax = "langchain4j-chat:chatId", producerOnly = true,
+             syntax = "langchain4j-chat:chatId",
              category = { Category.AI }, headersClass = LangChain4jChat.Headers.class)
 public class LangChain4jChatEndpoint extends DefaultEndpoint {
 
