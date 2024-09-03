@@ -14,7 +14,7 @@ Camel 4 supports Java 17. Support for Java 11 is dropped.
 
 == Removed Components
 
-The following components has been removed:
+The following components have been removed:
 
 [options="header"]
 |===
@@ -204,7 +204,7 @@ from routes that was created by Rest DSL or route templates or Kamelets. You can
 
 The xref:backlog-tracer.adoc[Backlog Tracer] has been enhanced and _fixed_ to trace message headers (also streaming types).
 This means that previously headers of type `InputStream` was not traced before, but is now included. This could mean that
-the header stream is positioned at end, and logging the header afterward, may appear as the header value is empty.
+the header stream is positioned at the end, and logging the header afterward may appear as the header value is empty.
 
 == UseOriginalMessage / UseOriginalBody
 
@@ -220,15 +220,15 @@ Health checks are now by default only readiness checks out of the box.
 Camel provides the `CamelContextCheck` as both readiness and liveness checks, so there is at least
 one of each out of the box.
 
-Only consumer based health-checks is enabled by default.
+Only consumer-based health checks are enabled by default.
 
 === Producer Health Checks
 
 The option `camel.health.components-enabled` has been renamed to `camel.health.producers-enabled`.
 
-Some components (in particular AWS) provides also health checks for producers; in Camel 3.x
+Some components, in particular AWS, also provide health checks for producers. In Camel 3.x
 these health checks did not work properly and has been disabled in the source.
-To continue this behaviour in Camel 4, then producer based health checks are disabled.
+To continue this behaviour in Camel 4, then producer-based health checks are disabled.
 
 Notice that `camel-kafka` comes with producer based health-check that worked in Camel 3,
 and therefore this change in Camel 4, means that this health-check is disabled.
@@ -278,7 +278,7 @@ should be changed to:
 == Backlog Tracing
 
 The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
-was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
+was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterward.
 The old behavior can be archived by setting `backlogTracingStandby=true`.
 
 Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
@@ -290,13 +290,13 @@ that contains the input and outgoing (if `InOut`) messages.
 
 == XML serialization
 
-The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
+The default XML serialization using `ModelToXMLDumper` has been improved and now uses a generated XML
 serializer located in the `camel-xml-io` module instead of the JAXB based one from `camel-jaxb`.
 
 == OpenAPI Maven Plugin
 
 The `camel-restdsl-openapi-plugin` Maven plugin now uses `platform-http` as the default rest component
-in the generated Rest DSL code. Previously the default was servlet. However, platform-http is a better
+in the generated Rest DSL code. Previously, the default was servlet. However, platform-http is a better
 default that works out of the box with Spring Boot and Quarkus.
 
 == Component changes
@@ -305,7 +305,7 @@ default that works out of the box with Spring Boot and Quarkus.
 
 The number of enums for `org.apache.camel.Category` has been reduced from 83 to 37, which means custom components
 that are using removed values need to choose one of the remainder values. We have done this to consolidate
-the number of categories of all components in the Camel community.
+the number of categories of components in the Camel community.
 
 === camel-openapi-rest-dsl-generator
 
@@ -313,7 +313,7 @@ This dsl-generator has updated the underlying model classes (`apicurio-data-mode
 
 === camel-atom
 
-The `camel-atom` component has changed the 3rd party atom client from Apache Abdera to RSSReader.
+The `camel-atom` component has changed the third party atom client from Apache Abdera to RSSReader.
 This means the feed object is changed from `org.apache.abdera.model.Feed` to `com.apptasticsoftware.rssreader.Item`.
 
 === camel-azure-cosmosdb
@@ -330,7 +330,7 @@ The example from above should now be as follows:
 
     "bean:myBean?method=foo(com.foo.MyOrder.class, true)"
 
-This also applies to Java types such as String, int, etc:
+This also applies to Java types such as String, int, etc.:
 
     "bean:myBean?method=bar(String.class, int.class)"
 
@@ -349,7 +349,7 @@ The underlying `hapi-fhir` library has been upgraded from 4.2.0 to 6.2.4. Only t
 
 === camel-google
 
-The API based components `camel-google-drive`, `camel-google-calendar`, `camel-google-sheets` and `camel-google-mail`
+The API-based components `camel-google-drive`, `camel-google-calendar`, `camel-google-sheets` and `camel-google-mail`
 has been upgraded from Google Java SDK v1 to v2 and to latest API revisions. The `camel-google-drive` and `camel-google-sheets`
 have some API methods changes, but the others are identical as before.
 
@@ -380,7 +380,7 @@ constants in class `KubernetesOperations` are also renamed. `REPLACE_CONFIGMAP_O
 
 === camel-web3j
 
-The `camel-web3j` has upgrade web3j JAR from 3.x to 5.0 which has many API changes, and so
+The `camel-web3j` has upgraded the `web3j` JAR from 3.x to 5.0 which has many API changes, and so
 some previous API calls are no long provided.
 
 === camel-main
@@ -471,7 +471,7 @@ Solver Daemon solutions should be migrated to use SolverManager.
 
 === camel-platform-http-vertx
 
-If the route or consumer is suspended then http status 503 is now returned instead of 404.
+If the route or consumer is suspended, then http status 503 is now returned instead of 404.
 
 === camel-salesforce
 
@@ -479,7 +479,7 @@ Property names of blob fields on generated DTOs no longer have 'Url' affixed. E.
 
 === camel-slack
 
-The default delay (on slack consumer) is changed from 0.5s to 10s to avoid being rate limited to often by Slack.
+The default delay (on Slack consumer) is changed from 0.5s to 10s to avoid being rate limited to often by Slack.
 
 === camel-spring-rabbitmq
 
@@ -494,7 +494,7 @@ with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` depe
 
 === Graceful Shutdown
 
-Camel now shutdowns a bit later during Spring Boot shutdown. This allows Spring Boot graceful shutdown
+Apache Camel shutdowns a bit later during Spring Boot shutdown. This allows Spring Boot graceful shutdown
 to complete first (stopping Spring Boot HTTP server gracefully),
 and then afterward Camel is doing its own xref:graceful-shutdown.adoc[].
 
@@ -524,7 +524,7 @@ Now the context-path is not in use, and the endpoint can be called with `http://
 
 NOTE: The `platform-http-starter` can also be used with Rest DSL.
 
-If the route or consumer is suspended then http status 503 is now returned instead of 404.
+If the route or consumer is suspended, then http status 503 is now returned instead of 404.
 
 === camel-twitter
 
@@ -537,9 +537,9 @@ The component was updated to use Twitter4j version 4.1.2, which https://twitter4
 
 The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as 3.x.
 
-For example using `readLockMinAge=5s` would pickup files that are older than 5 seconds from startup time.
+For example, using `readLockMinAge=5s` would pick up files that are older than 5 seconds from startup time.
 If you have many existing files on startup that are old, then Camel will now again be fast,
-and pickup these files immediately.
+and pick up these files immediately.
 
 
 == Upgrading Camel 4.0.0 to 4.0.1

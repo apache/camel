@@ -10,15 +10,15 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 When using `variableReceive` then the variable is only set if processing the `Exchange` was completely successfully.
 
-For example calling a route that fails due to an exception being thrown (even if `onException` or `errorHandler` are in use)
-then the variable is no longer set. Also, if the route is marked for rollback, or to stop continue routing with `.stop()`.
+For example, calling a route that fails due to an exception being thrown (even if `onException` or `errorHandler` are in use)
+then the variable is no longer set. Also, if the route is marked for rollback, or to stop continuing routing with `.stop()`.
 
 This is the same logic that the routing engine uses, whether to continue routing the `Exchange` or not.
 
 === camel-core-model
 
 Harmonized model for defining custom beans to be the same for Kamelets and generic beans in XML/YAML DSLs.
-Before there used to be 3 specialized model classes that has been refactored into a single class, offering the same capabilities
+Before, there used to be three specialized model classes that have been refactored into a single class, offering the same capabilities
 for configuring beans (constructors, properties, builder classes, init/destroy methods etc.)
 
 === XML DSL
@@ -86,8 +86,8 @@ The `specifciationUri` in the `rest-api` component has changed from being a `jav
 , as it uses Camels `ResourceLoader` to load from pluggable resources and also more tooling friendly.
 
 The validator using Atlassian `swagger-request-validator` JAR has been removed, as this library is not JakartaEE compatible,
-and was causing classloading problems. The validator is now using similar validation as Rest DSL. However, the validator
-no longer check for JSon payloads if any required nodes is missing.
+and was causing classloading problems. The validator is now using a similar validation as Rest DSL. However, the validator
+no longer checks for JSON payloads if any required nodes are missing.
 
 === camel-langchain4j-chat
 
@@ -146,13 +146,13 @@ The Camel Azure ServiceBus consumer has been refactored to internally use the hi
 === camel-jbang
 
 When running using `camel run --source-dir=mydir` then Camel JBang will now preload existing files on startup, such as `application.properties`,
-and beans and routes (same as if you run with `cd mydir; camel run *`). This allows to configure settings on Camel on startup, which was not possible beforehand.
+and beans and routes (same as if you run with `cd mydir; camel run *`). This allows configuring settings on Camel on startup, which was not possible beforehand.
 
 The `--open-api` option has changed from _code-first_ to use the new _contract-first_ Rest DSL style by using the specification file direct as-is.
 
 === camel-as2
 
-The `camel-as2` component has upgraded HTTP Client 4.x to 5.x and because of that, there are some options that have changed.
+The `camel-as2` component has upgraded HTTP Client 4.x to 5.x, and because of that, there are some options that have changed.
 
 Changes for AS2-MDN asynchronous delivery:
 
@@ -163,7 +163,7 @@ message receiver confirming receipt of the message.
 
 === camel-spring-boot
 
-The auto configuration of xref:clustering.adoc[Cluster Service] implementations has been moved to dedicated starters:
+The autoconfiguration of xref:clustering.adoc[Cluster Service] implementations has been moved to dedicated starters:
 
 [%header, cols="1,2"]
 |===
@@ -178,7 +178,7 @@ The auto configuration of xref:clustering.adoc[Cluster Service] implementations 
 |===
 
 
-The Cluster Services are turned on by default unless they are explicit disabled, as example:
+The Cluster Services are turned on by default unless they are explicitly disabled, for example:
 
 [source, properties]
 ----

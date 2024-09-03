@@ -1,7 +1,7 @@
 = Apache Camel 3.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from Camel 3.x to 3.y. For example, if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.20.6 to 3.20.7
@@ -31,7 +31,7 @@ The old behavior can be archived by setting `backlogTracingStandby=true`.
 
 The xref:backlog-tracer.adoc[Backlog Tracer] has been enhanced and _fixed_ to trace message headers (also streaming types).
 This means that previously headers of type `InputStream` was not traced before, but is now included. This could mean that
-the header stream is positioned at end, and logging the header afterward, may appear as the header value is empty.
+the header stream is positioned at the end, and logging the header afterward may appear as the header value is empty.
 
 === camel-micrometer-starter
 
@@ -50,7 +50,7 @@ A route now have `<routeProperty>` in the top instead of the bottom.
 
 === YAML DSL
 
-Using _allowable values_ in Rest with YAML DSL is fixed to use correct name as other DSLs.
+Using _allowable values_ in Rest with YAML DSL is fixed to use the correct name as other DSLs.
 
 Before:
 
@@ -86,12 +86,12 @@ and configure them via Java code or classic Spring XML `<bean>` style.
 
 === camel-kafka
 
-The following options has changed default value as they were mistakenly out of sync with Apache Kafka.
+The following options have changed default value as they were mistakenly out of sync with Apache Kafka.
 This caused camel-kafka producer to not enable idempotence out of the box, that otherwise plain Apache Kafka client would do:
 
-- enableIdempotence: changed from `false` to `true`
-- requestRequiredAcks: changed from `1` to `all`
-- retries: changed from `0` to _unset_
+- `enableIdempotence`: changed from `false` to `true`
+- `requestRequiredAcks`: changed from `1` to `all`
+- `retries`: changed from `0` to `_unset_`
 
 == Upgrading Camel 3.19 to 3.20
 
@@ -123,7 +123,7 @@ Dependencies not intended for end users has been removed, such as all `-parent` 
 
 === camel-base64
 
-The `base64` property placeholder function will now lookup the value as a property key.
+The `base64` property placeholder function will now look up the value as a property key.
 For example
 
 [source,text]
@@ -164,7 +164,7 @@ that it is now the same, how error handlers are in other DSLs.
 
 The Mongodb Driver core has been updated to version 4.8.1
 
-This fully support MongoDB 6.1
+This fully supports MongoDB 6.1
 
 === camel-google-pubsub
 

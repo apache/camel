@@ -8,9 +8,9 @@ xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide].
 
 == Java versions
 
-Camel 3 supports Java 11. Support for Java 8 is best effort for early versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
+Camel 3 supports Java 11. Support for Java 8 is best effort for early versions of Camel 3. However, at some time in the 3.x lifeline we will drop support for Java 8.
 
-In Java 11 the JAXB modules have been **removed** from the JDK, therefore you will need to add them as Maven dependencies (if you use JAXB such as when using XML DSL or the camel-jaxb component):
+In Java 11, the JAXB modules have been **removed** from the JDK, therefore, you will need to add them as Maven dependencies (if you use JAXB such as when using XML DSL or the camel-jaxb component):
 
 [source,xml]
 ----
@@ -52,7 +52,7 @@ In Camel 2.x camel-core was one JAR file, it has now been split up into many JAR
 - camel-util-json
 
 Maven users of Apache Camel can keep using the dependency `camel-core` which has transitive dependencies on all of its modules, except for `camel-main`, and therefore no migration is needed.
-However, users who want to trim the size of the classes on the classpath, can use fine grained Maven dependencies on only the modules needed.
+However, users who want to trim the size of the classes on the classpath, can use fine-grained Maven dependencies on only the modules needed.
 You may find how to do that in the examples.
 
 We have also modularized many of the core components and moved them out of `camel-core` to individual components:
@@ -109,9 +109,9 @@ Use:
 
 == Multiple CamelContexts per application not supported
 
-Support for multiple CamelContexts has been removed and only 1 CamelContext per deployment is supported.
-The latter was not recommended anyway and was also not 100% implemented (for example in camel-cdi).
-For Camel 3 only 1 CamelContext per deployment is recommended and supported.
+Support for multiple CamelContexts has been removed, and only 1 CamelContext per deployment is supported.
+The latter was not recommended anyway and was also not 100% implemented, for example, in `camel-cdi`.
+For Camel 3, only 1 `CamelContext` per deployment is recommended and supported.
 
 The `context` attribute on the various Camel annotations such as `@EndpointInject`, `@Produce`, `@Consume` etc. has therefore been removed.
 
@@ -149,8 +149,8 @@ The properties component will now use OS environment variables as preferred valu
 
 The `properties` component no longer support using endpoints, such as `properties:myKey`. The properties component is now only a property placeholder service.
 You can therefore no longer lookup the properties component via `camelContext.getComponent("properties")`.
-Instead you can use `camelContext.getPropertiesComponent()`, which also returns an interface of the properties component as `org.apache.camel.spi.PropertiesComponent`.
-The implementation is still named `org.apache.camel.component.properties.PropertiesComponent`, however it should rarely be used, as you should favour using the interface instead.
+Instead, you can use `camelContext.getPropertiesComponent()`, which also returns an interface of the properties component as `org.apache.camel.spi.PropertiesComponent`.
+The implementation is still named `org.apache.camel.component.properties.PropertiesComponent`, however, it should rarely be used, as you should favour using the interface instead.
 
 
 === Removed components
@@ -193,7 +193,7 @@ We have also renamed `camel-jetty9` to `camel-jetty`. The supported scheme is no
 
 === Hystrix EIP
 
-The Hystrix EIP has been generalized as circuit breaker to allow to plugin other implementations.
+The Hystrix EIP has been generalized as a circuit breaker to allow plugging in other implementations.
 
 In the Java DSL you need to migrate from `.hystrix()` to `.circuitBreaker()`.
 And in XML DSL `<hystrix>` should be `<circuitBreaker>`.
@@ -258,7 +258,7 @@ And the same for `<setProperty>`.
 
 === <aggregate> EIP in XML DSL
 
-The aggregte EIP have renamed the expressions (not the attributes) for setting correlation size/timeout to avoid a name clash, so migrate:
+The aggregate EIP has renamed the expressions (not the attributes) for setting correlation size/timeout to avoid a name clash, so migrate:
 
 [source,xml]
 ----
@@ -317,17 +317,17 @@ It is the same for the other EIPs `<delay>`, `<sample>`, and `<throttle>`.
 
 ==== camel-cdi
 
-Support for multiple CamelContexts has been removed, and therefore `@ContextName` has been removed. Instead use standard CDI annotations such as `@Named` and `@ApplicationScoped`.
+Support for multiple CamelContexts has been removed, and therefore `@ContextName` has been removed. Instead, use standard CDI annotations such as `@Named` and `@ApplicationScoped`.
 
 === javax.script
 
-The `camel-script` component has been removed and there is no support for javax.script, which is also deprecated in the JDK and to be removed from Java 11 onwards.
+The `camel-script` component has been removed, and there is no support for `javax.script`, which is also deprecated in the JDK and to be removed from Java 11 onwards.
 
 === Attachments API on Message
 
-The attachments API (javax.activation) has been moved out of `org.apache.camel.message` into an extension `org.apache.camel.attachment.AttachmentMessage` from the `camel-attachments` JAR.
+The attachments API (`javax.activation`) has been moved out of `org.apache.camel.message` into an extension `org.apache.camel.attachment.AttachmentMessage` from the `camel-attachments` JAR.
 
-To use this API you can get it via the `getMessage` method on `Exchange`:
+To use this API, you can get it via the `getMessage` method on `Exchange`:
 
   AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
   am.addAttachment("myAtt", new DataHandler(...));
@@ -338,16 +338,17 @@ The fault API has been removed from `org.apache.camel.Message` as it was only us
 
 === getOut on Exchange
 
-The `hasOut` and `getOut` methods on `Exchange` has been deprecated in favour of using `getMessage` instead. (Side note: Camel-core is still using these methods in a few places to be backwards compatible and relies on this logic as Camel was initially designed with the concept of IN and OUT messages inspired by the JBI and SOAP-WS specifications.)
+The `hasOut` and `getOut` methods on `Exchange` has been deprecated in favour of using `getMessage` instead.
+(Side note: `camel-core` is still using these methods in a few places to be backwards compatible and relies on this logic as Camel was initially designed with the concept of IN and OUT messages inspired by the JBI and SOAP-WS specifications.)
 
 === OUT message removed from Simple language and Mock component
 
 The simple language has removed the OUT message concepts eg `${out.body}`.
-Also the mock component has removed OUT message from its assertion API, eg
+Also, the mock component has removed OUT message from its assertion API, eg
 
   mock.message(0).outBody()...
 
-Also the `@OutHeaders` annotation for bean parameter binding has been removed, instead use `@Headers` instead.
+Also, the `@OutHeaders` annotation for bean parameter binding has been removed, instead use `@Headers` instead.
 
 === Mock component
 
@@ -376,12 +377,12 @@ The component `camel-aws` has been split into multiple components:
 - camel-aws-sqs
 - camel-aws-swf
 
-So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
+So you'll have to explicitly add the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
 
 === FHIR
 
 The camel-fhir component has upgraded it's hapi-fhir dependency to 4.1.0; Karaf support has been dropped until the hapi-fhir Karaf features are fixed and released.
-The default FHIR version has been changed to R4. Therefore if DSTU3 is desired it has to be explicitly set.
+The default FHIR version has been changed to R4. Therefore, if DSTU3 is desired, it has to be explicitly set.
 
 === Kafka
 
@@ -481,7 +482,7 @@ Before the default value was "DES/CBC/PKCS5Padding".
 
 === JSon DataFormat
 
-The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
+The default JSON library with the JSON dataformat has changed from `XStream` to `Jackson`.
 
 === Shiro Component
 
@@ -497,8 +498,8 @@ is now RSA-SHA256 (before it was RSA-SHA1).
 
 The default encryption key for the XML Security DataFormat has been removed,
 so it is now mandatory to supply the key String/bytes if you are using
-symmetric encryption. This means that some of the methods are removed that
-used the XMLSecurityDataFormat without specifying a key.
+symmetric encryption. This means that some methods are removed that
+used the `XMLSecurityDataFormat` without specifying a key.
 
 In addition, the default symmetric encryption algorithm has changed from
 Triple DES to AES-256 in GCM mode.
@@ -538,9 +539,9 @@ The APIs on `CamelContext` has been reduced a bit to focus on relevant API for C
 
 === Checked vs unchecked exceptions
 
-Most of the Camel exception classes have been migrated to be unchecked (e.g. extends `RuntimeException`).
+Most of the Camel exception classes have been migrated to be unchecked (e.g., extends `RuntimeException`).
 
-Also the lifecycle of the `start`, `stop` and `suspend`, `resume` methods on `Service` and `SuspendableService` has been changed to not throw checked exceptions.
+Also, the lifecycle of the `start`, `stop` and `suspend`, `resume` methods on `Service` and `SuspendableService` has been changed to not throw checked exceptions.
 
 ==== Generic Information
 
@@ -608,7 +609,7 @@ as property placeholders are already supported via Camel Main, Camel Spring Boot
 === camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegistry` class, then this is no longer necessary, and instead
-you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
+you should use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
 
   context.getRegistry().bind("myId", myBean);
 
@@ -732,7 +733,7 @@ The `@FallbackConverter` annotation has been removed, and you should use `@Conve
 
 === Removed JMX APIs for explaining EIPs, components, etc.
 
-The APIs that could find, and explain EIPs, components, endpoints etc. has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
+The APIs that could find, and explain EIPs, components, endpoints, etc. have been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
 
 === Other changes
 
