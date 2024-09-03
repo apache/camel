@@ -96,7 +96,8 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
 
         @Override
         protected void doInit() throws Exception {
-            this.executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, task.getClass().getSimpleName());
+            this.executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    task.getClass().getSimpleName());
             ServiceHelper.initService(task);
         }
 
