@@ -6,7 +6,7 @@
 :since: 4.5
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AI
 :camel-spring-boot-name: langchain4j-chat
