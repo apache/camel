@@ -218,6 +218,8 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2Builders,
             org.apache.camel.builder.endpoint.dsl.LangChain4jChatEndpointBuilderFactory.LangChain4jChatBuilders,
             org.apache.camel.builder.endpoint.dsl.LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsBuilders,
+            org.apache.camel.builder.endpoint.dsl.LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsBuilders,
+            org.apache.camel.builder.endpoint.dsl.LangChain4jWebSearchEndpointBuilderFactory.LangChain4jWebSearchBuilders,
             org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory.LanguageBuilders,
             org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory.LdapBuilders,
             org.apache.camel.builder.endpoint.dsl.LdifEndpointBuilderFactory.LdifBuilders,
