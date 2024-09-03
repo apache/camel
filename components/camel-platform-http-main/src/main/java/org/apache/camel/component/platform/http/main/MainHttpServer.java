@@ -499,6 +499,10 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     }
                 } else {
                     is = camelContext.getClassResolver().loadResourceAsStream(u);
+                    if (is == null) {
+                        // common folder for java app servers like quarkus and spring-boot
+                        is = camelContext.getClassResolver().loadResourceAsStream("META-INF/resources/" + u);
+                    }
                 }
                 if (is != null) {
                     String mime = MimeMapping.getMimeTypeForFilename(f.getName());
