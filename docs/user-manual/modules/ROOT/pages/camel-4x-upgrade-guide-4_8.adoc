@@ -46,6 +46,10 @@ The `KafkaIdempotentRepository` will now continue to sync cache updates after Ca
 You can configure `startupOnly=true` to only sync the cache once on startup,
 (however, then the cache is not synced with other Camel nodes in a cluster).
 
+=== camel-langchain4j-chat
+
+The chat-with-tools feature was deprecated. Use the new `camel-langchain4j-tool` component.
+
 === camel-tests
 
 Continuing the multi-release tests cleanups, on this one, restricted methods from the `CamelTestSupport` class
