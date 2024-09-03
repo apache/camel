@@ -49,7 +49,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -58,6 +57,8 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+
+import javax.inject.Inject;
 
 import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
 import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
@@ -213,8 +214,7 @@ public class ValidateMojo extends AbstractMojo {
     @Parameter(property = "camel.configurationFiles", defaultValue = "application.properties")
     private String configurationFiles;
 
-    @Component
-    private RepositorySystem repositorySystem;
+    private final RepositorySystem repositorySystem;
 
     @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
     private RepositorySystemSession repositorySystemSession;
@@ -229,6 +229,11 @@ public class ValidateMojo extends AbstractMojo {
     private static final Set<File> xmlFiles = new LinkedHashSet<>();
 
     private static final Set<String> downloadedArtifacts = new LinkedHashSet<>();
+
+    @Inject
+    public ValidateMojo(RepositorySystem repositorySystem) {
+        this.repositorySystem = repositorySystem;
+    }
 
     @Override
     public void execute() throws MojoExecutionException {

@@ -19,6 +19,8 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.tooling.model.SupportLevel;
@@ -46,17 +48,19 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
 
-    public PackageOtherMojo() {
+    @Inject
+    public PackageOtherMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
     }
 
-    public PackageOtherMojo(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
-                            File schemaOutDir, BuildContext buildContext) {
+    PackageOtherMojo(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
+                     File schemaOutDir, BuildContext buildContext) {
+        this(projectHelper, buildContext);
+
         setLog(log);
         this.project = project;
-        this.projectHelper = projectHelper;
         this.otherOutDir = otherOutDir;
         this.schemaOutDir = schemaOutDir;
-        this.buildContext = buildContext;
     }
 
     /**
@@ -92,7 +96,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
     public void prepareOthers() throws MojoExecutionException {
         Log log = getLog();
 
-        // first we need to setup the output directory because the next check
+        // first, we need to set up the output directory because the next check
         // can stop the build before the end and eclipse always needs to know
         // about that directory
         if (projectHelper != null) {
@@ -151,7 +155,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             throw new MojoExecutionException("Error loading other model. Reason: " + e, e);
         }
 
-        // now create properties file
+        // now create a properties file
         File camelMetaDir = new File(otherOutDir, "META-INF/services/org/apache/camel/");
 
         String properties = createProperties(project, "name", name);

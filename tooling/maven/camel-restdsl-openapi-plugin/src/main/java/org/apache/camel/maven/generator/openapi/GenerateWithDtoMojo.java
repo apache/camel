@@ -16,14 +16,22 @@
  */
 package org.apache.camel.maven.generator.openapi;
 
+import javax.inject.Inject;
+
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "generate-with-dto", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+@Mojo(name = "generate-with-dto", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
       requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateWithDtoMojo extends GenerateMojo {
+
+    @Inject
+    public GenerateWithDtoMojo(BuildPluginManager pluginManager) {
+        super(pluginManager);
+    }
 
     @Override
     public void execute() throws MojoExecutionException {

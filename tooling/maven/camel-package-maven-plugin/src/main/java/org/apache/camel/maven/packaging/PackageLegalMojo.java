@@ -22,12 +22,16 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 /**
  * Analyses the Camel plugins in a project and generates legal files.
@@ -36,10 +40,15 @@ import org.apache.maven.plugins.annotations.Parameter;
 public class PackageLegalMojo extends AbstractGeneratorMojo {
 
     /**
-     * The output directory for generated components file
+     * The output directory for the generated component files
      */
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File legalOutDir;
+
+    @Inject
+    public PackageLegalMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     /**
      * Execute goal.

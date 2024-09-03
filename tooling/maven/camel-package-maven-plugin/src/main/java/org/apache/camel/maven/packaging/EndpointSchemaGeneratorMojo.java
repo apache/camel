@@ -43,6 +43,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.Category;
 import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
@@ -76,6 +78,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
@@ -118,6 +122,16 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected List<Path> sourceRoots;
     protected Map<String, String> sources = new HashMap<>();
     protected Map<String, JavaSource<?>> parsed = new HashMap<>();
+
+    @Inject
+    public EndpointSchemaGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
+    // for testing purposes
+    EndpointSchemaGeneratorMojo() {
+        this(null, null);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

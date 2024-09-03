@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -37,6 +39,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
@@ -64,6 +68,11 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
+
+    @Inject
+    public GeneratePojoBeanMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     private static class BeanPojoModel {
         private String name;
@@ -132,10 +141,6 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
     }
 
     private static class BeanPojoOptionModel extends BaseOptionModel {
-
-    }
-
-    public GeneratePojoBeanMojo() {
     }
 
     @Override

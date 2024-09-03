@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,6 +35,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
@@ -59,6 +63,11 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
     protected File sourcesOutputDir;
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
+
+    @Inject
+    public GenerateInvokeOnHeaderMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     public static class InvokeOnHeaderModel {
         private String key;
@@ -97,9 +106,6 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         public void addArgs(String arg) {
             args.add(arg);
         }
-    }
-
-    public GenerateInvokeOnHeaderMojo() {
     }
 
     @Override

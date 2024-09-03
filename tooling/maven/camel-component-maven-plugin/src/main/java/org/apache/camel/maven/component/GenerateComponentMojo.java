@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.AbstractGenerateMojo;
 import org.apache.camel.maven.packaging.EndpointSchemaGeneratorMojo;
 import org.apache.camel.maven.packaging.GenerateConfigurerMojo;
@@ -32,7 +34,6 @@ import org.apache.camel.maven.packaging.TypeConverterLoaderGeneratorMojo;
 import org.apache.camel.maven.packaging.ValidateComponentMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -63,23 +64,20 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject currentProject;
 
-    @Component
-    protected MavenProjectHelper currentProjectHelper;
-    @Component
-    protected BuildContext currentBuildContext;
+    @Inject
+    public GenerateComponentMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         this.project = currentProject;
-        this.projectHelper = currentProjectHelper;
-        this.buildContext = currentBuildContext;
-
         super.execute();
     }
 
     @Override
     protected void doExecute() throws MojoFailureException, MojoExecutionException {
-        // do not sync pom file for this goal as we are standalone
+        // do not sync the pom file for this goal as we are standalone
         project.setContextValue("syncPomFile", "false");
 
         Map<String, Object> parameters = new HashMap<>();

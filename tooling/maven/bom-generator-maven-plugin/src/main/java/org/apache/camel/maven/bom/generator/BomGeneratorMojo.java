@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,7 +60,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -113,14 +113,12 @@ public class BomGeneratorMojo extends AbstractMojo {
     /**
      * Used to look up Artifacts in the remote repository.
      */
-    @Component
-    protected ArtifactFactory artifactFactory;
+    protected final ArtifactFactory artifactFactory;
 
     /**
      * Used to look up Artifacts in the remote repository.
      */
-    @Component
-    protected ArtifactResolver artifactResolver;
+    protected final ArtifactResolver artifactResolver;
 
     /**
      * List of Remote Repositories used by the resolver
@@ -133,6 +131,12 @@ public class BomGeneratorMojo extends AbstractMojo {
      */
     @Parameter(property = "localRepository", readonly = true, required = true)
     protected ArtifactRepository localRepository;
+
+    @Inject
+    public BomGeneratorMojo(ArtifactFactory artifactFactory, ArtifactResolver artifactResolver) {
+        this.artifactFactory = artifactFactory;
+        this.artifactResolver = artifactResolver;
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

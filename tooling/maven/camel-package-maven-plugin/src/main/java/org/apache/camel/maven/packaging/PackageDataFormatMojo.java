@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -65,47 +67,48 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     /**
-     * The output directory for generated dataformats file
+     * The output directory for the generated data format resources
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File dataFormatOutDir;
 
     /**
-     * The output directory for generated dataformats file
+     * The output directory for the generated data format java classes
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File configurerSourceOutDir;
 
     /**
-     * The output directory for generated dataformats file
+     * The output directory for the generated data format configurer resources
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File configurerResourceOutDir;
 
     /**
-     * The output directory for generated dataformats file
+     * The output directory for the generated data format schema resources
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
 
-    protected ClassLoader projectClassLoader;
     private final Map<String, Optional<JavaClassSource>> sources = new HashMap<>();
 
-    public PackageDataFormatMojo() {
+    @Inject
+    public PackageDataFormatMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
     }
 
-    public PackageDataFormatMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
-                                 File dataFormatOutDir, File configurerSourceOutDir,
-                                 File configurerResourceOutDir, File schemaOutDir,
-                                 BuildContext buildContext) {
+    PackageDataFormatMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
+                          File dataFormatOutDir, File configurerSourceOutDir,
+                          File configurerResourceOutDir, File schemaOutDir,
+                          BuildContext buildContext) {
+        this(projectHelper, buildContext);
+
         setLog(log);
         this.project = project;
-        this.projectHelper = projectHelper;
         this.dataFormatOutDir = dataFormatOutDir;
         this.configurerSourceOutDir = configurerSourceOutDir;
         this.configurerResourceOutDir = configurerResourceOutDir;
         this.schemaOutDir = schemaOutDir;
-        this.buildContext = buildContext;
     }
 
     /**
