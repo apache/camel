@@ -108,8 +108,11 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
                 .name(simpleDescription)
                 .build();
 
+        final LangChain4jChatConsumer langChain4jChatConsumer = new LangChain4jChatConsumer(this, processor);
+        configureConsumer(langChain4jChatConsumer);
+
         CamelToolSpecification camelToolSpecification
-                = new CamelToolSpecification(toolSpecification, new LangChain4jChatConsumer(this, processor));
+                = new CamelToolSpecification(toolSpecification, langChain4jChatConsumer);
         CamelToolExecutorCache.getInstance().put(chatId, camelToolSpecification);
 
         return camelToolSpecification.getConsumer();
