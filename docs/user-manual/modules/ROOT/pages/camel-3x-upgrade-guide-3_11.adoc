@@ -1,7 +1,7 @@
 = Apache Camel 3.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from Camel 3.x to 3.y. For example, if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.10 to 3.11
@@ -9,8 +9,8 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === Bean Language
 
 When using `beanType` (full qualified class name) with the bean language,
-then the bean language will *now* lookup in registry and if there is a single instance of the same type, then the existing bean is used.
-If not then a new bean is created (same behavior as before).
+then the bean language will *now* look up in the registry, and if there is a single instance of the same type, then the existing bean is used.
+If not, then a new bean is created (same behavior as before).
 
 === Aggregate EIP
 
@@ -18,7 +18,7 @@ The aggregate EIP will now always use a worker thread pool for processing outgoi
 Previously a worker pool was only created when `parallelProcessing=true`. When having `parallelProcessing=false`
 then a single-threaded worker pool is created and used by the aggregator.
 
-Camels routing engine works better when a dedicated worker pool that eliminates a _hack_ that otherwise was needed in other EIPs that
+Camels routing engine works better when a dedicated worker pool that eliminates a _hack_ that otherwise was necessary in other EIPs that
 was affected if using the aggregator in some special configurations.
 
 === RemoveHeader EIP
@@ -54,7 +54,7 @@ The `streamFilter` option should now be configured as endpoint uri parameter, in
 === camel-saxon
 
 The camel-saxon component no longer depends on camel-xslt-saxon.
-Any applications in needs of XSLT transformation with saxon should now declare an explicit dependency upon camel-xslt-saxon.
+Any applications in need of XSLT transformation with saxon should now declare an explicit dependency upon camel-xslt-saxon.
 
 === camel-maven-plugin with OSGi blueprint
 
@@ -92,14 +92,14 @@ mvn camel-karaf:run
 
 === camel-sql
 
-Support of deprecated use of named dataSource in the URI has been removed.
+Support for deprecated use of named dataSource in the URI has been removed.
 
 You have to use `sql:select * from table where id=# order by name?dataSource=\#myDS` instead of `sql:select * from table where id=# order by name?dataSource=myDS`.
 
 === Spring Boot Starters
 
-Some of the Camel Spring Boot starters have additional auto configuration options that clashed with component.
-Therefore those configurations has renamed their configuration keys:
+Some of the Camel Spring Boot starters have additional autoconfiguration options that clashed with component.
+Therefore, those configurations have renamed their configuration keys:
 
 |====
 | *Old Key prefix* | *New key prefix*
