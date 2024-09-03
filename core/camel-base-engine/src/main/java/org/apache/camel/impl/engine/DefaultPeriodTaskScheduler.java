@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.TimerListener;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -23,10 +26,6 @@ import org.apache.camel.support.TimerListenerManager;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A {@link PeriodTaskScheduler} that schedules generic tasks from custom components that are defined with the
