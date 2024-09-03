@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.TimerListener;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -32,7 +35,12 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
 
     @Override
     public void schedulePeriodTask(Runnable task, long period) {
-        addTimerListener(new TaskWrapper(task, period));
+        addTimerListener(new PeriodicTaskWrapper(task, period));
+    }
+
+    @Override
+    public void scheduledTask(Runnable task) {
+        addTimerListener(new TaskWrapper(task));
     }
 
     @Override
@@ -54,31 +62,29 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
         if (listener instanceof TaskWrapper) {
             super.addTimerListener(listener);
         } else {
-            throw new IllegalArgumentException("Use the addPeriodTask method");
+            throw new IllegalArgumentException("Use the schedulePeriodTask or scheduledTask methods");
         }
     }
 
-    private final class TaskWrapper extends ServiceSupport implements TimerListener {
+    private class TaskWrapper extends ServiceSupport implements TimerListener {
+        final Runnable task;
+        private ExecutorService executorService;
+        private Future running;
 
-        private final StopWatch watch = new StopWatch();
-        private final Runnable task;
-        private final long period;
-
-        public TaskWrapper(Runnable task, long period) {
+        public TaskWrapper(Runnable task) {
             this.task = task;
-            this.period = period;
-        }
-
-        public Runnable getTask() {
-            return task;
         }
 
         @Override
         public void onTimer() {
-            if (watch.taken() > period) {
-                watch.restart();
-                task.run();
+            // submit task only once as the task can potentially keep running (until camel is stopped)
+            if (running == null) {
+                running = executorService.submit(task);
             }
+        }
+
+        public Runnable getTask() {
+            return task;
         }
 
         @Override
@@ -89,6 +95,8 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
 
         @Override
         protected void doInit() throws Exception {
+            this.executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    task.getClass().getSimpleName());
             ServiceHelper.initService(task);
         }
 
@@ -100,6 +108,9 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
         @Override
         protected void doStop() throws Exception {
             ServiceHelper.stopService(task);
+            getCamelContext().getExecutorServiceManager().shutdown(executorService);
+            executorService = null;
+            running = null;
         }
 
         @Override
@@ -112,4 +123,23 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
             return task.toString();
         }
     }
+
+    private final class PeriodicTaskWrapper extends TaskWrapper {
+        private final StopWatch watch = new StopWatch();
+        private final long period;
+
+        public PeriodicTaskWrapper(Runnable task, long period) {
+            super(task);
+            this.period = period;
+        }
+
+        @Override
+        public void onTimer() {
+            if (watch.taken() > period) {
+                watch.restart();
+                task.run();
+            }
+        }
+    }
+
 }
