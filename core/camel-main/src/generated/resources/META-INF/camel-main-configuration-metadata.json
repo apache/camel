@@ -12,6 +12,7 @@
     { "name": "camel.vault.aws", "description": "Camel AWS Vault configurations", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration" },
     { "name": "camel.vault.gcp", "description": "Camel GCP Vault configurations", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration" },
     { "name": "camel.vault.azure", "description": "Camel Azure Key Vault configurations", "sourceType": "org.apache.camel.vault.AzureVaultConfiguration" },
+    { "name": "camel.vault.kubernetes", "description": "Camel Kubernetes Vault configurations", "sourceType": "org.apache.camel.vault.KubernetesVaultConfiguration" },
     { "name": "camel.opentelemetry", "description": "Camel OpenTelemetry configurations", "sourceType": "org.apache.camel.main.OtelConfigurationProperties" },
     { "name": "camel.metrics", "description": "Camel Micrometer Metrics configurations", "sourceType": "org.apache.camel.main.MetricsConfigurationProperties" },
     { "name": "camel.faulttolerance", "description": "Fault Tolerance EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
@@ -349,6 +350,8 @@
     { "name": "camel.vault.gcp.secrets", "description": "Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.gcp.serviceAccountKey", "description": "The Service Account Key location", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.gcp.subscriptionName", "description": "Define the Google Pubsub subscription Name to be used when checking for updates", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
-    { "name": "camel.vault.gcp.useDefaultInstance", "description": "Define if we want to use the GCP Client Default Instance or not", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" }
+    { "name": "camel.vault.gcp.useDefaultInstance", "description": "Define if we want to use the GCP Client Default Instance or not", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
+    { "name": "camel.vault.kubernetes.refreshEnabled", "description": "Whether to automatically reload Camel upon secrets being updated in Kubernetes Cluster.", "sourceType": "org.apache.camel.vault.KubernetesVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": true },
+    { "name": "camel.vault.kubernetes.secrets", "description": "Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.", "sourceType": "org.apache.camel.vault.KubernetesVaultConfiguration", "type": "string", "javaType": "java.lang.String" }
   ]
 }

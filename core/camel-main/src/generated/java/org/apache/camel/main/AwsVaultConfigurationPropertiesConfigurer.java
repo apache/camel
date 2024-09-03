@@ -35,6 +35,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "kubernetesvaultconfiguration":
+        case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "profilecredentialsprovider":
         case "profileCredentialsProvider": target.setProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "profilename":
@@ -70,6 +72,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "kubernetesvaultconfiguration":
+        case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "profilecredentialsprovider":
         case "profileCredentialsProvider": return boolean.class;
         case "profilename":
@@ -106,6 +110,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "kubernetesvaultconfiguration":
+        case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "profilecredentialsprovider":
         case "profileCredentialsProvider": return target.isProfileCredentialsProvider();
         case "profilename":

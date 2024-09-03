@@ -17,10 +17,7 @@
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.vault.AwsVaultConfiguration;
-import org.apache.camel.vault.AzureVaultConfiguration;
-import org.apache.camel.vault.GcpVaultConfiguration;
-import org.apache.camel.vault.HashicorpVaultConfiguration;
+import org.apache.camel.vault.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -280,6 +277,47 @@ public class MainVaultTest {
         Assertions.assertEquals("localhost", cfg.getHost());
         Assertions.assertEquals("8200", cfg.getPort());
         Assertions.assertEquals("https", cfg.getScheme());
+        main.stop();
+    }
+
+    @Test
+    public void testMainKubernetes() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.kubernetes.refreshEnabled", "true");
+        main.addInitialProperty("camel.vault.kubernetes.secrets", "xxxx");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesVaultConfiguration cfg = context.getVaultConfiguration().kubernetes();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getSecrets());
+        main.stop();
+    }
+
+    @Test
+    public void testMainKubernetesFluent() {
+        Main main = new Main();
+        main.configure().vault().kubernetes()
+                .withRefreshEnabled(true)
+                .withSecrets("xxxx")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesVaultConfiguration cfg = context.getVaultConfiguration().kubernetes();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getSecrets());
         main.stop();
     }
 }
