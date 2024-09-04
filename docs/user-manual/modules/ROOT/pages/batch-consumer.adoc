@@ -32,18 +32,18 @@ The `BatchConsumer` supports the following options:
 |=======================================================================
 |Option |Description
 |`maxMessagesPerPoll` |An integer to define a maximum messages to gather per poll. By default,
-no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when
+no maximum is set. It can be used to set a limit of e.g., 1000 to avoid when
 starting up the server that there are thousands of files. Set a value of
-0 or negative to disabled it as unlimited.
+0 or negative to disable it as unlimited.
 |=======================================================================
 
 Very often a `BatchConsumer` is scheduled and is based of the `ScheduledBatchPollingConsumer`
 that has many options for configuring the scheduling. These options are listed with _(scheduler)_
-as label in the endpoints options in the xref:components::index.adoc[Components] documentation.
+as label in the endpoint options' in the xref:components::index.adoc[Components] documentation.
 
 == Exchange Properties
 
-The following properties is set on the Exchange for
+The following properties are set on the Exchange for
 each Exchange polled in the same batch.
 
 [width="100%",cols="20%,80%",options="header",]
