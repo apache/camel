@@ -6,22 +6,22 @@ The controller is mainly in use during starting up the routes when Camel startup
 The controller is handling which routes, and in which order they should be started.
 
 Camel offers two kinds of controllers. The classic default controller, and a supervising
-controller that can attempt to restarting routes that failed during startup.
+controller that can attempt to restart routes that failed during startup.
 
 == DefaultRouteController
 
 This is the default controller and strategy that has always been in use by Camel.
 The controller works with the _fail fast_ principle, that if any routes fail to
-start, then it gives up and Camel itself fails starting up.
+start, then it gives up and Camel itself fails to start up.
 
-The controller also starts the routes sequentially and using a single thread.
-This means there are no concurrent startup, meaning the routes are started
+The controller also starts the routes sequentially and uses a single thread.
+This means there is no concurrent startup, meaning the routes are started
 more reliably without concurrency issues.
 
 If a route fails on startup then it is often its `Consumer` that triggers an error
 in its startup. Some components offer a way to handle this internally and
 attempt to recover from this. However, most components do not offer such a feature
-and therefore in most situations the route would fail to startup and therefore
+and therefore in most situations, the route would fail to startup and therefore
 also Camel itself. The JMS component is an example of a component that can
 recover from startup issues in the `Consumer` such as failing to connect to the JMS broker.
 
@@ -40,16 +40,16 @@ from("salesforce:cheese")
 ----
 
 Then the two routes may fail on startup. However, the first route with the file component
-would very likely always startup as it is just using the file system that is reliable.
+would very likely always start up as it is just using the file system that is reliable.
 
-The second route however is using Salesforce which can fail starting up if there is no network
+The second route, however, is using Salesforce, which can fail to start up if there is no network
 connecting to Salesforce.
 
 == SupervisingRouteController
 
 A supervising capable `RouteController` that delays the startup of the routes
 after the camel context startup and takes control of starting the routes in a safe manner.
-This controller is able to retry starting failing routes, and have various options to configure
+This controller is able to retry starting failing routes, and has various options to configure
 settings for backoff between restarting routes.
 
 If we take the same example again:
@@ -80,7 +80,7 @@ src.setInitialDelay(1000);
 src.setThreadPoolSize(2);
 -----
 
-If you use Camel with Spring Boot or Camel Main you can also enable supervising
+If you use Camel with Spring Boot or Camel Main, you can also enable supervising
 from `application.properties`:
 
 [source,properties]
@@ -139,12 +139,12 @@ IMPORTANT: The `UnhealthyOnExhausted` and `UnhealthyOnRestarting` options are de
 === Filtering routes to fail fast
 
 When using supervising route controller, then all routes would by default be supervised
-and allow Camel to startup successfully; even if one ore more routes would fail to startup.
+and allow Camel to start up successfully; even if one or more routes failed to start up.
 This is because the supervising will handle those failed routes and attempt to restart
 them in the background (with backoff).
 
-You may have a critical route which must always startup, and if not, cause Camel itself to fail starting.
-This can be done by filter the route from the supervising with the include/exclude options.
+You may have a critical route which must always start up, and if not, cause Camel itself to fail starting.
+This can be done by filtering the route from the supervising with the include/exclude options.
 
 Given the routes below:
 
@@ -177,5 +177,5 @@ NOTE: To use JMX with Camel then `camel-management` JAR must be included in the 
 
 == More Information
 
-When Camel is shutting down, then its xref:graceful-shutdown.adoc[Graceful Shutdown]
+When Apache Camel is shutting down, then its xref:graceful-shutdown.adoc[Graceful Shutdown]
 that handles this to ensure all the routes are shutdown graceful and safely.
