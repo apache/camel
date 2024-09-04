@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.secrets.vault;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,8 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
     private String secrets;
     private KubernetesClient kubernetesClient;
     private SecretPropertiesFunction propertiesFunction;
+    private volatile Instant lastReloadTime;
+    private volatile Instant startingTime;
 
     private static final Logger LOG = LoggerFactory.getLogger(SecretsReloadTriggerTask.class);
 
@@ -68,6 +71,20 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
      */
     public void setReloadEnabled(boolean reloadEnabled) {
         this.reloadEnabled = reloadEnabled;
+    }
+
+    /**
+     * Last time Kubernetes secrets update triggered reload.
+     */
+    public Instant getLastReloadTime() {
+        return lastReloadTime;
+    }
+
+    /**
+     * Starting Time Kubernetes secrets watcher
+     */
+    public Instant getStartingTime() {
+        return startingTime;
     }
 
     @Override
@@ -106,6 +123,7 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
 
     @Override
     public void run() {
+        startingTime = Instant.now();
         final CountDownLatch isWatchClosed = new CountDownLatch(1);
         Watch watch = kubernetesClient.secrets().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
             @Override
@@ -119,6 +137,7 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
                                 ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
                                 if (reload != null) {
                                     // trigger reload
+                                    lastReloadTime = Instant.now();
                                     reload.onReload(this);
                                 }
                             }
