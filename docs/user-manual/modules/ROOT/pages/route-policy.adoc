@@ -31,9 +31,9 @@ example.
 Camel provides the following policies out of the box:
 
 * `org.apache.camel.throttling.ThrottlingInflightRoutePolicy` - a throttling
-based policy that automatic suspends/resumes route(s) based on metrics
+based policy that automatically suspends/resumes route(s) based on metrics
 from the current in flight exchanges. You can use this to dynamically
-throttle e.g. a xref:components::jms-component.adoc[JMS] consumer, to avoid it consuming too
+ throttle, e.g. a xref:components::jms-component.adoc[JMS] consumer, to avoid it consuming too
 fast.
 
 * `org.apache.camel.throttling.ThrottlingExceptionRoutePolicy` - a throttling
@@ -48,7 +48,7 @@ xref:components::quartz-component.adoc[Quartz] component).
 
 == SuspendableService
 
-If you want to dynamic suspend/resume routes then it is advised to
+If you want to dynamic suspend/resume routes, then it is advised to
 use `SuspendableService` as it allows for fine-grained
 suspend and resume operations.
 
@@ -59,7 +59,7 @@ xref:exchange.adoc[Exchange] is complete, which means that it requires
 at least one xref:exchange.adoc[Exchange] to be complete before it
 _works_.
 
-The throttling inflight route policy has the following options:
+The throttling in flight route policy has the following options:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
@@ -67,11 +67,11 @@ The throttling inflight route policy has the following options:
 |Option |Default |Description
 
 |`scope` |`Route` |A scope for either `Route` or `Context` which defines if the current
-number of inflight exchanges is context based or for that particular
+number of in flight exchanges is context based or for that particular
 route.
 
 |`maxInflightExchanges` |`1000` |The maximum threshold when the throttling will start to suspend the
-route if the current number of inflight exchanges is higher than this
+route if the current number of in flight exchanges is higher than this
 value.
 
 |`resumePercentOfMax` |`70` |A percentage `0..100` which defines when the throttling should resume
@@ -86,14 +86,14 @@ again in case it has been suspended.
 
 The `ThrottlingInflightRoutePolicy` compared to
 xref:components:eips:throttle-eip.adoc[Throttler] EIP is that it does *not* block during
-throttling. It does throttling that is approximate based, meaning that
-its more coarse grained and not explicit precise as the
+throttling. Its throttling is approximate-based, meaning that
+its coarser grained and not explicitly precise as the
 xref:components:eips:throttle-eip.adoc[Throttler] EIP.
 
 The xref:components:eips:throttle-eip.adoc[Throttler] EIP can
 be much more accurate and only allow a specific number of messages being
-passed per a given time unit. Also the `ThrottlingInflightRoutePolicy`
-is based its metrics on number of inflight exchanges where as
+passed per a given time unit. Also, the `ThrottlingInflightRoutePolicy`
+is based its metrics on number of in flight exchanges whereas
 xref:components:eips:throttle-eip.adoc[Throttler] EIP is based on number o
 messages per time unit.
 
@@ -149,7 +149,7 @@ a `org.apache.camel.spi.RoutePolicyFactory` as a factory for creating
 a `RoutePolicy` instance for each route. This can be used when you
 want to use the same kind of route policy for all or some routes.
 
-With the factory you only need to configure this once, and every route created will
+With the factory, you only need to configure this once, and every route created will
 have the policy assigned.
 
 There is API on `CamelContext` to add a factory, as shown below
@@ -167,7 +167,7 @@ And from XML DSL you just define a `<bean>` with the factory, and Camel will aut
 ----------------------------------------------------------------------
 
 You can have as many route policy factories as you want, so if you have two factories,
-you can just add them both as shown:
+you can add them both as shown:
 
 [source,java]
 ----------------------------------------------------------
