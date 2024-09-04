@@ -26,7 +26,7 @@ xref:pojo-producing.adoc[POJO Producing].
 that method is selected.
 * if the bean can be converted to a xref:processor.adoc[Processor] using
 the xref:type-converter.adoc[Type Converter] mechanism, then this is
-used to process the message. The ActiveMQ (not yet compatible with Camel 4) component
+used to process the message. The ActiveMQ component
 used this mechanism (in Camel 3) to allow any JMS MessageListener to be invoked
 directly by Camel without having to write any integration glue code. You
 can use the same mechanism to integrate Camel into any other
@@ -113,8 +113,8 @@ body to the `body` parameter and convert it to a `String`.
 public String doSomething(String body)
 ----
 
-In the following sample we got one of the automatically-bound types as
-well - for instance, a `Registry` that we can use to lookup beans.
+In the following sample we got one of the automatically bound types as
+well. For instance, a `Registry` that we can use to lookup beans.
 
 [source,java]
 ----
@@ -143,13 +143,12 @@ exception `InvalidOrderException` - we can then bind that as well:
 public String badOrder(String body, InvalidOrderException invalid) 
 ----
 
-Notice that we can bind to it even if we use a sub type of
+Notice that we can bind to it even if we use a subtype of
 `java.lang.Exception` as Camel still knows it's an exception and can
 bind the cause (if any exists).
 
-So what about headers and other stuff? Well now it gets a bit tricky -
-so we can use annotations to help us, or specify the binding in the
-method name option.
+So what about headers and other stuff? Well, now it gets a bit tricky.
+We can use annotations to help us or specify the binding in the method name option.
 
 See the following sections for more detail.
 
@@ -232,9 +231,10 @@ specific method by providing the method name:
 .bean(OrderService.class, "doSomething")
 ----
 
-Here we tell Camel to invoke the doSomething method - Camel handles the
-parameters' binding. Now suppose the method has 2 parameters, and the
-2nd parameter is a boolean where we want to pass in a true value:
+Here we tell Camel to invoke the `_doSomething_` method.
+Camel handles the parameters' binding.
+Now suppose the method has 2 parameters, and the
+second parameter is a boolean where we want to pass in a true value:
 
 [source,java]
 ----
@@ -252,8 +252,8 @@ This can be done as follows:
 
 In the example above, we defined the first parameter using the wild card
 symbol `*`, which tells Camel to bind this parameter to any type, and let
-Camel figure this out. The 2nd parameter has a fixed value of `true`.
-Instead of the wildcard symbol we can instruct Camel to use the message
+Camel figure this out. The second parameter has a fixed value of `true`.
+Instead of the wildcard symbol, we can instruct Camel to use the message
 body as shown:
 
 [source,java]
@@ -265,7 +265,7 @@ The syntax of the parameters is using the xref:components:languages:simple-langu
 language so we have to use `${ }` placeholders in the body to
 refer to the message body.
 
-If you want to pass in a `null` value, then you can explicit define this
+If you want to pass in a `null` value, then you can explicitly define this
 in the method option as shown below:
 
 [source,java]
@@ -293,7 +293,7 @@ you can pass in a String and an integer:
 ----
 
 In the example above, we invoke the echo method with two parameters. The
-first has the content 'World' (without quotes), and the 2nd has the
+first has the content 'World' (without quotes), and the second has the
 value of 5. Camel will automatically convert these values to the parameters' types.
 
 Having the power of the xref:components:languages:simple-language.adoc[Simple] language allows us to
@@ -305,7 +305,7 @@ bind to message headers and other values such as:
 ----
 
 You can also use the OGNL support of the xref:components:languages:simple-language.adoc[Simple]
-expression language. Now suppose the message body is an object which has
+expression language. Now suppose the message body is an object that has
 a method named `asXml`. To invoke the `asXml` method we can do as
 follows:
 
@@ -325,7 +325,7 @@ use `.to` instead as shown:
 === Using type qualifiers to select among overloaded methods
 
 If you have a xref:components:eips:bean-eip.adoc[Bean] with overloaded methods, you can now
-specify parameter types (must use `.class` style, eg `com.foo.MyClass.class`) in the method name so Camel can match the method
+specify parameter types (must use `.class` style, e.g. `com.foo.MyClass.class`) in the method name so Camel can match the method
 you intend to use.
 
 Given the following bean:
@@ -338,7 +338,7 @@ Given the following bean:
 ----
 
 Then the `MyBean` has 2 overloaded methods with the names `hello` and
-`times`. So if we want to use the method which has 2 parameters we can
+`times`. So if we want to use the method which has two parameters, we can
 do as follows in the Camel route:
 
 [source,java]
@@ -349,7 +349,7 @@ from("direct:start")
 ----
 
 We can also use a `*` as wildcard, so we can just say we want to execute
-the method with 2 parameters we do:
+the method with two parameters we do:
 
 [source,java]
 ----
@@ -358,7 +358,7 @@ the method with 2 parameters we do:
     .to("mock:result");
 ----
 
-By default, Camel will match the type name using the simple name, e.g.
+By default, Camel will match the type name using the simple name, e.g.,
 any leading package name will be disregarded. However, if you want to
 match using the FQN, then specify the FQN type and Camel will leverage
 that. So if you have a parameter of type `com.foo.MyOrder` and you want to match against
@@ -390,4 +390,4 @@ where you can declare both using _name.class value_ syntax as shown:
 doSomething(com.foo.MyOrder.class ${body}, boolean.class ${header.high}, int.class 123)
 ----
 
-Notice that you *MUST* use `name.class` when declaring the type, also for String, int, boolean etc.
+Notice that you *MUST* use `name.class` when declaring the type, also for String, int, boolean, etc.
