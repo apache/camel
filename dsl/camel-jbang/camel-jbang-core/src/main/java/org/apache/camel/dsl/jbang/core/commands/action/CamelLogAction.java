@@ -81,6 +81,10 @@ public class CamelLogAction extends ActionBaseCommand {
                         description = "Keep following and outputting new log lines (use ctrl + c to exit).")
     boolean follow = true;
 
+    @CommandLine.Option(names = { "--startup" }, defaultValue = "false",
+                        description = "Only shows logs from the starting phase to make it quick to look at how Camel was started.")
+    boolean startup;
+
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto", completionCandidates = PrefixCompletionCandidates.class,
                         description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
     String prefix = "auto";
@@ -147,7 +151,12 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
                 limit = new Date(System.currentTimeMillis() - millis);
             }
-            if (tail != 0) {
+            if (startup) {
+                follow = false;
+                // only log startup logs until Camel was started
+                tailStartupLogFiles(rows);
+                dumpLogFiles(rows, 0);
+            } else if (tail != 0) {
                 // dump existing log lines
                 tailLogFiles(rows, tail, limit);
                 dumpLogFiles(rows, tail);
@@ -412,6 +421,28 @@ public class CamelLogAction extends ActionBaseCommand {
     private static File logFile(String pid) {
         String name = pid + ".log";
         return new File(CommandLineHelper.getCamelDir(), name);
+    }
+
+    private void tailStartupLogFiles(Map<Long, Row> rows) throws Exception {
+        for (Row row : rows.values()) {
+            File log = logFile(row.pid);
+            if (log.exists()) {
+                row.fifo = new ArrayDeque<>();
+                row.reader = new LineNumberReader(new FileReader(log));
+                String line;
+                do {
+                    line = row.reader.readLine();
+                    if (line != null) {
+                        row.fifo.offer(line);
+                        boolean found = line.contains("AbstractCamelContext") && line.contains("Apache Camel ")
+                                && line.contains(" started in ") && line.contains("(build:");
+                        if (found) {
+                            line = null;
+                        }
+                    }
+                } while (line != null);
+            }
+        }
     }
 
     private void tailLogFiles(Map<Long, Row> rows, int tail, Date limit) throws Exception {
