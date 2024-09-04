@@ -3,8 +3,8 @@
 This is the default xref:error-handler.adoc[Error Handler] in Camel.
 
 The default xref:error-handler.adoc[Error Handler] has the same power
-as the xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel],
-however it does *not* support a _dead letter queue_, which is
+as the xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel.]
+However, it does *not* support a _dead letter queue_, which is
 the only difference between the two of them.
 
 The `DefaultErrorHandler` is configured differently from
@@ -13,7 +13,7 @@ it is configured to:
 
 * not redeliver
 * not handled
-* no dead letter queue (not possible)
+* no dead letter queue (because it is not possible)
 
 By default, any exception thrown during routing will be propagated back
 to the caller and the xref:exchange.adoc[Exchange] ends immediately.
