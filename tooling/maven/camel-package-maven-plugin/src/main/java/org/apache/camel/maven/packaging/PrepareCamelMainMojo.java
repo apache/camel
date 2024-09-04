@@ -201,6 +201,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.azure.";
                 } else if (file.getName().contains("KubernetesVault")) {
                     prefix = "camel.vault.kubernetes.";
+                } else if (file.getName().contains("HashicorpVault")) {
+                    prefix = "camel.vault.hashicorp.";
                     // TODO: add more vault providers here
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
@@ -285,6 +287,16 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + kubernetesVaultConfig + " due " + e.getMessage(), e);
         }
 
+        File hashicorpVaultConfig
+                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/HashicorpVaultConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(hashicorpVaultConfig);
+            model.forEach(m -> m.setName("camel.vault.hashicorp." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + hashicorpVaultConfig + " due " + e.getMessage(), e);
+        }
+
         // lets sort so they are always ordered (but camel.main in top)
         data.sort((o1, o2) -> {
             if (o1.getName().startsWith("camel.main.") && !o2.getName().startsWith("camel.main.")) {
@@ -347,6 +359,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     new MainGroupModel(
                             "camel.vault.kubernetes", "Camel Kubernetes Vault configurations",
                             "org.apache.camel.vault.KubernetesVaultConfiguration"));
+            model.getGroups().add(
+                    new MainGroupModel(
+                            "camel.vault.hashicorp", "Camel Hashicorp Vault configurations",
+                            "org.apache.camel.vault.HashicorpVaultConfiguration"));
             // TODO: add more vault providers here
             model.getGroups().add(new MainGroupModel(
                     "camel.opentelemetry", "Camel OpenTelemetry configurations",

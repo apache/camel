@@ -415,6 +415,19 @@ The camel.vault.kubernetes supports 2 options, which are listed below.
 |===
 
 
+=== Camel Hashicorp Vault configurations
+The camel.vault.hashicorp supports 4 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.hashicorp.host* | Host to access hashicorp vault |  | String
+| *camel.vault.hashicorp.port* | Port to access hashicorp vault |  | String
+| *camel.vault.hashicorp.scheme* | Scheme to access hashicorp vault |  | String
+| *camel.vault.hashicorp.token* | Token to access hashicorp vault |  | String
+|===
+
+
 === Camel OpenTelemetry configurations
 The camel.opentelemetry supports 5 options, which are listed below.
 
