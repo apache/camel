@@ -6,12 +6,12 @@ Instructions on updating the website to include the new documentation version ar
 [[ReleaseGuide-Prequisites]]
 == Prequisites
 
-To prepare or perform a release you *must be* at least an Apache Camel committer.
+To prepare or perform a release, you *must be* at least an Apache Camel committer.
 
 * The artifacts for each and every release must be *signed*.
 * Your public key must be added to the KEYS file.
 * Your public key should also be cross-signed by other Apache committers (this can be done at key signing parties at
-ApacheCon for instance).
+ApacheCon, for instance).
 * Make sure you have the correct maven configuration in `~/.m2/settings.xml`.
 * https://github.com/takari/maven-wrapper[Maven Wrapper] is used and bundled with Camel 2.21 onwards and should be used
 for building the release.
@@ -21,12 +21,13 @@ for building the release.
 [[ReleaseGuide-MavenSetup]]
 == Maven Setup
 Before you deploy anything to the https://repository.apache.org[Apache Nexus repository] using Maven, you should
-configure your `~/.m2/settings.xml` file so that the file permissions of the deployed artifacts are group writable.
-If you do not do this, other developers will not able to overwrite your SNAPSHOT releases with newer versions.
+configure your `~/.m2/settings.xml` file so that the file permissions of the deployed artifacts are group-writable.
+If you do not do this, other developers will not be able to overwrite your SNAPSHOT releases with newer versions.
 
 The settings follow the guidelines used by the Maven project. Please pay particular attention to the
 http://maven.apache.org/guides/mini/guide-encryption.html[password encryption recommendations].
 
+[source,xml]
 ----
 <settings>
   ...
@@ -107,7 +108,7 @@ Complete the following steps to create a new Camel release:
   ./mvnw release:prepare -DdryRun -Prelease
   
 
-* The release plugin will prompt for a release version, an SCM tag and next release version.
+* The release plugin will prompt for a release version, an SCM tag and the next release version.
 
 *  Use a three digit release version of the form: `MAJOR.MINOR.PATCH`, e.g. `3.0.0`.
 
@@ -151,7 +152,7 @@ Complete the following steps to create a new Camel release:
 * Login to https://repository.apache.org using your Apache LDAP credentials.
 Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list of repositories, where xxx represents
 your username and ip.
-Click "Close" on the tool bar above.
+Click "Close" on the toolbar above.
 This will close the repository from future deployments and make it available for others to view.
 If you are staging multiple releases together, skip this step until you have staged everything.
 Enter the name and version of the artifact being released in the "Description" field and then click "Close".
@@ -162,8 +163,8 @@ This will make it easier to identify it later.
 * If you click on your repository, a tree view will appear below.
 You can then browse the contents to ensure the artifacts are as you expect them.
 Pay particular attention to the existence of *.asc (signature) files.
-If you don't like the content of the repository, right click your repository and choose "Drop".
-You can then rollback your release and repeat the process.
+If you don't like the content of the repository, right-click your repository and choose "Drop".
+You can then roll back your release and repeat the process.
 Note the repository URL, you will need this in your vote email.
 
 [[ReleaseGuide-CreatingTheRelease-Camel-spring-boot]]
@@ -179,7 +180,7 @@ Complete the following steps to create a new Camel-spring-boot release:
 
 . From Camel 3.3.0 ahead, the camel-spring-boot project uses camel-dependencies as parent.
 You'll need to set the version here https://github.com/apache/camel-spring-boot/blob/master/pom.xml#L26
-To the version released from the main Camel repository as first step.
+To the version released from the main Camel repository as the first step.
   
 . Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
 
@@ -197,7 +198,7 @@ Change the camel-version property in https://github.com/apache/camel-spring-boot
 
   ./mvnw release:prepare -DdryRun -Prelease
   
- * The release plugin will prompt for a release version, an SCM tag and next release version.
+ * The release plugin will prompt for a release version, an SCM tag and the next release version.
 
 *  Use a three digit release version of the form: `MAJOR.MINOR.PATCH`, e.g. `3.0.0`.
 
@@ -244,8 +245,8 @@ This will make it easier to identify it later.
 * If you click on your repository, a tree view will appear below.
 You can then browse the contents to ensure the artifacts are as you expect them.
 Pay particular attention to the existence of *.asc (signature) files.
-If the you don't like the content of the repository, right click your repository and choose "Drop".
-You can then rollback your release and repeat the process.
+If you don't like the content of the repository, right-click your repository and choose "Drop".
+You can then roll back your release and repeat the process.
 Note the repository URL, you will need this in your vote email.
 
 . Once the release has been voted
@@ -290,7 +291,7 @@ This will release the artifacts.
   cd ${CAMEL_ROOT_DIR}/etc/scripts
   ./release-website.sh <Camel version>
 
-. Merge the release branch back into the corresponding base branch (e.g. merge `release/3.2.0` into `camel-3.2.x`)
+. Merge the release branch back into the corresponding base branch (e.g., merge `release/3.2.0` into `camel-3.2.x`)
 
   git checkout BASE_BRANCH
   git pull
@@ -311,19 +312,19 @@ must be pushed to make them available to end users.
 [[Tagging-examples]]
 == Tagging examples
 
-These steps are optional and they could be done later too.
+These steps are optional, and they could be done later too.
 
 Once the release train (camel and camel-spring-boot) has been voted and published, there are some additional steps needed for the camel examples.
 
 . Camel-examples
 
-* On https://github.com/apache/camel-examples in the examples/pom.xml file the following steps are needed:
+* On https://github.com/apache/camel-examples in the examples/pom.xml file, the following steps are necessary:
 
 * Update the camel-dependencies version to the version coming from the release-train
 
-* Update the camel.version properties to the version coming from the release-train
+* Update the `camel.version` properties to the version coming from the release-train
 
-* To be sure everything is fine run
+* To be sure everything is fine, run:
 
   $ ./mvnw clean install
 
@@ -334,29 +335,29 @@ Once the release train (camel and camel-spring-boot) has been voted and publishe
   $ git tag -a camel-examples-$version -m "$version"
   $ git push origin camel-examples-$version
 
-* Now we pushed the tag and we need to advance the version of the examples
+* Now we pushed the tag, and we need to advance the version of the examples
 
 * Update the camel-dependencies version to the next version
 
-* Update the camel.version properties to the next version
+* Update the `camel.version` properties to the next version
 
 * Run the following command to advance the version in the examples
   
   $ find . -type f -exec sed -i 's/$oldVersion/$newVersion/g' {} +
 
-* To be sure everything is fine run 
+* To be sure everything is fine, run:
 
   $ ./mvnw clean install
 
 . Camel-spring-boot-examples
 
-* On https://github.com/apache/camel-spring-boot-examples in the examples/pom.xml file the following steps are needed:
+* On https://github.com/apache/camel-spring-boot-examples in the examples/pom.xml file the following steps are necessary:
 
 * Update the camel-dependencies version to the version coming from the release-train
     
-* Update the camel.version properties to the version coming from the release-train
+* Update the `camel.version` properties to the version coming from the release-train
     
-* To be sure everything is fine run
+* To be sure everything is fine, run:
       
   $ ./mvnw clean install
     
@@ -367,16 +368,16 @@ Once the release train (camel and camel-spring-boot) has been voted and publishe
   $ git tag -a camel-spring-boot-examples-$version -m "$version"
   $ git push origin camel-spring-boot-examples-$version
 
-* Now we pushed the tag and we need to advance the version of the examples
+* Now we pushed the tag, and we need to advance the version of the examples
 
 * Update the camel-dependencies version to the next version
 
-* Update the camel.version properties to the next version
+* Update the `camel.version` properties to the next version
 
 * Run the following command to advance the version in the examples
 
   $ find . -type f -exec sed -i 's/$oldVersion/$newVersion/g' {} +
    
-* To be sure everything is fine run 
+* To be sure everything is fine, run:
 
   $ ./mvnw clean install
