@@ -61,8 +61,9 @@ public class ListProperties extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--internal" }, description = "Whether to include internal configuration")
     boolean internal;
 
-    @CommandLine.Option(names = { "--mask" }, description = "Whether to mask configuration values to avoid printing sensitive information such as password or access keys",
-            defaultValue = "true")
+    @CommandLine.Option(names = { "--mask" },
+                        description = "Whether to mask configuration values to avoid printing sensitive information such as password or access keys",
+                        defaultValue = "true")
     boolean mask = true;
 
     public ListProperties(CamelJBangMain main) {
