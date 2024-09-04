@@ -94,7 +94,7 @@ camel.routecontroller.initialDelay = 1000
 camel.routecontroller.threadPoolSize = 2
 ----
 
-And for users with Spring <beans> or OSGi <blueprint> XML you can do as follows:
+And for users with Spring <beans> you can do as follows:
 
 [source,xml]
 ----
