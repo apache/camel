@@ -48,6 +48,7 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
     private KubernetesClient kubernetesClient;
     private SecretPropertiesFunction propertiesFunction;
     private volatile Instant lastReloadTime;
+    private volatile Instant startingTime;
 
     private static final Logger LOG = LoggerFactory.getLogger(SecretsReloadTriggerTask.class);
 
@@ -77,6 +78,13 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
      */
     public Instant getLastReloadTime() {
         return lastReloadTime;
+    }
+
+    /**
+     * Starting Time Kubernetes secrets watcher
+     */
+    public Instant getStartingTime() {
+        return startingTime;
     }
 
     @Override
@@ -115,6 +123,7 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
 
     @Override
     public void run() {
+        startingTime = Instant.now();
         final CountDownLatch isWatchClosed = new CountDownLatch(1);
         Watch watch = kubernetesClient.secrets().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
             @Override
