@@ -1060,6 +1060,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("kafka", json);
                     }
                 }
+                DevConsole dc21 = dcr.resolveById("main-configuration");
+                if (dc21 != null) {
+                    JsonObject json = (JsonObject) dc21.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("main-configuration", json);
+                    }
+                }
             }
             // various details
             JsonObject mem = collectMemory();

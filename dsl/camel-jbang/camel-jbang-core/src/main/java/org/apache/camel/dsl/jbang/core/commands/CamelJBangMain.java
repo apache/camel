@@ -107,6 +107,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(main)))
                         .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(main)))
+                        .addSubcommand("startup-configuration", new CommandLine(new StartupConfiguration(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))

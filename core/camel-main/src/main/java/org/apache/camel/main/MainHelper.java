@@ -596,15 +596,15 @@ public final class MainHelper {
         }
         if (SensitiveUtils.containsSensitive(k)) {
             if (debug) {
-                log.debug("    {} {}=xxxxxx", loc, k);
+                log.debug("    {} {} = xxxxxx", loc, k);
             } else {
-                log.info("    {} {}=xxxxxx", loc, k);
+                log.info("    {} {} = xxxxxx", loc, k);
             }
         } else {
             if (debug) {
-                log.debug("    {} {}={}", loc, k, v);
+                log.debug("    {} {} = {}", loc, k, v);
             } else {
-                log.info("    {} {}={}", loc, k, v);
+                log.info("    {} {} = {}", loc, k, v);
             }
         }
     }
