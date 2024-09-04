@@ -58,6 +58,9 @@ public class ListProperties extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--startup" }, description = "List only startup configuration")
     boolean startup;
 
+    @CommandLine.Option(names = { "--internal" }, description = "Whether to include internal configuration")
+    boolean internal;
+
     @CommandLine.Option(names = { "--sensitive" }, description = "Mask sensitive values such as passwords",
                         defaultValue = "true")
     boolean sensitive = true;
@@ -106,7 +109,11 @@ public class ListProperties extends ProcessWatchCommand {
                             }
                             row.value = value;
                             row.loc = sanitizeLocation(jo.getString("location"));
-                            rows.add(row);
+                            // location camel-main means that it is an internal configuration
+                            boolean accept = internal || !row.loc.equals("camel-main");
+                            if (accept) {
+                                rows.add(row);
+                            }
                         }
                     }
                 });
