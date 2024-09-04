@@ -17,11 +17,19 @@
 package org.apache.camel.impl.console;
 
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.OrderedLocationProperties;
+import org.apache.camel.util.SensitiveUtils;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+
+import static org.apache.camel.util.LocationHelper.locationSummary;
 
 @DevConsole(name = "properties", description = "Displays the properties loaded by Camel")
 public class PropertiesDevConsole extends AbstractDevConsole {
@@ -38,10 +46,21 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         String loc = String.join(", ", pc.getLocations());
         sb.append(String.format("Properties loaded from locations: %s", loc));
         sb.append("\n");
-        for (Map.Entry<Object, Object> entry : pc.loadProperties().entrySet()) {
-            Object k = entry.getKey();
+
+        Properties p = pc.loadProperties();
+        OrderedLocationProperties olp = null;
+        if (p instanceof OrderedLocationProperties) {
+            olp = (OrderedLocationProperties) p;
+        }
+        for (var entry : p.entrySet()) {
+            String k = entry.getKey().toString();
             Object v = entry.getValue();
-            sb.append(String.format("\n    %s = %s", k, v));
+            loc = olp != null ? locationSummary(olp, k) : null;
+            if (SensitiveUtils.containsSensitive(k)) {
+                sb.append(String.format("    %s %s = xxxxxx%n", loc, k));
+            } else {
+                sb.append(String.format("    %s %s = %s%n", loc, k, v));
+            }
         }
         sb.append("\n");
 
@@ -54,14 +73,47 @@ public class PropertiesDevConsole extends AbstractDevConsole {
 
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
         root.put("locations", pc.getLocations());
-        JsonObject props = new JsonObject();
-        root.put("properties", props);
-        for (Map.Entry<Object, Object> entry : pc.loadProperties().entrySet()) {
+
+        JsonArray arr = new JsonArray();
+        Properties p = pc.loadProperties();
+        OrderedLocationProperties olp = null;
+        if (p instanceof OrderedLocationProperties) {
+            olp = (OrderedLocationProperties) p;
+        }
+        for (var entry : p.entrySet()) {
             String k = entry.getKey().toString();
             Object v = entry.getValue();
-            props.put(k, v);
+            String loc = olp != null ? sanitizeLocation(olp.getLocation(k)) : null;
+
+            JsonObject jo = new JsonObject();
+            jo.put("key", k);
+            jo.put("value", v);
+            if (loc != null) {
+                jo.put("location", loc);
+            }
+            arr.add(jo);
+        }
+        if (!arr.isEmpty()) {
+            root.put("properties", arr);
         }
 
         return root;
     }
+
+    private static String sanitizeLocation(String loc) {
+        if (loc == null) {
+            return null;
+        }
+        // remove scheme to make it shorter
+        if (loc.contains(":")) {
+            loc = StringHelper.after(loc, ":");
+        }
+        // strip paths so location is only the name
+        loc = FileUtil.stripPath(loc);
+        if ("initial".equals(loc) || "override".equals(loc)) {
+            loc = "camel-main";
+        }
+        return loc;
+    }
+
 }

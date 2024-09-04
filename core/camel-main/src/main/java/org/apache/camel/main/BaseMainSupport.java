@@ -552,6 +552,15 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.addService(new MainPropertiesReload(this));
         }
 
+        // capture startup configuration
+        DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
+        if (dcr != null) {
+            MainConfigurationDevConsole mc = (MainConfigurationDevConsole) dcr.resolveById("main-configuration");
+            if (mc != null) {
+                mc.addStartupConfiguration(autoConfiguredProperties);
+            }
+        }
+
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             logConfigurationSummary(autoConfiguredProperties);
@@ -2316,11 +2325,21 @@ public abstract class BaseMainSupport extends BaseService {
             }
             // log summary of configurations
             if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
+                MainConfigurationDevConsole mc = null;
+                DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
+                if (dcr != null) {
+                    mc = (MainConfigurationDevConsole) dcr.resolveById("main-configuration");
+                }
                 boolean header = false;
                 for (var entry : autoConfiguredProperties.entrySet()) {
                     String k = entry.getKey().toString();
                     Object v = entry.getValue();
                     String loc = locationSummary(autoConfiguredProperties, k);
+
+                    if (mc != null) {
+                        // also capture autowired configuration
+                        mc.addStartupConfiguration(loc, k, v);
+                    }
 
                     // tone down logging noise for our own internal configurations
                     boolean debug = loc.contains("[camel-main]");
@@ -2444,9 +2463,9 @@ public abstract class BaseMainSupport extends BaseService {
                         }
                         String loc = locationSummary(propertyPlaceholders, k);
                         if (SensitiveUtils.containsSensitive(k)) {
-                            LOG.info("    {} {}=xxxxxx", loc, k);
+                            LOG.info("    {} {} = xxxxxx", loc, k);
                         } else {
-                            LOG.info("    {} {}={}", loc, k, v);
+                            LOG.info("    {} {} = {}", loc, k, v);
                         }
                     }
                 }
