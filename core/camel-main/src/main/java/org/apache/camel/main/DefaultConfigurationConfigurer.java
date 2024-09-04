@@ -99,11 +99,7 @@ import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.vault.AwsVaultConfiguration;
-import org.apache.camel.vault.AzureVaultConfiguration;
-import org.apache.camel.vault.GcpVaultConfiguration;
-import org.apache.camel.vault.HashicorpVaultConfiguration;
-import org.apache.camel.vault.VaultConfiguration;
+import org.apache.camel.vault.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -614,6 +610,11 @@ public final class DefaultConfigurationConfigurer {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setHashicorpVaultConfiguration(hashicorp);
         }
+        KubernetesVaultConfiguration kubernetes = getSingleBeanOfType(registry, KubernetesVaultConfiguration.class);
+        if (kubernetes != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setKubernetesVaultConfiguration(kubernetes);
+        }
         configureVault(camelContext);
 
         // apply custom configurations if any
@@ -688,6 +689,24 @@ public final class DefaultConfigurationConfigurer {
                 }
                 PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
                 scheduler.schedulePeriodTask(r, period);
+            }
+        }
+
+        if (vc.kubernetes().isRefreshEnabled()) {
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("kubernetes-secret-refresh", Runnable.class);
+            if (task.isPresent()) {
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} ", r);
+                }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
+                scheduler.scheduledTask(r);
             }
         }
     }
