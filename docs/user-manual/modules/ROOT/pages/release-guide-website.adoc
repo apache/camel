@@ -5,7 +5,7 @@ There are several cases:
 
 * A single repository release, such as `camel-kafka-connector`.
 * A set of separately versioned repositories, such as `camel-k`, `camel-k-runtime`, and `camel-kamelets`.
-* The set of main `camel`, `camel-spring-boot`, and `camel-karaf` which are versioned together.
+* The set of main `camel` and `camel-spring-boot` which are versioned together.
 
 Changes in the content repositories may be done as part of release preparation, or later. Changes in the `camel-website` `antora-playbook.yml` can be supplied in a PR at any time but should be merged only after the release is voted on and approved.
 
@@ -99,20 +99,6 @@ Note that this is the git branch name, which is related to but usually not ident
 Note that your `camel-website` PR will definitely need to be merged after removing the `source-map` extension configuration used to preview the website changes.
 
 === Notes for specific projects
-
-==== camel-karaf
-
-In `camel-karaf:tooling/camel-karaf-docs-maven-plugin/src/main/java/org/apache/camel/karaf/maven/ExtMvelHelper.java`::
-
-change
-+
-[source,java]
-private final static String CAMEL_VERSION = "next";`
-+
-to e.g.
-+
-[source,java]
-private final static String CAMEL_VERSION = "3.13.x";
 
 ==== camel-quarkus
 
