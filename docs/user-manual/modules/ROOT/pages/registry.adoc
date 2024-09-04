@@ -4,7 +4,7 @@ The `org.apache.camel.spi.Registry` API is a common API to lookup beans in any k
 whether you run Camel on Spring Boot, Quarkus, Standalone, Kafka or something else.
 
 Camel uses the `DefaultRegistry` that based on which runtime used (Spring Boot, Quarkus, etc.) will
-first lookup beans from the runtime platform, and fallback to Camel's own `SimpleRegistry`.
+first look up beans from the runtime platform, and fallback to Camel's own `SimpleRegistry`.
 
 == Registry API
 
@@ -47,7 +47,7 @@ public interface Registry extends BeanRepository {
 }
 ----
 
-If you for example need to add a bean to the `Registry` then you can easily do this from Java as follows:
+If you, for example, need to add a bean to the `Registry` then you can easily do this from Java as follows:
 
 [source,java]
 ----
@@ -64,7 +64,7 @@ from("jms:cheese").bean("foo");
 
 ==== Binding in Spring XML
 
-If you use Spring XML file, then any `<bean>` is automatic handled by Spring itself, and
+If you use the Spring XML file, then any `<bean>` is automatic handled by Spring itself, and
 registered into Spring bean container; which means there is no need to bind the bean from Camel also.
 
 [source,xml]
@@ -85,7 +85,7 @@ public MyFoo foo() {
 }
 ----
 
-This is common functionality of Spring Boot, and you can find information about this in
+This is a common functionality of Spring Boot, and you can find information about this in
 the Spring Boot project documentation.
 
 ==== Binding in Quarkus
@@ -165,8 +165,8 @@ MyFoo foo2 = camelContext.getRegistry().lookupByNameAndType("foo", MyFoo.class);
 
 === Looking up beans
 
-You can also use dependency injection that will lookup the bean via the Camel registry.
-If you use a runtime platform such as Spring Boot or Quarkus then they come with their own
+You can also use dependency injection that will look up the bean via the Camel registry.
+If you use a runtime platform such as Spring Boot or Quarkus, then they come with their own
 functionality for this. Camel also has its own bean injection annotation `@BeanInject` which can
 be used when running Camel standalone.
 
@@ -176,12 +176,12 @@ which may not always be the case. Therefore, it is best to only use the Spring B
 
 ==== Lookup in Spring Boot
 
-When using Spring Boot you can use Spring annotations such as `@Autowired` or `@Inject`
+When using Spring Boot, you can use Spring annotations such as `@Autowired` or `@Inject`
 for dependency injection.
 
 ==== Lookup in Quarkus
 
-When using Quarkus you can use CDI annotations such as `@Inject` and `@Named`
+When using Quarkus, you can use CDI annotations such as `@Inject` and `@Named`
 for dependency injection.
 
 == More Information
