@@ -1,8 +1,8 @@
 = CamelContext
 
-The https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/CamelContext.html[CamelContext] is the runtime system, which holds together all the fundamental concepts of Apache Camel (routes, endpoints, components, etc).
+The https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/CamelContext.html[`CamelContext`] is the runtime system, which holds together all the fundamental concepts of Apache Camel (routes, endpoints, components, etc).
 
-This context object represents the Camel runtime system. Typically, you have one _CamelContext_ instance in an application.
+This context object represents the Camel runtime system. Typically, you have one `CamelContext` instance in an application.
 
 image::images/camel-context.png[image]
 
@@ -106,7 +106,7 @@ image::images/message_flow_in_route.png[image]
 A route starts with a consumer (i.e., `from` in the DSL) that populates the initial xref:exchange.adoc[exchange]. At each processor step, the output (out) message
 from the previous step is the input (in) message of the next. In many cases, processors don’t set an out message, so in this case the in message
 is reused. The xref:exchange-pattern.adoc[exchange pattern] of the exchange determines, at the end of a route, whether a reply needs to be sent back to the caller of the route.
-If the exchange pattern (MEP) is InOnly, no reply will be sent back. If it’s InOut, Camel will take the out message from the last step and return it.
+If the exchange pattern (MEP) is `InOnly`, no reply will be sent back. If it’s `InOut`, Camel will take the out message from the last step and return it.
 
 === Component
 
@@ -137,7 +137,7 @@ factory, creating `FileEndpoint` based on the remaining parts of the URI. The co
 path `data/inbox` (2) tells `FileComponent` that the starting folder is `data/inbox`. The
 option, `delay=5000` (3) indicates that files should be polled at a 5-second interval.
 
-The next figure shows how an endpoint works together with an exchange, producers,and consumers.
+The next figure shows how an endpoint works together with an exchange, producers, and consumers.
 
 image::images/endpoint-factory.png[image]
 
@@ -159,7 +159,7 @@ does the heavy lifting.
 
 A consumer is the service that receives messages produced by some external system,
 wraps them in an xref:exchange.adoc[exchange], and sends them to be processed.
-Consumers are the source of the exchanges being routed in Camel.
+Consumers are the source of the exchanges being routed in Apache Camel.
 To create a new exchange, a consumer will use the endpoint that wraps
 the payload being consumed. A xref:processor.adoc[processor] is then used to initiate the routing of the
 exchange in Camel via the routing engine.
@@ -190,7 +190,7 @@ messages until it’s finished processing the current message. A common flavor o
 polling consumer is the scheduled polling consumer, which polls at scheduled intervals.
 File, FTP, and email components all use scheduled polling consumers.
 
-NOTE: In the Camel components its only either the event driven or scheduled polling consumers that
+NOTE: In the Camel components, its only either the event driven or scheduled polling consumers that
 are in use. The polling consumer (non-scheduled) is only used to poll on-demand, such as
 when using the xref:components:eips:pollEnrich-eip.adoc[Poll Enrich] EIP, or from Java by
 creating a `PollingConsumer` instance via the `createPollingConsumer()` method from `Endpoint`.
