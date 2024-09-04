@@ -57,6 +57,8 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals("Bye World", exchange.getOut().getBody());
         assertEquals(123, exchange.getIn().getHeader("foo"));
         assertNull(exchange.getProperty("bar"));
+        assertNull(exchange.getProperty("myVar"));
+        assertNull(exchange.getProperty("myOtherVar"));
     }
 
     @Test
@@ -71,6 +73,8 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         assertEquals("Hi Camel", exchange.getIn().getHeader("CamelFoo"));
         assertEquals(444, exchange.getProperty("bar"));
         assertEquals(555, exchange.getProperty("CamelBar"));
+        assertEquals(666, exchange.getVariable("myVar"));
+        assertEquals("cheese", exchange.getVariable("myOtherVar"));
         assertEquals(id, exchange.getExchangeId());
     }
 
@@ -184,8 +188,10 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         exchange.getIn().setHeader("CamelFoo", "Hi Camel");
         exchange.setProperty("bar", 444);
         exchange.setProperty("CamelBar", 555);
+        exchange.setVariable("myVar", 666);
+        exchange.setVariable("myOtherVar", "cheese");
         exchange.getOut().setBody("Bye World");
-        return DefaultExchangeHolder.marshal(exchange, includeProperties);
+        return DefaultExchangeHolder.marshal(exchange, includeProperties, false);
     }
 
     private static final class MyFoo {
