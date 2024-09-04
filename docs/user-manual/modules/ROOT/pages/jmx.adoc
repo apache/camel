@@ -218,22 +218,10 @@ supports the following tokens:
 * `\#camelId#` = the CamelContext id (eg the name)
 * `\#name#` - same as `\#camelId#`
 * `\#counter#` - an incrementing counter
-* `\#bundleId#` - the OSGi bundle id (only for OSGi environments)
-* `\#symbolicName#` - the OSGi symbolic name (only for OSGi environments)
-* `\#version#` - the OSGi bundle version (only for OSGi environments)
-
-The default naming pattern is differentiated between OSGi and non-OSGi
-as follows:
-
-* non OSGI: `\#name#`
-* OSGi: `\#symbolicName#`
 
 If there is a naming clash in the `JMXMBeanServer` then Camel
 will automatically fall back and use the `\#counter#` in the pattern to remedy
-this. Thus, the following patterns will then be used:
-
-* non OSGI: `\#name#-\#counter#`
-* OSGi: `\#symbolicName#-\#counter#`
+this. Thus, the following patterns will then be used: `\#name#-\#counter#`
 
 If you set an explicit naming pattern, then that pattern is always used,
 and the default patterns above are *not* used.
