@@ -109,9 +109,9 @@ public class ListProperties extends ProcessWatchCommand {
                                 value = "xxxxxx";
                             }
                             row.value = value;
+                            row.internalLoc = jo.getBooleanOrDefault("internal", false);
                             row.loc = sanitizeLocation(jo.getString("location"));
-                            // location camel-main means that it is an internal configuration
-                            boolean accept = internal || !row.loc.equals("camel-main");
+                            boolean accept = internal || !row.internalLoc;
                             if (accept) {
                                 rows.add(row);
                             }
@@ -163,6 +163,7 @@ public class ListProperties extends ProcessWatchCommand {
         String key;
         Object value;
         String loc;
+        boolean internalLoc;
 
         Row copy() {
             try {
