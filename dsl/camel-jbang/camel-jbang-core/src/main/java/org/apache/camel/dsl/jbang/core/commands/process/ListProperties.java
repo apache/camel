@@ -61,9 +61,9 @@ public class ListProperties extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--internal" }, description = "Whether to include internal configuration")
     boolean internal;
 
-    @CommandLine.Option(names = { "--sensitive" }, description = "Mask sensitive values such as passwords",
-                        defaultValue = "true")
-    boolean sensitive = true;
+    @CommandLine.Option(names = { "--mask" }, description = "Whether to mask configuration values to avoid printing sensitive information such as password or access keys",
+            defaultValue = "true")
+    boolean mask = true;
 
     public ListProperties(CamelJBangMain main) {
         super(main);
@@ -104,7 +104,7 @@ public class ListProperties extends ProcessWatchCommand {
                             JsonObject jo = (JsonObject) arr.get(i);
                             row.key = jo.getString("key");
                             String value = jo.getString("value");
-                            if (sensitive && SensitiveUtils.containsSensitive(row.key)) {
+                            if (mask && SensitiveUtils.containsSensitive(row.key)) {
                                 value = "xxxxxx";
                             }
                             row.value = value;
