@@ -1,13 +1,13 @@
 = Java DSL
 
-Apache Camel offers a Java based DSL.
+Apache Camel offers a Java-based DSL.
 
 In the Java DSL you create a route by extending the xref:manual::route-builder.adoc[`RouteBuilder` class], and implementing the `configure` method.
 
 == Java DSL example
 
-This is best illustrate by an example. In the code below we create a new
-class called `MyRouteBuilder` that extends the
+This is best illustrated by an example.
+In the code below we create a new class called `MyRouteBuilder` that extends the
 `org.apache.camel.builder.RouteBuilder` from Camel.
 
 In the `configure` method the Java DSL is at our disposal.
@@ -49,7 +49,7 @@ In the example above we have a single route, which pickup files (the `from`).
 from("file:src/data?noop=true")
 ---------------------------------------
 
-Then we use the xref:components:eips:choice-eip.adoc[Content Based Router] EIP
+Then we use the xref:components:eips:choice-eip.adoc[Content-Based Router] EIP
 (the `choice`) to route the message whether the person is from London or not.
 
 [source,java]
@@ -84,7 +84,7 @@ of breaking a String into multiple added elements:
 Camel now supports to define Camel routes in Java DSL using Lambda style. This can be beneficial for microservices or serverless where
 you may want to quickly define a few routes.
 
-For example using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
+For example, using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
 
 [source,java]
 ----
@@ -103,7 +103,7 @@ For more details see xref:dsl.adoc[DSL], xref:routes.adoc[Routes], and xref:proc
 
 As mentioned in the Getting Started guide, you can use Camel's Java DSL in a way that almost looks like a DSL. For instance:
 
-*Note*: comments afterwards explain some of the constructs used in the example.
+*Note*: comments afterward explain some of the constructs used in the example.
 
 .*Example of Camel's "Java DSL"*
 [source,java]
