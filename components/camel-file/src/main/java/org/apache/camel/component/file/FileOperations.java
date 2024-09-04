@@ -35,6 +35,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -53,6 +55,7 @@ import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadL
  */
 public class FileOperations implements GenericFileOperations<File> {
     private static final Logger LOG = LoggerFactory.getLogger(FileOperations.class);
+    private final Lock lock = new ReentrantLock();
     private FileEndpoint endpoint;
 
     public FileOperations() {
@@ -189,7 +192,8 @@ public class FileOperations implements GenericFileOperations<File> {
 
         // We need to make sure that this is thread-safe and only one thread
         // tries to create the path directory at the same time.
-        synchronized (this) {
+        lock.lock();
+        try {
             if (path.isDirectory() && path.exists()) {
                 // the directory already exists
                 return true;
@@ -197,6 +201,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 LOG.trace("Building directory: {}", path);
                 return buildDirectory(path, endpoint.getDirectoryPermissions(), absolute);
             }
+        } finally {
+            lock.unlock();
         }
     }
 

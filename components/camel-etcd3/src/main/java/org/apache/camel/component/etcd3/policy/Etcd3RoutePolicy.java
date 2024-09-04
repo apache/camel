@@ -63,10 +63,6 @@ public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContext
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Etcd3RoutePolicy.class);
     /**
-     * The mutex used to prevent concurrent access to {@code suspendedRoutes}.
-     */
-    private final Object mutex = new Object();
-    /**
      * The flag indicating whether the current node is a leader.
      */
     private final AtomicBoolean leader = new AtomicBoolean();
@@ -173,15 +169,21 @@ public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContext
 
     @Override
     public void onStop(Route route) {
-        synchronized (mutex) {
+        lock.lock();
+        try {
             suspendedRoutes.remove(route);
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized void onSuspend(Route route) {
-        synchronized (mutex) {
+    public void onSuspend(Route route) {
+        lock.lock();
+        try {
             suspendedRoutes.remove(route);
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -249,16 +251,17 @@ public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContext
      * @param route the route for which the consumer should be stopped.
      */
     private void stopConsumer(Route route) {
-        synchronized (mutex) {
-            try {
-                if (!suspendedRoutes.contains(route)) {
-                    LOGGER.debug("Stopping consumer for {} ({})", route.getId(), route.getConsumer());
-                    stopConsumer(route.getConsumer());
-                    suspendedRoutes.add(route);
-                }
-            } catch (Exception e) {
-                handleException(e);
+        lock.lock();
+        try {
+            if (!suspendedRoutes.contains(route)) {
+                LOGGER.debug("Stopping consumer for {} ({})", route.getId(), route.getConsumer());
+                stopConsumer(route.getConsumer());
+                suspendedRoutes.add(route);
             }
+        } catch (Exception e) {
+            handleException(e);
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -266,17 +269,18 @@ public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContext
      * Start all the consumers that have been stopped.
      */
     private void startAllStoppedConsumers() {
-        synchronized (mutex) {
-            try {
-                for (Route suspendedRoute : suspendedRoutes) {
-                    LOGGER.debug("Starting consumer for {} ({})", suspendedRoute.getId(), suspendedRoute.getConsumer());
-                    startConsumer(suspendedRoute.getConsumer());
-                }
-
-                suspendedRoutes.clear();
-            } catch (Exception e) {
-                handleException(e);
+        lock.lock();
+        try {
+            for (Route suspendedRoute : suspendedRoutes) {
+                LOGGER.debug("Starting consumer for {} ({})", suspendedRoute.getId(), suspendedRoute.getConsumer());
+                startConsumer(suspendedRoute.getConsumer());
             }
+
+            suspendedRoutes.clear();
+        } catch (Exception e) {
+            handleException(e);
+        } finally {
+            lock.unlock();
         }
     }
 

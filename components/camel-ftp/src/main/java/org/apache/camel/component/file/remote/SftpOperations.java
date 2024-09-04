@@ -34,6 +34,8 @@ import java.util.Base64;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -83,6 +85,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
+    private final Lock lock = new ReentrantLock();
 
     private static class TaskPayload {
         final RemoteFileConfiguration configuration;
@@ -117,32 +120,36 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
+    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
             throws GenericFileOperationFailedException {
-        if (isConnected()) {
-            // already connected
+        lock.lock();
+        try {
+            if (isConnected()) {
+                // already connected
+                return true;
+            }
+
+            BlockingTask task = Tasks.foregroundTask()
+                    .withBudget(Budgets.iterationBudget()
+                            .withMaxIterations(Budgets.atLeastOnce(endpoint.getMaximumReconnectAttempts()))
+                            .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
+                            .build())
+                    .build();
+
+            TaskPayload payload = new TaskPayload(configuration);
+
+            if (!task.run(this::tryConnect, payload)) {
+                throw new GenericFileOperationFailedException(
+                        "Cannot connect to " + configuration.remoteServerInformation(),
+                        payload.exception);
+            }
+
+            configureBulkRequests();
+
             return true;
+        } finally {
+            lock.unlock();
         }
-
-        BlockingTask task = Tasks
-                .foregroundTask()
-                .withBudget(Budgets.iterationBudget()
-                        .withMaxIterations(Budgets.atLeastOnce(endpoint.getMaximumReconnectAttempts()))
-                        .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
-                        .build())
-                .build();
-
-        TaskPayload payload = new TaskPayload(configuration);
-
-        if (!task.run(this::tryConnect, payload)) {
-            throw new GenericFileOperationFailedException(
-                    "Cannot connect to " + configuration.remoteServerInformation(),
-                    payload.exception);
-        }
-
-        configureBulkRequests();
-
-        return true;
     }
 
     private boolean tryConnect(TaskPayload payload) {
@@ -489,22 +496,33 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized boolean isConnected() throws GenericFileOperationFailedException {
-        return session != null && session.isConnected() && channel != null && channel.isConnected();
-    }
-
-    @Override
-    public synchronized void disconnect() throws GenericFileOperationFailedException {
-        if (session != null && session.isConnected()) {
-            session.disconnect();
-        }
-        if (channel != null && channel.isConnected()) {
-            channel.disconnect();
+    public boolean isConnected() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return session != null && session.isConnected() && channel != null && channel.isConnected();
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized void forceDisconnect() throws GenericFileOperationFailedException {
+    public void disconnect() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            if (session != null && session.isConnected()) {
+                session.disconnect();
+            }
+            if (channel != null && channel.isConnected()) {
+                channel.disconnect();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void forceDisconnect() throws GenericFileOperationFailedException {
+        lock.lock();
         try {
             if (session != null) {
                 session.disconnect();
@@ -516,6 +534,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             // ensure these
             session = null;
             channel = null;
+            lock.unlock();
         }
     }
 
@@ -526,22 +545,26 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        LOG.debug("Deleting file: {}", name);
+    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
+        lock.lock();
         try {
+            LOG.debug("Deleting file: {}", name);
             reconnectIfNecessary(null);
             channel.rm(name);
             return true;
         } catch (SftpException e) {
             LOG.debug("Cannot delete file {}: {}", name, e.getMessage(), e);
             throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
-        LOG.debug("Renaming file: {} to: {}", from, to);
+    public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
+        lock.lock();
         try {
+            LOG.debug("Renaming file: {} to: {}", from, to);
             reconnectIfNecessary(null);
             // make use of the '/' separator because JSch expects this
             // as the file separator even on Windows
@@ -551,64 +574,71 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         } catch (SftpException e) {
             LOG.debug("Cannot rename file from: {} to: {}", from, to, e);
             throw new GenericFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
-        // must normalize directory first
-        directory = endpoint.getConfiguration().normalizePath(directory);
-
-        LOG.trace("buildDirectory({},{})", directory, absolute);
-        // ignore absolute as all dirs are relative with FTP
-        boolean success = false;
-
-        // whether to check for existing dir using CD or LS
-        boolean cdCheck = !this.endpoint.getConfiguration().isExistDirCheckUsingLs();
-        String originalDirectory = cdCheck ? getCurrentDirectory() : null;
-
+    public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        lock.lock();
         try {
-            // maybe the full directory already exists
-            try {
-                if (cdCheck) {
-                    channel.cd(directory);
-                } else {
-                    // just do a fast listing
-                    channel.ls(directory, entry -> ChannelSftp.LsEntrySelector.BREAK);
-                }
-                success = true;
-            } catch (SftpException e) {
-                // ignore, we could not change directory so try to create it
-                // instead
-            }
+            // must normalize directory first
+            directory = endpoint.getConfiguration().normalizePath(directory);
 
-            if (!success) {
-                LOG.debug("Trying to build remote directory: {}", directory);
+            LOG.trace("buildDirectory({},{})", directory, absolute);
+            // ignore absolute as all dirs are relative with FTP
+            boolean success = false;
+
+            // whether to check for existing dir using CD or LS
+            boolean cdCheck = !this.endpoint.getConfiguration().isExistDirCheckUsingLs();
+            String originalDirectory = cdCheck ? getCurrentDirectory() : null;
+
+            try {
+                // maybe the full directory already exists
                 try {
-                    channel.mkdir(directory);
+                    if (cdCheck) {
+                        channel.cd(directory);
+                    } else {
+                        // just do a fast listing
+                        channel.ls(directory, entry -> ChannelSftp.LsEntrySelector.BREAK);
+                    }
                     success = true;
                 } catch (SftpException e) {
-                    // we are here if the server side doesn't create
-                    // intermediate folders
-                    // so create the folder one by one
-                    success = buildDirectoryChunks(directory);
+                    // ignore, we could not change directory so try to create it
+                    // instead
                 }
 
-                // only after successfully creating directory, we may set chmod on the file
-                if (success) {
-                    chmodOfDirectory(directory);
+                if (!success) {
+                    LOG.debug("Trying to build remote directory: {}", directory);
+                    try {
+                        channel.mkdir(directory);
+                        success = true;
+                    } catch (SftpException e) {
+                        // we are here if the server side doesn't create
+                        // intermediate folders
+                        // so create the folder one by one
+                        success = buildDirectoryChunks(directory);
+                    }
+
+                    // only after successfully creating directory, we may set chmod on the file
+                    if (success) {
+                        chmodOfDirectory(directory);
+                    }
                 }
+
+                // change back to original directory
+                if (originalDirectory != null) {
+                    changeCurrentDirectory(originalDirectory);
+                }
+            } catch (SftpException e) {
+                throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
             }
 
-            // change back to original directory
-            if (originalDirectory != null) {
-                changeCurrentDirectory(originalDirectory);
-            }
-        } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
+            return success;
+        } finally {
+            lock.unlock();
         }
-
-        return success;
     }
 
     private boolean buildDirectoryChunks(String dirName) throws SftpException {
@@ -650,81 +680,89 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized String getCurrentDirectory() throws GenericFileOperationFailedException {
-        LOG.trace("getCurrentDirectory()");
+    public String getCurrentDirectory() throws GenericFileOperationFailedException {
+        lock.lock();
         try {
+            LOG.trace("getCurrentDirectory()");
             String answer = channel.pwd();
             LOG.trace("Current dir: {}", answer);
             return answer;
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot get current directory", e);
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
-        LOG.trace("changeCurrentDirectory({})", path);
-        if (ObjectHelper.isEmpty(path)) {
-            return;
-        }
-
-        // must compact path so SFTP server can traverse correctly, make use of
-        // the '/'
-        // separator because JSch expects this as the file separator even on
-        // Windows
-        String before = path;
-        char separatorChar = '/';
-        path = FileUtil.compactPath(path, separatorChar);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Compacted path: {} -> {} using separator: {}", before, path, separatorChar);
-        }
-
-        // not stepwise should change directory in one operation
-        if (!endpoint.getConfiguration().isStepwise()) {
-            doChangeDirectory(path);
-            return;
-        }
-        if (getCurrentDirectory().startsWith(path)) {
-            // extract the path segment relative to the target path and make
-            // sure it keeps the preceding '/' for the regex op
-            String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ? 1 : 0));
-            if (p.isEmpty()) {
+    public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            LOG.trace("changeCurrentDirectory({})", path);
+            if (ObjectHelper.isEmpty(path)) {
                 return;
             }
-            // the first character must be '/' and hence removed
-            path = UP_DIR_PATTERN.matcher(p).replaceAll("/..").substring(1);
-        }
 
-        // if it starts with the root path then a little special handling for
-        // that
-        if (FileUtil.hasLeadingSeparator(path)) {
-            // change to root path
-            if (!path.matches("^[a-zA-Z]:(//|\\\\).*$")) {
-                doChangeDirectory(path.substring(0, 1));
-                path = path.substring(1);
-            } else {
-                if (path.matches("^[a-zA-Z]:(//).*$")) {
-                    doChangeDirectory(path.substring(0, 3));
-                    path = path.substring(3);
-                } else if (path.matches("^[a-zA-Z]:(\\\\).*$")) {
-                    doChangeDirectory(path.substring(0, 4));
-                    path = path.substring(4);
+            // must compact path so SFTP server can traverse correctly, make use of
+            // the '/'
+            // separator because JSch expects this as the file separator even on
+            // Windows
+            String before = path;
+            char separatorChar = '/';
+            path = FileUtil.compactPath(path, separatorChar);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Compacted path: {} -> {} using separator: {}", before, path, separatorChar);
+            }
+
+            // not stepwise should change directory in one operation
+            if (!endpoint.getConfiguration().isStepwise()) {
+                doChangeDirectory(path);
+                return;
+            }
+            if (getCurrentDirectory().startsWith(path)) {
+                // extract the path segment relative to the target path and make
+                // sure it keeps the preceding '/' for the regex op
+                String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ? 1 : 0));
+                if (p.isEmpty()) {
+                    return;
+                }
+                // the first character must be '/' and hence removed
+                path = UP_DIR_PATTERN.matcher(p).replaceAll("/..").substring(1);
+            }
+
+            // if it starts with the root path then a little special handling for
+            // that
+            if (FileUtil.hasLeadingSeparator(path)) {
+                // change to root path
+                if (!path.matches("^[a-zA-Z]:(//|\\\\).*$")) {
+                    doChangeDirectory(path.substring(0, 1));
+                    path = path.substring(1);
+                } else {
+                    if (path.matches("^[a-zA-Z]:(//).*$")) {
+                        doChangeDirectory(path.substring(0, 3));
+                        path = path.substring(3);
+                    } else if (path.matches("^[a-zA-Z]:(\\\\).*$")) {
+                        doChangeDirectory(path.substring(0, 4));
+                        path = path.substring(4);
+                    }
                 }
             }
-        }
 
-        // split into multiple dirs
-        final String[] dirs = path.split("/|\\\\");
+            // split into multiple dirs
+            final String[] dirs = path.split("/|\\\\");
 
-        if (dirs == null || dirs.length == 0) {
-            // path was just a relative single path
-            doChangeDirectory(path);
-            return;
-        }
+            if (dirs == null || dirs.length == 0) {
+                // path was just a relative single path
+                doChangeDirectory(path);
+                return;
+            }
 
-        // there are multiple dirs so do this in chunks
-        for (String dir : dirs) {
-            doChangeDirectory(dir);
+            // there are multiple dirs so do this in chunks
+            for (String dir : dirs) {
+                doChangeDirectory(dir);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -741,33 +779,44 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized void changeToParentDirectory() throws GenericFileOperationFailedException {
-        LOG.trace("changeToParentDirectory()");
-        String current = getCurrentDirectory();
-
-        String parent = FileUtil.compactPath(current + "/..");
-        // must start with absolute
-        if (!parent.startsWith("/")) {
-            parent = "/" + parent;
-        }
-
-        changeCurrentDirectory(parent);
-    }
-
-    @Override
-    public synchronized SftpRemoteFile[] listFiles() throws GenericFileOperationFailedException {
-        return listFiles(".");
-    }
-
-    @Override
-    public synchronized SftpRemoteFile[] listFiles(String path) throws GenericFileOperationFailedException {
-        LOG.trace("Listing remote files from path {}", path);
-        if (ObjectHelper.isEmpty(path)) {
-            // list current directory if file path is not given
-            path = ".";
-        }
-
+    public void changeToParentDirectory() throws GenericFileOperationFailedException {
+        lock.lock();
         try {
+            LOG.trace("changeToParentDirectory()");
+            String current = getCurrentDirectory();
+
+            String parent = FileUtil.compactPath(current + "/..");
+            // must start with absolute
+            if (!parent.startsWith("/")) {
+                parent = "/" + parent;
+            }
+
+            changeCurrentDirectory(parent);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public SftpRemoteFile[] listFiles() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return listFiles(".");
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public SftpRemoteFile[] listFiles(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            LOG.trace("Listing remote files from path {}", path);
+            if (ObjectHelper.isEmpty(path)) {
+                // list current directory if file path is not given
+                path = ".";
+            }
+
             Vector<?> files = channel.ls(path);
 
             return files.stream()
@@ -775,33 +824,45 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     .toArray(SftpRemoteFileJCraft[]::new);
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized boolean retrieveFile(String name, Exchange exchange, long size)
+    public boolean retrieveFile(String name, Exchange exchange, long size)
             throws GenericFileOperationFailedException {
-        LOG.trace("retrieveFile({})", name);
-        if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
-            // local work directory is configured so we should store file
-            // content as files in this local directory
-            return retrieveFileToFileInLocalWorkDirectory(name, exchange);
-        } else {
-            // store file content directory as stream on the body
-            return retrieveFileToStreamInBody(name, exchange);
+        lock.lock();
+        try {
+            LOG.trace("retrieveFile({})", name);
+            if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
+                // local work directory is configured so we should store file
+                // content as files in this local directory
+                return retrieveFileToFileInLocalWorkDirectory(name, exchange);
+            } else {
+                // store file content directory as stream on the body
+                return retrieveFileToStreamInBody(name, exchange);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
-        InputStream is = exchange.getIn().getHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, InputStream.class);
+    public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            InputStream is = exchange.getIn().getHeader(FtpConstants.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
-        if (is != null) {
-            try {
-                is.close();
-            } catch (IOException e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    throw new GenericFileOperationFailedException(e.getMessage(), e);
+                }
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -970,40 +1031,45 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized boolean storeFile(String name, Exchange exchange, long size)
+    public boolean storeFile(String name, Exchange exchange, long size)
             throws GenericFileOperationFailedException {
-        // must normalize name first
-        name = endpoint.getConfiguration().normalizePath(name);
+        lock.lock();
+        try {
+            // must normalize name first
+            name = endpoint.getConfiguration().normalizePath(name);
 
-        LOG.trace("storeFile({})", name);
+            LOG.trace("storeFile({})", name);
 
-        boolean answer;
-        String currentDir = null;
-        String path = FileUtil.onlyPath(name);
-        String targetName = name;
+            boolean answer;
+            String currentDir = null;
+            String path = FileUtil.onlyPath(name);
+            String targetName = name;
 
-        if (path != null && endpoint.getConfiguration().isStepwise()) {
-            // must remember current dir so we stay in that directory after
-            // the write
-            currentDir = getCurrentDirectory();
+            if (path != null && endpoint.getConfiguration().isStepwise()) {
+                // must remember current dir so we stay in that directory after
+                // the write
+                currentDir = getCurrentDirectory();
 
-            // change to path of name
-            changeCurrentDirectory(path);
+                // change to path of name
+                changeCurrentDirectory(path);
 
-            // the target name should be without path, as we have changed
-            // directory
-            targetName = FileUtil.stripPath(name);
+                // the target name should be without path, as we have changed
+                // directory
+                targetName = FileUtil.stripPath(name);
+            }
+
+            // store the file
+            answer = doStoreFile(name, targetName, exchange);
+
+            // change back to current directory if we changed directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
+
+            return answer;
+        } finally {
+            lock.unlock();
         }
-
-        // store the file
-        answer = doStoreFile(name, targetName, exchange);
-
-        // change back to current directory if we changed directory
-        if (currentDir != null) {
-            changeCurrentDirectory(currentDir);
-        }
-
-        return answer;
     }
 
     private boolean doStoreFile(String name, String targetName, Exchange exchange) throws GenericFileOperationFailedException {
@@ -1088,44 +1154,49 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized boolean existsFile(String name) throws GenericFileOperationFailedException {
-        LOG.trace("existsFile({})", name);
-        if (endpoint.isFastExistsCheck()) {
-            return fastExistsFile(name);
-        }
-        // check whether a file already exists
-        String directory = FileUtil.onlyPath(name);
-        if (directory == null) {
-            // assume current dir if no path could be extracted
-            directory = ".";
-        }
-        String onlyName = FileUtil.stripPath(name);
-
+    public boolean existsFile(String name) throws GenericFileOperationFailedException {
+        lock.lock();
         try {
-            @SuppressWarnings("rawtypes")
-            List files = channel.ls(directory);
-            // can return either null or an empty list depending on FTP servers
-            if (files == null) {
-                return false;
+            LOG.trace("existsFile({})", name);
+            if (endpoint.isFastExistsCheck()) {
+                return fastExistsFile(name);
             }
-            for (Object file : files) {
-                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
-                String existing = entry.getFilename();
-                LOG.trace("Existing file: {}, target file: {}", existing, name);
-                existing = FileUtil.stripPath(existing);
-                if (existing != null && existing.equals(onlyName)) {
-                    return true;
+            // check whether a file already exists
+            String directory = FileUtil.onlyPath(name);
+            if (directory == null) {
+                // assume current dir if no path could be extracted
+                directory = ".";
+            }
+            String onlyName = FileUtil.stripPath(name);
+
+            try {
+                @SuppressWarnings("rawtypes")
+                List files = channel.ls(directory);
+                // can return either null or an empty list depending on FTP servers
+                if (files == null) {
+                    return false;
                 }
-            }
-            return false;
-        } catch (SftpException e) {
-            // or an exception can be thrown with id 2 which means file does not
-            // exists
-            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                for (Object file : files) {
+                    ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
+                    String existing = entry.getFilename();
+                    LOG.trace("Existing file: {}, target file: {}", existing, name);
+                    existing = FileUtil.stripPath(existing);
+                    if (existing != null && existing.equals(onlyName)) {
+                        return true;
+                    }
+                }
                 return false;
+            } catch (SftpException e) {
+                // or an exception can be thrown with id 2 which means file does not
+                // exists
+                if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                    return false;
+                }
+                // otherwise its a more serious error so rethrow
+                throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
-            // otherwise its a more serious error so rethrow
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -1150,21 +1221,26 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
-    public synchronized boolean sendNoop() throws GenericFileOperationFailedException {
-        if (isConnected()) {
-            try {
-                session.sendKeepAliveMsg();
-                return true;
-            } catch (Exception e) {
-                LOG.debug("SFTP session was closed. Ignoring this exception.", e);
-                return false;
+    public boolean sendNoop() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            if (isConnected()) {
+                try {
+                    session.sendKeepAliveMsg();
+                    return true;
+                } catch (Exception e) {
+                    LOG.debug("SFTP session was closed. Ignoring this exception.", e);
+                    return false;
+                }
             }
+            return false;
+        } finally {
+            lock.unlock();
         }
-        return false;
     }
 
     @Override
-    public synchronized boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
+    public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         // is not implemented
         return true;
     }

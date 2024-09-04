@@ -284,7 +284,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     void onStarted(final DisruptorConsumer consumer) throws Exception {
-        synchronized (this) {
+        lock.lock();
+        try {
             // validate multiple consumers have been enabled is necessary
             if (!consumers.isEmpty() && !isMultipleConsumersSupported()) {
                 throw new IllegalStateException(
@@ -297,17 +298,22 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
                 LOGGER.debug("Tried to start Consumer {} on endpoint {} but it was already started", consumer,
                         getEndpointUri());
             }
+        } finally {
+            lock.unlock();
         }
     }
 
     void onStopped(final DisruptorConsumer consumer) throws Exception {
-        synchronized (this) {
+        lock.lock();
+        try {
             if (consumers.remove(consumer)) {
                 LOGGER.debug("Stopping consumer {} on endpoint {}", consumer, getEndpointUri());
                 getDisruptor().reconfigure();
             } else {
                 LOGGER.debug("Tried to stop Consumer {} on endpoint {} but it was already stopped", consumer, getEndpointUri());
             }
+        } finally {
+            lock.unlock();
         }
     }
 
