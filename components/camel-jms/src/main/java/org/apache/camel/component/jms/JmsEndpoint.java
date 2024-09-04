@@ -51,6 +51,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.UnwrapHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -148,6 +149,13 @@ public class JmsEndpoint extends DefaultEndpoint
             // we need to use reflection to find the URL to the brokers, so do this once on startup
             BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
             ConnectionFactory cf = getConnectionFactory();
+            // unwrap if cf is from a synthetic ClientProxy bean
+            if (cf != null && cf.getClass().getName().endsWith("ClientProxy")) {
+                ConnectionFactory actual = UnwrapHelper.unwrapClientProxy(cf);
+                if (actual != null) {
+                    cf = actual;
+                }
+            }
             serviceUrl = JmsServiceLocationHelper.getBrokerURLFromConnectionFactory(bi, cf);
             serviceProtocol = getComponent().getDefaultName();
 

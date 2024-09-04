@@ -35,6 +35,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.UnwrapHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -126,6 +127,13 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
             // we need to use reflection to find the URL to the database, so do this once on startup
             BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
             DataSource ds = getDataSource();
+            // unwrap if ds is from a synthetic ClientProxy bean
+            if (ds != null && ds.getClass().getName().endsWith("ClientProxy")) {
+                DataSource actual = UnwrapHelper.unwrapClientProxy(ds);
+                if (actual != null) {
+                    ds = actual;
+                }
+            }
             serviceUrl = SqlServiceLocationHelper.getJDBCURLFromDataSource(bi, ds);
 
             serviceMetadata = new HashMap<>();
