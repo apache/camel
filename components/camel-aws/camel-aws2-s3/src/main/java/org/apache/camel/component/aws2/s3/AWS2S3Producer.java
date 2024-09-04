@@ -149,7 +149,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         long partSize = getConfiguration().getPartSize();
-        if (contentLength == 0 && contentLength < partSize) {
+        if (contentLength == 0 || contentLength < partSize) {
             // optimize to do a single op if content length is known and < part size
             LOG.debug("File size < partSize. Uploading file in single operation: {}", filePayload);
             processSingleOp(exchange);
@@ -161,6 +161,7 @@ public class AWS2S3Producer extends DefaultProducer {
         objectMetadata.put("Content-Length", contentLength.toString());
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
+        final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
                 = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
 
@@ -254,6 +255,7 @@ public class AWS2S3Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
         message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
+        message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
         if (uploadResult.versionId() != null) {
             message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
         }
