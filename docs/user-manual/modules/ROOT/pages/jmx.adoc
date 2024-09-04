@@ -23,7 +23,7 @@ The high level supported types of management objects are:
 - https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedService.html[Service]
 
 Most of these management objects also expose lifecycle operations in
-addition to performance counter attributes.
+addition to performance counter-attributes.
 
 
 == Disabling or enabling Camel JMX
@@ -55,7 +55,7 @@ Spring XML configuration:
 </camelContext>
 ----
 
-In Java you can disable JMX directly on the `CamelContext` as follows:
+In Java, you can disable JMX directly on the `CamelContext` as follows:
 
 [source,java]
 ----
@@ -83,17 +83,17 @@ Camel JMX can be configured with the following options.
 |The JMX domain that all object names will use
 
 |`mbeansLevel` |  |`Default`
-|Configures the level for which MBeans are registered.
+|Configure the level for which MBeans are registered.
 See section _Registering MBeans for specific resources only_ for more details.
 
 |`onlyRegisterProcessorWithCustomId`
 |`org.apache.camel.jmx.onlyRegisterProcessorWithCustomId` |`false`
-|If this option is enabled then only processors with a
+|If this option is enabled, then only processors with a
 custom id set will be registered. This allows you to filer out unwanted
 processors in the JMX console.
 
 |`statisticsLevel` |  |`Default`
-|Configures the level for whether performance statistics is enabled for the MBean.
+|Configure the level for whether performance statistics is enabled for the MBean.
 See section _Configuring level of granularity for performance statistics_ for more details.
 
 |`includeHostName` |`org.apache.camel.jmx.includeHostName` | `false`
@@ -101,16 +101,16 @@ See section _Configuring level of granularity for performance statistics_ for mo
 
 |`useHostIPAddress` |`org.apache.camel.jmx.useHostIPAddress` |`false`
 |Whether to use hostname or IP Address in the service url
-when creating the remote connector. By default the hostname will be
+when creating the remote connector. By default, the hostname will be
 used.
 
 |`loadStatisticsEnabled` |`org.apache.camel.jmx.loadStatisticsEnabled` |`false`
-|Whether load statistics is enabled (gathers load statistics using a background thread per CamelContext).
+|Whether load statistics is enabled (gather load statistics using a background thread per CamelContext).
 
 |`endpointRuntimeStatisticsEnabled`
 |`org.apache.camel.jmx.endpointRuntimeStatisticsEnabled` |`true`
-|Whether endpoint runtime statistics is enabled (gathers runtime
-usage of each incoming and outgoing endpoints).
+|Whether endpoint runtime statistics is enabled (gather runtime
+usage of each incoming and outgoing endpoint).
 
 |`mask` |`org.apache.camel.jmx.mask` |`true`
 |A flag that indicates whether to remove detected sensitive information (such as passwords)
@@ -158,11 +158,11 @@ registered for new routes added later on. This feature can be disabled, for
 example, if you are adding and removing temporary routes that do not require
 management.
 
-In *Camel 4.5* onwards there are additional options to configure whether routes created from route templates or Kamelets
+In *Camel 4.5* onwards, there are additional options to configure whether routes created from route templates or Kamelets
 should be registered as MBeans or not. By default, Kamelets are now disabled with the intention to regard a Kamelet
-as a component, instead of a set of additional routes and processors MBeans that is essentially not needed for management
-and monitoring. The option `registerRoutesCreateByKamelet` can be set to `true` to enable MBeans which is how Camel 4.4 or
-older behaves. On the other hand routes created from route templates (not Kamelets) are default enabled.
+as a component, instead of a set of additional routes and processors MBeans that is essentially unnecessary for management
+and monitoring. The option `registerRoutesCreateByKamelet` can be set to `true` to enable MBeans, which is how Camel 4.4 or
+older behaves. On the other hand, routes created from route templates (not Kamelets) are default enabled.
 
 CAUTION: However, be cautious when using the `registerAlways` option in
 conjunction with dynamic EIP patterns, such as the xref:components:eips:recipientList-eip.adoc[Recipient List],
@@ -176,7 +176,7 @@ and consumes memory.
 You can configure a naming pattern for the MBeans names that Camel creates.
 The pattern is used as part of the `ObjectName` as the key after the domain name.
 
-By default Camel will use MBean names for the `ManagedCamelContextMBean`
+By default, Camel will use MBean names for the `ManagedCamelContextMBean`
 as follows:
 
 [source,text]
@@ -185,7 +185,7 @@ org.apache.camel:context=camel-1,type=context,name=camel-1
 ----
 
 If you configure a name on the `CamelContext` then that name is part of
-the `ObjectName` as well. For example if we have:
+the `ObjectName` as well. For example, if we have:
 
 [source,xml]
 ----
@@ -229,8 +229,8 @@ as follows:
 * OSGi: `\#symbolicName#`
 
 If there is a naming clash in the `JMXMBeanServer` then Camel
-will automatically fallback and use the `\#counter#` in the pattern to remedy
-this. Thus the following patterns will then be used:
+will automatically fall back and use the `\#counter#` in the pattern to remedy
+this. Thus, the following patterns will then be used:
 
 * non OSGI: `\#name#-\#counter#`
 * OSGi: `\#symbolicName#-\#counter#`
@@ -242,7 +242,7 @@ This allows us to have full control, very easily, of the naming for both
 the `CamelContext` id in the Registry and the JMX MBeans in the `JMXMBeanRegistry`.
 
 So if we want to explicitly name both the `CamelContext` and to use fixed
-MBean names that do not change (i.e. without counters), then we can use
+MBean names that do not change (i.e., without counters), then we can use
 the `managementNamePattern` attribute:
 
 [source,xml]
@@ -270,10 +270,10 @@ You can set a level for whether performance statistics are
 enabled or not when Camel starts up. The levels are:
 
 * `Default` - Camel will enable statistics for both routes and
-processors (fine grained).
+processors (fine-grained).
 
 * `Extended` - As default but with additional statistics gathered during
-runtime such as fine grained level of usage of endpoints and more.
+runtime such as fine-grained level of usage of endpoints and more.
 
 * `RoutesOnly` - Camel will only enable statistics for routes (coarse
 grained)
@@ -285,13 +285,13 @@ grained)
 ====
 *What does statistics enabled mean?*
 
-Statistics enabled means that Camel will do fine grained performance
-statistics for that particular MBean. There are statistics you can see, such as: number of exchanges completed/failed,
+Statistics enabled means that Camel will do fine-grained performance
+statistics for that particular MBean. There are statistics you can see, such as number of exchanges completed/failed,
 last/total/min/max/mean processing time, first/last failed time, etc.
 
 ====
 
-Using Java DSL you set the statistics level by:
+Using Java DSL, you set the statistics level by:
 
 [source,java]
 ----
@@ -329,7 +329,7 @@ passphrase, and use `xxxxxx` as the replacement value.
 
 === Masking JMX attributes in custom components
 
-When implementing custom Camel components you can mark which
+When implementing custom Camel components, you can mark which
 JMX attributes to mask with the `@ManagedAttribute` and `@ManagedOperation` annotations.
 
 The `mask` attribute can be set to `true` to indicate that the result of this JMX
