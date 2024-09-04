@@ -1,6 +1,6 @@
-= REST DSL with contract first OpenAPI
+= REST DSL with contract-first OpenAPI
 
-From *Camel 4.6* onwards the xref:rest-dsl.adoc[Rest DSL] has been improved with a _contract first_
+From *Camel 4.6* onwards, the xref:rest-dsl.adoc[Rest DSL] has been improved with a _contract-first_
 approach using vanilla OpenAPI specification.
 
 == How it works
@@ -16,15 +16,16 @@ Neither is (at this time of writing) any security aspects from the OpenAPI speci
 
 == Contract first
 
-The _contract first_ approach requires you to have an existing OpenAPI v3 specification file.
+The _contract-first_ approach requires you to have an existing OpenAPI v3 specification file.
 This contract is a standard OpenAPI contract, and you can use any existing API design tool to build such contracts.
 
 TIP: Camel support OpenAPI v3.0 and v3.1.
 
-In Camel, you then use the Rest DSL in _contract first_ mode. For example having a contracted in a file named `my-contract.json`,
+In Camel, you then use the Rest DSL in _contract-first_ mode.
+For example, having a contract in a file named `my-contract.json`,
 you can then copy this file to `src/main/resources` so it's loaded from classpath.
 
-In Camel Rest DSL you can then very easily define _contract first_ as shown below:
+In Camel Rest DSL you can then very easily define _contract-first_ as shown below:
 
 
 [tabs]
@@ -56,7 +57,7 @@ YAML::
 ----
 ====
 
-When Camel startup the OpenAPI specification file is loaded and parsed. For every APIs
+When Camel startup the OpenAPI specification file is loaded and parsed. For every API
 Camel builds HTTP REST endpoint, which are routed 1:1 to Camel routes using the `direct:operationId` naming convention.
 
 The _pestore_ has 18 APIs here we look at the 5 user APIs:
@@ -128,8 +129,8 @@ YAML::
 
 === Ignoring missing API operations
 
-When using OpenAPI with _contract first_ then Camel will on startup check if there is a corresponding `direct:operationId` route
-for every API service. If some operations are missing then Camel will fail on startup with an error.
+When using OpenAPI with _contract-first_, then Camel will on startup check if there is a corresponding `direct:operationId` route
+for every API service. If some operations are missing, then Camel will fail on startup with an error.
 
 During development, you can use `missingOperation` to ignore this as shown:
 
@@ -149,18 +150,18 @@ This is similar to ignoring missing API operations, as you can tell Camel to moc
     rest().openApi("petstore-v3.json").missingOperation("mock");
 ----
 
-When using _mock_ then Camel will (for missing operations) simulate a successful response:
+When using _mock_, then Camel will (for missing operations) simulate a successful response:
 
-1. attempting to load canned responses from file system.
+1. attempting to load canned responses from the file system.
 2. for GET verbs then attempt to use example inlined in the OpenAPI `response` section.
 3. for other verbs (DELETE, PUT, POST, PATCH) then return the input body as response.
-4. if none of above then return empty body.
+4. if none of the above, then return empty body.
 
 This allows you to have a set of files that you can use for development and testing purposes.
 
 The files should be stored in `camel-mock` when using Camel JBang, and `src/main/resources/camel-mock` for Maven/Gradle based projects.
 
-For example the following https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api-contract-first[Camel JBang example] is structured as:
+For example, the following https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api-contract-first[Camel JBang example] is structured as:
 
 [source,text]
 ----
@@ -233,7 +234,7 @@ so make sure it's the best example you want to let Camel use as mocked response 
 
 === Binding to POJO classes
 
-_contract first_ Rest DSL with OpenAPI also support binding mode to JSon and XML.
+_contract-first_ Rest DSL with OpenAPI also supports binding mode to JSON and XML.
 This works the same as _code first_ xref:rest-dsl.adoc[Rest DSL].
 
 However, we have added the `bindingPackageScan` configuration to make it possible for Camel to automatically discover POJO classes from classpath.
@@ -255,10 +256,10 @@ camel.rest.bindingMode = json
 camel.rest.bindingPackageScan = sample.petstore.model
 ----
 
-Then Camel will automatic for every OpenAPI operation detect the specified schemas for incoming and outgoing responses,
+Then Camel will automatically for every OpenAPI operation detect the specified schemas for incoming and outgoing responses,
 and map that to Java POJO classes by class name.
 
-For example the `getPetById` operation in the OpenAPI contract:
+For example, the `getPetById` operation in the OpenAPI contract:
 
 [source,json]
 ----
@@ -292,7 +293,7 @@ Here Camel will detect the `schema` part:
 And compute the class name as `Pet` and attempt to discover this class from classpath scanning specified via the `bindingPackageScan` option.
 
 You can source code generate Java POJO classes from an OpenAPI specification via tooling such as the `swagger-codegen-maven-plugin` Maven plugin.
-For more details see this https://github.com/apache/camel-spring-boot-examples/tree/main/openapi-contract-first[Spring Boot example].
+For more details, see this https://github.com/apache/camel-spring-boot-examples/tree/main/openapi-contract-first[Spring Boot example].
 
 === Expose API specification
 
