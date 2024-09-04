@@ -322,7 +322,7 @@ but the following listed types were not enhanced at build time or at class load 
 
 The problem here is that the source has been compiled or recompiled through
 your IDE and not through Maven, which would
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/pom.xml[enhance
+https://github.com/apache/camel/blob/main/components/camel-jpa/pom.xml[enhance
 the byte-code at build time]. To overcome this, you need to enable
 http://openjpa.apache.org/entity-enhancement.html#dynamic-enhancement[dynamic
 byte-code enhancement of OpenJPA]. For example, assuming the current
