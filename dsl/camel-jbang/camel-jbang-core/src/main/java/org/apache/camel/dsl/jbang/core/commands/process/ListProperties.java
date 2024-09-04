@@ -33,8 +33,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "startup-configuration", description = "List startup configuration of Camel integrations", sortOptions = false)
-public class StartupConfiguration extends ProcessWatchCommand {
+@Command(name = "properties", description = "List configuration properties", sortOptions = false)
+public class ListProperties extends ProcessWatchCommand {
 
     public static class PidNameKeyCompletionCandidates implements Iterable<String> {
 
@@ -55,11 +55,14 @@ public class StartupConfiguration extends ProcessWatchCommand {
                         description = "Sort by pid, name or key", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--startup" }, description = "List only startup configuration")
+    boolean startup;
+
     @CommandLine.Option(names = { "--sensitive" }, description = "Mask sensitive values such as passwords",
                         defaultValue = "true")
     boolean sensitive = true;
 
-    public StartupConfiguration(CamelJBangMain main) {
+    public ListProperties(CamelJBangMain main) {
         super(main);
     }
 
@@ -85,9 +88,15 @@ public class StartupConfiguration extends ProcessWatchCommand {
                         }
                         row.pid = Long.toString(ph.pid());
 
-                        JsonObject jv = (JsonObject) root.get("main-configuration");
-                        JsonArray arr = jv.getCollection("configurations");
-                        for (int i = 0; i < arr.size(); i++) {
+                        JsonArray arr;
+                        if (startup) {
+                            JsonObject jv = (JsonObject) root.get("main-configuration");
+                            arr = jv.getCollectionOrDefault("configurations", null);
+                        } else {
+                            JsonObject jv = (JsonObject) root.get("properties");
+                            arr = jv.getCollectionOrDefault("properties", null);
+                        }
+                        for (int i = 0; arr != null && i < arr.size(); i++) {
                             row = row.copy();
                             JsonObject jo = (JsonObject) arr.get(i);
                             row.key = jo.getString("key");
