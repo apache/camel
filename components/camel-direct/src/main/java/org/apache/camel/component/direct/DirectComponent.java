@@ -18,6 +18,10 @@ package org.apache.camel.component.direct;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -34,6 +38,8 @@ import org.apache.camel.util.StopWatch;
 public class DirectComponent extends DefaultComponent {
 
     // active consumers
+    private final Lock consumersLock = new ReentrantLock();
+    private final Condition consumersCondition = consumersLock.newCondition();
     private final Map<String, DirectConsumer> consumers = new HashMap<>();
     // counter that is used for producers to keep track if any consumer was added/removed since they last checked
     // this is used for optimization to avoid each producer to get consumer for each message processed
@@ -93,7 +99,8 @@ public class DirectComponent extends DefaultComponent {
     }
 
     public void addConsumer(String key, DirectConsumer consumer) {
-        synchronized (consumers) {
+        consumersLock.lock();
+        try {
             if (consumers.putIfAbsent(key, consumer) != null) {
                 throw new IllegalArgumentException(
                         "Cannot add a 2nd consumer to the same endpoint: " + key
@@ -101,21 +108,27 @@ public class DirectComponent extends DefaultComponent {
             }
             // state changed so inc counter
             stateCounter++;
-            consumers.notifyAll();
+            consumersCondition.signalAll();
+        } finally {
+            consumersLock.unlock();
         }
     }
 
     public void removeConsumer(String key, DirectConsumer consumer) {
-        synchronized (consumers) {
+        consumersLock.lock();
+        try {
             consumers.remove(key, consumer);
             // state changed so inc counter
             stateCounter++;
-            consumers.notifyAll();
+            consumersCondition.signalAll();
+        } finally {
+            consumersLock.unlock();
         }
     }
 
     protected DirectConsumer getConsumer(String key, boolean block, long timeout) throws InterruptedException {
-        synchronized (consumers) {
+        consumersLock.lock();
+        try {
             DirectConsumer answer = consumers.get(key);
             if (answer == null && block) {
                 StopWatch watch = new StopWatch();
@@ -128,10 +141,12 @@ public class DirectComponent extends DefaultComponent {
                     if (rem <= 0) {
                         break;
                     }
-                    consumers.wait(rem);
+                    consumersCondition.await(rem, TimeUnit.MILLISECONDS);
                 }
             }
             return answer;
+        } finally {
+            consumersLock.unlock();
         }
     }
 

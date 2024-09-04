@@ -66,11 +66,14 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
 
     public Dhis2Client getClient(Dhis2Configuration endpointConfiguration) {
         if (endpointConfiguration.equals(this.configuration)) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (this.dhis2Client == null) {
                     this.dhis2Client = Dhis2ClientBuilder.newClient(endpointConfiguration.getBaseApiUrl(),
                             endpointConfiguration.getUsername(), endpointConfiguration.getPassword()).build();
                 }
+            } finally {
+                lock.unlock();
             }
 
             return this.dhis2Client;

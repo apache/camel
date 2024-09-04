@@ -32,7 +32,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicMarkableReference;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.lmax.disruptor.InsufficientCapacityException;
 import com.lmax.disruptor.RingBuffer;
@@ -73,6 +75,7 @@ public class DisruptorReference {
     private final DisruptorWaitStrategy waitStrategy;
 
     private final Queue<Exchange> temporaryExchangeBuffer;
+    private final Lock lock = new ReentrantLock();
 
     //access guarded by this
     private ExecutorService executor;
@@ -144,11 +147,16 @@ public class DisruptorReference {
         ringBuffer.publish(sequence);
     }
 
-    public synchronized void reconfigure() throws Exception {
-        LOGGER.debug("Reconfiguring disruptor {}", this);
-        shutdownDisruptor(true);
+    public void reconfigure() throws Exception {
+        lock.lock();
+        try {
+            LOGGER.debug("Reconfiguring disruptor {}", this);
+            shutdownDisruptor(true);
 
-        start();
+            start();
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void start() throws Exception {
@@ -282,52 +290,62 @@ public class DisruptorReference {
         }
     }
 
-    private synchronized void shutdownDisruptor(boolean isReconfiguring) {
-        LOGGER.debug("Shutting down disruptor {}, reconfiguring: {}", this, isReconfiguring);
-        Disruptor<ExchangeEvent> currentDisruptor = disruptor.getReference();
-        disruptor.set(null, isReconfiguring);
+    private void shutdownDisruptor(boolean isReconfiguring) {
+        lock.lock();
+        try {
+            LOGGER.debug("Shutting down disruptor {}, reconfiguring: {}", this, isReconfiguring);
+            Disruptor<ExchangeEvent> currentDisruptor = disruptor.getReference();
+            disruptor.set(null, isReconfiguring);
 
-        if (currentDisruptor != null) {
-            //check if we had a blocking event handler to keep an empty disruptor 'busy'
-            if (handlers != null && handlers.length == 1
-                    && handlers[0] instanceof BlockingExchangeEventHandler blockingExchangeEventHandler) {
-                // yes we did, unblock it so we can get rid of our backlog,
-                // The eventhandler will empty its pending exchanges in our temporary buffer
-                blockingExchangeEventHandler.unblock();
-            }
+            if (currentDisruptor != null) {
+                //check if we had a blocking event handler to keep an empty disruptor 'busy'
+                if (handlers != null && handlers.length == 1
+                        && handlers[0] instanceof BlockingExchangeEventHandler blockingExchangeEventHandler) {
+                    // yes we did, unblock it so we can get rid of our backlog,
+                    // The eventhandler will empty its pending exchanges in our temporary buffer
+                    blockingExchangeEventHandler.unblock();
+                }
 
-            currentDisruptor.shutdown();
+                currentDisruptor.shutdown();
 
-            //they have already been given a trigger to halt when they are done by shutting down the disruptor
-            //we do however want to await their completion before they are scheduled to process events from the new
-            for (final LifecycleAwareExchangeEventHandler eventHandler : handlers) {
-                boolean eventHandlerFinished = false;
-                //the disruptor is now empty and all consumers are either done or busy processing their last exchange
-                while (!eventHandlerFinished) {
-                    try {
-                        //The disruptor shutdown command executed above should have triggered a halt signal to all
-                        //event processors which, in their death, should notify our event handlers. They respond by
-                        //switching a latch and we want to await that latch here to make sure they are done.
-                        if (!eventHandler.awaitStopped(10, TimeUnit.SECONDS)) {
-                            //we wait for a relatively long, but limited amount of time to prevent an application using
-                            //this component from hanging indefinitely
-                            //Please report a bug if you can repruduce this
-                            LOGGER.error("Disruptor/event handler failed to shut down properly, PLEASE REPORT");
+                //they have already been given a trigger to halt when they are done by shutting down the disruptor
+                //we do however want to await their completion before they are scheduled to process events from the new
+                for (final LifecycleAwareExchangeEventHandler eventHandler : handlers) {
+                    boolean eventHandlerFinished = false;
+                    //the disruptor is now empty and all consumers are either done or busy processing their last exchange
+                    while (!eventHandlerFinished) {
+                        try {
+                            //The disruptor shutdown command executed above should have triggered a halt signal to all
+                            //event processors which, in their death, should notify our event handlers. They respond by
+                            //switching a latch and we want to await that latch here to make sure they are done.
+                            if (!eventHandler.awaitStopped(10, TimeUnit.SECONDS)) {
+                                //we wait for a relatively long, but limited amount of time to prevent an application using
+                                //this component from hanging indefinitely
+                                //Please report a bug if you can repruduce this
+                                LOGGER.error("Disruptor/event handler failed to shut down properly, PLEASE REPORT");
+                            }
+                            eventHandlerFinished = true;
+                        } catch (InterruptedException e) {
+                            LOGGER.info("Interrupted while waiting for the shutdown to complete");
+                            Thread.currentThread().interrupt();
                         }
-                        eventHandlerFinished = true;
-                    } catch (InterruptedException e) {
-                        LOGGER.info("Interrupted while waiting for the shutdown to complete");
-                        Thread.currentThread().interrupt();
                     }
                 }
-            }
 
-            handlers = new LifecycleAwareExchangeEventHandler[0];
+                handlers = new LifecycleAwareExchangeEventHandler[0];
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
-    private synchronized void shutdownExecutor() {
-        resizeThreadPoolExecutor(0);
+    private void shutdownExecutor() {
+        lock.lock();
+        try {
+            resizeThreadPoolExecutor(0);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public String getName() {
@@ -361,28 +379,43 @@ public class DisruptorReference {
         return temporaryExchangeBuffer.size();
     }
 
-    public synchronized void addEndpoint(final DisruptorEndpoint disruptorEndpoint) {
-        LOGGER.debug("Adding Endpoint: {}", disruptorEndpoint);
-        endpoints.add(disruptorEndpoint);
-        LOGGER.debug("Endpoint added: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
-    }
-
-    public synchronized void removeEndpoint(final DisruptorEndpoint disruptorEndpoint) {
-        LOGGER.debug("Removing Endpoint: {}", disruptorEndpoint);
-        if (getEndpointCount() == 1) {
-            LOGGER.debug("Last Endpoint removed, shutdown disruptor");
-            //Shutdown our disruptor
-            shutdownDisruptor(false);
-
-            //As there are no endpoints dependent on this Disruptor, we may also shutdown our executor
-            shutdownExecutor();
+    public void addEndpoint(final DisruptorEndpoint disruptorEndpoint) {
+        lock.lock();
+        try {
+            LOGGER.debug("Adding Endpoint: {}", disruptorEndpoint);
+            endpoints.add(disruptorEndpoint);
+            LOGGER.debug("Endpoint added: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
+        } finally {
+            lock.unlock();
         }
-        endpoints.remove(disruptorEndpoint);
-        LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, getEndpointCount());
     }
 
-    public synchronized int getEndpointCount() {
-        return endpoints.size();
+    public void removeEndpoint(final DisruptorEndpoint disruptorEndpoint) {
+        lock.lock();
+        try {
+            LOGGER.debug("Removing Endpoint: {}", disruptorEndpoint);
+            if (getEndpointCount() == 1) {
+                LOGGER.debug("Last Endpoint removed, shutdown disruptor");
+                //Shutdown our disruptor
+                shutdownDisruptor(false);
+
+                //As there are no endpoints dependent on this Disruptor, we may also shutdown our executor
+                shutdownExecutor();
+            }
+            endpoints.remove(disruptorEndpoint);
+            LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, getEndpointCount());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public int getEndpointCount() {
+        lock.lock();
+        try {
+            return endpoints.size();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
