@@ -149,7 +149,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         long partSize = getConfiguration().getPartSize();
-        if (contentLength == 0 && contentLength < partSize) {
+        if (contentLength == 0 || contentLength < partSize) {
             // optimize to do a single op if content length is known and < part size
             LOG.debug("File size < partSize. Uploading file in single operation: {}", filePayload);
             processSingleOp(exchange);
