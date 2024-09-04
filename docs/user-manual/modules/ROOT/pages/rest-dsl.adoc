@@ -3,11 +3,11 @@
 Apache Camel offers a REST styled DSL.
 
 The intention is to allow end users to define REST services (hosted by Camel) using a
-REST style with verbs such as get, post, delete etc.
+REST style with verbs such as get, post, delete, etc.
 
-NOTE: From *Camel 4.6* onwards the Rest DSL has been improved with a _contract first_ approach using vanilla OpenAPI specification
+NOTE: From *Camel 4.6* onwards, the Rest DSL has been improved with a _contract-first_ approach using vanilla OpenAPI specification
 files. This is documented in the xref:rest-dsl-openapi.adoc[Rest DSL with OpenAPI contract first] page. This current page documents the
-_code first_ Rest DSL that Camel provides for a long time.
+_code-first_ Rest DSL that Camel provides for a long time.
 
 == How it works
 
@@ -15,11 +15,11 @@ The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] 
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
 as xref:components::netty-http-component.adoc[Netty HTTP], xref:components::servlet-component.adoc[Servlet], and
-others that has native REST integration.
+others that have native REST integration.
 
 == Components supporting Rest DSL
 
-The following Camel components supports the Rest DSL:
+The following Camel components support the Rest DSL:
 
 * xref:components::rest-component.adoc[camel-rest] *required* contains the base rest component needed by Rest DSL
 * xref:components::netty-http-component.adoc[camel-netty-http]
@@ -30,7 +30,7 @@ The following Camel components supports the Rest DSL:
 
 == Rest DSL with Java DSL
 
-To use the Rest DSL in Java DSL then just do as with regular Camel routes by
+To use the Rest DSL in Java DSL, then just do as with regular Camel routes by
 extending the `RouteBuilder` and define the routes in the `configure`
 method.
 
@@ -59,13 +59,13 @@ This defines a REST service with the following url mappings:
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |===
 |Base Path |Uri template |Verb |Consumes
-|/say |/hello |get |_all_
-|/say |/bye |get |application/json
-|/say |/bye |post |_all_
+|`_/say_` |`_/hello_` |`get` |_all_
+|`_/say_` |`_/bye_` |`get` |`application/json`
+|`_/say_` |`_/bye_` |`post` |_all_
 |===
 
 Notice that in the REST service we route directly to a Camel endpoint
-using `to()`. This is because the Rest DSL has a short-hand for
+using `to()`. This is because the Rest DSL has a shorthand for
 routing directly to an endpoint using `to()`.
 
 == Rest DSL with XML DSL
@@ -101,10 +101,10 @@ The example above can be defined in XML as shown below:
 </camelContext>
 ----
 
-== Using base path
+== Using a base path
 
-The REST DSL allows defining base path to make the DSL a bit more DRY.
-For example to define a customer path, we can set the base path in
+The REST DSL allows defining a base path to help applying the _"don't repeat yourself"_ (DRY) practice.
+For example, to define a customer path, we can set the base path in
 `rest("/customer")` and then provide the uri templates in the verbs, as
 shown below:
 
@@ -116,7 +116,7 @@ rest("/customers/")
     .post("/neworder").to("direct:customerNewOrder");
 ----
 
-And using XML DSL it becomes:
+And using XML DSL, it becomes:
 
 [source,xml]
 ----
@@ -170,37 +170,39 @@ For example:
 
 == Managing Rest services
 
-Each of the rest services becomes a Camel route, so in the first example
-we have 2 x get and 1 x post REST service, which each become a Camel
-route. This makes it _the same_ from Camel to manage and run these
-services - as they are just Camel routes. This means any tooling and API
+Each of the rest services becomes a Camel route, so in the first example,
+we have 2 x get and 1 x post REST service, which each becomes a Camel
+route.
+This makes it _the same_ from Apache Camel to manage and run these
+services, as they are just Camel routes.
+This means any tooling and API
 today that deals with Camel routes, also work with the REST services.
 
 NOTE: To use JMX with Camel then `camel-management` JAR must be included in the classpath.
 
 This means you can use JMX to stop/start routes, and also get the JMX
-metrics about the routes, such as number of message processed, and their
+metrics about the routes, such as the number of messages processed, and their
 performance statistics.
 
 There is also a Rest Registry JMX MBean that contains a registry of all
-REST services which has been defined.
+REST services that has been defined.
 
 == Inline Rest DSL as a single route
 
 IMPORTANT: Camel 4.4 or older has inline-routes disabled by default. Camel 4.5 or newer has inline-routes enabled by default.
 
 Each of the rest services becomes a Camel route, and this means, that if the rest
-service is calling another Camel route via `direct`, which is a very common practice.
-This means that each rest service then becomes 2 routes. This can become harder to manage
+service is calling another Camel route via `direct`, which is a widespread practice.
+This means that each rest service then becomes two routes. This can become harder to manage
 if you have many rest services.
 
 When you use `direct` endpoints then you can enable Rest DSL to automatically _inline_ the direct
-route in the rest route, meaning that there is only 1 route per rest service.
+route in the rest route, meaning that there is only one route per rest service.
 
 To do this you *MUST* use `direct` endpoints, and each endpoint must be unique name per service.
 And the option `inlineRoutes` must be enabled.
 
-For example in the Java DSL below we have enabled inline routes and each rest service
+For example, in the Java DSL below we have enabled inline routes and each rest service
 uses `direct` endpoints with unique names.
 
 [source,java]
@@ -232,7 +234,7 @@ And in XML:
 </rest>
 ----
 
-If you use Camel Main / Spring Boot / Quarkus / or Camel JBang you can also enable this in `application.properties` such as:
+If you use Camel Main, Camel Spring Boot, Camel Quarkus or Camel JBang, you can also enable this in `application.properties` such as:
 
 [source,properties]
 ----
@@ -271,14 +273,15 @@ And in XML:
 
 In this example the last two REST endpoints are configured with `disabled`.
 You can use xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder] to
-let a external configuration determine if the REST endpoint is disabled or not.
+let an external configuration determine if the REST endpoint is disabled or not.
 In this example the `/customers/\{id}/orders` endpoint is disabled via a placeholder.
 The last REST endpoint is hardcoded to be disabled.
 
 == Binding to POJOs using
 
 The Rest DSL supports automatic binding json/xml contents to/from POJOs
-using Camels Data Format. By default, the binding
+using data formats.
+By default, the binding
 mode is off, meaning there is no automatic binding happening for
 incoming and outgoing messages.
 
@@ -292,25 +295,25 @@ The binding modes are:
 |===
 |Binding Mode |Description
 
-|off |Binding is turned off. This is the default option.
+|`off` |Binding is turned off. This is the default option.
 
-|auto |Binding is enabled and Camel is relaxed and support json, xml or both if
-the needed data formats are included in the classpath. Notice that if
+|`auto` |Binding is enabled, and Camel is relaxed and supports JSON, XML or both if
+the necessary data formats are included in the classpath. Notice that if
 for example `camel-jaxb` is not on the classpath, then XML binding is
 not enabled.
 
-|json |Binding to/from json is enabled, and requires a json capable data
-format on the classpath. By default Camel will use `jackson` as the
+|`json` |Binding to/from JSON is enabled, and requires a JSON capable data
+format on the classpath. By default, Camel will use `jackson` as the
 data format.
 
-|xml |Binding to/from xml is enabled, and requires `camel-jaxb` on the
+|`xm` |Binding to/from XML is enabled, and requires `camel-jaxb` on the
 classpath.
 
-|json_xml |Binding to/from json and xml is enabled and requires both data formats to
+|`json_xml` |Binding to/from JSON and XML is enabled and requires both data formats to
 be on the classpath.
 |===
 
-When using camel-jaxb for xml bindings, then
+When using camel-jaxb for XML bindings, then
 you can use the option `mustBeJAXBElement` to relax the output message
 body must be a class with JAXB annotations. You can use this in
 situations where the message body is already in XML format, and you want
@@ -321,10 +324,11 @@ value.
 The binding from POJO to JSon/JAXB will only happen if the `content-type`
 header includes the word `json` or `xml` representatively. This allows you
 to specify a custom content-type if the message body should not attempt to be
-marshalled using the binding. For example if the message body is a
-custom binary payload etc.
+marshalled using the binding. For example, if the message body is a
+custom binary payload, etc.
 
-When automatic binding from POJO to JSon/JAXB takes place the existing `content-type` header will by default be replaced with either `application/json` or `application/xml`. To disable the default behavior and be able to produce JSon/JAXB responses with custom `content-type` headers (e.g. `application/user.v2+json`) you configure this in Java DSL as shown below:
+When automatic binding from POJO to JSON/JAXB takes place the existing `content-type` header will by default be replaced with either `application/json` or `application/xml`.
+To disable the default behavior and be able to produce JSON/JAXB responses with custom `content-type` headers (e.g. `application/user.v2+json`) you configure this in Java DSL as shown below:
 
 [source,java]
 ----
@@ -336,7 +340,7 @@ classpath, such as `camel-jaxb` and/or `camel-jackson`. And then enable
 the binding mode. You can configure the binding mode globally on the
 rest configuration, and then override per rest service as well.
 
-To enable binding you configure this in Java DSL as shown below:
+To enable binding, you configure this in Java DSL as shown below:
 
 [source,java]
 ----
@@ -350,10 +354,10 @@ And in XML DSL:
 <restConfiguration bindingMode="auto" component="netty-http" port="8080"/>
 ----
 
-When binding is enabled Camel will bind the incoming and outgoing
+When binding is enabled, Camel will bind the incoming and outgoing
 messages automatic, accordingly to the content type of the message. If
-the message is json, then json binding happens; and so if the message is
-xml then xml binding happens. The binding happens for incoming and reply
+the message is JSON, then JSON binding happens; and so if the message is
+ XML, then XML binding happens. The binding happens for incoming and reply
 messages. The table below summaries what binding occurs for incoming and
 reply messages. 
 
@@ -361,30 +365,23 @@ reply messages.
 |===
 |Message Body |Direction |Binding Mode |Message Body
 
-|XML |Incoming |auto,
-xml,
-json_xml |POJO
+|XML |Incoming |auto,xml,json_xml |POJO
 
-|POJO |Outgoing |auto,
-xml, json_xml |XML
+|POJO |Outgoing |auto,xml, json_xml |XML
 
-|JSON |Incoming |auto,
-json,
-json_xml |POJO
+|JSON |Incoming |auto,json,json_xml |POJO
 
-|POJO |Outgoing |auto,
-json,
-json_xml |JSON
+|POJO |Outgoing |auto,json,json_xml |JSON
 |===
  
-When using binding you must also configure what POJO type to map to.
+When using binding, you must also configure what POJO type to map to.
 This is mandatory for incoming messages, and optional for outgoing.
 
 NOTE: When using binding mode `json`, `xml` or `json_xml` then Camel will automatically set `consumers` and `produces`
-on the rest endpoint (according to the mode), if not already explicit configured. For example with binding mode `json`
+on the rest endpoint (according to the mode), if not already explicit configured. For example, with binding mode `json`
 and setting the outType as `UserPojo` then Camel will define this rest endpoint as producing `application/json`.
 
-For example to map from xml/json to a pojo class `UserPojo` you do this
+For example, to map from xml/json to a pojo class `UserPojo` you do this
 in Java DSL as shown below:
 
 [source,java]
@@ -465,7 +462,7 @@ public class UserPojo {
 }
 ----
 
-The `UserPojo` only supports json, as XML requires to use JAXB
+The `UserPojo` only supports JSON, as XML requires using JAXB
 annotations, so we can add those annotations if we want to support XML
 also
 
@@ -493,7 +490,7 @@ public class UserPojo {
 }
 ----
 
-By having the JAXB annotations the POJO supports both json and xml
+By having the JAXB annotations, the POJO supports both JSON and XML
 bindings.
 
 === Camel Rest-DSL configurations
@@ -507,33 +504,33 @@ The Rest DSL supports the following options:
 | *apiContextPath* | Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. |  | String
 | *apiHost* | To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname |  | String
 | *apiProperties* | Sets additional options on api level |  | Map
-| *apiVendorExtension* | Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs. | false | boolean
+| *apiVendorExtension* | Whether a vendor extension is enabled in the Rest APIs. If enabled, then Camel will include additional information as a vendor extension (e.g., keys starting with `_x-_`) such as route ids, class names etc. Not all third party API gateways and tools support vendor-extensions when importing your API docs. | false | boolean
 | *bindingMode* | Sets the binding mode to be used by the REST consumer | RestBindingMode.off | RestBindingMode
-| *clientRequestValidation* | Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error. | false | boolean
+| *clientRequestValidation* | Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSON, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error. | false | boolean
 | *component* | Sets the name of the Camel component to use as the REST consumer |  | String
 | *componentProperties* | Sets additional options on component level |  | Map
 | *consumerProperties* | Sets additional options on consumer level |  | Map
 | *contextPath* | Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty-http that includes a HTTP server. |  | String
 | *corsHeaders* | Sets the CORS headers to use if CORS has been enabled. |  | Map
 | *dataFormatProperties* | Sets additional options on data format level |  | Map
-| *enableCORS* | To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response. This option is default false | false | boolean
+| *enableCORS* | To specify whether to enable CORS, which means Camel will automatically include CORS in the HTTP headers in the response. This option is default false | false | boolean
 | *enableNoContentResponse* | To specify whether to return HTTP 204 with an empty body when a response contains an empty JSON object or XML root object. | false | boolean
 | *endpointProperties* | Sets additional options on endpoint level |  | Map
 | *host* | Sets the hostname to use by the REST consumer |  | String
 | *hostNameResolver* | Sets the resolver to use for resolving hostname | RestHostNameResolver.allLocalIp | RestHostNameResolver
-| *inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. This option is default false. | false | boolean
-| *jsonDataFormat* | Sets a custom json data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
+| *inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route. However, this requires using direct endpoints, which must be unique per service. This option is default false. | false | boolean
+| *jsonDataFormat* | Sets a custom JSON data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 | *port* | Sets the port to use by the REST consumer |  | int
 | *producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-openapi-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String
 | *producerComponent* | Sets the name of the Camel component to use as the REST producer |  | String
 | *scheme* | Sets the scheme to use by the REST consumer |  | String
 | *skipBindingOnErrorCode* | Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true. | true | boolean
 | *useXForwardHeaders* | Whether to use X-Forward headers to set host etc. for Swagger. This option is default true. | true | boolean
-| *xmlDataFormat* | Sets a custom xml data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
+| *xmlDataFormat* | Sets a custom XML data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 |===
 
 
-For example to configure to use the jetty component on port 9091, then we can do as follows:
+For example, to configure to use the jetty component on port 9091, then we can do as follows:
 [source,java]
 ----
 restConfiguration().component("jetty").port(9091).componentProperty("foo", "123");
@@ -548,7 +545,10 @@ And with XML DSL:
 </restConfiguration>
 ----
 
-If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used.
+If no component has been explicitly configured,
+then Camel will look up if there is a Camel component that integrates with the Rest DSL,
+or if a `org.apache.camel.spi.RestConsumerFactory` is registered in the registry.
+If either one is found, then that is being used.
 
 You can configure properties on these levels.
 
@@ -558,21 +558,22 @@ also configure these directly on the component.
 Camel components has many options you can set on endpoint level.
 * consumer - Is used to set any option on the consumer level.
 * data format - Is used to set any option on the data formats. For
-example to enable pretty print in the json data format.
+example, to enable pretty print in the JSON data format.
 * cors headers - If cors is enabled, then custom CORS headers can be
 set. See below for the default values which are in used. If a custom
 header is set then that value takes precedence over the default value.
 
-You can set multiple options of the same level, so you can for
-example configure 2 component options, and 3 endpoint options etc.
+You can set multiple options of the same level, so you can, for
+example, configure two component options, and three endpoint options, etc.
 
 
 == Enabling or disabling Jackson JSON features
 
-When using JSON binding you may want to turn specific Jackson features
-on or off. For example to disable failing on unknown properties (eg json
+When using JSON binding, you may want to turn specific Jackson features
+on or off.
+For example, to disable failing on unknown properties (e.g., JSON
 input has a property which cannot be mapped to a POJO) then configure
-this using the dataFormatProperty as shown below:
+this using the `dataFormatProperty` as shown below:
 
 [source,java]
 ----
@@ -588,7 +589,7 @@ as:
 .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES,ADJUST_DATES_TO_CONTEXT_TIME_ZONE");
 ----
 
-Likewise you can enable features using the enableFeatures such as:
+Likewise, you can enable features using the enableFeatures such as:
 
 [source,java]
 ----
@@ -601,11 +602,11 @@ The values that can be used for enabling and disabling features on
 Jackson are the names of the enums from the following three Jackson
 classes
 
-* com.fasterxml.jackson.databind.SerializationFeature
-* com.fasterxml.jackson.databind.DeserializationFeature
-* com.fasterxml.jackson.databind.MapperFeature
+* `com.fasterxml.jackson.databind.SerializationFeature`
+* `com.fasterxml.jackson.databind.DeserializationFeature`
+* `com.fasterxml.jackson.databind.MapperFeature`
 
-The rest configuration is of course also possible using XML DSL:
+The rest configuration is, of course, also possible using XML DSL:
 
 [source,xml]
 ----
@@ -617,24 +618,24 @@ The rest configuration is of course also possible using XML DSL:
 
 == Default CORS headers
 
-If CORS is enabled then the follow headers is in use by default. You can
-configure custom CORS headers which takes precedence over the default
+If CORS is enabled, then the _"follow headers"_ is in use by default.
+You can configure custom CORS headers that take precedence over the default
 value.
 
 [width="100%",cols="50%,50%",options="header",]
 |===
 |Key |Value
-|Access-Control-Allow-Origin |*
-|Access-Control-Allow-Methods |GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH
-|Access-Control-Allow-Headers |Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers
-|Access-Control-Max-Age |3600
+|`Access-Control-Allow-Origin` |*
+|`Access-Control-Allow-Methods` |GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH
+|`Access-Control-Allow-Headers` |Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers
+|`Access-Control-Max-Age` |3600
 |===
  
 == Defining a custom error message as-is
 
 If you want to define custom error messages to be sent back to the
-client with a HTTP error code (eg such as 400, 404 etc.)
-then you just set a header with the key `Exchange.HTTP_RESPONSE_CODE`
+client with a HTTP error code (e.g., such as 400, 404 etc.)
+then you set a header with the key `Exchange.HTTP_RESPONSE_CODE`
 to the error code (must be 300+) such as 404.
 And then the message body with any reply message, and optionally
 set the content-type header as well. There is a little example shown
@@ -656,7 +657,7 @@ from("direct:users-lives")
             .bean(new UserService(), "livesWhere");
 ----
 
-In this example if the input id is a number that is below 100, we want
+In this example, if the input id is a number that is below 100, we want
 to send back a custom error message, using the UserErrorService bean,
 which is implemented as shown:
 
@@ -671,17 +672,18 @@ public class UserErrorService {
 }
 ----
 
-In the UserErrorService bean we build our custom error message, and set
+In the `_UserErrorService_` bean, we build our custom error message, and set
 the HTTP error code to 400. This is important, as that tells rest-dsl
 that this is a custom error message, and the message should not use the
-output pojo binding (eg would otherwise bind to CountryPojo).
+output pojo binding (e.g., would otherwise bind to `_CountryPojo_`).
 
 === Catching JsonParserException and returning a custom error message
 
 You can return a custom message as-is (see previous section).
 So we can leverage this with Camel error handler to
 catch `JsonParserException`, handle that exception and build our custom
-response message. For example to return a HTTP error code 400 with a
+response message.
+For example, to return a HTTP error code 400 with a
 hardcoded message, we can do as shown below:
 
 [source,java]
@@ -710,7 +712,7 @@ the verbose parameter below:
 
 The default value is automatic set as
 header on the incoming Camel `Message`. So if the call
-the `/customers/id/orders` do not include a query parameter with
+to `/customers/id/orders` do not include a query parameter with
 key `verbose` then Camel will now include a header with key `verbose`
 and the value `false` because it was declared as the default value. This
 functionality is only applicable for query parameters.
@@ -735,9 +737,9 @@ The validation checks for the following:
 - Accept header matches what the Rest DSL produces. (Returns HTTP Status 406)
 - Missing required data (query parameters, HTTP headers, body). (Returns HTTP Status 400)
 - Checking if query parameters or HTTP headers has not-allowed values. (Returns HTTP Status 400)
-- Parsing error of the message body (JSon, XML or Auto binding mode must be enabled). (Returns HTTP Status 400)
+- Parsing error of the message body (JSON, XML or Auto binding mode must be enabled). (Returns HTTP Status 400)
 
-If the validation fails then Rest DSL will return a response
+If the validation fails, then Rest DSL will return a response
 with an HTTP error code.
 
 The validation is by default turned off (to be backwards compatible).
@@ -756,7 +758,8 @@ the `camel-openapi-java` modules.
 
 You can define each parameter fine-grained
 with details such as name, description, data type, parameter type and so
-on, using the `param`. For example to define the id path parameter you
+on, using the `param`.
+For example, to define the id path parameter, you
 can do as shown below:
 
 [source,xml]
@@ -779,7 +782,7 @@ And in Java DSL
 ----
 
 The body parameter type requires to use body as well for the name. For
-example a REST PUT operation to create/update an user could be done as:
+example, a REST PUT operation to create/update an user could be done as:
 
 [source,xml]
 ----
@@ -804,12 +807,12 @@ And in Java DSL:
 
 The generated API documentation can be configured to include vendor extensions (https://swagger.io/specification/#specificationExtensions)
 which document the operations and definitions with additional information, such as class name of model classes, camel context id and route id's.
-This information can be very helpful for developers especially during troubleshooting. However, at production usage you may wish to not have this turned
+This information can be very helpful for developers, especially during troubleshooting. However, at production usage you may wish to not have this turned
 on to avoid leaking implementation details into your API docs.
 
 The vendor extension information is stored in the API documentation with keys starting with `x-`.
 
-NOTE: Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+NOTE: Not all third party API gateways and tools support vendor-extensions when importing your API docs.
 
 The vendor extensions can be turned on `RestConfiguration` via the `apiVendorExtension` option:
 
