@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -84,5 +85,40 @@ class InitTest {
         assertTrue(f.exists(), "Yaml file not created: " + f);
 
         assertTrue(existingFileInTargetDirectory.toFile().exists(), "The file in the target folder has been deleted");
+    }
+
+    @Test
+    void initJavaWithPackageName() throws Exception {
+        Path packageFolderInsideMavenProject
+                = Files.createDirectories(new File(workingDir, "src/main/java/com/acme/demo").toPath());
+
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "MyRoute.java", "--dir=" + packageFolderInsideMavenProject);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        File f = new File(packageFolderInsideMavenProject.toFile(), "MyRoute.java");
+        assertTrue(f.exists(), "Java file not created: " + f);
+        List<String> lines = Files.readAllLines(f.toPath());
+        assertEquals("package com.acme.demo;", lines.get(0));
+        assertEquals("", lines.get(1));
+        assertEquals("import org.apache.camel.builder.RouteBuilder;", lines.get(2));
+        f.delete();
+    }
+
+    @Test
+    void initJavaWithoutPackageName() throws Exception {
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "MyRoute.java");
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        File f = new File("MyRoute.java");
+        assertTrue(f.exists(), "Java file not created: " + f);
+        List<String> lines = Files.readAllLines(f.toPath());
+        assertEquals("import org.apache.camel.builder.RouteBuilder;", lines.get(0));
+        f.delete();
     }
 }
