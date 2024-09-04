@@ -10,5 +10,5 @@ popular JSON libraries such as:
 - Google GSon
 - Johnzon
 
-How to use JSon with Camel then see the documentation (for the JSon data library of choice)
+How to use JSON with Camel then see the documentation (for the JSON data library of choice)
 in the list of xref:components:dataformats:index.adoc[Data Formats].
