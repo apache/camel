@@ -46,10 +46,10 @@ For example:
 
 [source,properties]
 ----
-location=file:{{sys:karaf.home}}/etc/foo.properties
+location=file:{{sys:app.home}}/etc/foo.properties
 ----
 
-In the location above we defined a location using the file scheme using the JVM system property with key `karaf.home`.
+In the location above we defined a location using the file scheme using the JVM system property with key `app.home`.
 
 To use an OS environment variable, instead you would have to prefix with
 `env:`.
@@ -111,11 +111,6 @@ For fine-grained configuration of the location, then this can be done as follows
       resolver = "classpath"
       path     = "com/my/company/something/my-properties-2.properties"
       optional = "false"/>
-    <propertiesLocation
-      resolver = "file"
-      path     = "{{sys:karaf.home}}/etc/my-override.properties"
-      optional = "true"/>
-   </propertyPlaceholder>
 </camelContext>
 ----
 

@@ -129,19 +129,15 @@ the security realm name to use, as shown below
 [source,java]
 ------------------------------------------------------------------------------------------
 <route>
-   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf"/>
+   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=someRealm"/>
    ...
 </route>
 ------------------------------------------------------------------------------------------
 
 The realm name is mandatory to enable basic authentication. By default,
 the JAAS based authenticator is used, which will use the realm name
-specified (karaf in the example above) and use the JAAS realm and the
+specified (`_someRealm_` in the example above) and use the JAAS realm and the
 `JAAS \{\{LoginModule}}s` of this realm for authentication.
-
-End user of Apache Karaf / ServiceMix has a karaf realm out of the box,
-and hence why the example above would work out of the box in these
-containers.
 
 ==== Specifying ACL on web resources
 
@@ -190,7 +186,7 @@ below:
 [source,xml]
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <route>
-   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true&amp;securityConfiguration.realm=karaf&amp;securityConfiguration.securityConstraint=#constraint"/>
+   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true&amp;securityConfiguration.realm=someRealm&amp;securityConfiguration.securityConstraint=#constraint"/>
    ...
 </route>
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

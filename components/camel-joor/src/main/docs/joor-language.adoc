@@ -351,7 +351,7 @@ The jOOR Camel language is only supported as a block of Java code that gets comp
 The code that you can write is therefore limited to a number of Java statements.
 
 The supported runtime is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
-It is not supported in OSGi, Camel Karaf or any kind of Java Application Server runtime.
+It is not supported on any kind of Java Application Server runtime.
 
 jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69), it works with exploded classpath.
 

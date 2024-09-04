@@ -156,7 +156,7 @@ See the `camel-example-csimple` example at https://github.com/apache/camel-examp
 The jOOR library integrates with the Java compiler and performs runtime compilation of Java code.
 
 The supported runtime when using `camel-simple-joor` is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
-It is not supported in OSGi, Camel Karaf or any kind of Java Application Server runtime.
+It is not supported on any kind of Java Application Server runtime.
 
 jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69),
 it works with exploded classpath.
