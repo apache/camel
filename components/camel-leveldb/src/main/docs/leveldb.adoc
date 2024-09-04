@@ -123,7 +123,7 @@ hit.
 
 You can see some examples in the unit tests of camel-leveldb, for
 example,
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-leveldb/src/test/java/org/apache/camel/component/leveldb/LevelDBAggregateRecoverTest.java[this
+https://github.com/apache/camel/blob/main/components/camel-leveldb/src/test/java/org/apache/camel/component/leveldb/LevelDBAggregateRecoverTest.java[this
 test].
 
 [[LevelDB-Serialization]]
