@@ -283,10 +283,9 @@ In this example, the route is assigned the `_yamlError_` route configuration by 
 Routes and route configuration are not required to use the same language. For example, you can code
 route configurations in Java, and then use XML DSL for the routes, and they would work together.
 
-== Route Configuration in classic Spring/Blueprint XML
+== Route Configuration in classic Spring XML
 
-When using XML DSL with `camel-spring-xml` or `camel-blueprint`
-then you can code your route configurations in `<routeConfigurationContext>` snippets
+When using XML DSL with `camel-spring-xml` then you can code your route configurations in `<routeConfigurationContext>` snippets
 in separate XML files as shown below:
 
 [source,xml]
