@@ -33,7 +33,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.logging.log4j.util.Strings;
 import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
@@ -226,10 +225,13 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                new Column().header("TOTAL").with(r -> "" + r.size),
                 new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getEndpointUri),
-                new Column().header("SIZE").with(r -> "" + r.size))));
+                new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.uri))));
     }
 
     protected int sortRow(Row o1, Row o2) {
