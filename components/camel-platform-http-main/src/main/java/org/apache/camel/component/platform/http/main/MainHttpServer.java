@@ -1320,7 +1320,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 jo.put("elapsed", watch.taken());
                 jo.put("status", "success");
                 // avoid double wrap
-                jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
+                jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), false, false, true, true, true, true,
                         BODY_MAX_CHARS).getMap("message"));
             } else {
                 jo.put("endpoint", target.getEndpointUri());
