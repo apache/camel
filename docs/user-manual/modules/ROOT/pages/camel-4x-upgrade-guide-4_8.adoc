@@ -25,6 +25,9 @@ performing these copies has increased from 4096 bytes to 16384 bytes (the defaul
 The tracer (`BacklogTracer`) has changed the `backlogSize` default value from `1000` to `100`, and `maxBodySize` from `128kb` to `32kb`.
 This reduces the amount of data captured and stored and helps reduce the tracing overhead.
 
+The `org.apache.camel.support.DefaultExchangeHolder` will now include both exchange variables and properties,
+if the parameter `includeProperties` is set to true.
+
 === camel-jbang
 
 The `camel trace` command has changed to show tracing status (by default). To dump traced messages use `camel trace --action=dump`.
