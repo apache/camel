@@ -137,16 +137,18 @@ public class MessageTableHelper {
         }
 
         if (root != null) {
-            eRow = new TableRow("Exchange", root.getString("exchangeType"), exchangePattern, exchangeId);
-            tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
-                    new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
-                    new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
-            tab1b = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
-                    new Column().dataAlign(HorizontalAlign.CENTER)
-                            .minWidth(18).maxWidth(18).with(TableRow::mepAsKey),
-                    new Column().dataAlign(HorizontalAlign.RIGHT)
-                            .maxWidth(80).with(TableRow::exchangeIdAsValue)));
+            if (exchangeId != null) {
+                eRow = new TableRow("Exchange", root.getString("exchangeType"), exchangePattern, exchangeId);
+                tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                        new Column().dataAlign(HorizontalAlign.LEFT)
+                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
+                        new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
+                tab1b = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                        new Column().dataAlign(HorizontalAlign.CENTER)
+                                .minWidth(18).maxWidth(18).with(TableRow::mepAsKey),
+                        new Column().dataAlign(HorizontalAlign.RIGHT)
+                                .maxWidth(80).with(TableRow::exchangeIdAsValue)));
+            }
             // exchange variables
             JsonArray arr = root.getCollection("exchangeVariables");
             if (arr != null) {
