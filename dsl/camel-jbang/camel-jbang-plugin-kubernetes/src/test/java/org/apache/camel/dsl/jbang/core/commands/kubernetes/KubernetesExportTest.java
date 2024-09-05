@@ -214,6 +214,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddIngressSpec(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
                 "--trait-profile", "kubernetes",
+                "--trait", "ingress.enabled=true",
                 "--trait", "ingress.host=example.com",
                 "--trait", "ingress.path=/something(/|$)(.*)",
                 "--trait", "ingress.pathType=ImplementationSpecific",
