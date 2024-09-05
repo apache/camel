@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +48,12 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -66,14 +72,18 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
@@ -84,6 +94,7 @@ import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -94,6 +105,10 @@ import org.slf4j.LoggerFactory;
 public class MainHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainHttpServer.class);
+    private static final int BODY_MAX_CHARS = 128 * 1024;
+
+    private final HeaderFilterStrategy filter = new HttpProtocolHeaderFilterStrategy();
+    private ProducerTemplate producer;
 
     private VertxPlatformHttpServer server;
     private VertxPlatformHttpRouter router;
@@ -340,6 +355,10 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
+        if (sendEnabled && producer == null) {
+            producer = camelContext.createProducerTemplate();
+        }
+
         server = new VertxPlatformHttpServer(configuration);
         // adding server to camel-context which will manage shutdown the server, so we should not do this here
         camelContext.addService(server);
@@ -350,14 +369,14 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             pluginRegistry.setCamelContext(getCamelContext());
             getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
         }
-        ServiceHelper.initService(pluginRegistry);
+        ServiceHelper.initService(pluginRegistry, producer);
     }
 
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        ServiceHelper.startService(server, pluginRegistry);
+        ServiceHelper.startService(server, pluginRegistry, producer);
         router = VertxPlatformHttpRouter.lookup(camelContext);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
@@ -367,7 +386,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(pluginRegistry);
+        ServiceHelper.stopAndShutdownServices(pluginRegistry, producer);
     }
 
     private boolean pluginsEnabled() {
@@ -1183,20 +1202,149 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     }
 
     protected void setupSendConsole() {
-        final Route download = router.route("/q/send/*")
-                .method(HttpMethod.GET).method(HttpMethod.POST);
+        final Route send = router.route("/q/send/")
+                .produces("application/json")
+                .method(HttpMethod.GET).method(HttpMethod.POST)
+                // need body handler to have access to the body
+                .handler(BodyHandler.create(false));
 
         Handler<RoutingContext> handler = new Handler<RoutingContext>() {
             @Override
             public void handle(RoutingContext ctx) {
-                ctx.end("Sending data");
+                try {
+                    doSend(ctx);
+                } catch (Exception e) {
+                    LOG.warn("Error sending Camel message due to: " + e.getMessage(), e);
+                    if (!ctx.response().ended()) {
+                        ctx.response().setStatusCode(500);
+                        ctx.end();
+                    }
+                }
             }
         };
         // use blocking handler as the task can take longer time to complete
-        download.handler(new BlockingHandlerDecorator(handler, true));
+        send.handler(new BlockingHandlerDecorator(handler, true));
 
         platformHttpComponent.addHttpEndpoint("/q/send", "GET,POST",
-                null, null, null);
+                null, "application/json", null);
+    }
+
+    protected void doSend(RoutingContext ctx) {
+        StopWatch watch = new StopWatch();
+        long timestamp = System.currentTimeMillis();
+
+        String endpoint = ctx.request().getHeader("endpoint");
+        String exchangePattern = ctx.request().getHeader("exchangePattern");
+        if (exchangePattern == null) {
+            exchangePattern = "InOnly"; // use in-only by default
+        }
+        final Map<String, Object> headers = new LinkedHashMap<>();
+        for (var entry : ctx.request().headers()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            boolean exclude = "endpoint".equals(k) || "exchangePattern".equals(k) || "Accept".equals(k)
+                    || filter.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), null);
+            if (!exclude) {
+                headers.put(entry.getKey(), entry.getValue());
+            }
+        }
+        final String body = ctx.body().asString();
+
+        Exchange out;
+        Endpoint target = null;
+        if (endpoint == null) {
+            List<org.apache.camel.Route> routes = camelContext.getRoutes();
+            if (!routes.isEmpty()) {
+                // grab endpoint from 1st route
+                target = routes.get(0).getEndpoint();
+            }
+        } else {
+            // is the endpoint a pattern or route id
+            boolean scheme = endpoint.contains(":");
+            boolean pattern = endpoint.endsWith("*");
+            if (!scheme || pattern) {
+                if (!scheme) {
+                    endpoint = endpoint + "*";
+                }
+                for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                    Endpoint e = route.getEndpoint();
+                    if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), endpoint)) {
+                        target = e;
+                        break;
+                    }
+                }
+                if (target == null) {
+                    // okay it may refer to a route id
+                    for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                        String id = route.getRouteId();
+                        Endpoint e = route.getEndpoint();
+                        if (EndpointHelper.matchEndpoint(camelContext, id, endpoint)) {
+                            target = e;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                target = camelContext.getEndpoint(endpoint);
+            }
+        }
+
+        JsonObject jo = new JsonObject();
+        if (target != null) {
+            final ExchangePattern mep = ExchangePattern.valueOf(exchangePattern);
+            out = producer.send(target, new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setPattern(mep);
+                    exchange.getMessage().setBody(body);
+                    if (!headers.isEmpty()) {
+                        exchange.getMessage().setHeaders(headers);
+                    }
+                }
+            });
+            if (out.getException() != null) {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangeId", out.getExchangeId());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "failed");
+                // avoid double wrap
+                jo.put("exception",
+                        MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
+            } else if ("InOut".equals(exchangePattern)) {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangeId", out.getExchangeId());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "success");
+                // avoid double wrap
+                jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
+                        BODY_MAX_CHARS).getMap("message"));
+            } else {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangeId", out.getExchangeId());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "success");
+            }
+        } else {
+            // there is no valid endpoint
+            ctx.response().setStatusCode(400);
+            jo.put("endpoint", endpoint);
+            jo.put("exchangeId", "");
+            jo.put("exchangePattern", exchangePattern);
+            jo.put("timestamp", timestamp);
+            jo.put("elapsed", watch.taken());
+            jo.put("status", "failed");
+            // avoid double wrap
+            jo.put("exception",
+                    MessageHelper.dumpExceptionAsJSonObject(new NoSuchEndpointException(endpoint))
+                            .getMap("exception"));
+        }
+        ctx.end(jo.toJson());
     }
 
 }
