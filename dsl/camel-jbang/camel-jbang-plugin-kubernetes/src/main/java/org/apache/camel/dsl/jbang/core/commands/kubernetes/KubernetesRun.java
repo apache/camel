@@ -309,7 +309,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         if (dev) {
             DefaultCamelContext reloadContext = new DefaultCamelContext(false);
-            configureFileWatch(reloadContext, export, workingDir);
+            configureFileWatch(reloadContext, workingDir);
             reloadContext.start();
 
             if (cleanup) {
@@ -506,12 +506,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return 0;
     }
 
-    private void configureFileWatch(DefaultCamelContext camelContext, KubernetesExport export, String workingDir)
+    private void configureFileWatch(DefaultCamelContext camelContext, String workingDir)
             throws Exception {
         String watchDir = ".";
         FileFilter filter = null;
         if (filePaths != null && filePaths.length > 0) {
-            watchDir = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
+            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
+            if (filePath != null) {
+                watchDir = filePath;
+            }
 
             filter = pathname -> Arrays.stream(filePaths)
                     .map(FileUtil::stripPath)
@@ -522,6 +525,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 = new FileWatcherResourceReloadStrategy(watchDir);
         reloadStrategy.setResourceReload((name, resource) -> {
             printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
+            KubernetesExport export = configureExport(workingDir);
             int refresh = export.export();
             if (refresh == 0) {
                 if (RuntimeType.quarkus == runtime) {
@@ -529,6 +533,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 } else if (RuntimeType.springBoot == runtime) {
                     deploySpringBoot(workingDir);
                 }
+            } else {
+                // print export command output with error details
+                printer().printf("Reloading project failed - export failed with code: %d%n", refresh);
             }
         });
         if (filter != null) {
