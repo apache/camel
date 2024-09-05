@@ -76,9 +76,8 @@ public final class ActiveSpanManager {
         if (holder != null) {
             Holder parent = holder.getParent();
             exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN, parent);
-            if (!holder.isClosed()) {
-                holder.closeScope();
-            }
+
+            holder.closeScope();
             if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
                 if (parent != null) {
                     SpanAdapter span = parent.getSpan();
