@@ -1230,6 +1230,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 root.put("azure-secrets", json);
             }
         }
+        // kubernetes-secrets is optional
+        Optional<DevConsole> dcKubernetes
+                = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("kubernetes-secrets");
+        if (dcKubernetes.isPresent()) {
+            JsonObject json = (JsonObject) dcKubernetes.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("kubernetes-secrets", json);
+            }
+        }
         return root;
     }
 
