@@ -38,28 +38,19 @@ import org.slf4j.LoggerFactory;
 @Language("datasonnet")
 public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
-
-    private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
-
-    static {
-        LOG.debug("One time classpath search...");
-        try (ScanResult scanResult = new ClassGraph().acceptPaths("/").scan()) {
-            try {
-                scanResult.getResourcesWithExtension("libsonnet")
-                        .forEachByteArrayThrowingIOException((resource, bytes) -> {
-                            LOG.debug("Loading DataSonnet library: {}", resource.getPath());
-                            CLASSPATH_IMPORTS.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
-                        });
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-        LOG.debug("One time classpath search done");
-    }
+    private final Map<String, String> classpathImports;
 
     // Cache used to stores the Mappers
     // See: {@link GroovyLanguage}
     private final Map<String, Mapper> mapperCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
+
+    public DatasonnetLanguage() {
+        this.classpathImports = discoverDataSonnetLibraries();
+    }
+
+    public DatasonnetLanguage(Map<String, String> classpathImports) {
+        this.classpathImports = classpathImports;
+    }
 
     @Override
     public Predicate createPredicate(String expression) {
@@ -106,7 +97,26 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     }
 
     public Map<String, String> getClasspathImports() {
-        return CLASSPATH_IMPORTS;
+        return classpathImports;
     }
 
+    private Map<String, String> discoverDataSonnetLibraries() {
+        Map<String, String> imports = new HashMap<>();
+        try (ScanResult scanResult = new ClassGraph().acceptPaths("/").scan()) {
+            try {
+                scanResult.getResourcesWithExtension("libsonnet")
+                        .forEachByteArrayThrowingIOException((resource, bytes) -> {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Loading DataSonnet library: {}", resource.getPath());
+                            }
+                            imports.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
+                        });
+            } catch (IOException e) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Failed to load DataSonnet libraries", e);
+                }
+            }
+        }
+        return imports;
+    }
 }
