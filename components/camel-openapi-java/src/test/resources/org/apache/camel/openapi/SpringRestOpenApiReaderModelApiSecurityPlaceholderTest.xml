@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+  <!-- use a dummy rest consumer factory for the rest engine -->
+  <bean id="dummy-rest" class="org.apache.camel.openapi.DummyRestConsumerFactory"/>
+
+  <bean id="userService" class="java.lang.Object"/>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <rest path="/user" tag="dude" description="User rest service" consumes="application/json" produces="application/json">
+      <securityDefinitions>
+        <oauth2 key="{{oauth.key}}" authorizationUrl="{{oauth.authorization.url}}" description="{{oauth.description}}"
+        tokenUrl="{{oauth.token.url}}" flow="{{oauth.flow}}" refreshUrl="{{oauth.refresh.url}}">
+          <scopes key="{{oauth.scope.read}}"
+                  value="{{oauth.scope.readers}}"/>
+          <scopes key="{{oauth.scope.write}}"
+                  value="{{oauth.scope.writers}}"/>
+        </oauth2>
+        <apiKey key="{{apiKey.key}}" name="{{apiKey.header.name}}" inHeader="{{apiKey.inHeader}}" description="{{apiKey.description}}"
+        inQuery="{{apiKey.inQuery}}" inCookie="{{apiKey.inCookie}}"/>
+        <basicAuth key="{{basicAuth.key}}" description="{{basicAuth.description}}"/>
+        <bearer key="{{bearer.key}}" format="{{bearer.format}}" description="{{bearer.description}}"/>
+        <mutualTLS key="{{mtls.key}}" description="{{mtls.description}}"/>
+        <openIdConnect key="{{oidc.key}}" url="{{oidc.url}}" description="{{oidc.description}}"/>
+      </securityDefinitions>
+
+      <get path="/{id}/{date}" description="Find user by id and date" outType="org.apache.camel.openapi.User">
+        <param name="id" type="path" description="The id of the user to get"/>
+        <param name="date" type="path" dataFormat="date" description="The date"/>
+        <responseMessage message="The user returned"/>
+        <security key="{{apiKey.key}}"/>
+        <to uri="bean:userService?method=getUser(${header.id})"/>
+      </get>
+
+      <put description="Updates or create a user" type="org.apache.camel.openapi.User">
+        <param name="body" type="body" description="The user to update or create"/>
+        <security key="{{oauth.key}}" scopes="write:{{oauth.scope.writers}},read:{{oauth.scope.readers}}"/>
+        <to uri="bean:userService?method=updateUser"/>
+      </put>
+
+      <get path="/findAll" description="Find all users" outType="org.apache.camel.openapi.User[]">
+        <responseMessage message="All the found users"/>
+        <security key="{{basicAuth.key}}"/>
+        <to uri="bean:userService?method=listUsers"/>
+      </get>
+
+      <post path="/sendInfo" description="Send user information" outType="java.lang.String">
+        <responseMessage message="User info sent"/>
+        <security key="{{oidc.key}}"/>
+        <to uri="bean:userService?method=listUsers"/>
+      </post>
+
+      <post path="/getInfo" description="get user information" type="org.apache.camel.openapi.User" outType="java.lang.String">
+        <responseMessage message="User info found"/>
+        <security key="{{bearer.key}}"/>
+        <to uri="bean:userService?method=listUsers"/>
+      </post>
+
+      <get path="/test" description="Test the service" outType="java.lang.String">
+        <responseMessage message="Tested the service successfully"/>
+        <security key="{{mtls.key}}"/>
+        <to uri="bean:userService?method=listUsers"/>
+      </get>
+
+    </rest>
+
+  </camelContext>
+
+</beans>
