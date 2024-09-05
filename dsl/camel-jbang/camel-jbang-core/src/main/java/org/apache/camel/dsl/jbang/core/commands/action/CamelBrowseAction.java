@@ -33,6 +33,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.logging.log4j.util.Strings;
+import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "browse",
@@ -205,6 +207,12 @@ public class CamelBrowseAction extends ActionBaseCommand {
                     JsonObject ep = new JsonObject();
                     ep.put("endpoint", row.uri);
                     String table = tableHelper.getDataAsTable(exchangeId, null, ep, null, message, null);
+                    String header = String.format("Browse Message: (%s/%s)", i + 1, row.messages.size());
+                    if (loggingColor) {
+                        printer().println(Ansi.ansi().fgGreen().a(header).reset().toString());
+                    } else {
+                        printer().println(header);
+                    }
                     printer().println(table);
                 }
             }
