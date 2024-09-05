@@ -17,8 +17,11 @@
 
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
@@ -33,6 +36,9 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 
 public class SourceHelper {
+
+    private static final String[] ACCEPTED_FILE_EXT
+            = new String[] { "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
 
     public static Source resolveSource(String source) {
         List<Source> resolved = resolveSources(Collections.singletonList(source));
@@ -52,7 +58,10 @@ public class SourceHelper {
         for (String source : sources) {
             SourceScheme sourceScheme = SourceScheme.fromUri(source);
             String fileExtension = FileUtil.onlyExt(source);
-            String fileName = SourceScheme.onlyName(FileUtil.onlyName(source)) + "." + fileExtension;
+            String fileName = SourceScheme.onlyName(FileUtil.onlyName(source));
+            if (fileExtension != null) {
+                fileName = fileName + "." + fileExtension;
+            }
             try {
                 switch (sourceScheme) {
                     case GIST -> {
@@ -63,9 +72,9 @@ public class SourceHelper {
                             for (String uri : all.toString().split(",")) {
                                 resolved.add(new Source(
                                         sourceScheme,
-                                        fileName,
+                                        FileUtil.stripPath(uri),
                                         IOHelper.loadText(resolver.resolve(uri).getInputStream()),
-                                        fileExtension, compression));
+                                        FileUtil.onlyExt(uri), compression));
                             }
                         }
                     }
@@ -114,16 +123,29 @@ public class SourceHelper {
                             for (String uri : all.toString().split(",")) {
                                 resolved.add(new Source(
                                         sourceScheme,
-                                        fileName,
+                                        FileUtil.stripPath(uri),
                                         IOHelper.loadText(resolver.resolve(uri).getInputStream()),
-                                        fileExtension, compression));
+                                        FileUtil.onlyExt(uri), compression));
                             }
                         }
                     }
                     case UNKNOWN -> {
-                        try (FileInputStream fis = new FileInputStream(source)) {
-                            resolved.add(
-                                    new Source(sourceScheme, fileName, IOHelper.loadText(fis), fileExtension, compression));
+                        if (isAcceptedSourceFile(fileExtension)) {
+                            File sourceFile = new File(source);
+                            if (!sourceFile.exists()) {
+                                throw new FileNotFoundException("Source file '%s' does not exist".formatted(source));
+                            }
+
+                            if (!sourceFile.isDirectory()) {
+                                try (FileInputStream fis = new FileInputStream(sourceFile)) {
+                                    resolved.add(
+                                            new Source(
+                                                    sourceScheme,
+                                                    fileName,
+                                                    IOHelper.loadText(fis),
+                                                    fileExtension, compression));
+                                }
+                            }
                         }
                     }
                 }
@@ -132,6 +154,10 @@ public class SourceHelper {
             }
         }
         return resolved;
+    }
+
+    public static boolean isAcceptedSourceFile(String fileExt) {
+        return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(fileExt));
     }
 
 }
