@@ -43,12 +43,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
@@ -108,6 +108,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private ScheduledExecutorService executor;
     private volatile ExecutorService terminateExecutor;
     private ProducerTemplate producer;
+    private ConsumerTemplate consumer;
     private File lockFile;
     private File statusFile;
     private File actionFile;
@@ -163,6 +164,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         platformVersion = cliConnectorFactory.getRuntimeVersion();
         producer = camelContext.createProducerTemplate();
+        consumer = camelContext.createConsumerTemplate();
 
         // create thread from JDK so it is not managed by Camel because we want the pool to be independent when
         // camel is being stopped which otherwise can lead to stopping the thread pool while the task is running
@@ -500,8 +502,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         StopWatch watch = new StopWatch();
         long timestamp = System.currentTimeMillis();
         String endpoint = root.getString("endpoint");
-        String body = root.getString("body");
+        String body = root.getStringOrDefault("body", "");
         String exchangePattern = root.getString("exchangePattern");
+        boolean poll = root.getBooleanOrDefault("poll", false);
+        long pollTimeout = root.getLongOrDefault("pollTimeout", 20000L);
+        // give extra time as jbang need to have response
+        pollTimeout += 5000;
         Collection<JsonObject> headers = root.getCollection("headers");
         if (body != null) {
             InputStream is = null;
@@ -560,20 +566,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
 
             if (target != null) {
-                out = producer.send(target, new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
+                if (poll) {
+                    exchangePattern = "InOut";
+                    out = consumer.receive(target, pollTimeout);
+                } else {
+                    final String mep = exchangePattern;
+                    out = producer.send(target, exchange -> {
                         exchange.getMessage().setBody(inputBody);
                         if (inputHeaders != null) {
                             exchange.getMessage().setHeaders(inputHeaders);
                         }
                         exchange.setPattern(
-                                "InOut".equals(exchangePattern) ? ExchangePattern.InOut : ExchangePattern.InOnly);
-                    }
-                });
+                                "InOut".equals(mep) ? ExchangePattern.InOut : ExchangePattern.InOnly);
+                    });
+                }
                 IOHelper.close(is);
                 LOG.trace("Updating output file: {}", outputFile);
-                if (out.getException() != null) {
+                if (out != null && out.getException() != null) {
                     JsonObject jo = new JsonObject();
                     jo.put("endpoint", target.getEndpointUri());
                     jo.put("exchangeId", out.getExchangeId());
@@ -585,7 +594,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     jo.put("exception",
                             MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
                     IOHelper.writeText(jo.toJson(), outputFile);
-                } else if ("InOut".equals(exchangePattern)) {
+                } else if (out != null && "InOut".equals(exchangePattern)) {
                     JsonObject jo = new JsonObject();
                     jo.put("endpoint", target.getEndpointUri());
                     jo.put("exchangeId", out.getExchangeId());
@@ -597,7 +606,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
                             BODY_MAX_CHARS).getMap("message"));
                     IOHelper.writeText(jo.toJson(), outputFile);
-                } else {
+                } else if (out != null) {
                     JsonObject jo = new JsonObject();
                     jo.put("endpoint", target.getEndpointUri());
                     jo.put("exchangeId", out.getExchangeId());
@@ -605,6 +614,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     jo.put("timestamp", timestamp);
                     jo.put("elapsed", watch.taken());
                     jo.put("status", "success");
+                    IOHelper.writeText(jo.toJson(), outputFile);
+                } else {
+                    JsonObject jo = new JsonObject();
+                    jo.put("endpoint", target.getEndpointUri());
+                    jo.put("exchangeId", "");
+                    jo.put("exchangePattern", exchangePattern);
+                    jo.put("timestamp", timestamp);
+                    jo.put("elapsed", watch.taken());
+                    jo.put("status", "timeout");
                     IOHelper.writeText(jo.toJson(), outputFile);
                 }
             } else {
@@ -1267,7 +1285,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             camelContext.getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
-        ServiceHelper.stopService(producer);
+        ServiceHelper.stopService(producer, consumer);
     }
 
     private static String getPid() {

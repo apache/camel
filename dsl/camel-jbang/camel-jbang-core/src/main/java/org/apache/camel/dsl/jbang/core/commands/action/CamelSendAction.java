@@ -46,6 +46,10 @@ public class CamelSendAction extends ActionBaseCommand {
                         description = "Endpoint where to send the message (can be uri, pattern, or refer to a route id)")
     String endpoint;
 
+    @CommandLine.Option(names = { "--poll" },
+                        description = "Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue.")
+    boolean poll;
+
     @CommandLine.Option(names = { "--reply" },
                         description = "Whether to expect a reply message (InOut vs InOut messaging style)")
     boolean reply;
@@ -54,7 +58,7 @@ public class CamelSendAction extends ActionBaseCommand {
                         description = "Saves reply message to the file with the given name (override if exists)")
     String replyFile;
 
-    @CommandLine.Option(names = { "--body" }, required = true,
+    @CommandLine.Option(names = { "--body" },
                         description = "Message body to send (prefix with file: to refer to loading message body from file)")
     String body;
 
@@ -117,9 +121,17 @@ public class CamelSendAction extends ActionBaseCommand {
         JsonObject root = new JsonObject();
         root.put("action", "send");
         root.put("endpoint", endpoint);
+        root.put("poll", poll);
+        // timeout cannot be too low
+        if (timeout < 5000) {
+            timeout = 5000;
+        }
+        root.put("pollTimeout", Math.min(1000, timeout - 1000)); // poll timeout should be shorter than jbang timeout
         String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
         root.put("exchangePattern", mep);
-        root.put("body", body);
+        if (body != null) {
+            root.put("body", body);
+        }
         if (headers != null) {
             JsonArray arr = new JsonArray();
             for (String h : headers) {
@@ -230,19 +242,35 @@ public class CamelSendAction extends ActionBaseCommand {
 
     private String getStatus(JsonObject r) {
         boolean failed = "failed".equals(r.getString("status"));
+        boolean timeout = "timeout".equals(r.getString("status"));
         boolean reply = r.containsKey("message");
         String status;
+        Ansi.Color c = Ansi.Color.GREEN;
         if (failed) {
             status = "Failed (exception)";
+            c = Ansi.Color.RED;
         } else if (replyFile != null) {
-            status = "Reply saved to file (success)";
+            if (poll) {
+                status = "Poll save to fill (success)";
+            } else {
+                status = "Reply save to file (success)";
+            }
         } else if (reply) {
-            status = "Reply received (success)";
+            if (poll) {
+                status = "Poll received (success)";
+            } else {
+                status = "Reply received (success)";
+            }
+        } else if (timeout) {
+            status = "Timeout";
+            c = Ansi.Color.YELLOW;
+        } else if (poll) {
+            status = "Poll (success)";
         } else {
             status = "Sent (success)";
         }
         if (loggingColor) {
-            return Ansi.ansi().fg(failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(status).reset().toString();
+            return Ansi.ansi().fg(c).a(status).reset().toString();
         } else {
             return status;
         }

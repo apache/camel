@@ -48,6 +48,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -105,9 +106,11 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     private static final Logger LOG = LoggerFactory.getLogger(MainHttpServer.class);
     private static final int BODY_MAX_CHARS = 128 * 1024;
+    private static final int DEFAULT_POLL_TIMEOUT = 20000;
 
     private final HeaderFilterStrategy filter = new HttpProtocolHeaderFilterStrategy();
     private ProducerTemplate producer;
+    private ConsumerTemplate consumer;
 
     private VertxPlatformHttpServer server;
     private VertxPlatformHttpRouter router;
@@ -357,6 +360,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         if (sendEnabled && producer == null) {
             producer = camelContext.createProducerTemplate();
         }
+        if (sendEnabled && consumer == null) {
+            consumer = camelContext.createConsumerTemplate();
+        }
 
         server = new VertxPlatformHttpServer(configuration);
         // adding server to camel-context which will manage shutdown the server, so we should not do this here
@@ -368,14 +374,14 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             pluginRegistry.setCamelContext(getCamelContext());
             getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
         }
-        ServiceHelper.initService(pluginRegistry, producer);
+        ServiceHelper.initService(pluginRegistry, producer, consumer);
     }
 
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        ServiceHelper.startService(server, pluginRegistry, producer);
+        ServiceHelper.startService(server, pluginRegistry, producer, consumer);
         router = VertxPlatformHttpRouter.lookup(camelContext);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
@@ -385,7 +391,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(pluginRegistry, producer);
+        ServiceHelper.stopAndShutdownServices(pluginRegistry, producer, consumer);
     }
 
     private boolean pluginsEnabled() {
@@ -1235,11 +1241,14 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         String endpoint = ctx.request().getHeader("endpoint");
         String exchangePattern = ctx.request().getHeader("exchangePattern");
         String resultType = ctx.request().getHeader("resultType");
+        String poll = ctx.request().getHeader("poll");
+        String pollTimeout = ctx.request().getHeader("pollTimeout");
         final Map<String, Object> headers = new LinkedHashMap<>();
         for (var entry : ctx.request().headers()) {
             String k = entry.getKey();
             boolean exclude
-                    = "endpoint".equals(k) || "exchangePattern".equals(k) || "resultType".equals(k) || "Accept".equals(k)
+                    = "endpoint".equals(k) || "exchangePattern".equals(k) || "poll".equals(k)
+                            || "pollTimeout".equals(k) || "resultType".equals(k) || "Accept".equals(k)
                             || filter.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), null);
             if (!exclude) {
                 headers.put(entry.getKey(), entry.getValue());
@@ -1301,18 +1310,24 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     exchangePattern = "InOnly"; // use in-only by default
                 }
                 final ExchangePattern mep = ExchangePattern.valueOf(exchangePattern);
-                out = producer.send(target, exchange -> {
-                    exchange.setPattern(mep);
-                    exchange.getMessage().setBody(body);
-                    if (!headers.isEmpty()) {
-                        exchange.getMessage().setHeaders(headers);
-                    }
-                });
-                if (clazz != null) {
+                long timeout = pollTimeout != null ? Long.parseLong(pollTimeout) : DEFAULT_POLL_TIMEOUT;
+                if ("true".equals(poll)) {
+                    exchangePattern = "InOut"; // we want to receive the data so enable out mode
+                    out = consumer.receive(target, timeout);
+                } else {
+                    out = producer.send(target, exchange -> {
+                        exchange.setPattern(mep);
+                        exchange.getMessage().setBody(body);
+                        if (!headers.isEmpty()) {
+                            exchange.getMessage().setHeaders(headers);
+                        }
+                    });
+                }
+                if (clazz != null && out != null) {
                     Object b = out.getMessage().getBody(clazz);
                     out.getMessage().setBody(b);
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 jo.put("endpoint", target.getEndpointUri());
                 jo.put("exchangePattern", exchangePattern);
                 jo.put("timestamp", timestamp);
@@ -1353,6 +1368,12 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 jo.put("timestamp", timestamp);
                 jo.put("elapsed", watch.taken());
                 jo.put("status", "success");
+            } else {
+                // timeout as there is no data
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "timeout");
             }
         } else {
             // there is no valid endpoint

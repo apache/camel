@@ -1382,6 +1382,24 @@ TIP: See more options with `camel cmd send --help`.
 
 The source for this example is provided on GitHub at https://github.com/apache/camel-kamelets-examples/tree/main/jbang/mqtt)[camel-jbang MQTT example].
 
+==== Poll messages via Camel
+
+*Available since Camel 4.8*
+
+The `camel cmd send` command has been improved to also _poll_ messages from Camel. This is needed
+if you want to poll the latest messages from a Kafka topic, JMS queue, or download a file from FTP etc.
+
+The poll uses Camel consumer to poll the message (timeout if no message received) instead of producer.
+
+For example to poll a message from a ActiveMQ queue named cheese you can do:
+
+[source,bash]
+----
+$ camel cmd send --poll --endpoint=activemq:cheese
+----
+
+When you poll then you do not send any payload (body or headers).
+
 === Controlling local Camel integrations
 
 To list the currently running Camel integrations you use the `ps` command:
