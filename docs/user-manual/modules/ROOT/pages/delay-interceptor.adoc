@@ -3,19 +3,20 @@
 The Delayer is used for slowing processing of messages.
 
 This allows you to set a fixed amount of delay between each step a message passes in
-the route, to better show how things is happening nice and slowly, so you
+the route.
+It can be used to better show how things are happening nicely and slowly, so you
 are not bombarded with a zillion lines of logging output.
 
 == Using Delayer
 
 The delayer can be configured on two levels:
 
-- CamelContext - _Globally_
-- Route - _Individually per route_
+- Camel context: _Globally_
+- Route: _Individually per route_
 
 === Configuring using XML DSL
 
-Just set the `delayer` attribute of the `<camelContext>` tag as shown below:
+Set the `delayer` attribute of the `<camelContext>` tag as shown below:
 
 [source,xml]
 --------------------------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ camelContext.setDelayer(200);
 You can also configure it on both camel context and per route
 as you like. Per route will override the camel context setting.
 
-For example the route below is only the first route that has a delayer with 200 millis.
+For example, the route below is only the first route that has a delayer with 200 milliseconds.
 
 [source,xml]
 ----
