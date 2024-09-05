@@ -1319,7 +1319,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 jo.put("elapsed", watch.taken());
                 jo.put("status", "failed");
                 jo.put("exception",
-                        MessageHelper.dumpExceptionAsJSonObject(e.getException()).getMap("exception"));
+                        MessageHelper.dumpExceptionAsJSonObject(e).getMap("exception"));
             }
             if (out != null && out.getException() != null) {
                 jo.put("endpoint", target.getEndpointUri());
