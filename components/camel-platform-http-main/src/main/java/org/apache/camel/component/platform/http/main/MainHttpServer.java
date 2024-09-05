@@ -114,6 +114,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     private boolean uploadEnabled;
     private String uploadSourceDir;
     private boolean downloadEnabled;
+    private boolean sendEnabled;
 
     @Override
     public CamelContext getCamelContext() {
@@ -247,6 +248,19 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
      */
     public void setDownloadEnabled(boolean downloadEnabled) {
         this.downloadEnabled = downloadEnabled;
+    }
+
+    @ManagedAttribute(description = "Whether send message is enabled  (q/send)")
+    public boolean isSendEnabled() {
+        return sendEnabled;
+    }
+
+    /**
+     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
+     * Camel endpoint URIs via HTTP.
+     */
+    public void setSendEnabled(boolean sendEnabled) {
+        this.sendEnabled = sendEnabled;
     }
 
     @ManagedAttribute(description = "HTTP server port number")
@@ -384,6 +398,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         }
         if (downloadEnabled) {
             setupDownloadConsole();
+        }
+        if (sendEnabled) {
+            setupSendConsole();
         }
         // metrics will be setup in camel-micrometer-prometheus
     }
@@ -1163,6 +1180,23 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
         platformHttpComponent.addHttpEndpoint("/q/download", "GET",
                 null, "text/plain,application/octet-stream", null);
+    }
+
+    protected void setupSendConsole() {
+        final Route download = router.route("/q/send/*")
+                .method(HttpMethod.GET).method(HttpMethod.POST);
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                ctx.end("Sending data");
+            }
+        };
+        // use blocking handler as the task can take longer time to complete
+        download.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint("/q/send", "GET,POST",
+                null, null, null);
     }
 
 }
