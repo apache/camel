@@ -1,9 +1,9 @@
 = Debugger
 
-The Camel Debugger is intended for 3rd party tooling to make it possible to
+The Camel Debugger is intended for third party tooling to make it possible to
 debug routes, trace messages and to use breakpoints with the EIP patterns in the Camel routes.
 
-The Debugger allows tooling or the likes to attach breakpoints which is
+The Debugger allows tooling or the likes to attach breakpoints which are
 being invoked when xref:exchange.adoc[Exchanges] are routed.
 
 == Java Debugging Camel routes in unit tests
@@ -117,16 +117,18 @@ which can be used to extend for custom implementations.
 
 === Camel Route debugger through JMX
 
-There is also a xref:backlog-debugger.adoc[Backlog Debugger] which allows debugging from JMX. It is automatically provided when `camel-debug` is on the classpath (since 3.16) or when using the `camel:debug` Maven goal (since 3.18).
+There is also a xref:backlog-debugger.adoc[Backlog Debugger] that allows debugging from JMX.
+It is automatically provided when `camel-debug` is on the classpath (since 3.16) or when
+using the `camel:debug` Maven goal (since 3.18).
 
 To be able to have enough time to add your breakpoints, since 3.18, you could need to suspend the message processing of Camel to make sure
 that you won't miss any messages. For this kind of need, you have to set either the environment variable `CAMEL_DEBUGGER_SUSPEND` or the system property `org.apache.camel.debugger.suspend` to `true` within the context of your application, then the `Backlog Debugger` suspends the message processing until the JMX operation `attach` is called. Calling the JMX operation `detach` suspends again the message processing.
 
 In case the environment variable and the system property are both set, the value of the environment variable is used.
 
-Several 3rd party tooling are using it:
+Several third-party tools are using it:
 
-* https://hawt.io/[hawtio] uses this for its web based debugging functionality
+* https://hawt.io/[hawtio] uses this for its web-based debugging functionality
 * https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code Debug Adapter for Camel]
 * http://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop Debug Adapter for Camel]
 * https://plugins.jetbrains.com/plugin/9371-apache-camel[IntelliJ Camel plugin]
