@@ -135,6 +135,24 @@ public class ListVault extends ProcessWatchCommand {
                                     rows.add(row);
                                 }
                             }
+
+                            JsonObject kubernetes = (JsonObject) vaults.get("kubernetes-secrets");
+                            if (kubernetes != null) {
+                                row.vault = "Kubernetes";
+                                row.lastCheck = kubernetes.getLongOrDefault("startCheckTimestamp", 0);
+                                row.lastReload = kubernetes.getLongOrDefault("lastReloadTimestamp", 0);
+                                JsonArray arr = (JsonArray) kubernetes.get("secrets");
+                                for (int i = 0; i < arr.size(); i++) {
+                                    if (i > 0) {
+                                        // create a copy for 2+ secrets
+                                        row = row.copy();
+                                    }
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    row.secret = jo.getString("name");
+                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                                    rows.add(row);
+                                }
+                            }
                         }
                     }
                 });
