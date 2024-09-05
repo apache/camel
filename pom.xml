@@ -337,6 +337,8 @@
                                     <exclude>doap.rdf</exclude>
                                     <exclude>mvnw*</exclude>
                                     <exclude>**/FileSplitXPathCharsetTest-input.xml</exclude>
+                                    <exclude>**/.camel-jbang-run/**</exclude>
+                                    <exclude>**/camel-jbang-run.properties</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
@@ -525,6 +527,8 @@
                             <exclude>**/quarkus-pom.ftl</exclude>
                             <exclude>**/quarkus-docker/*</exclude>
                             <exclude>.github/**/*</exclude>
+                            <exclude>**/.camel-jbang-run/**/*</exclude>
+                            <exclude>**/.camel-jbang/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>
