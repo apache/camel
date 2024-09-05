@@ -1239,6 +1239,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 root.put("kubernetes-secrets", json);
             }
         }
+
+        // hashicorp-secrets is optional
+        Optional<DevConsole> dcHashicorp
+                = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("hashicorp-secrets");
+        if (dcHashicorp.isPresent()) {
+            JsonObject json = (JsonObject) dcHashicorp.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("hashicorp-secrets", json);
+            }
+        }
         return root;
     }
 

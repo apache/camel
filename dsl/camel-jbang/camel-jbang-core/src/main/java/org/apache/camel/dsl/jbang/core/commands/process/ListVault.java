@@ -153,6 +153,14 @@ public class ListVault extends ProcessWatchCommand {
                                     rows.add(row);
                                 }
                             }
+
+                            JsonObject hashicorp = (JsonObject) vaults.get("hashicorp-secrets");
+                            if (hashicorp != null) {
+                                row.vault = "Hashicorp";
+                                row.lastCheck = hashicorp.getLongOrDefault("startCheckTimestamp", 0);
+                                row.lastReload = hashicorp.getLongOrDefault("lastReloadTimestamp", 0);
+                                rows.add(row);
+                            }
                         }
                     }
                 });
