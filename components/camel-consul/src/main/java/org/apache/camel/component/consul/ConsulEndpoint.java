@@ -91,13 +91,18 @@ public class ConsulEndpoint extends DefaultEndpoint {
         return this.apiEndpoint;
     }
 
-    public synchronized Consul getConsul() throws Exception {
-        if (consul == null && ObjectHelper.isEmpty(getConfiguration().getConsulClient())) {
-            consul = configuration.createConsulClient(getCamelContext());
-        } else if (ObjectHelper.isNotEmpty(getConfiguration().getConsulClient())) {
-            consul = getConfiguration().getConsulClient();
-        }
+    public Consul getConsul() throws Exception {
+        lock.lock();
+        try {
+            if (consul == null && ObjectHelper.isEmpty(getConfiguration().getConsulClient())) {
+                consul = configuration.createConsulClient(getCamelContext());
+            } else if (ObjectHelper.isNotEmpty(getConfiguration().getConsulClient())) {
+                consul = getConfiguration().getConsulClient();
+            }
 
-        return consul;
+            return consul;
+        } finally {
+            lock.unlock();
+        }
     }
 }

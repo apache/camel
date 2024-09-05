@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.calendar.internal;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.calendar.GoogleCalendarConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -25,16 +28,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 public final class GoogleCalendarPropertiesHelper extends ApiMethodPropertiesHelper<GoogleCalendarConfiguration> {
 
+    private static final Lock LOCK = new ReentrantLock();
     private static GoogleCalendarPropertiesHelper helper;
 
     private GoogleCalendarPropertiesHelper(CamelContext context) {
         super(context, GoogleCalendarConfiguration.class, GoogleCalendarConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized GoogleCalendarPropertiesHelper getHelper(CamelContext context) {
-        if (helper == null) {
-            helper = new GoogleCalendarPropertiesHelper(context);
+    public static GoogleCalendarPropertiesHelper getHelper(CamelContext context) {
+        LOCK.lock();
+        try {
+            if (helper == null) {
+                helper = new GoogleCalendarPropertiesHelper(context);
+            }
+            return helper;
+        } finally {
+            LOCK.unlock();
         }
-        return helper;
     }
 }

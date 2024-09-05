@@ -18,6 +18,8 @@ package org.apache.camel.itest.utils.extensions;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSException;
@@ -39,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public final class JmsServiceExtension implements Extension {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsServiceExtension.class);
-
+    private static final Lock LOCK = new ReentrantLock();
     private static JmsServiceExtension instance;
 
     private final JmsComponent amq;
@@ -84,16 +86,21 @@ public final class JmsServiceExtension implements Extension {
         return amq;
     }
 
-    public static synchronized JmsServiceExtension createExtension() {
-        if (instance == null) {
-            try {
-                instance = new JmsServiceExtension();
-            } catch (JMSException e) {
-                LOG.error("Unable to create JMS connection: {}", e.getMessage(), e);
-                fail(String.format("Unable to create JMS connection: %s", e.getMessage()));
+    public static JmsServiceExtension createExtension() {
+        LOCK.lock();
+        try {
+            if (instance == null) {
+                try {
+                    instance = new JmsServiceExtension();
+                } catch (JMSException e) {
+                    LOG.error("Unable to create JMS connection: {}", e.getMessage(), e);
+                    fail(String.format("Unable to create JMS connection: %s", e.getMessage()));
+                }
             }
-        }
 
-        return instance;
+            return instance;
+        } finally {
+            LOCK.unlock();
+        }
     }
 }

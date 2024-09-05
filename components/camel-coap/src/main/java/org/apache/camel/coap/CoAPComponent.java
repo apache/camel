@@ -64,35 +64,40 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
     public CoAPComponent() {
     }
 
-    public synchronized CoapServer getServer(int port, CoAPEndpoint endpoint) throws IOException, GeneralSecurityException {
-        CoapServer server = servers.get(port);
-        if (server == null && port == -1) {
-            server = getServer(DEFAULT_PORT, endpoint);
-        }
-        if (server == null) {
-            CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
-            Configuration config = Configuration.createStandardWithoutFile();
-            InetSocketAddress address = new InetSocketAddress(port);
-            coapBuilder.setConfiguration(config);
-
-            // Configure TLS and / or TCP
-            if (CoAPEndpoint.enableDTLS(endpoint.getUri())) {
-                doEnableDTLS(endpoint, address, coapBuilder);
-            } else if (CoAPEndpoint.enableTCP(endpoint.getUri())) {
-                doEnableTCP(endpoint, config, address, coapBuilder);
-            } else {
-                coapBuilder.setInetSocketAddress(address);
+    public CoapServer getServer(int port, CoAPEndpoint endpoint) throws IOException, GeneralSecurityException {
+        lock.lock();
+        try {
+            CoapServer server = servers.get(port);
+            if (server == null && port == -1) {
+                server = getServer(DEFAULT_PORT, endpoint);
             }
+            if (server == null) {
+                CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
+                Configuration config = Configuration.createStandardWithoutFile();
+                InetSocketAddress address = new InetSocketAddress(port);
+                coapBuilder.setConfiguration(config);
 
-            server = new CoapServer();
-            server.addEndpoint(coapBuilder.build());
+                // Configure TLS and / or TCP
+                if (CoAPEndpoint.enableDTLS(endpoint.getUri())) {
+                    doEnableDTLS(endpoint, address, coapBuilder);
+                } else if (CoAPEndpoint.enableTCP(endpoint.getUri())) {
+                    doEnableTCP(endpoint, config, address, coapBuilder);
+                } else {
+                    coapBuilder.setInetSocketAddress(address);
+                }
 
-            servers.put(port, server);
-            if (this.isStarted()) {
-                server.start();
+                server = new CoapServer();
+                server.addEndpoint(coapBuilder.build());
+
+                servers.put(port, server);
+                if (this.isStarted()) {
+                    server.start();
+                }
             }
+            return server;
+        } finally {
+            lock.unlock();
         }
-        return server;
     }
 
     private void doEnableTCP(

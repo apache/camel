@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
@@ -55,6 +57,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelInvocationHandler.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
+    private static final Lock LOCK = new ReentrantLock();
     public static final String CAMEL_INVOCATION_HANDLER = "CamelInvocationHandler";
     private static ExecutorService executorService;
     protected final Endpoint endpoint;
@@ -289,24 +292,29 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    protected static synchronized ExecutorService getExecutorService(CamelContext context) {
-        // CamelContext will shutdown thread pool when it shutdown so we can
-        // lazy create it on demand
-        // but in case of hot-deploy or the likes we need to be able to
-        // re-create it (its a shared static instance)
-        if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
-            // try to lookup a pool first based on id/profile
-            executorService = context.getRegistry().lookupByNameAndType(CAMEL_INVOCATION_HANDLER, ExecutorService.class);
-            if (executorService == null) {
-                executorService = context.getExecutorServiceManager().newThreadPool(CamelInvocationHandler.class,
-                        CAMEL_INVOCATION_HANDLER, CAMEL_INVOCATION_HANDLER);
+    protected static ExecutorService getExecutorService(CamelContext context) {
+        LOCK.lock();
+        try {
+            // CamelContext will shutdown thread pool when it shutdown so we can
+            // lazy create it on demand
+            // but in case of hot-deploy or the likes we need to be able to
+            // re-create it (its a shared static instance)
+            if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
+                // try to lookup a pool first based on id/profile
+                executorService = context.getRegistry().lookupByNameAndType(CAMEL_INVOCATION_HANDLER, ExecutorService.class);
+                if (executorService == null) {
+                    executorService = context.getExecutorServiceManager()
+                            .newThreadPool(CamelInvocationHandler.class, CAMEL_INVOCATION_HANDLER, CAMEL_INVOCATION_HANDLER);
+                }
+                if (executorService == null) {
+                    executorService = context.getExecutorServiceManager()
+                            .newDefaultThreadPool(CamelInvocationHandler.class, CAMEL_INVOCATION_HANDLER);
+                }
             }
-            if (executorService == null) {
-                executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class,
-                        CAMEL_INVOCATION_HANDLER);
-            }
+            return executorService;
+        } finally {
+            LOCK.unlock();
         }
-        return executorService;
     }
 
     /**
