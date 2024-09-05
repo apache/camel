@@ -16,6 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
@@ -28,12 +34,6 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 @CommandLine.Command(name = "browse",
                      description = "Browse pending messages on endpoints", sortOptions = false)
@@ -59,23 +59,23 @@ public class CamelBrowseAction extends ActionBaseCommand {
     String endpoint;
 
     @CommandLine.Option(names = { "--short-uri" },
-            description = "List endpoint URI without query parameters (short)")
+                        description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
     @CommandLine.Option(names = { "--wide-uri" },
-            description = "List endpoint URI in full details")
+                        description = "List endpoint URI in full details")
     boolean wideUri;
 
     @CommandLine.Option(names = { "--limit" }, defaultValue = "100",
-            description = "Limits the number of messages to dump per endpoint")
+                        description = "Limits the number of messages to dump per endpoint")
     int limit;
 
     @CommandLine.Option(names = { "--dump" }, defaultValue = "false",
-            description = "Whether to include message dumps")
+                        description = "Whether to include message dumps")
     boolean dump;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = UriSizeCompletionCandidates.class,
-            description = "Sort by uri, or size", defaultValue = "uri")
+                        description = "Sort by uri, or size", defaultValue = "uri")
     String sort;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
@@ -98,8 +98,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
     boolean pretty;
 
     private volatile long pid;
-
-    private MessageTableHelper tableHelper;
 
     public CamelBrowseAction(CamelJBangMain main) {
         super(main);
@@ -135,12 +133,12 @@ public class CamelBrowseAction extends ActionBaseCommand {
             // ignore
         }
 
-        List<BrowseRow> rows = new ArrayList<>();
+        List<Row> rows = new ArrayList<>();
         JsonObject jo = getJsonObject(outputFile);
         if (jo != null) {
             root = loadStatus(this.pid);
             if (root != null) {
-                BrowseRow row = new BrowseRow();
+                Row row = new Row();
                 row.pid = Long.toString(this.pid);
                 JsonObject context = (JsonObject) root.get("context");
                 if (context == null) {
@@ -182,13 +180,13 @@ public class CamelBrowseAction extends ActionBaseCommand {
         return 0;
     }
 
-    protected void dumpMessages(List<BrowseRow> rows) {
-        tableHelper = new MessageTableHelper();
+    protected void dumpMessages(List<Row> rows) {
+        MessageTableHelper tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
         tableHelper.setLoggingColor(loggingColor);
         tableHelper.setShowExchangeProperties(showExchangeProperties);
 
-        for (BrowseRow row : rows) {
+        for (Row row : rows) {
             if (row.messages != null) {
                 for (int i = 0; i < row.messages.size(); i++) {
                     JsonObject jo = row.messages.get(i);
@@ -213,7 +211,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         }
     }
 
-    protected void tableStatus(List<BrowseRow> rows) {
+    protected void tableStatus(List<Row> rows) {
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -226,7 +224,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
                 new Column().header("SIZE").with(r -> "" + r.size))));
     }
 
-    protected int sortRow(BrowseRow o1, BrowseRow o2) {
+    protected int sortRow(Row o1, Row o2) {
         String s = sort;
         int negate = 1;
         if (s.startsWith("-")) {
@@ -243,7 +241,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         }
     }
 
-    protected String getEndpointUri(BrowseRow r) {
+    protected String getEndpointUri(Row r) {
         String u = r.uri;
         if (shortUri) {
             int pos = u.indexOf('?');
@@ -254,7 +252,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         return u;
     }
 
-    private static class BrowseRow implements Cloneable {
+    private static class Row implements Cloneable {
         String pid;
         String name;
         String ago;
@@ -263,9 +261,9 @@ public class CamelBrowseAction extends ActionBaseCommand {
         long size;
         List<JsonObject> messages;
 
-        BrowseRow copy() {
+        Row copy() {
             try {
-                return (BrowseRow) clone();
+                return (Row) clone();
             } catch (CloneNotSupportedException e) {
                 return null;
             }

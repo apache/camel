@@ -141,7 +141,8 @@ public class MessageTableHelper {
                 eRow = new TableRow("Exchange", root.getString("exchangeType"), exchangePattern, exchangeId);
                 tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
+                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
                 tab1b = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.CENTER)
