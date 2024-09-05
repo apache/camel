@@ -19,6 +19,8 @@ package org.apache.camel.component.aws2.kinesis;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
@@ -31,23 +33,33 @@ public class KinesisConnection implements Closeable {
 
     private KinesisClient kinesisClient;
     private KinesisAsyncClient kinesisAsyncClient;
+    private final Lock lock = new ReentrantLock();
 
-    public synchronized KinesisClient getClient(final Kinesis2Endpoint endpoint) {
-        if (Objects.isNull(kinesisClient)) {
-            kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient() != null
-                    ? endpoint.getConfiguration().getAmazonKinesisClient()
-                    : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration()).getKinesisClient();
+    public KinesisClient getClient(final Kinesis2Endpoint endpoint) {
+        lock.lock();
+        try {
+            if (Objects.isNull(kinesisClient)) {
+                kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient() != null
+                        ? endpoint.getConfiguration().getAmazonKinesisClient()
+                        : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration()).getKinesisClient();
+            }
+            return kinesisClient;
+        } finally {
+            lock.unlock();
         }
-        return kinesisClient;
     }
 
-    public synchronized KinesisAsyncClient getAsyncClient(final Kinesis2Endpoint endpoint) {
-        if (Objects.isNull(kinesisAsyncClient)) {
-            kinesisAsyncClient = KinesisClientFactory
-                    .getKinesisAsyncClient(endpoint.getConfiguration())
-                    .getKinesisAsyncClient();
+    public KinesisAsyncClient getAsyncClient(final Kinesis2Endpoint endpoint) {
+        lock.lock();
+        try {
+            if (Objects.isNull(kinesisAsyncClient)) {
+                kinesisAsyncClient
+                        = KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration()).getKinesisAsyncClient();
+            }
+            return kinesisAsyncClient;
+        } finally {
+            lock.unlock();
         }
-        return kinesisAsyncClient;
     }
 
     public void setKinesisClient(final KinesisClient kinesisClient) {

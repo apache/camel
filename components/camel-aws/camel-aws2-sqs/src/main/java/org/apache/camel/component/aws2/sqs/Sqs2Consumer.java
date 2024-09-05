@@ -40,6 +40,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
@@ -484,7 +486,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
          * means there is no schedule.
          */
         private final AtomicLong queueAutoCreationScheduleTime = new AtomicLong(0L);
-        private final Object mutex = new Object();
+        private final Lock lock = new ReentrantLock();
         private final AtomicBoolean closed = new AtomicBoolean();
 
         private final Clock clock;
@@ -630,7 +632,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         private void createQueue(UUID requestId, PollingContext context) {
-            synchronized (mutex) {
+            lock.lock();
+            try {
                 if (isClosed() || context.isMissingQueueHandledInAnotherRequest(requestId)) {
                     // the missing queue error can be thrown by multiple threads
                     // the first thread that is handling the error should prevent other threads
@@ -648,6 +651,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                     LOG.error("Error while creating queue.", e);
                     context.firePollingError(e);
                 }
+            } finally {
+                lock.unlock();
             }
         }
 

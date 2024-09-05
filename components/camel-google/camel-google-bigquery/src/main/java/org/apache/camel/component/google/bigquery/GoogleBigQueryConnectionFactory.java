@@ -19,6 +19,8 @@ package org.apache.camel.component.google.bigquery;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.api.client.util.Strings;
 import com.google.api.services.bigquery.BigqueryScopes;
@@ -41,6 +43,7 @@ public class GoogleBigQueryConnectionFactory {
     private String serviceURL;
     private BigQuery client;
     private CamelContext camelContext;
+    private final Lock lock = new ReentrantLock();
 
     public GoogleBigQueryConnectionFactory() {
     }
@@ -49,11 +52,16 @@ public class GoogleBigQueryConnectionFactory {
         this.client = client;
     }
 
-    public synchronized BigQuery getDefaultClient() throws Exception {
-        if (this.client == null) {
-            this.client = buildClient();
+    public BigQuery getDefaultClient() throws Exception {
+        lock.lock();
+        try {
+            if (this.client == null) {
+                this.client = buildClient();
+            }
+            return this.client;
+        } finally {
+            lock.unlock();
         }
-        return this.client;
     }
 
     private BigQuery buildClient() throws Exception {
@@ -133,8 +141,13 @@ public class GoogleBigQueryConnectionFactory {
         return this;
     }
 
-    private synchronized void resetClient() {
-        this.client = null;
+    private void resetClient() {
+        lock.lock();
+        try {
+            this.client = null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public GoogleBigQueryConnectionFactory setCamelContext(CamelContext camelContext) {

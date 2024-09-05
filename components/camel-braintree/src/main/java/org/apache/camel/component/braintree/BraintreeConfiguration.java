@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +70,7 @@ public class BraintreeConfiguration {
     private boolean logHandlerEnabled = true;
     @UriParam(label = "advanced")
     private Integer httpReadTimeout;
+    private final Lock lock = new ReentrantLock();
 
     public BraintreeApiName getApiName() {
         return apiName;
@@ -239,50 +242,49 @@ public class BraintreeConfiguration {
     /**
      * Construct a BraintreeGateway from configuration
      */
-    synchronized BraintreeGateway newBraintreeGateway() {
-        final BraintreeGateway gateway;
+    BraintreeGateway newBraintreeGateway() {
+        lock.lock();
+        try {
+            final BraintreeGateway gateway;
 
-        if (accessToken != null) {
-            gateway = new BraintreeGateway(
-                    accessToken);
-            setEnvironment(gateway.getConfiguration().getEnvironment().getEnvironmentName());
-        } else {
-            gateway = new BraintreeGateway(
-                    getBraintreeEnvironment(),
-                    getMerchantId(),
-                    getPublicKey(),
-                    getPrivateKey());
+            if (accessToken != null) {
+                gateway = new BraintreeGateway(accessToken);
+                setEnvironment(gateway.getConfiguration().getEnvironment().getEnvironmentName());
+            } else {
+                gateway = new BraintreeGateway(getBraintreeEnvironment(), getMerchantId(), getPublicKey(), getPrivateKey());
+            }
+
+            if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
+                gateway.setProxy(proxyHost, proxyPort);
+            }
+
+            if (httpReadTimeout != null) {
+                gateway.getConfiguration().setTimeout(httpReadTimeout);
+            }
+
+            // If custom log name is defined, a new logger wil be requested otherwise
+            // the one supplied by Braintree' SDK will be used
+            final Logger logger = ObjectHelper.isNotEmpty(httpLogName)
+                    ? Logger.getLogger(httpLogName) : gateway.getConfiguration().getLogger();
+
+            // Cleanup handlers as by default braintree install a ConsoleHandler
+            for (Handler handler : logger.getHandlers()) {
+                logger.removeHandler(handler);
+            }
+
+            if (isLogHandlerEnabled()) {
+                logger.addHandler(new BraintreeLogHandler());
+            }
+
+            if (httpLogLevel != null) {
+                logger.setLevel(Level.parse(httpLogLevel));
+            }
+
+            gateway.getConfiguration().setLogger(logger);
+
+            return gateway;
+        } finally {
+            lock.unlock();
         }
-
-        if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
-            gateway.setProxy(proxyHost, proxyPort);
-        }
-
-        if (httpReadTimeout != null) {
-            gateway.getConfiguration().setTimeout(httpReadTimeout);
-        }
-
-        // If custom log name is defined, a new logger wil be requested otherwise
-        // the one supplied by Braintree' SDK will be used
-        final Logger logger = ObjectHelper.isNotEmpty(httpLogName)
-                ? Logger.getLogger(httpLogName)
-                : gateway.getConfiguration().getLogger();
-
-        // Cleanup handlers as by default braintree install a ConsoleHandler
-        for (Handler handler : logger.getHandlers()) {
-            logger.removeHandler(handler);
-        }
-
-        if (isLogHandlerEnabled()) {
-            logger.addHandler(new BraintreeLogHandler());
-        }
-
-        if (httpLogLevel != null) {
-            logger.setLevel(Level.parse(httpLogLevel));
-        }
-
-        gateway.getConfiguration().setLogger(logger);
-
-        return gateway;
     }
 }

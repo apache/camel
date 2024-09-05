@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.braintree.internal;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.braintree.BraintreeConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -25,16 +28,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 public final class BraintreePropertiesHelper extends ApiMethodPropertiesHelper<BraintreeConfiguration> {
 
+    private static final Lock LOCK = new ReentrantLock();
     private static BraintreePropertiesHelper helper;
 
     private BraintreePropertiesHelper(CamelContext context) {
         super(context, BraintreeConfiguration.class, BraintreeConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized BraintreePropertiesHelper getHelper(CamelContext context) {
-        if (helper == null) {
-            helper = new BraintreePropertiesHelper(context);
+    public static BraintreePropertiesHelper getHelper(CamelContext context) {
+        LOCK.lock();
+        try {
+            if (helper == null) {
+                helper = new BraintreePropertiesHelper(context);
+            }
+            return helper;
+        } finally {
+            LOCK.unlock();
         }
-        return helper;
     }
 }

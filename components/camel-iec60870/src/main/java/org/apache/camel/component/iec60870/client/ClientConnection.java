@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.camel.component.iec60870.DiscardAckModule;
@@ -76,6 +78,7 @@ public class ClientConnection {
         }
     };
 
+    private final Lock lock = new ReentrantLock();
     private final Map<ObjectAddress, Value<?>> lastValue = new HashMap<>();
     private final Map<ObjectAddress, ValueListener> listeners = new HashMap<>();
 
@@ -114,23 +117,33 @@ public class ClientConnection {
         this.client.close();
     }
 
-    protected synchronized void handleData(final ObjectAddress address, final Value<?> value) {
-        this.lastValue.put(address, value);
-        final ValueListener listener = this.listeners.get(address);
-        if (listener != null) {
-            listener.update(address, value);
+    protected void handleData(final ObjectAddress address, final Value<?> value) {
+        lock.lock();
+        try {
+            this.lastValue.put(address, value);
+            final ValueListener listener = this.listeners.get(address);
+            if (listener != null) {
+                listener.update(address, value);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized void setListener(final ObjectAddress address, final ValueListener listener) {
-        if (listener != null) {
-            this.listeners.put(address, listener);
-            final Value<?> last = this.lastValue.get(address);
-            if (last != null) {
-                listener.update(address, last);
+    public void setListener(final ObjectAddress address, final ValueListener listener) {
+        lock.lock();
+        try {
+            if (listener != null) {
+                this.listeners.put(address, listener);
+                final Value<?> last = this.lastValue.get(address);
+                if (last != null) {
+                    listener.update(address, last);
+                }
+            } else {
+                this.listeners.remove(address);
             }
-        } else {
-            this.listeners.remove(address);
+        } finally {
+            lock.unlock();
         }
     }
 

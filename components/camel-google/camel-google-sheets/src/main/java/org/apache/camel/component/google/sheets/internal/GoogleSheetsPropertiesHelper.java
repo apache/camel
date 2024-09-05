@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.sheets.internal;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.sheets.GoogleSheetsConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -25,16 +28,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 public final class GoogleSheetsPropertiesHelper extends ApiMethodPropertiesHelper<GoogleSheetsConfiguration> {
 
+    private static final Lock LOCK = new ReentrantLock();
     private static GoogleSheetsPropertiesHelper helper;
 
     private GoogleSheetsPropertiesHelper(CamelContext context) {
         super(context, GoogleSheetsConfiguration.class, GoogleSheetsConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized GoogleSheetsPropertiesHelper getHelper(CamelContext context) {
-        if (helper == null) {
-            helper = new GoogleSheetsPropertiesHelper(context);
+    public static GoogleSheetsPropertiesHelper getHelper(CamelContext context) {
+        LOCK.lock();
+        try {
+            if (helper == null) {
+                helper = new GoogleSheetsPropertiesHelper(context);
+            }
+            return helper;
+        } finally {
+            LOCK.unlock();
         }
-        return helper;
     }
 }
