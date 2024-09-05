@@ -2,7 +2,7 @@
 
 `CronScheduledRoutePolicy` is a
 xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] that facilitates
-route activation, de-activation, suspension and resumption of routes
+route activation, deactivation, suspension and resumption of routes
 based on a xref:components::quartz-component.adoc[Quartz] cron trigger.
 
 [TIP]
@@ -16,11 +16,11 @@ common and consistent way.
 
 == Using cron scheduled route policy
 
-In order to use a `CronScheduledRoutePolicy` it is
+To use a `CronScheduledRoutePolicy` it is
 necessary to instantiate an object of the type
 `org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy`.
 
-In order to perform a route operation at a given time the following
+To perform a route operation at a given time, the following
 information must be provided.
 
 === Starting a route
@@ -28,7 +28,7 @@ information must be provided.
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeStartTime |String |  |the initial scheduled Date and time as a
+|routeStartTime |String |  |the initial scheduled date and time as a
 Cron Expression for route start
 |=======================================================================
 
@@ -37,14 +37,14 @@ Cron Expression for route start
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeStopTime |String |  |the initial scheduled Date and time as a Cron
+|routeStopTime |String |  |the initial scheduled date and time as a Cron
 Expression for route stop
 
 |routeStopGracePeriod |int |10000 |the time period to wait before
 initiating graceful route stop
 
 |routeStopTimeUnit |long |TimeUnit.MILLISECONDS |the time unit for the
-grace period expressed as java.util.concurrent.TimeUnit
+grace period expressed as `java.util.concurrent.TimeUnit`
 |=======================================================================
 
 === Suspending a route
@@ -52,7 +52,7 @@ grace period expressed as java.util.concurrent.TimeUnit
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeSuspendTime |String |  |the initial scheduled Date and time as a
+|routeSuspendTime |String |  |the initial scheduled date and time as a
 Cron Expression for route suspension
 |=======================================================================
 
@@ -61,7 +61,7 @@ Cron Expression for route suspension
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
 |Parameter Name |Type |Default Value |Description
-|routeResumeTime |String |  |the initial scheduled Date and time as a
+|routeResumeTime |String |  |the initial scheduled date and time as a
 Cron Expression for route resumption
 |=======================================================================
 
@@ -99,7 +99,7 @@ And with Spring XML:
 ----
 
 IMPORTANT: Notice how the route to be scheduled *MUST* be configured to not
-xref:configuring-route-startup-ordering-and-autostartup.adoc[autostartup], to let
+xref:configuring-route-startup-ordering-and-autostartup.adoc[auto-startup], to let
 the route scheduler take control of starting and stopping the route accordingly.
 
 === Dependency
