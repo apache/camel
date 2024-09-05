@@ -47,7 +47,6 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
     private String secrets;
     private KubernetesClient kubernetesClient;
     private SecretPropertiesFunction propertiesFunction;
-    private volatile Instant lastReloadTime;
     private volatile Instant startingTime;
 
     private static final Logger LOG = LoggerFactory.getLogger(SecretsReloadTriggerTask.class);
@@ -71,13 +70,6 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
      */
     public void setReloadEnabled(boolean reloadEnabled) {
         this.reloadEnabled = reloadEnabled;
-    }
-
-    /**
-     * Last time Kubernetes secrets update triggered reload.
-     */
-    public Instant getLastReloadTime() {
-        return lastReloadTime;
     }
 
     /**
@@ -137,7 +129,6 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
                                 ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
                                 if (reload != null) {
                                     // trigger reload
-                                    lastReloadTime = Instant.now();
                                     reload.onReload(this);
                                 }
                             }
