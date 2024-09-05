@@ -53,17 +53,15 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
             return false;
         }
 
-        if (traitConfig.getKnativeService() != null && traitConfig.getKnativeService().getEnabled() != null) {
-            // Knative service either explicitly enabled or disabled
-            return traitConfig.getKnativeService().getEnabled() && TraitHelper.exposesHttpService(context);
+        // one of Knative traits needs to be explicitly enabled
+        boolean enabled = false;
+        if (traitConfig.getKnativeService() != null) {
+            enabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled()).orElse(false);
+        } else if (traitConfig.getKnative() != null) {
+            enabled = Optional.ofNullable(traitConfig.getKnative().getEnabled()).orElse(false);
         }
 
-        if (traitConfig.getKnative() != null && traitConfig.getKnative().getEnabled() != null) {
-            // Knative either explicitly enabled or disabled
-            return traitConfig.getKnative().getEnabled() && TraitHelper.exposesHttpService(context);
-        }
-
-        return false;
+        return enabled && TraitHelper.exposesHttpService(context);
     }
 
     @Override
