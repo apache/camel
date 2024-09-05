@@ -258,6 +258,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         String key = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.key"));
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
                 "--trait-profile", "openshift",
+                "--trait", "route.enabled=true",
                 "--trait", "route.host=example.com",
                 "--trait", "route.tls-termination=edge",
                 "--trait", "route.tls-certificate=" + certificate,

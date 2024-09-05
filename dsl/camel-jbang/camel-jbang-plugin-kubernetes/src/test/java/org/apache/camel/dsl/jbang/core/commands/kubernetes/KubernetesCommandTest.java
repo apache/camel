@@ -45,7 +45,7 @@ class KubernetesCommandTest extends KubernetesBaseTest {
                 "yaml");
 
         List<HasMetadata> resources = kubernetesClient.load(getKubernetesManifestAsStream(printer.getOutput())).items();
-        Assertions.assertEquals(4, resources.size());
+        Assertions.assertEquals(3, resources.size());
 
         Deployment deployment = resources.stream()
                 .filter(it -> Deployment.class.isAssignableFrom(it.getClass()))
