@@ -278,6 +278,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionKafkaTask();
             } else if ("trace".equals(action)) {
                 doActionTraceTask(root);
+            } else if ("browse".equals(action)) {
+                doActionBrowseTask(root);
             }
         } catch (Exception e) {
             // ignore
@@ -764,6 +766,22 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             } else {
                 json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
             }
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionBrowseTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("browse");
+        if (dc != null) {
+            String filter = root.getString("filter");
+            String limit = root.getString("limit");
+            String dump = root.getString("dump");
+            JsonObject json
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "limit", limit, "dump", dump));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
