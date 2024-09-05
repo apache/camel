@@ -52,7 +52,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StaticService;
@@ -1235,22 +1234,20 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
         String endpoint = ctx.request().getHeader("endpoint");
         String exchangePattern = ctx.request().getHeader("exchangePattern");
-        if (exchangePattern == null) {
-            exchangePattern = "InOnly"; // use in-only by default
-        }
+        String resultType = ctx.request().getHeader("resultType");
         final Map<String, Object> headers = new LinkedHashMap<>();
         for (var entry : ctx.request().headers()) {
             String k = entry.getKey();
-            String v = entry.getValue();
-            boolean exclude = "endpoint".equals(k) || "exchangePattern".equals(k) || "Accept".equals(k)
-                    || filter.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), null);
+            boolean exclude
+                    = "endpoint".equals(k) || "exchangePattern".equals(k) || "resultType".equals(k) || "Accept".equals(k)
+                            || filter.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), null);
             if (!exclude) {
                 headers.put(entry.getKey(), entry.getValue());
             }
         }
         final String body = ctx.body().asString();
 
-        Exchange out;
+        Exchange out = null;
         Endpoint target = null;
         if (endpoint == null) {
             List<org.apache.camel.Route> routes = camelContext.getRoutes();
@@ -1291,18 +1288,40 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
         JsonObject jo = new JsonObject();
         if (target != null) {
-            final ExchangePattern mep = ExchangePattern.valueOf(exchangePattern);
-            out = producer.send(target, new Processor() {
-                @Override
-                public void process(Exchange exchange) throws Exception {
+            Class<?> clazz = null;
+            try {
+                if (resultType != null) {
+                    clazz = camelContext.getClassResolver().resolveMandatoryClass(resultType);
+                    // we want the result as a specific type then make sure to use InOut
+                    if (exchangePattern == null) {
+                        exchangePattern = "InOut";
+                    }
+                }
+                if (exchangePattern == null) {
+                    exchangePattern = "InOnly"; // use in-only by default
+                }
+                final ExchangePattern mep = ExchangePattern.valueOf(exchangePattern);
+                out = producer.send(target, exchange -> {
                     exchange.setPattern(mep);
                     exchange.getMessage().setBody(body);
                     if (!headers.isEmpty()) {
                         exchange.getMessage().setHeaders(headers);
                     }
+                });
+                if (clazz != null) {
+                    Object b = out.getMessage().getBody(clazz);
+                    out.getMessage().setBody(b);
                 }
-            });
-            if (out.getException() != null) {
+            } catch (ClassNotFoundException e) {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "failed");
+                jo.put("exception",
+                        MessageHelper.dumpExceptionAsJSonObject(e.getException()).getMap("exception"));
+            }
+            if (out != null && out.getException() != null) {
                 jo.put("endpoint", target.getEndpointUri());
                 jo.put("exchangeId", out.getExchangeId());
                 jo.put("exchangePattern", exchangePattern);
@@ -1312,17 +1331,22 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 // avoid double wrap
                 jo.put("exception",
                         MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
-            } else if ("InOut".equals(exchangePattern)) {
+            } else if (out != null && "InOut".equals(exchangePattern)) {
                 jo.put("endpoint", target.getEndpointUri());
                 jo.put("exchangeId", out.getExchangeId());
                 jo.put("exchangePattern", exchangePattern);
                 jo.put("timestamp", timestamp);
                 jo.put("elapsed", watch.taken());
                 jo.put("status", "success");
-                // avoid double wrap
-                jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), false, false, true, true, true, true,
-                        BODY_MAX_CHARS).getMap("message"));
-            } else {
+                // dump response and remove unwanted data
+                JsonObject msg = MessageHelper.dumpAsJSonObject(out.getMessage(), false, false, true, true, true, true,
+                        BODY_MAX_CHARS).getMap("message");
+                msg.remove("exchangeId");
+                msg.remove("exchangePattern");
+                msg.remove("exchangeType");
+                msg.remove("messageType");
+                jo.put("message", msg);
+            } else if (out != null) {
                 jo.put("endpoint", target.getEndpointUri());
                 jo.put("exchangeId", out.getExchangeId());
                 jo.put("exchangePattern", exchangePattern);
