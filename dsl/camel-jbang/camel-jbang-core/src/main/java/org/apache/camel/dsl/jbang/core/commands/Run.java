@@ -1481,6 +1481,8 @@ public class Run extends CamelCommand {
                         if (key.endsWith(".level")) {
                             key = key.substring(0, key.length() - 6);
                         }
+                    } else {
+                        continue;
                     }
                     key = StringHelper.removeLeadingAndEndingQuotes(key);
                     String line = key + "=" + value;

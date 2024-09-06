@@ -57,9 +57,9 @@ public final class RuntimeUtil {
                 if (export) {
                     name = "log4j2-export.properties";
                 } else if (script) {
-                    name = "log4j2-export.properties";
+                    name = "log4j2-script.properties";
                 } else if (json) {
-                    name = "log4j2-export.properties";
+                    name = "log4j2-json.properties";
                 } else if (color) {
                     name = "log4j2.properties";
                 }
@@ -76,7 +76,9 @@ public final class RuntimeUtil {
                     if (!catName.isEmpty() && !catLevel.isEmpty()) {
                         sj.add("logger." + prefix + ".name=" + catName);
                         sj.add("logger." + prefix + ".level=" + catLevel);
-                        sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
+                        if (!export && !script) {
+                            sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
+                        }
                         sj.add("logger." + prefix + ".appenderRef.$2.ref=file");
                     }
                 }
