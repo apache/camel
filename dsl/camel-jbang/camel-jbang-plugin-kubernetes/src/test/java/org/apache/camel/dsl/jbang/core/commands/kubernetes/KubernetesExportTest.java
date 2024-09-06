@@ -77,9 +77,9 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
     private static Stream<Arguments> runtimeProvider() {
         return Stream.of(
-                Arguments.of(RuntimeType.quarkus),
+                Arguments.of(RuntimeType.main),
                 Arguments.of(RuntimeType.springBoot),
-                Arguments.of(RuntimeType.main));
+                Arguments.of(RuntimeType.quarkus));
     }
 
     @ParameterizedTest
