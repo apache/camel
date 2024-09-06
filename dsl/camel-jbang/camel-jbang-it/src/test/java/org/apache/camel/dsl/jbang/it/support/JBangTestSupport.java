@@ -147,6 +147,18 @@ public abstract class JBangTestSupport {
                 .isReadable();
     }
 
+    protected void checkCommandOutputs(String command, String contains) {
+        Assertions.assertThat(execute(command))
+                .as("command camel" + command + "should output" + contains)
+                .contains(contains);
+    }
+
+    protected void checkCommandDoesNotOutput(String command, String contains) {
+        Assertions.assertThat(execute(command))
+                .as("command camel" + command + "should not output" + contains)
+                .doesNotContain(contains);
+    }
+
     protected void assertFileInDataFolderDoesNotExist(String file) {
         final Path toVerify = Path.of(containerDataFolder, file);
         Assertions.assertThat(toVerify)
