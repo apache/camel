@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.browse;
 
+import java.util.Collection;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

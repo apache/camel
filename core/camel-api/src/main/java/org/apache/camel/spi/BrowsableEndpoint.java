@@ -37,12 +37,11 @@ public interface BrowsableEndpoint extends Endpoint {
     List<Exchange> getExchanges();
 
     /**
-     * Return the exchanges available on this endpoint, allowing to filter the
-     * result in the specific component.
+     * Return the exchanges available on this endpoint, allowing to filter the result in the specific component.
      *
-     * @param limit  to limit the result o a specific maximum. Use 0 for no limit.
-     * @param filter filter to filter among the messages to include.
-     * @return the exchanges on this endpoint
+     * @param  limit  to limit the result o a specific maximum. Use 0 for no limit.
+     * @param  filter filter to filter among the messages to include.
+     * @return        the exchanges on this endpoint
      */
     default List<Exchange> getExchanges(int limit, Predicate filter) {
         List<Exchange> answer = getExchanges();
