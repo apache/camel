@@ -229,8 +229,18 @@ public interface ShutdownStrategy extends StaticService {
 
     /**
      * Whether a timeout has occurred during a shutdown.
+     *
+     * @deprecated use {@link #isTimeoutOccurred()}
      */
+    @Deprecated(since = "4.8.0")
     boolean hasTimeoutOccurred();
+
+    /**
+     * Whether a timeout has occurred during a shutdown.
+     */
+    default boolean isTimeoutOccurred() {
+        return hasTimeoutOccurred();
+    }
 
     /**
      * Gets the logging level used for logging shutdown activity (such as starting and stopping routes). The default

@@ -68,6 +68,7 @@ import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedShutdownStrategy;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
 import org.apache.camel.management.mbean.ManagedThrottlingExceptionRoutePolicy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
@@ -104,6 +105,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -565,8 +567,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedRuntimeEndpointRegistry(context, runtimeEndpointRegistry);
         } else if (service instanceof StreamCachingStrategy streamCachingStrategy) {
             answer = new ManagedStreamCachingStrategy(context, streamCachingStrategy);
+        } else if (service instanceof ShutdownStrategy shutdownStrategy) {
+            answer = new ManagedShutdownStrategy(context, shutdownStrategy);
         } else if (service instanceof EventNotifier eventNotifier)
-            answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
+            answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, eventNotifier);
         else if (service instanceof TransformerRegistry transformerRegistry) {
             answer = new ManagedTransformerRegistry(context, transformerRegistry);
         } else if (service instanceof ValidatorRegistry validatorRegistry) {

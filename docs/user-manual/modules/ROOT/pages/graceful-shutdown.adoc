@@ -99,7 +99,9 @@ context.getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
 === JMX managed
 
 The `ShutdownStrategy` is JMX aware, so you can manage it from a
-JMX console. This allows to adjust the strategy at runtime, such as changing the timeout setting.
+JMX console. This allows to adjust the strategy at runtime.
+
+TIP: The timeout settings can also be changed on the `CamelContextMBean`.
 
 == Controlling ordering of routes
 

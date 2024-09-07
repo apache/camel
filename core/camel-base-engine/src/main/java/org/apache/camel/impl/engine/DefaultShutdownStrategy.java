@@ -284,6 +284,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     @Override
     public boolean hasTimeoutOccurred() {
+        return isTimeoutOccurred();
+    }
+
+    @Override
+    public boolean isTimeoutOccurred() {
         return timeoutOccurred.get();
     }
 
