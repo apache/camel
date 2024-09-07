@@ -19,7 +19,6 @@ package org.apache.camel.component.browse;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -139,8 +138,10 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     protected void onExchange(Exchange exchange) throws Exception {
         if (limit > 0) {
             // make room if end of capacity
-            while (exchanges.size() >= (limit - 1)) {
-                exchanges.remove(0);
+            int max = exchanges.size();
+            if (max >= limit) {
+                int space = Math.abs(max - (limit - 1));
+                exchanges = exchanges.subList(space, max);
             }
         }
         exchanges.add(exchange);
