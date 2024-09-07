@@ -17,6 +17,7 @@
 package org.apache.camel.kotlin.components
 
 import kotlin.Boolean
+import kotlin.Int
 import kotlin.String
 import kotlin.Unit
 import org.apache.camel.kotlin.CamelDslMarker
@@ -48,6 +49,20 @@ public class BrowseUriDsl(
   public fun name(name: String) {
     this.name = name
     it.url("$name")
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun limit(limit: String) {
+    it.property("limit", limit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun limit(limit: Int) {
+    it.property("limit", limit.toString())
   }
 
   /**
@@ -118,5 +133,13 @@ public class BrowseUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
+  /**
+   * To use a predicate to filter whether to include the message for browsing. Return true to
+   * include, false to exclude.
+   */
+  public fun filter(filter: String) {
+    it.property("filter", filter)
   }
 }

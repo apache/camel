@@ -43,6 +43,36 @@ public interface BrowseEndpointBuilderFactory {
         default AdvancedBrowseEndpointConsumerBuilder advanced() {
             return (AdvancedBrowseEndpointConsumerBuilder) this;
         }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
+         */
+        default BrowseEndpointConsumerBuilder limit(int limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
+         */
+        default BrowseEndpointConsumerBuilder limit(String limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
     }
 
     /**
@@ -171,6 +201,38 @@ public interface BrowseEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * To use a predicate to filter whether to include the message for
+         * browsing. Return true to include, false to exclude.
+         * 
+         * The option is a:
+         * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointConsumerBuilder filter(Predicate<org.apache.camel.Exchange> filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
+         * To use a predicate to filter whether to include the message for
+         * browsing. Return true to include, false to exclude.
+         * 
+         * The option will be converted to a
+         * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointConsumerBuilder filter(String filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
     }
 
     /**
@@ -183,6 +245,36 @@ public interface BrowseEndpointBuilderFactory {
             return (AdvancedBrowseEndpointProducerBuilder) this;
         }
 
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
+         */
+        default BrowseEndpointProducerBuilder limit(int limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
+         */
+        default BrowseEndpointProducerBuilder limit(String limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
     }
 
     /**
@@ -239,6 +331,38 @@ public interface BrowseEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To use a predicate to filter whether to include the message for
+         * browsing. Return true to include, false to exclude.
+         * 
+         * The option is a:
+         * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointProducerBuilder filter(Predicate<org.apache.camel.Exchange> filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
+         * To use a predicate to filter whether to include the message for
+         * browsing. Return true to include, false to exclude.
+         * 
+         * The option will be converted to a
+         * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointProducerBuilder filter(String filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
     }
 
     /**
@@ -252,6 +376,36 @@ public interface BrowseEndpointBuilderFactory {
             return (AdvancedBrowseEndpointBuilder) this;
         }
 
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
+         */
+        default BrowseEndpointBuilder limit(int limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: common
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
+         */
+        default BrowseEndpointBuilder limit(String limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
     }
 
     /**
@@ -265,6 +419,38 @@ public interface BrowseEndpointBuilderFactory {
             return (BrowseEndpointBuilder) this;
         }
 
+        /**
+         * To use a predicate to filter whether to include the message for
+         * browsing. Return true to include, false to exclude.
+         * 
+         * The option is a:
+         * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointBuilder filter(Predicate<org.apache.camel.Exchange> filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
+         * To use a predicate to filter whether to include the message for
+         * browsing. Return true to include, false to exclude.
+         * 
+         * The option will be converted to a
+         * <code>java.util.function.Predicate&lt;org.apache.camel.Exchange&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointBuilder filter(String filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
     }
 
     public interface BrowseBuilders {

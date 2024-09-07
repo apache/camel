@@ -18,6 +18,8 @@ package org.apache.camel.component.browse;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -28,6 +30,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
@@ -46,6 +49,11 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")
     @Metadata(required = true)
     private String name;
+    @UriParam(description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+    private int limit;
+    @UriParam(label = "advanced",
+              description = "To use a predicate to filter whether to include the message for browsing. Return true to include, false to exclude.")
+    private Predicate<Exchange> filter;
 
     private List<Exchange> exchanges;
     private volatile Processor onExchangeProcessor;
@@ -74,7 +82,13 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     public Producer createProducer() throws Exception {
         return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
-                onExchange(exchange);
+                boolean accept = true;
+                if (filter != null) {
+                    accept = filter.test(exchange);
+                }
+                if (accept) {
+                    onExchange(exchange);
+                }
             }
         };
     }
@@ -96,6 +110,22 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         this.name = name;
     }
 
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public Predicate<Exchange> getFilter() {
+        return filter;
+    }
+
+    public void setFilter(Predicate<Exchange> filter) {
+        this.filter = filter;
+    }
+
     protected List<Exchange> createExchangeList() {
         return new CopyOnWriteArrayList<>();
     }
@@ -107,7 +137,13 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
      * @throws Exception is thrown if failed to process the exchange
      */
     protected void onExchange(Exchange exchange) throws Exception {
-        getExchanges().add(exchange);
+        if (limit > 0) {
+            // make room if end of capacity
+            while (exchanges.size() >= (limit - 1)) {
+                exchanges.remove(0);
+            }
+        }
+        exchanges.add(exchange);
 
         // now fire the consumer
         if (onExchangeProcessor != null) {

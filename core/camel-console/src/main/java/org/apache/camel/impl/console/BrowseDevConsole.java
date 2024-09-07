@@ -85,15 +85,10 @@ public class BrowseDevConsole extends AbstractDevConsole {
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
-                List<Exchange> list = be.getExchanges();
-                long size = list != null ? list.size() : 0;
-                if (list != null && list.size() > max) {
-                    size = list.size();
-                    list = list.subList(0, max);
-                }
+                List<Exchange> list = be.getExchanges(max, null);
                 if (list != null) {
                     sb.append("\n");
-                    sb.append(String.format("Browse: %s (size: %d)%n", endpoint.getEndpointUri(), size));
+                    sb.append(String.format("Browse: %s (size: %d)%n", endpoint.getEndpointUri(), max));
                     if (dump) {
                         for (Exchange e : list) {
                             String json = MessageHelper.dumpAsJSon(e.getMessage(), false, false, true, 2, true, true, true,
@@ -125,16 +120,11 @@ public class BrowseDevConsole extends AbstractDevConsole {
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
-                List<Exchange> list = be.getExchanges();
-                long size = list != null ? list.size() : 0;
-                if (list != null && list.size() > max) {
-                    size = list.size();
-                    list = list.subList(0, max);
-                }
+                List<Exchange> list = be.getExchanges(max, null);
                 if (list != null) {
                     JsonObject jo = new JsonObject();
                     jo.put("endpointUri", endpoint.getEndpointUri());
-                    jo.put("size", size);
+                    jo.put("size", max);
                     arr.add(jo);
                     if (dump) {
                         JsonArray arr2 = new JsonArray();

@@ -29,8 +29,10 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "filter": target.setFilter(property(camelContext, java.util.function.Predicate.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "limit": target.setLimit(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -44,8 +46,10 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filter": return java.util.function.Predicate.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "limit": return int.class;
         default: return null;
         }
     }
@@ -60,8 +64,18 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "filter": return target.getFilter();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "limit": return target.getLimit();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "filter": return org.apache.camel.Exchange.class;
         default: return null;
         }
     }

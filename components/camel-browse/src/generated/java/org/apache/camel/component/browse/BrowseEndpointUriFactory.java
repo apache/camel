@@ -23,11 +23,13 @@ public class BrowseEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(7);
         props.add("bridgeErrorHandler");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("filter");
         props.add("lazyStartProducer");
+        props.add("limit");
         props.add("name");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
