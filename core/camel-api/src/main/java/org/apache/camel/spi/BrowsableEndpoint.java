@@ -30,6 +30,16 @@ import org.apache.camel.Exchange;
 public interface BrowsableEndpoint extends Endpoint {
 
     /**
+     * Maximum number of messages to browse by default.
+     */
+    long getBrowseLimit();
+
+    /**
+     * Maximum number of messages to browse by default.
+     */
+    void setBrowseLimit(long browseLimit);
+
+    /**
      * Return the exchanges available on this endpoint
      *
      * @return the exchanges on this endpoint
@@ -39,11 +49,11 @@ public interface BrowsableEndpoint extends Endpoint {
     /**
      * Return the exchanges available on this endpoint, allowing to filter the result in the specific component.
      *
-     * @param  limit  to limit the result o a specific maximum. Use 0 for no limit.
+     * @param  limit  to limit the result to a maximum. Use 0 for default limit.
      * @param  filter filter to filter among the messages to include.
      * @return        the exchanges on this endpoint
      */
-    default List<Exchange> getExchanges(int limit, Predicate filter) {
+    default List<Exchange> getExchanges(long limit, Predicate filter) {
         List<Exchange> answer = getExchanges();
         if (filter != null) {
             answer = (List<Exchange>) answer.stream().filter(filter).collect(Collectors.toList());

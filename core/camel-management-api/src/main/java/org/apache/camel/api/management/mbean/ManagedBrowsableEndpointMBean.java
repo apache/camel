@@ -16,9 +16,13 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedBrowsableEndpointMBean extends ManagedEndpointMBean {
+
+    @ManagedAttribute(description = "Maximum number of messages to browse by default.")
+    long getBrowseLimit();
 
     @ManagedOperation(description = "Current number of Exchanges in Queue")
     long queueSize();
