@@ -544,7 +544,7 @@ public class JmsConfiguration implements Cloneable {
                                                                      + "This option requires JMS 2.0 compliant broker.")
     private long deliveryDelay = -1;
     @UriParam(label = "advanced", defaultValue = "100",
-            description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
     private int browseLimit = 100;
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")

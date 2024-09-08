@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.BrowsableEndpoint;
-import org.apache.camel.spi.UriParam;
 import org.springframework.jms.core.JmsOperations;
 
 /**
