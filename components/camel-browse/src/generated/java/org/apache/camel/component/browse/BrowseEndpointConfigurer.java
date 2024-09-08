@@ -25,6 +25,8 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "browselimit":
+        case "browseLimit": target.setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -32,7 +34,6 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filter": target.setFilter(property(camelContext, java.util.function.Predicate.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "limit": target.setLimit(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -42,6 +43,8 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -49,7 +52,6 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filter": return java.util.function.Predicate.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "limit": return int.class;
         default: return null;
         }
     }
@@ -60,6 +62,8 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "browselimit":
+        case "browseLimit": return target.getBrowseLimit();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -67,7 +71,6 @@ public class BrowseEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "filter": return target.getFilter();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "limit": return target.getLimit();
         default: return null;
         }
     }

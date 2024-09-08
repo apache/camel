@@ -380,6 +380,38 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointConsumerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointConsumerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
@@ -768,6 +800,38 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a:
@@ -857,6 +921,38 @@ public interface StubEndpointBuilderFactory {
             return (StubEndpointBuilder) this;
         }
 
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
         /**
          * Define the queue instance which will be used by the endpoint.
          * 

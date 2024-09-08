@@ -43,12 +43,12 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
     }
 
     @Override
-    public long getBrowseLimit() {
+    public int getBrowseLimit() {
         return getEndpoint().getBrowseLimit();
     }
 
     @Override
-    public long queueSize() {
+    public int queueSize() {
         return getEndpoint().getExchanges().size();
     }
 

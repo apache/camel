@@ -32,12 +32,12 @@ public interface BrowsableEndpoint extends Endpoint {
     /**
      * Maximum number of messages to browse by default.
      */
-    long getBrowseLimit();
+    int getBrowseLimit();
 
     /**
      * Maximum number of messages to browse by default.
      */
-    void setBrowseLimit(long browseLimit);
+    void setBrowseLimit(int browseLimit);
 
     /**
      * Return the exchanges available on this endpoint

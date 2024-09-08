@@ -22,10 +22,10 @@ import org.apache.camel.api.management.ManagedOperation;
 public interface ManagedBrowsableEndpointMBean extends ManagedEndpointMBean {
 
     @ManagedAttribute(description = "Maximum number of messages to browse by default.")
-    long getBrowseLimit();
+    int getBrowseLimit();
 
     @ManagedOperation(description = "Current number of Exchanges in Queue")
-    long queueSize();
+    int queueSize();
 
     @ManagedOperation(description = "Get Exchange from queue by index")
     String browseExchange(Integer index);

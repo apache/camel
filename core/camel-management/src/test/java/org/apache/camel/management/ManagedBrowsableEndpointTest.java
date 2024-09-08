@@ -47,8 +47,8 @@ public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
 
-        Long size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
-        assertEquals(2, size.longValue());
+        Integer size = (Integer) mbeanServer.invoke(name, "queueSize", null, null);
+        assertEquals(2, size.intValue());
 
         String out
                 = (String) mbeanServer.invoke(name, "browseExchange", new Object[] { 0 }, new String[] { "java.lang.Integer" });

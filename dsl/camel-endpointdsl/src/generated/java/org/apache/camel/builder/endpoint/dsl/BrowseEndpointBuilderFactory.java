@@ -43,36 +43,6 @@ public interface BrowseEndpointBuilderFactory {
         default AdvancedBrowseEndpointConsumerBuilder advanced() {
             return (AdvancedBrowseEndpointConsumerBuilder) this;
         }
-        /**
-         * Maximum number of messages to keep in memory available for browsing.
-         * Use 0 for unlimited.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param limit the value to set
-         * @return the dsl builder
-         */
-        default BrowseEndpointConsumerBuilder limit(int limit) {
-            doSetProperty("limit", limit);
-            return this;
-        }
-        /**
-         * Maximum number of messages to keep in memory available for browsing.
-         * Use 0 for unlimited.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param limit the value to set
-         * @return the dsl builder
-         */
-        default BrowseEndpointConsumerBuilder limit(String limit) {
-            doSetProperty("limit", limit);
-            return this;
-        }
     }
 
     /**
@@ -202,6 +172,38 @@ public interface BrowseEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointConsumerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointConsumerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * To use a predicate to filter whether to include the message for
          * browsing. Return true to include, false to exclude.
          * 
@@ -245,36 +247,6 @@ public interface BrowseEndpointBuilderFactory {
             return (AdvancedBrowseEndpointProducerBuilder) this;
         }
 
-        /**
-         * Maximum number of messages to keep in memory available for browsing.
-         * Use 0 for unlimited.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param limit the value to set
-         * @return the dsl builder
-         */
-        default BrowseEndpointProducerBuilder limit(int limit) {
-            doSetProperty("limit", limit);
-            return this;
-        }
-        /**
-         * Maximum number of messages to keep in memory available for browsing.
-         * Use 0 for unlimited.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param limit the value to set
-         * @return the dsl builder
-         */
-        default BrowseEndpointProducerBuilder limit(String limit) {
-            doSetProperty("limit", limit);
-            return this;
-        }
     }
 
     /**
@@ -332,6 +304,38 @@ public interface BrowseEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointProducerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointProducerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * To use a predicate to filter whether to include the message for
          * browsing. Return true to include, false to exclude.
          * 
@@ -376,36 +380,6 @@ public interface BrowseEndpointBuilderFactory {
             return (AdvancedBrowseEndpointBuilder) this;
         }
 
-        /**
-         * Maximum number of messages to keep in memory available for browsing.
-         * Use 0 for unlimited.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param limit the value to set
-         * @return the dsl builder
-         */
-        default BrowseEndpointBuilder limit(int limit) {
-            doSetProperty("limit", limit);
-            return this;
-        }
-        /**
-         * Maximum number of messages to keep in memory available for browsing.
-         * Use 0 for unlimited.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         * 
-         * @param limit the value to set
-         * @return the dsl builder
-         */
-        default BrowseEndpointBuilder limit(String limit) {
-            doSetProperty("limit", limit);
-            return this;
-        }
     }
 
     /**
@@ -419,6 +393,38 @@ public interface BrowseEndpointBuilderFactory {
             return (BrowseEndpointBuilder) this;
         }
 
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBrowseEndpointBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
         /**
          * To use a predicate to filter whether to include the message for
          * browsing. Return true to include, false to exclude.

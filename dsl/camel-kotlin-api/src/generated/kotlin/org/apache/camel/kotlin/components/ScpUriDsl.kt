@@ -80,6 +80,15 @@ public class ScpUriDsl(
   }
 
   /**
+   * If provided, then Camel will write a checksum file when the original file has been written. The
+   * checksum file will contain the checksum created with the provided algorithm for the original file.
+   * The checksum file will always be written in the same folder as the original file.
+   */
+  public fun checksumFileAlgorithm(checksumFileAlgorithm: String) {
+    it.property("checksumFileAlgorithm", checksumFileAlgorithm)
+  }
+
+  /**
    * Allows you to set chmod on the stored file. For example chmod=664.
    */
   public fun chmod(chmod: String) {
@@ -102,15 +111,6 @@ public class ScpUriDsl(
    */
   public fun disconnect(disconnect: Boolean) {
     it.property("disconnect", disconnect.toString())
-  }
-
-  /**
-   * If provided, then Camel will write a checksum file when the original file has been written. The
-   * checksum file will contain the checksum created with the provided algorithm for the original file.
-   * The checksum file will always be written in the same folder as the original file.
-   */
-  public fun checksumFileAlgorithm(checksumFileAlgorithm: String) {
-    it.property("checksumFileAlgorithm", checksumFileAlgorithm)
   }
 
   /**
@@ -248,6 +248,20 @@ public class ScpUriDsl(
    */
   public fun moveExistingFileStrategy(moveExistingFileStrategy: String) {
     it.property("moveExistingFileStrategy", moveExistingFileStrategy)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: String) {
+    it.property("browseLimit", browseLimit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: Int) {
+    it.property("browseLimit", browseLimit.toString())
   }
 
   /**

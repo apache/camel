@@ -48,8 +48,9 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")
     @Metadata(required = true)
     private String name;
-    @UriParam(description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
-    private int limit;
+    @UriParam(label = "advanced", defaultValue = "100",
+              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+    private int browseLimit = 100;
     @UriParam(label = "advanced",
               description = "To use a predicate to filter whether to include the message for browsing. Return true to include, false to exclude.")
     private Predicate<Exchange> filter;
@@ -67,6 +68,16 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     @Override
     public boolean isRemote() {
         return false;
+    }
+
+    @Override
+    public int getBrowseLimit() {
+        return browseLimit;
+    }
+
+    @Override
+    public void setBrowseLimit(int browseLimit) {
+        this.browseLimit = browseLimit;
     }
 
     @Override
@@ -109,14 +120,6 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         this.name = name;
     }
 
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
     public Predicate<Exchange> getFilter() {
         return filter;
     }
@@ -136,11 +139,11 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
      * @throws Exception is thrown if failed to process the exchange
      */
     protected void onExchange(Exchange exchange) throws Exception {
-        if (limit > 0) {
+        if (browseLimit > 0) {
             // make room if end of capacity
             int max = exchanges.size();
-            if (max >= limit) {
-                int space = Math.abs(max - (limit - 1));
+            if (max >= browseLimit) {
+                int space = Math.abs(max - (browseLimit - 1));
                 exchanges = exchanges.subList(space, max);
             }
         }

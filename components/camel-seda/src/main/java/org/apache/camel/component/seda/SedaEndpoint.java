@@ -73,6 +73,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private BlockingQueue<Exchange> queue;
     @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE)
     private int size = SedaConstants.QUEUE_SIZE;
+    @UriParam(label = "advanced", defaultValue = "100",
+              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+    private int browseLimit = 100;
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
@@ -314,6 +317,17 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @ManagedAttribute(description = "Current queue size")
     public int getCurrentQueueSize() {
         return queue.size();
+    }
+
+    @Override
+    @ManagedAttribute(description = "Maximum number of messages to browse by default")
+    public int getBrowseLimit() {
+        return browseLimit;
+    }
+
+    @Override
+    public void setBrowseLimit(int browseLimit) {
+        this.browseLimit = browseLimit;
     }
 
     /**

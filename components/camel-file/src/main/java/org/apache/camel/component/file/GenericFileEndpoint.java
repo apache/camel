@@ -98,6 +98,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                             + "file.<p/> Only ${file.name} and ${file.name.next} is supported as dynamic placeholders.")
     protected String doneFileName;
 
+    @UriParam(label = "advanced", defaultValue = "100",
+            description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+    private int browseLimit = 100;
+
     // producer options
 
     @UriParam(label = "producer", description = "Flatten is used to flatten the file name path to strip any leading "
@@ -487,22 +491,35 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * This implementation will <b>not</b> load the file content. Any file locking is neither in use by this
-     * implementation..
+     * implementation.
      */
     @Override
     public List<Exchange> getExchanges() {
+        return getExchanges(browseLimit, null);
+    }
+
+    @Override
+    public List<Exchange> getExchanges(long limit, java.util.function.Predicate filter) {
         final List<Exchange> answer = new ArrayList<>();
 
         GenericFileConsumer<?> consumer = null;
         try {
-            // create a new consumer which can poll the exchanges we want to
-            // browse
+            // create a new consumer which can poll the exchanges we want to browse
             // do not provide a processor as we do some custom processing
             consumer = createConsumer(null);
+            if (filter == null) {
+                consumer.setMaxMessagesPerPoll(browseLimit);
+            }
             consumer.setCustomProcessor(new Processor() {
                 @Override
                 public void process(Exchange exchange) throws Exception {
-                    answer.add(exchange);
+                    boolean include = true;
+                    if (filter != null) {
+                        include = filter.test(exchange);
+                    }
+                    if (include && answer.size() < browseLimit) {
+                        answer.add(exchange);
+                    }
                 }
             });
             // do not start scheduler, as we invoke the poll manually
@@ -521,7 +538,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                 LOG.debug("Error stopping consumer used for browsing exchanges. This exception will be ignored", e);
             }
         }
-
         return answer;
     }
 
@@ -867,6 +883,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setDoneFileName(String doneFileName) {
         this.doneFileName = doneFileName;
+    }
+
+    @Override
+    public int getBrowseLimit() {
+        return browseLimit;
+    }
+
+    @Override
+    public void setBrowseLimit(int browseLimit) {
+        this.browseLimit = browseLimit;
     }
 
     public Boolean isIdempotent() {

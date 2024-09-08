@@ -23,8 +23,9 @@ public class MockEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(13);
+        Set<String> props = new HashSet<>(14);
         props.add("assertPeriod");
+        props.add("browseLimit");
         props.add("copyOnExchange");
         props.add("expectedCount");
         props.add("failFast");

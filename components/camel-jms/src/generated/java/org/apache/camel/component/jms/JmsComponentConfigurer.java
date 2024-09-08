@@ -62,6 +62,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": getOrCreateConfiguration(target).setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "browselimit":
+        case "browseLimit": getOrCreateConfiguration(target).setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "cachelevel":
         case "cacheLevel": getOrCreateConfiguration(target).setCacheLevel(property(camelContext, int.class, value)); return true;
         case "cachelevelname":
@@ -270,6 +272,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "cachelevel":
         case "cacheLevel": return int.class;
         case "cachelevelname":
@@ -479,6 +483,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": return getOrCreateConfiguration(target).isAutoStartup();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "browselimit":
+        case "browseLimit": return getOrCreateConfiguration(target).getBrowseLimit();
         case "cachelevel":
         case "cacheLevel": return getOrCreateConfiguration(target).getCacheLevel();
         case "cachelevelname":

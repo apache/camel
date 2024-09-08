@@ -52,20 +52,6 @@ public class BrowseUriDsl(
   }
 
   /**
-   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
-   */
-  public fun limit(limit: String) {
-    it.property("limit", limit)
-  }
-
-  /**
-   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
-   */
-  public fun limit(limit: Int) {
-    it.property("limit", limit.toString())
-  }
-
-  /**
    * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions
    * (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the
    * likes, will now be processed as a message and handled by the routing Error Handler. Important:
@@ -133,6 +119,20 @@ public class BrowseUriDsl(
    */
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: String) {
+    it.property("browseLimit", browseLimit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: Int) {
+    it.property("browseLimit", browseLimit.toString())
   }
 
   /**

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.springframework.jms.core.JmsOperations;
 
 /**
@@ -30,7 +31,7 @@ import org.springframework.jms.core.JmsOperations;
  */
 @ManagedResource(description = "Managed JMS Queue Endpoint")
 public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoint, BrowsableEndpoint {
-    private int maximumBrowseSize = -1;
+    private int maximumBrowseSize = 100;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
@@ -77,6 +78,16 @@ public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoin
     @ManagedAttribute
     public void setMaximumBrowseSize(int maximumBrowseSize) {
         this.maximumBrowseSize = maximumBrowseSize;
+    }
+
+    @Override
+    public int getBrowseLimit() {
+        return maximumBrowseSize;
+    }
+
+    @Override
+    public void setBrowseLimit(int browseLimit) {
+        this.maximumBrowseSize = browseLimit;
     }
 
     @Override
