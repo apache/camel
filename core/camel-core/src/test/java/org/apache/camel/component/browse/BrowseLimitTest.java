@@ -36,20 +36,20 @@ public class BrowseLimitTest extends ContextTestSupport {
 
     @Test
     public void testLimit() throws Exception {
-        template.sendBody("browse:foo?limit=1", body1);
-        template.sendBody("browse:foo?limit=1", body2);
-        template.sendBody("browse:foo?limit=1", body3);
-        template.sendBody("browse:foo?limit=1", body4);
-        template.sendBody("browse:foo?limit=1", body5);
+        template.sendBody("browse:foo?browseLimit=1", body1);
+        template.sendBody("browse:foo?browseLimit=1", body2);
+        template.sendBody("browse:foo?browseLimit=1", body3);
+        template.sendBody("browse:foo?browseLimit=1", body4);
+        template.sendBody("browse:foo?browseLimit=1", body5);
 
         Collection<Endpoint> list = context.getEndpoints();
         assertEquals(2, list.size(), "number of endpoints");
 
-        BrowsableEndpoint be1 = context.getEndpoint("browse:foo?limit=1", BrowsableEndpoint.class);
+        BrowsableEndpoint be1 = context.getEndpoint("browse:foo?browseLimit=1", BrowsableEndpoint.class);
         assertEquals(1, be1.getExchanges().size());
         assertEquals("five", be1.getExchanges().get(0).getMessage().getBody());
 
-        BrowsableEndpoint be2 = context.getEndpoint("browse:bar?limit=5", BrowsableEndpoint.class);
+        BrowsableEndpoint be2 = context.getEndpoint("browse:bar?browseLimit=5", BrowsableEndpoint.class);
         assertEquals(5, be2.getExchanges().size());
     }
 
@@ -57,7 +57,7 @@ public class BrowseLimitTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("browse:foo?limit=1").to("browse:bar?limit=5");
+                from("browse:foo?browseLimit=1").to("browse:bar?browseLimit=5");
             }
         };
     }
