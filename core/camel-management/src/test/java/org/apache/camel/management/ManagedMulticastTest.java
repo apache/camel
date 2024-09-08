@@ -46,11 +46,11 @@ public class ManagedMulticastTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://a");
-        Long queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
+        Integer queueSize = (Integer) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(3, queueSize.intValue());
 
         name = getCamelObjectName(TYPE_ENDPOINT, "mock://b");
-        queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
+        queueSize = (Integer) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(3, queueSize.intValue());
 
         name = getCamelObjectName(TYPE_PROCESSOR, "myMulticast");
