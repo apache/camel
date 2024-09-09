@@ -126,11 +126,11 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         String returnValue = null;
         String defaultValue = null;
         String version = null;
-        if (remainder.contains("/")) {
-            String keyRemainder = StringHelper.before(remainder, "/");
+        if (remainder.contains("#")) {
+            String keyRemainder = StringHelper.before(remainder, "#");
             engine = StringHelper.before(keyRemainder, ":");
             key = StringHelper.after(keyRemainder, ":");
-            subkey = StringHelper.after(remainder, "/");
+            subkey = StringHelper.after(remainder, "#");
             defaultValue = StringHelper.after(subkey, ":");
             if (ObjectHelper.isNotEmpty(defaultValue)) {
                 if (defaultValue.contains("@")) {
