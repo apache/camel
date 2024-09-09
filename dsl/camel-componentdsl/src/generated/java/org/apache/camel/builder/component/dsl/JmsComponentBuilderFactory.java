@@ -1325,6 +1325,24 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default JmsComponentBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+    
         /**
          * To use a shared JMS configuration.
          * 
@@ -2219,6 +2237,7 @@ public interface JmsComponentBuilderFactory {
             case "asyncStartListener": getOrCreateConfiguration((JmsComponent) component).setAsyncStartListener((boolean) value); return true;
             case "asyncStopListener": getOrCreateConfiguration((JmsComponent) component).setAsyncStopListener((boolean) value); return true;
             case "autowiredEnabled": ((JmsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "browseLimit": getOrCreateConfiguration((JmsComponent) component).setBrowseLimit((int) value); return true;
             case "configuration": ((JmsComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
             case "destinationResolver": getOrCreateConfiguration((JmsComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
             case "errorHandler": getOrCreateConfiguration((JmsComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;

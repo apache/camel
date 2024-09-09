@@ -177,7 +177,8 @@ public class MessageTableHelper {
             if (!rows.isEmpty()) {
                 tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
+                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT)
                                 .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                         new Column().dataAlign(HorizontalAlign.RIGHT)
@@ -192,7 +193,8 @@ public class MessageTableHelper {
                 TableRow msgRow = new TableRow("Message", root.getString("messageType"), null, null);
                 tab3 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(msgRow), Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
+                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
             }
             arr = root.getCollection("headers");
@@ -206,7 +208,8 @@ public class MessageTableHelper {
                 // headers
                 tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
+                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT)
                                 .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                         new Column().dataAlign(HorizontalAlign.RIGHT)
