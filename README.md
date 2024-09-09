@@ -11,7 +11,7 @@
 
 ### Introduction
 
-Camel empowers you to define routing and mediation rules in a variety of domain-specific languages (DSL, such as Java, XML, Groovy, Kotlin, and YAML). This means you get smart completion of routing rules in your IDE, whether in a Java or XML editor.
+Camel empowers you to define routing and mediation rules in a variety of domain-specific languages (DSL, such as Java, XML, Groovy and YAML). This means you get smart completion of routing rules in your IDE, whether in a Java or XML editor.
 
 Apache Camel uses URIs to enable easier integration with all kinds of
 transport or messaging model including HTTP, ActiveMQ, JMS, JBI, SCA, MINA

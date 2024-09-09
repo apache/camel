@@ -107,7 +107,6 @@ public class RunCommandITCase extends JBangTestSupport {
         execute("stop simple");
         execute("init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/languages/rou*");
         executeBackground("run *");
-        checkLogContains("Hello Camel K from kotlin");
         checkLogContains("HELLO YAML !!!");
     }
 

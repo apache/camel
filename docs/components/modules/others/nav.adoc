@@ -18,8 +18,6 @@
 *** xref:jsh-dsl.adoc[JavaShell DSL]
 *** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
 *** xref:kamelet-main.adoc[Kamelet Main]
-*** xref:kotlin-api.adoc[Kotlin API]
-*** xref:kotlin-dsl.adoc[Kotlin DSL]
 *** xref:java-xml-io-dsl.adoc[XML Io Dsl]
 *** xref:yaml-dsl.adoc[YAML DSL]
 ** xref:elytron.adoc[Elytron]

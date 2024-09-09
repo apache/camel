@@ -160,7 +160,6 @@ const sources = {
   // +** xref:groovy-dsl.adoc[Groovy Dsl]
   // +** xref:js-dsl.adoc[JavaScript Dsl]
   // +** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
-  // +** xref:kotlin-dsl.adoc[Kotlin Dsl]
   // +** xref:java-xml-io-dsl.adoc[XML Dsl]
   //These seem to have no content, just a non-xref link to the user manual,
   // where the dsls are not actually explained.  Should the sources be removed?

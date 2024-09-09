@@ -36,7 +36,6 @@ public final class GitHubHelper {
     public static String asGithubSingleUrl(String url) {
         // strip https://github.com/
         url = url.substring(19);
-        // https://github.com/apache/camel-k-examples/blob/main/generic-examples/languages/routes.kts
         // https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/hello-java/Hey.java
         // https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-java/Hey.java
         url = url.replaceFirst("/", ":");
@@ -129,8 +128,8 @@ public final class GitHubHelper {
                     } else if (routes != null) {
                         if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
                                 || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)
-                                || "groovy".equalsIgnoreCase(ext) || "js".equalsIgnoreCase(ext) || "jsh".equalsIgnoreCase(ext)
-                                || "kts".equalsIgnoreCase(ext)) {
+                                || "groovy".equalsIgnoreCase(ext) || "js".equalsIgnoreCase(ext)
+                                || "jsh".equalsIgnoreCase(ext)) {
                             String htmlUrl = c.get("html_url").asText();
                             String u = asGithubSingleUrl(htmlUrl);
                             routes.add(u);
