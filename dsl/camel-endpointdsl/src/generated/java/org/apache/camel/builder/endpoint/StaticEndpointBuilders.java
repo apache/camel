@@ -103,7 +103,7 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
-    public static ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq6(String path) {
+    public static ActiveMQ6EndpointBuilderFactory.ActiveMQ6EndpointBuilder activemq6(String path) {
         return activemq6("activemq6", path);
     }
     /**
@@ -131,8 +131,8 @@ public class StaticEndpointBuilders {
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
-    public static ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq6(String componentName, String path) {
-        return ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static ActiveMQ6EndpointBuilderFactory.ActiveMQ6EndpointBuilder activemq6(String componentName, String path) {
+        return ActiveMQ6EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AMQP (camel-amqp)
