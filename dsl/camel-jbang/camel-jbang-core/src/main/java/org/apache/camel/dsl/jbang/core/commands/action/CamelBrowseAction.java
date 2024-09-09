@@ -79,10 +79,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Sort by uri, or size", defaultValue = "uri")
     String sort;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in browsed messages")
-    boolean showExchangeProperties;
-
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in browsed messages")
     boolean showHeaders = true;
@@ -126,6 +122,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         root.put("filter", endpoint == null ? "*" : endpoint);
         root.put("limit", limit);
         root.put("dump", dump);
+        root.put("includeBody", showBody);
 
         File f = getActionFile(Long.toString(pid));
         try {
@@ -185,7 +182,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         MessageTableHelper tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
         tableHelper.setLoggingColor(loggingColor);
-        tableHelper.setShowExchangeProperties(showExchangeProperties);
+        tableHelper.setShowExchangeProperties(false);
 
         for (Row row : rows) {
             if (row.messages != null) {
@@ -194,9 +191,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
 
                     String exchangeId = jo.getString("exchangeId");
                     JsonObject message = jo.getMap("message");
-                    if (!showExchangeProperties && message != null) {
-                        message.remove("exchangeProperties");
-                    }
                     if (!showHeaders && message != null) {
                         message.remove("headers");
                     }

@@ -780,8 +780,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             String filter = root.getString("filter");
             String limit = root.getString("limit");
             String dump = root.getString("dump");
+            String includeBody = root.getString("includeBody");
             JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "limit", limit, "dump", dump));
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                            Map.of("filter", filter, "limit", limit, "dump", dump, "includeBody", includeBody));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
