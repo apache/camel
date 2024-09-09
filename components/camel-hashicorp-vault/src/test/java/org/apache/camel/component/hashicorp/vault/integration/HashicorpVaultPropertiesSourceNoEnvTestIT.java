@@ -511,6 +511,27 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
     }
 
     @Test
+    public void testPropertiesWithVersionFieldAndDefaultValueWithSlashInName() throws Exception {
+        context.getVaultConfiguration().hashicorp().setToken(System.getProperty("camel.vault.hashicorp.token"));
+        context.getVaultConfiguration().hashicorp().setHost(System.getProperty("camel.vault.hashicorp.host"));
+        context.getVaultConfiguration().hashicorp().setPort(System.getProperty("camel.vault.hashicorp.port"));
+        context.getVaultConfiguration().hashicorp().setScheme(System.getProperty("camel.vault.hashicorp.scheme"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{hashicorp:secret:production/secrets/hello#id:pippo@1}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("21");
+
+        template.sendBody("direct:version", "Hello World");
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
     public void testPropertiesWithDoubleEngines() throws Exception {
         context.getVaultConfiguration().hashicorp().setToken(System.getProperty("camel.vault.hashicorp.token"));
         context.getVaultConfiguration().hashicorp().setHost(System.getProperty("camel.vault.hashicorp.host"));
