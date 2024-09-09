@@ -214,6 +214,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddIngressSpec(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
                 "--trait-profile", "kubernetes",
+                "--trait", "ingress.enabled=true",
                 "--trait", "ingress.host=example.com",
                 "--trait", "ingress.path=/something(/|$)(.*)",
                 "--trait", "ingress.pathType=ImplementationSpecific",
@@ -258,6 +259,7 @@ class KubernetesExportTest extends KubernetesBaseTest {
         String key = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.key"));
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
                 "--trait-profile", "openshift",
+                "--trait", "route.enabled=true",
                 "--trait", "route.host=example.com",
                 "--trait", "route.tls-termination=edge",
                 "--trait", "route.tls-certificate=" + certificate,

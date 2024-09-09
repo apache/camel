@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "main-configuration",
+    "title": "Main Configuration",
+    "description": "Display Camel startup configuration",
+    "deprecated": false,
+    "javaType": "org.apache.camel.main.MainConfigurationDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-main",
+    "version": "4.8.0-SNAPSHOT"
+  }
+}
+

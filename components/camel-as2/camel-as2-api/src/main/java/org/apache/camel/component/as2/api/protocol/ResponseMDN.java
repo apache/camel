@@ -24,6 +24,8 @@ import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Constants;
@@ -90,6 +92,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private final String mdnMessageTemplate;
     private final Certificate[] validateSigningCertificateChain;
 
+    private final Lock lock = new ReentrantLock();
     private VelocityEngine velocityEngine;
 
     public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
@@ -320,21 +323,26 @@ public class ResponseMDN implements HttpResponseInterceptor {
         }
     }
 
-    private synchronized VelocityEngine getVelocityEngine() {
-        if (velocityEngine == null) {
-            velocityEngine = new VelocityEngine();
+    private VelocityEngine getVelocityEngine() {
+        lock.lock();
+        try {
+            if (velocityEngine == null) {
+                velocityEngine = new VelocityEngine();
 
-            // set default properties
-            Properties properties = new Properties();
-            properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
-            properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
-            properties.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
-            final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
-            properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
+                // set default properties
+                Properties properties = new Properties();
+                properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
+                properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
+                properties.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
+                final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
+                properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
 
-            velocityEngine.init(properties);
+                velocityEngine.init(properties);
+            }
+            return velocityEngine;
+        } finally {
+            lock.unlock();
         }
-        return velocityEngine;
     }
 
 }

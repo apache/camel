@@ -53,6 +53,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "metricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "sendenabled":
+        case "sendEnabled": target.setSendEnabled(property(camelContext, boolean.class, value)); return true;
         case "staticcontextpath":
         case "staticContextPath": target.setStaticContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "staticenabled":
@@ -100,6 +102,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "metricsEnabled": return boolean.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
+        case "sendenabled":
+        case "sendEnabled": return boolean.class;
         case "staticcontextpath":
         case "staticContextPath": return java.lang.String.class;
         case "staticenabled":
@@ -148,6 +152,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "metricsEnabled": return target.isMetricsEnabled();
         case "path": return target.getPath();
         case "port": return target.getPort();
+        case "sendenabled":
+        case "sendEnabled": return target.isSendEnabled();
         case "staticcontextpath":
         case "staticContextPath": return target.getStaticContextPath();
         case "staticenabled":

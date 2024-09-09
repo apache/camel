@@ -147,6 +147,18 @@ public abstract class JBangTestSupport {
                 .isReadable();
     }
 
+    protected void checkCommandOutputs(String command, String contains) {
+        Assertions.assertThat(execute(command))
+                .as("command camel" + command + "should output" + contains)
+                .contains(contains);
+    }
+
+    protected void checkCommandDoesNotOutput(String command, String contains) {
+        Assertions.assertThat(execute(command))
+                .as("command camel" + command + "should not output" + contains)
+                .doesNotContain(contains);
+    }
+
     protected void assertFileInDataFolderDoesNotExist(String file) {
         final Path toVerify = Path.of(containerDataFolder, file);
         Assertions.assertThat(toVerify)
@@ -183,6 +195,26 @@ public abstract class JBangTestSupport {
                 .untilAsserted(() -> Assertions.assertThat(getLogs(route))
                         .as("log contains " + contains)
                         .contains(contains)));
+    }
+
+    protected void checkLogDoesNotContain(String route, String contains, int waitForSeconds) {
+        Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
+                .atMost(waitForSeconds, TimeUnit.SECONDS)
+                .untilAsserted(() -> Assertions.assertThat(getLogs(route))
+                        .as("log does not contain " + contains)
+                        .doesNotContain(contains)));
+    }
+
+    protected void checkLogDoesNotContain(String contains, int waitForSeconds) {
+        checkLogDoesNotContain(null, contains, waitForSeconds);
+    }
+
+    protected void checkLogDoesNotContain(String route, String contains) {
+        checkLogDoesNotContain(route, contains, ASSERTION_WAIT_SECONDS);
+    }
+
+    protected void checkLogDoesNotContain(String contains) {
+        checkLogDoesNotContain(contains, ASSERTION_WAIT_SECONDS);
     }
 
     protected void checkLogContainsPattern(String contains) {
@@ -256,6 +288,10 @@ public abstract class JBangTestSupport {
                     .atMost(Duration.ofMinutes(2))
                     .pollInterval(Duration.ofSeconds(1))
                     .until(() -> !process.isAlive());
+            if (process.exitValue() != 0) {
+                logger.error(String.valueOf(process.getErrorStream()));
+                logger.info(String.valueOf(process.getOutputStream()));
+            }
             return new String(process.getInputStream().readAllBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -451,4 +451,7 @@ public abstract class BaseService {
         return Holder.LOG;
     }
 
+    protected Lock getInternalLock() {
+        return lock;
+    }
 }

@@ -58,25 +58,35 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         return endpoint;
     }
 
-    public synchronized IRCConnection getIRCConnection(IrcConfiguration configuration) {
-        final IRCConnection connection;
-        if (connectionCache.containsKey(configuration.getCacheKey())) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
+    public IRCConnection getIRCConnection(IrcConfiguration configuration) {
+        lock.lock();
+        try {
+            final IRCConnection connection;
+            if (connectionCache.containsKey(configuration.getCacheKey())) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
+                }
+                connection = connectionCache.get(configuration.getCacheKey());
+            } else {
+                connection = createConnection(configuration);
+                connectionCache.put(configuration.getCacheKey(), connection);
             }
-            connection = connectionCache.get(configuration.getCacheKey());
-        } else {
-            connection = createConnection(configuration);
-            connectionCache.put(configuration.getCacheKey(), connection);
+            return connection;
+        } finally {
+            lock.unlock();
         }
-        return connection;
     }
 
-    public synchronized void closeIRCConnection(IrcConfiguration configuration) {
-        IRCConnection connection = connectionCache.get(configuration.getCacheKey());
-        if (connection != null) {
-            closeConnection(connection);
-            connectionCache.remove(configuration.getCacheKey());
+    public void closeIRCConnection(IrcConfiguration configuration) {
+        lock.lock();
+        try {
+            IRCConnection connection = connectionCache.get(configuration.getCacheKey());
+            if (connection != null) {
+                closeConnection(connection);
+                connectionCache.remove(configuration.getCacheKey());
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

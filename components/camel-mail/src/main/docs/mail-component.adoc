@@ -468,7 +468,7 @@ The code is provided out of the box in Camel 2.10 onwards in the
 `camel-mail` component. The code is in the class:
 `org.apache.camel.component.mail.SplitAttachmentsExpression`, which you
 can find the source code
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-mail/src/main/java/org/apache/camel/component/mail/SplitAttachmentsExpression.java[here]
+https://github.com/apache/camel/blob/main/components/camel-mail/src/main/java/org/apache/camel/component/mail/SplitAttachmentsExpression.java[here]
 
 In the Camel route, you then need to use this
 Expression in the route as shown below:

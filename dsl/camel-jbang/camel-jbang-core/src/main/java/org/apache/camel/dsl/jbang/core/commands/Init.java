@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Stack;
@@ -178,8 +179,33 @@ public class Init extends CamelCommand {
             }
             content = sb.toString();
         }
+        if ("java".equals(ext)) {
+            String packageDeclaration = computeJavaPackageDeclaration(target);
+            content = content.replaceFirst("\\{\\{ \\.PackageDeclaration }}", packageDeclaration);
+        }
         IOHelper.writeText(content, new FileOutputStream(target, false));
         return 0;
+    }
+
+    /**
+     * @param  target
+     * @return             The package declaration lines to insert at the beginning of the file or empty string if no
+     *                     package found
+     * @throws IOException
+     */
+    private String computeJavaPackageDeclaration(File target) throws IOException {
+        String packageDeclaration = "";
+        String canonicalPath = target.getParentFile().getCanonicalPath();
+        String srcMainJavaPath = "src" + File.separatorChar + "main" + File.separatorChar + "java";
+        int index = canonicalPath.indexOf(srcMainJavaPath);
+        if (index != -1) {
+            String packagePath = canonicalPath.substring(index + srcMainJavaPath.length() + 1);
+            String packageName = packagePath.replace(File.separatorChar, '.');
+            if (!packageName.isEmpty()) {
+                packageDeclaration = "package " + packageName + ";\n\n";
+            }
+        }
+        return packageDeclaration;
     }
 
     private void createWorkingDirectoryIfAbsent() {

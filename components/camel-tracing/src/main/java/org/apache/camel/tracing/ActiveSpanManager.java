@@ -76,9 +76,8 @@ public final class ActiveSpanManager {
         if (holder != null) {
             Holder parent = holder.getParent();
             exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN, parent);
-            if (!holder.isClosed()) {
-                holder.closeScope();
-            }
+
+            holder.closeScope();
             if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
                 if (parent != null) {
                     SpanAdapter span = parent.getSpan();
@@ -101,7 +100,7 @@ public final class ActiveSpanManager {
      */
     public static void endScope(Exchange exchange) {
         Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
-        if (holder != null && !holder.isClosed()) {
+        if (holder != null) {
             holder.closeScope();
         }
     }
@@ -115,13 +114,11 @@ public final class ActiveSpanManager {
         private final Holder parent;
         private final SpanAdapter span;
         private final AutoCloseable scope;
-        private boolean closed;
 
         Holder(Holder parent, SpanAdapter span) {
             this.parent = parent;
             this.span = span;
             this.scope = span.makeCurrent();
-            this.closed = false;
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Tracing: started scope: {}", this.scope);
             }
@@ -135,21 +132,12 @@ public final class ActiveSpanManager {
             return span;
         }
 
-        public boolean isClosed() {
-            return closed;
-        }
-
         private void closeScope() {
-            if (closed) {
-                LOG.error("Tracing: scope already closed: {}", this.scope);
-            }
-
             try {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Tracing: closing scope: {}", this.scope);
                 }
                 scope.close();
-                this.closed = true;
             } catch (Exception e) {
                 LOG.debug("Failed to close span scope. This exception is ignored.", e);
             }

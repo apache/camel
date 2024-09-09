@@ -14,8 +14,8 @@ to support init and destroy method on beans.
 === camel-core
 
 The `UseOriginalAggregationStrategy` class will now propagate the caught exception stored in the exchange property `Exchange.EXCEPTION_CAUGHT`
-as well. For example when using the Splitter EIP with this, then any caught exception during splitting, would be stored
-as well, which allows access to this information afterward, for example in an `onCompletion` where the caught exception
+as well. For example, when using the Splitter EIP with this, then any caught exception during splitting would be stored
+as well, which allows access to this information afterward, for example, in an `onCompletion` where the caught exception
 can be used to know some error happened during splitting.
 
 Internally, Camel will now use Java's own `InputStream.transferTo` for copying data between streams whenever such copies don't
@@ -24,6 +24,9 @@ performing these copies has increased from 4096 bytes to 16384 bytes (the defaul
 
 The tracer (`BacklogTracer`) has changed the `backlogSize` default value from `1000` to `100`, and `maxBodySize` from `128kb` to `32kb`.
 This reduces the amount of data captured and stored and helps reduce the tracing overhead.
+
+The `org.apache.camel.support.DefaultExchangeHolder` will now include both exchange variables and properties,
+if the parameter `includeProperties` is set to true.
 
 === camel-jbang
 
@@ -37,14 +40,18 @@ The following components that were marked as deprecated:
 
 === camel-as2
 
-The header prefixes has been corrected from `CamelAS2.` -> `CamelAs2.` to be consistent with naming convention
-used by other API based components. The documentation uses the correct naming prefix as `CamelAs2.`.
+The header prefixes have been corrected from `CamelAS2.` -> `CamelAs2.` to be consistent with naming convention
+used by other API-based components. The documentation uses the correct naming prefix as `CamelAs2.`.
 
 === camel-kafka
 
 The `KafkaIdempotentRepository` will now continue to sync cache updates after Camel has been started.
-You can configure `startupOnly=true` to only sync the cache once on startup
-(however then the cache is not synced with other Camel nodes in a cluster).
+You can configure `startupOnly=true` to only sync the cache once on startup,
+(however, then the cache is not synced with other Camel nodes in a cluster).
+
+=== camel-langchain4j-chat
+
+The chat-with-tools feature was deprecated. Use the new `camel-langchain4j-tool` component.
 
 === camel-tests
 

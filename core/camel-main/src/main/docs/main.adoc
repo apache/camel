@@ -170,7 +170,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 22 options, which are listed below.
+The camel.server supports 23 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -192,6 +192,7 @@ The camel.server supports 22 options, which are listed below.
 | *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics | false | boolean
 | *camel.server.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.server.port* | Port to use for binding embedded HTTP server | 8080 | int
+| *camel.server.sendEnabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean
 | *camel.server.staticContextPath* | The context-path to use for serving static content. By default, the root path is used. And if there is an index.html page then this is automatically loaded. | / | String
 | *camel.server.staticEnabled* | Whether serving static files is enabled. If enabled then Camel can host html/js and other web files that makes it possible to include small web applications. | false | boolean
 | *camel.server.uploadEnabled* | Whether to enable file upload via HTTP (not intended for production use). This functionality is for development to be able to reload Camel routes and code with source changes (if reload is enabled). If enabled then you can upload/delete files via HTTP PUT/DELETE on context-path: /q/upload/\{name}. You must also configure the uploadSourceDir option. | false | boolean
@@ -401,6 +402,30 @@ The camel.vault.azure supports 12 options, which are listed below.
 | *camel.vault.azure.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.azure.tenantId* | The Tenant Id for accessing Azure Key Vault |  | String
 | *camel.vault.azure.vaultName* | The vault Name in Azure Key Vault |  | String
+|===
+
+
+=== Camel Kubernetes Vault configurations
+The camel.vault.kubernetes supports 2 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.kubernetes.refresh{zwsp}Enabled* | Whether to automatically reload Camel upon secrets being updated in Kubernetes Cluster. | true | boolean
+| *camel.vault.kubernetes.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
+|===
+
+
+=== Camel Hashicorp Vault configurations
+The camel.vault.hashicorp supports 4 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.hashicorp.host* | Host to access hashicorp vault |  | String
+| *camel.vault.hashicorp.port* | Port to access hashicorp vault |  | String
+| *camel.vault.hashicorp.scheme* | Scheme to access hashicorp vault |  | String
+| *camel.vault.hashicorp.token* | Token to access hashicorp vault |  | String
 |===
 
 

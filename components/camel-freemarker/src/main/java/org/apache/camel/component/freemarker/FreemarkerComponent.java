@@ -85,24 +85,30 @@ public class FreemarkerComponent extends DefaultComponent {
         return endpoint;
     }
 
-    public synchronized Configuration getConfiguration() {
-        if (configuration == null) {
-            configuration = new Configuration(Configuration.VERSION_2_3_32);
-            configuration.setLocalizedLookup(isLocalizedLookup());
-            configuration.setTemplateLoader(new URLTemplateLoader() {
-                @Override
-                protected URL getURL(String name) {
-                    try {
-                        return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(), name);
-                    } catch (Exception e) {
-                        // freemarker prefers to ask for locale first (eg xxx_en_GB, xxX_en), and then fallback without locale
-                        // so we should return null to signal the resource could not be found
-                        return null;
+    public Configuration getConfiguration() {
+        lock.lock();
+        try {
+            if (configuration == null) {
+                configuration = new Configuration(Configuration.VERSION_2_3_32);
+                configuration.setLocalizedLookup(isLocalizedLookup());
+                configuration.setTemplateLoader(new URLTemplateLoader() {
+
+                    @Override
+                    protected URL getURL(String name) {
+                        try {
+                            return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(), name);
+                        } catch (Exception e) {
+                            // freemarker prefers to ask for locale first (eg xxx_en_GB, xxX_en), and then fallback without locale
+                            // so we should return null to signal the resource could not be found
+                            return null;
+                        }
                     }
-                }
-            });
+                });
+            }
+            return (Configuration) configuration.clone();
+        } finally {
+            lock.unlock();
         }
-        return (Configuration) configuration.clone();
     }
 
     /**
@@ -150,14 +156,19 @@ public class FreemarkerComponent extends DefaultComponent {
         this.localizedLookup = localizedLookup;
     }
 
-    private synchronized Configuration getNoCacheConfiguration() {
-        if (noCacheConfiguration == null) {
-            // create a clone of the regular configuration
-            noCacheConfiguration = (Configuration) getConfiguration().clone();
-            // set this one to not use cache
-            noCacheConfiguration.setCacheStorage(new NullCacheStorage());
+    private Configuration getNoCacheConfiguration() {
+        lock.lock();
+        try {
+            if (noCacheConfiguration == null) {
+                // create a clone of the regular configuration
+                noCacheConfiguration = (Configuration) getConfiguration().clone();
+                // set this one to not use cache
+                noCacheConfiguration.setCacheStorage(new NullCacheStorage());
+            }
+            return noCacheConfiguration;
+        } finally {
+            lock.unlock();
         }
-        return noCacheConfiguration;
     }
 
 }

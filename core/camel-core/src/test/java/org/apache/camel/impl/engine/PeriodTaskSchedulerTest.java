@@ -101,4 +101,31 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    public void testSchedulerRun() {
+        final AtomicInteger taskCounter = new AtomicInteger();
+        counter.set(0);
+
+        PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
+            // speedup unit test
+            timerListenerManager.setInterval(10);
+        }
+        // this task is only executed once (it can keep looping forever if needed)
+        scheduler.scheduledTask(() -> {
+            counter.incrementAndGet();
+            for (int i = 0; i < 10; i++) {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    // ignore
+                }
+                taskCounter.incrementAndGet();
+            }
+        });
+        context.start();
+
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> counter.get() == 1 && taskCounter.get() == 10);
+    }
+
 }

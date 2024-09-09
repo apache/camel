@@ -45,6 +45,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "kubernetesvaultconfiguration":
+        case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "refreshenabled":
         case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
         case "refreshperiod":
@@ -83,6 +85,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "kubernetesvaultconfiguration":
+        case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "refreshenabled":
         case "refreshEnabled": return boolean.class;
         case "refreshperiod":
@@ -122,6 +126,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "kubernetesvaultconfiguration":
+        case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "refreshenabled":
         case "refreshEnabled": return target.isRefreshEnabled();
         case "refreshperiod":

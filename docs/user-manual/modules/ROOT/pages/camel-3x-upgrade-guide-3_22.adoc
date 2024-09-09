@@ -1,7 +1,7 @@
 = Apache Camel 3.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from Camel 3.x to 3.y. For example, if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.21 to 3.22
@@ -14,7 +14,7 @@ No changes expected.
 
 The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as previously in 3.x.
 
-For example using `readLockMinAge=5s` would pickup files that are older than 5 seconds from startup time.
+For example, using `readLockMinAge=5s` would pickup files that are older than 5 seconds from startup time.
 If you have many existing files on startup that are old, then Camel will now again be fast,
-and pickup these files immediately.
+and pick up these files immediately.
 

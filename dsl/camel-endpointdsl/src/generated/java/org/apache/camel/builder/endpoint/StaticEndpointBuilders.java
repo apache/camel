@@ -9385,6 +9385,86 @@ public class StaticEndpointBuilders {
         return LangChain4jEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LangChain4j Tools (camel-langchain4j-tools)
+     * LangChain4j Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+     * 
+     * Syntax: <code>langchain4j-tools:toolId</code>
+     * 
+     * Path parameter: toolId (required)
+     * The tool name
+     * 
+     * @param path toolId
+     * @return the dsl builder
+     */
+    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String path) {
+        return langchain4jTools("langchain4j-tools", path);
+    }
+    /**
+     * LangChain4j Tools (camel-langchain4j-tools)
+     * LangChain4j Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+     * 
+     * Syntax: <code>langchain4j-tools:toolId</code>
+     * 
+     * Path parameter: toolId (required)
+     * The tool name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path toolId
+     * @return the dsl builder
+     */
+    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String componentName, String path) {
+        return LangChain4jToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * LangChain4j Web Search (camel-langchain4j-web-search)
+     * LangChain4j Web Search Engine
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-web-search
+     * 
+     * Syntax: <code>langchain4j-web-search:searchId</code>
+     * 
+     * Path parameter: searchId (required)
+     * The id
+     * 
+     * @param path searchId
+     * @return the dsl builder
+     */
+    public static LangChain4jWebSearchEndpointBuilderFactory.LangChain4jWebSearchEndpointBuilder langchain4jWebSearch(String path) {
+        return langchain4jWebSearch("langchain4j-web-search", path);
+    }
+    /**
+     * LangChain4j Web Search (camel-langchain4j-web-search)
+     * LangChain4j Web Search Engine
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-web-search
+     * 
+     * Syntax: <code>langchain4j-web-search:searchId</code>
+     * 
+     * Path parameter: searchId (required)
+     * The id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path searchId
+     * @return the dsl builder
+     */
+    public static LangChain4jWebSearchEndpointBuilderFactory.LangChain4jWebSearchEndpointBuilder langchain4jWebSearch(String componentName, String path) {
+        return LangChain4jWebSearchEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 

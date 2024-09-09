@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -49,17 +48,13 @@ public class RouteTrait extends BaseTrait {
             return false;
         }
 
-        // explicitly disabled
-        if (traitConfig.getRoute() != null && !Optional.ofNullable(traitConfig.getRoute().getEnabled()).orElse(true)) {
+        // must be explicitly enabled
+        if (traitConfig.getRoute() == null || !Optional.ofNullable(traitConfig.getRoute().getEnabled()).orElse(false)) {
             return false;
         }
 
         // configured service
-        if (traitConfig.getRoute() != null) {
-            return context.getService() != null;
-        }
-
-        return true;
+        return context.getService().isPresent();
     }
 
     @Override
@@ -136,8 +131,6 @@ public class RouteTrait extends BaseTrait {
             }
             try (InputStream is = new FileInputStream(file)) {
                 return IOHelper.loadText(is);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

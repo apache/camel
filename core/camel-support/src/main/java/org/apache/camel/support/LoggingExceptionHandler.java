@@ -98,7 +98,7 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     protected boolean isSuppressLogging() {
         if (camelContext != null) {
             return (camelContext.getStatus().isStopping() || camelContext.getStatus().isStopped())
-                    && camelContext.getShutdownStrategy().hasTimeoutOccurred()
+                    && camelContext.getShutdownStrategy().isTimeoutOccurred()
                     && camelContext.getShutdownStrategy().isSuppressLoggingOnTimeout();
         } else {
             return false;

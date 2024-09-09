@@ -1,7 +1,7 @@
 = Apache Camel 3.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from Camel 3.x to 3.y. For example, if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.21 to 3.21.3
@@ -98,7 +98,7 @@ To enable access, then set `accessExternalSchemaProtocols=all` or specify allowe
 
 === camel-platform-http-vertx
 
-If the route or consumer is suspended then http status 503 is now returned instead of 404.
+If the route or consumer is suspended, then http status 503 is now returned instead of 404.
 
 === camel-spring-rabbitmq
 
@@ -111,15 +111,15 @@ XML parser in `StAXJAXBIteratorExpression` has been made more secure by disablin
 
 === camel-cm-sms
 
-XML parsers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
+XML parsers have been made more secure by disabling `DOCTYPE` and/or access to external DTD/Schema.
 
 === camel-schematron
 
-XML parsers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
+XML parsers have been made more secure by disabling `DOCTYPE` and/or access to external DTD/Schema.
 
 === camel-xmlsecurity
 
-XML parsers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
+XML parsers have been made more secure by disabling `DOCTYPE` and/or access to external DTD/Schema.
 
 === camel-jbang
 
@@ -169,7 +169,7 @@ with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` depe
 The health-check has aligned to be more similar to microprofile-health in the JSon output.
 Spring Boot now also includes additional data per check, when using full exposure level.
 
-For example as shown below for the context health check:
+For example, as shown below for the context health check:
 
 [source,json]
 ----
@@ -209,7 +209,7 @@ This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
 
 === camel-platform-http-starter
 
-If the route or consumer is suspended then http status 503 is now returned instead of 404.
+If the route or consumer is suspended, then http status 503 is now returned instead of 404.
 
 The `platform-http-starter` has been changed from using `camel-servlet` to use Spring HTTP server directly.
 Therefore, all the HTTP endpoints are no longer prefixed with the servlet context-path (default is `camel`).
@@ -222,7 +222,7 @@ from("platform-http:myservice")
   .to("...")
 ----
 
-Then calling _myservice_ would before require to include the context-path, such as `http://localhost:8080/camel/myservice`.
+Then calling `_myservice_` would before require including the context-path, such as `http://localhost:8080/camel/myservice`.
 Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
 
 NOTE: The `platform-http-starter` can also be used with Rest DSL.

@@ -207,18 +207,28 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         return answer;
     }
 
-    public synchronized HttpClient getHttpClient() {
-        if (httpClient == null) {
-            httpClient = createHttpClient();
+    public HttpClient getHttpClient() {
+        lock.lock();
+        try {
+            if (httpClient == null) {
+                httpClient = createHttpClient();
+            }
+            return httpClient;
+        } finally {
+            lock.unlock();
         }
-        return httpClient;
     }
 
     /**
      * Sets a custom HttpClient to be used by the producer
      */
-    public synchronized void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
+    public void setHttpClient(HttpClient httpClient) {
+        lock.lock();
+        try {
+            this.httpClient = httpClient;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**

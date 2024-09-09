@@ -134,13 +134,35 @@ public class KubernetesExport extends Export {
 
         runtime = configurer.runtime;
         quarkusVersion = configurer.quarkusVersion;
-        symbolicLink = configurer.symbolicLink;
-        mavenWrapper = configurer.mavenWrapper;
-        gradleWrapper = configurer.gradleWrapper;
-        exportDir = configurer.exportDir;
+
         files = configurer.files;
         gav = configurer.gav;
+        repositories = configurer.repositories;
+        dependencies = configurer.dependencies;
+        excludes = configurer.excludes;
+        mavenSettings = configurer.mavenSettings;
+        mavenSettingsSecurity = configurer.mavenSettingsSecurity;
+        mavenCentralEnabled = configurer.mavenCentralEnabled;
+        mavenApacheSnapshotEnabled = configurer.mavenApacheSnapshotEnabled;
+        javaVersion = configurer.javaVersion;
+        camelVersion = configurer.camelVersion;
+        kameletsVersion = configurer.kameletsVersion;
+        profile = configurer.profile;
+        localKameletDir = configurer.localKameletDir;
+        springBootVersion = configurer.springBootVersion;
+        camelSpringBootVersion = configurer.camelSpringBootVersion;
+        quarkusGroupId = configurer.quarkusGroupId;
+        quarkusArtifactId = configurer.quarkusArtifactId;
+        buildTool = configurer.buildTool;
         openapi = configurer.openapi;
+        exportDir = configurer.exportDir;
+        packageName = configurer.packageName;
+        buildProperties = configurer.buildProperties;
+        symbolicLink = configurer.symbolicLink;
+        javaLiveReload = configurer.javaLiveReload;
+        ignoreLoadingError = configurer.ignoreLoadingError;
+        mavenWrapper = configurer.mavenWrapper;
+        gradleWrapper = configurer.gradleWrapper;
         fresh = configurer.fresh;
         download = configurer.download;
         quiet = configurer.quiet;
@@ -492,13 +514,34 @@ public class KubernetesExport extends Export {
      */
     public record ExportConfigurer(RuntimeType runtime,
             String quarkusVersion,
-            boolean symbolicLink,
-            boolean mavenWrapper,
-            boolean gradleWrapper,
-            String exportDir,
             List<String> files,
             String gav,
+            List<String> repositories,
+            List<String> dependencies,
+            List<String> excludes,
+            String mavenSettings,
+            String mavenSettingsSecurity,
+            boolean mavenCentralEnabled,
+            boolean mavenApacheSnapshotEnabled,
+            String javaVersion,
+            String camelVersion,
+            String kameletsVersion,
+            String profile,
+            String localKameletDir,
+            String springBootVersion,
+            String camelSpringBootVersion,
+            String quarkusGroupId,
+            String quarkusArtifactId,
+            String buildTool,
             String openapi,
+            String exportDir,
+            String packageName,
+            List<String> buildProperties,
+            boolean symbolicLink,
+            boolean javaLiveReload,
+            boolean ignoreLoadingError,
+            boolean mavenWrapper,
+            boolean gradleWrapper,
             boolean fresh,
             boolean download,
             boolean quiet,

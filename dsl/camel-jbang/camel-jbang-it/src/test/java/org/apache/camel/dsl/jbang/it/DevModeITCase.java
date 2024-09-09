@@ -88,6 +88,38 @@ public class DevModeITCase extends JBangTestSupport {
         checkLogContains("Hello Camel from Jenna");
     }
 
+    @Test
+    public void testDeleteFileViaHttp() throws IOException {
+        copyResourceInDataFolder(TestResources.DIR_ROUTE);
+        executeBackground(String.format("run --dev --console --source-dir=%s", mountPoint()));
+        checkLogContains("Hello world!");
+        execInHost(String.format(
+                "curl -X DELETE http://localhost:%s/q/upload/FromDirectoryRoute.java",
+                containerService.getDevConsolePort()));
+        checkLogContains("FromDirectoryRoute.java does not exist");
+    }
+
+    @Test
+    public void testUploadFileViaHttp() throws IOException {
+        copyResourceInDataFolder(TestResources.DIR_ROUTE);
+        Files.createDirectory(Path.of(getDataFolder() + "/source-dir"));
+        Files.copy(Path.of(getDataFolder() + "/FromDirectoryRoute.java"),
+                Path.of(getDataFolder() + "/source-dir/FromDirectoryRoute.java"));
+        executeBackground(String.format("run --dev --console --source-dir=%s/source-dir", mountPoint()));
+        checkLogContains("Hello world!");
+        makeTheFileWriteable(String.format("%s/FromDirectoryRoute.java", mountPoint()));
+        Path routeFile = Path.of(getDataFolder(), "FromDirectoryRoute.java");
+        Files.write(routeFile,
+                Files.readAllLines(routeFile).stream()
+                        .map(line -> line.replace("Hello world!", "I have been modified!"))
+                        .collect(Collectors.toList()));
+        checkLogDoesNotContain("I have been modified!");
+        execInHost(String.format(
+                "curl -X PUT http://localhost:%s/q/upload/FromDirectoryRoute.java --data-binary \"@%s/FromDirectoryRoute.java\"",
+                containerService.getDevConsolePort(), getDataFolder()));
+        checkLogContains("I have been modified!");
+    }
+
     private HttpResponse<String> getDevRequest(final String ctxUrl) {
         try {
             return httpClient.send(HttpRequest

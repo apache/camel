@@ -133,7 +133,8 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
         LOG.debug("parse connection - fullUri: {} -> {}", fullUri, id);
 
-        synchronized (this) {
+        lock.lock();
+        try {
             LOG.debug("Locating connection - {}", id);
 
             T1 connection = this.connections.get(id);
@@ -148,6 +149,8 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
                 this.connections.put(id, connection);
             }
             return connection;
+        } finally {
+            lock.unlock();
         }
     }
 

@@ -6,7 +6,7 @@
 :since: 4.5
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AI
 :camel-spring-boot-name: langchain4j-chat
@@ -159,6 +159,9 @@ String response = template.requestBody("direct:send-multiple", messages, String.
 ----
 
 === Chat with Tool
+
+IMPORTANT: as of Camel 4.8.0 this feature is deprecated. Users should use the xref:langchain4j-tools-component.adoc[LangChain4j Tool component].
+
 Camel langchain4j-chat component as a consumer can be used to implement a LangChain tool.
 Right now tools are supported only via the OpenAiChatModel backed by OpenAI APIs.
 

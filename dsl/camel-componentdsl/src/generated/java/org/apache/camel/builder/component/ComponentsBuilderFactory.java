@@ -2826,6 +2826,32 @@ public interface ComponentsBuilderFactory {
         return Langchain4jEmbeddingsComponentBuilderFactory.langchain4jEmbeddings();
     }
     /**
+     * LangChain4j Tools (camel-langchain4j-tools)
+     * LangChain4j Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+     * 
+     * @return the dsl builder
+     */
+    static Langchain4jToolsComponentBuilderFactory.Langchain4jToolsComponentBuilder langchain4jTools() {
+        return Langchain4jToolsComponentBuilderFactory.langchain4jTools();
+    }
+    /**
+     * LangChain4j Web Search (camel-langchain4j-web-search)
+     * LangChain4j Web Search Engine
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-web-search
+     * 
+     * @return the dsl builder
+     */
+    static Langchain4jWebSearchComponentBuilderFactory.Langchain4jWebSearchComponentBuilder langchain4jWebSearch() {
+        return Langchain4jWebSearchComponentBuilderFactory.langchain4jWebSearch();
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 

@@ -80,7 +80,6 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchProducer.class);
 
     protected final ElasticsearchConfiguration configuration;
-    private final Object mutex = new Object();
     private volatile RestClient client;
     private Sniffer sniffer;
 
@@ -477,7 +476,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
     private void startClient() {
         if (client == null) {
-            synchronized (mutex) {
+            lock.lock();
+            try {
                 if (client == null) {
                     LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
                     if (configuration.getHostAddressesList() != null
@@ -487,6 +487,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                         LOG.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
                     }
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }

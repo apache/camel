@@ -272,7 +272,7 @@ And in Spring Boot:
 camel.springboot.load-health-checks = true
 ----
 
-And if you use the classic Spring XML or Blueprint XML, you can enable this on `<camelContext>` as shown:
+And if you use the classic Spring XML, you can enable this on `<camelContext>` as shown:
 
 [source,xml]
 ----

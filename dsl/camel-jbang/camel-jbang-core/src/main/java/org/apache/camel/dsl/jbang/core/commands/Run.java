@@ -78,9 +78,6 @@ public class Run extends CamelCommand {
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
     private static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
-    private static final String[] ACCEPTED_FILE_EXT
-            = new String[] { "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
-
     private static final String[] ACCEPTED_XML_ROOT_ELEMENT_NAMES = new String[] {
             "route", "routes",
             "routeTemplate", "routeTemplates",
@@ -1484,6 +1481,8 @@ public class Run extends CamelCommand {
                         if (key.endsWith(".level")) {
                             key = key.substring(0, key.length() - 6);
                         }
+                    } else {
+                        continue;
                     }
                     key = StringHelper.removeLeadingAndEndingQuotes(key);
                     String line = key + "=" + value;
@@ -1563,7 +1562,7 @@ public class Run extends CamelCommand {
             }
             // if the ext is an accepted file then we include it as a potential route
             // (java files need to be included as route to support pojos/processors with routes)
-            return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext2));
+            return SourceHelper.isAcceptedSourceFile(ext2);
         } else {
             // assume match as it can be wildcard or dir
             return true;

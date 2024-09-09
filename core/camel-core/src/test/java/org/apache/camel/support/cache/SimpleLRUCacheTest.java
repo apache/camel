@@ -350,7 +350,8 @@ class SimpleLRUCacheTest {
                 }
             }).start();
         }
-        assertTrue(latch.await(20, TimeUnit.SECONDS), "Should have completed within a reasonable timeframe");
+        assertTrue(latch.await(20, TimeUnit.SECONDS),
+                "Should have completed within a reasonable timeframe. Latch at: " + latch.getCount());
         assertEquals(maximumCacheSize, cache.size());
         assertEquals(totalKeysPerThread * threads - maximumCacheSize, counter.get());
     }
@@ -377,7 +378,8 @@ class SimpleLRUCacheTest {
                 }
             }).start();
         }
-        assertTrue(latch.await(20, TimeUnit.SECONDS), "Should have completed within a reasonable timeframe");
+        assertTrue(latch.await(20, TimeUnit.SECONDS),
+                "Should have completed within a reasonable timeframe. Latch at: " + latch.getCount());
         assertEquals(maximumCacheSize, cache.size());
         counter.set(0);
         for (int j = 0; j < maximumCacheSize; j++) {

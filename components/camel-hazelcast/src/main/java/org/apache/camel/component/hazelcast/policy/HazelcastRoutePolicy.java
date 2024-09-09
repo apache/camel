@@ -104,13 +104,23 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     }
 
     @Override
-    public synchronized void onStop(Route route) {
-        suspendedRoutes.remove(route);
+    public void onStop(Route route) {
+        lock.lock();
+        try {
+            suspendedRoutes.remove(route);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized void onSuspend(Route route) {
-        suspendedRoutes.remove(route);
+    public void onSuspend(Route route) {
+        lock.lock();
+        try {
+            suspendedRoutes.remove(route);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -165,7 +175,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         }
     }
 
-    private synchronized void stopConsumer(Route route) {
+    private void stopConsumer(Route route) {
+        lock.lock();
         try {
             if (!suspendedRoutes.contains(route)) {
                 LOGGER.debug("Stopping consumer for {} ({})", route.getId(), route.getConsumer());
@@ -174,10 +185,13 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
             }
         } catch (Exception e) {
             handleException(e);
+        } finally {
+            lock.unlock();
         }
     }
 
-    private synchronized void startAllStoppedConsumers() {
+    private void startAllStoppedConsumers() {
+        lock.lock();
         try {
             for (Route route : suspendedRoutes) {
                 LOGGER.debug("Starting consumer for {} ({})", route.getId(), route.getConsumer());
@@ -187,6 +201,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
             suspendedRoutes.clear();
         } catch (Exception e) {
             handleException(e);
+        } finally {
+            lock.unlock();
         }
     }
 

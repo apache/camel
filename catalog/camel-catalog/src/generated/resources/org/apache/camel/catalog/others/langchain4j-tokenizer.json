@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "langchain4j-tokenizer",
+    "title": "LangChain4j Tokenizer",
+    "description": "LangChain4j Tokenizer",
+    "deprecated": false,
+    "firstVersion": "4.8.0",
+    "label": "ai",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-langchain4j-tokenizer",
+    "version": "4.8.0-SNAPSHOT"
+  }
+}

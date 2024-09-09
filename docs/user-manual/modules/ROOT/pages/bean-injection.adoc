@@ -57,5 +57,5 @@ be used to inject Camel resources as well.
 
 == Bean Injection with Spring Boot
 
-Camel has first class support for Spring Boot, and you can use the Spring annotations
+Camel has first-class support for Spring Boot, and you can use the Spring annotations
 such as `@Autowired` to also inject Camel resources.

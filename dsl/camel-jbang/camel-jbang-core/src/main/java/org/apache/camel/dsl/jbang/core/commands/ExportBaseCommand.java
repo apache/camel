@@ -105,24 +105,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String gav;
 
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
-    List<String> excludes = new ArrayList<>();
+    protected List<String> excludes = new ArrayList<>();
 
     @CommandLine.Option(names = { "--maven-settings" },
                         description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                                       + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
-    String mavenSettings;
+    protected String mavenSettings;
 
     @CommandLine.Option(names = { "--maven-settings-security" },
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
-    String mavenSettingsSecurity;
+    protected String mavenSettingsSecurity;
 
     @CommandLine.Option(names = { "--maven-central-enabled" },
                         description = "Whether downloading JARs from Maven Central repository is enabled")
-    boolean mavenCentralEnabled = true;
+    protected boolean mavenCentralEnabled = true;
 
     @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
                         description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
-    boolean mavenApacheSnapshotEnabled = true;
+    protected boolean mavenApacheSnapshotEnabled = true;
 
     @CommandLine.Option(names = { "--main-classname" },
                         description = "The class name of the Camel Main application class",
@@ -490,7 +490,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     boolean kamelet = "camel.component.kamelet.location".equals(k)
                             || "camel.jbang.localKameletDir".equals(k);
                     boolean jkube = "camel.jbang.jkubeFiles".equals(k);
-                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
+                    boolean web = "html".equals(ext) || "js".equals(ext) || "css".equals(ext) || "jpeg".equals(ext)
+                            || "jpg".equals(ext) || "png".equals(ext) || "ico".equals(ext);
+                    File srcWeb = new File(srcResourcesDir, "META-INF/resources");
+                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : web ? srcWeb : srcResourcesDir;
                     File source = new File(f);
                     File out;
                     if (source.isDirectory()) {
@@ -510,6 +513,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             out.mkdirs();
                             safeCopy(source, out, true);
                         } else {
+                            out.mkdirs();
                             safeCopy(source, out, true);
                         }
                     } else {
@@ -630,8 +634,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 }
                 if (!v.isBlank()) {
                     String line = applicationPropertyLine(k, v);
-                    fos.write(line.getBytes(StandardCharsets.UTF_8));
-                    fos.write("\n".getBytes(StandardCharsets.UTF_8));
+                    if (line != null && !line.isBlank()) {
+                        fos.write(line.getBytes(StandardCharsets.UTF_8));
+                        fos.write("\n".getBytes(StandardCharsets.UTF_8));
+                    }
                 }
             }
         } finally {

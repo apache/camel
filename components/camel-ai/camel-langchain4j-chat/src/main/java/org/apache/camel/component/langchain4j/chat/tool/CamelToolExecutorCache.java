@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Caches Tools Specification and Consumer route reference by the chatId, so that different chats can have different
  * Tool implementation
  */
+@Deprecated(since = "4.8.0")
 public final class CamelToolExecutorCache {
 
     private Map<String, Set<CamelToolSpecification>> tools;

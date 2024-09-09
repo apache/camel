@@ -151,42 +151,6 @@
             </properties>
         </profile>
         <profile>
-            <id>backwards-compatibility</id>
-            <activation>
-                <os>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <skipITs>${skipITs}</skipITs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>kafka-2</id>
-                                <configuration>
-                                    <skipITs>${skipITs}</skipITs>
-                                    <systemPropertyVariables>
-                                        <kafka.instance.type>local-kafka2-container</kafka.instance.type>
-                                    </systemPropertyVariables>
-                                    <reportNameSuffix>kafka-2</reportNameSuffix>
-                                    <excludedGroups>non-abstract,health,idempotent</excludedGroups>
-                                </configuration>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>full</id>
             <activation>
                 <property>

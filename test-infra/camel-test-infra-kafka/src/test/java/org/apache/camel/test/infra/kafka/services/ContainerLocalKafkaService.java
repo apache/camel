@@ -29,9 +29,6 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
     public static final String KAFKA3_IMAGE_NAME = LocalPropertyResolver.getProperty(
             ContainerLocalKafkaService.class,
             KafkaProperties.KAFKA3_CONTAINER);
-    public static final String KAFKA2_IMAGE_NAME = LocalPropertyResolver.getProperty(
-            ContainerLocalKafkaService.class,
-            KafkaProperties.KAFKA2_CONTAINER);
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
     private final KafkaContainer kafka;
@@ -75,16 +72,6 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
     @Override
     public KafkaContainer getContainer() {
         return kafka;
-    }
-
-    public static ContainerLocalKafkaService kafka2Container() {
-        KafkaContainer container
-                = new KafkaContainer(
-                        DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA2_IMAGE_NAME))
-                                .asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA2_IMAGE_NAME));
-        container = container.withEmbeddedZookeeper();
-
-        return new ContainerLocalKafkaService(container);
     }
 
     public static ContainerLocalKafkaService kafka3Container() {

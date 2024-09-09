@@ -32,35 +32,48 @@ public class RestDevConsole extends AbstractDevConsole {
         super("camel", "rest", "Rest", "Rest DSL Registry information");
     }
 
+    private RestRegistry rr;
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        try {
+            rr = getCamelContext().getRestRegistry();
+        } catch (IllegalArgumentException e) {
+            // ignore as this is optional
+        }
+    }
+
     @Override
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        RestRegistry rr = getCamelContext().getRestRegistry();
-        for (RestRegistry.RestService rs : rr.listAllRestServices()) {
-            if (!sb.isEmpty()) {
-                sb.append("\n");
+        if (rr != null) {
+            for (RestRegistry.RestService rs : rr.listAllRestServices()) {
+                if (!sb.isEmpty()) {
+                    sb.append("\n");
+                }
+                sb.append(String.format("\n    Url: %s", rs.getUrl()));
+                sb.append(String.format("\n    Method: %s", rs.getMethod()));
+                sb.append(String.format("\n    State: %s", rs.getState()));
+                if (rs.getConsumes() != null) {
+                    sb.append(String.format("\n    Consumes: %s", rs.getConsumes()));
+                }
+                if (rs.getProduces() != null) {
+                    sb.append(String.format("\n    Produces: %s", rs.getProduces()));
+                }
+                if (rs.getInType() != null) {
+                    sb.append(String.format("\n    In Type: %s", rs.getInType()));
+                }
+                if (rs.getOutType() != null) {
+                    sb.append(String.format("\n    Out Type: %s", rs.getOutType()));
+                }
+                if (rs.getDescription() != null) {
+                    sb.append(String.format("\n    Description: %s", rs.getDescription()));
+                }
             }
-            sb.append(String.format("\n    Url: %s", rs.getUrl()));
-            sb.append(String.format("\n    Method: %s", rs.getMethod()));
-            sb.append(String.format("\n    State: %s", rs.getState()));
-            if (rs.getConsumes() != null) {
-                sb.append(String.format("\n    Consumes: %s", rs.getConsumes()));
-            }
-            if (rs.getProduces() != null) {
-                sb.append(String.format("\n    Produces: %s", rs.getProduces()));
-            }
-            if (rs.getInType() != null) {
-                sb.append(String.format("\n    In Type: %s", rs.getInType()));
-            }
-            if (rs.getOutType() != null) {
-                sb.append(String.format("\n    Out Type: %s", rs.getOutType()));
-            }
-            if (rs.getDescription() != null) {
-                sb.append(String.format("\n    Description: %s", rs.getDescription()));
-            }
+            sb.append("\n");
         }
-        sb.append("\n");
 
         return sb.toString();
     }
@@ -69,32 +82,33 @@ public class RestDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        List<JsonObject> list = new ArrayList<>();
-        root.put("rests", list);
+        if (rr != null) {
+            List<JsonObject> list = new ArrayList<>();
+            root.put("rests", list);
 
-        RestRegistry rr = getCamelContext().getRestRegistry();
-        for (RestRegistry.RestService rs : rr.listAllRestServices()) {
-            JsonObject jo = new JsonObject();
-            jo.put("url", rs.getUrl());
-            jo.put("method", rs.getMethod());
-            jo.put("contractFirst", rs.isContractFirst());
-            jo.put("state", rs.getState());
-            if (rs.getConsumes() != null) {
-                jo.put("consumes", rs.getConsumes());
+            for (RestRegistry.RestService rs : rr.listAllRestServices()) {
+                JsonObject jo = new JsonObject();
+                jo.put("url", rs.getUrl());
+                jo.put("method", rs.getMethod());
+                jo.put("contractFirst", rs.isContractFirst());
+                jo.put("state", rs.getState());
+                if (rs.getConsumes() != null) {
+                    jo.put("consumes", rs.getConsumes());
+                }
+                if (rs.getProduces() != null) {
+                    jo.put("produces", rs.getProduces());
+                }
+                if (rs.getInType() != null) {
+                    jo.put("inType", rs.getInType());
+                }
+                if (rs.getOutType() != null) {
+                    jo.put("outType", rs.getOutType());
+                }
+                if (rs.getDescription() != null) {
+                    jo.put("description", rs.getDescription());
+                }
+                list.add(jo);
             }
-            if (rs.getProduces() != null) {
-                jo.put("produces", rs.getProduces());
-            }
-            if (rs.getInType() != null) {
-                jo.put("inType", rs.getInType());
-            }
-            if (rs.getOutType() != null) {
-                jo.put("outType", rs.getOutType());
-            }
-            if (rs.getDescription() != null) {
-                jo.put("description", rs.getDescription());
-            }
-            list.add(jo);
         }
 
         return root;

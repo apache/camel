@@ -5,7 +5,7 @@ Please make sure to meet these prerequisites for running Camel integrations on K
 * Connect to namespace on a Kubernetes cluster where you want to run the integration
 * Camel K operator must be installed on the Kubernetes cluster (either installed on the same namespace or as global operator for the whole cluster)
 
-To set up a local Kubernetes cluster you have several options.
+To set up a local Kubernetes cluster, you have several options.
 Camel K JBang is able to interact with all of these Kubernetes platforms.
 
 * Kind
@@ -49,11 +49,11 @@ camel k run route.yaml
 ----
 
 The command runs the Camel integration on Kubernetes.
-More precisely it creates a Camel K Integration custom resource in the current namespace.
+More precisely, it creates a Camel K Integration custom resource in the current namespace.
 The Camel K operator makes sure to create a proper runtime image and run the integration (usually as a Pod).
 
 The Camel K operator will automatically manage and configure this integration.
-In particular the operator takes care on exposing services, configuring health endpoints, providing metrics, updating image streams and much more.
+In particular, the operator takes care on exposing services, configuring health endpoints, providing metrics, updating image streams and much more.
 
 By default, the run command will not wait for the integration to in state running.
 You need to add `-w` or `--wait` option in order to wait for the integration to become ready.
@@ -91,46 +91,46 @@ The run command offers a lot more options that you may use to configure the Came
 |Adds dependency that should be included, use "camel:" prefix for a Camel component, "mvn:org.my:app:1.0" for a Maven dependency.
 
 |--property
-|Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]).
+|Add a runtime property or properties file from a path, a config map or a secret (syntax: `[my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]`).
 
 |--build-property
-|Add a build time property or properties file from a path, a config map or a secret  (syntax: [my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]]).
+|Add a build time property or properties file from a path, a config map or a secret  (syntax: `[my-key=my-value,file:/path/to/my-conf.properties,[configmap,secret]:name]]`).
 
 |--config
-|Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap,secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).
+|Add a runtime configuration from a ConfigMap or a Secret (syntax: `[configmap,secret]:name[/key]`, where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).
 
 |--resource
-|Add a runtime resource from a Configmap or a Secret (syntax: [configmap,secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).
+|Add a runtime resource from a Configmap or a Secret (syntax: `[configmap,secret]:name[/key][@path]`, where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and the path represents the destination path).
 
 |--open-api
-|Add an OpenAPI spec (syntax: [configmap,file]:name).
+|Add an OpenAPI spec (syntax: `[configmap,file]:name`).
 
 |--env
-|Set an environment variable in the integration container, for instance "-e MY_VAR=my-value".
+|Set an environment variable in the integration container, for instance `"-e MY_VAR=my-value"`.
 
 |--volume
-|Mount a volume into the integration container, for instance "-v pvcname:/container/path".
+|Mount a volume into the integration container, for instance `"-v pvcname:/container/path"`.
 
 |--connect
-|A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
+|A Service that the integration should bind to, specified as `[[apigroup/]version:]kind:[namespace/]name`.
 
 |--source
-|Add source file to your integration, this is added to the list of files listed as arguments of the command.
+|Add a source file to your integration, this is added to the list of files listed as arguments of the command.
 
 |--maven-repository
 |Add a maven repository used to resolve dependencies.
 
 |--annotation
-|Add an annotation to the integration. Use name values pairs like "--annotation my.company=hello".
+|Add an annotation to the integration. Use name values pairs like `"--annotation my.company=hello"`.
 
 |--label
-|Add a label to the integration. Use name values pairs like "--label my.company=hello".
+|Add a label to the integration. Use name values pairs like `"--label my.company=hello"`.
 
 |--trait
-|Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
+|Add a trait configuration to the integration. Use name values pairs like `"--trait trait.name.config=hello"`.
 
 |--use-flows
-|Write yaml sources as Flow objects in the integration custom resource (default=true).
+|Write YAML sources as Flow objects in the integration custom resource (default=true).
 
 |--compression
 |Enable storage of sources and resources as a compressed binary blobs.
@@ -142,7 +142,7 @@ The run command offers a lot more options that you may use to configure the Came
 |Print logs after integration has been started.
 
 |--output
-|Just output the generated integration custom resource (supports: yaml or json or k8s).
+|Just output the generated integration custom resource (supports: YAML or JSON or k8s).
 |=======================================================================
 
 == List integrations
@@ -188,7 +188,7 @@ camel k delete --all
 
 == Create integration pipes
 
-In some contexts (for example **"serverless"**) users often want to leverage the power of Apache Camel to be able to connect to various sources/sinks, with focus on connectivity to 3rd party technologies and services and less focus on doing complex processing (such as transformations or other enterprise integration patterns).
+In some contexts (for example, **"serverless"**), users often want to leverage the power of Apache Camel to be able to connect to various sources/sinks, with focus on connectivity to 3rd party technologies and services and less focus on doing complex processing (such as transformations or other enterprise integration patterns).
 
 Pipe resources represent a special form of Camel integrations where a source gets bound to a sink.
 The operation to create such a Pipe resource is often related to as the process of binding a source to a sink.
@@ -206,7 +206,7 @@ The Camel K bind command supports the following options:
 |Operator id selected to manage this integration. (default=camel-k)
 
 |--source
-|Source (from) such as a Kamelet or Camel endpoint uri that provides data..
+|Source (from) such as a Kamelet or Camel endpoint uri that provides data.
 
 |--sink
 |Sink (to) such as a Kamelet or Camel endpoint uri where data should be sent to.
@@ -215,19 +215,19 @@ The Camel K bind command supports the following options:
 |Add optional 1-n steps to the pipe processing. Each step represents a reference to a Kamelet of type action.
 
 |--property
-|Add a pipe property in the form of [source,sink,error-handler,step-<n>].<key>=<value> where <n> is the step number starting from 1.
+|Add a pipe property in the form of `[source,sink,error-handler,step-<n>].<key>=<value>` where `<n>` is the step number starting from 1.
 
 |--error-handler
-|Add error handler (none,log,sink:<endpoint>). Sink endpoints are expected in the format [[apigroup/]version:]kind:[namespace/]name, plain Camel URIs or Kamelet name.
+|Add error handler (none,log,sink:<endpoint>). Sink endpoints are expected in the format `[[apigroup/]version:]kind:[namespace/]name`, plain Camel URIs or Kamelet name.
 
 |--annotation
-|Add an annotation to the integration. Use name values pairs like "--annotation my.company=hello".
+|Add an annotation to the integration. Use name values pairs like `"--annotation my.company=hello"`.
 
 |--connect
-|A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.
+|A Service that the integration should bind to, specified as `[[apigroup/]version:]kind:[namespace/]name`.
 
 |--trait
-|Add a trait configuration to the integration. Use name values pairs like "--trait trait.name.config=hello".
+|Add a trait configuration to the integration. Use name values pairs like `"--trait trait.name.config=hello"`.
 
 |--wait
 |Wait for the integration to become ready.
@@ -236,14 +236,14 @@ The Camel K bind command supports the following options:
 |Print logs after integration has been started.
 
 |--output
-|Just output the generated pipe custom resource (supports: file, yaml or json).
+|Just output the generated pipe custom resource (supports: file, YAML or JSON).
 |=======================================================================
 
 Sources and sinks in a pipe may be Camel endpoint URIs, a Kamelet or a references to a Kubernetes resource (e.g. Knative brokers, Kafka topics).
 
 === Binding Kamelets
 
-In a typical use case a Pipe connects Kamelets of type source and sink.
+In a typical use case, a Pipe connects Kamelets of type source and sink.
 Usually a Kamelet gets identified by its name (e.g. timer-source, log-sink).
 
 [source,bash]
@@ -252,7 +252,7 @@ camel k bind my-pipe --source timer-source --sink log-sink --property source.mes
 ----
 
 The bind command receives the name of the pipe as a command argument and uses several options to specify the source and the sink.
-In addition to that the user is able to specify properties on the individual source and sink (e.g. the message property on the timer-source Kamelet).
+In addition to that, the user is able to specify properties on the individual source and sink (e.g., the message property on the timer-source Kamelet).
 
 The result of this command is a Pipe custom resource that you can apply to a Kubernetes cluster.
 
@@ -512,7 +512,7 @@ You can set the `brokers` property to explicitly point to the Strimzi Kafka brok
 You can configure an error handler in order to specify what to do when some event ends up with failure.
 Pipes offer a mechanism to specify an error policy to adopt in case an event processing fails.
 
-In case of an exception thrown during the pipe processing the respective error handler will perform its actions.
+In case of an exception thrown during the pipe processing, the respective error handler will perform its actions.
 
 The Pipe knows different types of error handlers `none`, `log` and `sink`:
 
@@ -524,8 +524,8 @@ The error handler may be configured with special properties that allow you to de
 
 ==== No error handler
 
-There may be certain cases where you want to just ignore any failure happening on your integration.
-In this situation just use a `none` error handler.
+There may be certain cases where you want to just ignore any failure happening in your integration.
+In this situation use a `none` error handler.
 
 [source,bash]
 ----
@@ -584,7 +584,7 @@ spec:
 
 The `sink` error handler is probably the most interesting error handler type as it allows you to redirect failing events to other components, such as a third party URI, a queue or topic or even another `Kamelet` which will be performing certain logic with the failing event.
 
-The sink error handler expects a proper endpoint URI which may be a reference to another Kamelet, a fully qualified custom resource reference or an arbitrary Camel endpoint URI.
+The sink error handler expects a proper endpoint URI, which may be a reference to another Kamelet, a fully qualified custom resource reference or an arbitrary Camel endpoint URI.
 
 [source,bash]
 ----
@@ -617,12 +617,12 @@ spec:
         # ...
 ----
 <1> You can use `ref` or `uri`. `ref` will be interpreted by the operator according the `kind`, `apiVersion` and `name`. You can use any `Kamelet`, `KafkaTopic` channel or `Knative` destination.
-<2> Properties targeting the sink endpoint (in this example a property on the `Kamelet` named `my-error-handler`). Properties targeting the sink endpoint need to use the `error-handler.sink.*` prefix.
+<2> Properties targeting the sink endpoint (in this example, a property on the `Kamelet` named `my-error-handler`). Properties targeting the sink endpoint need to use the `error-handler.sink.*` prefix.
 <3> Parameters for the error handler (such as redelivery or delay policy). Error handler parameters need to use the `error-handler.*` prefix.
 
-NOTE: The error handler properties are divided into properties that target the error handler sink endpoint and properties that should be set on the Camel error handler component (e.g. maximumRedeliveries). You need to specify the respective property prefix (`error-handler.` or `error-handler.sink.`) to decide where the property should be set.
+NOTE: The error handler properties are divided into properties that target the error handler sink endpoint and properties that should be set on the Camel error handler component, (e.g., maximumRedeliveries). You need to specify the respective property prefix (`error-handler.` or `error-handler.sink.`) to decide where the property should be set.
 
-As an alternative to referencing a Kamelet as an error handler sink you may also use an arbitrary Camel endpoint URI.
+As an alternative to referencing a Kamelet as an error handler sink, you may also use an arbitrary Camel endpoint URI.
 
 [source,bash]
 ----

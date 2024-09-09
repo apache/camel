@@ -219,7 +219,7 @@ Request: type=gold, active=true, customerData=<Customer.toString() representatio
 ====
 More examples on how to process requests and write responses can be
 found
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/jaxrs/simplebinding/[here].
+https://github.com/apache/camel/tree/main/components/camel-cxf/camel-cxf-rest/src/test/java/org/apache/camel/component/cxf/jaxrs/simplebinding[here].
 ====
 
 === Consuming a REST Request - Default Binding Style

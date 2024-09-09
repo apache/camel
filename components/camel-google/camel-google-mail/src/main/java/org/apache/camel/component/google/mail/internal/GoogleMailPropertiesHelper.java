@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.mail.internal;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.mail.GoogleMailConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -25,16 +28,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 public final class GoogleMailPropertiesHelper extends ApiMethodPropertiesHelper<GoogleMailConfiguration> {
 
+    private static final Lock LOCK = new ReentrantLock();
     private static GoogleMailPropertiesHelper helper;
 
     private GoogleMailPropertiesHelper(CamelContext context) {
         super(context, GoogleMailConfiguration.class, GoogleMailConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized GoogleMailPropertiesHelper getHelper(CamelContext context) {
-        if (helper == null) {
-            helper = new GoogleMailPropertiesHelper(context);
+    public static GoogleMailPropertiesHelper getHelper(CamelContext context) {
+        LOCK.lock();
+        try {
+            if (helper == null) {
+                helper = new GoogleMailPropertiesHelper(context);
+            }
+            return helper;
+        } finally {
+            LOCK.unlock();
         }
-        return helper;
     }
 }

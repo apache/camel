@@ -6,7 +6,7 @@ route templates are parameterized routes.
 
 _Route template_ + _input parameters_ => _route_
 
-From a route template you can create one or more routes.
+From a route template, you can create one or more routes.
 
 == Defining route templates in the DSL
 
@@ -70,15 +70,15 @@ And in XML DSL
 </routeTemplates>
 ----
 
-In the examples above there was one route template, but you can define as many as you want.
+In the examples above, there was one route template, but you can define as many as you want.
 Each template must have a unique id. The template parameters are used for defining the parameters
-the template accepts. As you can see there are 3 parameters: name, greeting, and myPeriod. The first two
-parameters are mandatory, whereas myPeriod is optional as it has a default value of 3s.
+the template accepts. As you can see, there are three parameters: `_name_`, `_greeting_`, and `_myPeriod_`. The first two
+parameters are mandatory, whereas `_myPeriod_` is optional as it has a default value of 3s.
 
 The template parameters are then used in the route as regular property placeholders with the `{{ }}` syntax.
 Notice how we use `{\{name}}` and `{\{greeting}}` in the timer endpoint and the simple language.
 
-The route can of course also use regular property placeholders as well.
+The route can, of course, use regular property placeholders as well.
 Now imagine there was a property placeholder with the name greeting:
 
 [source,properties]
@@ -86,7 +86,7 @@ Now imagine there was a property placeholder with the name greeting:
 greeting = Davs
 ----
 
-Then Camel would normally have used this value `Davs` when creating the route. However as the route template
+Then Camel would normally have used this value `Davs` when creating the route. However, as the route template
 has defined a template parameter with the same name `greeting` then a value must be provided when
 creating routes from the template.
 
@@ -113,7 +113,7 @@ TemplatedRouteBuilder.builder(context, "myTemplate")
     .add();
 ----
 
-And in Java DSL
+And in Java DSL:
 
 [source,java]
 ----
@@ -126,7 +126,7 @@ templatedRoute("myTemplate")
         .parameter("myPeriod", "5s");
 ----
 
-And in Spring XML DSL
+And in Spring XML DSL:
 
 [source,xml]
 ----
@@ -143,7 +143,7 @@ And in Spring XML DSL
 </camelContext>
 ----
 
-And in XML DSL
+And in XML DSL:
 
 [source,xml]
 ----
@@ -160,7 +160,7 @@ And in XML DSL
 </templatedRoutes>
 ----
 
-And in YAML DSL
+And in YAML DSL:
 
 [source,yaml]
 ----
@@ -201,7 +201,7 @@ TemplatedRouteBuilder.builder(context, "myTemplate")
     .add();
 ----
 
-And in Java DSL
+And in Java DSL:
 
 [source,java]
 ----
@@ -212,7 +212,7 @@ templatedRoute("myTemplate")
         .parameter("myPeriod", "5s");
 ----
 
-And in Spring XML DSL
+And in Spring XML DSL:
 
 [source,xml]
 ----
@@ -225,7 +225,7 @@ And in Spring XML DSL
 </camelContext>
 ----
 
-And in XML DSL
+And in XML DSL:
 
 [source,xml]
 ----
@@ -238,7 +238,7 @@ And in XML DSL
 </templatedRoutes>
 ----
 
-And in YAML DSL
+And in YAML DSL:
 
 [source,yaml]
 ----
@@ -256,10 +256,10 @@ And in YAML DSL
 
 === Using template parameters with Java DSL simple builder
 
-When using Java DSL and simple language then beware that you should
+When using Java DSL and simple language, then beware that you should
 not use the _simple fluent builder_ when defining the simple expressions/predicates.
 
-For example given the following route template in Java DSL:
+For example, given the following route template in Java DSL:
 
 [source,java]
 ----
@@ -291,10 +291,10 @@ Instead, the simple expression should be a literal String value _only_ as follow
 
 === Using hardcoded node IDs in route templates
 
-If route templates contains hardcoded node IDs then routes created from templates will use the same IDs
-and therefore if 2 or more routes are created from the same template, you will have _duplicate id detected_ error.
+If route templates contain hardcoded node IDs, then routes created from templates will use the same IDs.
+Therefore, if two or more routes are created from the same template, you will have _duplicate id detected_ error.
 
-Given the route template below, then it has hardcoded ID (_new-order_) in node calling the http services.
+Given the route template below, then it has hardcoded ID (`_new-order_`) in node calling the http services.
 
 [source,java]
 ----
@@ -311,11 +311,11 @@ public class MyRouteTemplates extends RouteBuilder {
 }
 ----
 
-When creating routes from templates, you can then provide a _prefix_ which are used for all node IDs.
+When creating routes from templates, you can then provide a _prefix_ which is used for all node IDs.
 This allows to create 2 or more routes without _duplicate id_ errors.
 
-For example in the following we create a new route _myCoolRoute_ from the _myTemplate_ template, and
-use a prefix of _web_.
+For example in the following, we create a new route `_myCoolRoute_` from the `_myTemplate_` template, and
+use a prefix of `_web_`.
 
 And in Java DSL
 
@@ -337,7 +337,7 @@ templatedRoute("orderTemplate")
         .parameter("queue", "order.ftp");
 ----
 
-And in Spring XML DSL
+And in Spring XML DSL:
 
 [source,xml]
 ----
@@ -348,7 +348,7 @@ And in Spring XML DSL
 </camelContext>
 ----
 
-And in XML DSL
+And in XML DSL:
 
 [source,xml]
 ----
@@ -359,7 +359,7 @@ And in XML DSL
 </templatedRoutes>
 ----
 
-And in YAML DSL
+And in YAML DSL:
 
 [source,yaml]
 ----
@@ -374,10 +374,10 @@ And in YAML DSL
 
 == Binding beans to route template
 
-The route template allows to bind beans which is local scoped and only used as part of creating routes from the template.
-This allows to use the same template to create multiple routes, where beans are local (private) for each created route.
+The route template allows binding beans that are locally scoped and only used as part of creating routes from the template.
+This allows using the same template to create multiple routes, where beans are local (private) for each created route.
 
-For example given the following route template where we use `templateBean` to setup the local bean as shown:
+For example, given the following route template where we use `templateBean` to set up the local bean as shown:
 
 [source,java]
 ----
@@ -393,27 +393,27 @@ routeTemplate("s3template")
 ----
 
 The template has two parameters to specify the AWS region and the S3 bucket. To connect to S3
-then a `software.amazon.awssdk.services.s3.S3Client` bean is needed.
+then a `software.amazon.awssdk.services.s3.S3Client` bean is necessary.
 
-To create this bean we specify this with the `templateBean` DSL where we specify the bean id as `myClient`.
-The type of the bean can be specified (`S3Client.class`) however it is optional
+To create this bean, we specify this with the `templateBean` DSL where we specify the bean id as `myClient`.
+The type of the bean can be specified (`S3Client.class`), however, it is optional
 (can be used if you need to let beans be discovered by type and not by name).
 
-This ensures that the code creating the bean is executed later ( when Camel is creating a route from the template),
+This ensures that the code creating the bean is executed later (when Camel is creating a route from the template),
 then the code must be specified as a _supplier_. Because we want during creation of the bean access to template parameters,
-we use a Camel `BeanSupplier` which gives access to `RouteTemplateContext` that is the _rtc_ variable in the code above.
+we use a Camel `BeanSupplier` which gives access to `RouteTemplateContext` that is the `_rtc_` variable in the code above.
 
 IMPORTANT: The local bean with id `myClient` *must* be referred to using Camel's property placeholder syntax, eg `{\{myClient}}`
 in the route template, as shown above with the _to_ endpoint. This is because the local
 bean must be made unique and Camel will internally re-assign the bean id to use a unique id instead of `myClient`. And this is done with the help
 of the property placeholder functionality.
 
-If multiple routes are created from this template, then each of the created routes, have their own
-S3Client bean created.
+If multiple routes are created from this template, then each of the created routes have their own
+`S3Client` bean created.
 
 === Binding beans to route templates from template builder
 
-The `TemplatedRouteBuilder` also allows to bind local beans (which allows to specify those beans) when
+The `TemplatedRouteBuilder` also allows to bind local beans (which allows specifying those beans) when
 creating routes from existing templates.
 
 Suppose the route template below is defined in XML:
@@ -434,7 +434,7 @@ Suppose the route template below is defined in XML:
 The template has no bean bindings for `#{\{myClient}}` which would be required for creating the template.
 
 When creating routes form the template via `TemplatedRouteBuilder` then you can provide the bean binding
-if you desire the bean to be local scoped (not shared with others):
+if you desire the bean to be locally scoped (not shared with others):
 
 [source,java]
 ----
@@ -451,7 +451,7 @@ TemplatedRouteBuilder.builder(context, "s3template")
 
 As you can see the binding is similar to when using `templateBean` directly in the route template.
 
-And in Java DSL
+And in Java DSL:
 
 [source,java]
 ----
@@ -466,7 +466,7 @@ templatedRoute("s3template")
 ----
 <1> Note that the third parameter of the `bean` method is not directly the bean but rather a factory method that will be used to create the bean, here we use a lambda expression as factory method.
 
-And in XML DSL
+And in XML DSL:
 
 [source,xml]
 ----
@@ -486,7 +486,7 @@ And in XML DSL
 ----
 <1> For non-Java DSL, in case of a complex bean factory, you can still rely on a language like `groovy` to define your bean factory inside a `script` element.
 
-And in YAML DSL
+And in YAML DSL:
 
 [source,yaml]
 ----
@@ -526,7 +526,7 @@ TemplatedRouteBuilder.builder(context, "s3template")
     .add();
 ----
 
-And in Java DSL
+And in Java DSL:
 
 [source,java]
 ----
@@ -544,12 +544,12 @@ a new route is created from the route template. However, the latter gives freedo
 === Binding beans to route templates using bean types
 
 You can create a local bean by referring to a fully qualified class name which Camel will use to create
-a new local bean instance. When using this the created bean is created via default constructor of the class.
+a new local bean instance. When using this, the created bean is created via default constructor of the class.
 
 The bean instance can be configured with properties via getter/setter style.
 The previous example with creating the AWS S3Client would not support this kind as this uses _fluent builder_ pattern (not getter/setter).
 
-TIP: In *Camel 4.6* onwards you can also use constructor arguments for beans
+TIP: In *Camel 4.6* onwards, you can also use constructor arguments for beans
 
 So suppose we have a class as follows:
 
@@ -583,7 +583,7 @@ routeTemplate("barTemplate")
     .to("bean:{{myBar}}")
 ----
 
-With Java DSL you can also refer to the bean class using type safe way:
+With Java DSL, you can also refer to the bean class using type safe way:
 
 [source,java]
 ----
@@ -619,9 +619,9 @@ In XML DSL you would do:
 === Binding beans to route templates using scripting languages
 
 You can use scripting languages like groovy, java, mvel to create the bean.
-This allows to define route templates with the scripting language built-in (such as groovy).
+This allows defining route templates with the scripting language built-in (such as groovy).
 
-For example creating the AWS S3 client can be done as shown in Java (with inlined groovy code):
+For example, creating the AWS S3 client can be done as shown in Java (with inlined groovy code):
 
 [source,java]
 ----
@@ -685,7 +685,7 @@ The route template in XML DSL can then also use groovy language to create the be
 </camelContext>
 ----
 
-Notice how the groovy code can be inlined directly in the route template in XML also. Of course you can also externalize
+Notice how the groovy code can be inlined directly in the route template in XML also. Of course, you can also externalize
 the bean creation code to an external file, by using `resource:` as prefix:
 
 [source,xml]
@@ -711,11 +711,11 @@ The languages supported are:
 |===
 | Type | Description
 | bean | Calling a method on a Java class to create the bean.
-| groovy | Using groovy script to create the bean.
-| java | Java code which are runtime compiled (using jOOR library) to create the bean.
-| mvel | To use Mvel template script to create the bean.
+| groovy | Using a groovy script to create the bean.
+| java | Java code which is runtime compiled (using jOOR library) to create the bean.
+| mvel | To use a Mvel template script to create the bean.
 | ognl | To use OGNL template script to create the bean.
-| _name_ | To use a 3rd party language by the given _name_ to create the bean.
+| _name_ | To use a third-party language by the given `_name_` to create the bean.
 |===
 
 Camel will bind `RouteTemplateContext` as the root object with name `rtc` when evaluating the script.
@@ -764,7 +764,7 @@ then you can call this method from the route template in XML DSL:
 </camelContext>
 ----
 
-The method signature of createS3Client must then have 1 parameter for the `RouteTemplateContext` as shown:
+The method signature of createS3Client must then have one parameter for the `RouteTemplateContext` as shown:
 
 [source,java]
 ----
@@ -833,11 +833,11 @@ routeTemplate("myTemplate")
 
 The route templates can be dumped as XML from the `ManagedCamelContextMBean` MBean via the `dumpRouteTemplatesAsXml` operation.
 
-== Creating routes from properties file
+== Creating routes from a properties file
 
 When using `camel-main` you can specify the parameters for route templates in `application.properties` file.
 
-For example given the route template below (from a `RouteBuilder` class):
+For example, given the route template below (from a `RouteBuilder` class):
 
 [source,java]
 ----
@@ -866,10 +866,11 @@ camel.route-template[1].result=cheese
 The SPI interface `org.apache.camel.spi.RouteTemplateParameterSource` can be used to implement custom sources that
 are used during startup of Camel to create routes via the templates with parameters from the custom source(s).
 
-For example a custom source can be implemented to read parameters from a shared database that Camel uses during startup
-to create routes. This allows to externalize these parameters and as well to easily add more routes with varying parameters.
+For example, a custom source can be implemented to read parameters from a shared database that Camel uses during startup
+to create routes.
+This allows externalizing these parameters and as well to easily add more routes with varying parameters.
 
-To let Camel discover custom sources then register the source into the Camel registry.
+To let Camel discover custom sources, then register the source into the Camel registry.
 
 == See Also
 

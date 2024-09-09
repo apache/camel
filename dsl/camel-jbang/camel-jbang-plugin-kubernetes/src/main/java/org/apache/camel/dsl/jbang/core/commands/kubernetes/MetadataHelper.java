@@ -105,7 +105,13 @@ public class MetadataHelper {
     public static SourceMetadata readFromSource(CamelCatalog catalog, String location, String source) throws Exception {
         try (CamelContext context = createCamelContext()) {
             Resource resource = ResourceHelper.fromString(location, source);
-            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            try {
+                PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+            } catch (IllegalArgumentException e) {
+                // obviously no matching routes loader is available, return empty metadata
+                return new SourceMetadata();
+            }
 
             context.start();
 

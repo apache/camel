@@ -50,6 +50,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private boolean uploadEnabled;
     private String uploadSourceDir;
     private boolean downloadEnabled;
+    private boolean sendEnabled;
 
     @Metadata(label = "security")
     private boolean authenticationEnabled;
@@ -264,6 +265,18 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.downloadEnabled = downloadEnabled;
     }
 
+    public boolean isSendEnabled() {
+        return sendEnabled;
+    }
+
+    /**
+     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
+     * Camel endpoint URIs via HTTP.
+     */
+    public void setSendEnabled(boolean sendEnabled) {
+        this.sendEnabled = sendEnabled;
+    }
+
     public boolean isAuthenticationEnabled() {
         return authenticationEnabled;
     }
@@ -467,6 +480,15 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withDownloadEnabled(boolean downloadEnabled) {
         this.downloadEnabled = downloadEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
+     * Camel endpoint URIs via HTTP.
+     */
+    public HttpServerConfigurationProperties withSendEnabled(boolean sendEnabled) {
+        this.sendEnabled = sendEnabled;
         return this;
     }
 

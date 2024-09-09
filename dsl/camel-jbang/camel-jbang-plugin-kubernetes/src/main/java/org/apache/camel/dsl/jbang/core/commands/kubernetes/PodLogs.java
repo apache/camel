@@ -148,9 +148,8 @@ public class PodLogs extends KubernetesBaseCommand {
             }
         } catch (IOException e) {
             printer().println("Failed to read pod logs - " + e.getMessage());
-            return false;
         }
 
-        return resumeCount < 10;
+        return resumeCount < 25;
     }
 }

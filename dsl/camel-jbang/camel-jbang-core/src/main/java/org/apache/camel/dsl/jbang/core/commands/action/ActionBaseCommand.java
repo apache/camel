@@ -94,7 +94,7 @@ abstract class ActionBaseCommand extends CamelCommand {
 
     static long extractSince(ProcessHandle ph) {
         long since = 0;
-        if (ph.info().startInstant().isPresent()) {
+        if (ph != null && ph.info().startInstant().isPresent()) {
             since = ph.info().startInstant().get().toEpochMilli();
         }
         return since;

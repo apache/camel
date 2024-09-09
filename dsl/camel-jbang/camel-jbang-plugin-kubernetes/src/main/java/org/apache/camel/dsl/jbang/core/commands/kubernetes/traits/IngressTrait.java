@@ -48,17 +48,13 @@ public class IngressTrait extends BaseTrait {
             return false;
         }
 
-        // explicitly disabled
-        if (traitConfig.getIngress() != null && !Optional.ofNullable(traitConfig.getIngress().getEnabled()).orElse(true)) {
+        // must be explicitly enabled
+        if (traitConfig.getIngress() == null || !Optional.ofNullable(traitConfig.getIngress().getEnabled()).orElse(false)) {
             return false;
         }
 
-        // auto configuration with configured service
-        if (traitConfig.getIngress() != null && Optional.ofNullable(traitConfig.getIngress().getAuto()).orElse(true)) {
-            return context.getService() != null;
-        }
-
-        return true;
+        // configured service
+        return context.getService().isPresent();
     }
 
     @Override

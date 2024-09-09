@@ -181,10 +181,10 @@ The shorthand `-p` option from `run` and `script` command has been removed. Use 
 === camel-jsonpath
 
 The `camel-jsonpath` will now work more similar as `camel-jq` when you specify a `resultType` and have a list of entities.
-Before `camel-jsonapath` would attempt to convert the `List` to the given `restultType` which often is not useable. What
+Before `camel-jsonapath` would attempt to convert the `List` to the given `restultType` which often is not usable. What
 users want is to be able to convert each entry in the list to a given type such as a POJO.
 
-For example the snippet below select all books from a JSon document, which will be in a `List<Map>` object where each
+For example, the snippet below selects all books from a JSON document, which will be in a `List<Map>` object where each
 book is an entry as a `Map`. Before Camel would attempt to convert `List` to `Book` which would not be possible.
 From this release onwards, Camel will convert each entry to a `Book` so the result is `List<Book>`.
 
@@ -215,7 +215,7 @@ The `camel-micrometer` have renamed tag `serviceName` to `kind` and use naming t
 | serviceName="MicrometerRoutePolicyService" | kind="CamelRoute"
 |===
 
-Due to Kamelets are changed to act more like a Camel component, and not expose internal details as JMX MBeans, then
+Because the Kamelets were changed to act more like a Camel component, and not expose internal details as JMX MBeans, then
 micrometer and metrics no longer include statistics for those Kamelet routes.
 
 The old behaviour can be enabled by setting `registerRoutesCreateByKamelet=true`
@@ -272,10 +272,10 @@ The class `org.apache.camel.component.redis.processor.idempotent.RedisStringIdem
 
 == Camel Spring Boot
 
-The auto configuration with `camel.springboot.xxx` properties has been harmonized to use same naming for
-all the Camel runtimes (camel-main, canel-quarkus, and camel-spring-boot). These options have been marked
+The autoconfiguration with `camel.springboot.xxx` properties has been harmonized to use same naming for
+all the Camel runtimes (`camel-main`, `camel-quarkus`, and `camel-spring-boot`). These options have been marked
 as deprecated, and you can migrate to use `camel.main.xxx` naming instead.
 
-For example `camel.springboot.name = Foo` to `camel.main.name = Foo`.
+For example, `camel.springboot.name = Foo` to `camel.main.name = Foo`.
 
 Only the special Spring Boot options are still named `camel.springboot.xxx`.

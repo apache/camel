@@ -26,15 +26,16 @@ prior to creating the type converter registry
 
 === camel-health
 
-Routes which has are set to **not** auto-startup are reported as UP in health-checks.
-We have now implemented similar logic for the consumer health check as well (the route and consumer health check are linked together).
+Routes that have been set to **not** auto-startup are reported as UP in health-checks.
+We have now implemented similar logic for the consumer health check as well. In this case, the route and consumer health check
+are linked together.
 
 Previously a route that has not been started due to `auto-startup=false` would still have its consumer health-check being executed,
 which could lead to DOWN due to consumer failing the check.
 
 The `SupervisingRouteController` has now been pre-configured to report `DOWN` during restart attempts, and also when
 giving up starting a route. It is the `UnhealthyOnExhausted` and `UnhealthyOnRestarting` options that have been changed to be default `true`.
-To have previous behavior you can set these options to `false`.
+To have previous behavior, you can set these options to `false`.
 
 == camel-cloud
 
@@ -61,7 +62,7 @@ The Load Balancer EIP has aligned naming and the following balancers has been re
 | weighted | weightedLoadBalancer
 |===
 
-For example in XML you need to change from:
+For example in XML, you need to change from:
 
 [source,xml]
 ----
@@ -109,14 +110,14 @@ The `generate` commands has been moved into separate plugin which you need to in
 camel plugin add generate
 ----
 
-TIP: You can see list of available plugins using `camel plugin get --all`.
+TIP: You can see the list of available plugins using `camel plugin get --all`.
 
 === camel-jetty / camel-servlet / camel-undertow
 
 When using embedded HTTP server (consumer) then the headers `CamelHttpServletRequest` and `CamelHttpServletResponse`
 has been removed.
 
-To gain access to these then you need to use the `HttpMessage` API instead as shown below:
+To gain access to these, then you need to use the `HttpMessage` API instead as shown below:
 
 [source,java]
 ----
@@ -203,7 +204,7 @@ Upgraded PubNub client from v6 to v9 and the `wherenow` operation is removed due
 The `camel-as2` component has been updated so that the client can compress a MIME body before signing or compress a MIME body before signing and encrypting as described in
 sections https://datatracker.ietf.org/doc/html/rfc5402/#section-3.2[3.2] and https://datatracker.ietf.org/doc/html/rfc5402/#section-3.5[3.5] of https://datatracker.ietf.org/doc/html/rfc5402/[rfc 5402].
 
-When the AS2 server is configured with a decryption key all received messages require encryption otherwise the server
+When the AS2 server is configured with a decryption key, all received messages require encryption. Otherwise, the server
 will return an 'insufficient-security' error disposition. Only messages with valid encryption will be successfully processed,
 for instance, 'encrypted', 'signed-encrypted', 'encrypted-compressed', 'encrypted-compressed-signed' and 
 'encrypted-signed-compressed' message types.
@@ -212,15 +213,16 @@ Messages that cannot be successfully decrypted will return a 'decryption-failed'
 This includes messages encrypted with a invalid key or if the server receives encrypted messages but is not 
 configured with a decryption key.
 
-When the AS2 server is configured with a message signature validation certificate chain all received messages
-require a signature otherwise the server will return an 'insufficient-security' error disposition.
+When the AS2 server is configured with a message signature validation certificate chain, all received messages
+require a signature. Otherwise, the server will return an 'insufficient-security' error disposition.
 Only messages with a valid signature will be processed, for instance, 'signed', 'compressed-signed',
 and 'signed-compressed' message types.
 
 The server will return an 'authentication-failure' error when a message fails signature validation.
 
-When the AS2 server is configured with a message signature validation certificate chain and a decryption key all received messages 
-require encryption and a signature otherwise the server will return an 'insufficient-security' error disposition. 
+When the AS2 server is configured with a message signature validation certificate chain and a decryption key,
+all received messages require encryption and a signature.
+Otherwise, the server will return an 'insufficient-security' error disposition.
 Only messages with a valid signature and encryption will be processed, for instance, 'signed-encrypted', 'encrypted-compressed-signed', 
 and 'encrypted-signed-compressed'.
 
