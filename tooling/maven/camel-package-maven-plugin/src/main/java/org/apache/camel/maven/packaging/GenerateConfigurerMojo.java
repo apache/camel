@@ -19,12 +19,16 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 /**
  * Generate configurer classes from @Configurer annotated classes for main sources.
@@ -49,12 +53,14 @@ public class GenerateConfigurerMojo extends AbstractGenerateConfigurerMojo {
 
     /**
      * To generate configurer for these classes. The syntax is either <tt>fqn</tt> or </tt>fqn=targetFqn</tt>. This
-     * allows to map source class to target class to generate the source code using a different classname.
+     * allows mapping source class to target class to generate the source code using a different classname.
      */
     @Parameter
     protected List<String> classes;
 
-    public GenerateConfigurerMojo() {
+    @Inject
+    public GenerateConfigurerMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
     }
 
     @Override

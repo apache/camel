@@ -66,11 +66,12 @@ import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
 
-@SuppressWarnings("unused")
 public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
@@ -80,6 +81,10 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
+
+    protected ModelWriterGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     private static Type type(Member member) {
         return member instanceof Method

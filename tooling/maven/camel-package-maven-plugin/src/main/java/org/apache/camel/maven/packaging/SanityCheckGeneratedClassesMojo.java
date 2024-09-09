@@ -21,12 +21,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 @Mojo(name = "sanity-check", threadSafe = true)
 public class SanityCheckGeneratedClassesMojo extends AbstractGeneratorMojo {
+
+    @Inject
+    public SanityCheckGeneratedClassesMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

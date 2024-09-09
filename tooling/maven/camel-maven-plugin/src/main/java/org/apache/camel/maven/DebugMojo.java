@@ -22,13 +22,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.util.CastUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
@@ -38,10 +43,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectBuilder;
 
 /**
- * The maven goal allowing to automatically set up the Camel application in order to debug the Camel routes thanks to
- * the Camel textual Route Debugger.
+ * The maven goal allowing to automatically set up the Camel application to debug the Camel routes thanks to the Camel
+ * textual Route Debugger.
  */
 @Mojo(name = "debug", defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
       requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
@@ -58,6 +64,12 @@ public class DebugMojo extends DevMojo {
 
     @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession session;
+
+    @Inject
+    public DebugMojo(ArtifactResolver artifactResolver, ArtifactFactory artifactFactory, ArtifactMetadataSource metadataSource,
+                     MavenProjectBuilder projectBuilder) {
+        super(artifactResolver, artifactFactory, metadataSource, projectBuilder);
+    }
 
     @Override
     protected void beforeBootstrapCamel() throws Exception {

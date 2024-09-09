@@ -26,8 +26,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.ClassUtil;
-import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.tooling.model.EipModel;
@@ -46,8 +47,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
-import org.jboss.jandex.DotName;
-import org.jboss.jandex.IndexView;
 
 import static java.lang.reflect.Modifier.isStatic;
 
@@ -58,17 +57,14 @@ import static java.lang.reflect.Modifier.isStatic;
 @Mojo(name = "generate-languages-list", threadSafe = true)
 public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
-    private static final DotName LANGUAGE = DotName.createSimple(Language.class.getName());
-    private IndexView indexView;
-
     /**
-     * The output directory for generated languages file
+     * The output directory for generated language resources
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File languageOutDir;
 
     /**
-     * The output directory for generated languages file
+     * The output directory for generated schema resources
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
@@ -79,19 +75,17 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
-    public PackageLanguageMojo() {
-    }
-
+    @Inject
     public PackageLanguageMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
                                File buildDir, File languageOutDir, File schemaOutDir,
                                BuildContext buildContext) {
+        super(projectHelper, buildContext);
+
         setLog(log);
         this.project = project;
-        this.projectHelper = projectHelper;
         this.buildDir = buildDir;
         this.languageOutDir = languageOutDir;
         this.schemaOutDir = schemaOutDir;
-        this.buildContext = buildContext;
     }
 
     /**
@@ -412,13 +406,6 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         int idx = javaType.lastIndexOf('.');
         String pckName = javaType.substring(0, idx);
         return "META-INF/" + pckName.replace('.', '/');
-    }
-
-    private IndexView getIndex() {
-        if (indexView == null) {
-            indexView = PackagePluginUtils.readJandexIndexQuietly(project);
-        }
-        return indexView;
     }
 
 }

@@ -31,6 +31,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -40,6 +42,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
@@ -62,7 +66,9 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
-    public GenerateEndpointUriFactoryMojo() {
+    @Inject
+    public GenerateEndpointUriFactoryMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
     }
 
     @Override

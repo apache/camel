@@ -37,6 +37,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.model.AnnotationModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
@@ -128,8 +130,13 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     protected List<Path> sourceRoots;
 
+    @Inject
+    public UpdateReadmeMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+    public void execute(MavenProject project)
             throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         componentDocDir = new File(project.getBasedir(), "src/main/docs");
@@ -138,7 +145,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         languageDocDir2 = new File(project.getBasedir(), "/src/main/docs/modules/languages/pages");
         File engine = findCamelDirectory(project.getBasedir(), "camel-core-engine");
         eipDocDir = new File(engine, "/src/main/docs/modules/eips/pages");
-        super.execute(project, projectHelper, buildContext);
+        super.execute(project);
     }
 
     @Override

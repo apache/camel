@@ -16,11 +16,15 @@
  */
 package org.apache.camel.maven.packaging;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 /**
  * To be used by 3rd party Camel component developers to generate metadata.
@@ -29,9 +33,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class GenerateComponentMojo extends AbstractGenerateMojo {
 
+    @Inject
+    public GenerateComponentMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
     protected void doExecute() throws MojoFailureException, MojoExecutionException {
 
-        // do not sync pom file for this goal as we are standalone
+        // do not sync the pom file for this goal as we are standalone
         project.setContextValue("syncPomFile", "false");
 
         // jandex

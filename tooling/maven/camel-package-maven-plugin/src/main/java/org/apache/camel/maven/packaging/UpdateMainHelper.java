@@ -18,10 +18,14 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
@@ -36,6 +40,11 @@ public class UpdateMainHelper extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/")
     protected File baseDir;
+
+    @Inject
+    public UpdateMainHelper(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     /**
      * Execute goal.

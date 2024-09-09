@@ -19,6 +19,8 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -41,12 +43,16 @@ public class XmlModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
     @Parameter(defaultValue = "${camel-generate-xml-writer}")
     protected boolean generateXmlWriter;
 
+    @Inject
+    public XmlModelWriterGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
-            throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
         generateXmlWriter = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-xml-writer", "false"));
-        super.execute(project, projectHelper, buildContext);
+        super.execute(project);
     }
 
     @Override

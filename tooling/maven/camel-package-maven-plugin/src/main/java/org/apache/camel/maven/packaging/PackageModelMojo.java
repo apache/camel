@@ -21,11 +21,15 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 /**
  * Analyses the Camel EIPs in a project and generates extra descriptor information for easier auto-discovery in Camel.
@@ -40,10 +44,15 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
     protected File buildDir;
 
     /**
-     * The output directory for generated models file
+     * The output directory for the generated model files
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outDir;
+
+    @Inject
+    public PackageModelMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     /**
      * Execute goal.

@@ -186,6 +186,12 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-xml</artifactId>
                 <version>${plexus-xml-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-xml-impl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>

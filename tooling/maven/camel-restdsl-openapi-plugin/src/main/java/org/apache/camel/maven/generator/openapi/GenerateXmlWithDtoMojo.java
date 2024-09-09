@@ -16,14 +16,22 @@
  */
 package org.apache.camel.maven.generator.openapi;
 
+import javax.inject.Inject;
+
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "generate-xml-with-dto", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+@Mojo(name = "generate-xml-with-dto", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
       requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateXmlWithDtoMojo extends GenerateXmlMojo {
+
+    @Inject
+    public GenerateXmlWithDtoMojo(BuildPluginManager pluginManager) {
+        super(pluginManager);
+    }
 
     @Override
     public void execute() throws MojoExecutionException {

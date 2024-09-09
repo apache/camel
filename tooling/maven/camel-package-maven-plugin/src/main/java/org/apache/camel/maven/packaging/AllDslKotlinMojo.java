@@ -34,6 +34,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import com.squareup.kotlinpoet.ClassName;
 import com.squareup.kotlinpoet.ClassNames;
 import com.squareup.kotlinpoet.CodeBlock;
@@ -106,19 +108,24 @@ public class AllDslKotlinMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/languages")
     protected File languagesJsonDir;
 
-    private transient String licenseHeader;
+    private String licenseHeader;
 
     private static final Predicate<String> identifierPattern = Pattern.compile("\\w+").asMatchPredicate();
 
     private static final Pattern genericPattern = Pattern.compile("<([\\w.?\\s]+)>");
 
+    @Inject
+    public AllDslKotlinMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+    public void execute(MavenProject project)
             throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         baseDir = project.getBasedir();
         componentsPackageName = "org.apache.camel.kotlin.components";
-        super.execute(project, projectHelper, buildContext);
+        super.execute(project);
     }
 
     @Override

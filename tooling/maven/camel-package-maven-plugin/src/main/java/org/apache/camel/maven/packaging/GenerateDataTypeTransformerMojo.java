@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -33,6 +35,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
@@ -57,6 +61,11 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
+
+    @Inject
+    public GenerateDataTypeTransformerMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     private static class DataTypeTransformerModel {
         private String className;
@@ -113,9 +122,6 @@ public class GenerateDataTypeTransformerMojo extends AbstractGeneratorMojo {
         public void setDeprecated(boolean deprecated) {
             this.deprecated = deprecated;
         }
-    }
-
-    public GenerateDataTypeTransformerMojo() {
     }
 
     @Override

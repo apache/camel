@@ -271,7 +271,7 @@
         <jedis-client-version>5.1.5</jedis-client-version>
         <jetcd-version>0.8.3</jetcd-version>
         <jetty-version>12.0.13</jetty-version>
-		<jetty-for-solr-version>10.0.20</jetty-for-solr-version>        
+		    <jetty-for-solr-version>10.0.20</jetty-for-solr-version>        
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
@@ -363,6 +363,7 @@
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>6.13.3</mockwebserver-version>
         <mockito-version>5.13.0</mockito-version>
+        <mojo-executor-version>2.4.0</mojo-executor-version>
         <mongo-java-driver-version>5.1.4</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.17.1</msal4j-version>
@@ -432,6 +433,7 @@
         <saxon-version>12.5</saxon-version>
         <scala-datasonnet-version>2.13.14</scala-datasonnet-version>
         <shiro-version>2.0.1</shiro-version>
+        <sisu-maven-plugin-version>0.9.0.M3</sisu-maven-plugin-version>
         <slack-api-model-version>1.42.0</slack-api-model-version>
         <slf4j-api-version>2.0.16</slf4j-api-version>
         <slf4j-version>2.0.16</slf4j-version>
@@ -3050,6 +3052,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven-plugin-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.sisu</groupId>
+                    <artifactId>sisu-maven-plugin</artifactId>
+                    <version>${sisu-maven-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

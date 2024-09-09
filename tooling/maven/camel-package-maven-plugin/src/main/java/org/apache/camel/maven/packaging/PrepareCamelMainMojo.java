@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.MainModel;
@@ -52,10 +54,15 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
 
     /**
-     * The output directory for generated spring boot tooling file
+     * The output directory for the generated spring boot tooling files
      */
     @Parameter(defaultValue = "${project.basedir}/src/main/doc")
     protected File outFolder;
+
+    @Inject
+    public PrepareCamelMainMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     /**
      * Parses the Camel Main configuration java source file.
@@ -164,10 +171,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
     }
 
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
-            throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         outFolder = new File(project.getBasedir(), "src/generated/resources");
-        super.execute(project, projectHelper, buildContext);
+        super.execute(project);
     }
 
     @Override
