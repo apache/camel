@@ -1280,7 +1280,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Whether to capture precise source location:line-number for all EIPs in Camel routes.
      *
-     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses
+     * Enabling this will impact parsing Java based routes (also Groovy, etc.) on startup as this uses
      * {@link StackTraceElement} to calculate the location from the Camel route, which comes with a performance cost.
      * This only impact startup, not the performance of the routes at runtime.
      */
@@ -1289,7 +1289,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Whether to capture precise source location:line-number for all EIPs in Camel routes.
      *
-     * Enabling this will impact parsing Java based routes (also Groovy, Kotlin, etc.) on startup as this uses
+     * Enabling this will impact parsing Java based routes (also Groovy, etc.) on startup as this uses
      * {@link StackTraceElement} to calculate the location from the Camel route, which comes with a performance cost.
      * This only impact startup, not the performance of the routes at runtime.
      */

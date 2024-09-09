@@ -8,7 +8,7 @@ to copy the same configuration to a set of routes or rely on global error handli
 Now you can configure a number of route configurations, and then specify on each route
 which configuration to use (you can use match by ids, wildcards, and regular expression).
 
-The route configuration is supported by all DSLs, so usable by: Java, XML, Groovy, Kotlin and so forth.
+The route configuration is supported by all DSLs, so usable by: Java, XML, Groovy and so forth.
 
 In the route configuration, you can set up common strategies for:
 

@@ -68,8 +68,6 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
             downloadLoader("camel-js-dsl");
         } else if ("jsh".equals(extension)) {
             downloadLoader("camel-jsh-dsl");
-        } else if ("kts".equals(extension)) {
-            downloadLoader("camel-kotlin-dsl");
         } else if ("xml".equals(extension)
                 || "camel.xml".equals(extension)) {
             downloadLoader("camel-xml-io-dsl");

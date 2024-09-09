@@ -55,3 +55,15 @@ Additionally, starting with Camel 4.9, we strongly recommend users to avoid rely
 via `@TestInstance(TestInstance.Lifecycle.PER_CLASS)`), as this is considered a deprecated functionality that will be removed in the
 future.
 The logs will print a warning message if this behavior is detected.
+
+=== Removed API
+
+==== Kotlin DSL
+
+The Kotlin DSL which was deprecated in Camel 4.7.0 has now been removed. The routes must be migrated to another DSL such as Java, Yaml or xml.
+
+=== Deprecated Components
+
+The following components that were marked as deprecated:
+
+* 
