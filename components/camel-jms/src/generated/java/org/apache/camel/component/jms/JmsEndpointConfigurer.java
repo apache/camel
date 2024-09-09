@@ -109,6 +109,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "idleconsumerlimit":
         case "idleConsumerLimit": target.getConfiguration().setIdleConsumerLimit(property(camelContext, int.class, value)); return true;
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": target.getConfiguration().setIdleReceivesPerTaskLimit(property(camelContext, int.class, value)); return true;
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": target.getConfiguration().setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
         case "includealljmsxproperties":
@@ -310,6 +312,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "idleconsumerlimit":
         case "idleConsumerLimit": return int.class;
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": return int.class;
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": return int.class;
         case "includealljmsxproperties":
@@ -512,6 +516,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "idleconsumerlimit":
         case "idleConsumerLimit": return target.getConfiguration().getIdleConsumerLimit();
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": return target.getConfiguration().getIdleReceivesPerTaskLimit();
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": return target.getConfiguration().getIdleTaskExecutionLimit();
         case "includealljmsxproperties":

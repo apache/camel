@@ -119,6 +119,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "idleconsumerlimit":
         case "idleConsumerLimit": getOrCreateConfiguration(target).setIdleConsumerLimit(property(camelContext, int.class, value)); return true;
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": getOrCreateConfiguration(target).setIdleReceivesPerTaskLimit(property(camelContext, int.class, value)); return true;
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": getOrCreateConfiguration(target).setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
         case "includealljmsxproperties":
@@ -329,6 +331,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "idleconsumerlimit":
         case "idleConsumerLimit": return int.class;
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": return int.class;
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": return int.class;
         case "includealljmsxproperties":
@@ -540,6 +544,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "idleconsumerlimit":
         case "idleConsumerLimit": return getOrCreateConfiguration(target).getIdleConsumerLimit();
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": return getOrCreateConfiguration(target).getIdleReceivesPerTaskLimit();
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": return getOrCreateConfiguration(target).getIdleTaskExecutionLimit();
         case "includealljmsxproperties":
