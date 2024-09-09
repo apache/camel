@@ -23,7 +23,9 @@ import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageBuilder;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import io.opentelemetry.semconv.HttpAttributes;
+import io.opentelemetry.semconv.SemanticAttributes;
+import io.opentelemetry.semconv.incubating.DbIncubatingAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
@@ -36,10 +38,10 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
         TAG_MAP.put(Tag.COMPONENT, "component");
         TAG_MAP.put(Tag.DB_TYPE, SemanticAttributes.DB_SYSTEM.getKey());
         TAG_MAP.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.getKey());
-        TAG_MAP.put(Tag.DB_INSTANCE, SemanticAttributes.DB_NAME.getKey());
-        TAG_MAP.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.getKey());
-        TAG_MAP.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.getKey());
-        TAG_MAP.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.getKey());
+        TAG_MAP.put(Tag.DB_INSTANCE, DbIncubatingAttributes.DB_NAME.getKey());
+        TAG_MAP.put(Tag.HTTP_METHOD, HttpAttributes.HTTP_REQUEST_METHOD.getKey());
+        TAG_MAP.put(Tag.HTTP_STATUS, HttpAttributes.HTTP_RESPONSE_STATUS_CODE.getKey());
+        TAG_MAP.put(Tag.HTTP_URL, HttpAttributes.HTTP_REQUEST_METHOD.getKey());
         TAG_MAP.put(Tag.MESSAGE_BUS_DESTINATION, "message_bus.destination");
     }
 

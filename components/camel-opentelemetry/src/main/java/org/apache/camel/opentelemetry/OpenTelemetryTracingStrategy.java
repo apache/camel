@@ -28,6 +28,8 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.tracing.ActiveSpanManager;
+import org.apache.camel.tracing.GetCorrelationContextProcessor;
+import org.apache.camel.tracing.SetCorrelationContextProcessor;
 import org.apache.camel.tracing.SpanDecorator;
 
 public class OpenTelemetryTracingStrategy implements InterceptStrategy {

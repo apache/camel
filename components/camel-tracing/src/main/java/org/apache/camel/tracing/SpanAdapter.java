@@ -83,4 +83,19 @@ public interface SpanAdapter {
     default AutoCloseable makeCurrent() {
         return Tracer.NOOP_CLOSEABLE;
     }
+
+    /**
+     * Set an item from the current correlation context.
+     *
+     * @param key   the item key.
+     * @param value the item value.
+     */
+    void setCorrelationContextItem(String key, String value);
+
+    /**
+     * Get an item from the current correlation context.
+     *
+     * @param key the item key.
+     */
+    String getContextPropagationItem(String key);
 }

@@ -21,10 +21,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MockSpanAdapter implements SpanAdapter {
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.TagConstants;
+
+/**
+ * In memory implementation of {@link SpanAdapter} used for testing and mocking.
+ */
+public class InMemorySpanAdapter implements SpanAdapter {
 
     private final List<LogEntry> logEntries = new ArrayList<>();
     private final Map<String, Object> tags = new HashMap<>();
+    private final Map<String, String> contextPropagationItems = new HashMap<>();
     private String traceId;
     private String spanId;
     private boolean isCurrent;
@@ -96,6 +103,16 @@ public class MockSpanAdapter implements SpanAdapter {
     @Override
     public AutoCloseable makeCurrent() {
         return new Scope();
+    }
+
+    @Override
+    public void setCorrelationContextItem(String key, String value) {
+        contextPropagationItems.put(key, value);
+    }
+
+    @Override
+    public String getContextPropagationItem(String key) {
+        return contextPropagationItems.get(key);
     }
 
     public boolean isCurrent() {

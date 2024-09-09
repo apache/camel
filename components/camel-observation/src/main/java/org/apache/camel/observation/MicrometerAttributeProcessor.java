@@ -16,8 +16,10 @@
  */
 package org.apache.camel.observation;
 
+import io.micrometer.observation.Observation;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -27,27 +29,30 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GetCorrelationContextProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+/**
+ * A processor which adds an attribute on the active {@link Observation} with an {@link org.apache.camel.Expression}
+ */
+public class MicrometerAttributeProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GetCorrelationContextProcessor.class);
-
-    private final String headerName;
-    private final String keyName;
+    private static final Logger LOG = LoggerFactory.getLogger(MicrometerAttributeProcessor.class);
+    private final String attributeName;
+    private final Expression expression;
     private String id;
     private String routeId;
 
-    public GetCorrelationContextProcessor(String keyName, String headerName) {
-        this.keyName = ObjectHelper.notNull(keyName, "keyName");
-        this.headerName = ObjectHelper.notNull(headerName, "headerName");
+    public MicrometerAttributeProcessor(String tagName, Expression expression) {
+        this.attributeName = ObjectHelper.notNull(tagName, "tagName");
+        this.expression = ObjectHelper.notNull(expression, "expression");
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             MicrometerObservationSpanAdapter camelSpan = (MicrometerObservationSpanAdapter) ActiveSpanManager.getSpan(exchange);
-            if (camelSpan != null) {
-                String item = camelSpan.getContextPropagationItem(keyName);
-                exchange.getMessage().setHeader(headerName, item);
+            Observation observation = camelSpan.getMicrometerObservation();
+            if (observation != null) {
+                String tag = expression.evaluate(exchange, String.class);
+                observation.highCardinalityKeyValue(attributeName, tag);
             } else {
                 LOG.warn("Micrometer Observation: Cannot find managed span for exchange: {}", exchange);
             }
@@ -63,7 +68,7 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
 
     @Override
     public String getTraceLabel() {
-        return "getCorrelationContext[" + keyName + ", " + headerName + "]";
+        return "attribute[" + attributeName + ", " + expression + "]";
     }
 
     @Override
@@ -86,22 +91,12 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
         this.routeId = routeId;
     }
 
-    public String getKeyName() {
-        return keyName;
+    public String getAttributeName() {
+        return attributeName;
     }
 
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override
