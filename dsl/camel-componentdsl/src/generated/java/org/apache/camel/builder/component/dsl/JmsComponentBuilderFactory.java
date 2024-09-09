@@ -1435,6 +1435,42 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Marks the consumer as idle after the specified number of idle
+         * receives have been reached. An idle receive is counted from the
+         * moment a null message is returned by the receiver after the potential
+         * setReceiveTimeout elapsed. This gives the opportunity to check if the
+         * idle task count exceeds setIdleTaskExecutionLimit and based on that
+         * decide if the task needs to be re-scheduled or not, saving resources
+         * that would otherwise be held. This setting differs from
+         * setMaxMessagesPerTask where the task is released and re-scheduled
+         * after this limit is reached, no matter if the received messages were
+         * null or non-null messages. This setting alone can be inflexible if
+         * one desires to have a large enough batch for each task but requires a
+         * quick(er) release from the moment there are no more messages to
+         * process. This setting differs from setIdleTaskExecutionLimit where
+         * this limit decides after how many iterations of being marked as idle,
+         * a task is released. For example: If setMaxMessagesPerTask is set to
+         * '500' and #setIdleReceivesPerTaskLimit is set to '60' and
+         * setReceiveTimeout is set to '1000' and setIdleTaskExecutionLimit is
+         * set to '1', then 500 messages per task would be processed unless
+         * there is a subsequent number of 60 idle messages received, the task
+         * would be marked as idle and released. This also means that after the
+         * last message was processed, the task would be released after 60
+         * seconds as long as no new messages appear.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleReceivesPerTaskLimit the value to set
+         * @return the dsl builder
+         */
+        default JmsComponentBuilder idleReceivesPerTaskLimit(int idleReceivesPerTaskLimit) {
+            doSetProperty("idleReceivesPerTaskLimit", idleReceivesPerTaskLimit);
+            return this;
+        }
+    
         
         /**
          * Specifies the limit for idle executions of a receive task, not having
@@ -2243,6 +2279,7 @@ public interface JmsComponentBuilderFactory {
             case "errorHandler": getOrCreateConfiguration((JmsComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
             case "exceptionListener": getOrCreateConfiguration((JmsComponent) component).setExceptionListener((jakarta.jms.ExceptionListener) value); return true;
             case "idleConsumerLimit": getOrCreateConfiguration((JmsComponent) component).setIdleConsumerLimit((int) value); return true;
+            case "idleReceivesPerTaskLimit": getOrCreateConfiguration((JmsComponent) component).setIdleReceivesPerTaskLimit((int) value); return true;
             case "idleTaskExecutionLimit": getOrCreateConfiguration((JmsComponent) component).setIdleTaskExecutionLimit((int) value); return true;
             case "includeAllJMSXProperties": getOrCreateConfiguration((JmsComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
             case "includeCorrelationIDAsBytes": ((JmsComponent) component).setIncludeCorrelationIDAsBytes((boolean) value); return true;
