@@ -60,6 +60,11 @@ public class BrowseDevConsole extends AbstractDevConsole {
      */
     public static final String INCLUDE_BODY = "includeBody";
 
+    /**
+     * Maximum size of the message body to include in the dump
+     */
+    public static final String BODY_MAX_CHARS = "bodyMaxChars";
+
     @Metadata(defaultValue = "32768",
               description = "Maximum size of the message body to include in the dump")
     private int bodyMaxChars = 32 * 1024;
@@ -93,6 +98,7 @@ public class BrowseDevConsole extends AbstractDevConsole {
         final int max = lim == null ? limit : Integer.parseInt(lim);
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
         boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
+        int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
 
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());
@@ -102,12 +108,12 @@ public class BrowseDevConsole extends AbstractDevConsole {
                 List<Exchange> list = be.getExchanges(max, null);
                 if (list != null) {
                     sb.append("\n");
-                    sb.append(String.format("Browse: %s (size: %d)%n", endpoint.getEndpointUri(), max));
+                    sb.append(String.format("Browse: %s (size: %d limit: %d)%n", endpoint.getEndpointUri(), list.size(), max));
                     if (dump) {
                         for (Exchange e : list) {
                             String json
                                     = MessageHelper.dumpAsJSon(e.getMessage(), false, false, includeBody, 2, true, true, true,
-                                            bodyMaxChars, true);
+                                            maxChars, true);
                             sb.append(json);
                             sb.append("\n");
                         }
@@ -130,6 +136,7 @@ public class BrowseDevConsole extends AbstractDevConsole {
         final int max = lim == null ? limit : Integer.parseInt(lim);
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
         boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
+        int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
 
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());
@@ -140,13 +147,14 @@ public class BrowseDevConsole extends AbstractDevConsole {
                 if (list != null) {
                     JsonObject jo = new JsonObject();
                     jo.put("endpointUri", endpoint.getEndpointUri());
-                    jo.put("size", max);
+                    jo.put("queueSize", list.size());
+                    jo.put("limit", max);
                     arr.add(jo);
                     if (dump) {
                         JsonArray arr2 = new JsonArray();
                         for (Exchange e : list) {
                             arr2.add(MessageHelper.dumpAsJSonObject(e.getMessage(), false, false, includeBody, true, true, true,
-                                    bodyMaxChars));
+                                    maxChars));
                         }
                         if (!arr2.isEmpty()) {
                             jo.put("messages", arr2);
