@@ -384,8 +384,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return switch (type) {
             case "org.apache.camel.component.atmosphere.websocket.WebsocketComponent" -> "AtmosphereWebsocket";
             case "org.apache.camel.component.zookeepermaster.MasterComponent" -> "ZooKeeperMaster";
-            case "org.apache.camel.component.jetty9.JettyHttpComponent9" -> "JettyHttp";
             case "org.apache.camel.component.elasticsearch.ElasticsearchComponent" -> "ElasticsearchRest";
+            case "org.apache.camel.component.activemq.ActiveMQComponent" -> "ActiveMQ";
+            case "org.apache.camel.component.activemq6.ActiveMQComponent" -> "ActiveMQ6";
             default -> name;
         };
     }
