@@ -55,6 +55,16 @@ public class BrowseDevConsole extends AbstractDevConsole {
      */
     public static final String DUMP = "dump";
 
+    /**
+     * Whether to include message body in dumps
+     */
+    public static final String INCLUDE_BODY = "includeBody";
+
+    /**
+     * Maximum size of the message body to include in the dump
+     */
+    public static final String BODY_MAX_CHARS = "bodyMaxChars";
+
     @Metadata(defaultValue = "32768",
               description = "Maximum size of the message body to include in the dump")
     private int bodyMaxChars = 32 * 1024;
@@ -71,6 +81,14 @@ public class BrowseDevConsole extends AbstractDevConsole {
         this.bodyMaxChars = bodyMaxChars;
     }
 
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     @Override
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
@@ -79,25 +97,23 @@ public class BrowseDevConsole extends AbstractDevConsole {
         String lim = (String) options.get(LIMIT);
         final int max = lim == null ? limit : Integer.parseInt(lim);
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
+        boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
+        int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
 
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
-                List<Exchange> list = be.getExchanges();
-                long size = list != null ? list.size() : 0;
-                if (list != null && list.size() > max) {
-                    size = list.size();
-                    list = list.subList(0, max);
-                }
+                List<Exchange> list = be.getExchanges(max, null);
                 if (list != null) {
                     sb.append("\n");
-                    sb.append(String.format("Browse: %s (size: %d)%n", endpoint.getEndpointUri(), size));
+                    sb.append(String.format("Browse: %s (size: %d limit: %d)%n", endpoint.getEndpointUri(), list.size(), max));
                     if (dump) {
                         for (Exchange e : list) {
-                            String json = MessageHelper.dumpAsJSon(e.getMessage(), false, false, true, 2, true, true, true,
-                                    bodyMaxChars, true);
+                            String json
+                                    = MessageHelper.dumpAsJSon(e.getMessage(), false, false, includeBody, 2, true, true, true,
+                                            maxChars, true);
                             sb.append(json);
                             sb.append("\n");
                         }
@@ -119,28 +135,26 @@ public class BrowseDevConsole extends AbstractDevConsole {
         String lim = (String) options.get(LIMIT);
         final int max = lim == null ? limit : Integer.parseInt(lim);
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
+        boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
+        int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
 
         Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
         endpoints.addAll(getCamelContext().getEndpoints());
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
-                List<Exchange> list = be.getExchanges();
-                long size = list != null ? list.size() : 0;
-                if (list != null && list.size() > max) {
-                    size = list.size();
-                    list = list.subList(0, max);
-                }
+                List<Exchange> list = be.getExchanges(max, null);
                 if (list != null) {
                     JsonObject jo = new JsonObject();
                     jo.put("endpointUri", endpoint.getEndpointUri());
-                    jo.put("size", size);
+                    jo.put("queueSize", list.size());
+                    jo.put("limit", max);
                     arr.add(jo);
                     if (dump) {
                         JsonArray arr2 = new JsonArray();
                         for (Exchange e : list) {
-                            arr2.add(MessageHelper.dumpAsJSonObject(e.getMessage(), false, false, true, true, true, true,
-                                    bodyMaxChars));
+                            arr2.add(MessageHelper.dumpAsJSonObject(e.getMessage(), false, false, includeBody, true, true, true,
+                                    maxChars));
                         }
                         if (!arr2.isEmpty()) {
                             jo.put("messages", arr2);

@@ -777,11 +777,17 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("browse");
         if (dc != null) {
-            String filter = root.getString("filter");
-            String limit = root.getString("limit");
-            String dump = root.getString("dump");
+            Map<String, Object> map = new HashMap<>();
+            map.put("filter", root.getString("filter"));
+            map.put("limit", root.getString("limit"));
+            map.put("dump", root.getString("dump"));
+            map.put("includeBody", root.getString("includeBody"));
+            String bodyMaxChars = root.getString("bodyMaxChars");
+            if (bodyMaxChars != null) {
+                map.put("bodyMaxChars", bodyMaxChars);
+            }
             JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "limit", limit, "dump", dump));
+                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, map);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

@@ -830,6 +830,20 @@ public class FtpsUriDsl(
   }
 
   /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: String) {
+    it.property("browseLimit", browseLimit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: Int) {
+    it.property("browseLimit", browseLimit.toString())
+  }
+
+  /**
    * Buffer size in bytes used for writing files (or in case of FTP for downloading and uploading
    * files).
    */

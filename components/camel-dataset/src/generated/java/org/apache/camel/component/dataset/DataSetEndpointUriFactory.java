@@ -23,9 +23,10 @@ public class DataSetEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(23);
         props.add("assertPeriod");
         props.add("bridgeErrorHandler");
+        props.add("browseLimit");
         props.add("consumeDelay");
         props.add("copyOnExchange");
         props.add("dataSetIndex");

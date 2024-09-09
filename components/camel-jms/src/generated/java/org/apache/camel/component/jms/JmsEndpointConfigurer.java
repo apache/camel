@@ -49,6 +49,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": target.getConfiguration().setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.getConfiguration().setAutoStartup(property(camelContext, boolean.class, value)); return true;
+        case "browselimit":
+        case "browseLimit": target.getConfiguration().setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "cachelevel":
         case "cacheLevel": target.getConfiguration().setCacheLevel(property(camelContext, int.class, value)); return true;
         case "cachelevelname":
@@ -248,6 +250,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "cachelevel":
         case "cacheLevel": return int.class;
         case "cachelevelname":
@@ -448,6 +452,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": return target.getConfiguration().isAsyncStopListener();
         case "autostartup":
         case "autoStartup": return target.getConfiguration().isAutoStartup();
+        case "browselimit":
+        case "browseLimit": return target.getConfiguration().getBrowseLimit();
         case "cachelevel":
         case "cacheLevel": return target.getConfiguration().getCacheLevel();
         case "cachelevelname":

@@ -20,6 +20,7 @@
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true,
+    "browsable": false,
     "remote": false
   },
   "componentProperties": {

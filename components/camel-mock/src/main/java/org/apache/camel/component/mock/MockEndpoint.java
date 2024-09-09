@@ -145,6 +145,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private boolean failFast = true;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
+    @UriParam(label = "advanced", defaultValue = "100",
+              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+    private int browseLimit = 100;
 
     public MockEndpoint() {
         reset();
@@ -1649,6 +1652,16 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public void setFailFast(boolean failFast) {
         this.failFast = failFast;
+    }
+
+    @Override
+    public int getBrowseLimit() {
+        return browseLimit;
+    }
+
+    @Override
+    public void setBrowseLimit(int browseLimit) {
+        this.browseLimit = browseLimit;
     }
 
     // Implementation methods

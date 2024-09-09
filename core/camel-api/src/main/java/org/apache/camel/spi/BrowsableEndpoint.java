@@ -17,6 +17,8 @@
 package org.apache.camel.spi;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -28,9 +30,37 @@ import org.apache.camel.Exchange;
 public interface BrowsableEndpoint extends Endpoint {
 
     /**
+     * Maximum number of messages to browse by default.
+     */
+    int getBrowseLimit();
+
+    /**
+     * Maximum number of messages to browse by default.
+     */
+    void setBrowseLimit(int browseLimit);
+
+    /**
      * Return the exchanges available on this endpoint
      *
      * @return the exchanges on this endpoint
      */
     List<Exchange> getExchanges();
+
+    /**
+     * Return the exchanges available on this endpoint, allowing to filter the result in the specific component.
+     *
+     * @param  limit  to limit the result to a maximum. Use 0 for default limit.
+     * @param  filter filter to filter among the messages to include.
+     * @return        the exchanges on this endpoint
+     */
+    default List<Exchange> getExchanges(long limit, Predicate filter) {
+        List<Exchange> answer = getExchanges();
+        if (filter != null) {
+            answer = (List<Exchange>) answer.stream().filter(filter).collect(Collectors.toList());
+        }
+        if (limit > 0) {
+            answer = answer.stream().limit(limit).toList();
+        }
+        return answer;
+    }
 }

@@ -25,6 +25,8 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": target.setAssertPeriod(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "browselimit":
+        case "browseLimit": target.setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "copyonexchange":
         case "copyOnExchange": target.setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
         case "expectedcount":
@@ -55,6 +57,8 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": return long.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "copyonexchange":
         case "copyOnExchange": return boolean.class;
         case "expectedcount":
@@ -86,6 +90,8 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": return target.getAssertPeriod();
+        case "browselimit":
+        case "browseLimit": return target.getBrowseLimit();
         case "copyonexchange":
         case "copyOnExchange": return target.isCopyOnExchange();
         case "expectedcount":

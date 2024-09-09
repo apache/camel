@@ -79,10 +79,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Sort by uri, or size", defaultValue = "uri")
     String sort;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in browsed messages")
-    boolean showExchangeProperties;
-
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in browsed messages")
     boolean showHeaders = true;
@@ -90,6 +86,14 @@ public class CamelBrowseAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
                         description = "Show message body in browsed messages")
     boolean showBody = true;
+
+    @CommandLine.Option(names = { "--only-body" }, defaultValue = "false",
+                        description = "Show only message body in browsed messages")
+    boolean onlyBody;
+
+    @CommandLine.Option(names = { "--body-max-chars" },
+                        description = "Maximum size of the message body to include in the dump")
+    int bodyMaxChars;
 
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
@@ -126,6 +130,10 @@ public class CamelBrowseAction extends ActionBaseCommand {
         root.put("filter", endpoint == null ? "*" : endpoint);
         root.put("limit", limit);
         root.put("dump", dump);
+        root.put("includeBody", showBody);
+        if (bodyMaxChars > 0) {
+            root.put("bodyMaxChars", bodyMaxChars);
+        }
 
         File f = getActionFile(Long.toString(pid));
         try {
@@ -156,7 +164,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                 for (int i = 0; arr != null && i < arr.size(); i++) {
                     JsonObject o = (JsonObject) arr.get(i);
                     row.uri = o.getString("endpointUri");
-                    row.size = o.getLong("size");
+                    row.queueSize = o.getInteger("queueSize");
+                    row.limit = o.getInteger("limit");
                     if (dump) {
                         row.messages = o.getCollection("messages");
                     }
@@ -170,7 +179,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         rows.sort(this::sortRow);
 
         if (dump) {
-            dumpMessages(rows);
+            dumpMessages(rows, onlyBody);
         } else {
             tableStatus(rows);
         }
@@ -181,27 +190,29 @@ public class CamelBrowseAction extends ActionBaseCommand {
         return 0;
     }
 
-    protected void dumpMessages(List<Row> rows) {
+    protected void dumpMessages(List<Row> rows, boolean onlyBody) {
         MessageTableHelper tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
         tableHelper.setLoggingColor(loggingColor);
-        tableHelper.setShowExchangeProperties(showExchangeProperties);
+        tableHelper.setShowExchangeProperties(false);
 
         for (Row row : rows) {
             if (row.messages != null) {
                 for (int i = 0; i < row.messages.size(); i++) {
                     JsonObject jo = row.messages.get(i);
-
                     String exchangeId = jo.getString("exchangeId");
                     JsonObject message = jo.getMap("message");
-                    if (!showExchangeProperties && message != null) {
-                        message.remove("exchangeProperties");
-                    }
-                    if (!showHeaders && message != null) {
+                    if (onlyBody) {
+                        exchangeId = null;
                         message.remove("headers");
-                    }
-                    if (!showBody && message != null) {
-                        message.remove("body");
+                        message.remove("messageType");
+                    } else {
+                        if (!showHeaders && message != null) {
+                            message.remove("headers");
+                        }
+                        if (!showBody && message != null) {
+                            message.remove("body");
+                        }
                     }
                     JsonObject ep = new JsonObject();
                     ep.put("endpoint", row.uri);
@@ -225,7 +236,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                new Column().header("TOTAL").with(r -> "" + r.size),
+                new Column().header("SIZE").with(r -> "" + r.queueSize),
+                new Column().header("LIMIT").with(r -> "" + r.limit),
                 new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getEndpointUri),
@@ -245,7 +257,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
             case "uri":
                 return o1.uri.compareToIgnoreCase(o2.uri) * negate;
             case "size":
-                return Long.compare(o1.size, o2.size) * negate;
+                return Long.compare(o1.queueSize, o2.queueSize) * negate;
             default:
                 return 0;
         }
@@ -268,7 +280,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
         String ago;
         long uptime;
         String uri;
-        long size;
+        int queueSize;
+        int limit;
         List<JsonObject> messages;
 
         Row copy() {

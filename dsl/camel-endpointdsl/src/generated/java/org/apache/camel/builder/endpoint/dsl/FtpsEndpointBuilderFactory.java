@@ -2947,6 +2947,38 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointConsumerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointConsumerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
@@ -4597,6 +4629,38 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointProducerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointProducerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
@@ -5727,6 +5791,38 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
             return this;
         }
         /**

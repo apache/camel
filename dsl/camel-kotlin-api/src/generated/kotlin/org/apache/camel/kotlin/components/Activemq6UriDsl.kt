@@ -1023,6 +1023,20 @@ public class Activemq6UriDsl(
   }
 
   /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: String) {
+    it.property("browseLimit", browseLimit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: Int) {
+    it.property("browseLimit", browseLimit.toString())
+  }
+
+  /**
    * A pluggable org.springframework.jms.support.destination.DestinationResolver that allows you to
    * use your own resolver (for example, to lookup the real destination in a JNDI registry).
    */

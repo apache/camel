@@ -113,7 +113,7 @@ public class BrowsableQueueTest extends AbstractJMSTest {
 
         // now lets browse the queue
         JmsQueueEndpoint endpoint = getMandatoryEndpoint(queueName, JmsQueueEndpoint.class);
-        assertEquals(-1, endpoint.getMaximumBrowseSize());
+        assertEquals(100, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: {}", list);
         assertEquals(8, endpoint.getExchanges().size(), "Size of list");
