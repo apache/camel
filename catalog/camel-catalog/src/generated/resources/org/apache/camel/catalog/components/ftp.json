@@ -21,6 +21,7 @@
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false,
+    "browsable": true,
     "remote": true
   },
   "componentProperties": {
