@@ -118,6 +118,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getMaxMessagesPerTask() >= 0) {
             answer.setMaxMessagesPerTask(endpoint.getMaxMessagesPerTask());
         }
+        if (endpoint.getIdleReceivesPerTaskLimit() != 0) {
+            answer.setIdleReceivesPerTaskLimit(endpoint.getIdleReceivesPerTaskLimit());
+        }
         answer.setIdleConsumerLimit(endpoint.getIdleConsumerLimit());
         answer.setIdleTaskExecutionLimit(endpoint.getIdleTaskExecutionLimit());
         answer.setMessageListener(this);

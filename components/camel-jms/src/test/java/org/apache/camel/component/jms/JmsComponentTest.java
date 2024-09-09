@@ -66,6 +66,7 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(21, endpoint.getIdleConsumerLimit());
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
         assertEquals(90, endpoint.getMaxMessagesPerTask());
+        assertEquals(45, endpoint.getIdleReceivesPerTaskLimit());
         assertEquals(3, endpoint.getPriority());
         assertEquals(5000, endpoint.getReceiveTimeout());
         assertEquals(9000, endpoint.getRecoveryInterval());
@@ -96,6 +97,7 @@ public class JmsComponentTest extends CamelTestSupport {
         comp.getConfiguration().setIdleConsumerLimit(21);
         comp.getConfiguration().setMaxConcurrentConsumers(5);
         comp.getConfiguration().setMaxMessagesPerTask(90);
+        comp.getConfiguration().setIdleReceivesPerTaskLimit(45);
         comp.getConfiguration().setPriority(3);
         comp.getConfiguration().setReceiveTimeout(5000);
         comp.getConfiguration().setRecoveryInterval(9000);

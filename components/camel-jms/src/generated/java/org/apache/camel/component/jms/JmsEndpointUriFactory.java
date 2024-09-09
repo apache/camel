@@ -23,7 +23,7 @@ public class JmsEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(102);
+        Set<String> props = new HashSet<>(103);
         props.add("acceptMessagesWhileStopping");
         props.add("acknowledgementModeName");
         props.add("allowAdditionalHeaders");
@@ -69,6 +69,7 @@ public class JmsEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("formatDateHeadersToIso8601");
         props.add("headerFilterStrategy");
         props.add("idleConsumerLimit");
+        props.add("idleReceivesPerTaskLimit");
         props.add("idleTaskExecutionLimit");
         props.add("includeAllJMSXProperties");
         props.add("includeSentJMSMessageID");

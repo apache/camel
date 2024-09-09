@@ -271,6 +271,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getMaxMessagesPerTask() >= 0) {
             answer.setMaxMessagesPerTask(endpoint.getMaxMessagesPerTask());
         }
+        if (endpoint.getIdleReceivesPerTaskLimit() != 0) {
+            answer.setIdleReceivesPerTaskLimit(endpoint.getIdleReceivesPerTaskLimit());
+        }
         answer.setMessageListener(this);
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);

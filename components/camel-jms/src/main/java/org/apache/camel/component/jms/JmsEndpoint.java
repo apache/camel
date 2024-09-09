@@ -624,6 +624,11 @@ public class JmsEndpoint extends DefaultEndpoint
         return getConfiguration().getMaxMessagesPerTask();
     }
 
+    @ManagedAttribute
+    public int getIdleReceivesPerTaskLimit() {
+        return getConfiguration().getIdleReceivesPerTaskLimit();
+    }
+
     public MessageConverter getMessageConverter() {
         return getConfiguration().getMessageConverter();
     }
@@ -951,6 +956,11 @@ public class JmsEndpoint extends DefaultEndpoint
     @ManagedAttribute
     public void setMaxMessagesPerTask(int maxMessagesPerTask) {
         getConfiguration().setMaxMessagesPerTask(maxMessagesPerTask);
+    }
+
+    @ManagedAttribute
+    public void setIdleReceivesPerTaskLimit(int idleReceivesPerTaskLimit) {
+        getConfiguration().setIdleReceivesPerTaskLimit(idleReceivesPerTaskLimit);
     }
 
     public void setMessageConverter(MessageConverter messageConverter) {
