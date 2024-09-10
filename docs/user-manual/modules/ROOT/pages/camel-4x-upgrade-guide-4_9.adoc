@@ -43,6 +43,20 @@ to this
 
 You could find more details on CAMEL-21179 issue
 
+=== camel-google-secret-manager properties function
+
+The syntax for retrieving a single field of a secret has been changed.
+
+From this
+
+`{{gcp:database/username}}`
+
+to this
+
+`{{gcp:database#username}}`
+
+You could find more details on CAMEL-21179 issue
+
 === camel-test
 
 The `CamelTestSupport` class was modified so that the JUnit 5 extension code that was part of the class itself,
