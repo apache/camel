@@ -47,7 +47,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello3");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -61,8 +61,8 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{gcp:database_sample/username}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{gcp:database_sample/password}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{gcp:database_sample#username}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{gcp:database_sample#password}}")).to("mock:bar");
             }
         });
         context.start();
@@ -81,8 +81,8 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{gcp:database_sample/username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{gcp:database_sample/password:password}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{gcp:database_sample#username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{gcp:database_sample#password:password}}")).to("mock:bar");
             }
         });
         context.start();
@@ -122,8 +122,8 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{gcp:postgresql/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{gcp:postgresql/additional2:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{gcp:postgresql#additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{gcp:postgresql#additional2:secret}}")).to("mock:bar");
             }
         });
         context.start();
@@ -142,8 +142,8 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{gcp:test-3/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{gcp:test-3/additional2:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{gcp:test-3#additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{gcp:test-3#additional2:secret}}")).to("mock:bar");
             }
         });
         context.start();
@@ -163,8 +163,8 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{gcp:test-3/additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{gcp:test-3/additional2}}")).to("mock:bar");
+                    from("direct:username").setBody(simple("{{gcp:test-3#additional1}}")).to("mock:bar");
+                    from("direct:password").setBody(simple("{{gcp:test-3#additional2}}")).to("mock:bar");
                 }
             });
             context.start();
@@ -204,12 +204,12 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{gcp:hello@1}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{gcp:test@1}}")).to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("\"id\":\"23\"");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("\"{\"id\":\"27\"}\"");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
@@ -222,12 +222,12 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{gcp:hello}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{gcp:test}}")).to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"id\":\"23\"}");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("\"{\"id\":\"27\"}\"");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
@@ -240,13 +240,13 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{gcp:hello:pippo@2}}"))
+                from("direct:version").setBody(simple("{{gcp:hello@2}}"))
                         .to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello2");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
@@ -259,13 +259,13 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{gcp:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                from("direct:version").setBody(simple("{{gcp:test1#pippo@1}}"))
                         .to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("22");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
@@ -278,13 +278,13 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{gcp:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba29}}"))
+                from("direct:version").setBody(simple("{{gcp:test1#pippo@2}}"))
                         .to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("23");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
@@ -297,13 +297,13 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{gcp:hello/id@3}}"))
+                from("direct:version").setBody(simple("{{gcp:hello@3}}"))
                         .to("mock:bar");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("23");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello3");
 
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
