@@ -177,7 +177,6 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 100
          * Group: advanced
          * 
          * @param browseLimit the value to set
@@ -193,7 +192,6 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 100
          * Group: advanced
          * 
          * @param browseLimit the value to set
@@ -309,7 +307,6 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 100
          * Group: advanced
          * 
          * @param browseLimit the value to set
@@ -325,7 +322,6 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 100
          * Group: advanced
          * 
          * @param browseLimit the value to set
@@ -399,7 +395,6 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 100
          * Group: advanced
          * 
          * @param browseLimit the value to set
@@ -415,7 +410,6 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 100
          * Group: advanced
          * 
          * @param browseLimit the value to set

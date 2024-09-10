@@ -19,15 +19,15 @@ package org.apache.camel.component.browse;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * The <a href="http://camel.apache.org/browse.html">Browse Component</a> provides a simple
- * <a href="http://camel.apache.org/browsableendpoint.html">BrowsableEndpoint</a> for testing visualization or
- * debugging.
- */
 @org.apache.camel.spi.annotations.Component("browse")
 public class BrowseComponent extends DefaultComponent {
+
+    @Metadata(label = "advanced",
+              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+    private int browseLimit;
 
     public BrowseComponent() {
     }
@@ -36,7 +36,16 @@ public class BrowseComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BrowseEndpoint endpoint = new BrowseEndpoint(uri, this);
         endpoint.setName(remaining);
+        endpoint.setBrowseLimit(browseLimit);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public int getBrowseLimit() {
+        return browseLimit;
+    }
+
+    public void setBrowseLimit(int browseLimit) {
+        this.browseLimit = browseLimit;
     }
 }

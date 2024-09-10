@@ -48,9 +48,9 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     @UriPath(description = "A name which can be any string to uniquely identify the endpoint")
     @Metadata(required = true)
     private String name;
-    @UriParam(label = "advanced", defaultValue = "100",
+    @UriParam(label = "advanced",
               description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
-    private int browseLimit = 100;
+    private int browseLimit;
     @UriParam(label = "advanced",
               description = "To use a predicate to filter whether to include the message for browsing. Return true to include, false to exclude.")
     private Predicate<Exchange> filter;
