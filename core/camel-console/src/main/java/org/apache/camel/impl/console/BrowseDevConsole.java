@@ -51,6 +51,11 @@ public class BrowseDevConsole extends AbstractDevConsole {
     public static final String LIMIT = "limit";
 
     /**
+     * To receive N last messages from the tail
+     */
+    public static final String TAIL = "tail";
+
+    /**
      * Whether to include message dumps
      */
     public static final String DUMP = "dump";
@@ -95,6 +100,8 @@ public class BrowseDevConsole extends AbstractDevConsole {
 
         String filter = (String) options.get(FILTER);
         String lim = (String) options.get(LIMIT);
+        String tail = (String) options.get(TAIL);
+        final int pos = tail == null ? 0 : Integer.parseInt(tail);
         final int max = lim == null ? limit : Integer.parseInt(lim);
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
         boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
@@ -106,9 +113,16 @@ public class BrowseDevConsole extends AbstractDevConsole {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
                 List<Exchange> list = be.getExchanges(max, null);
+                int queueSize = list != null ? list.size() : 0;
+                int begin = 0;
+                if (list != null && pos > 0 && pos < list.size()) {
+                    begin = list.size() - pos;
+                    list = list.subList(begin, list.size());
+                }
                 if (list != null) {
                     sb.append("\n");
-                    sb.append(String.format("Browse: %s (size: %d limit: %d)%n", endpoint.getEndpointUri(), list.size(), max));
+                    sb.append(String.format("Browse: %s (size: %d limit: %d position: %d)%n", endpoint.getEndpointUri(),
+                            queueSize, max, begin));
                     if (dump) {
                         for (Exchange e : list) {
                             String json
@@ -133,6 +147,8 @@ public class BrowseDevConsole extends AbstractDevConsole {
 
         String filter = (String) options.get(FILTER);
         String lim = (String) options.get(LIMIT);
+        String tail = (String) options.get(TAIL);
+        final int pos = tail == null ? 0 : Integer.parseInt(tail);
         final int max = lim == null ? limit : Integer.parseInt(lim);
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
         boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
@@ -144,11 +160,18 @@ public class BrowseDevConsole extends AbstractDevConsole {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
                 List<Exchange> list = be.getExchanges(max, null);
+                int queueSize = list != null ? list.size() : 0;
+                int begin = 0;
+                if (list != null && pos > 0 && pos < list.size()) {
+                    begin = list.size() - pos;
+                    list = list.subList(begin, list.size());
+                }
                 if (list != null) {
                     JsonObject jo = new JsonObject();
                     jo.put("endpointUri", endpoint.getEndpointUri());
-                    jo.put("queueSize", list.size());
+                    jo.put("queueSize", queueSize);
                     jo.put("limit", max);
+                    jo.put("position", begin);
                     arr.add(jo);
                     if (dump) {
                         JsonArray arr2 = new JsonArray();

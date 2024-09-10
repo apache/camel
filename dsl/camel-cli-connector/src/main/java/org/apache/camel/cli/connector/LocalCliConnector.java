@@ -780,6 +780,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             Map<String, Object> map = new HashMap<>();
             map.put("filter", root.getString("filter"));
             map.put("limit", root.getString("limit"));
+            map.put("tail", root.getString("tail"));
             map.put("dump", root.getString("dump"));
             map.put("includeBody", root.getString("includeBody"));
             String bodyMaxChars = root.getString("bodyMaxChars");

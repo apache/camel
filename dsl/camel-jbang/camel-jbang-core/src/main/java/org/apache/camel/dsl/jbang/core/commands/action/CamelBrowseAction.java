@@ -67,13 +67,17 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "List endpoint URI in full details")
     boolean wideUri;
 
+    @CommandLine.Option(names = { "--dump" }, defaultValue = "false",
+                        description = "Whether to include message dumps")
+    boolean dump;
+
     @CommandLine.Option(names = { "--limit" }, defaultValue = "100",
                         description = "Limits the number of messages to dump per endpoint")
     int limit;
 
-    @CommandLine.Option(names = { "--dump" }, defaultValue = "false",
-                        description = "Whether to include message dumps")
-    boolean dump;
+    @CommandLine.Option(names = { "--tail" },
+                        description = "The number of messages from the end (latest) to dump")
+    int tail;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = UriSizeCompletionCandidates.class,
                         description = "Sort by uri, or size", defaultValue = "uri")
@@ -129,6 +133,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         root.put("action", "browse");
         root.put("filter", endpoint == null ? "*" : endpoint);
         root.put("limit", limit);
+        root.put("tail", tail);
         root.put("dump", dump);
         root.put("includeBody", showBody);
         if (bodyMaxChars > 0) {
@@ -166,6 +171,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
                     row.uri = o.getString("endpointUri");
                     row.queueSize = o.getInteger("queueSize");
                     row.limit = o.getInteger("limit");
+                    row.position = o.getInteger("position");
                     if (dump) {
                         row.messages = o.getCollection("messages");
                     }
@@ -217,7 +223,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                     JsonObject ep = new JsonObject();
                     ep.put("endpoint", row.uri);
                     String table = tableHelper.getDataAsTable(exchangeId, null, ep, null, message, null);
-                    String header = String.format("Browse Message: (%s/%s)", i + 1, row.messages.size());
+                    String header = String.format("Browse Message: (%s/%s)", row.position + i + 1,
+                            row.position + row.messages.size());
                     if (loggingColor) {
                         printer().println(Ansi.ansi().fgGreen().a(header).reset().toString());
                     } else {
@@ -282,6 +289,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         String uri;
         int queueSize;
         int limit;
+        int position;
         List<JsonObject> messages;
 
         Row copy() {
