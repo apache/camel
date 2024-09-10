@@ -57,7 +57,7 @@ public class SourceHelper {
         List<Source> resolved = new ArrayList<>();
         for (String source : sources) {
             SourceScheme sourceScheme = SourceScheme.fromUri(source);
-            String fileExtension = FileUtil.onlyExt(source);
+            String fileExtension = FileUtil.onlyExt(source, true);
             String fileName = SourceScheme.onlyName(FileUtil.onlyName(source));
             if (fileExtension != null) {
                 fileName = fileName + "." + fileExtension;
