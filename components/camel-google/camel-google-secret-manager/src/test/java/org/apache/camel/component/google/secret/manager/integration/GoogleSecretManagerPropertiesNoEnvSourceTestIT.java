@@ -308,4 +308,24 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         template.sendBody("direct:version", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
+
+    @Test
+    public void testComplexCustomPropertiesFunctionWithSlash() throws Exception {
+        context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
+        context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:username").setBody(simple("{{gcp:postgresql_account_admin_prod#username}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{gcp:postgresql_account_admin_prod#password}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "secret");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        MockEndpoint.assertIsSatisfied(context);
+    }
 }
