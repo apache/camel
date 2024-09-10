@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "CassandraAggregationRepository",
     "javaType": "org.apache.camel.processor.aggregate.cassandra.CassandraAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Cassandra Aggregation Repository",
     "description": "Aggregation repository that uses Cassandra table to store exchanges. Advice: use LeveledCompaction for this table and tune read\/write consistency levels.",
     "deprecated": false,

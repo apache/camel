@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "InfinispanRemoteAggregationRepository",
     "javaType": "org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Infinispan Remote Aggregation Repository",
     "description": "Aggregation repository that uses remote Infinispan to store exchanges.",
     "deprecated": false,

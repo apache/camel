@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "HazelcastAggregationRepository",
     "javaType": "org.apache.camel.processor.aggregate.hazelcast.HazelcastAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Hazelcast Aggregation Repository",
     "description": "Aggregation repository that uses Hazelcast Cache to store exchanges.",
     "deprecated": false,

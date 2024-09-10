@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "InfinispanEmbeddedAggregationRepository",
     "javaType": "org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Infinispan Embedded Aggregation Repository",
     "description": "Aggregation repository that uses embedded Infinispan to store exchanges.",
     "deprecated": false,

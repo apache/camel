@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "MemoryAggregationRepository",
     "javaType": "org.apache.camel.processor.aggregate.MemoryAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Memory Aggregation Repository",
     "description": "A memory based AggregationRepository which stores Exchange in memory only.",
     "deprecated": false,

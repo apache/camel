@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 
 @Metadata(label = "bean",
           description = "Aggregation repository that uses Etcd3 to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class Etcd3AggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {

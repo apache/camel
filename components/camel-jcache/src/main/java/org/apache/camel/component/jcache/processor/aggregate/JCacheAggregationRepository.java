@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 @Metadata(label = "bean",
           description = "Aggregation repository that uses JCache to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class JCacheAggregationRepository extends ServiceSupport
         implements CamelContextAware, OptimisticLockingAggregationRepository {

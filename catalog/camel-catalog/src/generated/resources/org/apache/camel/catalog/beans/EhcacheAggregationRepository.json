@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "EhcacheAggregationRepository",
     "javaType": "org.apache.camel.component.ehcache.processor.aggregate.EhcacheAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Ehcache Aggregation Repository",
     "description": "Aggregation repository that uses Caffeine Cache to store exchanges.",
     "deprecated": false,
