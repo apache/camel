@@ -289,7 +289,13 @@ public class KubernetesExport extends Export {
             buildProperties.add("%s.kubernetes.image-pull-policy=%s".formatted(propPrefix, imagePullPolicy));
         }
 
-        // Quarkus Runtime specific
+        // Runtime specific for Main
+        if (runtime == RuntimeType.main) {
+            addDependencies("org.apache.camel:camel-health",
+                    "org.apache.camel:camel-platform-http-main");
+        }
+
+        // Runtime specific for Quarkus
         if (runtime == RuntimeType.quarkus) {
 
             // Quarkus specific dependencies
