@@ -41,6 +41,11 @@ public enum DriveFilesApiMethod implements ApiMethod {
         "delete",
         arg("fileId", String.class)),
 
+    DOWNLOAD(
+        com.google.api.services.drive.Drive.Files.Download.class,
+        "download",
+        arg("fileId", String.class)),
+
     EMPTY_TRASH(
         com.google.api.services.drive.Drive.Files.EmptyTrash.class,
         "emptyTrash"),
