@@ -395,7 +395,7 @@ You're able to do get single secret value in your route, like for example:
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{azure:database/username}}"/>
+        <log message="Username is {{azure:database#username}}"/>
     </route>
 </camelContext>
 ----
@@ -409,7 +409,7 @@ You could specify a default value in case the particular field of secret is not 
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{azure:database/username:admin}}"/>
+        <log message="Username is {{azure:database#username:admin}}"/>
     </route>
 </camelContext>
 ----
