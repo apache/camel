@@ -79,6 +79,10 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "The number of messages from the end (latest) to dump")
     int tail;
 
+    @CommandLine.Option(names = { "--fresh-size" }, defaultValue = "false",
+                        description = "Whether to calculate fresh queue size information (performance overhead)")
+    boolean freshSize;
+
     @CommandLine.Option(names = { "--sort" }, completionCandidates = UriSizeCompletionCandidates.class,
                         description = "Sort by uri, or size", defaultValue = "uri")
     String sort;
@@ -134,6 +138,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         root.put("filter", endpoint == null ? "*" : endpoint);
         root.put("limit", limit);
         root.put("tail", tail);
+        root.put("freshSize", freshSize);
         root.put("dump", dump);
         root.put("includeBody", showBody);
         if (bodyMaxChars > 0) {
@@ -243,8 +248,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                new Column().header("SIZE").with(r -> "" + r.queueSize),
-                new Column().header("LIMIT").with(r -> "" + r.limit),
+                new Column().header("SIZE").headerAlign(HorizontalAlign.RIGHT).with(this::getQueueSize),
                 new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getEndpointUri),
@@ -268,6 +272,16 @@ public class CamelBrowseAction extends ActionBaseCommand {
             default:
                 return 0;
         }
+    }
+
+    protected String getQueueSize(Row r) {
+        if (freshSize) {
+            return "" + r.queueSize;
+        }
+        if (r.queueSize >= r.limit) {
+            return r.queueSize + "+";
+        }
+        return "" + r.queueSize;
     }
 
     protected String getEndpointUri(Row r) {

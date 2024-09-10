@@ -35,20 +35,22 @@ import org.springframework.jms.core.JmsOperations;
 public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 
     @Override
-    public List<Exchange> browse(JmsOperations template, String queue, final JmsBrowsableEndpoint endpoint) {
+    public List<Exchange> browse(
+            JmsOperations template, String queue, final JmsBrowsableEndpoint endpoint,
+            final int limit) {
         if (endpoint.getSelector() != null) {
             return template.browseSelected(queue, endpoint.getSelector(),
-                    (session, browser) -> doBrowse(endpoint, session, browser));
+                    (session, browser) -> doBrowse(endpoint, session, browser, limit));
         } else {
-            return template.browse(queue, (session, browser) -> doBrowse(endpoint, session, browser));
+            return template.browse(queue, (session, browser) -> doBrowse(endpoint, session, browser, limit));
         }
     }
 
-    private static List<Exchange> doBrowse(JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser)
+    private static List<Exchange> doBrowse(JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser, int limit)
             throws JMSException {
-        int size = endpoint.getMaximumBrowseSize();
-        if (size <= 0) {
-            size = Integer.MAX_VALUE;
+
+        if (limit <= 0) {
+            limit = Integer.MAX_VALUE;
         }
 
         // not the best implementation in the world as we have to browse
@@ -56,7 +58,7 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
         List<Exchange> answer = new ArrayList<>();
         Enumeration<?> iter = browser.getEnumeration();
 
-        for (int i = 0; i < size && iter.hasMoreElements(); i++) {
+        for (int i = 0; i < limit && iter.hasMoreElements(); i++) {
             Message message = (Message) iter.nextElement();
             Exchange exchange = endpoint.createExchange(message, session);
             answer.add(exchange);

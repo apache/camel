@@ -66,6 +66,11 @@ public class BrowseDevConsole extends AbstractDevConsole {
     public static final String INCLUDE_BODY = "includeBody";
 
     /**
+     * Whether to calculate fresh queue size (can cause performance overhead)
+     */
+    public static final String FRESH_SIZE = "freshSize";
+
+    /**
      * Maximum size of the message body to include in the dump
      */
     public static final String BODY_MAX_CHARS = "bodyMaxChars";
@@ -103,6 +108,7 @@ public class BrowseDevConsole extends AbstractDevConsole {
         String tail = (String) options.get(TAIL);
         final int pos = tail == null ? 0 : Integer.parseInt(tail);
         final int max = lim == null ? limit : Integer.parseInt(lim);
+        boolean freshSize = "true".equals(options.getOrDefault(FRESH_SIZE, "false"));
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
         boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
         int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
@@ -112,11 +118,11 @@ public class BrowseDevConsole extends AbstractDevConsole {
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
-                List<Exchange> list = be.getExchanges(max, null);
+                List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
                 int queueSize = list != null ? list.size() : 0;
                 int begin = 0;
-                if (list != null && pos > 0 && pos < list.size()) {
-                    begin = list.size() - pos;
+                if (list != null && pos > 0) {
+                    begin = Math.max(0, list.size() - pos);
                     list = list.subList(begin, list.size());
                 }
                 if (list != null) {
@@ -150,6 +156,7 @@ public class BrowseDevConsole extends AbstractDevConsole {
         String tail = (String) options.get(TAIL);
         final int pos = tail == null ? 0 : Integer.parseInt(tail);
         final int max = lim == null ? limit : Integer.parseInt(lim);
+        boolean freshSize = "true".equals(options.getOrDefault(FRESH_SIZE, "false"));
         boolean dump = "true".equals(options.getOrDefault(DUMP, "true"));
         boolean includeBody = "true".equals(options.getOrDefault(INCLUDE_BODY, "true"));
         int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
@@ -159,11 +166,11 @@ public class BrowseDevConsole extends AbstractDevConsole {
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
-                List<Exchange> list = be.getExchanges(max, null);
+                List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
                 int queueSize = list != null ? list.size() : 0;
                 int begin = 0;
-                if (list != null && pos > 0 && pos < list.size()) {
-                    begin = list.size() - pos;
+                if (list != null && pos > 0) {
+                    begin = Math.max(0, list.size() - pos);
                     list = list.subList(begin, list.size());
                 }
                 if (list != null) {

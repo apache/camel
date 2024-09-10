@@ -18,6 +18,8 @@ package org.apache.camel.component.activemq6;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -96,12 +98,21 @@ public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsa
 
     @Override
     public List<Exchange> getExchanges() {
+        return getExchanges(maximumBrowseSize, null);
+    }
+
+    @Override
+    public List<Exchange> getExchanges(int limit, Predicate filter) {
         if (queueBrowseStrategy == null) {
             return Collections.emptyList();
         }
         String queue = getDestinationName();
         JmsOperations template = getConfiguration().createInOnlyTemplate(this, false, queue);
-        return queueBrowseStrategy.browse(template, queue, this);
+        List<Exchange> list = queueBrowseStrategy.browse(template, queue, this, limit);
+        if (filter != null) {
+            list = (List<Exchange>) list.stream().filter(filter).collect(Collectors.toList());
+        }
+        return list;
     }
 
     protected QueueBrowseStrategy createQueueBrowseStrategy() {

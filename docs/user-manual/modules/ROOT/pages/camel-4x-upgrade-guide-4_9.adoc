@@ -11,6 +11,10 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value
 to an `Integer` value.
 
+=== camel-jms
+
+Added `int limit` as parameter to the `browse` method in `org.apache.camel.component.jms.QueueBrowseStrategy`.
+
 === camel-hashicorp-vault properties function
 
 The syntax for retrieving a single field of a secret has been changed.

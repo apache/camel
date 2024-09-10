@@ -499,7 +499,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     @Override
-    public List<Exchange> getExchanges(long limit, java.util.function.Predicate filter) {
+    public List<Exchange> getExchanges(int limit, java.util.function.Predicate filter) {
         final List<Exchange> answer = new ArrayList<>();
 
         GenericFileConsumer<?> consumer = null;

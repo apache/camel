@@ -21,8 +21,14 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.springframework.jms.core.JmsOperations;
 
+/**
+ * Strategy for browsing JMS queues
+ */
 public interface QueueBrowseStrategy {
 
-    List<Exchange> browse(JmsOperations template, String queue, JmsBrowsableEndpoint endpoint);
+    /**
+     * Browse the given queue
+     */
+    List<Exchange> browse(JmsOperations template, String queue, JmsBrowsableEndpoint endpoint, int limit);
 
 }

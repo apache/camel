@@ -53,7 +53,7 @@ public interface BrowsableEndpoint extends Endpoint {
      * @param  filter filter to filter among the messages to include.
      * @return        the exchanges on this endpoint
      */
-    default List<Exchange> getExchanges(long limit, Predicate filter) {
+    default List<Exchange> getExchanges(int limit, Predicate filter) {
         List<Exchange> answer = getExchanges();
         if (filter != null) {
             answer = (List<Exchange>) answer.stream().filter(filter).collect(Collectors.toList());

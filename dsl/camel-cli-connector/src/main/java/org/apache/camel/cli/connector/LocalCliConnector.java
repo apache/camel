@@ -781,6 +781,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             map.put("filter", root.getString("filter"));
             map.put("limit", root.getString("limit"));
             map.put("tail", root.getString("tail"));
+            map.put("freshSize", root.getString("freshSize"));
             map.put("dump", root.getString("dump"));
             map.put("includeBody", root.getString("includeBody"));
             String bodyMaxChars = root.getString("bodyMaxChars");
